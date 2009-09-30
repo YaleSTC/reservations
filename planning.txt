@@ -1,0 +1,105 @@
+AppConfig:
+  - default (admin) email address to send notifications
+  - custom email bodies for overdue/due notifications
+    - maybe just institution name
+
+Users:
+  - can we assume CAS?
+    - if so, use RubyCAS + User model with additional attributes
+    - if not, use Authlogic
+    
+    
+    
+Reservations:
+  - has_many (habtm?) Equipment Objects
+  - belongs_to reserver (User)
+  - belongs_to checkout_handler (User)
+  - belongs_to checkin_handler (User)
+  - start_date (date)
+  - due_date (date)
+  - checked_out (datetime) (Initial focus on reserving by the day)
+  - checked_in (datetime)
+  
+  
+  
+  
+  
+Categories
+  - name
+  - max_per_user?
+  - max_checkout_length
+  
+  - default "Accessory" category
+  
+Equipment Model
+  - belongs_to Category
+  - name
+  - make? model?
+  - description
+  - checkout procedures? checkin procedures?
+  - late fee
+  - replacement value
+  - max_per_user?
+  - max_checkout_length
+  
+Equipment Objects (instances of Equipment Models)
+  - belongs_to Equipment Model
+  - name
+  - serial no/identifier
+  - current_owner (who currently has this item? doubles as 'checked out' bool)
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+Issue #1: how to handle a reservation for Joe User
+  There are two ways to make a reservation: based on time or based on equipment.
+  How do we handle these two cases from a UI perspective?
+Solution:
+  Most users want to rent 1 main thing (or 1 main thing + accessories)
+  So: allow them to browse the collection and select their first item
+    (Availability tables show availability for the next week)
+  [Alternately, if the user wants to make a reservation for a specific time frame,
+    and is not specific about equipment, provide a box in the sidebar that says:
+    "Want to rent equipment for a specific date? Narrow down your search:"]
+  When first item is added to cart, ask what time period they would like to rent it for
+  THIS IS THE LENGTH OF THE RESERVATION
+  Next, ask whether they would like to proceed directly to finalizing the reservation
+    or whether they would like to add more equipment/accessories first
+    (Update all availability tables to show data for the reservation period)
+  After each additional item, prompt whether to continue or to go to finalization
+  
+  
+Issue #2: changing reservation details during finalization
+  If the user wants to change the dates of the reservation
+    Allow them to change the dates, then show them which items conflict with that timeframe
+      (For conflicts, suggest similar items/items in the same category?)
+  
+  
+The end user:
+  may or may not be logged in to begin with
+  wants to make a reservation
+    browses catalog
+        - views information on individual items
+        - specs
+        - availability
+      - adds/removes items in cart (session variables)
+        - if possible, update cart to show
+        - if not possible, give useful feedback
+          - e.g. not available, exceed max size of reservation, etc.
+    goes to finalize ("make" reservation)
+      - prompt to log in if not yet logged in
+      - 
+  
+
+
