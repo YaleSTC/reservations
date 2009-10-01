@@ -3,7 +3,7 @@ class UsersController < ApplicationController
   before_filter :require_admin, :only => :index
   
   def index
-    @users = User.all
+    @users = User.find(:all, :order => 'login ASC')
   end
   
   def show

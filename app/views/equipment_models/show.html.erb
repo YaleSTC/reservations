@@ -1,0 +1,26 @@
+<% title @equipment_model.category.name.singularize + ": "+@equipment_model.name %>
+
+<p>
+  <strong>Description:</strong>
+  <%=h @equipment_model.description %>
+</p>
+<p>
+  <strong>Late Fee:</strong>
+  <%=h number_to_currency(@equipment_model.late_fee) %> / day
+</p>
+<p>
+  <strong>Replacement Fee:</strong>
+  <%=h number_to_currency(@equipment_model.replacement_fee) %>
+</p>
+<p>
+  <strong>Max Per User:</strong>
+  <%=h @equipment_model.max_per_user %>
+</p>
+
+<%= link_to "Add new "+@equipment_model.name.singularize+" object", new_equipment_model_equipment_object_path(@equipment_model) %>
+
+<p>
+  <%= link_to "Edit "+@equipment_model.category.name.singularize, edit_equipment_model_path(@equipment_model) %> |
+  <%= link_to "Destroy "+@equipment_model.category.name.singularize, @equipment_model, :confirm => 'Are you sure?', :method => :delete %> |
+  <%= link_to "View All "+@equipment_model.category.name.pluralize, category_equipment_models_path(@equipment_model.category) %>
+</p>

@@ -1,0 +1,20 @@
+<% title "Equipment Object" %>
+
+<p>
+  <strong>Name:</strong>
+  <%=h @equipment_object.name %>
+</p>
+<p>
+  <strong>Serial:</strong>
+  <%=h @equipment_object.serial %>
+</p>
+<p>
+  <strong>Equipment Model:</strong>
+  <%=h @equipment_object.equipment_model %>
+</p>
+
+<p>
+  <%= link_to "Edit", edit_equipment_object_path(@equipment_object) %> |
+  <%= link_to "Destroy", @equipment_object, :confirm => 'Are you sure?', :method => :delete %> |
+  <%= link_to "View All", equipment_objects_path %>
+</p>

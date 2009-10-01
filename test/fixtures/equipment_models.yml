@@ -1,0 +1,13 @@
+one:
+  string: 
+  description: MyText
+  late_fee: 9.99
+  replacement_fee: 9.99
+  max_per_user: 1
+
+two:
+  string: 
+  description: MyText
+  late_fee: 9.99
+  replacement_fee: 9.99
+  max_per_user: 1

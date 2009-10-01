@@ -11,7 +11,7 @@
   <% for user in @users %>
     <tr>
       <td><%=h user.login %></td>
-      <td><%=h "#{user.nickname} #{user.last_name}" %></td>
+      <td><%=h user.name %></td>
       <td><%=h user.phone %></td>
       <td><%=h user.email %></td>
       <td><%=h user.affiliation %></td>

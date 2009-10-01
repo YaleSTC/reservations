@@ -9,8 +9,10 @@
   <%=h @category.max_checkout_length %> days
 </p>
 
+<%= link_to "Add new "+@category.name.singularize+" model", new_category_equipment_model_path(@category) %>
+
 <p>
-  <%= link_to "Edit", edit_category_path(@category) %> |
-  <%= link_to "Destroy", @category, :confirm => 'Are you sure?', :method => :delete %> |
-  <%= link_to "View All", categories_path %>
+  <%= link_to "Edit Category", edit_category_path(@category) %> |
+  <%= link_to "Destroy Category", @category, :confirm => 'Are you sure?', :method => :delete %> |
+  <%= link_to "View All Categories", categories_path %>
 </p>

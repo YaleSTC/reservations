@@ -8,6 +8,7 @@ class ApplicationController < ActionController::Base
   
   before_filter CASClient::Frameworks::Rails::Filter
   before_filter :first_time_user
+  before_filter :create_empty_cart
 
   def current_user
     @current_user ||= User.find_by_login(session[:cas_user])
@@ -19,6 +20,10 @@ class ApplicationController < ActionController::Base
         need you to supply us with some basic contact information first."
       redirect_to new_user_path
     end
+  end
+  
+  def create_empty_cart
+    #session[:cart] ||= Reservation.new
   end
   
   def logout

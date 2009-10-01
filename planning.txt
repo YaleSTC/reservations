@@ -4,6 +4,28 @@ AppConfig:
     - maybe just institution name inserted into template?
   - for now, checkouts will be BY THE DAY
     - as long as I code well, we can go back and add more granularity later
+    
+    total # active reservations?
+    (# of) overlapping reservations
+    
+    allow anyone with a netid? allow only certain netids?
+    
+    
+NO PARTIAL CHECK-IN!
+do weekends count? saturdays and/or sundays? (app-wide)
+hourly fines? / start and end hours
+
+
+Emails!
+Set from address and AdminCC
+
+
+
+
+restrictions
+- # of equipment
+- length of time
+
 
 Users:
   - can we assume CAS?
@@ -37,6 +59,7 @@ Categories
   - name
   - max_per_user (optional?)
   - max_checkout_length (optional?)
+  - min_checkout_length? orbis
   - default "Accessory" category
   
 Equipment Model
@@ -44,20 +67,22 @@ Equipment Model
   - name
   - make? model? (combine these?)
   - description
+    -short description (shown in list view) + long description
   - checkout procedures? checkin procedures?
   - late fee
   - replacement value
   - max_per_user (defaults to category max)
     - cannot be greater than category max
-  - max_checkout_length (defaults to category max)
+  - max_checkout_length? (defaults to category max)
     - cannot be greater than category max
+    - MAYBE NOT on model level
   
 Equipment Objects (instances of Equipment Models)
   - belongs_to Equipment Model
   - (habtm Documents)
   - (habtm Photos)
   - name
-  - serial no/identifier
+  - serial no/identifier (optional)
   - current_owner (who currently has this item? doubles as 'checked out' bool)
     - through (checked out) Reservation
   

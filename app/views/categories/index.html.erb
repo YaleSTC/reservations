@@ -8,10 +8,9 @@
   </tr>
   <% for category in @categories %>
     <tr>
-      <td><%=h category.name %></td>
+      <td><%= link_to category.name, category %></td>
       <td><%=h category.max_per_user %></td>
-      <td><%=h category.max_checkout_length %></td>
-      <td><%= link_to "Show", category %></td>
+      <td><%=h category.max_checkout_length %> days</td>
       <td><%= link_to "Edit", edit_category_path(category) %></td>
       <td><%= link_to "Destroy", category, :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>

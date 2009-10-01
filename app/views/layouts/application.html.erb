@@ -111,8 +111,15 @@
     	  <div id="sidebarbottom">
       		<ul>
   			      <ul>
-              	<li><%= link_to "Users", users_path %></li>
-              	<li><%= link_to "Categories", categories_path %></li>
+              	<% if current_user.nil? %>
+                	<%= link_to "Sign In" %>
+                <% elsif current_user.is_admin? %>
+                	<li><%= link_to "Users", users_path %></li>
+                <% else %>
+                	<li><%= link_to "My Profile", user_path(current_user) %></li>
+                <% end %>
+                <li><%= link_to "Categories", categories_path %></li>
+                <li><%= link_to "Equipment Models", equipment_models_path %></li>
               </ul>
           </ul>
           <%= yield(:left_sidebar) %>

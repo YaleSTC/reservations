@@ -1,5 +1,13 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :categories
+  map.resources :equipment_objects
+  
+  map.resources :equipment_models do |equipment_model|
+    equipment_model.resources :equipment_objects
+  end
+
+  map.resources :categories do |category|
+    category.resources :equipment_models
+  end
 
   map.resources :users
   

@@ -1,0 +1,5 @@
+<% title "Add New " + (@equipment_model.nil? ? "Equipment Objects" : @equipment_model.name.pluralize) %>
+
+<%= render :partial => 'form' %>
+
+<p><%= link_to "Back to List", (@equipment_model.nil? ? equipment_objects_path : equipment_model_equipment_objects_path(@equipment_model)) %></p>

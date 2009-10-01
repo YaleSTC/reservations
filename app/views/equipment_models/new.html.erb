@@ -1,0 +1,5 @@
+<% title "Add New " + (@category.nil? ? "Equipment Model" : @category.name.singularize) %>
+
+<%= render :partial => 'form' %>
+
+<p><%= link_to "Back to List", (@category.nil? ? equipment_models_path : category_equipment_models_path(@category)) %></p>

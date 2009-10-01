@@ -9,12 +9,31 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091001181809) do
+ActiveRecord::Schema.define(:version => 20091001215110) do
 
   create_table "categories", :force => true do |t|
     t.string   "name"
     t.integer  "max_per_user"
     t.integer  "max_checkout_length"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "equipment_models", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.decimal  "late_fee"
+    t.decimal  "replacement_fee"
+    t.integer  "max_per_user"
+    t.integer  "category_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "equipment_objects", :force => true do |t|
+    t.string   "name"
+    t.string   "serial"
+    t.integer  "equipment_model_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

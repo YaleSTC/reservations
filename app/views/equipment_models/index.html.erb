@@ -1,0 +1,33 @@
+<% title (@category.nil? ? "Equipment Models" : @category.name.pluralize) %>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <%= "<th>Type</th>" unless @category %>
+    <th>Description</th>
+    <th>Late Fee</th>
+    <th>Replacement Fee</th>
+    <th>Max Per User</th>
+  </tr>
+  <% for equipment_model in @equipment_models %>
+    <tr>
+      <td><%= link_to equipment_model.name, equipment_model %></td>
+      <%= ("<td>" + (link_to equipment_model.category.name.singularize, equipment_model.category) + "</td>") unless @category %>
+      <td><%=h equipment_model.description %></td>
+      <td><%=h number_to_currency(equipment_model.late_fee) %></td>
+      <td><%=h number_to_currency(equipment_model.replacement_fee) %></td>
+      <td><%=h equipment_model.max_per_user %></td>
+      <td><%= link_to "Edit", edit_equipment_model_path(equipment_model) %></td>
+      <td><%= link_to "Destroy", equipment_model, :confirm => 'Are you sure?', :method => :delete %></td>
+    </tr>
+  <% end %>
+</table>
+
+<p>
+  <% if @category %>
+    <%= link_to ("New "+@category.name.singularize), new_category_equipment_model_path(@category) %> |
+    <%= link_to "View All Equipment Models", equipment_models_path %>
+  <% else %>
+    <%= link_to "New Equipment Model", new_equipment_model_path %>
+  <% end %>
+</p>

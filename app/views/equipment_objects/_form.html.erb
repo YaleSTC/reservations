@@ -1,0 +1,20 @@
+<% form_for @equipment_object do |f| %>
+  <%= f.error_messages %>
+  <% if @equipment_model %>
+    <%= f.hidden_field :equipment_model_id, :value => @equipment_model.id %>
+  <% else %>
+    <p>
+      <%= f.label :equipment_model_id %><br />
+      <%= f.select :equipment_model_id, EquipmentModel.select_options, :prompt => true %>
+    </p>
+  <% end %>
+  <p>
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.label :serial %><br />
+    <%= f.text_field :serial %>
+  </p>
+  <p><%= f.submit "Submit" %></p>
+<% end %>
