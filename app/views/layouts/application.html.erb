@@ -103,6 +103,9 @@
         <div id="itgAdminHeader"></div>
       </div> 
 
+      <%- flash.each do |name, msg| -%>
+        <%= content_tag :div, msg, :id => "flash_#{name}" %>
+      <%- end -%>
       
     	<div id="sidebar-left">
     	  <div id="sidebarbottom">
@@ -119,13 +122,17 @@
     		<%= yield(:body) || yield %>
 			</div>
 
-      <% if yield(:right_sidebar) %>
-      	<div id="sidebar-right">
-      	  <div id="sidebarbottom">
-            <%= yield(:right_sidebar) %>
-      	  </div>
-      	</div>
-    	<% end %>
+    	<div id="sidebar-right">
+    	  <div id="sidebarbottom">
+    	    asdf
+    	    <% if current_user %>
+    	      logged in as <%= link_to current_user.login, current_user %>
+    	      <%= link_to "[log out]", logout_path %>
+    	    <% end %>
+          <%= yield(:right_sidebar) %>
+          <Br><BR><BR><BR><BR><BR><BR>asdf
+    	  </div>
+    	</div>
 
       <hr />
       <div id="footer">

@@ -7,11 +7,7 @@
 #content {
   padding: 0 0 20px 15px;
 	margin: 15px 0 0;
-}
-
-#flash_notice, #flash_error {
-  padding: 5px 8px;
-  margin: 10px 0;
+	width: 520px;
 }
 
 #flash_notice {
@@ -22,6 +18,15 @@
 #flash_error {
   background-color: #FCC;
   border: solid 1px #C66;
+}
+
+#flash_notice, #flash_error {
+  padding: 5px 8px;
+  margin: 10px 0;
+	border-left: none;
+	border-right: none;
+	font-size: 140%;
+	text-align: center;
 }
 
 .fieldWithErrors {
@@ -70,5 +75,5 @@ table, td, tr, th{
 }
 
 td{
-	border: 1px solid #666;
+	border: 1px solid #999;
 }

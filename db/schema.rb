@@ -19,7 +19,8 @@ ActiveRecord::Schema.define(:version => 20090930234012) do
     t.string   "phone"
     t.string   "email"
     t.string   "affiliation"
-    t.boolean  "is_banned"
+    t.boolean  "is_banned",   :default => false
+    t.boolean  "is_admin",    :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

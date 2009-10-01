@@ -2,7 +2,7 @@
   <%= f.error_messages %>
   <p>
     <%= f.label :login %><br />
-    <%= f.text_field :login %>
+    <%= @user.login %>
   </p>
   <p>
     <%= f.label :first_name %><br />
@@ -25,12 +25,18 @@
     <%= f.text_field :email %>
   </p>
   <p>
-    <%= f.label :affiliation %><br />
+    <%= f.label :affiliation, "Affiliation (including college, year, etc)" %><br />
     <%= f.text_field :affiliation %>
   </p>
-  <p>
-    <%= f.label :is_banned %><br />
-    <%= f.check_box :is_banned %>
-  </p>
+  <% if current_user and current_user.is_admin? %>
+    <p>
+      <%= f.label :is_banned %><br />
+      <%= f.check_box :is_banned %>
+    </p>
+    <p>
+      <%= f.label :is_admin %><br />
+      <%= f.check_box :is_admin %>
+    </p>
+  <% end %>
   <p><%= f.submit "Submit" %></p>
 <% end %>

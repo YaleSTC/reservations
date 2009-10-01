@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  skip_before_filter :first_time_user, :only => [:new, :create]
+  
   def index
     @users = User.all
   end
@@ -9,10 +11,12 @@ class UsersController < ApplicationController
   
   def new
     @user = User.new
+    @user.login = session[:cas_user] #default to current user
   end
   
   def create
     @user = User.new(params[:user])
+    @user.login = session[:cas_user]
     if @user.save
       flash[:notice] = "Successfully created user."
       redirect_to @user

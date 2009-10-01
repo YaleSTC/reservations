@@ -7,10 +7,22 @@ class ApplicationController < ActionController::Base
   helper_method :current_user
   
   before_filter CASClient::Frameworks::Rails::Filter
+  before_filter :first_time_user
 
   def current_user
-    @current_user ||= session[:cas_user]
+    @current_user ||= User.find_by_login(session[:cas_user])
   end
-  # Scrub sensitive parameters from your log
-  # filter_parameter_logging :password
+  
+  def first_time_user
+    if current_user.nil?
+      flash[:notice] = "Hey there! Since this is your first time making a reservation, we'll
+        need you to supply us with some basic contact information first."
+      redirect_to new_user_path
+    end
+  end
+  
+  def logout
+    @current_user = nil
+    CASClient::Frameworks::Rails::Filter.logout(self)
+  end
 end

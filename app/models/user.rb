@@ -1,3 +1,4 @@
 class User < ActiveRecord::Base
-  attr_accessible :login, :first_name, :last_name, :nickname, :phone, :email, :affiliation, :is_banned
+  #login is set automatically by CAS; it should not be editable
+  attr_accessible :first_name, :last_name, :nickname, :phone, :email, :affiliation, :is_banned
 end
