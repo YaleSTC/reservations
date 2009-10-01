@@ -124,13 +124,11 @@
 
     	<div id="sidebar-right">
     	  <div id="sidebarbottom">
-    	    asdf
     	    <% if current_user %>
     	      logged in as <%= link_to current_user.login, current_user %>
     	      <%= link_to "[log out]", logout_path %>
     	    <% end %>
           <%= yield(:right_sidebar) %>
-          <Br><BR><BR><BR><BR><BR><BR>asdf
     	  </div>
     	</div>
 

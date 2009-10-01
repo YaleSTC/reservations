@@ -10,7 +10,7 @@ class UsersController < ApplicationController
   end
   
   def new
-    @user = User.new
+    @user = User.new(User.search_ldap(session[:cas_user]))
     @user.login = session[:cas_user] #default to current user
   end
   
