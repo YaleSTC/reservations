@@ -2,4 +2,5 @@ log/*.log
 tmp/**/*
 .DS_Store
 doc/api
-doc/app 
+doc/app
+db/*.sqlite3 
