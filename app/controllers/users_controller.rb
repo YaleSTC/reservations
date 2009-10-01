@@ -8,16 +8,21 @@ class UsersController < ApplicationController
   
   def show
     @user = User.find(params[:id])
+    require_user(@user)
   end
   
   def new
-    @user = User.new(User.search_ldap(session[:cas_user]))
-    @user.login = session[:cas_user] #default to current user
+    if current_user and current_user.is_admin?
+      @user = User.new
+    else
+      @user = User.new(User.search_ldap(session[:cas_user]))
+      @user.login = session[:cas_user] #default to current login
+    end
   end
   
   def create
     @user = User.new(params[:user])
-    @user.login = session[:cas_user]
+    @user.login = session[:cas_user] unless current_user and current_user.is_admin?
     @user.is_admin = true if User.count == 0
     if @user.save
       flash[:notice] = "Successfully created user."
@@ -35,7 +40,7 @@ class UsersController < ApplicationController
   def update
     @user = User.find(params[:id])
     require_user(@user)
-    @user.login = session[:cas_user] unless current_user.is_admin?
+    params[:user].delete(:login) unless current_user.is_admin? #no changing login unless you're an admin
     if @user.update_attributes(params[:user])
       flash[:notice] = "Successfully updated user."
       redirect_to @user

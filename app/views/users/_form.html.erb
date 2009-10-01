@@ -2,7 +2,12 @@
   <%= f.error_messages %>
   <p>
     <%= f.label :login %><br />
-    <%= @user.login %>
+    <% if current_user and current_user.is_admin? %>
+      <%= f.text_field :login %>
+    <% else %>
+      <%= @user.login %>
+      <%= f.hidden_field :login, :value => @user.login %>
+    <% end %>
   </p>
   <p>
     <%= f.label :first_name %><br />

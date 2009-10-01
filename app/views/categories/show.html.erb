@@ -1,0 +1,16 @@
+<% title "Category: "+@category.name %>
+
+<p>
+  <strong>Max Per User:</strong>
+  <%=h @category.max_per_user %>
+</p>
+<p>
+  <strong>Max Checkout Length:</strong>
+  <%=h @category.max_checkout_length %> days
+</p>
+
+<p>
+  <%= link_to "Edit", edit_category_path(@category) %> |
+  <%= link_to "Destroy", @category, :confirm => 'Are you sure?', :method => :delete %> |
+  <%= link_to "View All", categories_path %>
+</p>

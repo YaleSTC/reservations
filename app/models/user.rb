@@ -1,7 +1,12 @@
 require 'net/ldap'
 class User < ActiveRecord::Base
-  #login is set automatically by CAS; it should not be editable
-  attr_accessible :first_name, :last_name, :nickname, :phone, :email, :affiliation, :is_banned
+  attr_accessible :login, :first_name, :last_name, :nickname, :phone, :email, :affiliation, :is_banned
+  
+  validates_presence_of :first_name
+  validates_presence_of :last_name
+  validates_presence_of :phone
+  validates_presence_of :email
+  validates_presence_of :affiliation
   
   def name
     if nickname.nil? or nickname == ""

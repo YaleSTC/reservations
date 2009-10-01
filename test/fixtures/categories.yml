@@ -1,0 +1,9 @@
+one:
+  name: MyString
+  max_per_user: 1
+  max_checkout_length: 1
+
+two:
+  name: MyString
+  max_per_user: 1
+  max_checkout_length: 1

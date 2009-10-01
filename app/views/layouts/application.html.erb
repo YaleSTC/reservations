@@ -112,6 +112,7 @@
       		<ul>
   			      <ul>
               	<li><%= link_to "Users", users_path %></li>
+              	<li><%= link_to "Categories", categories_path %></li>
               </ul>
           </ul>
           <%= yield(:left_sidebar) %>
@@ -119,14 +120,20 @@
     	</div>
 
     	<div id="content">
+    	  <%- if show_title? -%>
+          <h1><%=h yield(:title) %></h1>
+        <%- end -%>
+        
     		<%= yield(:body) || yield %>
 			</div>
 
     	<div id="sidebar-right">
     	  <div id="sidebarbottom">
     	    <% if current_user %>
-    	      logged in as <%= link_to current_user.login, current_user %>
-    	      <%= link_to "[log out]", logout_path %>
+      	    <div id="logged_in">
+      	      logged in as <%= link_to current_user.login, current_user %>
+      	      <%= link_to "[log out]", logout_path %>
+    	      </div>
     	    <% end %>
           <%= yield(:right_sidebar) %>
     	  </div>

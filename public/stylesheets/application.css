@@ -77,3 +77,24 @@ table, td, tr, th{
 td{
 	border: 1px solid #999;
 }
+
+h1{
+	color: #963;
+	text-align: left;
+	font-size: 200%;
+	margin-bottom: 10px;
+}
+
+div#logged_in{
+	margin-top: 1em;
+	margin-right: 1em;
+	text-align: right;
+}
+
+input.number_input{
+	width: 50px;
+}
+
+label{
+	font-weight: bold;
+}

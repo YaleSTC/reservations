@@ -1,0 +1,16 @@
+<% form_for @category do |f| %>
+  <%= f.error_messages %>
+  <p>
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.label :max_per_user, "Maximum per user (leave blank if unrestricted)" %><br />
+    <%= f.text_field :max_per_user, :class => 'number_input' %>
+  </p>
+  <p>
+    <%= f.label :max_checkout_length, "Maximum checkout length (leave blank if unrestricted)"%><br />
+    <%= f.text_field :max_checkout_length, :class => 'number_input' %> days
+  </p>
+  <p><%= f.submit "Submit" %></p>
+<% end %>

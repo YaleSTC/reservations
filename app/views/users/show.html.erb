@@ -1,9 +1,5 @@
-<% title @user.name %>
+<% title @user.name + (@user.is_banned ? " (banned)" : "") %>
 
-<p>
-  <strong>Is Admin:</strong>
-  <%=h @user.is_admin %>
-</p>
 <p>
   <strong>Login:</strong>
   <%=h @user.login %>
@@ -32,13 +28,21 @@
   <strong>Affiliation:</strong>
   <%=h @user.affiliation %>
 </p>
-<p>
-  <strong>Is Banned:</strong>
-  <%=h @user.is_banned %>
-</p>
+<% if current_user.is_admin? %>
+  <p>
+    <strong>Is Admin:</strong>
+    <%=h @user.is_admin %>
+  </p>
+  <p>
+    <strong>Is Banned:</strong>
+    <%=h @user.is_banned %>
+  </p>
+<% end %>
 
 <p>
-  <%= link_to "Edit", edit_user_path(@user) %> |
-  <%= link_to "Destroy", @user, :confirm => 'Are you sure?', :method => :delete %> |
-  <%= link_to "View All", users_path %>
+  <%= link_to "Edit Information", edit_user_path(@user) %>
+  <% if current_user.is_admin? %>
+    | <%= link_to "Destroy User", @user, :confirm => 'Are you sure?', :method => :delete %>
+    | <%= link_to "View All Users", users_path %>
+  <% end %>
 </p>
