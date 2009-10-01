@@ -72,6 +72,7 @@ Solution:
   [Alternately, if the user wants to make a reservation for a specific time frame,
     and is not specific about equipment, provide a box in the sidebar that says:
     "Want to rent equipment for a specific date? Narrow down your search:"]
+    [Maybe include a category selection here? QuickPick?]
   When first item is added to cart, ask what time period they would like to rent it for
   THIS IS THE LENGTH OF THE RESERVATION
   Next, ask whether they would like to proceed directly to finalizing the reservation
@@ -84,6 +85,9 @@ Issue #2: changing reservation details during finalization
   If the user wants to change the dates of the reservation
     Allow them to change the dates, then show them which items conflict with that timeframe
       (For conflicts, suggest similar items/items in the same category?)
+  If the user wants to change items to reserve
+    Removing items is fine
+    Adding items => dump them back to the catalog search screen
   
   
 The end user:

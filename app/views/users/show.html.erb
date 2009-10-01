@@ -1,0 +1,40 @@
+<% title "User" %>
+
+<p>
+  <strong>Login:</strong>
+  <%=h @user.login %>
+</p>
+<p>
+  <strong>First Name:</strong>
+  <%=h @user.first_name %>
+</p>
+<p>
+  <strong>Last Name:</strong>
+  <%=h @user.last_name %>
+</p>
+<p>
+  <strong>Nickname:</strong>
+  <%=h @user.nickname %>
+</p>
+<p>
+  <strong>Phone:</strong>
+  <%=h @user.phone %>
+</p>
+<p>
+  <strong>Email:</strong>
+  <%=h @user.email %>
+</p>
+<p>
+  <strong>Affiliation:</strong>
+  <%=h @user.affiliation %>
+</p>
+<p>
+  <strong>Is Banned:</strong>
+  <%=h @user.is_banned %>
+</p>
+
+<p>
+  <%= link_to "Edit", edit_user_path(@user) %> |
+  <%= link_to "Destroy", @user, :confirm => 'Are you sure?', :method => :delete %> |
+  <%= link_to "View All", users_path %>
+</p>
