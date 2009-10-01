@@ -25,4 +25,17 @@ class ApplicationController < ActionController::Base
     @current_user = nil
     CASClient::Frameworks::Rails::Filter.logout(self)
   end
+  
+  def require_admin
+    restricted_redirect_to(root_path) unless current_user.is_admin?
+  end
+  
+  def require_user(user, new_path=root_path)
+    restricted_redirect_to(new_path) unless current_user == user or current_user.is_admin?
+  end
+  
+  def restricted_redirect_to(new_path=root_path)
+    flash[:error] = "Sorry, that action is restricted."
+    redirect_to new_path
+  end
 end

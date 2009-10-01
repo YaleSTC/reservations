@@ -1,5 +1,9 @@
-<% title "User" %>
+<% title @user.name %>
 
+<p>
+  <strong>Is Admin:</strong>
+  <%=h @user.is_admin %>
+</p>
 <p>
   <strong>Login:</strong>
   <%=h @user.login %>

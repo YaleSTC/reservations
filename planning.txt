@@ -1,15 +1,20 @@
 AppConfig:
   - default (admin) email address to send notifications
   - custom email bodies for overdue/due notifications
-    - maybe just institution name
+    - maybe just institution name inserted into template?
+  - for now, checkouts will be BY THE DAY
+    - as long as I code well, we can go back and add more granularity later
 
 Users:
   - can we assume CAS?
     - if so, use RubyCAS + User model with additional attributes
     - if not, use Authlogic
+  - can affiliation just be a string?
+    - add a nice front-end for editing, but I don't think it needs 3 fields,
+      given that they're all parts of the same thing (affil + college + class year)
     
-    
-    
+  - has many Equipment Objects through Reservations
+      
 Reservations:
   - has_many (habtm?) Equipment Objects
   - belongs_to reserver (User)
@@ -20,37 +25,47 @@ Reservations:
   - checked_out (datetime) (Initial focus on reserving by the day)
   - checked_in (datetime)
   
+  - must have at least one object
+  - /can/ start and end on the same day (one day rental)
   
-  
-  
+  - requires renter to 'sign' before it is finalized
+    - not checked out until user has signed
   
 Categories
   - name
-  - max_per_user?
-  - max_checkout_length
+  - max_per_user
+  - max_checkout_length_default
+    - this should just provide a default value for equipment model creation
   
   - default "Accessory" category
   
 Equipment Model
-  - belongs_to Category
+  - belongs_to Category (optionally)
   - name
-  - make? model?
+  - make? model? (combine these?)
   - description
   - checkout procedures? checkin procedures?
   - late fee
   - replacement value
-  - max_per_user?
-  - max_checkout_length
+  - max_per_user
+  - max_checkout_length (default value taken from category)
   
 Equipment Objects (instances of Equipment Models)
   - belongs_to Equipment Model
+  - (habtm Documents)
+  - (habtm Photos)
   - name
   - serial no/identifier
   - current_owner (who currently has this item? doubles as 'checked out' bool)
+    - through Reservation?
+  
+(Documents
+  - habtm Equipment Models
+  - use Paperclip)
   
   
-  
-  
+(Photos
+  - subset of Documents?)
   
   
   
@@ -107,3 +122,37 @@ The end user:
   
 
 
+
+
+
+
+
+
+
+
+There are only three different roles => We don't need a role system.
+
+Joe User needs to:
+  - view equipment
+    - model information, availability, etc.
+    - documentation
+  - reserve equipment
+  - view past/current/upcoming reservations
+  
+  - receive email reminders
+    - upcoming reservations, due dates, overdue notices
+  
+Checkout Person needs to:
+
+
+Admin needs to
+  - view all reservations
+  - view all checkouts
+    - what equipment is currently out? who has what?
+  - manage equipment
+    - Categories have many Equipment Models have many Equipment Objects
+    
+    
+
+    
+sessions in database? necessary?
