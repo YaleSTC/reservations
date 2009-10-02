@@ -11,11 +11,10 @@
   <% for user in @users %>
     <tr>
       <td><%=h user.login %></td>
-      <td><%=h user.name %></td>
+      <td><%= link_to user.name, user %></td>
       <td><%=h user.phone %></td>
       <td><%=h user.email %></td>
       <td><%=h user.affiliation %></td>
-      <td><%= link_to "Show", user %></td>
       <td><%= link_to "Edit", edit_user_path(user) %></td>
       <td><%= link_to "Destroy", user, :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>

@@ -16,8 +16,23 @@
   <strong>Max Per User:</strong>
   <%=h @equipment_model.max_per_user %>
 </p>
+<p>
+  <strong>Documents:</strong>
+  <% if @equipment_model.documents.empty? %>
+    none
+  <% else %>
+    <ul>
+    <% @equipment_model.documents.each do |document| %>
+      <li><%= link_to document.name, document.data_file_name %></li>
+    <% end %>
+    </ul>
+  <% end %>
+</p>
 
-<%= link_to "Add new "+@equipment_model.name.singularize+" object", new_equipment_model_equipment_object_path(@equipment_model) %>
+<p>
+  <%= link_to "Add new "+@equipment_model.name.singularize+" object", new_equipment_model_equipment_object_path(@equipment_model) %> | 
+  <%= link_to "View all "+@equipment_model.name.singularize+" objects", equipment_model_equipment_objects_path(@equipment_model) %>
+</p>
 
 <p>
   <%= link_to "Edit "+@equipment_model.category.name.singularize, edit_equipment_model_path(@equipment_model) %> |

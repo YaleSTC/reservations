@@ -1,0 +1,16 @@
+<tr class="equipment_object">
+<% fields_for "equipment_model[equipment_object_attributes][]", equipment_object do |equipment_object_form| %>
+  <td>
+    <%= equipment_object_form.text_field :name %>
+  </td>
+  <td>
+    <%= equipment_object_form.text_field :serial %>
+  </td>
+  <td>
+    new
+  </td>
+  <td>    
+    <%= link_to_function "[remove]", "$(this).parents('.equipment_object').remove()" %>
+  </td>
+<% end %>
+</tr>

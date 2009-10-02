@@ -1,0 +1,23 @@
+<% title "Documents" %>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Data File Name</th>
+    <th>Data Content Type</th>
+    <th>Data File Size</th>
+  </tr>
+  <% for document in @documents %>
+    <tr>
+      <td><%=h document.name %></td>
+      <td><%=h document.data_file_name %></td>
+      <td><%=h document.data_content_type %></td>
+      <td><%=h document.data_file_size %></td>
+      <td><%= link_to "Show", document %></td>
+      <td><%= link_to "Edit", edit_document_path(document) %></td>
+      <td><%= link_to "Destroy", document, :confirm => 'Are you sure?', :method => :delete %></td>
+    </tr>
+  <% end %>
+</table>
+
+<p><%= link_to "New Document", new_document_path %></p>

@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :documents
+
   map.resources :equipment_objects
   
   map.resources :equipment_models do |equipment_model|

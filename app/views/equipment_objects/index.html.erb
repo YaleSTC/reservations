@@ -1,22 +1,27 @@
 <% title (@equipment_model.nil? ? "Equipment Objects" : @equipment_model.name.pluralize) %>
 
-<table>
+<table id="equipment_model_table">
   <tr>
     <th>Name</th>
-    <th>Serial</th>
-    <th>Equipment Model</th>
+    <th>Serial (optional)</th>
+    <th>Status</th>
   </tr>
   <% for equipment_object in @equipment_objects %>
     <tr>
-      <td><%=h equipment_object.name %></td>
+      <td><%= link_to equipment_object.name, equipment_object %></td>
       <td><%=h equipment_object.serial %></td>
-      <td><%=h equipment_object.equipment_model %></td>
-      <td><%= link_to "Show", equipment_object %></td>
+      <td><%= equipment_object.status %></td>
       <td><%= link_to "Edit", edit_equipment_object_path(equipment_object) %></td>
       <td><%= link_to "Destroy", equipment_object, :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>
   <% end %>
 </table>
+
+<% if @equipment_model %>
+  <p>
+    <%= add_equipment_object_link("Add new "+@equipment_model.name.singularize) %>
+  </p>
+<% end %>
 
 <p>
   <% if @equipment_model %>

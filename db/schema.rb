@@ -9,12 +9,22 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091001215110) do
+ActiveRecord::Schema.define(:version => 20091001234857) do
 
   create_table "categories", :force => true do |t|
     t.string   "name"
     t.integer  "max_per_user"
     t.integer  "max_checkout_length"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "documents", :force => true do |t|
+    t.string   "name"
+    t.string   "data_file_name"
+    t.string   "data_content_type"
+    t.integer  "data_file_size"
+    t.integer  "equipment_model_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

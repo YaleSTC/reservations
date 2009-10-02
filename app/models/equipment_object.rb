@@ -1,5 +1,9 @@
 class EquipmentObject < ActiveRecord::Base
   belongs_to :equipment_model
   
-  attr_accessible :name, :serial, :equipment_model
+  attr_accessible :name, :serial, :equipment_model_id
+  
+  def status
+    "Available"
+  end
 end

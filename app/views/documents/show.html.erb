@@ -1,0 +1,24 @@
+<% title "Document" %>
+
+<p>
+  <strong>Name:</strong>
+  <%=h @document.name %>
+</p>
+<p>
+  <strong>Data File Name:</strong>
+  <%=h @document.data_file_name %>
+</p>
+<p>
+  <strong>Data Content Type:</strong>
+  <%=h @document.data_content_type %>
+</p>
+<p>
+  <strong>Data File Size:</strong>
+  <%=h @document.data_file_size %>
+</p>
+
+<p>
+  <%= link_to "Edit", edit_document_path(@document) %> |
+  <%= link_to "Destroy", @document, :confirm => 'Are you sure?', :method => :delete %> |
+  <%= link_to "View All", documents_path %>
+</p>
