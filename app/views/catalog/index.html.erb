@@ -1,0 +1,10 @@
+<% title "Catalog" %>
+
+<% @equipment_models_by_category.each do |category, equipment_models| %>
+  <h2><%= category.name %></h2>
+  <ul>
+  <% equipment_models.each do |equipment_model| %>
+    <li><%= link_to equipment_model.name, equipment_model %></li>
+  <% end %>
+  </ul>
+<% end %>

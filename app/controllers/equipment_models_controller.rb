@@ -5,7 +5,7 @@ class EquipmentModelsController < ApplicationController
       @equipment_models = @category.equipment_models
     else
       #@equipment_models = EquipmentModel.find(:all, :order => )
-      @equipment_models = EquipmentModel.find(:all, :include => :category, :order => 'categories.name')
+      @equipment_models = EquipmentModel.find(:all, :include => :category, :order => 'categories.name ASC, equipment_models.name ASC')
     end
   end
   
