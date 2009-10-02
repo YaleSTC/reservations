@@ -98,3 +98,15 @@ input.number_input{
 label{
 	font-weight: bold;
 }
+
+div#cart{
+	border: 1px solid #000;
+	background: #f6f6f6;
+	margin: 5px;
+	padding: 5px;
+}
+
+div#cart h2{
+	margin: 0 0 5px 0;
+	padding: 0;
+}

@@ -1,0 +1,13 @@
+<div id="cart">
+  <h2>Your cart</h2>
+  <% if cart.items.size == 0 %>
+    (empty)
+  <% else %>
+    <ul>
+    <% cart.items.each do |item| %>
+      <li><%= item.quantity %> x <%= item.name %></li>
+    <% end %>
+    </ul>
+    <%= link_to "[empty cart]", empty_cart_path %>
+  <% end %>
+</div>

@@ -5,10 +5,11 @@ class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
   helper_method :current_user
+  helper_method :cart
   
   before_filter CASClient::Frameworks::Rails::Filter
   before_filter :first_time_user
-  before_filter :create_empty_cart
+  before_filter :cart
 
   def current_user
     @current_user ||= User.find_by_login(session[:cas_user])
@@ -22,8 +23,14 @@ class ApplicationController < ActionController::Base
     end
   end
   
-  def create_empty_cart
-    #session[:cart] ||= Reservation.new
+  def cart
+    session[:cart] ||= Cart.new
+  end
+  
+  def empty_cart
+    session[:cart] = Cart.new
+    flash[:notice] = "Cart emptied."
+    redirect_to root_path
   end
   
   def logout

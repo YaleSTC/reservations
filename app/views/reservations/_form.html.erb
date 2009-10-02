@@ -1,0 +1,32 @@
+<% form_for @reservation do |f| %>
+  <%= f.error_messages %>
+  <p>
+    <%= f.label :reserver %><br />
+    <%= f.text_field :reserver %>
+  </p>
+  <p>
+    <%= f.label :checkout_handler %><br />
+    <%= f.text_field :checkout_handler %>
+  </p>
+  <p>
+    <%= f.label :checkin_handler %><br />
+    <%= f.text_field :checkin_handler %>
+  </p>
+  <p>
+    <%= f.label :start_date %><br />
+    <%= f.datetime_select :start_date %>
+  </p>
+  <p>
+    <%= f.label :due_date %><br />
+    <%= f.datetime_select :due_date %>
+  </p>
+  <p>
+    <%= f.label :checked_out %><br />
+    <%= f.datetime_select :checked_out %>
+  </p>
+  <p>
+    <%= f.label :checked_in %><br />
+    <%= f.datetime_select :checked_in %>
+  </p>
+  <p><%= f.submit "Submit" %></p>
+<% end %>

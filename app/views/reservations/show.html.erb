@@ -1,0 +1,36 @@
+<% title "Reservation" %>
+
+<p>
+  <strong>Reserver:</strong>
+  <%=h @reservation.reserver %>
+</p>
+<p>
+  <strong>Checkout Handler:</strong>
+  <%=h @reservation.checkout_handler %>
+</p>
+<p>
+  <strong>Checkin Handler:</strong>
+  <%=h @reservation.checkin_handler %>
+</p>
+<p>
+  <strong>Start Date:</strong>
+  <%=h @reservation.start_date %>
+</p>
+<p>
+  <strong>Due Date:</strong>
+  <%=h @reservation.due_date %>
+</p>
+<p>
+  <strong>Checked Out:</strong>
+  <%=h @reservation.checked_out %>
+</p>
+<p>
+  <strong>Checked In:</strong>
+  <%=h @reservation.checked_in %>
+</p>
+
+<p>
+  <%= link_to "Edit", edit_reservation_path(@reservation) %> |
+  <%= link_to "Destroy", @reservation, :confirm => 'Are you sure?', :method => :delete %> |
+  <%= link_to "View All", reservations_path %>
+</p>

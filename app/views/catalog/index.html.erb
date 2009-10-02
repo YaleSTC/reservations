@@ -4,7 +4,10 @@
   <h2><%= category.name %></h2>
   <ul>
   <% equipment_models.each do |equipment_model| %>
-    <li><%= link_to equipment_model.name, equipment_model %></li>
+    <li>
+      <%= link_to equipment_model.name, equipment_model %>
+      <%= link_to "[add to cart]", :controller => 'catalog', :action => 'add_to_cart', :id => equipment_model.id %>
+    </li>
   <% end %>
   </ul>
 <% end %>

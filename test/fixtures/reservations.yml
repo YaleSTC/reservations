@@ -1,0 +1,17 @@
+one:
+  reserver: 
+  checkout_handler: 
+  checkin_handler: 
+  start_date: 2009-10-02 12:59:01
+  due_date: 2009-10-02 12:59:01
+  checked_out: 2009-10-02 12:59:01
+  checked_in: 2009-10-02 12:59:01
+
+two:
+  reserver: 
+  checkout_handler: 
+  checkin_handler: 
+  start_date: 2009-10-02 12:59:01
+  due_date: 2009-10-02 12:59:01
+  checked_out: 2009-10-02 12:59:01
+  checked_in: 2009-10-02 12:59:01

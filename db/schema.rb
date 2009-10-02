@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091001234857) do
+ActiveRecord::Schema.define(:version => 20091002184322) do
 
   create_table "categories", :force => true do |t|
     t.string   "name"
@@ -40,6 +40,13 @@ ActiveRecord::Schema.define(:version => 20091001234857) do
     t.datetime "updated_at"
   end
 
+  create_table "equipment_models_reservations", :force => true do |t|
+    t.integer  "equipment_model_id"
+    t.integer  "reservation_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "equipment_objects", :force => true do |t|
     t.string   "name"
     t.string   "serial"
@@ -47,6 +54,28 @@ ActiveRecord::Schema.define(:version => 20091001234857) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "reservations", :force => true do |t|
+    t.integer  "reserver_id"
+    t.integer  "checkout_handler_id"
+    t.integer  "checkin_handler_id"
+    t.datetime "start_date"
+    t.datetime "due_date"
+    t.datetime "checked_out"
+    t.datetime "checked_in"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "sessions", :force => true do |t|
+    t.string   "session_id", :null => false
+    t.text     "data"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
+  add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
 
   create_table "users", :force => true do |t|
     t.string   "login"

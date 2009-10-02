@@ -123,6 +123,7 @@
                 <li><%= link_to "Categories", categories_path %></li>
                 <li><%= link_to "Equipment Models", equipment_models_path %></li>
                 <li><%= link_to "Equipment Objects", equipment_objects_path %></li>
+                <li><%= link_to "Reservations", reservations_path %></li>
               </ul>
           </ul>
           <%= yield(:left_sidebar) %>
@@ -145,6 +146,7 @@
       	      <%= link_to "[log out]", logout_path %>
     	      </div>
     	    <% end %>
+    	    <%= render :partial => 'reservations/cart_sidebar' %>
           <%= yield(:right_sidebar) %>
     	  </div>
     	</div>
