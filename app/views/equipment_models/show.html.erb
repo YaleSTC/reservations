@@ -16,18 +16,22 @@
   <strong>Max Per User:</strong>
   <%=h @equipment_model.max_per_user %>
 </p>
-<p>
+<p id="documents">
   <strong>Documents:</strong>
   <% if @equipment_model.documents.empty? %>
     none
   <% else %>
     <ul>
     <% @equipment_model.documents.each do |document| %>
-      <li><%= link_to document.name, document.data_file_name %></li>
+      <li><%= link_to document.name, document.data.url %> <%= link_to "[x]", document, :confirm => 'Are you sure you want to delete this document?', :method => :delete %>
+      </li>
     <% end %>
     </ul>
   <% end %>
 </p>
+<%= link_to_function "Add Document" do |document|
+  document.insert_html :bottom, :documents, :partial => 'documents/document', :object => Document.new
+end %>
 
 <p>
   <%= link_to "Add new "+@equipment_model.name.singularize+" object", new_equipment_model_equipment_object_path(@equipment_model) %> | 

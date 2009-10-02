@@ -29,20 +29,5 @@
     <%= f.text_field :max_per_user, :class => 'number_input' %>
   </p>
   
-  <% @equipment_model.documents.each do |document| %>
-    <div class="equipment_model_documents">
-      <%= document.name %>
-      <%= check_box_tag "document_ids[]", document.id %> (Check to delete)
-    </div>
-  <% end %>
-  
-  <div id="documents">
-    <%# render :partial => 'documents/document', :collection => @equipment_model.documents if @equipment_model.documents %>
-  </div>
-
-  <%= link_to_function "Add Document" do |document|
-    document.insert_html :bottom, :documents, :partial => 'documents/document', :object => Document.new
-  end %>
-  
   <p><%= f.submit "Submit" %></p>
 <% end %>

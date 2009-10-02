@@ -37,8 +37,9 @@ class DocumentsController < ApplicationController
   
   def destroy
     @document = Document.find(params[:id])
+    @equipment_model = @document.equipment_model
     @document.destroy
     flash[:notice] = "Successfully destroyed document."
-    redirect_to documents_url
+    redirect_to equipment_model_path(@equipment_model)
   end
 end

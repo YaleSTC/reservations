@@ -4,10 +4,12 @@
   <strong>Name:</strong>
   <%=h @equipment_object.name %>
 </p>
-<p>
-  <strong>Serial:</strong>
-  <%=h @equipment_object.serial %>
-</p>
+<% unless @equipment_object.serial.nil? or @equipment_object.serial == "" %>
+  <p>
+    <strong>Serial:</strong>
+    <%=h @equipment_object.serial %>
+  </p>
+<% end %>
 <p>
   <strong>Equipment Model:</strong>
   <%=h @equipment_object.equipment_model.name %>
