@@ -5,9 +5,10 @@
 }
 
 #content {
-  padding: 0 0 20px 15px;
-	margin: 15px 0 0;
-	width: 520px;
+  padding: 15px 0 20px 15px;
+	margin: 0;
+	width: 490px;
+	background: #f9f9f9;
 }
 
 #flash_notice {
@@ -72,6 +73,7 @@ table, td, tr, th{
 	margin: 0;
 	padding: 5px;
 	border-collapse: collapse;
+	background: #fff;
 }
 
 td{
@@ -101,12 +103,18 @@ label{
 
 div#cart{
 	border: 1px solid #000;
-	background: #f6f6f6;
+	background: #f8f8f8;
 	margin: 5px;
 	padding: 5px;
+	width: 200px;
+	float: right;
 }
 
 div#cart h2{
 	margin: 0 0 5px 0;
 	padding: 0;
+}
+
+div#sidebar-right{
+	width: 220px;
 }

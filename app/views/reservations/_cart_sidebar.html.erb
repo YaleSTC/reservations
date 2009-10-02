@@ -5,9 +5,11 @@
   <% else %>
     <ul>
     <% cart.items.each do |item| %>
-      <li><%= item.quantity %> x <%= item.name %></li>
+      <li><%= item.quantity %> x <%= item.name %> <small><%= link_to "[remove]", :controller => 'catalog', :action => 'remove_from_cart', :id => item.equipment_model.id %></small></li>
     <% end %>
     </ul>
-    <%= link_to "[empty cart]", empty_cart_path %>
+    <br />
+    <%= button_to "Empty cart", empty_cart_path %>
+    <%= button_to "Make reservation" %>
   <% end %>
 </div>
