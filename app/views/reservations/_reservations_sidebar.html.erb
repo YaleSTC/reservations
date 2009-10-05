@@ -1,0 +1,14 @@
+<div id="reservations">
+  <h2>Your reservations</h2>
+  <% if current_user.reservations.empty? %>
+    (none)
+  <% else %>
+  <small>
+    <ul>
+      <% current_user.reservations.each do |reservation| %>
+        <li><%= link_to "#{reservation.start_date.to_date.to_s(:long)}&ndash;#{reservation.due_date.to_date.to_s(:long)}", reservation %></li>
+      <% end %>
+    </ul>
+  </small>
+  <% end %>
+</div>
