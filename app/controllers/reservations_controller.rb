@@ -1,5 +1,6 @@
 class ReservationsController < ApplicationController
-  before_filter :require_login, :only => [:index]
+  before_filter :require_login, :only => [:index, :show]
+  before_filter :require_admin, :only => [:check_out, :check_in]
   
   def index
     if current_user.is_admin?
@@ -44,6 +45,14 @@ class ReservationsController < ApplicationController
   
   def update
     @reservation = Reservation.find(params[:id])
+
+    if params[:commit] == "Check out equipment"
+      @reservation.checked_out = Time.now
+      # if equipment object ids are not unique, throw a hissy fit
+      flash.now[:error] = "The same piece of equipment cannot be assigned twice!"
+      render :action => 'check_out' and return if params[:reservation][:equipment_object_ids].uniq!
+    end
+
     if @reservation.update_attributes(params[:reservation])
       flash[:notice] = "Successfully updated reservation."
       redirect_to @reservation
@@ -57,5 +66,9 @@ class ReservationsController < ApplicationController
     @reservation.destroy
     flash[:notice] = "Successfully destroyed reservation."
     redirect_to reservations_url
+  end
+  
+  def check_out
+    @reservation = Reservation.find(params[:id])
   end
 end

@@ -112,6 +112,7 @@
     	  <div id="sidebarbottom">
       		<ul>
   			      <ul>
+                <li><%= link_to "Catalog", catalog_path %></li>
               	<% if current_user.nil? %>
                 	<%= link_to "Sign In" %>
                 <% elsif current_user.is_admin? %>
@@ -119,11 +120,13 @@
                 <% else %>
                 	<li><%= link_to "My Profile", user_path(current_user) %></li>
                 <% end %>
-                <li><%= link_to "Catalog", catalog_path %></li>
-                <li><%= link_to "Categories", categories_path %></li>
-                <li><%= link_to "Equipment Models", equipment_models_path %></li>
-                <li><%= link_to "Equipment Objects", equipment_objects_path %></li>
+                <% if current_user and current_user.is_admin? %>
+                  <li><%= link_to "Categories", categories_path %></li>
+                  <li><%= link_to "Equipment Models", equipment_models_path %></li>
+                <% end %>
                 <li><%= link_to "Reservations", reservations_path %></li>
+                <li><a href="http://clc.yale.edu/">CLC Home</a></li>
+              	<li><a href="http://clc.yale.edu/contact/" title="Contact Us">Contact Us</a></li>
               </ul>
           </ul>
           <%= yield(:left_sidebar) %>
@@ -142,13 +145,13 @@
     	  <div id="sidebarbottom">
     	    <% if current_user %>
       	    <div id="logged_in">
-      	      logged in as <%= link_to current_user.login, current_user %>
+      	      logged in as <%= link_to current_user.name, current_user %>
       	      <%= link_to "[log out]", logout_path %>
     	      </div>
     	    <% end %>
     	    <%= render :partial => 'reservations/cart_sidebar' %>
     	    <br style="clear: both" />
-    	    <%= render :partial => 'reservations/reservations_sidebar' %>
+    	    <%= render :partial => 'reservations/reservations_sidebar' if current_user %>
           <%= yield(:right_sidebar) %>
     	  </div>
     	</div>

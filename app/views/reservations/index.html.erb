@@ -14,7 +14,9 @@
       <td><%=h reservation.due_date.to_date.to_s(:long) %></td>
       <td><%=h reservation.status %></td>
       <td><%= link_to "Show", reservation %></td>
-      <td><%= link_to "Destroy", reservation, :confirm => 'Are you sure?', :method => :delete %></td>
+      <% if current_user.is_admin? %>
+        <td><%= link_to "Destroy", reservation, :confirm => 'Are you sure?', :method => :delete %></td>
+      <% end %>
     </tr>
   <% end %>
 </table>

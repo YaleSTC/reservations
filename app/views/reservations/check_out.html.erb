@@ -1,0 +1,22 @@
+<% title "Reservation Checkout" %>
+<% form_for @reservation do |f| %>
+  <p>
+    <%= @reservation.reserver.name %> is picking up the following equipment:
+  </p>
+  <ul>
+    <% @reservation.equipment_models_reservations.each do |item| %>
+      <% item.quantity.times do %>
+        <li>
+          <%= item.equipment_model.name %>:
+          <%= select_tag 'reservation[equipment_object_ids][]', item.equipment_model.available_object_select_options, :prompt => true %>
+          <%#= collection_select(:reservation, :equipment_object_ids, item.equipment_model.equipment_objects, :id, :name, {:prompt => true}) %>
+        </li>
+      <% end %>
+    <% end %>
+  </ul>
+  <p>
+    This equipment is <strong>due back on <%= @reservation.due_date.to_date.to_s(:long) %>.</strong><br />
+    An overdue return will incur a combined late fee of <%= number_to_currency(@reservation.late_fee) %> / day.
+  </p>
+  <%= submit_tag "Check out equipment" %>
+<% end %>

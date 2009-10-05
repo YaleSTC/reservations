@@ -88,8 +88,7 @@ h1{
 }
 
 div#logged_in{
-	margin-top: 1em;
-	margin-right: 1em;
+	margin: .25em 1em;
 	text-align: right;
 }
 

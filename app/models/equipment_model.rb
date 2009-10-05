@@ -35,4 +35,8 @@ class EquipmentModel < ActiveRecord::Base
     # TODO: what if the equipment hasn't been returned?
     self.equipment_objects.count - EquipmentModelsReservation.sum(:quantity, :include => :reservation, :conditions => ["equipment_model_id = ? AND reservations.start_date <= ? AND reservations.due_date >= ?", self.id, date.to_time.utc, date.to_time.utc])
   end
+  
+  def available_object_select_options
+    self.equipment_objects.select{|e| e.available?}.sort_by(&:name).collect{|item| "<option value=#{item.id}>#{item.name}</option>"}
+  end
 end

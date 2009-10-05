@@ -9,4 +9,8 @@ class EquipmentObject < ActiveRecord::Base
   def status
     "available"
   end
+  
+  def available?
+    status == "available"
+  end
 end

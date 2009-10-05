@@ -5,7 +5,7 @@
   <ul>
   <% equipment_models.each do |equipment_model| %>
     <li>
-      <%= link_to equipment_model.name, equipment_model %> (<%= equipment_model.available_count %> available)
+      <%= link_to equipment_model.name, equipment_model %> (<%= equipment_model.available_count %> available now)
       <%= link_to "[add to cart]", :controller => 'catalog', :action => 'add_to_cart', :id => equipment_model.id %>
     </li>
   <% end %>
