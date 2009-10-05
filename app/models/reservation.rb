@@ -10,9 +10,9 @@ class Reservation < ActiveRecord::Base
   
   def status
     if checked_out.nil?
-      :not_checked_out
+      "not checked out"
     else
-      :checked_out
+      "checked out"
     end
   end
 end

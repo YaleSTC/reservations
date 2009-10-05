@@ -22,7 +22,7 @@ class EquipmentObjectsController < ApplicationController
     @equipment_object = EquipmentObject.new(params[:equipment_object])
     if @equipment_object.save
       flash[:notice] = "Successfully created equipment object."
-      redirect_to @equipment_object
+      redirect_to @equipment_object.equipment_model
     else
       render :action => 'new'
     end
@@ -36,7 +36,7 @@ class EquipmentObjectsController < ApplicationController
     @equipment_object = EquipmentObject.find(params[:id])
     if @equipment_object.update_attributes(params[:equipment_object])
       flash[:notice] = "Successfully updated equipment object."
-      redirect_to @equipment_object
+      redirect_to @equipment_object.equipment_model
     else
       render :action => 'edit'
     end

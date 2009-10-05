@@ -23,6 +23,7 @@ class ReservationsController < ApplicationController
     end
     if @reservation.save
       flash[:notice] = "Successfully created reservation."
+      session[:cart] = Cart.new
       redirect_to @reservation
     else
       render :action => 'new'

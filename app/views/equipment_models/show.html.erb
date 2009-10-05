@@ -41,27 +41,28 @@
   <strong>Equipment Objects:</strong>
   <% if @equipment_model.equipment_objects.empty? %>
     none
-    <small><%= link_to_function "[add equipment_object]" do |document|
+    <small><%= link_to_function "[add equipment object]" do |document|
       document.insert_html :bottom, :equipment_objects, :partial => 'equipment_objects/add_equipment_object_form', :object => EquipmentObject.new
     end %></small>
   <% else %>
     <ul>
       <% @equipment_model.equipment_objects.each do |equipment_object| %>
-        <li><%= link_to equipment_object.name, equipment_object %> <%= link_to "[x]", document, :confirm => 'Are you sure you want to delete this equipment object?', :method => :delete %>
+        <li><%= link_to equipment_object.name, equipment_object %> <%= link_to "[x]", equipment_object, :confirm => 'Are you sure you want to delete this equipment object?', :method => :delete %>
         </li>
       <% end %>
       <li style="list-style:none">
-        <small><%= link_to_function "[add equipment_object]" do |document|
+        <small><%= link_to_function "[add equipment object]" do |document|
           document.insert_html :bottom, :equipment_objects, :partial => 'equipment_objects/add_equipment_object_form', :object => EquipmentObject.new
         end %></small>
       </li>
     </ul>
   <% end %>
 </p>
-<p>
+
+<!-- <p>
   <%= link_to "Add new "+@equipment_model.name.singularize+" object", new_equipment_model_equipment_object_path(@equipment_model) %> | 
   <%= link_to "View all "+@equipment_model.name.singularize+" objects", equipment_model_equipment_objects_path(@equipment_model) %>
-</p>
+</p> -->
 
 <p>
   <%= link_to "Edit "+@equipment_model.category.name.singularize, edit_equipment_model_path(@equipment_model) %> |
