@@ -26,4 +26,11 @@ class CartItem
   def name
     @equipment_model.name
   end
+  
+  def available?(range_of_dates)
+    range_of_dates.each do |day|
+      return false if equipment_model.available_count(day) < quantity
+    end
+    true
+  end
 end

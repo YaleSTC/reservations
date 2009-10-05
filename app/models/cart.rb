@@ -1,8 +1,10 @@
 class Cart
-  attr_reader :items   
+  attr_reader :items, :start_date, :due_date
   
   def initialize
     @items = []
+    @start_date = Date.today
+    @due_date = Date.today
   end
   
   def add_equipment_model(equipment_model)
@@ -39,5 +41,21 @@ class Cart
   
   def empty?
     @items.empty?
+  end
+  
+  def available?
+    return false if start_date.nil? or due_date.nil?
+    @items.each do |item|
+      return false if !item.available?(start_date..due_date)
+    end
+    return true
+  end
+  
+  def set_start_date(date)
+    @start_date = date  
+  end
+  
+  def set_due_date(date)
+    @due_date = date  
   end
 end

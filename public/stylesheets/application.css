@@ -5,9 +5,9 @@
 }
 
 #content {
-  padding: 15px 0 20px 15px;
+  padding: 15px 15px 20px 15px;
 	margin: 0;
-	width: 490px;
+	width: 465px;
 	background: #f9f9f9;
 }
 
@@ -106,7 +106,7 @@ div#cart{
 	background: #f8f8f8;
 	margin: 5px;
 	padding: 5px;
-	width: 200px;
+	width: 212px;
 	float: right;
 }
 
@@ -116,5 +116,13 @@ div#cart h2{
 }
 
 div#sidebar-right{
-	width: 220px;
+	width: 230px;
+}
+
+select{
+	width: inherit;
+}
+
+strong.error{
+	color: #b00;
 }

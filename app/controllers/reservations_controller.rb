@@ -13,6 +13,8 @@ class ReservationsController < ApplicationController
       redirect_to catalog_path
     else
       @reservation = Reservation.new
+      @reservation.start_date = cart.start_date
+      @reservation.due_date = cart.due_date
     end
   end
   

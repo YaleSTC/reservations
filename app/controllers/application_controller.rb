@@ -27,6 +27,13 @@ class ApplicationController < ActionController::Base
     session[:cart] ||= Cart.new
   end
   
+  def update_cart
+    session[:cart].set_start_date(Date.civil(params[:cart][:"start_date(1i)"].to_i,params[:cart][:"start_date(2i)"].to_i,params[:cart][:"start_date(3i)"].to_i))
+    session[:cart].set_due_date(Date.civil(params[:cart][:"due_date(1i)"].to_i,params[:cart][:"due_date(2i)"].to_i,params[:cart][:"due_date(3i)"].to_i))
+    flash[:notice] = "Cart dates updated."
+    redirect_to root_path
+  end
+  
   def empty_cart
     session[:cart] = Cart.new
     flash[:notice] = "Cart emptied."

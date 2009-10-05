@@ -28,4 +28,8 @@ class EquipmentModel < ActiveRecord::Base
       documents.build(attributes)
     end
   end
+  
+  def available_count(date=Date.today)
+    self.equipment_objects.count - Reservation.count(:all, :conditions => ["start_date <= ? and due_date >= ?", date, date])
+  end
 end

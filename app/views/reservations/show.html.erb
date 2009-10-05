@@ -2,7 +2,7 @@
 
 <p>
   <strong>Reserved by:</strong>
-  <%=h @reservation.reserver %>
+  <%=h @reservation.reserver.name %>
 </p>
 <!-- <p>
   <strong>Checkout Handler:</strong>
@@ -14,11 +14,11 @@
 </p> -->
 <p>
   <strong>Start Date:</strong>
-  <%=h @reservation.start_date %>
+  <%=h @reservation.start_date.to_date.to_s(:long) %>
 </p>
 <p>
   <strong>Due Date:</strong>
-  <%=h @reservation.due_date %>
+  <%=h @reservation.due_date.to_date.to_s(:long) %>
 </p>
 <!-- <p>
   <strong>Checked Out:</strong>

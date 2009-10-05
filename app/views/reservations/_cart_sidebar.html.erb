@@ -4,10 +4,21 @@
     (empty)
   <% else %>
     <ul>
-    <% cart.items.each do |item| %>
-      <li><%= item.quantity %> x <%= link_to item.name, item.equipment_model %> <small><%= link_to "[remove]", :controller => 'catalog', :action => 'remove_from_cart', :id => item.equipment_model.id %></small></li>
-    <% end %>
+      <% cart.items.each do |item| %>
+        <li><%= item.quantity %> x <%= link_to item.name, item.equipment_model %> <small><%= link_to "[remove]", :controller => 'catalog', :action => 'remove_from_cart', :id => item.equipment_model.id %></small></li>
+      <% end %>
     </ul>
+    <% form_tag update_cart_path do %>
+      <p>
+        <%= label_tag :start_date, 'Start of reservation' %><br />
+        <%= date_select :cart, :start_date, :order => [:month, :day, :year], :default => cart.start_date %>
+      </p>
+      <p>
+        <%= label_tag :due_date, 'End of reservation' %><br />
+        <%= date_select :cart, :due_date, :order => [:month, :day, :year], :default => cart.due_date %>
+      </p>
+      <%= submit_tag "Update dates", :style => 'float: right' %>
+    <% end %>
     <br />
     <%= button_to "Empty cart", empty_cart_path %>
     <%= button_to "Make reservation", new_reservation_path %>
