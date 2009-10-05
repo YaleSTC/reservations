@@ -3,24 +3,17 @@
 <table>
   <tr>
     <th>Reserver</th>
-    <th>Checkout Handler</th>
-    <th>Checkin Handler</th>
     <th>Start Date</th>
     <th>Due Date</th>
-    <th>Checked Out</th>
-    <th>Checked In</th>
+    <th>Status</th>
   </tr>
   <% for reservation in @reservations %>
     <tr>
-      <td><%=h reservation.reserver %></td>
-      <td><%=h reservation.checkout_handler %></td>
-      <td><%=h reservation.checkin_handler %></td>
-      <td><%=h reservation.start_date %></td>
-      <td><%=h reservation.due_date %></td>
-      <td><%=h reservation.checked_out %></td>
-      <td><%=h reservation.checked_in %></td>
+      <td><%=h reservation.reserver.name %></td>
+      <td><%=h reservation.start_date.to_date.to_s(:long) %></td>
+      <td><%=h reservation.due_date.to_date.to_s(:long) %></td>
+      <td><%=h reservation.status %></td>
       <td><%= link_to "Show", reservation %></td>
-      <td><%= link_to "Edit", edit_reservation_path(reservation) %></td>
       <td><%= link_to "Destroy", reservation, :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>
   <% end %>

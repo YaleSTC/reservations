@@ -1,6 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :reservations
-
+  map.resources :reservations, :member => {:check_out => :get, :check_in => :get}
   map.resources :documents
   map.resources :equipment_objects
   map.resources :equipment_models do |equipment_model|

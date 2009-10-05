@@ -14,10 +14,13 @@ class Reservation < ActiveRecord::Base
   attr_accessible :reserver, :reserver_id, :checkout_handler, :checkout_handler_id, :checkin_handler, :checkin_handler_id, :start_date, :due_date, :checked_out, :checked_in
   
   def status
+    #TODO: check this logic
     if checked_out.nil?
-      "not checked out"
+      "reserved"
+    elsif checked_in.nil?
+      due_date < Date.today ? "overdue" : "checked out"
     else
-      "checked out"
+      "returned"
     end
   end
   

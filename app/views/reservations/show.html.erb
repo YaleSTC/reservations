@@ -38,7 +38,17 @@
 </p>
 
 <p>
-  <%= link_to "Edit", edit_reservation_path(@reservation) %> |
-  <%= link_to "Destroy", @reservation, :confirm => 'Are you sure?', :method => :delete %> |
-  <%= link_to "View All", reservations_path %>
+  <% if current_user.is_admin? %>
+    <% if @reservation.status == "reserved" %>
+      <%= link_to "Check out", check_out_reservation_path(@reservation) %>
+    <% elsif @reservations.status != "returned" %>
+      <%= link_to "Check in", check_in_reservation_path(@reservation) %>
+    <% end %> |
+  <% end %>
+  <%= link_to "Cancel reservation", @reservation, :confirm => 'Are you sure?', :method => :delete %>
+  <% if current_user.is_admin? %> |
+    <%= link_to "View all reservations", reservations_path %>
+  <% elsif current_user %> |
+    <%= link_to "View all your reservations", reservations_path %>
+  <% end %>
 </p>

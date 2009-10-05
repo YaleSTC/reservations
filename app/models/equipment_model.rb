@@ -30,6 +30,9 @@ class EquipmentModel < ActiveRecord::Base
   end
   
   def available_count(date=Date.today)
-    self.equipment_objects.count - Reservation.count(:all, :conditions => ["start_date <= ? and due_date >= ?", date, date])
+    # get the total number of objects of this kind
+    # then subtract the total quantity currently checked out or reserved
+    # TODO: what if the equipment hasn't been returned?
+    self.equipment_objects.count - EquipmentModelsReservation.sum(:quantity, :include => :reservation, :conditions => ["equipment_model_id = ? AND reservations.start_date <= ? AND reservations.due_date >= ?", self.id, date.to_time.utc, date.to_time.utc])
   end
 end

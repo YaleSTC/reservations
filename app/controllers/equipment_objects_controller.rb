@@ -5,7 +5,7 @@ class EquipmentObjectsController < ApplicationController
       @equipment_model = EquipmentModel.find(params[:equipment_model_id])
       @equipment_objects = @equipment_model.equipment_objects
     else
-      @equipment_objects = EquipmentObject.all
+      @equipment_objects = EquipmentObject.find(:all, :include => :equipment_model, :order => 'equipment_models.name ASC, equipment_objects.name ASC')
     end
   end
   

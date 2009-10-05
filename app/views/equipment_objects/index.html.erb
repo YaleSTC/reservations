@@ -2,12 +2,14 @@
 
 <table id="equipment_model_table">
   <tr>
+    <th>Equipment Model</th>
     <th>Name</th>
     <th>Serial (optional)</th>
     <th>Status</th>
   </tr>
   <% for equipment_object in @equipment_objects %>
     <tr>
+      <td><%= link_to equipment_object.equipment_model.name, equipment_object.equipment_model %></td>
       <td><%= link_to equipment_object.name, equipment_object %></td>
       <td><%=h equipment_object.serial %></td>
       <td><%= equipment_object.status %></td>

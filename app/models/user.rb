@@ -1,5 +1,7 @@
 require 'net/ldap'
 class User < ActiveRecord::Base
+  has_many :reservations, :foreign_key => 'reserver_id'
+  
   attr_accessible :login, :first_name, :last_name, :nickname, :phone, :email, :affiliation, :is_banned
   
   validates_presence_of :first_name

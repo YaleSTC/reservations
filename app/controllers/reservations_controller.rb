@@ -1,6 +1,12 @@
 class ReservationsController < ApplicationController
+  before_filter :require_login, :only => [:index]
+  
   def index
-    @reservations = Reservation.all
+    if current_user.is_admin?
+      @reservations = Reservation.all
+    else
+      @reservations = current_user.reservations
+    end
   end
   
   def show

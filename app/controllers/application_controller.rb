@@ -49,6 +49,13 @@ class ApplicationController < ActionController::Base
     restricted_redirect_to(root_path) unless current_user.is_admin?
   end
   
+  def require_login
+    if current_user.nil?
+      flash[:error] = "Sorry, that action requires you to log in."
+      redirect_to root_path
+    end
+  end
+  
   def require_user(user, new_path=root_path)
     restricted_redirect_to(new_path) unless current_user == user or current_user.is_admin?
   end
