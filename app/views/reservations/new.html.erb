@@ -1,5 +1,32 @@
-<% title "New Reservation" %>
+<% title "Create Reservation" %>
 
-<%= render :partial => 'form' %>
-
-<p><%= link_to "Back to List", reservations_path %></p>
+<% form_for @reservation do |f| %>
+  <%= f.error_messages %>
+  <p>
+    <%= f.label :reserver, "Reserved by" %><br />
+    <% if current_user and current_user.is_admin? %>
+      <%= f.select :reserver_id, User.select_options, :prompt => true %>
+    <% else %>
+      <%= @user.name %>
+      <%= f.hidden_field :reserver_id, :value => @user.id %>
+    <% end %>
+  </p>
+  <p>
+    <%= f.label :start_date %><br />
+    <%= f.date_select :start_date, :order => [:month, :day, :year] %>
+  </p>
+  <p>
+    <%= f.label :due_date %><br />
+    <%= f.date_select :due_date, :order => [:month, :day, :year] %>
+  </p>
+  <p>
+    <label>Equipment</label><br />
+    <ul>
+      <% cart.items.each do |item| %>
+        <li><%= item.quantity %> x <%= link_to item.name, item.equipment_model %></li>
+      <% end %>
+      <li style="list-style: none"><small><%= link_to "Go back to the catalog", catalog_path %></small></li>
+    </ul>
+  </p>
+  <p><%= f.submit "Finalize reservation" %></p>
+<% end %>

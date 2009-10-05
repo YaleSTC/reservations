@@ -1,0 +1,15 @@
+<div class="equipment_object" style="margin-left: 30px">
+  <% form_for add_equipment_object_form do |f| %>
+    <% fields_for "equipment_model[document_attributes][]", add_equipment_object_form do |d| %>
+      <p>
+        <%#= d.text_field :name, :value => 'Enter name of document', :onclick => "if(this.value == 'Enter name of document') this.value=''; " %><br />
+        <%#= d.file_field :data %>
+      </p>
+    <% end %>
+  
+    <p>
+      <%= f.submit "Add Equipment Object" %>
+      <%= link_to_function "cancel", "$(this).parents('.equipment_object').remove()" %>
+    </p>
+  <% end %>
+</div>

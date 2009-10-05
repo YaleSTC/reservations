@@ -43,6 +43,7 @@ ActiveRecord::Schema.define(:version => 20091002184322) do
   create_table "equipment_models_reservations", :force => true do |t|
     t.integer  "equipment_model_id"
     t.integer  "reservation_id"
+    t.integer  "quantity"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

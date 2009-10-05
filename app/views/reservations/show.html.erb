@@ -1,17 +1,17 @@
-<% title "Reservation" %>
+<% title "Reservation ##{@reservation.id}" %>
 
 <p>
-  <strong>Reserver:</strong>
+  <strong>Reserved by:</strong>
   <%=h @reservation.reserver %>
 </p>
-<p>
+<!-- <p>
   <strong>Checkout Handler:</strong>
   <%=h @reservation.checkout_handler %>
 </p>
 <p>
   <strong>Checkin Handler:</strong>
   <%=h @reservation.checkin_handler %>
-</p>
+</p> -->
 <p>
   <strong>Start Date:</strong>
   <%=h @reservation.start_date %>
@@ -20,13 +20,21 @@
   <strong>Due Date:</strong>
   <%=h @reservation.due_date %>
 </p>
-<p>
+<!-- <p>
   <strong>Checked Out:</strong>
   <%=h @reservation.checked_out %>
 </p>
 <p>
   <strong>Checked In:</strong>
   <%=h @reservation.checked_in %>
+</p> -->
+<p>
+  <strong>Equipment:</strong>
+  <ul>
+    <% @reservation.equipment_models_reservations.each do |equipment_models_reservations| %>
+      <li><%= equipment_models_reservations.quantity %> x <%= link_to equipment_models_reservations.equipment_model.name, equipment_models_reservations.equipment_model %></li>
+    <% end %>
+  </ul>
 </p>
 
 <p>

@@ -26,7 +26,7 @@ class UsersController < ApplicationController
     @user.is_admin = true if User.count == 0
     if @user.save
       flash[:notice] = "Successfully created user."
-      redirect_to @user
+      redirect_to (current_user.is_admin? ? @user : root_path)
     else
       render :action => 'new'
     end

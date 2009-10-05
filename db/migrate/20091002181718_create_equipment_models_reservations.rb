@@ -3,7 +3,7 @@ class CreateEquipmentModelsReservations < ActiveRecord::Migration
     create_table :equipment_models_reservations do |t|
       t.references :equipment_model
       t.references :reservation
-      t.references :equipment_object #for actual checkout
+      t.integer :quantity #for actual checkout
       t.timestamps
     end
   end

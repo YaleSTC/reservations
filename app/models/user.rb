@@ -29,4 +29,8 @@ class User < ActiveRecord::Base
             :email       => result[0][:mail],
             :affiliation => [result[0][:curriculumshortname], result[0][:college], result[0][:class]].select{|s| s.length > 0}.join(" ")} unless result.empty?
   end
+  
+  def self.select_options
+    self.find(:all, :order => 'last_name ASC').collect{|item| ["#{item.last_name}, #{item.first_name}", item.id]}
+  end
 end
