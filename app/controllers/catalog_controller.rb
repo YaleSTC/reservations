@@ -6,7 +6,9 @@ class CatalogController < ApplicationController
   def add_to_cart
     @equipment_model = EquipmentModel.find(params[:id])
     cart.add_equipment_model(@equipment_model)
-    redirect_to root_path
+    respond_to do |format|
+      format.html{redirect_to root_path}
+    end
   rescue ActiveRecord::RecordNotFound 
     logger.error("Attempt to add invalid equipment model #{params[:id]}") 
     flash[:notice] = "Invalid equipment_model" 

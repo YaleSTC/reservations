@@ -1,5 +1,7 @@
 <% form_for @equipment_model, :html => { :multipart => true } do |f| %>
   <%= f.error_messages %>
+  <%= hidden_field_tag "product[category_ids][]", "" %><%# for HABTM checkboxes %>
+  
   <% if @category %>
     <%= f.hidden_field :category_id, :value => @category.id %>
   <% else %>
