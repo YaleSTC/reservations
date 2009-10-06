@@ -11,6 +11,8 @@ class Reservation < ActiveRecord::Base
   validates_presence_of :due_date
   validate :not_empty
   
+  named_scope :currently_out, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL", nil, nil]
+  
   attr_accessible :reserver, :reserver_id, :checkout_handler, :checkout_handler_id, :checkin_handler, :checkin_handler_id, :start_date, :due_date, :checked_out, :checked_in, :equipment_object_ids
   
   def status

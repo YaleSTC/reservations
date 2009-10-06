@@ -7,7 +7,11 @@ class EquipmentObject < ActiveRecord::Base
   attr_accessible :name, :serial, :equipment_model_id
   
   def status
-    "available"
+    if !(@current_reservation = self.reservations).empty?
+      "checked out to "+@current_reservation[0].reserver.name
+    else
+      "available"
+    end
   end
   
   def available?

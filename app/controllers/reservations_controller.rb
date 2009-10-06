@@ -73,7 +73,7 @@ class ReservationsController < ApplicationController
   
   def destroy
     @reservation = Reservation.find(params[:id])
-    require_user(@reservation.user)
+    require_user(@reservation.reserver)
     @reservation.destroy
     flash[:notice] = "Successfully destroyed reservation."
     redirect_to reservations_url

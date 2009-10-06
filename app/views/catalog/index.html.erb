@@ -1,12 +1,15 @@
 <% title "Catalog" %>
 
+<%= render :partial => 'quicksearch' %>
+
 <% @equipment_models_by_category.each do |category, equipment_models| %>
   <h2><%= category.name %></h2>
   <ul>
   <% equipment_models.each do |equipment_model| %>
     <li>
-      <%= link_to equipment_model.name, equipment_model %> (<%= equipment_model.available_count %> available now)
-      <%= link_to "[add to cart]", :controller => 'catalog', :action => 'add_to_cart', :id => equipment_model.id %>
+      <%= link_to equipment_model.name, equipment_model %><br />
+      (<%= equipment_model.available?(cart.start_date..cart.due_date) || "0" %> available from <%= cart.start_date %> to <%= cart.due_date %>)<br />
+      <%= link_to "[add to cart]", :controller => 'catalog', :action => 'add_to_cart', :id => equipment_model.id %><br /><br />
     </li>
   <% end %>
   </ul>

@@ -18,4 +18,8 @@ class Category < ActiveRecord::Base
   def self.select_options
     self.find(:all, :order => 'name ASC').collect{|item| [item.name, item.id]}
   end
+  
+  def self.singular_select_options
+    self.find(:all, :order => 'name ASC').collect{|item| "<option value='#{item.id}'>#{item.name.singularize}</option"}
+  end
 end

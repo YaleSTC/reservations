@@ -9,6 +9,7 @@
 	margin: 0;
 	width: 465px;
 	background: #f5f5f5;
+	position: relative;
 }
 
 #flash_notice {
@@ -131,4 +132,19 @@ select{
 
 strong.error{
 	color: #b00;
+}
+
+div#quicksearch{
+	position: absolute;
+	top: 14px;
+	right: 14px;
+	font-size: 85%;
+	width: 220px;
+	padding: 0 8px;
+	border: 1px solid black;
+	background: #fff;
+}
+
+div#quicksearch select{
+	font-size: 85%;
 }

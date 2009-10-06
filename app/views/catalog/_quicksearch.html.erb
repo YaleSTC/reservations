@@ -1,0 +1,17 @@
+<div id="quicksearch">
+  <p>
+    Know what you're looking for? <%= link_to_function "Find it quickly.", "$('#quicksearch_hidden').toggle()" %>
+  </p>
+  <div id="quicksearch_hidden" style="display:none">
+    <% form_tag :action => 'search' do %>
+      <p>
+        I need a <%= select_tag :category, Category.singular_select_options %> from<br />
+        <%= date_select :cart, :start_date, :order => [:month, :day, :year], :default => cart.start_date %> to<br />
+        <%= date_select :cart, :due_date, :order => [:month, :day, :year], :default => cart.due_date %>.
+      </p>
+      <p>
+        <%= submit_tag 'Narrow your search' %>
+      </p>
+    <% end %>
+  </div>
+</div>
