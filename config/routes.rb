@@ -12,6 +12,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.catalog '/catalog', :controller => 'catalog'
   map.add_to_cart '/catalog/add_to_cart/:id', :controller => 'catalog', :action => 'add_to_cart'
+  map.remove_from_cart '/catalog/remove_from_cart/:id', :controller => 'catalog', :action => 'remove_from_cart'
   map.empty_cart '/cart/empty', :controller => 'application', :action => 'empty_cart'
   map.update_cart '/cart/update', :controller => 'application', :action => 'update_cart'
   map.logout '/logout', :controller => 'application', :action => 'logout'

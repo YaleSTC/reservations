@@ -149,7 +149,9 @@
       	      <%= link_to "[log out]", logout_path %>
     	      </div>
     	    <% end %>
-    	    <%= render :partial => 'reservations/cart_sidebar' %>
+    	    <div id="cart">
+      	    <%= render :partial => 'reservations/cart_sidebar' %>
+    	    </div>
     	    <br style="clear: both" />
     	    <%= render :partial => 'reservations/reservations_sidebar' if current_user %>
           <%= yield(:right_sidebar) %>

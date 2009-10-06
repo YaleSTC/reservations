@@ -1,6 +1,8 @@
 class CatalogController < ApplicationController
   def index
-    @equipment_models_by_category = EquipmentModel.find(:all, :include => :category, :order => 'categories.name ASC, equipment_models.name ASC').group_by(&:category)
+    @equipment_models_by_category = EquipmentModel.find(:all, :include => :category, :order => 'categories.name ASC, equipment_models.name ASC').group_by(&:category)  
+    #push accessories to bottom by removing and reinserting
+    @equipment_models_by_category[Category.find_by_name("Accessories")] = @equipment_models_by_category.delete(Category.find_by_name("Accessories"))
   end
   
   def add_to_cart
@@ -8,6 +10,7 @@ class CatalogController < ApplicationController
     cart.add_equipment_model(@equipment_model)
     respond_to do |format|
       format.html{redirect_to root_path}
+      format.js
     end
   rescue ActiveRecord::RecordNotFound 
     logger.error("Attempt to add invalid equipment model #{params[:id]}") 
@@ -18,7 +21,10 @@ class CatalogController < ApplicationController
   def remove_from_cart
     @equipment_model = EquipmentModel.find(params[:id])
     cart.remove_equipment_model(@equipment_model)
-    redirect_to root_path
+    respond_to do |format|
+      format.html{redirect_to root_path}
+      format.js
+    end
   rescue ActiveRecord::RecordNotFound 
     logger.error("Attempt to remove invalid equipment model #{params[:id]}") 
     flash[:notice] = "Invalid equipment_model" 

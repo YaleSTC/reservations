@@ -3,7 +3,7 @@
   <%= @equipment_model.formatted_description %>
 </p>
 <p>
-  <%= link_to "[add to cart]", add_to_cart_path(@equipment_model) %>
+  <%= link_to_remote "[add to cart]", {:url => add_to_cart_path(@equipment_model)}, :href => add_to_cart_path(@equipment_model) %>
 </p>
 
 <% unless @equipment_model.accessories.empty? %>
@@ -11,7 +11,7 @@
     <legend>Recommended accessories:</legend>
     <ul>
       <% @equipment_model.accessories.each do |accessory| %>
-        <li><%= accessory.name %> <%= link_to "[add to cart]", add_to_cart_path(accessory) %></li>
+        <li><%= accessory.name %> <%= link_to_remote "[add to cart]", {:url => add_to_cart_path(accessory)}, :href => add_to_cart_path(accessory) %></li>
       <% end %>
     </ul>
   </fieldset>

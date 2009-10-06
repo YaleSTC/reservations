@@ -1,11 +1,10 @@
-<div id="cart">
   <h2>Your cart</h2>
   <% if cart.items.size == 0 %>
     (empty)
   <% else %>
     <ul>
       <% cart.items.each do |item| %>
-        <li><%= item.quantity %> x <%= link_to item.name, item.equipment_model %> <small><%= link_to "[remove]", :controller => 'catalog', :action => 'remove_from_cart', :id => item.equipment_model.id %></small></li>
+        <li><%= item.quantity %> x <%= link_to item.name, item.equipment_model %> <small><%= link_to_remote "[remove]", {:url => remove_from_cart_path(item.equipment_model)}, :href => remove_from_cart_path(item.equipment_model) %></small></li>
       <% end %>
     </ul>
   <% end %>
@@ -25,4 +24,3 @@
     <%= button_to "Empty cart", empty_cart_path %>
     <%= button_to "Make reservation", new_reservation_path %>
   <% end %>
-</div>
