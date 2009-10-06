@@ -37,6 +37,10 @@ class EquipmentModelsController < ApplicationController
   
   def update
     @equipment_model = EquipmentModel.find(params[:id])
+    
+    #purge accessories
+    @equipment_model.accessories = []
+    
     if @equipment_model.update_attributes(params[:equipment_model])
       flash[:notice] = "Successfully updated equipment model."
       redirect_to @equipment_model

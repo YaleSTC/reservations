@@ -6,6 +6,10 @@ class EquipmentModel < ActiveRecord::Base
   has_many :equipment_models_reservations
   has_many :reservations, :through => :equipment_models_reservations
   
+  #associates with itself for accessories/recommended related models
+  has_many :accessories_equipment_models, :foreign_key => :equipment_model_id
+  has_many :accessories, :through => :accessories_equipment_models
+  
   validates_presence_of :name
   validates_uniqueness_of :name
   validates_presence_of :description
@@ -13,7 +17,7 @@ class EquipmentModel < ActiveRecord::Base
   validates_numericality_of :replacement_fee
   validates_numericality_of :max_per_user, :allow_nil => true
   
-  attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, :max_per_user, :document_attributes
+  attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, :max_per_user, :document_attributes, :accessory_ids
   
   def maximum_per_user
     max_per_user || "unrestricted"

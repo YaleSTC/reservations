@@ -5,7 +5,7 @@
   <% else %>
     <p>
       <%= f.label :category_id %><br />
-      <%= f.select :category_id, Category.select_options, :prompt => true %>
+      <%= f.select :category_id, Category.select_options, :prompt => true %> <%= link_to "[add new category]", new_category_path %>
     </p>
   <% end %>
   <p>
@@ -27,6 +27,16 @@
   <p>
     <%= f.label :max_per_user %><br />
     <%= f.text_field :max_per_user, :class => 'number_input' %>
+  </p>
+  
+  <p>
+    <%= f.label :accessories %><br />
+    <% Category.find_by_name("Accessories").equipment_models.each do |equipment_model| %>
+      <li>
+        <%= check_box_tag 'equipment_model[accessory_ids][]', equipment_model.id %> 
+        <%= link_to equipment_model.name, equipment_model %>
+      </li>
+    <% end %>
   </p>
   
   <p><%= f.submit "Submit" %></p>

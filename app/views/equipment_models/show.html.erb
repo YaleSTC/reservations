@@ -2,7 +2,20 @@
 <p>
   <%= @equipment_model.formatted_description %>
 </p>
-<%= link_to "[add to cart]", :controller => 'catalog', :action => 'add_to_cart', :id => @equipment_model.id %>
+<p>
+  <%= link_to "[add to cart]", add_to_cart_path(@equipment_model) %>
+</p>
+
+<% unless @equipment_model.accessories.empty? %>
+  <fieldset>
+    <legend>Recommended accessories:</legend>
+    <ul>
+      <% @equipment_model.accessories.each do |accessory| %>
+        <li><%= accessory.name %> <%= link_to "[add to cart]", add_to_cart_path(accessory) %></li>
+      <% end %>
+    </ul>
+  </fieldset>
+<% end %>
 <fieldset>
   <legend>Further details:</legend>
   <p>
