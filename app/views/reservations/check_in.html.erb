@@ -1,0 +1,21 @@
+<% title "Reservation Checkin" %>
+<% form_for @reservation do |f| %>
+  <p>
+    <%= @reservation.reserver.name %> is returning the following equipment:
+  </p>
+  <ul style="list-style:none">
+    <% @reservation.equipment_objects.each do |equipment_object| %>
+      <li>
+        <%= check_box_tag 'reservation[equipment_object_ids][]', equipment_object.id %>
+        <%= equipment_object.equipment_model.name %> (<%= equipment_object.name %>)
+      </li>
+    <% end %>
+  </ul>
+  <% if @reservation.due_date.to_date < Date.today %>
+    <p>
+      This equipment is <strong class="error">overdue.</strong><br />
+      At a fee of <%= number_to_currency(@reservation.late_fee) %> / day, the renter owes <strong><%= number_to_currency(@reservation.late_fee * (@reservation.due_date.to_date - Date.today).to_i)  %></strong> total.
+    </p>
+  <% end %>
+  <%= submit_tag "Check in equipment" %>
+<% end %>

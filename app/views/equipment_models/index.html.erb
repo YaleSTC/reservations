@@ -17,17 +17,21 @@
       <td><%=h number_to_currency(equipment_model.late_fee) %></td>
       <td><%=h number_to_currency(equipment_model.replacement_fee) %></td>
       <td><%=h equipment_model.maximum_per_user %></td>
-      <td><%= link_to "Edit", edit_equipment_model_path(equipment_model) %></td>
-      <td><%= link_to "Destroy", equipment_model, :confirm => 'Are you sure?', :method => :delete %></td>
+      <% if current_user.is_admin? %>
+        <td><%= link_to "Edit", edit_equipment_model_path(equipment_model) %></td>
+        <td><%= link_to "Destroy", equipment_model, :confirm => 'Are you sure?', :method => :delete %></td>
+      <% end %>
     </tr>
   <% end %>
 </table>
 
 <p>
   <% if @category %>
-    <%= link_to ("New "+@category.name.singularize), new_category_equipment_model_path(@category) %> |
+    <% if current_user.is_admin? %>
+      <%= link_to ("New "+@category.name.singularize), new_category_equipment_model_path(@category) %> |
+    <% end %>
     <%= link_to "View All Equipment Models", equipment_models_path %>
-  <% else %>
+  <% elsif current_user.is_admin? %>
     <%= link_to "New Equipment Model", new_equipment_model_path %>
   <% end %>
 </p>

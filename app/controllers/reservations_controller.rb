@@ -49,8 +49,18 @@ class ReservationsController < ApplicationController
     if params[:commit] == "Check out equipment"
       @reservation.checked_out = Time.now
       # if equipment object ids are not unique, throw a hissy fit
-      flash.now[:error] = "The same piece of equipment cannot be assigned twice!"
-      render :action => 'check_out' and return if params[:reservation][:equipment_object_ids].uniq!
+      if params[:reservation][:equipment_object_ids].uniq!
+        flash.now[:error] = "The same piece of equipment cannot be assigned twice!"
+        render :action => 'check_out' and return 
+      end
+    elsif params[:commit] == "Check in equipment"
+      @reservation.checked_in = Time.now
+      # if not all objects are returned, throw up a warning
+      if params[:reservation][:equipment_object_ids].size != @reservation.equipment_objects.size
+        flash[:error] = "However, you must return all equipment to complete check-in!" 
+      end
+      #return the checked off items
+      params[:reservation][:equipment_object_ids] = @reservation.equipment_objects.collect{|e| e.id.to_s} - params[:reservation][:equipment_object_ids]
     end
 
     if @reservation.update_attributes(params[:reservation])
@@ -63,12 +73,17 @@ class ReservationsController < ApplicationController
   
   def destroy
     @reservation = Reservation.find(params[:id])
+    require_user(@reservation.user)
     @reservation.destroy
     flash[:notice] = "Successfully destroyed reservation."
     redirect_to reservations_url
   end
   
   def check_out
+    @reservation = Reservation.find(params[:id])
+  end
+  
+  def check_in
     @reservation = Reservation.find(params[:id])
   end
 end

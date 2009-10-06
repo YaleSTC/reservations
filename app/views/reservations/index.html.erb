@@ -1,4 +1,4 @@
-<% title "Reservations" %>
+<% title (current_user.is_admin? ? "" : "Your ")+"Reservations" %>
 
 <table>
   <tr>
@@ -20,5 +20,3 @@
     </tr>
   <% end %>
 </table>
-
-<p><%= link_to "New Reservation", new_reservation_path %></p>
