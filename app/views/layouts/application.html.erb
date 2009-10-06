@@ -114,7 +114,7 @@
   			      <ul>
                 <li><%= link_to "Catalog", catalog_path %></li>
               	<% if current_user.nil? %>
-                	<%= link_to "Sign In" %>
+                	<li><%= link_to "Sign In" %></li>
                 <% elsif current_user.is_admin? %>
                 	<li><%= link_to "Users", users_path %></li>
                 <% else %>

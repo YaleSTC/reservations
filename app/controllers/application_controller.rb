@@ -8,11 +8,16 @@ class ApplicationController < ActionController::Base
   helper_method :cart
   
   before_filter CASClient::Frameworks::Rails::Filter
+  before_filter :first_run
   before_filter :first_time_user
   before_filter :cart
 
   def current_user
     @current_user ||= User.find_by_login(session[:cas_user])
+  end
+  
+  def first_run
+    Category.find_or_create_by_name("Accessories")
   end
   
   def first_time_user
@@ -58,6 +63,10 @@ class ApplicationController < ActionController::Base
   
   def require_user(user, new_path=root_path)
     restricted_redirect_to(new_path) unless current_user == user or current_user.is_admin?
+  end
+  
+  def require_user_or_checkout_person(user, new_path=root_path)
+    restricted_redirect_to(new_path) unless current_user == user or current_user.can_checkout?
   end
   
   def restricted_redirect_to(new_path=root_path)

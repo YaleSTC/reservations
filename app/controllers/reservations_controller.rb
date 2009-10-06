@@ -1,12 +1,12 @@
 class ReservationsController < ApplicationController
   before_filter :require_login, :only => [:index, :show]
-  before_filter :require_admin, :only => [:check_out, :check_in]
+  before_filter :require_checkout_person, :only => [:check_out, :check_in]
   
   def index
-    if current_user.is_admin?
-      @reservations = Reservation.all
+    if current_user.can_checkout?
+      @reservations = Reservation.find(:all, :order => 'start_date ASC')
     else
-      @reservations = current_user.reservations
+      @reservations = current_user.reservations.sort_by(&:start_date).reverse
     end
   end
   
@@ -73,7 +73,7 @@ class ReservationsController < ApplicationController
   
   def destroy
     @reservation = Reservation.find(params[:id])
-    require_user(@reservation.reserver)
+    require_user_or_checkout_person(@reservation.reserver)
     @reservation.destroy
     flash[:notice] = "Successfully destroyed reservation."
     redirect_to reservations_url

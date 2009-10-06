@@ -29,6 +29,16 @@ class EquipmentModel < ActiveRecord::Base
     end
   end
   
+  def formatted_description
+    lines = self.description.split(/^/)
+    
+    nice_content = "<p>"
+    lines.each do |line|
+      nice_content += line + "<br />"
+    end
+    nice_content += "</p>"
+  end
+  
   def available?(date_range)
     overall_count = self.equipment_objects.size
     date_range.each do |date|

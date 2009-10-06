@@ -2,7 +2,7 @@ require 'net/ldap'
 class User < ActiveRecord::Base
   has_many :reservations, :foreign_key => 'reserver_id'
   
-  attr_accessible :login, :first_name, :last_name, :nickname, :phone, :email, :affiliation, :is_banned
+  attr_accessible :login, :first_name, :last_name, :nickname, :phone, :email, :affiliation, :is_banned, :is_checkout_person, :is_admin
   
   validates_presence_of :first_name
   validates_presence_of :last_name
@@ -16,6 +16,10 @@ class User < ActiveRecord::Base
     else
       nickname + " " + last_name
     end
+  end
+  
+  def can_checkout?
+    self.is_checkout_person? or self.is_admin?
   end
   
   def self.search_ldap(login)

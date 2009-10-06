@@ -52,7 +52,6 @@ ActiveRecord::Schema.define(:version => 20091005214259) do
     t.string   "name"
     t.string   "serial"
     t.integer  "equipment_model_id"
-    t.integer  "equipment_models_reservation_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -94,8 +93,9 @@ ActiveRecord::Schema.define(:version => 20091005214259) do
     t.string   "phone"
     t.string   "email"
     t.string   "affiliation"
-    t.boolean  "is_banned",   :default => false
-    t.boolean  "is_admin",    :default => false
+    t.boolean  "is_banned",          :default => false
+    t.boolean  "is_admin",           :default => false
+    t.boolean  "is_checkout_person", :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

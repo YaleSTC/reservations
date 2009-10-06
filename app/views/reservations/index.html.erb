@@ -1,4 +1,4 @@
-<% title (current_user.is_admin? ? "" : "Your ")+"Reservations" %>
+<% title (current_user.can_checkout? ? "" : "Your ")+"Reservations" %>
 
 <table>
   <tr>

@@ -48,7 +48,7 @@
 </p>
 
 <p>
-  <% if current_user.is_admin? %>
+  <% if current_user.can_checkout? %>
     <% if @reservation.status == "reserved" %>
       <%= link_to "Check out", check_out_reservation_path(@reservation) %> |
     <% elsif @reservation.status != "returned" %>
@@ -58,7 +58,7 @@
   <% if @reservation.status == "reserved" or current_user.is_admin? %>
     <%= link_to "Cancel reservation", @reservation, :confirm => 'Are you sure?', :method => :delete %> |
   <% end %>
-  <% if current_user.is_admin? %>
+  <% if current_user.can_checkout? %>
     <%= link_to "View all reservations", reservations_path %>
   <% else %>
     <%= link_to "View all your reservations", reservations_path %>

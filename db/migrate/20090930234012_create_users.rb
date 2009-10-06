@@ -10,6 +10,7 @@ class CreateUsers < ActiveRecord::Migration
       t.string :affiliation
       t.boolean :is_banned, :default => false
       t.boolean :is_admin, :default => false
+      t.boolean :is_checkout_person, :default => false
       t.timestamps
     end
   end
