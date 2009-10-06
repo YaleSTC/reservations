@@ -3,7 +3,7 @@
 <%= render :partial => 'quicksearch' %>
 
 <% @equipment_models_by_category.each do |category, equipment_models| %>
-  <h2><%= category.name %></h2>
+  <h2><%= link_to category.name, category_equipment_models_path(category) %></h2>
   <ul>
   <% equipment_models.each do |equipment_model| %>
     <li>

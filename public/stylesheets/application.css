@@ -138,13 +138,13 @@ div#quicksearch{
 	position: absolute;
 	top: 14px;
 	right: 14px;
-	font-size: 85%;
-	width: 220px;
+	font-size: 11px;
+	width: 225px;
 	padding: 0 8px;
 	border: 1px solid black;
 	background: #fff;
 }
 
 div#quicksearch select{
-	font-size: 85%;
+	font-size: 10px;
 }
