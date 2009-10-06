@@ -48,6 +48,7 @@ class ReservationsController < ApplicationController
 
     if params[:commit] == "Check out equipment"
       @reservation.checked_out = Time.now
+      @reservation.checkout_handler = current_user
       # if equipment object ids are not unique, throw a hissy fit
       if params[:reservation][:equipment_object_ids].uniq!
         flash.now[:error] = "The same piece of equipment cannot be assigned twice!"
@@ -55,9 +56,11 @@ class ReservationsController < ApplicationController
       end
     elsif params[:commit] == "Check in equipment"
       @reservation.checked_in = Time.now
+      @reservation.checkin_handler = current_user
       # if not all objects are returned, throw up a warning
       if params[:reservation][:equipment_object_ids].size != @reservation.equipment_objects.size
-        flash[:error] = "However, you must return all equipment to complete check-in!" 
+        flash.now[:error] = "You must return all equipment to complete check-in!" 
+        render :action => 'check_in' and return 
       end
       #return the checked off items
       params[:reservation][:equipment_object_ids] = @reservation.equipment_objects.collect{|e| e.id.to_s} - params[:reservation][:equipment_object_ids]
