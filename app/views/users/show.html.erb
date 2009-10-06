@@ -1,5 +1,10 @@
 <% title @user.name + (@user.is_banned ? " (banned)" : "") %>
 
+<div id="current_equipment"
+  <strong>User's current equipment:</strong><br />
+  <%= render :partial => 'current_equipment', :object => @user %>
+</div>
+
 <p>
   <strong>Login:</strong>
   <%=h @user.login %>

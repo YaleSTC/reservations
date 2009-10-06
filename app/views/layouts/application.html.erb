@@ -154,6 +154,12 @@
     	    </div>
     	    <br style="clear: both" />
     	    <%= render :partial => 'reservations/reservations_sidebar' if current_user %>
+    	    <% unless current_user.equipment_objects.empty? %>
+      	    <div id="equipment">
+              <h3>Your current equipment:</h3>
+              <%= render :partial => 'users/current_equipment', :object => current_user %>
+            </div>
+    	    <% end %>
           <%= yield(:right_sidebar) %>
     	  </div>
     	</div>

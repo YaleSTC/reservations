@@ -1,0 +1,11 @@
+<% unless current_equipment.equipment_objects.empty? %>
+  <small>
+    <ul>
+      <% current_equipment.equipment_objects.each do |equipment_object| %>
+        <li><%= link_to equipment_object.equipment_model.name, equipment_object.equipment_model %> (<%= link_to equipment_object.name, equipment_object %>)</li>
+      <% end %>
+    </ul>
+  </small>
+<% else %>
+  none
+<% end %>

@@ -54,6 +54,10 @@ class ApplicationController < ActionController::Base
     restricted_redirect_to(root_path) unless current_user.is_admin?
   end
   
+  def require_checkout_person
+    restricted_redirect_to(root_path) unless current_user.can_checkout?
+  end
+  
   def require_login
     if current_user.nil?
       flash[:error] = "Sorry, that action requires you to log in."

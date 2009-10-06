@@ -22,6 +22,10 @@ class User < ActiveRecord::Base
     self.is_checkout_person? or self.is_admin?
   end
   
+  def equipment_objects
+    self.reservations.collect{|r| r.equipment_objects}.flatten
+  end
+  
   def self.search_ldap(login)
     ldap = Net::LDAP.new(:host => "directory.yale.edu", :port => 389)
     filter = Net::LDAP::Filter.eq("uid", login)

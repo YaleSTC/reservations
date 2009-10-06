@@ -115,7 +115,7 @@ div#cart h2, div#reservations h2{
 	padding: 0;
 }
 
-div#reservations{
+div#reservations, div#equipment{
 	margin: 5px;
 	padding: 2px;
 	width: 218px;
@@ -147,4 +147,15 @@ div#quicksearch{
 
 div#quicksearch select{
 	font-size: 10px;
+}
+
+fieldset{
+	margin-top: 1em;
+}
+
+div#current_equipment{
+	float: right;
+	border: 1px solid black;
+	padding: 10px;
+	background: #fff;
 }
