@@ -1,6 +1,7 @@
 class Document < ActiveRecord::Base
   belongs_to :equipment_model
   has_attached_file :data, :styles => { :small => "150x150>" }, :whiny => false
+  #:whiny => false stops it from yelling at us when it tries to resize documents that aren't images
   
   named_scope :images, :conditions => ["data_content_type LIKE ?", "image%"]
   named_scope :not_images, :conditions => ["data_content_type NOT LIKE ?", "image%"]

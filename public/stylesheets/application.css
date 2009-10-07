@@ -152,6 +152,7 @@ div#quicksearch select{
 img.product_small{
 	float: left;
 	margin: 0 10px 10px 0;
+	border: 1px solid #999;
 }
 
 fieldset{
