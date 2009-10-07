@@ -159,3 +159,7 @@ div#current_equipment{
 	padding: 10px;
 	background: #fff;
 }
+
+div#current_equipment ul{
+	padding-left: 15px;
+}
