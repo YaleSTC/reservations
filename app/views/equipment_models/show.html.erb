@@ -1,4 +1,5 @@
 <% title @equipment_model.category.name.singularize + ": "+@equipment_model.name %>
+<%= (link_to (image_tag @equipment_model.photos.first.data.url(:small), :class => 'product_small'), @equipment_model.photos.first.data.url, :target => '_blank' ) unless @equipment_model.photos.empty? %>
 <p>
   <%= @equipment_model.formatted_description %>
 </p>
@@ -32,9 +33,34 @@
       <%=h @equipment_model.maximum_per_user %>
     </p>
   <% end %>
+  <p id="images">
+    <strong>Images:</strong>
+    <% if @equipment_model.documents.images.empty? %>
+      none
+      <% if current_user.is_admin? %>
+        <small><%= link_to_function "[add image]" do |document|
+          document.insert_html :bottom, :images, :partial => 'documents/add_image_form', :object => Document.new
+        end %></small>
+      <% end %>
+    <% else %>
+      <ul>
+        <% @equipment_model.documents.images.each do |document| %>
+          <li><%= link_to document.name, document.data.url %> <%= link_to "[x]", document, :confirm => 'Are you sure you want to delete this document?', :method => :delete %>
+          </li>
+        <% end %>
+        <% if current_user.is_admin? %>
+          <li style="list-style:none">
+            <small><%= link_to_function "[add image]" do |document|
+              document.insert_html :bottom, :images, :partial => 'documents/add_image_form', :object => Document.new
+            end %></small>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </p>
   <p id="documents">
     <strong>Documentation:</strong>
-    <% if @equipment_model.documents.empty? %>
+    <% if @equipment_model.documents.not_images.empty? %>
       none
       <% if current_user.is_admin? %>
         <small><%= link_to_function "[add document]" do |document|
@@ -43,7 +69,7 @@
       <% end %>
     <% else %>
       <ul>
-        <% @equipment_model.documents.each do |document| %>
+        <% @equipment_model.documents.not_images.each do |document| %>
           <li><%= link_to document.name, document.data.url %> <%= link_to "[x]", document, :confirm => 'Are you sure you want to delete this document?', :method => :delete %>
           </li>
         <% end %>

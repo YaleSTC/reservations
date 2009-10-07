@@ -43,6 +43,10 @@ class EquipmentModel < ActiveRecord::Base
     nice_content += "</p>"
   end
   
+  def photos
+    self.documents.images
+  end
+  
   def available?(date_range)
     overall_count = self.equipment_objects.size
     date_range.each do |date|

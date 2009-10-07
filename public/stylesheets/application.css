@@ -149,8 +149,14 @@ div#quicksearch select{
 	font-size: 10px;
 }
 
+img.product_small{
+	float: left;
+	margin: 0 10px 10px 0;
+}
+
 fieldset{
 	margin-top: 1em;
+	clear: both;
 }
 
 div#current_equipment{
@@ -162,4 +168,22 @@ div#current_equipment{
 
 div#current_equipment ul{
 	padding-left: 15px;
+}
+
+ul.catalog{
+	list-style: none;
+	padding-left: 20px;
+}
+
+h2.catalog, ul.catalog, ul.catalog li{
+	clear: both;
+}
+
+h2.catalog{
+	padding-top: 1em;
+}
+
+ul.catalog h3{
+	padding: 0;
+	margin: 0 0 0 0;
 }
