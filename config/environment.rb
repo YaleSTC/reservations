@@ -21,6 +21,20 @@ Rails::Initializer.run do |config|
   # config.gem "aws-s3", :lib => "aws/s3"
   config.gem 'javan-whenever', :lib => false, :source => 'http://gems.github.com'
 
+  # Configure Rails Mail options
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    :address => "mail.yale.edu",
+    :port => 587,
+    :domain => "yale.edu",
+    # with these disabled, the server must be connected to the yale network for email to work
+    #:authentication => :login,
+    #:user_name => "username",
+    #:password => "password",
+  }
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.default_charset = "utf-8"
+
   # Only load the plugins named here, in the order given (default is alphabetical).
   # :all can be used as a placeholder for all plugins not explicitly named
   # config.plugins = [ :exception_notification, :ssl_requirement, :all ]

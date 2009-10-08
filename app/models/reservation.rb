@@ -37,6 +37,14 @@ class Reservation < ActiveRecord::Base
     equipment_models_reservations.map{|item| item.quantity * item.equipment_model.late_fee}.sum.to_f
   end
   
+  def equipment_list
+    html = ""
+    self.equipment_models_reservations.each do |equipment_models_reservations|
+      html += "#{equipment_models_reservations.quantity} x #{equipment_models_reservations.equipment_model.name}\r\n"
+    end
+    html
+  end
+  
   # def equipment_object_ids=(ids)
   #   ids.each do |id|
   #     equipment_objects << EquipmentObject.find(id)
