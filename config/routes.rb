@@ -16,6 +16,8 @@ ActionController::Routing::Routes.draw do |map|
   map.empty_cart '/cart/empty', :controller => 'application', :action => 'empty_cart'
   map.update_cart '/cart/update', :controller => 'application', :action => 'update_cart'
   map.logout '/logout', :controller => 'application', :action => 'logout'
+  map.edit_app_config '/app_config/edit', :controller => 'app_config', :action => 'edit'
+  map.update_app_config '/app_config/update', :controller => 'app_config', :action => 'update'
 
   # The priority is based upon order of creation: first created -> highest priority.
 

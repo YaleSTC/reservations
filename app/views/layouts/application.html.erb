@@ -125,6 +125,9 @@
                   <li><%= link_to "Equipment Models", equipment_models_path %></li>
                 <% end %>
                 <li><%= link_to "Reservations", reservations_path %></li>
+                <% if current_user and current_user.is_admin? %>
+                <li><%= link_to "App Settings", edit_app_config_path %></li>
+                <% end %>
                 <li><a href="http://clc.yale.edu/">CLC Home</a></li>
               	<li><a href="http://clc.yale.edu/contact/" title="Contact Us">Contact Us</a></li>
               </ul>
