@@ -10,6 +10,8 @@ class Reservation < ActiveRecord::Base
   validates_presence_of :start_date
   validates_presence_of :due_date
   validate :not_empty
+  validate :not_in_past
+  validate :start_date_before_due_date
   
   named_scope :currently_out, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL"]
   named_scope :active, :conditions => ["checked_in IS NULL"]
@@ -30,7 +32,15 @@ class Reservation < ActiveRecord::Base
   end
   
   def not_empty
-    errors.add_to_base("A reservation must contain at least one item!") if self.equipment_models_reservations.empty?
+    errors.add_to_base("A reservation must contain at least one item.") if self.equipment_models_reservations.empty?
+  end
+  
+  def not_in_past
+    errors.add_to_base("A reservation cannot be made in the past!") if self.due_date < Time.now.midnight
+  end
+  
+  def start_date_before_due_date
+    errors.add_to_base("A reservation's due date must come after its start date.") if self.due_date < self.start_date
   end
   
   def late_fee
