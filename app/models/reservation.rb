@@ -38,11 +38,11 @@ class Reservation < ActiveRecord::Base
   end
   
   def equipment_list
-    html = ""
+    raw_text = ""
     self.equipment_models_reservations.each do |equipment_models_reservations|
-      html += "#{equipment_models_reservations.quantity} x #{equipment_models_reservations.equipment_model.name}\r\n"
+      raw_text += "#{equipment_models_reservations.quantity} x #{equipment_models_reservations.equipment_model.name}\r\n"
     end
-    html
+    raw_text
   end
   
   # def equipment_object_ids=(ids)

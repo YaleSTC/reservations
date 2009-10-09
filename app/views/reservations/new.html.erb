@@ -17,25 +17,50 @@
     <%= f.hidden_field :due_date, :value => cart.due_date %>
   </p>
   <p>
+    <% acceptable_reservation = true %>
     <% if cart.items.empty? %>
+      <% acceptable_reservation = false %>
       <strong class="error">Your cart is empty!</strong> You need to add items to your cart before you can make a reservation.
     <% else %>
       <ul>
         <% cart.items.each do |item| %>
           <li>
             <%= item.quantity %> x <%= link_to item.name, item.equipment_model %>
-            <% if !item.available?(cart.start_date..cart.due_date) %><br /><small>
+            <%# TODO: make this check against the user's total equipment, not just this reservation %>
+            <% if item.equipment_model.maximum_per_user != "unrestricted" and item.quantity > item.equipment_model.maximum_per_user %><br /><small>
+              <% acceptable_reservation = false %>
+              <strong class="error">You may not check out this many of this item.</strong> Users may rent
+              only <%= item.equipment_model.maximum_per_user %> of this item during any given period. Please use
+              the cart menu in the right sidebar to either remove this item
+              or to change the dates of your reservation.</small>
+            <% elsif !item.available?(cart.start_date..cart.due_date) %><br /><small>
+              <% acceptable_reservation = false %>
               <strong class="error">This item is not available for the specified period.</strong> Please use
               the cart menu in the right sidebar to either remove this item
               or to change the dates of your reservation.</small>
             <% end %>
           </li>
         <% end %>
+        <%# check to see if this reservation goes over any category maximums %>
+        <% cart.items.group_by{|i| i.equipment_model.category}.each do |category, items| %>
+          <% total_items = items.map{|item| item.quantity}.sum %>
+          <% if category.maximum_per_user != "unlimited" and total_items > category.maximum_per_user %>
+            <% acceptable_reservation = false %>
+            <li>
+              <small>
+                <strong class="error">You may not check out this many <%= category.name.pluralize %>.</strong>
+                Users are limited to <%= category.maximum_per_user %> of this kind of equipment.
+                Please use the cart menu in the right sidebar to either remove a <%= category.name.singularize %>
+                or to change the dates of your reservation.
+              </small>
+            </li>
+          <% end %>
+        <% end %>
         <li style="list-style: none"><small><%= link_to "Go back to the catalog", catalog_path %></small></li>
       </ul>
     <% end %>
   </p>
-  <% if cart.empty? or !cart.available? %>
+  <% if !acceptable_reservation %>
     <p>
       <strong>Your reservation cannot be made for one or more reasons. Please resolve the issues
         listed above, then return here to finalize your reservation. Thank you.</strong>

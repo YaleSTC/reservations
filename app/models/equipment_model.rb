@@ -19,8 +19,9 @@ class EquipmentModel < ActiveRecord::Base
   
   attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, :max_per_user, :document_attributes, :accessory_ids
   
+  #inherits from category if not defined
   def maximum_per_user
-    max_per_user || "unrestricted"
+    max_per_user || category.maximum_per_user
   end
   
   def self.select_options
