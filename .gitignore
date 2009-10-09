@@ -3,4 +3,5 @@ tmp/**/*
 .DS_Store
 doc/api
 doc/app
-db/*.sqlite3 
+db/*.sqlite3
+db/* 
