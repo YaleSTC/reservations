@@ -33,7 +33,8 @@
               only <%= item.equipment_model.maximum_per_user %> of this item during any given period. Please use
               the cart menu in the right sidebar to either remove this item
               or to change the dates of your reservation.</small>
-            <% elsif !item.available?(cart.start_date..cart.due_date) %><br /><small>
+            <% end %>
+            <% if !item.available?(cart.start_date..cart.due_date) %><br /><small>
               <% acceptable_reservation = false %>
               <strong class="error">This item is not available for the specified period.</strong> Please use
               the cart menu in the right sidebar to either remove this item
@@ -55,17 +56,34 @@
               </small>
             </li>
           <% end %>
+          <% if category.maximum_checkout_length != "unrestricted" and category.max_checkout_length < cart.duration %>
+            <li>
+              <small>
+                <strong class="error">You may not check out a <%= category.name.singularize %> for more than 
+                <%= category.max_checkout_length %> days.</strong>
+                Please use the cart menu in the right sidebar to either remove all <%= category.name.pluralize %>
+                from your order or to change the dates of your reservation.
+              </small>
+            </li>
+          <% end %>
         <% end %>
         <li style="list-style: none"><small><%= link_to "Go back to the catalog", catalog_path %></small></li>
       </ul>
     <% end %>
   </p>
-  <% if !acceptable_reservation %>
+  <% if !acceptable_reservation and !current_user.is_admin? %>
     <p>
       <strong>Your reservation cannot be made for one or more reasons. Please resolve the issues
         listed above, then return here to finalize your reservation. Thank you.</strong>
     </p>
   <% else %>
+    <% if !acceptable_reservation %><%#admin checkout%>
+      <p>
+        <strong>NOTE: As an administrator, you can approve the above reservation despite the issues
+          mentioned above.</strong>
+        However, please remember that these restrictions exist for a reason. Thank you :)
+      </p>
+    <% end %>
     <p><%= f.submit "Finalize reservation" %></p>
   <% end %>
 <% end %>

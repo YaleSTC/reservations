@@ -58,4 +58,8 @@ class Cart
   def set_due_date(date)
     @due_date = date  
   end
+  
+  def duration #in days
+    @due_date - @start_date + 1
+  end
 end
