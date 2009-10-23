@@ -39,7 +39,7 @@ class EquipmentModel < ActiveRecord::Base
     
     nice_content = "<p>"
     lines.each do |line|
-      nice_content += line + "<br />"
+      nice_content += line + "<br />" unless (line.include? "<table>" or line.include? "<td>")
     end
     nice_content += "</p>"
   end
