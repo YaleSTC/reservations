@@ -19,6 +19,30 @@
     <%= f.text_area :description %>
   </p>
   <p>
+    <%= hidden_field_tag :clear_checkout_procedures, true %>
+    <%= f.label :checkout_procedures %>
+    <div id="checkout_procedures">
+      <% unless @equipment_model.checkout_procedures.nil? %>
+        <%= render :partial => 'checkout_procedure', :collection => @equipment_model.checkout_procedures %>
+      <% end %>
+    </div>
+    <%= link_to_function "[add checkout procedure]" do |document|
+      document.insert_html :bottom, :checkout_procedures, :partial => 'checkout_procedure'
+    end %>
+  </p>
+  <p>
+    <%= hidden_field_tag :clear_checkin_procedures, true %>
+    <%= f.label :checkin_procedures %>
+    <div id="checkin_procedures">
+      <% unless @equipment_model.checkin_procedures.nil? %>
+        <%= render :partial => 'checkin_procedure', :collection => @equipment_model.checkin_procedures %>
+      <% end %>
+    </div>
+    <%= link_to_function "[add checkin procedure]" do |document|
+      document.insert_html :bottom, :checkin_procedures, :partial => 'checkin_procedure'
+    end %>
+  </p>
+  <p>
     <%= f.label :late_fee %><br />
     $<%= f.text_field :late_fee, :class => 'number_input' %> / day
   </p>
@@ -27,7 +51,7 @@
     $<%= f.text_field :replacement_fee, :class => 'number_input' %>
   </p>
   <p>
-    <%= f.label :max_per_user %><br />
+    <%= f.label :max_per_user, "Maximum per user (leave blank to default to category value)" %><br />
     <%= f.text_field :max_per_user, :class => 'number_input' %>
   </p>
   

@@ -20,6 +20,7 @@ Rails::Initializer.run do |config|
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"
   config.gem 'javan-whenever', :lib => false, :source => 'http://gems.github.com'
+  config.gem 'ruby-net-ldap', :lib => "net/ldap"
 
   # Configure Rails Mail options
   config.action_mailer.delivery_method = :smtp

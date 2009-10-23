@@ -37,6 +37,8 @@ class EquipmentModelsController < ApplicationController
   
   def update
     @equipment_model = EquipmentModel.find(params[:id])
+    @equipment_model.checkout_procedures = nil if params[:clear_checkout_procedures]
+    @equipment_model.checkin_procedures = nil if params[:clear_checkin_procedures]
     if @equipment_model.update_attributes(params[:equipment_model])
       flash[:notice] = "Successfully updated equipment model."
       redirect_to @equipment_model

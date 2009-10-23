@@ -1,4 +1,6 @@
 class EquipmentModel < ActiveRecord::Base
+  serialize :checkout_procedures
+  serialize :checkin_procedures
   belongs_to :category
   has_many :equipment_objects
   has_many :documents
@@ -17,7 +19,7 @@ class EquipmentModel < ActiveRecord::Base
   validates_numericality_of :replacement_fee
   validates_numericality_of :max_per_user, :allow_nil => true
   
-  attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, :max_per_user, :document_attributes, :accessory_ids
+  attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, :max_per_user, :document_attributes, :accessory_ids, :checkout_procedures, :checkin_procedures
   
   #inherits from category if not defined
   def maximum_per_user

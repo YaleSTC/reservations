@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091008032231) do
+ActiveRecord::Schema.define(:version => 20091023172207) do
 
   create_table "accessories_equipment_models", :force => true do |t|
     t.integer  "accessory_id"
@@ -39,12 +39,14 @@ ActiveRecord::Schema.define(:version => 20091008032231) do
   create_table "equipment_models", :force => true do |t|
     t.string   "name"
     t.text     "description"
-    t.decimal  "late_fee",        :precision => 10, :scale => 2
-    t.decimal  "replacement_fee", :precision => 10, :scale => 2
+    t.decimal  "late_fee",            :precision => 10, :scale => 2
+    t.decimal  "replacement_fee",     :precision => 10, :scale => 2
     t.integer  "max_per_user"
     t.integer  "category_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "checkout_procedures"
+    t.string   "checkin_procedures"
   end
 
   create_table "equipment_models_reservations", :force => true do |t|

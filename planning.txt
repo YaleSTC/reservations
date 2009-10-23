@@ -1,3 +1,32 @@
+EquipmentObjects:
+  name + serial
+  serial not visible to normal users
+  
+Checkout
+  procedures
+    text for now, maybe checkboxes later
+  type in netid
+  
+Emails
+  from admin_email
+    options
+      send me all emails
+      send me all overdue emails
+  different from address?
+  
+  email notification to next reserver if someone hasn't returned the equipment
+  
+EquipmentObject
+  tracking who had what when
+  
+EquipmentModels:
+  users can't destroy documentation and images :P
+
+
+
+
+
+
 AppConfig:
   - default (admin) email address to send notifications
   - custom email bodies for overdue/due notifications

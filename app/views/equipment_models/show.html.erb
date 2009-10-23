@@ -107,6 +107,30 @@
         </ul>
       <% end %>
     </p>
+    <p>
+      <strong>Checkout Procedures:</strong>
+      <% if @equipment_model.checkout_procedures.nil? %>
+        none
+      <% else %>
+        <ul>
+          <% @equipment_model.checkout_procedures.each do |checkout_procedure| %>
+            <li><%= checkout_procedure %></li>
+          <% end %>
+        </ul>
+      <% end %>
+    </p>
+    <p>
+      <strong>Checkin Procedures:</strong>
+      <% if @equipment_model.checkin_procedures.nil? %>
+        none
+      <% else %>
+        <ul>
+          <% @equipment_model.checkin_procedures.each do |checkin_procedure| %>
+            <li><%= checkin_procedure %></li>
+          <% end %>
+        </ul>
+      <% end %>
+    </p>
   <% end %>
 </fieldset>
 
