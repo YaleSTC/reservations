@@ -43,6 +43,7 @@ class EquipmentModel < ActiveRecord::Base
         nice_content += line
       else
         nice_content += line + "<br />" 
+      end
     end
     nice_content += "</p>"
   end
