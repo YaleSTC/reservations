@@ -11,6 +11,25 @@
       </li>
     <% end %>
   </ul>
+  <p>
+    <strong>Checkin procedures:</strong>
+    <ul>
+      <% @reservation.equipment_models_reservations.each do |item| %>
+        <li><%= item.equipment_model.name %></li>
+        <ul>
+          <% if item.equipment_model.checkin_procedures.nil? %>
+            no checkin procedures
+          <% else %>
+            <% item.equipment_model.checkin_procedures.each do |checkin_procedure| %>
+              <li style="list-style: none">
+                <%= check_box_tag 'reservation[checkin_procedures][]' %> <%= checkin_procedure %>
+              </li>
+            <% end %>
+          <% end %>
+        </ul>
+      <% end %>
+    </ul>
+  </p>
   <% if @reservation.due_date.to_date < Date.today %>
     <p>
       This equipment is <strong class="error">overdue.</strong><br />

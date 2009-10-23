@@ -18,5 +18,24 @@
     This equipment is <strong>due back on <%= @reservation.due_date.to_date.to_s(:long) %>.</strong><br />
     An overdue return will incur a combined late fee of <%= number_to_currency(@reservation.late_fee) %> / day.
   </p>
+  <p>
+    <strong>Checkout procedures:</strong>
+    <ul>
+      <% @reservation.equipment_models_reservations.each do |item| %>
+        <li><%= item.equipment_model.name %></li>
+        <ul>
+          <% if item.equipment_model.checkout_procedures.nil? %>
+            no checkout procedures
+          <% else %>
+            <% item.equipment_model.checkout_procedures.each do |checkout_procedure| %>
+              <li style="list-style: none">
+                <%= check_box_tag 'reservation[checkout_procedures][]' %> <%= checkout_procedure %>
+              </li>
+            <% end %>
+          <% end %>
+        </ul>
+      <% end %>
+    </ul>
+  </p>
   <%= submit_tag "Check out equipment" %>
 <% end %>

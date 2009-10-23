@@ -53,14 +53,22 @@ class ReservationsController < ApplicationController
       if params[:reservation][:equipment_object_ids].uniq!
         flash.now[:error] = "The same piece of equipment cannot be assigned twice!"
         render :action => 'check_out' and return 
+      # elsif not all checkout procedures were checked
+      elsif (@reservation.equipment_models_reservations.map{|r| r.equipment_model.checkout_procedures.nil? ? 0 : r.equipment_model.checkout_procedures.size}.sum) > 0 and (params[:reservation][:checkout_procedures].nil? or params[:reservation][:checkout_procedures].size != @reservation.equipment_models_reservations.map{|r| r.equipment_model.checkout_procedures.nil? ? 0 : r.equipment_model.checkout_procedures.size}.sum)
+        flash.now[:error] = "Make sure to complete all checkout procedures!"
+        render :action => 'check_out' and return
       end
     elsif params[:commit] == "Check in equipment"
       @reservation.checked_in = Time.now
       @reservation.checkin_handler = current_user
       # if not all objects are returned, throw up a warning
-      if params[:reservation][:equipment_object_ids].size != @reservation.equipment_objects.size
+      if params[:reservation].nil? or params[:reservation][:equipment_object_ids].size != @reservation.equipment_objects.size
         flash.now[:error] = "You must return all equipment to complete check-in!" 
         render :action => 'check_in' and return 
+      # elsif not all checkin procedures were checked
+      elsif (@reservation.equipment_models_reservations.map{|r| r.equipment_model.checkin_procedures.nil? ? 0 : r.equipment_model.checkin_procedures.size}.sum) > 0 and (params[:reservation][:checkin_procedures].nil? or params[:reservation][:checkin_procedures].size != @reservation.equipment_models_reservations.map{|r| r.equipment_model.checkin_procedures.nil? ? 0 : r.equipment_model.checkin_procedures.size}.sum)
+        flash.now[:error] = "Make sure to complete all checkin procedures!"
+        render :action => 'check_in' and return
       end
       #return the checked off items
       params[:reservation][:equipment_object_ids] = @reservation.equipment_objects.collect{|e| e.id.to_s} - params[:reservation][:equipment_object_ids]
