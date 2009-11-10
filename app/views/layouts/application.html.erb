@@ -123,6 +123,7 @@
                 <% if current_user and current_user.is_admin? %>
                   <li><%= link_to "Categories", categories_path %></li>
                   <li><%= link_to "Equipment Models", equipment_models_path %></li>
+                  <li><%= link_to "Equipment Objects", equipment_objects_path %></li>
                 <% end %>
                 <li><%= link_to "Reservations", reservations_path %></li>
                 <% if current_user and current_user.is_admin? %>

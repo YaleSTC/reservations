@@ -1,4 +1,6 @@
 class EquipmentObjectsController < ApplicationController
+  before_filter :require_admin
+  
   def index
     @equipment_objects = EquipmentObject.all
     if params[:equipment_model_id]
