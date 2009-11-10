@@ -12,7 +12,7 @@
 <% end %>
 <p>
   <strong>Equipment Model:</strong>
-  <%=h @equipment_object.equipment_model.name %>
+  <%= link_to @equipment_object.equipment_model.name, @equipment_object.equipment_model %>
 </p>
 <p>
   <strong>Status:</strong>

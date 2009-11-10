@@ -2,7 +2,10 @@
   <% form_for add_equipment_object_form do |f| %>
     <%= f.hidden_field :equipment_model_id, :value => @equipment_model.id %>
     <p>
-      <%= f.text_field :name, :value => 'Enter name or serial #', :onclick => "if(this.value == 'Enter name or serial #') this.value='';" %>
+      <%= f.text_field :name, :value => 'Enter name', :onclick => "if(this.value == 'Enter name') this.value='';" %>
+    </p>
+    <p>
+      <%= f.text_field :serial, :value => 'Enter serial # (optional)', :onclick => "if(this.value == 'Enter serial # (optional)') this.value='';" %>
     </p>
     <p>
       <%= f.submit "Add Equipment Object" %>

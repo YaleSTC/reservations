@@ -22,6 +22,7 @@ class EquipmentObjectsController < ApplicationController
   
   def create
     @equipment_object = EquipmentObject.new(params[:equipment_object])
+    @equipment_object.serial = nil if @equipment_object.serial = "Enter serial # (optional)"
     if @equipment_object.save
       flash[:notice] = "Successfully created equipment object."
       redirect_to @equipment_object.equipment_model
@@ -46,8 +47,9 @@ class EquipmentObjectsController < ApplicationController
   
   def destroy
     @equipment_object = EquipmentObject.find(params[:id])
+    @equipment_model = @equipment_object.equipment_model
     @equipment_object.destroy
     flash[:notice] = "Successfully destroyed equipment object."
-    redirect_to equipment_objects_url
+    redirect_to @equipment_model
   end
 end

@@ -96,7 +96,10 @@
       <% else %>
         <ul>
           <% @equipment_model.equipment_objects.each do |equipment_object| %>
-            <li><%= link_to equipment_object.name, equipment_object %> (<%= equipment_object.status %>) <%= link_to "[x]", equipment_object, :confirm => 'Are you sure you want to delete this equipment object?', :method => :delete %>
+            <li>
+              <%= link_to equipment_object.name, equipment_object %> 
+              (<%= equipment_object.status %>) <%= link_to "[x]", equipment_object, :confirm => 'Are you sure you want to delete this equipment object?', :method => :delete %>
+              <%= "<br>&nbsp;&nbsp;<small>Serial #: #{equipment_object.serial}</small>" unless equipment_object.serial.blank? %>
             </li>
           <% end %>
           <li style="list-style:none">
