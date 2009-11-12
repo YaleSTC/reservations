@@ -19,6 +19,6 @@
 
 # Learn more: http://github.com/javan/whenever
 
-every 1.day, :at => '10:35 am' do
+every 1.day, :at => '1:20 am' do
   rake "mailman"
 end
