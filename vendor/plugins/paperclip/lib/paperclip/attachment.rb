@@ -7,7 +7,9 @@ module Paperclip
     
     def self.default_options
       @default_options ||= {
-        :url           => "#{ActionController::Base.relative_url_root}/system/:attachment/:id/:style/:filename",
+        :url           => "/system/:attachment/:id/:style/:filename",
+        #this relative root fix doesn't actually work :P
+        #:url           => "#{ActionController::Base.relative_url_root}/system/:attachment/:id/:style/:filename",
         :path          => ":rails_root/public:url",
         :styles        => {},
         :default_url   => "/:attachment/:style/missing.png",
