@@ -26,6 +26,14 @@
 <% end %>
 
 <p>
+  <% if params[:show_accessories] %>
+    <%= link_to "Hide Accessories from List", equipment_objects_path %>
+  <% else %>
+    <%= link_to "Show Accessories in List", equipment_objects_path(:show_accessories => true) %>
+  <% end %>
+</p>
+
+<p>
   <% if @equipment_model %>
     <%= link_to ("New "+@equipment_model.name.singularize), new_equipment_model_equipment_object_path(@equipment_model) %> |
     <%= link_to "View All Equipment Objects", equipment_objects_path %>

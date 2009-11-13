@@ -8,7 +8,7 @@ class EquipmentObject < ActiveRecord::Base
   
   def status
     if !(@current_reservation = self.reservations).empty?
-      "checked out to "+@current_reservation[0].reserver.name
+      "checked out to #{@current_reservation[0].reserver.name} through #{@current_reservation[0].due_date.strftime("%b %d")}"
     else
       "available"
     end
