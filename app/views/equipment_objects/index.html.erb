@@ -13,8 +13,10 @@
       <td><%= link_to equipment_object.name, equipment_object %></td>
       <td><%=h equipment_object.serial %></td>
       <td><%= equipment_object.status %></td>
-      <td><%= link_to "Edit", edit_equipment_object_path(equipment_object) %></td>
-      <td><%= link_to "Destroy", equipment_object, :confirm => 'Are you sure?', :method => :delete %></td>
+      <% if current_user.is_admin? %>
+        <td><%= link_to "Edit", edit_equipment_object_path(equipment_object) %></td>
+        <td><%= link_to "Destroy", equipment_object, :confirm => 'Are you sure?', :method => :delete %></td>
+      <% end %>
     </tr>
   <% end %>
 </table>
@@ -33,11 +35,13 @@
   <% end %>
 </p>
 
-<p>
-  <% if @equipment_model %>
-    <%= link_to ("New "+@equipment_model.name.singularize), new_equipment_model_equipment_object_path(@equipment_model) %> |
-    <%= link_to "View All Equipment Objects", equipment_objects_path %>
-  <% else %>
-    <%= link_to "New Equipment Object", new_equipment_object_path %>
-  <% end %>
-</p>
+<% if current_user.is_admin? %>
+  <p>
+    <% if @equipment_model %>
+      <%= link_to ("New "+@equipment_model.name.singularize), new_equipment_model_equipment_object_path(@equipment_model) %> |
+      <%= link_to "View All Equipment Objects", equipment_objects_path %>
+    <% else %>
+      <%= link_to "New Equipment Object", new_equipment_object_path %>
+    <% end %>
+  </p>
+<% end %>
