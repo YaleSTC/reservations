@@ -10,7 +10,8 @@ class Reservation < ActiveRecord::Base
   validates_presence_of :start_date
   validates_presence_of :due_date
   validate :not_empty
-  validate :not_in_past
+  #Currently this prevents checking in overdue items. We can work on a better fix.
+  #validate :not_in_past
   validate :start_date_before_due_date
   
   named_scope :currently_out, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL"]

@@ -53,9 +53,11 @@ EOF
       run "mkdir -p #{shared_path}/log"
       run "mkdir -p #{shared_path}/pids"
       run "mkdir -p #{shared_path}/sessions"
+      run "mkdir -p #{shared_path}/system/datas"
       run "ln -nsfF #{shared_path}/log/ #{current_path}/log"
       run "ln -nsfF #{shared_path}/pids/ #{current_path}/tmp/pids"      
       run "ln -nsfF #{shared_path}/sessions/ #{current_path}/tmp/sessions"
+      run "ln -nsfF #{shared_path}/system/ #{current_path}/public/system"
     end    
   end  
 end
