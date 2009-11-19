@@ -9,6 +9,7 @@ class ReservationsController < ApplicationController
       else
         @reservations = Reservation.find(:all, :order => 'start_date ASC')
         @reservations = @reservations.select{|r| r.checked_in == nil}
+      end
     else
       @reservations = current_user.reservations.sort_by(&:start_date).reverse
     end
