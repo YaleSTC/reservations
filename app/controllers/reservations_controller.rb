@@ -4,7 +4,11 @@ class ReservationsController < ApplicationController
   
   def index
     if current_user.can_checkout?
-      @reservations = Reservation.find(:all, :order => 'start_date ASC')
+      if params[:show_returned]
+        @reservations = Reservation.find(:all, :order => 'start_date ASC')
+      else
+        @reservations = Reservation.find(:all, :conditions => ["checked_in is NULL"],  :order => 'start_date ASC')
+      end
     else
       @reservations = current_user.reservations.sort_by(&:start_date).reverse
     end
