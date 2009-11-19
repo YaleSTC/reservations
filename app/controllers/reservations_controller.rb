@@ -7,8 +7,7 @@ class ReservationsController < ApplicationController
       if params[:show_returned]
         @reservations = Reservation.find(:all, :order => 'start_date ASC')
       else
-        @reservations = Reservation.find(:all, :order => 'start_date ASC')
-        @reservations = @reservations.select{|r| r.checked_in == nil}
+        @reservations = Reservation.find(:all, :conditions => ["checked_in is NULL"],  :order => 'start_date ASC')
       end
     else
       @reservations = current_user.reservations.sort_by(&:start_date).reverse
