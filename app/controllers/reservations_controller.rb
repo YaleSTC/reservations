@@ -62,7 +62,8 @@ class ReservationsController < ApplicationController
       @reservation.checked_in = Time.now
       @reservation.checkin_handler = current_user
       # if not all objects are returned, throw up a warning
-      if params[:reservation].nil? or params[:reservation][:equipment_object_ids].size != @reservation.equipment_objects.size
+      # also, handle the error case where we return an empty reservation (a checked-out reservation with no associated equipment objects)
+      if (params[:reservation].nil? and !@reservation.equipment_objects.empty?) or (params[:reservation] and params[:reservation][:equipment_object_ids].size != @reservation.equipment_objects.size)
         flash.now[:error] = "You must return all equipment to complete check-in!" 
         render :action => 'check_in' and return 
       # elsif not all checkin procedures were checked
@@ -71,7 +72,7 @@ class ReservationsController < ApplicationController
         render :action => 'check_in' and return
       end
       #return the checked off items
-      params[:reservation][:equipment_object_ids] = @reservation.equipment_objects.collect{|e| e.id.to_s} - params[:reservation][:equipment_object_ids]
+      params[:reservation][:equipment_object_ids] = @reservation.equipment_objects.collect{|e| e.id.to_s} - params[:reservation][:equipment_object_ids] unless params[:reservation].nil?
     end
 
     if @reservation.update_attributes(params[:reservation])
