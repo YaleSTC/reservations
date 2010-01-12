@@ -10,19 +10,20 @@
 <table>
   <tr>
     <th>Reserver</th>
-    <th>Start Date</th>
+    <th>Equipment</th>
     <th>Due Date</th>
     <th>Status</th>
   </tr>
   <% for reservation in @reservations %>
     <tr>
       <td><%=h reservation.reserver.name %></td>
+      <td><%=h reservation.equipment_list %></td>
       <td><%=h reservation.start_date.to_date.to_s(:long) %></td>
       <td><%=h reservation.due_date.to_date.to_s(:long) %></td>
       <td><%=h reservation.status %></td>
-      <td><%= link_to "Show", reservation %></td>
+      <td><%= link_to "View", reservation %></td>
       <% if current_user.is_admin? %>
-        <td><%= link_to "Destroy", reservation, :confirm => 'Are you sure?', :method => :delete %></td>
+        <td><%= link_to "Delete", reservation, :confirm => 'Are you sure?', :method => :delete %></td>
       <% end %>
     </tr>
   <% end %>
