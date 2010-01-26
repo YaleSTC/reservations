@@ -10,7 +10,7 @@ task (:mailman => :environment) do
   puts "Done!"
   
   #get all reservations that end today and aren't already checked in
-  upcoming_reservations = Reservation.find(:all, :conditions => ["checked_in IS NULL and due_date >= ? and due_date < ?", Time.now.midnight.utc, Time.now.midnight.utc + 1.day])
+  upcoming_reservations = Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and due_date >= ? and due_date < ?", Time.now.midnight.utc, Time.now.midnight.utc + 1.day])
   puts "Found #{upcoming_reservations.size} reservations due for checkin. Sending reminder emails..."
   upcoming_reservations.each do |upcoming_reservation|
     Notifier.deliver_upcoming_checkin_notification(upcoming_reservation)
@@ -26,7 +26,7 @@ task (:mailman => :environment) do
   puts "Done!"
   
   #get all reservations that ended before today and aren't already checked in
-  upcoming_reservations = Reservation.find(:all, :conditions => ["checked_in IS NULL and due_date < ?", Time.now.midnight.utc])
+  upcoming_reservations = Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc])
   puts "Found #{upcoming_reservations.size} reservations overdue for checkin. Sending reminder emails..."
   upcoming_reservations.each do |upcoming_reservation|
     Notifier.deliver_overdue_checkin_notification(upcoming_reservation)
