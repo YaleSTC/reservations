@@ -1,20 +1,22 @@
 # == INITIAL CONFIG ==============
+set :application, "reservations"
+set :repository,  "git@github.com:YaleSTC/reservations.git"
+set :apache_config_dir, "/etc/apache2/vhosts.d"
+set :document_root, "/srv/www/htdocs"
 
 set :user, "deploy"
 set :runner, "deploy"
-set :use_sudo, :true
+set :use_sudo, false
 
-set :domain, Capistrano::CLI.ui.ask("deployment server hostname (e.g. weke.its.yale.edu): ")
-set :application, "reservations"
-set :application_prefix, Capistrano::CLI.ui.ask("deployment application prefix (e.g. bass): ")
+set :domain, Capistrano::CLI.ui.ask("Deployment server hostname (e.g. weke.its.yale.edu): ")
+set :application_prefix, Capistrano::CLI.ui.ask("Deployment application prefix (e.g. bass): ")
+set :branch, Capistrano::CLI.ui.ask("deployment branch (e.g. master): ")
 set :deploy_to, "/srv/www/rails/#{application}/#{application_prefix}"
 
-
-set :repository,  "git@github.com:YaleSTC/reservations.git"
 set :scm, :git
 #set :deploy_via, :remote_cache
 set :scm_verbose, false
-set :branch, "master"
+
 
 role :app, "#{domain}"
 role :web, "#{domain}"
@@ -22,7 +24,6 @@ role :db,  "#{domain}", :primary => true
 
 
 # == CONFIG ====================================================================
-# == SET UP DB STUFF, MONGREL CONFIG
 
 namespace :init do
   namespace :config do
@@ -76,6 +77,13 @@ namespace :db do
     set :backup_file, "#{shared_path}/backup/#{application}-snapshot-#{backup_time}.sql"
     run "mysqldump --add-drop-table -u #{db_user} -p #{db_pass} #{application}_#{application_prefix}_production --opt | bzip2 -c > #{backup_file}.bz2"
   end
+
+  desc "Create database"
+  task :create, :roles => :db, :only => {:primary => true} do
+    run "cd #{release_path} && rake db:create RAILS_ENV=production"
+  end
+
+
 end
 
 #== DEPLOYMENT
@@ -83,6 +91,23 @@ end
 
 #before "deploy:migrate", "db:backup"
 namespace :deploy do
+
+  desc "Initializer. Runs setup, copies code, creates and migrates db, and starts app"
+  task :first, :roles => :app do
+    setup
+    update
+    passenger_config
+    db:create
+    migrate
+    restart_apache
+  end
+
+  desc "Create vhosts file for Passenger config"
+  task :passenger_config, :roles => :app do
+    run "#{sudo} sh -c \'echo \"RailsBaseURI /#{application_prefix}\" > #{apache_config_dir}/rails_#{application}_#{application_prefix}.conf\'"
+    run "#{sudo} ln -s #{deploy_to}/current/public #{document_root}/#{application_prefix}"    
+  end
+
   task :start, :roles => :app do
     run "touch #{current_release}/tmp/restart.txt"
   end
@@ -95,17 +120,24 @@ namespace :deploy do
   task :restart, :roles => :app do
     run "touch #{current_release}/tmp/restart.txt"
   end
-end
 
-after "deploy", "deploy:cleanup"
-after "deploy:migrations", "deploy:cleanup"
-after "deploy:setup", "init:config:database"
-after "deploy:symlink", "init:config:localize"
-after "deploy:symlink", "deploy:update_crontab"
+  desc "Restart Apache"
+  task :restart_apache, :roles => :app do
 
-namespace :deploy do
+      run "#{sudo} /etc/init.d/apache2 restart"
+
+  end
+
+
   desc "Update the crontab file"
   task :update_crontab, :roles => :db do
     run "cd #{release_path} && whenever --update-crontab #{application}-#{application_prefix}"
   end
+
 end
+
+after "deploy:setup", "init:config:database"
+after "deploy:symlink", "init:config:localize"
+after "deploy:symlink", "deploy:update_crontab"
+after "deploy", "deploy:cleanup"
+after "deploy:migrations", "deploy:cleanup"
