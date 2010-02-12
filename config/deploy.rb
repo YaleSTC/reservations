@@ -78,12 +78,6 @@ namespace :db do
     run "mysqldump --add-drop-table -u #{db_user} -p #{db_pass} #{application}_#{application_prefix}_production --opt | bzip2 -c > #{backup_file}.bz2"
   end
 
-  desc "Create database"
-  task :create, :roles => :db, :only => {:primary => true} do
-    run "cd #{release_path} && rake db:create RAILS_ENV=production"
-  end
-
-
 end
 
 #== DEPLOYMENT
@@ -97,7 +91,7 @@ namespace :deploy do
     setup
     update
     passenger_config
-    db:create
+    create_db
     migrate
     restart_apache
   end
@@ -106,6 +100,11 @@ namespace :deploy do
   task :passenger_config, :roles => :app do
     run "#{sudo} sh -c \'echo \"RailsBaseURI /#{application_prefix}\" > #{apache_config_dir}/rails_#{application}_#{application_prefix}.conf\'"
     run "#{sudo} ln -s #{deploy_to}/current/public #{document_root}/#{application_prefix}"    
+  end
+
+  desc "Create database"
+  task :create_db, :roles => :app, :only => {:primary => true} do
+    run "cd #{release_path} && #{sudo} rake db:create RAILS_ENV=production"
   end
 
   task :start, :roles => :app do
