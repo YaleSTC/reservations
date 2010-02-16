@@ -21,7 +21,7 @@ Rails::Initializer.run do |config|
   # config.gem "aws-s3", :lib => "aws/s3"
   config.gem 'whenever', :lib => false, :source => 'http://gemcutter.org'
   config.gem 'ruby-net-ldap', :lib => "net/ldap"
-
+  config.gem 'paperclip', :source => 'http://gemcutter.org'
   # Configure Rails Mail options
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
