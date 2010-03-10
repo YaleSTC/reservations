@@ -50,6 +50,9 @@
       <%= link_to "Check in", check_in_reservation_path(@reservation) %> |
     <% end %>
   <% end %>
+  <% if current_user.is_admin? %>
+    <%= link_to "Edit reservation", edit_reservation_path(@reservation) %> |
+  <% end %>
   <% if @reservation.status == "reserved" or current_user.is_admin? %>
     <%= link_to "Cancel reservation", @reservation, :confirm => 'Are you sure?', :method => :delete %> |
   <% end %>
