@@ -5,9 +5,9 @@ class ReservationsController < ApplicationController
   def index
     if current_user.can_checkout?
       if params[:show_returned]
-        @reservations = Reservation.find(:all, :order => 'start_date ASC')
+        @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.pending, Reservation.returned ].delete_if{|a| a.empty?} #remove empty arrays from set
       else
-        @reservations = Reservation.find(:all, :conditions => ["checked_in is NULL"],  :order => 'start_date ASC')
+        @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.pending ].delete_if{|a| a.empty?}
       end
     else
       @reservations = current_user.reservations.sort_by(&:start_date).reverse

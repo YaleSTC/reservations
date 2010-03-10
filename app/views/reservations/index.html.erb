@@ -7,25 +7,4 @@
   <% end %>
 </p>
 
-<table>
-  <tr>
-    <th>Reserver</th>
-    <th>Equipment</th>
-    <th>Start Date</th>
-    <th>Due Date</th>
-    <th>Status</th>
-  </tr>
-  <% for reservation in @reservations %>
-    <tr>
-      <td><%=h reservation.reserver.name %></td>
-      <td><%= reservation.equipment_list.gsub("\r\n", "<br>") %></td>
-      <td><%=h reservation.start_date.to_date.to_s(:long) %></td>
-      <td><%=h reservation.due_date.to_date.to_s(:long) %></td>
-      <td><%=h reservation.status %></td>
-      <td><%= link_to "View", reservation %></td>
-      <% if current_user.is_admin? %>
-        <td><%= link_to "Delete", reservation, :confirm => 'Are you sure?', :method => :delete %></td>
-      <% end %>
-    </tr>
-  <% end %>
-</table>
+<%= render :partial => "reservations_list", :collection => @reservations_set %>
