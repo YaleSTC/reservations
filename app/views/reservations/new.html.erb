@@ -3,7 +3,7 @@
 <% form_for @reservation do |f| %>
   <%= f.error_messages %>
   <p>The following equipment will be reserved by 
-    <% if current_user and current_user.is_admin? %>
+    <% if current_user and (current_user.is_admin? || current_user.is_checkout_person?) %>
       <%= f.select :reserver_id, User.select_options, :prompt => true %>
     <% else %>
       <%= current_user.name %>

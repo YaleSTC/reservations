@@ -1,3 +1,8 @@
+# == DEPLOYMENT DEFAULTS =========
+default_domain = ENV['DOMAIN'] ? ENV['DOMAIN'] : "mahi.its.yale.edu"
+default_application_prefix = ENV['PREFIX'] ? ENV['PREFIX'] : "reservations_test"
+default_branch = ENV['BRANCH'] ? ENV['BRANCH'] : "master"
+
 # == INITIAL CONFIG ==============
 set :application, "reservations"
 set :repository,  "git@github.com:YaleSTC/reservations.git"
@@ -8,15 +13,19 @@ set :user, "deploy"
 set :runner, "deploy"
 set :use_sudo, false
 
-set :domain, Capistrano::CLI.ui.ask("Deployment server hostname (e.g. weke.its.yale.edu): ")
-set :application_prefix, Capistrano::CLI.ui.ask("Deployment application prefix (e.g. bass): ")
-set :branch, Capistrano::CLI.ui.ask("deployment branch (e.g. master): ")
+set :domain, Capistrano::CLI.ui.ask("Deployment server hostname (default #{default_domain}): ") unless ENV['DOMAIN']
+set :application_prefix, Capistrano::CLI.ui.ask("Application prefix (default #{default_application_prefix}): ") unless ENV['PREFIX']
+set :branch, Capistrano::CLI.ui.ask("Deployment branch (default #{default_branch}): ") unless ENV['BRANCH']
+
+#Set Variables to default if specified from command line or left blank
+set :domain, default_domain if (ENV['DOMAIN'] || fetch(:domain) == "")
+set :application_prefix, default_application_prefix if (ENV['PREFIX'] || fetch(:application_prefix) == "")
+set :branch, default_branch if (ENV['BRANCH'] || fetch(:branch) == "")
+
 set :deploy_to, "/srv/www/rails/#{application}/#{application_prefix}"
 
 set :scm, :git
-#set :deploy_via, :remote_cache
 set :scm_verbose, false
-
 
 role :app, "#{domain}"
 role :web, "#{domain}"
@@ -45,12 +54,25 @@ EOF
       put database_configuration, "#{shared_path}/config/database.yml"
     end
 
+    desc "Enter Hoptoad API code"
+    task :hoptoad do
+      set :api_key, Capistrano::CLI.ui.ask("Hoptoad API Key: ")
+      hoptoad_config=<<-EOF
+HoptoadNotifier.configure do |config|
+  config.api_key = '#{api_key}'
+end
+
+EOF
+      put hoptoad_config, "#{shared_path}/config/hoptoad.rb"
+    end
 
     desc "Symlink shared configurations to current"
     task :localize, :roles => [:app] do
-      %w[database.yml].each do |f|
-        run "ln -nsf #{shared_path}/config/#{f} #{current_path}/config/#{f}"
-      end
+
+      run "ln -nsf #{shared_path}/config/database.yml #{current_path}/config/database.yml"
+      #Temporarily disabled until hoptoad integration is complete
+      #run "ln -nsf #{shared_path}/config/hoptoad.rb #{current_path}/config/initializers/hoptoad.rb"
+
       run "mkdir -p #{shared_path}/log"
       run "mkdir -p #{shared_path}/pids"
       run "mkdir -p #{shared_path}/sessions"
@@ -90,8 +112,8 @@ namespace :deploy do
   task :first, :roles => :app do
     setup
     update
-    passenger_config
     create_db
+    passenger_config
     migrate
     restart_apache
   end
@@ -103,7 +125,7 @@ namespace :deploy do
   end
 
   desc "Create database"
-  task :create_db, :roles => :app, :only => {:primary => true} do
+  task :create_db, :roles => :app do
     run "cd #{release_path} && #{sudo} rake db:create RAILS_ENV=production"
   end
 
@@ -122,20 +144,18 @@ namespace :deploy do
 
   desc "Restart Apache"
   task :restart_apache, :roles => :app do
-
       run "#{sudo} /etc/init.d/apache2 restart"
-
   end
 
-
   desc "Update the crontab file"
-  task :update_crontab, :roles => :db do
-    run "cd #{release_path} && whenever --update-crontab #{application}-#{application_prefix}"
+  task :update_crontab, :roles => :app do
+    run "cd #{release_path} && whenever --update-crontab #{application}-#{application_prefix} --set 'rails_root=#{current_path}'"
   end
 
 end
 
 after "deploy:setup", "init:config:database"
+#after "deploy:setup", "init:config:hoptoad"
 after "deploy:symlink", "init:config:localize"
 after "deploy:symlink", "deploy:update_crontab"
 after "deploy", "deploy:cleanup"
