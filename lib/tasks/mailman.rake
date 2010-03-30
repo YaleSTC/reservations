@@ -18,7 +18,7 @@ task (:mailman => :environment) do
   puts "Done!"
   
   #get all reservations that started before today and aren't already checked out
-  upcoming_reservations = Reservation.find(:all, :conditions => ["checked_out IS NULL and start_date <= ? and  start_date > ?", Time.now.midnight.utc, Time.now.midnight.utc - 1.day])
+  upcoming_reservations = Reservation.find(:all, :conditions => ["checked_out IS NULL and start_date < ? and  start_date >= ?", Time.now.midnight.utc, Time.now.midnight.utc - 1.day])
   puts "Found #{upcoming_reservations.size} reservations overdue for checkout. Sending reminder emails..."
   upcoming_reservations.each do |upcoming_reservation|
     Notifier.deliver_overdue_checkout_notification(upcoming_reservation)
