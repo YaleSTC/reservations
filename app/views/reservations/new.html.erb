@@ -57,6 +57,7 @@
             </li>
           <% end %>
           <% if category.maximum_checkout_length != "unrestricted" and category.max_checkout_length < cart.duration %>
+            <% acceptable_reservation = false %>
             <li>
               <small>
                 <strong class="error">You may not check out a <%= category.name.singularize %> for more than 
