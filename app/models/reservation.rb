@@ -54,7 +54,11 @@ class Reservation < ActiveRecord::Base
   def equipment_list
     raw_text = ""
     self.equipment_models_reservations.each do |equipment_models_reservations|
-      raw_text += "#{equipment_models_reservations.quantity} x #{equipment_models_reservations.equipment_model.name}\r\n"
+      if requipment_models_reservations.equipment_model
+        raw_text += "#{equipment_models_reservations.quantity} x #{equipment_models_reservations.equipment_model.name}\r\n"
+      else
+        raw_text += "#{equipment_models_reservations.quantity} x *equipment deleted*\r\n"
+      end
     end
     raw_text
   end
