@@ -10,7 +10,11 @@
   <% for reservation in reservations_list %>
     <tr>
       <td><%= link_to reservation.id, reservation %></td>
-      <td><%=h reservation.reserver.name %></td>
+      <% if reservation.reserver%>
+        <td><%=h reservation.reserver.name %></td>
+      <% else %>
+        <td>User no longer exists</td>
+      <% end %>
       <td><%= reservation.equipment_list.gsub("\r\n", "<br>") %></td>
       <td><%=h reservation.start_date.to_date.to_s(:long) %></td>
       <td><%=h reservation.due_date.to_date.to_s(:long) %></td>
