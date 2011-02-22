@@ -5,9 +5,9 @@ default_branch = ENV['BRANCH'] ? ENV['BRANCH'] : "master"
 
 # == INITIAL CONFIG ==============
 set :application, "reservations"
-set :repository,  "git@github.com:YaleSTC/reservations.git"
-set :apache_config_dir, "/etc/apache2/vhosts.d"
-set :document_root, "/srv/www/htdocs"
+set :repository,  "git://github.com/YaleSTC/reservations.git"
+set :apache_config_dir, "/etc/httpd/conf.d"
+set :document_root, "/var/www/html"
 
 set :user, "deploy"
 set :runner, "deploy"
@@ -22,7 +22,7 @@ set :domain, default_domain if (ENV['DOMAIN'] || fetch(:domain) == "")
 set :application_prefix, default_application_prefix if (ENV['PREFIX'] || fetch(:application_prefix) == "")
 set :branch, default_branch if (ENV['BRANCH'] || fetch(:branch) == "")
 
-set :deploy_to, "/srv/www/rails/#{application}/#{application_prefix}"
+set :deploy_to, "/var/www/rails/#{application}/#{application_prefix}"
 
 set :scm, :git
 set :scm_verbose, false
@@ -46,7 +46,7 @@ production:
   adapter: mysql
   database: #{application}_#{application_prefix}_production
   host: localhost
-  user: #{mysql_user}
+  username: #{mysql_user}
   password: #{mysql_pass}
 
 EOF
@@ -112,7 +112,7 @@ namespace :deploy do
   task :first, :roles => :app do
     setup
     update
-    create_db
+    #create_db
     passenger_config
     migrate
     restart_apache
@@ -120,8 +120,8 @@ namespace :deploy do
 
   desc "Create vhosts file for Passenger config"
   task :passenger_config, :roles => :app do
-    run "#{sudo} sh -c \'echo \"RailsBaseURI /#{application_prefix}\" > #{apache_config_dir}/rails_#{application}_#{application_prefix}.conf\'"
-    run "#{sudo} ln -s #{deploy_to}/current/public #{document_root}/#{application_prefix}"    
+    run "sh -c \'echo \"RailsBaseURI /#{application_prefix}\" > #{apache_config_dir}/rails/rails_#{application}_#{application_prefix}.conf\'"
+    run "ln -s #{deploy_to}/current/public #{document_root}/#{application_prefix}"    
   end
 
   desc "Create database"
@@ -144,7 +144,7 @@ namespace :deploy do
 
   desc "Restart Apache"
   task :restart_apache, :roles => :app do
-      run "#{sudo} /etc/init.d/apache2 restart"
+      run "#{sudo} /etc/init.d/httpd restart"
   end
 
   desc "Update the crontab file"
