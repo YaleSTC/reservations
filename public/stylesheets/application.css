@@ -4,6 +4,10 @@
   overflow: hidden;
 }
 
+#itg_wrapper {
+	width: 920px;
+}
+
 #content {
   padding: 15px 15px 20px 15px;
 	margin: 0;
