@@ -1,10 +1,12 @@
 # SQLite version 3.x
 #   gem install sqlite3-ruby (not necessary on OS X Leopard)
 development:
-  adapter: sqlite3
-  database: db/development.sqlite3
+  adapter: mysql
+  database: reservations_development
   pool: 5
-  timeout: 5000
+  user: root
+  password: Yale2013
+  host: localhost
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
