@@ -15,9 +15,11 @@
           <h3><%= link_to equipment_model.name, equipment_model %></h3>
           (<%= equipment_model.available?(cart.start_date..cart.due_date) || "0" %> available from <%= cart.start_date %> to <%= cart.due_date %>)<br />
           <%= link_to_remote "[add to cart]", {:url => add_to_cart_path(equipment_model)}, :href => add_to_cart_path(equipment_model) %><br /><br />
+       <% # Using both the ":url" and ":href" symbols seems redundant. Remove one? %>
         </li>
       <% end %>
     <% end %>
     </ul>
   <% end %>
 <% end %>
+
