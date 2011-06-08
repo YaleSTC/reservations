@@ -5,7 +5,7 @@ development:
   database: reservations_development
   pool: 5
   user: root
-  password: Yale2013
+  password: 
   host: localhost
 
 # Warning: The database defined as "test" will be erased and

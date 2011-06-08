@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091023172207) do
+ActiveRecord::Schema.define(:version => 20110401155438) do
 
   create_table "accessories_equipment_models", :force => true do |t|
     t.integer  "accessory_id"
@@ -45,8 +45,9 @@ ActiveRecord::Schema.define(:version => 20091023172207) do
     t.integer  "category_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "checkout_procedures"
-    t.string   "checkin_procedures"
+    t.text     "checkout_procedures"
+    t.text     "checkin_procedures"
+    t.boolean  "active",                                             :default => true
   end
 
   create_table "equipment_models_reservations", :force => true do |t|
