@@ -1,0 +1,14 @@
+--- 
+equipment_models_001: 
+  active: "1"
+  category_id: "2"
+  checkin_procedures: 
+  checkout_procedures: 
+  created_at: 2011-06-10 13:13:27
+  description: ...
+  id: "1"
+  late_fee: "10.00"
+  max_per_user: 
+  name: Canon
+  replacement_fee: "500.00"
+  updated_at: 2011-06-10 13:13:27

@@ -6,6 +6,7 @@ class CreateEquipmentModels < ActiveRecord::Migration
       t.decimal :late_fee, :precision => 10, :scale => 2
       t.decimal :replacement_fee, :precision => 10, :scale => 2
       t.integer :max_per_user
+      t.boolean :active, :default => true
       t.references :category
       t.timestamps
     end

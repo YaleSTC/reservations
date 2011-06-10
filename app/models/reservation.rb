@@ -1,7 +1,7 @@
 class Reservation < ActiveRecord::Base
-  has_many :equipment_models_reservations
-  has_many :equipment_models, :through => :equipment_models_reservations
-  has_and_belongs_to_many :equipment_objects
+  # has_many :equipment_models_reservations
+  belongs_to :equipment_model
+  belongs_to :equipment_object
   belongs_to :reserver, :class_name => 'User'
   belongs_to :checkout_handler, :class_name => 'User'
   belongs_to :checkin_handler, :class_name => 'User'
@@ -20,7 +20,7 @@ class Reservation < ActiveRecord::Base
   named_scope :active, :conditions => ["checked_in IS NULL"] #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
   named_scope :returned, :conditions => ["checked_in IS NOT NULL and checked_out IS NOT NULL"]
   
-  attr_accessible :reserver, :reserver_id, :checkout_handler, :checkout_handler_id, :checkin_handler, :checkin_handler_id, :start_date, :due_date, :checked_out, :checked_in, :equipment_object_ids
+  attr_accessible :reserver, :reserver_id, :checkout_handler, :checkout_handler_id, :checkin_handler, :checkin_handler_id, :start_date, :due_date, :checked_out, :checked_in, :equipment_model_id, :equipment_object_id
   
   def status
     #TODO: check this logic

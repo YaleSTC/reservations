@@ -3,6 +3,7 @@ class CreateEquipmentObjects < ActiveRecord::Migration
     create_table :equipment_objects do |t|
       t.string :name
       t.string :serial
+      t.boolean :active, :default => true
       t.references :equipment_model
       t.timestamps
     end

@@ -4,9 +4,9 @@ class EquipmentModel < ActiveRecord::Base
   belongs_to :category
   has_many :equipment_objects
   has_many :documents
-  #has_and_belongs_to_many :reservations
-  has_many :equipment_models_reservations
-  has_many :reservations, :through => :equipment_models_reservations
+  # has_and_belongs_to_many :reservations
+  # has_many :equipment_models_reservations
+  has_many :reservations
   
   #associates with itself for accessories/recommended related models
   has_many :accessories_equipment_models, :foreign_key => :equipment_model_id
