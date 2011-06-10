@@ -15,3 +15,35 @@ equipment_objects_002:
   name: Cassie
   serial: 
   updated_at: 2011-06-10 13:23:31
+equipment_objects_003: 
+  active: "1"
+  created_at: 2011-06-10 18:15:55
+  equipment_model_id: "2"
+  id: "3"
+  name: Nathan
+  serial: 
+  updated_at: 2011-06-10 18:15:55
+equipment_objects_004: 
+  active: "1"
+  created_at: 2011-06-10 18:16:31
+  equipment_model_id: "2"
+  id: "4"
+  name: Nikki
+  serial: 
+  updated_at: 2011-06-10 18:16:31
+equipment_objects_005: 
+  active: "1"
+  created_at: 2011-06-10 18:19:24
+  equipment_model_id: "3"
+  id: "5"
+  name: Steph
+  serial: 
+  updated_at: 2011-06-10 18:19:24
+equipment_objects_006: 
+  active: "1"
+  created_at: 2011-06-10 19:43:21
+  equipment_model_id: "4"
+  id: "6"
+  name: Red Lens
+  serial: 
+  updated_at: 2011-06-10 19:43:21

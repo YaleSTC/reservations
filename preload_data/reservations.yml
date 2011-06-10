@@ -1,27 +1,2 @@
---- 
-reservations_001: 
-  checked_in: 
-  checked_out: 
-  checkin_handler_id: 
-  checkout_handler_id: 
-  created_at: 2011-06-10 14:38:42
-  due_date: 2011-06-12 04:00:00
-  equipment_model_id: "1"
-  equipment_object_id: 
-  id: "1"
-  reserver_id: "1"
-  start_date: 2011-06-10 04:00:00
-  updated_at: 2011-06-10 16:36:14
-reservations_002: 
-  checked_in: 
-  checked_out: 
-  checkin_handler_id: 
-  checkout_handler_id: 
-  created_at: 2011-06-10 16:38:45
-  due_date: 2011-06-10 04:00:00
-  equipment_model_id: "1"
-  equipment_object_id: 
-  id: "2"
-  reserver_id: "1"
-  start_date: 2011-06-10 04:00:00
-  updated_at: 2011-06-10 16:38:45
+--- {}
+

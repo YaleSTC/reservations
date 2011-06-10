@@ -1,2 +1,7 @@
---- {}
-
+--- 
+accessories_equipment_models_001: 
+  accessory_id: "4"
+  created_at: 2011-06-10 19:44:01
+  equipment_model_id: "1"
+  id: "1"
+  updated_at: 2011-06-10 19:44:01
