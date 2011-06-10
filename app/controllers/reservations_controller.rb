@@ -29,19 +29,34 @@ class ReservationsController < ApplicationController
     end
   end
   
+  # def create
+  #   @reservation = Reservation.new(params[:reservation])
+  #   cart.items.each do |item|
+  #     @reservation.equipment_models_reservations << EquipmentModelsReservation.new(:equipment_model_id => item.equipment_model.id, :quantity => item.quantity)
+  #   end
+  #   if @reservation.save
+  #     flash[:notice] = "Successfully created reservation."
+  #     session[:cart] = Cart.new
+  #     redirect_to @reservation
+  #   else
+  #     render :action => 'new'
+  #   end
+  # end
+
   def create
-    @reservation = Reservation.new(params[:reservation])
     cart.items.each do |item|
-      @reservation.equipment_models_reservations << EquipmentModelsReservation.new(:equipment_model_id => item.equipment_model.id, :quantity => item.quantity)
-    end
-    if @reservation.save
-      flash[:notice] = "Successfully created reservation."
-      session[:cart] = Cart.new
-      redirect_to @reservation
-    else
-      render :action => 'new'
+      @reservation = Reservation.new(params[:reservation])
+      @reservation.equipment_model =  item.equipment_model
+      if @reservation.save
+        flash[:notice] = "Successfully created reservation."
+        session[:cart] = Cart.new
+        redirect_to @reservation
+      else
+        render :action => 'new'
+      end
     end
   end
+
   
   def edit
     @reservation = Reservation.find(params[:id])

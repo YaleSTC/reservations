@@ -1,4 +1,4 @@
-<% unless current_equipment.equipment_objects.empty? %>
+<% unless current_equipment # current_equipment.equipment_objects.empty? %>
   <small>
     <ul>
       <% current_equipment.equipment_objects.each do |equipment_object| %>

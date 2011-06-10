@@ -16,18 +16,14 @@
   <strong>Equipment:
   </strong>
   <ul>
-    <% @reservation.equipment_models_reservations.each do |equipment_models_reservations| %>
       <li>
-        <%= equipment_models_reservations.quantity %> x <%= link_to equipment_models_reservations.equipment_model.name, equipment_models_reservations.equipment_model %>
-        <% if @reservation.equipment_objects %>
+        <%= @reservation.equipment_model.name %>
+        <% if @reservation.equipment_object %>
           <ul>
-            <% (@reservation.equipment_objects & equipment_models_reservations.equipment_model.equipment_objects).each do |equipment_object| %>
-              <li><%= link_to equipment_object.name, equipment_object %></li>
-            <% end %>
+            <li><%= link_to @reservation.equipment_object.name, equipment_object %></li>
           </ul>
         <% end %>
       </li>
-    <% end %>
   </ul>
 </p>
 <% if @reservation.checked_out %>

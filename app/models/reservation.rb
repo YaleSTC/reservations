@@ -36,7 +36,7 @@ class Reservation < ActiveRecord::Base
   end
   
   def not_empty
-    errors.add_to_base("A reservation must contain at least one item.") if self.equipment_models_reservations.empty?
+    errors.add_to_base("A reservation must contain at least one item.") if self.equipment_model.nil?
   end
   
   def not_in_past

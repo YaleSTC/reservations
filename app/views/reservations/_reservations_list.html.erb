@@ -15,7 +15,7 @@
       <% else %>
         <td>User no longer exists</td>
       <% end %>
-      <td><%= reservation.equipment_list.gsub("\r\n", "<br>") %></td>
+      <td><%= reservation.equipment_model.name %></td>
       <td><%=h reservation.start_date.to_date.to_s(:long) %></td>
       <td><%=h reservation.due_date.to_date.to_s(:long) %></td>
     </tr>
