@@ -47,14 +47,13 @@ class ReservationsController < ApplicationController
     cart.items.each do |item|
       @reservation = Reservation.new(params[:reservation])
       @reservation.equipment_model =  item.equipment_model
-      if @reservation.save
-        flash[:notice] = "Successfully created reservation."
-        session[:cart] = Cart.new
-        redirect_to @reservation
-      else
-        render :action => 'new'
-      end
+      @reservation.save
     end
+    flash[:notice] = "Your reservations have been made."
+    session[:cart] = Cart.new
+    redirect_to catalog_path
+  rescue
+    flash.now[:error] = "Oops, something went wrong with making your reservation."
   end
 
   

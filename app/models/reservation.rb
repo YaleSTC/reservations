@@ -48,7 +48,7 @@ class Reservation < ActiveRecord::Base
   end
   
   def late_fee
-    equipment_models_reservations.map{|item| item.quantity * item.equipment_model.late_fee}.sum.to_f
+    self.equipment_model.late_fee.to_f
   end
   
   def equipment_list
