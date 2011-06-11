@@ -72,7 +72,7 @@ class ReservationsController < ApplicationController
         flash.now[:error] = "The same piece of equipment cannot be assigned twice!"
         render :action => 'check_out' and return 
       # elsif not all checkout procedures were checked
-      elsif (@reservation.equipment_models_reservations.map{|r| r.equipment_model.checkout_procedures.nil? ? 0 : r.equipment_model.checkout_procedures.size}.sum) > 0 and (params[:reservation][:checkout_procedures].nil? or params[:reservation][:checkout_procedures].size != @reservation.equipment_models_reservations.map{|r| r.equipment_model.checkout_procedures.nil? ? 0 : r.equipment_model.checkout_procedures.size}.sum)
+      elsif !@reservation.equipment_model.checkout_procedures.nil?
         flash.now[:error] = "Make sure to complete all checkout procedures!"
         render :action => 'check_out' and return
       end
@@ -85,7 +85,7 @@ class ReservationsController < ApplicationController
         flash.now[:error] = "You must return all equipment to complete check-in!" 
         render :action => 'check_in' and return 
       # elsif not all checkin procedures were checked
-      elsif (@reservation.equipment_models_reservations.map{|r| r.equipment_model.checkin_procedures.nil? ? 0 : r.equipment_model.checkin_procedures.size}.sum) > 0 and (params[:reservation][:checkin_procedures].nil? or params[:reservation][:checkin_procedures].size != @reservation.equipment_models_reservations.map{|r| r.equipment_model.checkin_procedures.nil? ? 0 : r.equipment_model.checkin_procedures.size}.sum)
+      elsif !@reservation.equipment_model.checkin_procedures.nil?
         flash.now[:error] = "Make sure to complete all checkin procedures!"
         render :action => 'check_in' and return
       end
