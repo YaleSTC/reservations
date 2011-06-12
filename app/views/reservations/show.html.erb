@@ -17,13 +17,9 @@
   </strong>
   <ul>
       <li>
-        <%= @reservation.equipment_model.name %>
-        <% if @reservation.equipment_object %>
-          <ul>
-            <li><%= link_to @reservation.equipment_object.name, equipment_object %></li>
-          </ul>
-        <% end %>
-      </li>
+				<%= @reservation.equipment_model.name %>
+				<%= @reservation.equipment_object.nil? ? "" : ", #{@reservation.equipment_object.name}" %>
+			</li>
   </ul>
 </p>
 <% if @reservation.checked_out %>

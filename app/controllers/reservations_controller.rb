@@ -61,27 +61,27 @@ class ReservationsController < ApplicationController
     @reservation = Reservation.find(params[:id])
   end
   
+  # doesn't actually add reservation-equipment_object associations
   def update
     @reservation = Reservation.find(params[:id])
 
     if params[:commit] == "Check out equipment"
       @reservation.checked_out = Time.now
       @reservation.checkout_handler = current_user
-      # if equipment object ids are not unique, throw a hissy fit
-      if params[:reservation][:equipment_object_ids].uniq!
-        flash.now[:error] = "The same piece of equipment cannot be assigned twice!"
-        render :action => 'check_out' and return 
+      # raise params.to_yaml
       # elsif not all checkout procedures were checked
-      elsif !@reservation.equipment_model.checkout_procedures.nil?
+      if !@reservation.equipment_model.checkout_procedures.nil?
         flash.now[:error] = "Make sure to complete all checkout procedures!"
         render :action => 'check_out' and return
+      else
+        @reservation.equipment_object = EquipmentObject.find(params[:reservation][:equipment_object_id])
       end
     elsif params[:commit] == "Check in equipment"
       @reservation.checked_in = Time.now
       @reservation.checkin_handler = current_user
       # if not all objects are returned, throw up a warning
       # also, handle the error case where we return an empty reservation (a checked-out reservation with no associated equipment objects)
-      if (params[:reservation].nil? and !@reservation.equipment_objects.empty?) or (params[:reservation] and params[:reservation][:equipment_object_ids].size != @reservation.equipment_objects.size)
+      if (params[:reservation].nil? and !@reservation.equipment_objects.empty?) or (params[:reservation] and params[:reservation][:equipment_object_id].size != @reservation.equipment_objects.size)
         flash.now[:error] = "You must return all equipment to complete check-in!" 
         render :action => 'check_in' and return 
       # elsif not all checkin procedures were checked
@@ -90,7 +90,7 @@ class ReservationsController < ApplicationController
         render :action => 'check_in' and return
       end
       #return the checked off items
-      params[:reservation][:equipment_object_ids] = @reservation.equipment_objects.collect{|e| e.id.to_s} - params[:reservation][:equipment_object_ids] unless params[:reservation].nil?
+      params[:reservation][:equipment_object_id] = @reservation.equipment_objects.collect{|e| e.id.to_s} - params[:reservation][:equipment_object_id] unless params[:reservation].nil?
     end
 
     if @reservation.update_attributes(params[:reservation])

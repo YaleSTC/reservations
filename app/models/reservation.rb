@@ -63,7 +63,7 @@ class Reservation < ActiveRecord::Base
     raw_text
   end
   
-  # def equipment_object_ids=(ids)
+  # def equipment_object_id=(ids)
   #   ids.each do |id|
   #     equipment_objects << EquipmentObject.find(id)
   #   end

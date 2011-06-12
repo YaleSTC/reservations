@@ -6,7 +6,7 @@
   <ul style="list-style:none">
     <% @reservation.equipment_objects.each do |equipment_object| %>
       <li>
-        <%= check_box_tag 'reservation[equipment_object_ids][]', equipment_object.id %>
+        <%= check_box_tag 'reservation[equipment_object_id][]', equipment_object.id %>
         <%= equipment_object.equipment_model.name %> (<%= equipment_object.name %>)
       </li>
     <% end %>
