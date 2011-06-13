@@ -45,7 +45,7 @@ class ReservationsController < ApplicationController
 
   def create
     cart.items.each do |item|
-      for q in 1..item.quantity
+      for q in 1..item.quantity     # accounts for multiple equipment objects of the same equipment model (for accessories)
         @reservation = Reservation.new(params[:reservation])
         @reservation.equipment_model =  item.equipment_model
         @reservation.save
@@ -64,20 +64,36 @@ class ReservationsController < ApplicationController
   end
 
   # doesn't actually add reservation-equipment_object associations
+  # it does now
   def update
     @reservation = Reservation.find(params[:id])
 
     if params[:commit] == "Check out equipment"
+      b = []
+      a = Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", @reservation.reserver_id])
+      a.each do |a|
+        b.push(a.equipment_model_id)
+      end
+      c = Hash.new(0)
+      b.each do |v|
+        c[v] += 1
+        c.each do |k|
+          if v > 1
+          flash.now[:error] = "Not cool man!"
+          render :action => 'check_out' and return
+          else
+          end
+        end
+      end
       @reservation.checked_out = Time.now
       @reservation.checkout_handler = current_user
-
-      # elsif not all checkout procedures were checked
       if !@reservation.equipment_model.checkout_procedures.nil?
         flash.now[:error] = "Make sure to complete all checkout procedures!"
         render :action => 'check_out' and return
       else
         @reservation.equipment_object = EquipmentObject.find(params[:reservation][:equipment_object_id])
       end
+
     elsif params[:commit] == "Check in equipment"
       # handle the error case where we return an empty reservation (a checked-out reservation with no associated equipment objects)
       # elsif not all checkin procedures were checked
@@ -116,5 +132,7 @@ class ReservationsController < ApplicationController
   def check_in
     @reservation = Reservation.find(params[:id])
   end
+
+
 end
 
