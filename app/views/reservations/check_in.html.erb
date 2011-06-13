@@ -4,30 +4,26 @@
     <%= @reservation.reserver.name %> is returning the following equipment:
   </p>
   <ul style="list-style:none">
-    <% @reservation.equipment_objects.each do |equipment_object| %>
       <li>
-        <%= check_box_tag 'reservation[equipment_object_id][]', equipment_object.id %>
-        <%= equipment_object.equipment_model.name %> (<%= equipment_object.name %>)
+        <%= check_box_tag 'reservation[equipment_object_id]', @reservation.equipment_object.id %>
+        <%= @reservation.equipment_model.name %> (<%= @reservation.equipment_object.name %>)
       </li>
-    <% end %>
   </ul>
   <p>
     <strong>Checkin procedures:</strong>
     <ul>
-      <% @reservation.equipment_models_reservations.each do |item| %>
-        <li><%= item.equipment_model.name %></li>
-        <ul>
-          <% if item.equipment_model.checkin_procedures.nil? %>
-            no checkin procedures
-          <% else %>
-            <% item.equipment_model.checkin_procedures.each do |checkin_procedure| %>
-              <li style="list-style: none">
-                <%= check_box_tag 'reservation[checkin_procedures][]' %> <%= checkin_procedure %>
-              </li>
-            <% end %>
-          <% end %>
-        </ul>
-      <% end %>
+       <li><%= @reservation.equipment_model.name %></li>
+       <ul>
+         <% if @reservation.equipment_model.checkin_procedures.nil? %>
+           no checkin procedures
+         <% else %>
+           <% @reservation.equipment_model.checkin_procedures.each do |checkin_procedure| %>
+             <li style="list-style: none">
+               <%= check_box_tag 'reservation[checkin_procedures][]' %> <%= checkin_procedure %>
+             </li>
+           <% end %>
+         <% end %>
+       </ul>
     </ul>
   </p>
   <% if @reservation.due_date.to_date < Date.today %>
