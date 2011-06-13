@@ -2,17 +2,17 @@
 
 <% form_for @reservation do |f| %>
   <%= f.error_messages %>
-  <p>The following equipment will be reserved by 
+  <p>The following equipment will be reserved by
     <% if current_user and (current_user.is_admin? || current_user.is_checkout_person?) %>
       <%= f.select :reserver_id, User.select_options, :prompt => true %>
     <% else %>
       <%= current_user.name %>
       <%= f.hidden_field :reserver_id, :value => current_user.id %>
     <% end %>
-    from 
+    from
     <%= cart.start_date.to_s(:long) %>
     <%= f.hidden_field :start_date, :value => cart.start_date %>
-    to 
+    to
     <%= cart.due_date.to_s(:long) %>:
     <%= f.hidden_field :due_date, :value => cart.due_date %>
   </p>
@@ -20,6 +20,7 @@
     <% acceptable_reservation = true %>
     <% if cart.items.empty? %>
       <% acceptable_reservation = false %>
+      <%# redundant? %>
       <strong class="error">Your cart is empty!</strong> You need to add items to your cart before you can make a reservation.
     <% else %>
       <ul>
@@ -60,7 +61,7 @@
             <% acceptable_reservation = false %>
             <li>
               <small>
-                <strong class="error">You may not check out a <%= category.name.singularize %> for more than 
+                <strong class="error">You may not check out a <%= category.name.singularize %> for more than
                 <%= category.max_checkout_length %> days.</strong>
                 Please use the cart menu in the right sidebar to either remove all <%= category.name.pluralize %>
                 from your order or to change the dates of your reservation.
@@ -89,3 +90,4 @@
     <p><%= f.submit "Finalize reservation" %></p>
   <% end %>
 <% end %>
+
