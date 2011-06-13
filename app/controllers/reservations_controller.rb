@@ -68,7 +68,7 @@ class ReservationsController < ApplicationController
     if params[:commit] == "Check out equipment"
       @reservation.checked_out = Time.now
       @reservation.checkout_handler = current_user
-      # raise params.to_yaml
+      
       # elsif not all checkout procedures were checked
       if !@reservation.equipment_model.checkout_procedures.nil?
         flash.now[:error] = "Make sure to complete all checkout procedures!"
@@ -77,20 +77,18 @@ class ReservationsController < ApplicationController
         @reservation.equipment_object = EquipmentObject.find(params[:reservation][:equipment_object_id])
       end
     elsif params[:commit] == "Check in equipment"
-      @reservation.checked_in = Time.now
-      @reservation.checkin_handler = current_user
-      # if not all objects are returned, throw up a warning
-      # also, handle the error case where we return an empty reservation (a checked-out reservation with no associated equipment objects)
-      if (params[:reservation].nil? and !@reservation.equipment_objects.empty?) or (params[:reservation] and params[:reservation][:equipment_object_id].size != @reservation.equipment_objects.size)
-        flash.now[:error] = "You must return all equipment to complete check-in!" 
-        render :action => 'check_in' and return 
+      # handle the error case where we return an empty reservation (a checked-out reservation with no associated equipment objects)
       # elsif not all checkin procedures were checked
+      if @reservation.equipment_object.nil?
+        flash.now[:error] = "Empty reservation error"
+        render :action => 'check_in' and return
       elsif !@reservation.equipment_model.checkin_procedures.nil?
         flash.now[:error] = "Make sure to complete all checkin procedures!"
         render :action => 'check_in' and return
+      else
+        @reservation.checked_in = Time.now
+        @reservation.checkin_handler = current_user
       end
-      #return the checked off items
-      params[:reservation][:equipment_object_id] = @reservation.equipment_objects.collect{|e| e.id.to_s} - params[:reservation][:equipment_object_id] unless params[:reservation].nil?
     end
 
     if @reservation.update_attributes(params[:reservation])

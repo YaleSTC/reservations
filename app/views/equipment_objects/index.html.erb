@@ -12,11 +12,7 @@
       <td><%= link_to equipment_object.equipment_model.name, equipment_object.equipment_model %></td>
       <td><%= link_to equipment_object.name, equipment_object %></td>
       <td><%=h equipment_object.serial %></td>
-      <td><%= equipment_object.status %></td>
-      <% if current_user.is_admin? %>
-        <td><%= link_to "Edit", edit_equipment_object_path(equipment_object) %></td>
-        <td><%= link_to "Destroy", equipment_object, :confirm => 'Are you sure?', :method => :delete %></td>
-      <% end %>
+			<td><%= equipment_object.status %></td>
     </tr>
   <% end %>
 </table>

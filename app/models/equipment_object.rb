@@ -7,11 +7,13 @@ class EquipmentObject < ActiveRecord::Base
   attr_accessible :name, :serial, :equipment_model_id
   
   def status
-    if !(@current_reservation = self.reservations).empty?
-      "checked out to #{@current_reservation[0].reserver.name} through #{@current_reservation[0].due_date.strftime("%b %d")}"
-    else
-      "available"
+    # last_reservation = Reservation.find(self.reservation_ids.last.to_s)
+    self.reservations.each do |r|
+      if (!r.checked_out.nil?) && (r.status != "returned")
+        return "checked out by #{r.reserver.name} through #{r.due_date.strftime("%b %d")}"
+      end
     end
+    "available"
   end
   
   def available?

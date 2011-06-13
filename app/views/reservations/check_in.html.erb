@@ -5,7 +5,7 @@
   </p>
   <ul style="list-style:none">
       <li>
-        <%= check_box_tag 'reservation[equipment_object_id]', @reservation.equipment_object.id %>
+        <%= check_box_tag 'reservation[equipment_object_id]', @reservation.equipment_object_id %>
         <%= @reservation.equipment_model.name %> (<%= @reservation.equipment_object.name %>)
       </li>
   </ul>

@@ -1,11 +1,13 @@
-<% unless current_equipment # current_equipment.equipment_objects.empty? %>
+<% unless current_equipment.reservations.empty? %>
   <small>
     <ul>
-      <% current_equipment.equipment_objects.each do |equipment_object| %>
-        <li><%= link_to equipment_object.equipment_model.name, equipment_object.equipment_model %> (<%= link_to equipment_object.name, equipment_object %>)</li>
+      <% current_equipment.reservations.each do |r| %>
+				<% if (r.status == "checked out")||(r.status == "overdue") %>
+	        <li><%= link_to r.equipment_model.name, r.equipment_model %> (<%= link_to r.equipment_object.name, r.equipment_object %>)</li>
+				<% end %>
       <% end %>
     </ul>
   </small>
 <% else %>
-  none
+  <li> none </li>
 <% end %>

@@ -28,8 +28,6 @@ class Reservation < ActiveRecord::Base
       "reserved"
     elsif checked_in.nil?
       due_date < Date.today ? "overdue" : "checked out"
-    elsif !equipment_objects.empty?
-      "partially returned"
     else
       "returned"
     end
