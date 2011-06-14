@@ -1,7 +1,7 @@
 class ReservationsController < ApplicationController
   before_filter :require_login, :only => [:index, :show]
   before_filter :require_checkout_person, :only => [:check_out, :check_in]
-  
+
   def index
     if current_user.can_checkout?
       if params[:show_returned]
@@ -13,11 +13,11 @@ class ReservationsController < ApplicationController
       @reservations = current_user.reservations.sort_by(&:start_date).reverse
     end
   end
-  
+
   def show
     @reservation = Reservation.find(params[:id])
   end
-  
+
   def new
     if cart.items.empty?
       flash[:error] = "You need to add items to your cart before making a reservation!"
@@ -28,7 +28,7 @@ class ReservationsController < ApplicationController
       @reservation.due_date = cart.due_date
     end
   end
-  
+
   # def create
   #   @reservation = Reservation.new(params[:reservation])
   #   cart.items.each do |item|
@@ -45,9 +45,11 @@ class ReservationsController < ApplicationController
 
   def create
     cart.items.each do |item|
-      @reservation = Reservation.new(params[:reservation])
-      @reservation.equipment_model =  item.equipment_model
-      @reservation.save
+      for q in 1..item.quantity     # accounts for multiple equipment objects of the same equipment model (for accessories)
+        @reservation = Reservation.new(params[:reservation])
+        @reservation.equipment_model =  item.equipment_model
+        @reservation.save
+      end
     end
     flash[:notice] = "Your reservations have been made."
     session[:cart] = Cart.new
@@ -56,17 +58,32 @@ class ReservationsController < ApplicationController
     flash.now[:error] = "Oops, something went wrong with making your reservation."
   end
 
-  
+
   def edit
     @reservation = Reservation.find(params[:id])
   end
-  
+
   def update
     @reservation = Reservation.find(params[:id])
     if params[:commit] == "Check out equipment"
+      b = []
+      a = Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", @reservation.reserver_id])
+      a.each do |a|
+        b.push(a.equipment_model_id)
+      end
+      c = Hash.new(0)
+      b.each do |v|
+        c[v] += 1
+        c.each do |k|
+          if v > 1
+          flash.now[:error] = "Not cool man!"
+          render :action => 'check_out' and return
+          else
+          end
+        end
+      end
       @reservation.checked_out = Time.now
       @reservation.checkout_handler = current_user
-      # raise params.to_yaml
       # elsif not all checkout procedures were checked
       if !@reservation.equipment_model.checkout_procedures.nil? && (@reservation.equipment_model.checkout_procedures.size != params[:reservation][:checkout_procedures].size.to_i)
         flash.now[:error] = "Make sure to complete all checkout procedures!"
@@ -74,6 +91,7 @@ class ReservationsController < ApplicationController
       else
         @reservation.equipment_object = EquipmentObject.find(params[:reservation][:equipment_object_id])
       end
+
     elsif params[:commit] == "Check in equipment"
       # handle the error case where we return an empty reservation (a checked-out reservation with no associated equipment objects)
       # elsif not all checkin procedures were checked
@@ -96,7 +114,7 @@ class ReservationsController < ApplicationController
       render :action => 'edit'
     end
   end
-  
+
   def destroy
     @reservation = Reservation.find(params[:id])
     require_user_or_checkout_person(@reservation.reserver)
@@ -104,12 +122,15 @@ class ReservationsController < ApplicationController
     flash[:notice] = "Successfully destroyed reservation."
     redirect_to reservations_url
   end
-  
+
   def check_out
     @reservation = Reservation.find(params[:id])
   end
-  
+
   def check_in
     @reservation = Reservation.find(params[:id])
   end
+
+
 end
+
