@@ -13,17 +13,3 @@ users_001:
   nickname: 
   phone: 405-385-1759
   updated_at: 2011-06-10 13:07:49
-users_002: 
-  affiliation: food
-  created_at: 2011-06-10 19:28:57
-  email: shafqat.ahmed@yale.edu
-  first_name: Shafqat
-  id: "2"
-  is_admin: "1"
-  is_banned: "0"
-  is_checkout_person: "0"
-  last_name: Ahmed
-  login: sa482
-  nickname: ""
-  phone: "2035725757"
-  updated_at: 2011-06-10 19:28:57

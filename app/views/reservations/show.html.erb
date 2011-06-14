@@ -13,14 +13,9 @@
   <%=h @reservation.due_date.to_date.to_s(:long) %>
 </p>
 <p>
-  <strong>Equipment:
-  </strong>
-  <ul>
-      <li>
-				<%= @reservation.equipment_model.name %>
-				<%= @reservation.equipment_object.nil? ? "" : ", #{@reservation.equipment_object.name}" %>
-			</li>
-  </ul>
+  <strong>Equipment:</strong>
+	<%=h @reservation.equipment_model.name %>
+	<%=h @reservation.equipment_object.nil? ? "unassigned" : @reservation.equipment_object.name %>
 </p>
 <% if @reservation.checked_out %>
   <p>

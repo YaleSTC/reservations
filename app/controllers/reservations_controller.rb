@@ -61,16 +61,14 @@ class ReservationsController < ApplicationController
     @reservation = Reservation.find(params[:id])
   end
   
-  # doesn't actually add reservation-equipment_object associations
   def update
     @reservation = Reservation.find(params[:id])
-
     if params[:commit] == "Check out equipment"
       @reservation.checked_out = Time.now
       @reservation.checkout_handler = current_user
-      
+      # raise params.to_yaml
       # elsif not all checkout procedures were checked
-      if !@reservation.equipment_model.checkout_procedures.nil?
+      if !@reservation.equipment_model.checkout_procedures.nil? && (@reservation.equipment_model.checkout_procedures.size != params[:reservation][:checkout_procedures].size.to_i)
         flash.now[:error] = "Make sure to complete all checkout procedures!"
         render :action => 'check_out' and return
       else

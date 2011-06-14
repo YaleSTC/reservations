@@ -47,3 +47,11 @@ equipment_objects_006:
   name: Red Lens
   serial: 
   updated_at: 2011-06-10 19:43:21
+equipment_objects_007: 
+  active: "1"
+  created_at: 2011-06-13 17:49:31
+  equipment_model_id: "3"
+  id: "7"
+  name: Sally
+  serial: 
+  updated_at: 2011-06-13 17:49:31
