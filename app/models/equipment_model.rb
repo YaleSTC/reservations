@@ -64,13 +64,13 @@ class EquipmentModel < ActiveRecord::Base
     overall_count
   end
   
-  def available_count(date=Date.today)
+  def available_count(date)
     # get the total number of objects of this kind
     # then subtract the total quantity currently checked out, reserved, or overdue
     # TODO: the system does not account for early checkouts.
     
-    reserved_count = Reservation.find(:all, :conditions => ["equipment_model_id = ? and checked_in IS NULL and start_date <= ? and due_date >= ?", self.id, date.to_time.utc, date.to_time.utc]).size
-    overdue_count = Reservation.find(:all, :conditions => ["equipment_model_id = ? and checked_in IS NULL and due_date < ?", self.id, date.to_time.utc]).size    
+    reserved_count = Reservation.find(:all, :conditions => ["checked_in IS NULL and equipment_model_id = ? and start_date <= ? and due_date >= ?", self.id, date.to_time.utc, date.to_time.utc]).size
+    overdue_count = Reservation.find(:all, :conditions => ["checked_in IS NULL and equipment_model_id = ? and due_date <= ?", self.id, Date.today.to_time.utc]).size
     
     self.equipment_objects.count - reserved_count - overdue_count
   end
