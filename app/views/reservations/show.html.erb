@@ -15,7 +15,7 @@
 <p>
   <strong>Equipment:</strong>
 	<%=h @reservation.equipment_model.name %>
-	<%=h @reservation.equipment_object.nil? ? "unassigned" : @reservation.equipment_object.name %>
+	<%=h @reservation.equipment_object.nil? ? "(unassigned)" : "(#{@reservation.equipment_object.name})" %>
 </p>
 <% if @reservation.checked_out %>
   <p>

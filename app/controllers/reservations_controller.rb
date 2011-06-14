@@ -66,22 +66,31 @@ class ReservationsController < ApplicationController
   def update
     @reservation = Reservation.find(params[:id])
     if params[:commit] == "Check out equipment"
-      b = []
-      a = Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", @reservation.reserver_id])
-      a.each do |a|
-        b.push(a.equipment_model_id)
+
+      user_current_reservations = Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", @reservation.reserver_id])
+      user_current_categories = []
+      user_current_models = []
+      user_current_reservations.each do |r|
+        user_current_categories << r.equipment_model.category.id
+        user_current_models << r.equipment_model_id
       end
-      c = Hash.new(0)
-      b.each do |v|
-        c[v] += 1
-        c.each do |k|
-          if v > 1
-          flash.now[:error] = "Not cool man!"
+      for c in 1..user_current_categories.uniq.size
+        category_id = user_current_categories.uniq[c - 1]
+        if user_current_categories.count(category_id) >= Category.find(category_id).max_per_user
+          flash.now[:error] = "You already have a pending #{Category.find(category_id).name} reservation!"
           render :action => 'check_out' and return
-          else
+        end
+      end
+      for m in 1..user_current_models.uniq.size
+        model_id = user_current_models.uniq[m - 1]
+        if !EquipmentModel.find(model_id).max_per_user.nil?
+          if user_current_models.count(model_id) >= EquipmentModel.find(model_id).max_per_user
+            flash.now[:error] = "You already have a pending #{EquipmentModel.find(model_id).name} reservation!"
+            render :action => 'check_out' and return
           end
         end
       end
+      
       @reservation.checked_out = Time.now
       @reservation.checkout_handler = current_user
       # elsif not all checkout procedures were checked
@@ -98,7 +107,7 @@ class ReservationsController < ApplicationController
       if @reservation.equipment_object.nil?
         flash.now[:error] = "Empty reservation error"
         render :action => 'check_in' and return
-      elsif !@reservation.equipment_model.checkin_procedures.nil?
+      elsif !@reservation.equipment_model.checkin_procedures.nil? && (@reservation.equipment_model.checkout_procedures.size != params[:reservation][:checkin_procedures].size.to_i)
         flash.now[:error] = "Make sure to complete all checkin procedures!"
         render :action => 'check_in' and return
       else
