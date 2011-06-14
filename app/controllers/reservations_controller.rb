@@ -66,7 +66,6 @@ class ReservationsController < ApplicationController
   def update
     @reservation = Reservation.find(params[:id])
     if params[:commit] == "Check out equipment"
-
       user_current_reservations = Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", @reservation.reserver_id])
       user_current_categories = []
       user_current_models = []
@@ -90,7 +89,7 @@ class ReservationsController < ApplicationController
           end
         end
       end
-      
+
       @reservation.checked_out = Time.now
       @reservation.checkout_handler = current_user
       # elsif not all checkout procedures were checked
