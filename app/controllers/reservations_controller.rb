@@ -73,20 +73,14 @@ class ReservationsController < ApplicationController
         user_current_categories << r.equipment_model.category.id
         user_current_models << r.equipment_model_id
       end
-      for c in 1..user_current_categories.uniq.size
-        category_id = user_current_categories.uniq[c - 1]
-        if user_current_categories.count(category_id) >= @reservation.equipment_model.category.max_per_user
-          flash.now[:error] = "You already have a pending #{@reservation.equipment_model.category.name} reservation!"
-          render :action => 'check_out' and return
-        end
+      if user_current_categories.count(@reservation.equipment_model.category.id) >= @reservation.equipment_model.category.max_per_user
+        flash.now[:error] = "You already have a pending #{@reservation.equipment_model.category.name} reservation!"
+        render :action => 'check_out' and return
       end
-      for m in 1..user_current_models.uniq.size
-        model_id = user_current_models.uniq[m - 1]
-        if !EquipmentModel.find(model_id).max_per_user.nil?
-          if user_current_models.count(model_id) >= @reservation.equipment_model.max_per_user
-            flash.now[:error] = "You already have a pending #{@reservation.equipment_model.name} reservation!"
-            render :action => 'check_out' and return
-          end
+      if !EquipmentModel.find(@reservation.equipment_model_id).max_per_user.nil?
+        if user_current_models.count(@reservation.equipment_model_id) >= @reservation.equipment_model.max_per_user
+          flash.now[:error] = "You already have a pending #{@reservation.equipment_model.name} reservation!"
+          render :action => 'check_out' and return
         end
       end
 
