@@ -65,6 +65,7 @@ class ReservationsController < ApplicationController
 
   def update
     @reservation = Reservation.find(params[:id])
+    @reservation.checkout_handler = current_user
     if params[:commit] == "Check out equipment"
       user_current_reservations = Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", @reservation.reserver_id])
       user_current_categories = []
@@ -73,19 +74,17 @@ class ReservationsController < ApplicationController
         user_current_categories << r.equipment_model.category.id
         user_current_models << r.equipment_model_id
       end
-      if user_current_categories.count(@reservation.equipment_model.category.id) >= @reservation.equipment_model.category.max_per_user
+      if !@reservation.checkout_handler.is_admin and (user_current_categories.count(@reservation.equipment_model.category.id) >= @reservation.equipment_model.category.max_per_user)
         flash.now[:error] = "You already have a pending #{@reservation.equipment_model.category.name} reservation!"
         render :action => 'check_out' and return
       end
-      if !EquipmentModel.find(@reservation.equipment_model_id).max_per_user.nil?
+      if !@reservation.checkout_handler.is_admin and !EquipmentModel.find(@reservation.equipment_model_id).max_per_user.nil?
         if user_current_models.count(@reservation.equipment_model_id) >= @reservation.equipment_model.max_per_user
           flash.now[:error] = "You already have a pending #{@reservation.equipment_model.name} reservation!"
           render :action => 'check_out' and return
         end
       end
-
       @reservation.checked_out = Time.now
-      @reservation.checkout_handler = current_user
       # elsif not all checkout procedures were checked
       if !@reservation.equipment_model.checkout_procedures.nil? && (@reservation.equipment_model.checkout_procedures.size != params[:reservation][:checkout_procedures].size.to_i)
         flash.now[:error] = "Make sure to complete all checkout procedures!"

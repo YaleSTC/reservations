@@ -28,6 +28,7 @@
           <li>
             <%= item.quantity %> x <%= link_to item.name, item.equipment_model %>
             <%# TODO: make this check against the user's total equipment, not just this reservation %>
+            <%# We now have a second check that now accounts for total equipment %>
             <% if item.equipment_model.maximum_per_user != "unrestricted" and item.quantity > item.equipment_model.maximum_per_user %><br /><small>
               <% acceptable_reservation = false %>
               <strong class="error">You may not check out this many of this item.</strong> Users may rent
