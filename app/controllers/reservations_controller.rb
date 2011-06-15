@@ -67,6 +67,14 @@ class ReservationsController < ApplicationController
     @reservation = Reservation.find(params[:id])
     @reservation.checkout_handler = current_user
     if params[:commit] == "Check out equipment"
+      if !@reservation.checkout_handler.is_admin
+        overdue_reservations = Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ? and due_date < ?", @reservation.reserver_id, Time.now.utc])
+        if overdue_reservations.size >= 1
+          flash.now[:error] = "This user has #{overdue_reservations.size} overdue reservation(s)! Overdue equipment must be returned before more equipment can be checked out"
+          render :action => 'check_out' and return
+         end
+      end
+
       user_current_reservations = Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", @reservation.reserver_id])
       user_current_categories = []
       user_current_models = []
@@ -75,12 +83,12 @@ class ReservationsController < ApplicationController
         user_current_models << r.equipment_model_id
       end
       if !@reservation.checkout_handler.is_admin and (user_current_categories.count(@reservation.equipment_model.category.id) >= @reservation.equipment_model.category.max_per_user)
-        flash.now[:error] = "You already have a pending #{@reservation.equipment_model.category.name} reservation!"
+        flash.now[:error] = "This user already has a pending #{@reservation.equipment_model.category.name} reservation! Only #{@reservation.equipment_model.category.max_per_user} #{@reservation.equipment_model.category.name}(s) may be checked out at a time!"
         render :action => 'check_out' and return
       end
       if !@reservation.checkout_handler.is_admin and !EquipmentModel.find(@reservation.equipment_model_id).max_per_user.nil?
         if user_current_models.count(@reservation.equipment_model_id) >= @reservation.equipment_model.max_per_user
-          flash.now[:error] = "You already have a pending #{@reservation.equipment_model.name} reservation!"
+          flash.now[:error] = "This user already has a pending #{@reservation.equipment_model.name} reservation! Only #{@reservation.equipment_model.max_per_user} #{@reservation.equipment_model.name}(s) may be checked out at a time!"
           render :action => 'check_out' and return
         end
       end
