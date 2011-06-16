@@ -51,13 +51,13 @@ class Reservation < ActiveRecord::Base
 
   def equipment_list
     raw_text = ""
-    self.equipment_models_reservations.each do |equipment_models_reservations|
-      if equipment_models_reservations.equipment_model
-        raw_text += "#{equipment_models_reservations.quantity} x #{equipment_models_reservations.equipment_model.name}\r\n"
-      else
-        raw_text += "#{equipment_models_reservations.quantity} x *equipment deleted*\r\n"
-      end
-    end
+ #   Reservation.find(:all, :conditions => ["reserver_id = ?", @user.id]).each do |reservation|
+  #    if reservation.equipment_model
+   #     raw_text += "1 x #{reservation.equipment_model.name}\r\n"
+    #  else
+     #   raw_text += "1 x *equipment deleted*\r\n"
+     # end
+    #end
     raw_text
   end
 

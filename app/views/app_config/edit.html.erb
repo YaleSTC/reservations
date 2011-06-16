@@ -26,6 +26,11 @@
     <%= text_area_tag :overdue_checkin_email_body, Settings.overdue_checkin_email_body %>
   </p>
   <p>
+    <%= label_tag "Warning missing equipment email body" %><br />
+    <%= text_area_tag :warning_missing_equipment_email_body, Settings.warning_missing_equipment_email_body %>
+  </p>
+  <p>
     <%= submit_tag "Save changes" %>
   </p>
 <% end %>
+

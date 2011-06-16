@@ -72,7 +72,7 @@ class ReservationsController < ApplicationController
         if overdue_reservations.size >= 1
           flash.now[:error] = "This user has #{overdue_reservations.size} overdue reservation(s)! Overdue equipment must be returned before more equipment can be checked out"
           render :action => 'check_out' and return
-         end
+        end
       end
 
       user_current_reservations = Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", @reservation.reserver_id])
@@ -84,19 +84,19 @@ class ReservationsController < ApplicationController
       end
       if !@reservation.checkout_handler.is_admin and (user_current_categories.count(@reservation.equipment_model.category.id) >= @reservation.equipment_model.category.max_per_user)
         flash.now[:error] = "This user already has a pending #{@reservation.equipment_model.category.name} reservation! Only #{@reservation.equipment_model.category.max_per_user} #{@reservation.equipment_model.category.name}(s) may be checked out at a time!"
-        render :action => 'check_out' and return
+      render :action => 'check_out' and return
       end
       if !@reservation.checkout_handler.is_admin and !EquipmentModel.find(@reservation.equipment_model_id).max_per_user.nil?
         if user_current_models.count(@reservation.equipment_model_id) >= @reservation.equipment_model.max_per_user
           flash.now[:error] = "This user already has a pending #{@reservation.equipment_model.name} reservation! Only #{@reservation.equipment_model.max_per_user} #{@reservation.equipment_model.name}(s) may be checked out at a time!"
-          render :action => 'check_out' and return
+        render :action => 'check_out' and return
         end
       end
       @reservation.checked_out = Time.now
-      # elsif not all checkout procedures were checked
-      if !@reservation.equipment_model.checkout_procedures.nil? && (@reservation.equipment_model.checkout_procedures.size != params[:reservation][:checkout_procedures].size.to_i)
-        flash.now[:error] = "Make sure to complete all checkout procedures!"
-        render :action => 'check_out' and return
+    # elsif not all checkout procedures were checked
+      if !@reservation.equipment_model.checkout_procedures.nil? && (params[:reservation][:checkout_procedures].nil? || (@reservation.equipment_model.checkout_procedures.size != params[:reservation][:checkout_procedures].size.to_i))
+      flash.now[:error] = "Make sure to complete all checkout procedures!"
+      render :action => 'check_out' and return
       else
         @reservation.equipment_object = EquipmentObject.find(params[:reservation][:equipment_object_id])
       end
@@ -107,7 +107,10 @@ class ReservationsController < ApplicationController
       if @reservation.equipment_object.nil?
         flash.now[:error] = "Empty reservation error"
         render :action => 'check_in' and return
-      elsif !@reservation.equipment_model.checkin_procedures.nil? && (@reservation.equipment_model.checkout_procedures.size != params[:reservation][:checkin_procedures].size.to_i)
+      elsif params[:reservation].nil? || params[:reservation][:equipment_object_id].nil?
+        flash.now[:error] = "Confirm presence of equipment!"
+        render :action => 'check_in' and return
+      elsif !@reservation.equipment_model.checkin_procedures.nil? && (params[:reservation][:checkin_procedures].nil? || (@reservation.equipment_model.checkin_procedures.size != params[:reservation][:checkin_procedures].size.to_i))
         flash.now[:error] = "Make sure to complete all checkin procedures!"
         render :action => 'check_in' and return
       else
