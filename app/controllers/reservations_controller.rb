@@ -93,7 +93,7 @@ class ReservationsController < ApplicationController
           flash[:error] = error_messages.join("<br><br>")
         else
           reservation.checked_out = Time.now
-          reservation.equipment_object_id = EquipmentObject.find(params[:reservation][:equipment_object_id])
+          reservation.equipment_object = EquipmentObject.find(params[:reservation][:equipment_object_id])
         end
         if reservation.update_attributes(params[:reservation])
           flash[:notice] = "Successfully checked out"
