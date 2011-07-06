@@ -11,7 +11,7 @@
     <tr>
       <td><%= link_to reservation.id, reservation %></td>
       <% if reservation.reserver%>
-        <td><%=h reservation.reserver.name %></td>
+        <td><%=h link_to reservation.reserver.name, {:action => 'show_all', :id => reservation.reserver.id} %></td>
       <% else %>
         <td>User no longer exists</td>
       <% end %>

@@ -1,0 +1,38 @@
+<h3><%= @user.name %></h3>
+<table>
+  <tr>
+    <th>Start Date</th>
+    <th>Due Date</th>
+    <th>Reservation #</th>
+    <th>Equipment Model</th>
+    <th>Equipment Object</th>
+    <th>Checkout Date</th>
+    <th>Checkin Date</th>
+  </tr>
+
+  <% @user.reservations.each do |reservation| %>
+
+    <tr>
+      <td><%=h reservation.start_date.to_date.to_s(:long) %></td>
+      <td><%=h reservation.due_date.to_date.to_s(:long) %></td>
+      <td><%= reservation.id %></td>
+      <td><%= reservation.equipment_model.name %></td>
+      <% if !reservation.equipment_object.nil? %>
+        <td><%= reservation.equipment_object.name %></td>
+      <% else %>
+        <td></td>
+      <% end %>
+      <% if !reservation.checked_out.nil? %>
+        <td><%=h reservation.checked_out.to_date.to_s(:long) %></td>
+      <% else %>
+        <td></td>
+      <% end %>
+      <% if !reservation.checked_in.nil? %>
+        <td><%=h reservation.checked_in.to_date.to_s(:long) %></td>
+      <% else %>
+        <td></td>
+      <% end %>
+    </tr>
+  <% end %>
+</table>
+

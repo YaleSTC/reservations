@@ -1,5 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :reservations, :member => {:check_out => :get, :check_in => :get}
+  map.resources :reservations, :member => {:check_out => :get, :check_in => :get, :show_all => :get}
   map.resources :documents
   map.resources :equipment_objects
   map.resources :equipment_models do |equipment_model|
@@ -9,7 +9,7 @@ ActionController::Routing::Routes.draw do |map|
     category.resources :equipment_models
   end
   map.resources :users
-  
+
   map.catalog '/catalog', :controller => 'catalog'
   map.add_to_cart '/catalog/add_to_cart/:id', :controller => 'catalog', :action => 'add_to_cart'
   map.remove_from_cart '/catalog/remove_from_cart/:id', :controller => 'catalog', :action => 'remove_from_cart'
@@ -37,7 +37,7 @@ ActionController::Routing::Routes.draw do |map|
 
   # Sample resource route with sub-resources:
   #   map.resources :products, :has_many => [ :comments, :sales ], :has_one => :seller
-  
+
   # Sample resource route with more complex sub-resources
   #   map.resources :products do |products|
   #     products.resources :comments
@@ -61,3 +61,4 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
 end
+

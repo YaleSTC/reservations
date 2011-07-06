@@ -15,12 +15,16 @@ class Reservation < ActiveRecord::Base
   validate :start_date_before_due_date
 
   named_scope :pending, {:conditions => ["checked_out IS NULL and checked_in IS NULL"], :order => 'start_date ASC'}
+
   named_scope :checked_out, lambda { {:conditions => ["checked_out IS NOT NULL and checked_in IS NULL and due_date >=  ?", Time.now.midnight.utc ], :order => 'start_date ASC' } }
+
+
   named_scope :overdue, lambda { {:conditions => ["checked_out IS NOT NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc ], :order => 'start_date ASC' } }
   named_scope :active, :conditions => ["checked_in IS NULL"] #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
   named_scope :returned, :conditions => ["checked_in IS NOT NULL and checked_out IS NOT NULL"]
-
-  attr_accessible :reserver, :reserver_id, :checkout_handler, :checkout_handler_id, :checkin_handler, :checkin_handler_id, :start_date, :due_date, :checked_out, :checked_in, :equipment_model_id, :equipment_object_id
+  #named_scope :due_for_checkout_old_version, lambda { { :conditions => ["checked_out IS NULL and checked_in IS NULL and start_date <= ? and due_date >= ?", Time.now.midnight.utc, Time.now.midnight.utc ], :order => 'start_date ASC'} }
+  #named_scope :due_for_checkin_old_version, lambda { { :conditions => ["checked_out IS NOT NULL and checked_in IS NULL"], :order => 'start_date ASC'} }
+    attr_accessible :reserver, :reserver_id, :checkout_handler, :checkout_handler_id, :checkin_handler, :checkin_handler_id, :start_date, :due_date, :checked_out, :checked_in, :equipment_model_id, :equipment_object_id
 
   def status
     #TODO: check this logic
@@ -32,9 +36,59 @@ class Reservation < ActiveRecord::Base
       "returned"
     end
   end
-  # These three methods are not being implemented...
+  # Some methods are not being implemented...
   def not_empty
     errors.add_to_base("A reservation must contain at least one item.") if self.equipment_model.nil?
+  end
+
+  def self.due_for_checkin(user)
+    Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", user.id], :order => 'start_date ASC')
+  end
+
+  def self.due_for_checkout(user)
+    Reservation.find(:all, :conditions => ["checked_out IS NULL and checked_in IS NULL and reserver_id = ? and start_date <= ?", user.id, Time.now.midnight.utc], :order => 'start_date ASC')
+  end
+
+  def self.overdue_reservations?(user)
+    Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc,], :order => 'start_date ASC').count >= 1
+  end
+
+  def self.active_reservations
+    Reservation.find(:all, :conditions => ["checked_in IS NULL"], :order => 'start_date ASC')
+  end
+
+    def self.category_limit_reached?(reservation)
+    user_current_reservations = Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", reservation.reserver_id])
+    user_current_categories = []
+    user_current_reservations.each do |r|
+      user_current_categories << r.equipment_model.category.id
+    end
+    user_current_categories.count(reservation.equipment_model.category.id) >= (reservation.equipment_model.category.max_per_user)
+  end
+
+  def self.equipment_model_limit_reached?(reservation)
+    user_current_reservations = Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", reservation.reserver_id])
+    user_current_models = []
+    user_current_reservations.each do |r|
+      user_current_models << r.equipment_model_id
+    end
+    if !EquipmentModel.find(reservation.equipment_model_id).max_per_user.nil?
+      user_current_models.count(reservation.equipment_model_id) >= reservation.equipment_model.max_per_user
+    else
+      false
+    end
+  end
+
+  def self.check_out_procedures_exist?(reservation)
+    !reservation.equipment_model.checkout_procedures.nil?
+  end
+
+  def self.check_in_procedures_exist?(reservation)
+    !reservation.equipment_model.checkin_procedures.nil?
+  end
+
+  def self.empty_reservation?(reservation)
+    reservation.equipment_object.nil?
   end
 
   def not_in_past
@@ -66,5 +120,14 @@ class Reservation < ActiveRecord::Base
   #     equipment_objects << EquipmentObject.find(id)
   #   end
   # end
+private
+
+  def redirect_to_check_out(msg = nil)
+    flash[:notice] = msg if msg
+    redirect_to :action => 'check_out'
+  end
+
+
+
 end
 

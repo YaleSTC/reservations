@@ -1,36 +1,9 @@
-<% title "Reservation Checkin" %>
-<% form_for @reservation do |f| %>
-  <p>
-    <%= @reservation.reserver.name %> is returning the following equipment:
-  </p>
-  <ul style="list-style:none">
-      <li>
-        <%= check_box_tag 'reservation[equipment_object_id]', @reservation.equipment_object_id %>
-        <%= @reservation.equipment_model.name %> (<%= @reservation.equipment_object.name %>)
-      </li>
-  </ul>
-  <p>
-    <strong>Checkin procedures:</strong>
-    <ul>
-       <li><%= @reservation.equipment_model.name %></li>
-       <ul>
-         <% if @reservation.equipment_model.checkin_procedures.nil? %>
-           no checkin procedures
-         <% else %>
-           <% @reservation.equipment_model.checkin_procedures.each do |checkin_procedure| %>
-             <li style="list-style: none">
-               <%= check_box_tag 'reservation[checkin_procedures][]' %> <%= checkin_procedure %>
-             </li>
-           <% end %>
-         <% end %>
-       </ul>
-    </ul>
-  </p>
-  <% if @reservation.due_date.to_date < Date.today %>
-    <p>
-      This equipment is <strong class="error">overdue.</strong><br />
-      At a fee of <%= number_to_currency(@reservation.late_fee) %> / day, the renter owes <strong><%= number_to_currency(@reservation.late_fee * (Date.today - @reservation.due_date.to_date).to_i)  %></strong> total.
-    </p>
-  <% end %>
+  <% title "Reservation Checkin" %>
+<% form_tag( {:controller => 'reservations', :action => "update"}, :method => "put" ) do %>
+<p>
+  <%= @reservation.reserver.name %> is picking up the following equipment:
+</p>
+<%= render :partial => "check_in_item", :collection => @check_in_set %>
   <%= submit_tag "Check in equipment" %>
 <% end %>
+

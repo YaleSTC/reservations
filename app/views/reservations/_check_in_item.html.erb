@@ -1,0 +1,32 @@
+      <ul style="list-style:none">
+        <br>
+        <%= check_in_item.equipment_model.name %>
+          <li>
+           <%= check_box_tag 'reservation[equipment_object_id]', check_in_item.equipment_object_id %>
+           <%= check_in_item.equipment_model.name %> (<%= check_in_item.equipment_object.name %>)
+        </li>
+      </ul>
+      <p>
+        <strong>Checkin procedures:</strong>
+        <ul>
+           <li><%= check_in_item.equipment_model.name %></li>
+           <ul>
+             <% if check_in_item.equipment_model.checkin_procedures.nil? %>
+               no checkin procedures
+             <% else %>
+               <% check_in_item.equipment_model.checkin_procedures.each do |checkin_procedure| %>
+                 <li style="list-style: none">
+                   <%= check_box_tag 'reservation[checkin_procedures][]' %> <%= checkin_procedure %>
+                 </li>
+               <% end %>
+             <% end %>
+           </ul>
+        </ul>
+      </p>
+      <% if check_in_item.due_date.to_date < Date.today %>
+        <p>
+          This equipment is <strong class="error">overdue.</strong><br />
+          At a fee of <%= number_to_currency(check_in_item.late_fee) %> / day, the renter owes <strong><%= number_to_currency(check_in_item.late_fee * (Date.today - check_in_item.due_date.to_date).to_i)  %></strong> total.
+        </p>
+  <% end %>
+

@@ -1,16 +1,17 @@
 class UsersController < ApplicationController
   skip_before_filter :first_time_user, :only => [:new, :create]
   before_filter :require_admin, :only => :index
-  
+
   def index
     @users = User.find(:all, :order => 'login ASC')
   end
-  
+
   def show
     @user = User.find(params[:id])
     require_user(@user)
+    @reservations_set = @user.reservations.active_reservations
   end
-  
+
   def new
     if current_user and current_user.is_admin?
       @user = User.new
@@ -19,7 +20,7 @@ class UsersController < ApplicationController
       @user.login = session[:cas_user] #default to current login
     end
   end
-  
+
   def create
     @user = User.new(params[:user])
     @user.login = session[:cas_user] unless current_user and current_user.is_admin?
@@ -31,12 +32,12 @@ class UsersController < ApplicationController
       render :action => 'new'
     end
   end
-  
+
   def edit
     @user = User.find(params[:id])
     require_user(@user)
   end
-  
+
   def update
     @user = User.find(params[:id])
     require_user(@user)
@@ -48,7 +49,7 @@ class UsersController < ApplicationController
       render :action => 'edit'
     end
   end
-  
+
   def destroy
     @user = User.find(params[:id])
     @user.destroy
@@ -56,3 +57,4 @@ class UsersController < ApplicationController
     redirect_to users_url
   end
 end
+

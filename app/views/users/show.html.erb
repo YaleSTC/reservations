@@ -2,7 +2,7 @@
 
 <div id="current_equipment"
   <strong>User's current equipment:</strong><br />
-  <%= render :partial => 'current_equipment', :object => @user %>
+  <%= render :partial => 'current_equipment', :object => @reservations_set %>
 </div>
 
 <p>
@@ -55,3 +55,4 @@
     | <%= link_to "View All Users", users_path %>
   <% end %>
 </p>
+
