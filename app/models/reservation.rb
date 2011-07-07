@@ -24,7 +24,7 @@ class Reservation < ActiveRecord::Base
   named_scope :returned, :conditions => ["checked_in IS NOT NULL and checked_out IS NOT NULL"]
   #named_scope :due_for_checkout_old_version, lambda { { :conditions => ["checked_out IS NULL and checked_in IS NULL and start_date <= ? and due_date >= ?", Time.now.midnight.utc, Time.now.midnight.utc ], :order => 'start_date ASC'} }
   #named_scope :due_for_checkin_old_version, lambda { { :conditions => ["checked_out IS NOT NULL and checked_in IS NULL"], :order => 'start_date ASC'} }
-    attr_accessible :reserver, :reserver_id, :checkout_handler, :checkout_handler_id, :checkin_handler, :checkin_handler_id, :start_date, :due_date, :checked_out, :checked_in, :equipment_model_id, :equipment_object_id
+    attr_accessible :reserver, :reserver_id, :checkout_handler, :checkout_handler_id, :checkin_handler, :checkin_handler_id, :start_date, :due_date, :checked_out, :checked_in, :equipment_object, :equipment_model_id, :equipment_object_id
 
   def status
     #TODO: check this logic

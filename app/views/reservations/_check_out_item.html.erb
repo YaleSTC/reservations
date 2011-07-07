@@ -2,7 +2,7 @@
       <ul>
         <%= check_out_item.equipment_model.name %>
         <li>
-          <%= select_tag "reservation[equipment_object_id][]", check_out_item.equipment_model.available_object_select_options, :prompt => true %>
+          <%= select_tag "reservation[equipment_object_id]", check_out_item.equipment_model.available_object_select_options, :prompt => true %>
       <%#= collection_select(:check_out_item, :equipment_object_id, item.equipment_model.equipment_objects, :id, :name, {:prompt => true}) %>
         </li>
       </ul>

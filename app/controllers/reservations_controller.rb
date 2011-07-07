@@ -71,10 +71,11 @@ class ReservationsController < ApplicationController
 
     error_messages = []
     @reservation = Reservation.find(params[:id])
-    @reservation.checkout_handler = current_user
     if params[:commit] == "Check out equipment"
+      iteration_number = 0
       Reservation.due_for_checkout(@reservation.reserver).to_a.each do |reservation|
-
+        iteration_number += 1
+        reservation.checkout_handler = current_user
         if Reservation.overdue_reservations?(reservation.reserver)
           error_messages << "Overdue Equipment Exists"
         end
@@ -91,15 +92,16 @@ class ReservationsController < ApplicationController
         end
         if !error_messages.empty?
           flash[:error] = error_messages.join("<br><br>")
-        else
-          reservation.checked_out = Time.now
-          reservation.equipment_object = EquipmentObject.find(params[:reservation][:equipment_object_id])
+          redirect_to :action => 'check_out' and return
         end
+          reservation.checked_out = Time.now
+          flash[:notice] = "Flash corresponding to iteration #{iteration_number}"
+          reservation.equipment_object = EquipmentObject.find(params[:reservation][:equipment_object_id])
         if reservation.update_attributes(params[:reservation])
-          flash[:notice] = "Successfully checked out"
+          flash[:notice] = "Successfully checked out iteration #{iteration_number}"
         end
       end
-      redirect_to :action => 'check_out' and return
+      redirect_to :action => 'index' and return
 
     elsif params[:commit] == "Check in equipment"
       Reservation.due_for_checkin(@reservation.reserver).to_a.each do |reservation|
