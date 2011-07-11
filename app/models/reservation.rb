@@ -42,15 +42,15 @@ class Reservation < ActiveRecord::Base
   end
 
   def self.due_for_checkin(user)
-    Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", user.id], :order => 'start_date ASC')
+    Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL"], :order => 'start_date ASC')
   end
 
-  def self.due_for_checkout(user)
-    Reservation.find(:all, :conditions => ["checked_out IS NULL and checked_in IS NULL and reserver_id = ? and start_date <= ?", user.id, Time.now.midnight.utc], :order => 'start_date ASC')
+  def self.due_for_checkout
+    Reservation.find(:all, :conditions => ["checked_out IS NULL and checked_in IS NULL and start_date <= ?", Time.now.midnight.utc], :order => 'start_date ASC')
   end
 
   def self.overdue_reservations?(user)
-    Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc,], :order => 'start_date ASC').count >= 1
+    Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ? and due_date < ?", user.id, Time.now.midnight.utc,], :order => 'start_date ASC').count >= 1
   end
 
   def self.active_reservations

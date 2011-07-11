@@ -73,6 +73,7 @@ class ReservationsController < ApplicationController
     @reservation = Reservation.find(params[:id])
     if params[:commit] == "Check out equipment"
       iteration_number = 0
+      equipment_objects = params[:reservation][:equipment_object_id].collect{|eoi| EquipmentObject.find_by_id(eoi.to_i)}
       Reservation.due_for_checkout(@reservation.reserver).to_a.each do |reservation|
         iteration_number += 1
         reservation.checkout_handler = current_user
@@ -96,7 +97,7 @@ class ReservationsController < ApplicationController
         end
           reservation.checked_out = Time.now
           flash[:notice] = "Flash corresponding to iteration #{iteration_number}"
-          reservation.equipment_object = EquipmentObject.find(params[:reservation][:equipment_object_id])
+          reservation.equipment_object = equipment_objects[iteration_number - 1]
         if reservation.update_attributes(params[:reservation])
           flash[:notice] = "Successfully checked out iteration #{iteration_number}"
         end
@@ -142,12 +143,12 @@ class ReservationsController < ApplicationController
 
   def check_out
     @reservation = Reservation.find(params[:id])
-    @check_out_set = Reservation.due_for_checkout(@reservation.reserver).to_a
+    @check_out_set = Reservation.due_for_checkout(@reservation.reserver)
   end
 
   def check_in
     @reservation = Reservation.find(params[:id])
-    @check_in_set = Reservation.due_for_checkin(@reservation.reserver).to_a
+    @check_in_set = Reservation.due_for_checkin(@reservation.reserver)
   end
 
 

@@ -9,7 +9,7 @@ class UsersController < ApplicationController
   def show
     @user = User.find(params[:id])
     require_user(@user)
-    @reservations_set = @user.reservations.active_reservations
+    @all_equipment = @user.reservations.active_reservations
   end
 
   def new
@@ -48,6 +48,16 @@ class UsersController < ApplicationController
     else
       render :action => 'edit'
     end
+  end
+
+ def check_out
+    @user = User.find(params[:id])
+    @check_out_set = @user.reservations.due_for_checkout
+  end
+
+  def check_in
+    @user = User.find(params[:id])
+    @check_in_set = @user.reservations.due_for_checkin
   end
 
   def destroy
