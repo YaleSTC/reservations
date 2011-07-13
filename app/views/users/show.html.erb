@@ -2,9 +2,7 @@
 
 <div id="current_equipment"
   <strong>User's current equipment:</strong><br />
-  <%= render :partial => "current_equipment", :object => @all_equipment %>
-      <% if current_user.can_checkout? %>
-  <% end %>
+  <%= render :partial => 'current_equipment', :object => @user %>
 </div>
 
 <p>
