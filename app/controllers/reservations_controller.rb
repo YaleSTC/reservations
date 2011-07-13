@@ -68,7 +68,7 @@ class ReservationsController < ApplicationController
   end
 
   def update
-
+#    raise params.to_yaml
     @reservation = Reservation.find(params[:id])
 
     if params[:commit] == "Check out equipment"
@@ -150,12 +150,15 @@ class ReservationsController < ApplicationController
         end
           reservation.save
       end
-      flash[:notice] = "Successfull checked in all equipment"
+      flash[:notice] = "Successfull checked in equipment"
       redirect_to :action => 'index' and return
+    end
 
-
-    else
-      redirect_to :action => "edit"
+    if params[:commit] == "Submit"
+      if @reservation.update_attributes(params[:reservation])
+        flash[:notice] = "Successfully edited reservation."
+        redirect_to @reservation
+      end
     end
   end
 
