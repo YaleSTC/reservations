@@ -50,16 +50,6 @@ class UsersController < ApplicationController
     end
   end
 
- def check_out
-    @user = User.find(params[:id])
-    @check_out_set = @user.reservations.due_for_checkout
-  end
-
-  def check_in
-    @user = User.find(params[:id])
-    @check_in_set = @user.reservations.due_for_checkin
-  end
-
   def destroy
     @user = User.find(params[:id])
     @user.destroy

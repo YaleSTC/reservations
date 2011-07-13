@@ -4,8 +4,6 @@
   <strong>User's current equipment:</strong><br />
   <%= render :partial => "current_equipment", :object => @all_equipment %>
       <% if current_user.can_checkout? %>
-    <%= link_to "Check out", check_out_users_path(@user.id) %> |
-    <%= link_to "Check in", check_in_users_path(@user.id) %> |
   <% end %>
 </div>
 
