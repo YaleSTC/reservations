@@ -68,10 +68,11 @@ class ReservationsController < ApplicationController
   end
 
   def update
-#    raise params.to_yaml
+
     @reservation = Reservation.find(params[:id])
 
     if params[:commit] == "Check out equipment"
+      #update attributes for all equipment that is checked off
       reservations_to_be_checked_out = []
       reservation_check_out_procedures_count = []
       params[:reservations].each do |reservation_id, reservation_hash|
@@ -81,44 +82,36 @@ class ReservationsController < ApplicationController
           r.checked_out = Time.now
           r.equipment_object = EquipmentObject.find(reservation_hash[:equipment_object_id])
           reservations_to_be_checked_out << r
-          if reservation_hash[:checkout_procedures]
-            reservation_check_out_procedures_count << reservation_hash[:checkout_procedures].count
-          else
-            reservation_check_out_procedures_count << 0
-          end
+          #There is no editable "checkout procedures" attribute for reservations. Ideally, this coding will be improved so that each individual procedure is considered and recorded. For now, we're just making sure that all procedures are checked off.
+          reservation_check_out_procedures_count << (reservation_hash[:checkout_procedures] || []).count
         end
       end
 
-      a_reservation = Reservation.find(params[:reservations].first.first)
+      #All-encompassing checks
       if reservations_to_be_checked_out.first.nil?
         flash[:error] = "No reservation selected!"
         redirect_to :action => 'check_out' and return
-      end
-
-      error_msg = a_reservation.check_for_validity(reservations_to_be_checked_out)
-      if Reservation.overdue_reservations?(a_reservation.reserver)
+      elsif Reservation.overdue_reservations?(reservations_to_be_checked_out.first.reserver)
         flash[:error] = "User has overdue equipment, checkout may not proceed"
         redirect_to :action => "check_out" and return
-      elsif !error_msg.empty?
+      end
+
+      #Checks that must be done on each individual reservation
+      error_msg = reservations_to_be_checked_out.first.check_out_permissions(reservations_to_be_checked_out, reservation_check_out_procedures_count)
+      if !error_msg.empty?
         flash[:error] = error_msg
         redirect_to :action => 'check_out' and return
-      elsif error_msg.empty?
-        hash = Hash[reservations_to_be_checked_out.zip(reservation_check_out_procedures_count)]
-        hash.each do |reservation, count|
-         if !reservation.equipment_model.checkout_procedures.nil?
-            if reservation.equipment_model.checkout_procedures.count != count
-              flash[:error] = "Checkout Procedures for #{reservation.equipment_model.name} not Completed"
-              redirect_to :action => 'check_out' and return
-            end
-          end
+      else
+        reservations_to_be_checked_out.each do |reservation|
           reservation.save
         end
-      end
         flash[:notice] = "Successfully checked out equipment!"
         redirect_to :action => 'index' and return
+      end
 
 
     elsif params[:commit] == "Check in equipment"
+
       if params[:reservations].nil?
         flash[:error] = "No reservation selected!"
         redirect_to :action => 'check_in' and return
@@ -132,32 +125,30 @@ class ReservationsController < ApplicationController
           r.checkin_handler = current_user
           r.checked_in = Time.now
           reservations_to_be_checked_in << r
-          if reservation_hash[:checkin_procedures]
-            reservation_check_in_procedures_count << reservation_hash[:checkin_procedures].count
-          else
-            reservation_check_in_procedures_count << 0
-          end
+          reservation_check_in_procedures_count << (reservation_hash[:checkin_procedures] || []).count
+        else
+          flash[:error] = "You filled out check in procedures without selecting the reservation!"
+          redirect_to :action => 'check_in' and return
         end
       end
 
-      hash = Hash[reservations_to_be_checked_in.zip(reservation_check_in_procedures_count)]
-      hash.each do |reservation, count|
-        if !reservation.equipment_model.checkin_procedures.nil?
-          if reservation.equipment_model.checkin_procedures.count != count
-            flash[:error] = "Checkin Procedures for #{reservation.equipment_model.name} not Completed"
-            redirect_to :action => 'check_in' and return
-          end
-        end
+      error_msg = reservations_to_be_checked_in.first.check_in_permissions(reservations_to_be_checked_in, reservation_check_in_procedures_count)
+      if !error_msg.empty?
+        flash[:error] = error_msg
+        redirect_to :action => 'check_in' and return
+      else
+        reservations_to_be_checked_in.each do |reservation|
           reservation.save
+        end
+        flash[:notice] = "Successfully checked in equipment!"
+        redirect_to :action => 'index' and return
       end
-      flash[:notice] = "Successfull checked in equipment"
-      redirect_to :action => 'index' and return
-    end
 
-    if params[:commit] == "Submit"
-      if @reservation.update_attributes(params[:reservation])
-        flash[:notice] = "Successfully edited reservation."
-        redirect_to @reservation
+      if params[:commit] == "Submit"
+        if @reservation.update_attributes(params[:reservation])
+          flash[:notice] = "Successfully edited reservation."
+          redirect_to @reservation
+        end
       end
     end
   end

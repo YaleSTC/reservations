@@ -46,14 +46,14 @@ class Reservation < ActiveRecord::Base
   end
 
   def self.due_for_checkout(user)
-    Reservation.find(:all, :conditions => ["checked_out IS NULL and checked_in IS NULL and start_date <= ? and reserver_id =?", Time.now.midnight.utc, user.id], :order => 'start_date ASC')
+    Reservation.find(:all, :conditions => ["checked_out IS NULL and checked_in IS NULL and start_date <= ? and due_date >= ? and reserver_id =?", Time.now.midnight.utc, Time.now.midnight.utc, user.id], :order => 'start_date ASC')
   end
 
   def self.overdue_reservations?(user)
     Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ? and due_date < ?", user.id, Time.now.midnight.utc,], :order => 'start_date ASC').count >= 1
   end
 
-  def check_for_validity(reservations)
+  def check_out_permissions(reservations, procedures_count)
     error_messages = ""
     if reservations.nil?
       error_messages += "No reservations selected!"
@@ -67,22 +67,46 @@ class Reservation < ActiveRecord::Base
         user_current_models << r.equipment_model_id
       end
 
+      #Check if all check out procedures have been met
+      Hash[reservations.zip(procedures_count)].each do |reservation, procedure_count|
+        if Reservation.check_out_procedures_exist?(reservation)
+          if reservation.equipment_model.checkout_procedures.count != procedure_count
+            error_messages += "Checkout Procedures for #{reservation.equipment_model.name} not Completed"
+          end
+        end
+      end
+
       reservations.each do |reservation|
 
         #Check if category limit has been reached
         if user_current_categories.count(reservation.equipment_model.category.id) >= (reservation.equipment_model.category.max_per_user)
-          error_messages += "Category limit for #{reservation.equipment_model.category.name} has been reached"
+          error_messages += "Category limit for #{reservation.equipment_model.category.name} has been reached<br>"
         end
 
         #Check if equipment model limit has been reached
         if !EquipmentModel.find(reservation.equipment_model_id).max_per_user.nil?
           if user_current_models.count(reservation.equipment_model_id) >= reservation.equipment_model.max_per_user
-            error_messages += "Equipment Model limit for #{reservation.equipment_model.name} has been reached"
+            error_messages += "Equipment Model limit for #{reservation.equipment_model.name} has been reached<br>"
           end
         end
+
+
       end
-      error_messages
     end
+    error_messages
+  end
+
+  def check_in_permissions(reservations, procedures_count)
+    error_messages = ""
+    Hash[reservations.zip(procedures_count)].each do |reservation, procedure_count|
+      if !reservation.equipment_model.checkin_procedures.nil?
+        if reservation.equipment_model.checkin_procedures.count != procedure_count
+          error_messages += "Checkin Procedures for #{reservation.equipment_model.name} not Completed"
+          redirect_to :action => 'check_in' and return
+        end
+      end
+    end
+    error_messages
   end
 
   def self.active_reservations
