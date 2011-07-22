@@ -20,6 +20,7 @@ class ReservationsController < ApplicationController
 
   def show_all
     @user = User.find(params[:id])
+    @user_reservations_set = Reservation.active_user_reservations(@user)
   end
 
   def new
@@ -68,9 +69,7 @@ class ReservationsController < ApplicationController
   end
 
   def update
-
-    @reservation = Reservation.find(params[:id])
-
+    error_msgs = ""
     if params[:commit] == "Check out equipment"
       #update attributes for all equipment that is checked off
       reservations_to_be_checked_out = []
@@ -90,25 +89,26 @@ class ReservationsController < ApplicationController
       #All-encompassing checks
       if reservations_to_be_checked_out.first.nil?
         flash[:error] = "No reservation selected!"
-        redirect_to :action => 'check_out' and return
-      elsif Reservation.overdue_reservations?(reservations_to_be_checked_out.first.reserver)
-        flash[:error] = "User has overdue equipment, checkout may not proceed"
         redirect_to :action => "check_out" and return
+      elsif Reservation.overdue_reservations?(reservations_to_be_checked_out.first.reserver)
+          error_msg += "User has overdue equipment<br>"
       end
 
       #Checks that must be done on each individual reservation
-      error_msg = reservations_to_be_checked_out.first.check_out_permissions(reservations_to_be_checked_out, reservation_check_out_procedures_count)
+      error_msg += reservations_to_be_checked_out.first.check_out_permissions(reservations_to_be_checked_out, reservation_check_out_procedures_count)
       if !error_msg.empty?
-        flash[:error] = error_msg
-        redirect_to :action => 'check_out' and return
-      else
-        reservations_to_be_checked_out.each do |reservation|
-          reservation.save
+        if current_user.is_admin?
+          error_msg += "Admin Override: equipment has been successfully checked out "
+        else
+          flash[:error] = error_msg
+          redirect_to :action => "check_out" and return
         end
-        flash[:notice] = "Successfully checked out equipment!"
-        redirect_to :action => 'index' and return
       end
-
+      reservations_to_be_checked_out.each do |reservation|
+        reservation.save
+      end
+#      flash[:notice] = "Successfully checked out equipment!"
+      redirect_to :action => 'index' and return
 
     elsif params[:commit] == "Check in equipment"
 
@@ -162,15 +162,14 @@ class ReservationsController < ApplicationController
   end
 
   def check_out
-    @reservation = Reservation.find(params[:id])
-    @check_out_set = Reservation.due_for_checkout(@reservation.reserver)
+    @user = User.find(params[:id])
+    @check_out_set = Reservation.due_for_checkout(@user)
   end
 
   def check_in
-    @reservation = Reservation.find(params[:id])
-    @check_in_set = Reservation.due_for_checkin(@reservation.reserver)
+    @user =  User.find(params[:id])
+    @check_in_set = Reservation.due_for_checkin(@user)
   end
-
 
 end
 

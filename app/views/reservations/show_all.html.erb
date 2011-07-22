@@ -2,10 +2,21 @@
   <strong>Reserved by:</strong>
   <%= link_to @user.name, @user %>
 </p>
+
+<table>
+  <tr>
+    <th>Reservation #</th>
+    <th>Equipment</th>
+    <th>Start Date</th>
+    <th>Due Date</th>
+  </tr>
+<%= render :partial => "user_reservations_list", :collection => @user_reservations_set %>
+</table>
+
 <p>
 <% if current_user.can_checkout? %>
-  <%= link_to "Check out", check_out_reservation_path %> |
-  <%= link_to "Check in", check_in_reservation_path %> |
+  <%= link_to "Check out", check_out_reservation_path(@user) %> |
+  <%= link_to "Check in", check_in_reservation_path(@user) %> |
   <%= link_to "View all reservations", reservations_path %>
 <% else %>
   <%= link_to "View all your reservations", reservations_path %>

@@ -22,8 +22,6 @@ class Reservation < ActiveRecord::Base
   named_scope :overdue, lambda { {:conditions => ["checked_out IS NOT NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc ], :order => 'start_date ASC' } }
   named_scope :active, :conditions => ["checked_in IS NULL"] #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
   named_scope :returned, :conditions => ["checked_in IS NOT NULL and checked_out IS NOT NULL"]
-  #named_scope :due_for_checkout_old_version, lambda { { :conditions => ["checked_out IS NULL and checked_in IS NULL and start_date <= ? and due_date >= ?", Time.now.midnight.utc, Time.now.midnight.utc ], :order => 'start_date ASC'} }
-  #named_scope :due_for_checkin_old_version, lambda { { :conditions => ["checked_out IS NOT NULL and checked_in IS NULL"], :order => 'start_date ASC'} }
     attr_accessible :reserver, :reserver_id, :checkout_handler, :checkout_handler_id, :checkin_handler, :checkin_handler_id, :start_date, :due_date, :checked_out, :checked_in, :equipment_object, :equipment_model_id, :equipment_object_id
 
   def status
@@ -71,7 +69,7 @@ class Reservation < ActiveRecord::Base
       Hash[reservations.zip(procedures_count)].each do |reservation, procedure_count|
         if Reservation.check_out_procedures_exist?(reservation)
           if reservation.equipment_model.checkout_procedures.count != procedure_count
-            error_messages += "Checkout Procedures for #{reservation.equipment_model.name} not Completed"
+            error_messages += "Checkout Procedures for #{reservation.equipment_model.name} not Completed<br>"
           end
         end
       end
@@ -101,7 +99,7 @@ class Reservation < ActiveRecord::Base
     Hash[reservations.zip(procedures_count)].each do |reservation, procedure_count|
       if !reservation.equipment_model.checkin_procedures.nil?
         if reservation.equipment_model.checkin_procedures.count != procedure_count
-          error_messages += "Checkin Procedures for #{reservation.equipment_model.name} not Completed"
+          error_messages += "Checkin Procedures for #{reservation.equipment_model.name} not Completed<br>"
           redirect_to :action => 'check_in' and return
         end
       end
@@ -109,8 +107,8 @@ class Reservation < ActiveRecord::Base
     error_messages
   end
 
-  def self.active_reservations
-    Reservation.find(:all, :conditions => ["checked_in IS NULL"], :order => 'start_date ASC')
+  def self.active_user_reservations(user)
+    Reservation.find(:all, :conditions => ["checked_in IS NULL and reserver_id = ?", user.id], :order => 'start_date ASC')
   end
 
   def self.check_out_procedures_exist?(reservation)

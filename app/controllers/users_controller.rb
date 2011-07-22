@@ -9,7 +9,7 @@ class UsersController < ApplicationController
   def show
     @user = User.find(params[:id])
     require_user(@user)
-    @all_equipment = @user.reservations.active_reservations
+    @all_equipment = Reservation.active_user_reservations(@user)
   end
 
   def new
