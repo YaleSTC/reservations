@@ -89,7 +89,7 @@ class ReservationsController < ApplicationController
       #All-encompassing checks, only need to be done once
       if reservations_to_be_checked_out.first.nil? #Prevents the nil error from not selecting any reservations
         flash[:error] = "No reservation selected!"
-        redirect_to :action => "check_out" and return
+        redirect_to :back and return
       elsif Reservation.overdue_reservations?(reservations_to_be_checked_out.first.reserver) #Checks for any overdue equipment
         error_msgs += "User has overdue equipment.<br>"
       end
@@ -101,7 +101,7 @@ class ReservationsController < ApplicationController
           error_msgs += "Admin Override: Equipment has been successfully checked out."
         else #everyone else is redirected
           flash[:error] = error_msgs
-          redirect_to :action => "check_out" and return
+          redirect_to :back and return
         end
       end
 
@@ -115,7 +115,7 @@ class ReservationsController < ApplicationController
 
       if params[:reservations].nil? #Prevents the nil error from not selecting any reservations
         flash[:error] = "No reservation selected!"
-        redirect_to :action => 'check_in' and return
+        redirect_to :back and return
       end
 
       reservations_to_be_checked_in = []
@@ -129,14 +129,14 @@ class ReservationsController < ApplicationController
           reservation_check_in_procedures_count << (reservation_hash[:checkin_procedures] || []).count #Like above, accounting for check in procedures count using two arrays
         else
           flash[:error] = "You filled out check in procedures without selecting the reservation!" #Prevents the nil error from selecting checkout procedures, but no reservations.
-          redirect_to :action => 'check_in' and return
+          redirect_to :back and return
         end
       end
 
       error_msgs = reservations_to_be_checked_in.first.check_in_permissions(reservations_to_be_checked_in, reservation_check_in_procedures_count) #This method currently just counts the check in procedures to make sure they are all checked off
       if !error_msgs.empty?
         flash[:error] = error_msgs
-        redirect_to :action => 'check_in' and return
+        redirect_to :back and return
       else
         reservations_to_be_checked_in.each do |reservation|
           reservation.save
@@ -163,13 +163,21 @@ class ReservationsController < ApplicationController
   end
 
   def check_out
-    @user = User.find(params[:id])
+    @user = User.find(params[:user_id])
     @check_out_set = Reservation.due_for_checkout(@user)
   end
 
+  def check_out_single
+    @reservation = Reservation.find(params[:id])
+  end
+
   def check_in
-    @user =  User.find(params[:id])
+    @user =  User.find(params[:user_id])
     @check_in_set = Reservation.due_for_checkin(@user)
+  end
+
+  def check_in_single
+    @reservation =  Reservation.find(params[:id])
   end
 
 end
