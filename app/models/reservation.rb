@@ -68,7 +68,7 @@ class Reservation < ActiveRecord::Base
       #Check if all check out procedures have been met
       Hash[reservations.zip(procedures_count)].each do |reservation, procedure_count|
         if Reservation.check_out_procedures_exist?(reservation)
-          if reservation.equipment_model.checkout_procedures.count != procedure_count
+          if reservation.equipment_model.checkout_procedures.count != procedure_count #For now, this check can only be passed if ALL procedures are checked off
             error_messages += "Checkout Procedures for #{reservation.equipment_model.name} not Completed<br>"
           end
         end
@@ -97,10 +97,9 @@ class Reservation < ActiveRecord::Base
   def check_in_permissions(reservations, procedures_count)
     error_messages = ""
     Hash[reservations.zip(procedures_count)].each do |reservation, procedure_count|
-      if !reservation.equipment_model.checkin_procedures.nil?
-        if reservation.equipment_model.checkin_procedures.count != procedure_count
+      if Reservation.check_in_procedures_exist?(reservation)
+        if reservation.equipment_model.checkin_procedures.count != procedure_count #For now, this check can only be passed if ALL procedures are checked off
           error_messages += "Checkin Procedures for #{reservation.equipment_model.name} not Completed<br>"
-          redirect_to :action => 'check_in' and return
         end
       end
     end
