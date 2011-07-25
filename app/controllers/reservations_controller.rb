@@ -72,6 +72,7 @@ class ReservationsController < ApplicationController
 
     error_msgs = ""
     if params[:commit] == "Check out equipment"
+
       reservations_to_be_checked_out = []
       reservation_check_out_procedures_count = []
       params[:reservations].each do |reservation_id, reservation_hash|
@@ -90,20 +91,21 @@ class ReservationsController < ApplicationController
         flash[:error] = "No reservation selected!"
         redirect_to :action => "check_out" and return
       elsif Reservation.overdue_reservations?(reservations_to_be_checked_out.first.reserver) #Checks for any overdue equipment
-        error_msgs += "User has overdue equipment<br>"
+        error_msgs += "User has overdue equipment.<br>"
       end
 
       #Checks that must be iterated over each individual reservation
       error_msgs += reservations_to_be_checked_out.first.check_out_permissions(reservations_to_be_checked_out, reservation_check_out_procedures_count) #This method checks the Category Max Per User, Equipment Model Max per User, and whether all the checkout procedures have been checked off
       if !error_msgs.empty? #If any requirements are not met...
         if current_user.is_admin? #Admins can ignore them
-          error_msgs += "Admin Override: Equipment has been successfully checked out"
+          error_msgs += "Admin Override: Equipment has been successfully checked out."
         else #everyone else is redirected
           flash[:error] = error_msgs
           redirect_to :action => "check_out" and return
         end
       end
-      reservations_to_be_checked_out.each do |reservation| #updates to reservations are saved
+
+            reservations_to_be_checked_out.each do |reservation| #updates to reservations are saved
         reservation.save
       end
       flash[:notice] = error_msgs.empty? ? "Successfully checked out equipment!" : error_msgs #Allows admins to see all errors, but still checkout successfully
@@ -131,9 +133,9 @@ class ReservationsController < ApplicationController
         end
       end
 
-      error_msg = reservations_to_be_checked_in.first.check_in_permissions(reservations_to_be_checked_in, reservation_check_in_procedures_count) #This method currently just counts the check in procedures to make sure they are all checked off
-      if !error_msg.empty?
-        flash[:error] = error_msg
+      error_msgs = reservations_to_be_checked_in.first.check_in_permissions(reservations_to_be_checked_in, reservation_check_in_procedures_count) #This method currently just counts the check in procedures to make sure they are all checked off
+      if !error_msgs.empty?
+        flash[:error] = error_msgs
         redirect_to :action => 'check_in' and return
       else
         reservations_to_be_checked_in.each do |reservation|
