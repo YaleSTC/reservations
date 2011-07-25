@@ -1,0 +1,9 @@
+July 25, 2011
+
+Current issues with newly refactored Reservations:
+
+1. Quicksearch doesn't work. Something to do with the partial, but I don't understand why (Predates this summer)
+2. Reservation index view is segmented, not grouped by patron or date (Due to refactoring)
+3. Cart does not flash an error for illogical date ranges. It claims the reservation has been made, and then doesn't make it  (Predates this summer)
+4. Users can put in nonsensical information for their contact info (Predates this summer)
+

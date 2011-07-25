@@ -17,8 +17,6 @@ class Reservation < ActiveRecord::Base
   named_scope :pending, {:conditions => ["checked_out IS NULL and checked_in IS NULL"], :order => 'start_date ASC'}
 
   named_scope :checked_out, lambda { {:conditions => ["checked_out IS NOT NULL and checked_in IS NULL and due_date >=  ?", Time.now.midnight.utc ], :order => 'start_date ASC' } }
-
-
   named_scope :overdue, lambda { {:conditions => ["checked_out IS NOT NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc ], :order => 'start_date ASC' } }
   named_scope :active, :conditions => ["checked_in IS NULL"] #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
   named_scope :returned, :conditions => ["checked_in IS NOT NULL and checked_out IS NOT NULL"]
@@ -34,7 +32,7 @@ class Reservation < ActiveRecord::Base
       "returned"
     end
   end
-  # Some methods are not being implemented...
+
   def not_empty
     errors.add_to_base("A reservation must contain at least one item.") if self.equipment_model.nil?
   end
@@ -122,6 +120,7 @@ class Reservation < ActiveRecord::Base
     reservation.equipment_object.nil?
   end
 
+  #These two methods (not_in_past and start_date_before_due_date) don't seem to be working
   def not_in_past
     errors.add_to_base("A reservation cannot be made in the past!") if self.due_date < Time.now.midnight
   end
@@ -151,13 +150,6 @@ class Reservation < ActiveRecord::Base
   #     equipment_objects << EquipmentObject.find(id)
   #   end
   # end
-private
-
-  def redirect_to_check_out(msg = nil)
-    flash[:notice] = msg if msg
-    redirect_to :action => 'check_out'
-  end
-
 
 
 end

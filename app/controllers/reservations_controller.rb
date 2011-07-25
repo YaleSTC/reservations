@@ -10,7 +10,7 @@ class ReservationsController < ApplicationController
         @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.pending ].delete_if{|a| a.empty?}
       end
     else
-      @reservations = current_user.reservations.sort_by(&:start_date).reverse
+      @reservations_set = [current_user.reservations.overdue, current_user.reservations.checked_out, current_user.reservations.pending ].delete_if{|a| a.empty?}
     end
   end
 
