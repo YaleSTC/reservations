@@ -105,7 +105,7 @@ class ReservationsController < ApplicationController
         end
       end
 
-            reservations_to_be_checked_out.each do |reservation| #updates to reservations are saved
+      reservations_to_be_checked_out.each do |reservation| #updates to reservations are saved
         reservation.save
       end
       flash[:notice] = error_msgs.empty? ? "Successfully checked out equipment!" : error_msgs #Allows admins to see all errors, but still checkout successfully

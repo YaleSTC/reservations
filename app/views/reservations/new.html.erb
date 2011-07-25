@@ -28,7 +28,7 @@
           <li>
             <%= item.quantity %> x <%= link_to item.name, item.equipment_model %>
             <%# TODO: make this check against the user's total equipment, not just this reservation %>
-            <%# We now have a second check that now accounts for total equipment %>
+            <%# We now have a second check that now accounts for total equipment during checkout %>
             <% if item.equipment_model.maximum_per_user != "unrestricted" and item.quantity > item.equipment_model.maximum_per_user %><br /><small>
               <% acceptable_reservation = false %>
               <strong class="error">You may not check out this many of this item.</strong> Users may rent
@@ -66,6 +66,15 @@
                 <%= category.max_checkout_length %> days.</strong>
                 Please use the cart menu in the right sidebar to either remove all <%= category.name.pluralize %>
                 from your order or to change the dates of your reservation.
+              </small>
+            </li>
+          <% end %>
+          <% if !cart.logical_start_and_due_dates? %>
+            <% acceptable_reservation = false %>
+            <li>
+              <small>
+                <strong class="error">Your cart dates don't make sense.</strong>
+                Please use the cart menu in the right sidebar to change the dates of your reservation.
               </small>
             </li>
           <% end %>

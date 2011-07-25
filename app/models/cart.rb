@@ -1,12 +1,12 @@
 class Cart
   attr_reader :items, :start_date, :due_date
-  
+
   def initialize
     @items = []
     @start_date = Date.today
     @due_date = Date.today
   end
-  
+
   def add_equipment_model(equipment_model)
     current_item = @items.find {|item| item.equipment_model == equipment_model}
     if current_item
@@ -17,7 +17,7 @@ class Cart
     end
     current_item
   end
-  
+
   def remove_equipment_model(equipment_model)
     current_item = @items.find {|item| item.equipment_model == equipment_model}
     current_item.decrement_quantity
@@ -26,7 +26,7 @@ class Cart
     end
     current_item
   end
-  
+
   def get_cart_items
     items = []
     @items.each do |item|
@@ -34,15 +34,15 @@ class Cart
     end
     items
   end
-  
+
   def total_items
     @items.sum{ |item| item.quantity }
   end
-  
+
   def empty?
     @items.empty?
   end
-  
+
   def available?
     return false if start_date.nil? or due_date.nil?
     @items.each do |item|
@@ -50,16 +50,21 @@ class Cart
     end
     return true
   end
-  
+
   def set_start_date(date)
-    @start_date = date  
+    @start_date = date
   end
-  
+
   def set_due_date(date)
-    @due_date = date  
+    @due_date = date
   end
-  
+
+  def logical_start_and_due_dates?
+    @due_date >= @start_date && @start_date >= Date.today
+  end
+
   def duration #in days
     @due_date - @start_date + 1
   end
 end
+
