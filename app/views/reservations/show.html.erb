@@ -1,35 +1,36 @@
-<% title "Reservation ##{@reservation.id}" + (@reservation.status == "reserved" ? "" : " (#{@reservation.status})") %>
+<% if current_user.can_checkout? || current_user == @reservation.reserver %>
+  <% title "Reservation ##{@reservation.id}" + (@reservation.status == "reserved" ? "" : " (#{@reservation.status})") %>
 
-<p>
-  <strong>Reserved by:</strong>
-  <%= link_to @reservation.reserver.name, @reservation.reserver %>
-</p>
-<p>
-  <strong>Start Date:</strong>
-  <%=h @reservation.start_date.to_date.to_s(:long) %>
-</p>
-<p>
-  <strong>Due Date:</strong>
-  <%=h @reservation.due_date.to_date.to_s(:long) %>
-</p>
-<p>
-  <strong>Equipment:</strong>
-	<%=h @reservation.equipment_model.name %>
-	<%=h @reservation.equipment_object.nil? ? "(unassigned)" : "(#{@reservation.equipment_object.name})" %>
-</p>
-<% if @reservation.checked_out %>
   <p>
-    Checked out <%=h @reservation.checked_out.to_s(:long) %>
-    by <%=h @reservation.checkout_handler.nil? ? "unknown" : @reservation.checkout_handler.name %>
+    <strong>Reserved by:</strong>
+    <%= link_to @reservation.reserver.name, @reservation.reserver %>
   </p>
-<% end %>
-<% if @reservation.checked_in %>
   <p>
-    Checked in <%=h @reservation.checked_in.to_s(:long) %>
-    by <%=h @reservation.checkin_handler.nil? ? "unknown" : @reservation.checkin_handler.name %>
+    <strong>Start Date:</strong>
+    <%=h @reservation.start_date.to_date.to_s(:long) %>
   </p>
-<% end %>
-<p>
+  <p>
+    <strong>Due Date:</strong>
+    <%=h @reservation.due_date.to_date.to_s(:long) %>
+  </p>
+  <p>
+    <strong>Equipment:</strong>
+  	<%=h @reservation.equipment_model.name %>
+  	<%=h @reservation.equipment_object.nil? ? "(unassigned)" : "(#{@reservation.equipment_object.name})" %>
+  </p>
+  <% if @reservation.checked_out %>
+    <p>
+      Checked out <%=h @reservation.checked_out.to_s(:long) %>
+      by <%=h @reservation.checkout_handler.nil? ? "unknown" : @reservation.checkout_handler.name %>
+    </p>
+  <% end %>
+  <% if @reservation.checked_in %>
+    <p>
+      Checked in <%=h @reservation.checked_in.to_s(:long) %>
+      by <%=h @reservation.checkin_handler.nil? ? "unknown" : @reservation.checkin_handler.name %>
+    </p>
+  <% end %>
+  <p>
 <!--  <% if current_user.can_checkout? %>
     <% if @reservation.status == "reserved" %>
       <%= link_to "Check out", check_out_reservation_path(@reservation) %> |
@@ -38,14 +39,15 @@
     <% end %>
   <% end %>  -->
 
-<% if @reservation.status == "reserved" or current_user.is_admin? %>
-  <%= link_to "Cancel reservation", @reservation, :confirm => 'Are you sure?', :method => :delete %> |
+  <% if @reservation.status == "reserved" or current_user.is_admin? %>
+    <%= link_to "Cancel reservation", @reservation, :confirm => 'Are you sure?', :method => :delete %> |
+  <% end %>
+  <% if current_user.can_checkout? %>
+    <%= link_to "Edit reservation", edit_reservation_path(@reservation) %> |
+    <%= link_to "View all reservations", reservations_path %>
+  <% else %>
+    <%= link_to "View all your reservations", reservations_path %>
+  <% end %>
+  </p>
 <% end %>
-<% if current_user.can_checkout? %>
-  <%= link_to "Edit reservation", edit_reservation_path(@reservation) %> |
-  <%= link_to "View all reservations", reservations_path %>
-<% else %>
-  <%= link_to "View all your reservations", reservations_path %>
-<% end %>
-</p>
 

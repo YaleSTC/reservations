@@ -1,5 +1,9 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :reservations, :member => {:check_out => :get, :check_in => :get, :show_all => :get}
+  map.show_all_reservations_for_user '/reservations/show_all/for_user/:user_id', :controller => 'reservations', :action => 'show_all'
+  map.check_out_reservations_for_user '/reservations/check_out/for_user/:user_id', :controller => 'reservations', :action => 'check_out'
+  map.check_in_reservations_for_user '/reservations/check_in/for_user/:user_id', :controller => 'reservations', :action => 'check_in'
+
   map.resources :documents
   map.resources :equipment_objects
   map.resources :equipment_models do |equipment_model|

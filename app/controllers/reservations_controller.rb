@@ -19,7 +19,7 @@ class ReservationsController < ApplicationController
   end
 
   def show_all #Action called in _reservations_list partial view, allows checkout person to view all current reservations for one user
-    @user = User.find(params[:id])
+    @user = User.find(params[:user_id])
     @user_reservations_set = Reservation.active_user_reservations(@user)
   end
 
