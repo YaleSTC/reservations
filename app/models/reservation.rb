@@ -14,10 +14,10 @@ class Reservation < ActiveRecord::Base
   #validate :not_in_past
   validate :start_date_before_due_date
 
-  named_scope :pending, {:conditions => ["checked_out IS NULL and checked_in IS NULL"], :order => 'start_date ASC'}
+  named_scope :pending, {:conditions => ["checked_out IS NULL and checked_in IS NULL"], :order => 'start_date, due_date, reserver_id'}
 
-  named_scope :checked_out, lambda { {:conditions => ["checked_out IS NOT NULL and checked_in IS NULL and due_date >=  ?", Time.now.midnight.utc ], :order => 'start_date ASC' } }
-  named_scope :overdue, lambda { {:conditions => ["checked_out IS NOT NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc ], :order => 'start_date ASC' } }
+  named_scope :checked_out, lambda { {:conditions => ["checked_out IS NOT NULL and checked_in IS NULL and due_date >=  ?", Time.now.midnight.utc ], :order => 'start_date, due_date, reserver_id' } }
+  named_scope :overdue, lambda { {:conditions => ["checked_out IS NOT NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc ], :order => 'start_date, due_date, reserver_id' } }
   named_scope :active, :conditions => ["checked_in IS NULL"] #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
   named_scope :returned, :conditions => ["checked_in IS NOT NULL and checked_out IS NOT NULL"]
     attr_accessible :reserver, :reserver_id, :checkout_handler, :checkout_handler_id, :checkin_handler, :checkin_handler_id, :start_date, :due_date, :checked_out, :checked_in, :equipment_object, :equipment_model_id, :equipment_object_id

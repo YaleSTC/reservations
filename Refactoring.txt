@@ -3,7 +3,7 @@ July 25, 2011
 Current issues with newly refactored Reservations:
 
 1. Users can put in nonsensical information for their contact info (Predates this summer)
-2. Quicksearch doesn't work. Something to do with the partial, but I don't understand why (Predates this summer)
+2. Quicksearch doesn't work on Firefox. (Predates this summer)
 4. We currently prevent users from checking out past the category and equipment model limit. They are still capable of reserving past these limits. A patron could potentially make two reservations, back to back, and only checkout one at a time, and thereby hog a certain piece of equipment.
 
 3. Reservation index view is segmented, not grouped by patron or date (Due to refactoring)
