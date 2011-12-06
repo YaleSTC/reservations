@@ -6,4 +6,4 @@ doc/app
 db/*.sqlite3
 db/*
 public/system/datas/*
-
+config/database.yml

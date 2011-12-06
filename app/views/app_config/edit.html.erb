@@ -10,6 +10,16 @@
     <%= text_field_tag :department_name, Settings.department_name %>
   </p>
   <p>
+    <%= label_tag "Contact Link Text" %><br />
+	<p>Set the text of the "Contact Us" link</p>
+    <%= text_field_tag :contact_link_text, Settings.contact_link_text %>
+  </p>
+  <p>
+    <%= label_tag "Contact Link Location" %><br />
+	<p>Set where the "Contact Us" link points. (e.g. http://www.yale.edu/contact/ or mailto://contact@yale.edu)</p>
+    <%= text_field_tag :contact_link_location, Settings.contact_link_location %>
+  </p>
+  <p>
     <%= label_tag "Upcoming checkout email body" %><br />
     <%= text_area_tag :upcoming_checkout_email_body, Settings.upcoming_checkout_email_body %>
   </p>
