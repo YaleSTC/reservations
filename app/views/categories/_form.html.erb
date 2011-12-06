@@ -12,5 +12,9 @@
     <%= f.label :max_checkout_length, "Maximum checkout length (leave blank if unrestricted)"%><br />
     <%= f.text_field :max_checkout_length, :class => 'number_input' %> days
   </p>
+  <p>
+    <%= f.label :sort_order, "Sort order (lowest at top)"%><br />
+    <%= f.text_field :sort_order, :class => 'number_input' %>
+  </p>
   <p><%= f.submit "Submit" %></p>
 <% end %>

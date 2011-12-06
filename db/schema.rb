@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110401155438) do
+ActiveRecord::Schema.define(:version => 20111206171041) do
 
   create_table "accessories_equipment_models", :force => true do |t|
     t.integer  "accessory_id"
@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(:version => 20110401155438) do
     t.integer  "max_checkout_length"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "sort_order"
   end
 
   create_table "documents", :force => true do |t|
@@ -66,7 +67,7 @@ ActiveRecord::Schema.define(:version => 20110401155438) do
     t.datetime "updated_at"
   end
 
-  create_table "equipment_objects_reservations", :force => true do |t|
+  create_table "equipment_objects_reservations", :id => false, :force => true do |t|
     t.integer  "equipment_object_id"
     t.integer  "reservation_id"
     t.datetime "created_at"
