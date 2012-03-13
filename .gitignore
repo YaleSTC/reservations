@@ -1,9 +1,9 @@
 log/*.log
 tmp/**/*
+.rbenv-version
 .DS_Store
 doc/api
 doc/app
 db/*.sqlite3
 db/*
 public/system/datas/*
-
