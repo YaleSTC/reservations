@@ -2,6 +2,7 @@ log/*.log
 tmp/**/*
 .rbenv-version
 .DS_Store
+config/database.yml
 doc/api
 doc/app
 db/*.sqlite3
