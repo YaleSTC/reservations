@@ -1,7 +1,7 @@
 # Be sure to restart your server when you modify this file
 
 # Specifies gem version of Rails to use when vendor/rails is not present
-RAILS_GEM_VERSION = '2.3.11' unless defined? RAILS_GEM_VERSION
+RAILS_GEM_VERSION = '2.3.14' unless defined? RAILS_GEM_VERSION
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
@@ -19,9 +19,9 @@ Rails::Initializer.run do |config|
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"
-  config.gem 'whenever', :lib => false, :source => 'http://gemcutter.org'
-  config.gem 'ruby-net-ldap', :lib => "net/ldap"
-  config.gem 'paperclip', :source => 'http://gemcutter.org'
+  # config.gem 'whenever', :lib => false, :source => 'http://gemcutter.org'
+  # config.gem 'ruby-net-ldap', :lib => "net/ldap"
+  # config.gem 'paperclip', :source => 'http://gemcutter.org'
   # Configure Rails Mail options
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
