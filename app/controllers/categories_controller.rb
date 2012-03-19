@@ -30,6 +30,7 @@ class CategoriesController < ApplicationController
   
   def update
     @category = Category.find(params[:id])
+    @category.sort_order = params[:category][:sort_order].to_i
     if @category.update_attributes(params[:category])
       flash[:notice] = "Successfully updated category."
       redirect_to @category

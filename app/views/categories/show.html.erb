@@ -8,6 +8,10 @@
   <strong>Max Checkout Length:</strong>
   <%=h @category.maximum_checkout_length %>
 </p>
+<p>
+  <strong>Sort Order:</strong>
+  <%=h @category.sort_order %>
+</p>
 
 <p>
   <%= link_to "Add new "+@category.name.singularize+" model", new_category_equipment_model_path(@category) %> | 

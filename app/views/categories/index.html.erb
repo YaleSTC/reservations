@@ -5,12 +5,14 @@
     <th>Name</th>
     <th>Max Per User</th>
     <th>Max Checkout Length</th>
+    <th>Sort Order</th>
   </tr>
   <% for category in @categories %>
     <tr>
       <td><%= link_to category.name, category %></td>
       <td><%=h category.maximum_per_user %></td>
       <td><%=h category.maximum_checkout_length %></td>
+      <td><%=h category.sort_order %></td>
       <td><%= link_to "Edit", edit_category_path(category) %></td>
       <td><%= link_to "Destroy", category, :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>

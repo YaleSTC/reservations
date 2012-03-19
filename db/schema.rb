@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(:version => 20110401155438) do
     t.integer  "max_checkout_length"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "sort_order"
   end
 
   create_table "documents", :force => true do |t|
@@ -48,6 +49,7 @@ ActiveRecord::Schema.define(:version => 20110401155438) do
     t.datetime "updated_at"
     t.text     "checkout_procedures"
     t.text     "checkin_procedures"
+    t.boolean  "active",                                             :default => true
   end
 
   create_table "equipment_models_reservations", :force => true do |t|
@@ -67,7 +69,7 @@ ActiveRecord::Schema.define(:version => 20110401155438) do
     t.datetime "updated_at"
   end
 
-  create_table "equipment_objects_reservations", :force => true do |t|
+  create_table "equipment_objects_reservations", :id => false, :force => true do |t|
     t.integer  "equipment_object_id"
     t.integer  "reservation_id"
     t.datetime "created_at"

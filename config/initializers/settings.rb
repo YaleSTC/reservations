@@ -2,7 +2,12 @@
 begin
   Settings.admin_email ||= "admin@admin.admin"
   Settings.department_name ||= "School of Art Digital Technology Office"
-
+  
+  Settings.contact_link_text ||= "Contact Us"
+  Settings.contact_link_location ||= "mailto:contact.us@change.com"
+  Settings.home_link_text  ||= "Home"
+  Settings.home_link_location ||= "http://clc.yale.edu"
+  
   Settings.upcoming_checkout_email_body ||= "Dear @user@,
   Please remember to come pick up the following equipment that you reserved:
 
