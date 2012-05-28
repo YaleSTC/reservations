@@ -14,13 +14,14 @@ class Reservation < ActiveRecord::Base
   #validate :not_in_past
   validate :start_date_before_due_date
 
-  named_scope :pending, {:conditions => ["checked_out IS NULL and checked_in IS NULL"], :order => 'start_date, due_date, reserver_id'}
-
-  named_scope :checked_out, lambda { {:conditions => ["checked_out IS NOT NULL and checked_in IS NULL and due_date >=  ?", Time.now.midnight.utc ], :order => 'start_date, due_date, reserver_id' } }
-  named_scope :overdue, lambda { {:conditions => ["checked_out IS NOT NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc ], :order => 'start_date, due_date, reserver_id' } }
-  named_scope :active, :conditions => ["checked_in IS NULL"] #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
-  named_scope :returned, :conditions => ["checked_in IS NOT NULL and checked_out IS NOT NULL"]
-    attr_accessible :reserver, :reserver_id, :checkout_handler, :checkout_handler_id, :checkin_handler, :checkin_handler_id, :start_date, :due_date, :checked_out, :checked_in, :equipment_object, :equipment_model_id, :equipment_object_id
+  scope :recent, order('start_date, due_date, reserver_id')
+  scope :pending, where("checked_out IS NULL and checked_in IS NULL").recent
+  scope :checked_out, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date >=  ?", Time.now.midnight.utc).recent }
+  scope :overdue, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc ).recent }
+  scope :active, where("checked_in IS NULL") #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
+  scope :returned, where("checked_in IS NOT NULL and checked_out IS NOT NULL")
+  
+  attr_accessible :reserver, :reserver_id, :checkout_handler, :checkout_handler_id, :checkin_handler, :checkin_handler_id, :start_date, :due_date, :checked_out, :checked_in, :equipment_object, :equipment_model_id, :equipment_object_id
 
   def status
     #TODO: check this logic
@@ -38,15 +39,15 @@ class Reservation < ActiveRecord::Base
   end
 
   def self.due_for_checkin(user)
-    Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", user.id], :order => 'start_date ASC')
+    Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
   end
 
   def self.due_for_checkout(user)
-    Reservation.find(:all, :conditions => ["checked_out IS NULL and checked_in IS NULL and start_date <= ? and due_date >= ? and reserver_id =?", Time.now.midnight.utc, Time.now.midnight.utc, user.id], :order => 'start_date ASC')
+    Reservation.where("checked_out IS NULL and checked_in IS NULL and start_date <= ? and due_date >= ? and reserver_id =?", Time.now.midnight.utc, Time.now.midnight.utc, user.id].order('start_date ASC')
   end
 
   def self.overdue_reservations?(user)
-    Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ? and due_date < ?", user.id, Time.now.midnight.utc,], :order => 'start_date ASC').count >= 1
+    Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ? and due_date < ?", user.id, Time.now.midnight.utc,).order('start_date ASC').count >= 1 #FIXME: does this need the order?
   end
 
   def check_out_permissions(reservations, procedures_count)
@@ -55,7 +56,7 @@ class Reservation < ActiveRecord::Base
       error_messages += "No reservations selected!"
     else
       current_patron_id = reservations.first.reserver.id
-      user_current_reservations = Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", current_patron_id])
+      user_current_reservations = Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", current_patron_id)
       user_current_categories = []
       user_current_models = []
       user_current_reservations.each do |r|
@@ -105,7 +106,7 @@ class Reservation < ActiveRecord::Base
   end
 
   def self.active_user_reservations(user)
-    Reservation.find(:all, :conditions => ["checked_in IS NULL and reserver_id = ?", user.id], :order => 'start_date ASC')
+    Reservation.where("checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
   end
 
   def self.check_out_procedures_exist?(reservation)
@@ -135,12 +136,11 @@ class Reservation < ActiveRecord::Base
 
   def equipment_list
     raw_text = ""
- #   Reservation.find(:all, :conditions => ["reserver_id = ?", @user.id]).each do |reservation|
-  #    if reservation.equipment_model
-   #     raw_text += "1 x #{reservation.equipment_model.name}\r\n"
-    #  else
-     #   raw_text += "1 x *equipment deleted*\r\n"
-     # end
+    #Reservation.where("reserver_id = ?", @user.id).each do |reservation|
+    #if reservation.equipment_model
+    #  raw_text += "1 x #{reservation.equipment_model.name}\r\n"
+    #else
+    #  raw_text += "1 x *equipment deleted*\r\n"
     #end
     raw_text
   end
@@ -150,7 +150,6 @@ class Reservation < ActiveRecord::Base
   #     equipment_objects << EquipmentObject.find(id)
   #   end
   # end
-
 
 end
 

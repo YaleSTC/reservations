@@ -1,6 +1,6 @@
 class CatalogController < ApplicationController
   def index
-    @equipment_models_by_category = EquipmentModel.find(:all, :include => :category, :order => 'categories.sort_order ASC, equipment_models.name ASC').group_by(&:category)  
+    @equipment_models_by_category = EquipmentModel.order('categories.sort_order ASC, equipment_models.name ASC').includes(:category).group_by(&:category)
     #push accessories to bottom by removing and reinserting
     #@equipment_models_by_category[Category.find_by_name("Accessories")] = @equipment_models_by_category.delete(Category.find_by_name("Accessories"))
   end

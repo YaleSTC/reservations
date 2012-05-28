@@ -1,3 +1,10 @@
+GIT
+  remote: git://github.com/100hz/rails-settings.git
+  revision: ba456f2b89c83ee193866f124e502e7bfadac0f2
+  specs:
+    rails-settings (0.1.2)
+      rails (>= 3.0.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -73,7 +80,7 @@ GEM
     rake (0.9.2.2)
     rdoc (3.12)
       json (~> 1.4)
-    rubycas-client (2.3.8)
+    rubycas-client (2.2.1)
       activesupport
     rubycas-client-rails (0.1.0)
       rails (>= 3.0.0)
@@ -95,7 +102,9 @@ DEPENDENCIES
   net-ldap
   paperclip
   rails (= 3.0.12)
+  rails-settings!
   rake
   rdoc
+  rubycas-client (= 2.2.1)
   rubycas-client-rails
   whenever

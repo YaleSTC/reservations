@@ -3,8 +3,8 @@ class Document < ActiveRecord::Base
   has_attached_file :data, :styles => { :small => "150x150>" }, :whiny => false
   #:whiny => false stops it from yelling at us when it tries to resize documents that aren't images
   
-  named_scope :images, :conditions => ["data_content_type LIKE ?", "image%"]
-  named_scope :not_images, :conditions => ["data_content_type NOT LIKE ?", "image%"]
+  scope :images, where("data_content_type LIKE ?", "image%")
+  scope :not_images, where("data_content_type NOT LIKE ?", "image%")
   
   before_save :change_name
   validates_presence_of :name
