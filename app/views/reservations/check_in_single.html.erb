@@ -1,5 +1,5 @@
 <% title "Single Reservation Checkin" %>
-<% form_tag( {:controller => 'reservations', :action => "update"}, :method => "put" ) do %>
+<%= form_tag( {:controller => 'reservations', :action => "update"}, :method => "put" ) do %>
   <p>
     <%= @reservation.reserver.name %> is picking up the following equipment:
   </p>

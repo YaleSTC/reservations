@@ -4,11 +4,11 @@
   <% else %>
     <ul>
       <% cart.items.each do |item| %>
-        <li><%= item.quantity %> x <%= link_to item.name, item.equipment_model %> <small><%= link_to_remote "[remove]", {:url => remove_from_cart_path(item.equipment_model)}, :href => remove_from_cart_path(item.equipment_model) %></small></li>
+        <li><%= item.quantity %> x <%= link_to item.name, item.equipment_model %> <small><%= link_to "[remove]", {:url => remove_from_cart_path(item.equipment_model)}, :href => remove_from_cart_path(item.equipment_model), :remote => true %></small></li>
       <% end %>
     </ul>
   <% end %>
-  <% form_tag update_cart_path do %>
+  <%= form_tag update_cart_path do %>
     <p>
       <%= label_tag :start_date, 'Start of reservation' %><br />
       <%= date_select :cart, :start_date, :order => [:month, :day, :year], :default => cart.start_date %>

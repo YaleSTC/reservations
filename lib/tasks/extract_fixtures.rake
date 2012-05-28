@@ -23,10 +23,10 @@ task :extract_fixtures => :environment do
   skip_tables = ["schema_info", "sessions", "schema_migrations"]
   ActiveRecord::Base.establish_connection
   tables = ENV['FIXTURES'] ? ENV['FIXTURES'].split(/,/) : ActiveRecord::Base.connection.tables - skip_tables
-  Dir.mkdir("#{RAILS_ROOT}/preload_data/") unless File::exists?("#{RAILS_ROOT}/preload_data/")
+  Dir.mkdir("#{Rails.root}/preload_data/") unless File::exists?("#{Rails.root}/preload_data/")
   tables.each do |table_name|
     i = "000"
-    File.open("#{RAILS_ROOT}/preload_data/#{table_name}.yml", 'w') do |file|
+    File.open("#{Rails.root}/preload_data/#{table_name}.yml", 'w') do |file|
       data = ActiveRecord::Base.connection.select_all(sql % table_name)
       file.write data.inject({}) { |hash, record|
         hash["#{table_name}_#{i.succ!}"] = record

@@ -1,5 +1,5 @@
 <div class="document">
-  <% fields_for "equipment_model[document_attributes][]", document do |d| %>
+  <%= fields_for "equipment_model[document_attributes][]", document do |d| %>
     <p>
       <%= d.label :document %><br />
       Name: <%= d.text_field :name %><br />

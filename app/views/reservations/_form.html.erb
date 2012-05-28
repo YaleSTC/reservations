@@ -1,4 +1,4 @@
-<% form_for @reservation do |f| %>
+<%= form_for @reservation do |f| %>
   <%= f.error_messages %>
 
   <% if current_user and current_user.is_admin? %>

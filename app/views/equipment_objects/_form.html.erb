@@ -1,4 +1,4 @@
-<% form_for @equipment_object do |f| %>
+<%= form_for @equipment_object do |f| %>
   <%= f.error_messages %>
   <% if @equipment_model %>
     <%= f.hidden_field :equipment_model_id, :value => @equipment_model.id %>

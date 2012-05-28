@@ -43,7 +43,7 @@ class Reservation < ActiveRecord::Base
   end
 
   def self.due_for_checkout(user)
-    Reservation.where("checked_out IS NULL and checked_in IS NULL and start_date <= ? and due_date >= ? and reserver_id =?", Time.now.midnight.utc, Time.now.midnight.utc, user.id].order('start_date ASC')
+    Reservation.where("checked_out IS NULL and checked_in IS NULL and start_date <= ? and due_date >= ? and reserver_id =?", Time.now.midnight.utc, Time.now.midnight.utc, user.id).order('start_date ASC')
   end
 
   def self.overdue_reservations?(user)

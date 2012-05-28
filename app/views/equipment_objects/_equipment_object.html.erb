@@ -1,5 +1,5 @@
 <tr class="equipment_object">
-<% fields_for "equipment_model[equipment_object_attributes][]", equipment_object do |equipment_object_form| %>
+<%= fields_for "equipment_model[equipment_object_attributes][]", equipment_object do |equipment_object_form| %>
   <td>
     <%= equipment_object_form.text_field :name %>
   </td>

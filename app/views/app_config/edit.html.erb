@@ -1,6 +1,6 @@
 <% title "Edit Application Settings" %>
 
-<% form_tag update_app_config_path do %>
+<%= form_tag update_app_config_path do %>
   <p>
     <%= label_tag "Admin email address" %><br />
     <%= text_field_tag :admin_email, Settings.admin_email %>
