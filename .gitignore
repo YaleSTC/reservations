@@ -1,9 +1,4 @@
-log/*.log
-tmp/**/*
-.rbenv-version
-.DS_Store
-config/database.yml
-doc/api
-doc/app
+.bundle
 db/*.sqlite3
-public/system/datas/*
+log/*.log
+tmp/

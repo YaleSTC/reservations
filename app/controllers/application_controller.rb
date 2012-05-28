@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_user
   helper_method :cart
   
-  before_filter CASClient::Frameworks::Rails::Filter
+  before_filter RubyCAS::Filter
   before_filter :first_run
   before_filter :first_time_user
   before_filter :cart
