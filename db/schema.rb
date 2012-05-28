@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110401155438) do
+ActiveRecord::Schema.define(:version => 20111206171041) do
 
   create_table "accessories_equipment_models", :force => true do |t|
     t.integer  "accessory_id"
@@ -43,7 +43,6 @@ ActiveRecord::Schema.define(:version => 20110401155438) do
     t.decimal  "late_fee",            :precision => 10, :scale => 2
     t.decimal  "replacement_fee",     :precision => 10, :scale => 2
     t.integer  "max_per_user"
-    t.boolean  "active",                                             :default => true
     t.integer  "category_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -63,7 +62,6 @@ ActiveRecord::Schema.define(:version => 20110401155438) do
   create_table "equipment_objects", :force => true do |t|
     t.string   "name"
     t.string   "serial"
-    t.boolean  "active",             :default => true
     t.integer  "equipment_model_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -77,8 +75,6 @@ ActiveRecord::Schema.define(:version => 20110401155438) do
   end
 
   create_table "reservations", :force => true do |t|
-    t.integer  "equipment_model_id"
-    t.integer  "equipment_object_id"
     t.integer  "reserver_id"
     t.integer  "checkout_handler_id"
     t.integer  "checkin_handler_id"

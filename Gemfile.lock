@@ -15,7 +15,8 @@ GEM
     cocaine (0.2.1)
     json (1.6.5)
     mime-types (1.17.2)
-    mysql (2.8.1)
+    mysql2 (0.2.18)
+    net-ldap (0.3.1)
     paperclip (2.7.0)
       activerecord (>= 2.3.0)
       activesupport (>= 2.3.2)
@@ -32,7 +33,6 @@ GEM
     rake (0.8.7)
     rdoc (3.12)
       json (~> 1.4)
-    ruby-net-ldap (0.0.4)
     whenever (0.7.3)
       activesupport (>= 2.3.4)
       chronic (~> 0.6.3)
@@ -41,10 +41,10 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  mysql
+  mysql2 (~> 0.2.11)
+  net-ldap
   paperclip
   rails (= 2.3.14)
   rake (= 0.8.7)
   rdoc
-  ruby-net-ldap
   whenever
