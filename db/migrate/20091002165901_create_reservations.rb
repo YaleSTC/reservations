@@ -1,8 +1,6 @@
 class CreateReservations < ActiveRecord::Migration
   def self.up
     create_table :reservations do |t|
-      t.references :equipment_model
-      t.references :equipment_object
       t.references :reserver
       t.references :checkout_handler
       t.references :checkin_handler
