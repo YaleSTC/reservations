@@ -21,16 +21,16 @@
   <legend>Further details:</legend>
   <p>
     <strong>Late Fee:</strong>
-    <%=h number_to_currency(@equipment_model.late_fee) %> / day
+    <%= number_to_currency(@equipment_model.late_fee) %> / day
   </p>
   <p>
     <strong>Replacement Fee:</strong>
-    <%=h number_to_currency(@equipment_model.replacement_fee) %>
+    <%= number_to_currency(@equipment_model.replacement_fee) %>
   </p>
   <% if current_user.is_admin? %>
     <p>
       <strong>Max Per User:</strong>
-      <%=h @equipment_model.maximum_per_user %>
+      <%= @equipment_model.maximum_per_user %>
     </p>
   <% end %>
   <% if current_user.is_admin? %>

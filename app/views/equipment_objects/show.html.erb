@@ -2,12 +2,12 @@
 
 <p>
   <strong>Name:</strong>
-  <%=h @equipment_object.name %>
+  <%= @equipment_object.name %>
 </p>
 <% unless @equipment_object.serial.nil? or @equipment_object.serial == "" %>
   <p>
     <strong>Serial:</strong>
-    <%=h @equipment_object.serial %>
+    <%= @equipment_object.serial %>
   </p>
 <% end %>
 <p>
@@ -16,7 +16,7 @@
 </p>
 <p>
   <strong>Status:</strong>
-  <%=h @equipment_object.status %>
+  <%= @equipment_object.status %>
 </p>
 
 <p>

@@ -11,13 +11,13 @@
     <tr>
       <td><%= link_to reservation.id, reservation %></td>
       <% if reservation.reserver%>
-        <td><%=h link_to reservation.reserver.name, show_all_reservations_for_user_path(reservation.reserver.id) %></td>
+        <td><%= link_to reservation.reserver.name, show_all_reservations_for_user_path(reservation.reserver.id) %></td>
       <% else %>
         <td>User no longer exists</td>
       <% end %>
       <td><%= reservation.equipment_model.name %></td>
-      <td><%=h reservation.start_date.to_date.to_s(:long) %></td>
-      <td><%=h reservation.due_date.to_date.to_s(:long) %></td>
+      <td><%= reservation.start_date.to_date.to_s(:long) %></td>
+      <td><%= reservation.due_date.to_date.to_s(:long) %></td>
     </tr>
   <% end %>
 </table>

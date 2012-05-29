@@ -7,44 +7,44 @@
 
 <p>
   <strong>Login:</strong>
-  <%=h @user.login %>
+  <%= @user.login %>
 </p>
 <p>
   <strong>First Name:</strong>
-  <%=h @user.first_name %>
+  <%= @user.first_name %>
 </p>
 <p>
   <strong>Last Name:</strong>
-  <%=h @user.last_name %>
+  <%= @user.last_name %>
 </p>
 <p>
   <strong>Nickname:</strong>
-  <%=h @user.nickname %>
+  <%= @user.nickname %>
 </p>
 <p>
   <strong>Phone:</strong>
-  <%=h @user.phone %>
+  <%= @user.phone %>
 </p>
 <p>
   <strong>Email:</strong>
-  <%=h @user.email %>
+  <%= @user.email %>
 </p>
 <p>
   <strong>Affiliation:</strong>
-  <%=h @user.affiliation %>
+  <%= @user.affiliation %>
 </p>
 <% if current_user.is_admin? %>
   <p>
     <strong>Is Admin:</strong>
-    <%=h @user.is_admin %>
+    <%= @user.is_admin %>
   </p>
   <p>
     <strong>Is Checkout Person:</strong>
-    <%=h @user.is_checkout_person %>
+    <%= @user.is_checkout_person %>
   </p>
   <p>
     <strong>Is Banned:</strong>
-    <%=h @user.is_banned %>
+    <%= @user.is_banned %>
   </p>
 <% end %>
 

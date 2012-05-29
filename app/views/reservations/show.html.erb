@@ -7,27 +7,27 @@
   </p>
   <p>
     <strong>Start Date:</strong>
-    <%=h @reservation.start_date.to_date.to_s(:long) %>
+    <%= @reservation.start_date.to_date.to_s(:long) %>
   </p>
   <p>
     <strong>Due Date:</strong>
-    <%=h @reservation.due_date.to_date.to_s(:long) %>
+    <%= @reservation.due_date.to_date.to_s(:long) %>
   </p>
   <p>
     <strong>Equipment:</strong>
-  	<%=h @reservation.equipment_model.name %>
-  	<%=h @reservation.equipment_object.nil? ? "(unassigned)" : "(#{@reservation.equipment_object.name})" %>
+  	<%= @reservation.equipment_model.name %>
+  	<%= @reservation.equipment_object.nil? ? "(unassigned)" : "(#{@reservation.equipment_object.name})" %>
   </p>
   <% if @reservation.checked_out %>
     <p>
-      Checked out <%=h @reservation.checked_out.to_s(:long) %>
-      by <%=h @reservation.checkout_handler.nil? ? "unknown" : @reservation.checkout_handler.name %>
+      Checked out <%= @reservation.checked_out.to_s(:long) %>
+      by <%= @reservation.checkout_handler.nil? ? "unknown" : @reservation.checkout_handler.name %>
     </p>
   <% end %>
   <% if @reservation.checked_in %>
     <p>
-      Checked in <%=h @reservation.checked_in.to_s(:long) %>
-      by <%=h @reservation.checkin_handler.nil? ? "unknown" : @reservation.checkin_handler.name %>
+      Checked in <%= @reservation.checked_in.to_s(:long) %>
+      by <%= @reservation.checkin_handler.nil? ? "unknown" : @reservation.checkin_handler.name %>
     </p>
   <% end %>
   <p>
