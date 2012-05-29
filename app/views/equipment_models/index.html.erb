@@ -3,12 +3,12 @@
 <table>
   <tr>
     <th>Name</th>
-    <%= "<th>Type</th>" unless @category %>
+    <%= "<th>Type</th>".html_safe unless @category %>
   </tr>
   <% for equipment_model in @equipment_models %>
     <tr>
       <td><%= link_to equipment_model.name, equipment_model %></td>
-      <%= ("<td>" + (link_to equipment_model.category.name.singularize, equipment_model.category) + "</td>") unless @category %>
+      <%= ("<td>" + (link_to equipment_model.category.name.singularize, equipment_model.category) + "</td>").html_safe unless @category %>
       <% if current_user.is_admin? %>
         <td><%= link_to "Edit", edit_equipment_model_path(equipment_model) %></td>
         <td><%= link_to "Destroy", equipment_model, :confirm => 'Are you sure?', :method => :delete %></td>
