@@ -31,12 +31,12 @@ class User < ActiveRecord::Base
     filter = Net::LDAP::Filter.eq("uid", login)
     attrs = ["givenname", "sn", "eduPersonNickname", "telephoneNumber", "uid", "mail", "collegename", "curriculumshortname", "college", "class"]
     result = ldap.search(:base => "ou=People,o=yale.edu", :filter => filter, :attributes => attrs)
-    return {:first_name  => result[0][:givenname],
-            :last_name   => result[0][:sn],
-            :nickname    => result[0][:eduPersonNickname],
-            :phone       => result[0][:telephoneNumber],
-            :login       => result[0][:uid],
-            :email       => result[0][:mail],
+    return {:first_name  => result[0][:givenname][0],
+            :last_name   => result[0][:sn][0],
+            :nickname    => result[0][:eduPersonNickname][0],
+            :phone       => result[0][:telephoneNumber][0],
+            :login       => result[0][:uid][0],
+            :email       => result[0][:mail][0],
             :affiliation => [result[0][:curriculumshortname], result[0][:college], result[0][:class]].select{|s| s.length > 0}.join(" ")} unless result.empty?
   end
   

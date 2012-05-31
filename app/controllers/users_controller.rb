@@ -17,6 +17,7 @@ class UsersController < ApplicationController
       @user = User.new
     else
       @user = User.new(User.search_ldap(session[:cas_user]))
+      binding.pry
       @user.login = session[:cas_user] #default to current login
     end
   end
