@@ -34,7 +34,7 @@ class User < ActiveRecord::Base
     return {:first_name  => result[0][:givenname][0],
             :last_name   => result[0][:sn][0],
             :nickname    => result[0][:eduPersonNickname][0],
-            :phone       => result[0][:telephoneNumber][0],
+            #:phone       => result[0][:telephoneNumber][0], #the phone number in the Yale phonebook is always wrong, let's not include it
             :login       => result[0][:uid][0],
             :email       => result[0][:mail][0],
             :affiliation => [result[0][:curriculumshortname], result[0][:college], result[0][:class]].select{|s| s.length > 0}.join(" ")} unless result.empty?
