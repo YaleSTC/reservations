@@ -1,7 +1,7 @@
 <% title @equipment_model.category.name.singularize + ": "+@equipment_model.name %>
 <%= (link_to (image_tag @equipment_model.photos.first.data.url(:small), :class => 'product_small'), @equipment_model.photos.first.data.url, :target => '_blank' ) unless @equipment_model.photos.empty? %>
 <p>
-  <%= @equipment_model.formatted_description %>
+  <%= @equipment_model.formatted_description.html_safe %>
 </p>
 <p>
   <%= link_to "[add to cart]", {:url => add_to_cart_path(@equipment_model)}, :href => add_to_cart_path(@equipment_model), :remote => true %>
@@ -99,7 +99,7 @@
             <li>
               <%= link_to equipment_object.name, equipment_object %> 
               (<%= equipment_object.status %>) <%= link_to "[x]", equipment_object, :confirm => 'Are you sure you want to delete this equipment object?', :method => :delete %>
-              <%= "<br>&nbsp;&nbsp;<small>Serial #: #{equipment_object.serial}</small>" unless equipment_object.serial.blank? %>
+              <%= "<br>&nbsp;&nbsp;<small>Serial #: #{equipment_object.serial}</small>".html_safe unless equipment_object.serial.blank? %>
             </li>
           <% end %>
           <li style="list-style:none">

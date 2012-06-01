@@ -18,8 +18,8 @@ test:
   reconnect: false
   database: reservations_development
   pool: 5
-  username: ncmaas
-  password: got2help
+  username: root
+  password:
   socket: /var/run/mysqld/mysqld.sock
 
 production:
