@@ -47,7 +47,7 @@ class ApplicationController < ActionController::Base
   
   def logout
     @current_user = nil
-    CASClient::Frameworks::Rails::Filter.logout(self)
+    RubyCAS::Filter.logout(self)
   end
   
   def require_admin
