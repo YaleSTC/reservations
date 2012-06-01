@@ -18,6 +18,7 @@ class EquipmentModel < ActiveRecord::Base
   validates_numericality_of :late_fee
   validates_numericality_of :replacement_fee
   validates_numericality_of :max_per_user, :allow_nil => true
+  validates_presence_of :category
 
   attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, :max_per_user, :document_attributes, :accessory_ids, :checkout_procedures, :checkin_procedures
 

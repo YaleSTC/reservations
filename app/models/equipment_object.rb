@@ -3,6 +3,7 @@ class EquipmentObject < ActiveRecord::Base
   has_many :reservations
   
   validates_presence_of :name
+  validates_presence_of :equipment_model
   
   attr_accessible :name, :serial, :equipment_model_id
   
