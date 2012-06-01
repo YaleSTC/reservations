@@ -68,7 +68,7 @@ class Reservation < ActiveRecord::Base
       Hash[reservations.zip(procedures_count)].each do |reservation, procedure_count|
         if Reservation.check_out_procedures_exist?(reservation)
           if reservation.equipment_model.checkout_procedures.count != procedure_count #For now, this check can only be passed if ALL procedures are checked off
-            error_messages += "Checkout Procedures for #{reservation.equipment_model.name} not Completed<br>"
+            error_messages += "Checkout Procedures for #{reservation.equipment_model.name} not Completed."
           end
         end
       end
@@ -77,13 +77,13 @@ class Reservation < ActiveRecord::Base
 
         #Check if category limit has been reached
         if user_current_categories.count(reservation.equipment_model.category.id) >= (reservation.equipment_model.category.max_per_user)
-          error_messages += "Category limit for #{reservation.equipment_model.category.name} has been reached<br>"
+          error_messages += "Category limit for #{reservation.equipment_model.category.name} has been reached."
         end
 
         #Check if equipment model limit has been reached
         if !EquipmentModel.find(reservation.equipment_model_id).max_per_user.nil?
           if user_current_models.count(reservation.equipment_model_id) >= reservation.equipment_model.max_per_user
-            error_messages += "Equipment Model limit for #{reservation.equipment_model.name} has been reached<br>"
+            error_messages += "Equipment Model limit for #{reservation.equipment_model.name} has been reached."
           end
         end
 
@@ -98,7 +98,7 @@ class Reservation < ActiveRecord::Base
     Hash[reservations.zip(procedures_count)].each do |reservation, procedure_count|
       if Reservation.check_in_procedures_exist?(reservation)
         if reservation.equipment_model.checkin_procedures.count != procedure_count #For now, this check can only be passed if ALL procedures are checked off
-          error_messages += "Checkin Procedures for #{reservation.equipment_model.name} not Completed<br>"
+          error_messages += "Checkin Procedures for #{reservation.equipment_model.name} not completed."
         end
       end
     end

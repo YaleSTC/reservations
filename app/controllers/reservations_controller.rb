@@ -91,20 +91,19 @@ class ReservationsController < ApplicationController
         flash[:error] = "No reservation selected!"
         redirect_to :back and return
       elsif Reservation.overdue_reservations?(reservations_to_be_checked_out.first.reserver) #Checks for any overdue equipment
-        error_msgs += "User has overdue equipment.<br>"
+        error_msgs += "User has overdue equipment."
       end
 
       #Checks that must be iterated over each individual reservation
       error_msgs += reservations_to_be_checked_out.first.check_out_permissions(reservations_to_be_checked_out, reservation_check_out_procedures_count) #This method checks the Category Max Per User, Equipment Model Max per User, and whether all the checkout procedures have been checked off
       if !error_msgs.empty? #If any requirements are not met...
         if current_user.is_admin? #Admins can ignore them
-          error_msgs += "Admin Override: Equipment has been successfully checked out."
+          error_msgs = " Admin Override: Equipment has been successfully checked out even though " + error_msgs
         else #everyone else is redirected
           flash[:error] = error_msgs
           redirect_to :back and return
         end
       end
-
       reservations_to_be_checked_out.each do |reservation| #updates to reservations are saved
         reservation.save
       end
