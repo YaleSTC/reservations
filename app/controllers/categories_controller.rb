@@ -16,6 +16,7 @@ class CategoriesController < ApplicationController
   
   def create
     @category = Category.new(params[:category])
+    @category.sort_order = params[:category][:sort_order].to_i
     if @category.save
       flash[:notice] = "Successfully created category."
       redirect_to @category
