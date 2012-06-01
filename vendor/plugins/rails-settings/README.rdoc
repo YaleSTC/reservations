@@ -1,0 +1,56 @@
+= Settings Plugin
+
+Settings is a plugin that makes managing a table of global key, value pairs easy.
+Think of it like a global Hash stored in you database, that uses simple ActiveRecord
+like methods for manipulation.  Keep track of any global setting that you dont want
+to hard code into your rails app.  You can store any kind of object.  Strings, numbers,
+arrays, or any object.
+
+
+== Setup
+
+You must create the table used by the Settings model.  Simply run this command:
+  ruby script/generate settings_migration
+
+Now just put that migration in the database with:
+  rake db:migrate
+
+
+== Usage
+
+The syntax is easy.  First, lets create some settings to keep track of:
+
+  Settings.admin_password = 'supersecret'
+  Settings.date_format    = '%m %d, %Y'
+  Settings.cocktails      = ['Martini', 'Screwdriver', 'White Russian']
+  Settings.foo            = 123
+
+Now lets read them back:
+
+  Settings.foo            # returns 123
+
+Changing an existing setting is the same as creating a new setting:
+
+  Settings.foo = 'super duper bar'
+
+Decide you dont want to track a particular setting anymore?
+
+  Settings.destroy :foo
+  Settings.foo            # returns nil
+
+Want a list of all the settings?
+
+  Settings.all            # returns {'admin_password' => 'super_secret', 'date_format' => '%m %d, %Y'}
+
+Set defaults for certain settings of your app.  This will cause the defined settings to return with the
+Specified value even if they are not in the database.  Make a new file in config/initializers/settings.rb
+with the following:
+
+  Settings.defaults[:some_setting] = 'footastic'
+  
+Now even if the database is completely empty, you app will have some intelligent defaults:
+
+  Settings.some_setting   # returns 'footastic'
+
+
+That's all there is to it!. Enjoy!
