@@ -2,7 +2,7 @@
   <%= f.error_messages %>
   <p>
     <%= f.label :login %><br />
-    <% if current_user and current_user.is_admin? %>
+    <% if current_user and current_user.is_admin_in_adminmode? %>
       <%= f.text_field :login %>
     <% else %>
       <%= @user.login %>
@@ -33,7 +33,7 @@
     <%= f.label :affiliation, "Affiliation (including college, year, etc)" %><br />
     <%= f.text_field :affiliation %>
   </p>
-  <% if current_user and current_user.is_admin? %>
+  <% if current_user and current_user.is_admin_in_adminmode? %>
     <p>
       <%= f.label :is_banned %><br />
       <%= f.check_box :is_banned %>

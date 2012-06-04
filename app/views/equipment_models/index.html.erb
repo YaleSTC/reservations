@@ -9,7 +9,7 @@
     <tr>
       <td><%= link_to equipment_model.name, equipment_model %></td>
       <%= ("<td>" + (link_to equipment_model.category.name.singularize, equipment_model.category) + "</td>").html_safe unless @category %>
-      <% if current_user.is_admin? %>
+      <% if current_user.is_admin_in_adminmode? %>
         <td><%= link_to "Edit", edit_equipment_model_path(equipment_model) %></td>
         <td><%= link_to "Destroy", equipment_model, :confirm => 'Are you sure?', :method => :delete %></td>
       <% end %>
@@ -19,11 +19,11 @@
 
 <p>
   <% if @category %>
-    <% if current_user.is_admin? %>
+    <% if current_user.is_admin_in_adminmode? %>
       <%= link_to ("New "+@category.name.singularize), new_category_equipment_model_path(@category) %> |
     <% end %>
     <%= link_to "View All Equipment Models", equipment_models_path %>
-  <% elsif current_user.is_admin? %>
+  <% elsif current_user.is_admin_in_adminmode? %>
     <%= link_to "New Equipment Model", new_equipment_model_path %>
   <% end %>
 </p>

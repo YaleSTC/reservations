@@ -11,6 +11,15 @@ class ApplicationController < ActionController::Base
   before_filter :first_run
   before_filter :first_time_user
   before_filter :cart
+  before_filter :department_chooser
+
+  def department_chooser
+    if (params[:su_mode] && current_user.is_admin?)
+      current_user.update_attribute(:adminmode, params[:su_mode]=='ON')
+      flash[:notice] = "Adminmode is now #{current_user.adminmode? ? 'ON' : 'OFF'}"
+      redirect_to :action => "index" and return
+    end
+  end
 
   def current_user
     @current_user ||= User.find_by_login(session[:cas_user])
@@ -51,7 +60,7 @@ class ApplicationController < ActionController::Base
   end
   
   def require_admin
-    restricted_redirect_to(root_path) unless current_user.is_admin?
+    restricted_redirect_to(root_path) unless current_user.is_admin_in_adminmode?
   end
   
   def require_checkout_person
@@ -66,7 +75,7 @@ class ApplicationController < ActionController::Base
   end
   
   def require_user(user, new_path=root_path)
-    restricted_redirect_to(new_path) unless current_user == user or current_user.is_admin?
+    restricted_redirect_to(new_path) unless current_user == user or current_user.is_admin_in_adminmode?
   end
   
   def require_user_or_checkout_person(user, new_path=root_path)

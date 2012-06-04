@@ -1,7 +1,7 @@
 <%= form_for @reservation do |f| %>
   <%= f.error_messages %>
 
-  <% if current_user and current_user.is_admin? %>
+  <% if current_user and current_user.is_admin_in_adminmode? %>
     <%= f.select :reserver_id, User.select_options, :prompt => true %>
   <% else %>
     <%= current_user.name %>

@@ -13,7 +13,7 @@ class UsersController < ApplicationController
   end
 
   def new
-    if current_user and current_user.is_admin?
+    if current_user and current_user.is_admin_in_adminmode?
       @user = User.new
     else
       @user = User.new(User.search_ldap(session[:cas_user]))
@@ -23,11 +23,11 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(params[:user])
-    @user.login = session[:cas_user] unless current_user and current_user.is_admin?
+    @user.login = session[:cas_user] unless current_user and current_user.is_admin_in_adminmode?
     @user.is_admin = true if User.count == 0
     if @user.save
       flash[:notice] = "Successfully created user."
-      redirect_to (current_user.is_admin? ? @user : root_path)
+      redirect_to (current_user.is_admin_in_adminmode? ? @user : root_path)
     else
       render :action => 'new'
     end
@@ -41,7 +41,7 @@ class UsersController < ApplicationController
   def update
     @user = User.find(params[:id])
     require_user(@user)
-    params[:user].delete(:login) unless current_user.is_admin? #no changing login unless you're an admin
+    params[:user].delete(:login) unless current_user.is_admin_in_adminmode? #no changing login unless you're an admin
     if @user.update_attributes(params[:user])
       flash[:notice] = "Successfully updated user."
       redirect_to @user

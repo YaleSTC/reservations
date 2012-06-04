@@ -3,7 +3,7 @@
 <%= form_for @reservation do |f| %>
   <%= f.error_messages %>
   <p>The following equipment will be reserved by
-    <% if current_user and (current_user.is_admin? || current_user.is_checkout_person?) %>
+    <% if current_user and (current_user.is_admin_in_adminmode? || current_user.is_checkout_person?) %>
       <%= f.select :reserver_id, User.select_options, :prompt => true %>
     <% else %>
       <%= current_user.name %>
@@ -83,7 +83,7 @@
       </ul>
     <% end %>
   </p>
-  <% if !acceptable_reservation and !current_user.is_admin? %>
+  <% if !acceptable_reservation and !current_user.is_admin_in_adminmode? %>
     <p>
       <strong>Your reservation cannot be made for one or more reasons. Please resolve the issues
         listed above, then return here to finalize your reservation. Thank you.</strong>

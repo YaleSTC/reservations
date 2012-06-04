@@ -31,7 +31,7 @@
   <% end %>
 </p>
 
-<% if current_user.is_admin? %>
+<% if current_user.is_admin_in_adminmode? %>
   <p>
     <% if @equipment_model %>
       <%= link_to ("New "+@equipment_model.name.singularize), new_equipment_model_equipment_object_path(@equipment_model) %> |

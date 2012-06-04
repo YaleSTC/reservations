@@ -97,7 +97,7 @@ class ReservationsController < ApplicationController
       #Checks that must be iterated over each individual reservation
       error_msgs += reservations_to_be_checked_out.first.check_out_permissions(reservations_to_be_checked_out, reservation_check_out_procedures_count) #This method checks the Category Max Per User, Equipment Model Max per User, and whether all the checkout procedures have been checked off
       if !error_msgs.empty? #If any requirements are not met...
-        if current_user.is_admin? #Admins can ignore them
+        if current_user.is_admin_in_adminmode? #Admins can ignore them
           error_msgs = " Admin Override: Equipment has been successfully checked out even though " + error_msgs
         else #everyone else is redirected
           flash[:error] = error_msgs

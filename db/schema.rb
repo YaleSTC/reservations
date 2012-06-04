@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120528214306) do
+ActiveRecord::Schema.define(:version => 20120604201512) do
 
   create_table "accessories_equipment_models", :force => true do |t|
     t.integer  "accessory_id"
@@ -26,7 +26,6 @@ ActiveRecord::Schema.define(:version => 20120528214306) do
     t.integer  "max_checkout_length"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "sort_order"
   end
 
   create_table "documents", :force => true do |t|
@@ -125,6 +124,10 @@ ActiveRecord::Schema.define(:version => 20120528214306) do
     t.boolean  "is_checkout_person", :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "adminmode",          :default => true
+    t.boolean  "checkoutpersonmode", :default => false
+    t.boolean  "normalusermode",     :default => false
+    t.boolean  "bannedmode",         :default => false
   end
 
 end

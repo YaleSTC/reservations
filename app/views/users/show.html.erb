@@ -33,7 +33,7 @@
   <strong>Affiliation:</strong>
   <%= @user.affiliation %>
 </p>
-<% if current_user.is_admin? %>
+<% if current_user.is_admin_in_adminmode? %>
   <p>
     <strong>Is Admin:</strong>
     <%= @user.is_admin %>
@@ -50,7 +50,7 @@
 
 <p>
   <%= link_to "Edit Information", edit_user_path(@user) %>
-  <% if current_user.is_admin? %>
+  <% if current_user.is_admin_in_adminmode? %>
     | <%= link_to "Destroy User", @user, :confirm => 'Are you sure?', :method => :delete %>
     | <%= link_to "View All Users", users_path %>
   <% end %>

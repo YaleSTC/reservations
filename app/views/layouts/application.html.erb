@@ -115,12 +115,12 @@
                 <li><%= link_to "Catalog", catalog_path %></li>
               	<% if current_user.nil? %>
                 	<li><%= link_to "Sign In" %></li>
-                <% elsif current_user.is_admin? %>
+                <% elsif current_user.is_admin_in_adminmode? %>
                 	<li><%= link_to "Users", users_path %></li>
                 <% else %>
                 	<li><%= link_to "My Profile", user_path(current_user) %></li>
                 <% end %>
-                <% if current_user and current_user.is_admin? %>
+                <% if current_user and current_user.is_admin_in_adminmode? %>
                   <li><%= link_to "Categories", categories_path %></li>
                   <li><%= link_to "Equipment Models", equipment_models_path %></li>
                 <% end %>
@@ -128,11 +128,20 @@
                   <li><%= link_to "Equipment Objects", equipment_objects_path %></li>
                 <% end %>
                 <li><%= link_to "Reservations", reservations_path %></li>
-                <% if current_user and current_user.is_admin? %>
+                <% if current_user and current_user.is_admin_in_adminmode? %>
                 <li><%= link_to "App Settings", edit_app_config_path %></li>
                 <% end %>
               	<li><%= link_to Settings.home_link_text, Settings.home_link_location %></li>
               	<li><%= link_to Settings.contact_link_text, Settings.contact_link_location %></li>
+			<% if current_user and current_user.is_admin? %>
+			<li>View as:
+				<li>Checkout Person</li>
+				<li>Normal User</li>
+				<li>Banned User</li>.
+			<%= link_to (current_user.adminmode? ? 'ON' : 'OFF'),
+                {:su_mode => current_user.adminmode? ? 'OFF' : 'ON' } %>
+			</li>
+			<% end %>
               </ul>
           </ul>
           <%= yield(:left_sidebar) %>
