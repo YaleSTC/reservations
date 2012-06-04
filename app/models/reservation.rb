@@ -76,11 +76,7 @@ class Reservation < ActiveRecord::Base
       reservations.each do |reservation|
 
         #Check if category limit has been reached
-        if reservation.equipment_model.category.max_per_user == NIL
-          # this senseless line (above) is to circumvent
-          # an error in the elsif with Num >= NIL,
-          # an undefined comparison
-        elsif user_current_categories.count(reservation.equipment_model.category.id) >= (reservation.equipment_model.category.max_per_user)
+        if user_current_categories.count(reservation.equipment_model.category.id) >= (reservation.equipment_model.category.max_per_user)
           error_messages += "Category limit for #{reservation.equipment_model.category.name} has been reached."
         end
 

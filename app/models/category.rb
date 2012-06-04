@@ -5,7 +5,7 @@ class Category < ActiveRecord::Base
   validates_numericality_of :max_per_user, :allow_nil => true
   validates_numericality_of :max_checkout_length, :allow_nil => true
   
-  attr_accessible :name, :max_per_user, :max_checkout_length, :sort_order
+  attr_accessible :name, :max_per_user, :max_checkout_length
   
   def maximum_per_user
     max_per_user || "unrestricted"

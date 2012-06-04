@@ -5,7 +5,7 @@ class EquipmentObject < ActiveRecord::Base
   validates_presence_of :name
   validates_presence_of :equipment_model
   
-  attr_accessible :name, :serial, :equipment_model_id, :active
+  attr_accessible :name, :serial, :equipment_model_id
   
   def status
     # last_reservation = Reservation.find(self.reservation_ids.last.to_s)
