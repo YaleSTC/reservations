@@ -47,7 +47,7 @@
         <%# check to see if this reservation goes over any category maximums %>
         <% cart.items.group_by{|i| i.equipment_model.category}.each do |category, items| %>
           <% total_items = items.map{|item| item.quantity}.sum %>
-          <% if category.maximum_per_user != "unlimited" and total_items.to_i > category.maximum_per_user.to_i %>
+          <% if category.maximum_per_user != "unrestricted" and total_items.to_i > category.maximum_per_user.to_i %>
             <% acceptable_reservation = false %>
             <li>
               <small>

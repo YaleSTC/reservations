@@ -131,8 +131,12 @@
                 <% if current_user and current_user.is_admin? %>
                 <li><%= link_to "App Settings", edit_app_config_path %></li>
                 <% end %>
-              	<li><%= link_to Settings.home_link_text, Settings.home_link_location %></li>
-              	<li><%= link_to Settings.contact_link_text, Settings.contact_link_location %></li>
+                <% if Settings.home_link_text and Settings.home_link_location %>
+                  <li><%= link_to Settings.home_link_text, Settings.home_link_location %></li>
+                <% end %>
+                <% if Settings.contact_link_text and Settings.contact_link_location %>
+                  <li><%= link_to Settings.contact_link_text, Settings.contact_link_location %></li>
+                <% end %>
               </ul>
           </ul>
           <%= yield(:left_sidebar) %>
