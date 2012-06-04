@@ -2,21 +2,14 @@
 
 <table>
   <tr>
-    <th>Login</th>
+    <th>NetID</th>
     <th>Name</th>
-    <th>Phone</th>
-    <th>Email</th>
-    <th>Affiliation</th>
   </tr>
   <% for user in @users %>
     <tr>
       <td><%= user.login %></td>
       <td><%= link_to user.name, user %></td>
-      <td><%= user.phone %></td>
-      <td><%= user.email %></td>
-      <td><%= user.affiliation %></td>
       <td><%= link_to "Edit", edit_user_path(user) %></td>
-      <td><%= link_to "Destroy", user, :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>
   <% end %>
 </table>
