@@ -74,19 +74,20 @@ class Reservation < ActiveRecord::Base
       end
 
       reservations.each do |reservation|
+        #Check if the max number of reservations per user is unlimited
+        if !reservation.equipment_model.category.max_per_user.nil?
+          #Check if category limit has been reached
+          if user_current_categories.count(reservation.equipment_model.category.id) >= (reservation.equipment_model.category.max_per_user)
+            error_messages += "Category limit for #{reservation.equipment_model.category.name} has been reached."
+          end
 
-        #Check if category limit has been reached
-        if user_current_categories.count(reservation.equipment_model.category.id) >= (reservation.equipment_model.category.max_per_user)
-          error_messages += "Category limit for #{reservation.equipment_model.category.name} has been reached."
-        end
-
-        #Check if equipment model limit has been reached
-        if !EquipmentModel.find(reservation.equipment_model_id).max_per_user.nil?
-          if user_current_models.count(reservation.equipment_model_id) >= reservation.equipment_model.max_per_user
-            error_messages += "Equipment Model limit for #{reservation.equipment_model.name} has been reached."
+          #Check if equipment model limit has been reached
+          if !EquipmentModel.find(reservation.equipment_model_id).max_per_user.nil?
+            if user_current_models.count(reservation.equipment_model_id) >= reservation.equipment_model.max_per_user
+              error_messages += "Equipment Model limit for #{reservation.equipment_model.name} has been reached."
+            end
           end
         end
-
 
       end
     end
