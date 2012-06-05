@@ -39,6 +39,9 @@ begin
 
   Thank you,
   @department_name@"
+  
+  Settings.reservation_confirmation_email_body ||= "Dear @user@, this is your confirmation."
+  
 rescue
   puts "Settings table does not exist yet; please run rake db:migrate."
 end
