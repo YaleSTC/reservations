@@ -19,12 +19,19 @@ class User < ActiveRecord::Base
   end
   
   def can_checkout?
-    self.is_checkout_person? or (self.is_admin? &&
-						   (self.adminmode? || self.checkoutpersonmode?))
+    self.is_checkout_person? or self.is_admin_in_adminmode? or self.is_admin_in_checkoutpersonmode?
   end
 
   def is_admin_in_adminmode?
     is_admin? && adminmode?
+  end
+
+  def is_admin_in_checkoutpersonmode?
+    is_admin? && checkoutpersonmode?
+  end
+
+  def is_admin_in_bannedmode?
+    is_admin? && bannedmode?
   end
   
   def equipment_objects

@@ -1,4 +1,4 @@
-<% title @user.name + (@user.is_banned ? " (banned)" : "") %>
+<% title @user.name + ((@user.is_banned || @user.is_admin_in_bannedmode?) ? " (banned)" : "") %>
 
 <div id="current_equipment"
   <strong>User's current equipment:</strong><br />

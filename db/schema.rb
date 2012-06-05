@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(:version => 20120604201512) do
     t.integer  "max_checkout_length"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "sort_order"
   end
 
   create_table "documents", :force => true do |t|

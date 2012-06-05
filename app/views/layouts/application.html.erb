@@ -134,13 +134,18 @@
               	<li><%= link_to Settings.home_link_text, Settings.home_link_location %></li>
               	<li><%= link_to Settings.contact_link_text, Settings.contact_link_location %></li>
 			<% if current_user and current_user.is_admin? %>
-			<li>View as:
-				<li>Checkout Person</li>
-				<li>Normal User</li>
-				<li>Banned User</li>.
-			<%= link_to (current_user.adminmode? ? 'ON' : 'OFF'),
-                {:su_mode => current_user.adminmode? ? 'OFF' : 'ON' } %>
-			</li>
+			<li>View as:</li>
+				<% if current_user.adminmode? %>Admin
+				<% else %><%= link_to 'Admin', {:a_mode => 'ON'}%><% end %>
+				<br>
+				<% if current_user.checkoutpersonmode? %>Checkout Person
+				<% else %><%= link_to 'Checkout Person', {:c_mode => 'ON'}%><% end %>
+				<br>
+				<% if current_user.normalusermode? %>Normal User
+				<% else %><%= link_to 'Normal User', {:n_mode => 'ON'}%><% end %>
+				<br>
+				<% if current_user.bannedmode? %>Banned User
+				<% else %><%= link_to 'Banned User', {:b_mode => 'ON'}%><% end %>
 			<% end %>
               </ul>
           </ul>

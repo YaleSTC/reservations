@@ -14,9 +14,36 @@ class ApplicationController < ActionController::Base
   before_filter :department_chooser
 
   def department_chooser
-    if (params[:su_mode] && current_user.is_admin?)
-      current_user.update_attribute(:adminmode, params[:su_mode]=='ON')
-      flash[:notice] = "Adminmode is now #{current_user.adminmode? ? 'ON' : 'OFF'}"
+    if (params[:a_mode] && current_user.is_admin)
+      current_user.update_attribute(:adminmode, 1)
+	 current_user.update_attribute(:checkoutpersonmode, 0)
+	 current_user.update_attribute(:normalusermode, 0)
+	 current_user.update_attribute(:bannedmode, 0)
+      flash[:notice] = "Viewing as Admin"
+      redirect_to :action => "index" and return
+    end
+if (params[:c_mode] && current_user.is_admin)
+	 current_user.update_attribute(:adminmode, 0)
+	 current_user.update_attribute(:checkoutpersonmode, 1)
+	 current_user.update_attribute(:normalusermode, 0)
+	 current_user.update_attribute(:bannedmode, 0)
+      flash[:notice] = "Viewing as Checkout Person"
+      redirect_to :action => "index" and return
+    end
+if (params[:n_mode] && current_user.is_admin)
+	 current_user.update_attribute(:adminmode, 0)
+	 current_user.update_attribute(:checkoutpersonmode, 0)
+	 current_user.update_attribute(:normalusermode, 1)
+	 current_user.update_attribute(:bannedmode, 0)
+      flash[:notice] = "Viewing as Normal User"
+      redirect_to :action => "index" and return
+    end
+if (params[:b_mode] && current_user.is_admin)
+	 current_user.update_attribute(:adminmode, 0)
+      current_user.update_attribute(:checkoutpersonmode, 0)
+	 current_user.update_attribute(:normalusermode, 0)
+      current_user.update_attribute(:bannedmode, 1)
+      flash[:notice] = "Viewing as Banned User"
       redirect_to :action => "index" and return
     end
   end
