@@ -26,9 +26,9 @@
         <%= render :partial => 'checkout_procedure', :collection => @equipment_model.checkout_procedures %>
       <% end %>
     </div>
-    <%= link_to_function "[add checkout procedure]" do |document| %>
-      <%= document.insert_html(:bottom, :checkout_procedures, :partial => 'checkout_procedure') %>
-    <% end %>
+    <%= link_to_function "[add checkout procedure]" do |document|
+      document.insert_html(:bottom, :checkout_procedures, :partial => 'checkout_procedure')
+    end %>
   </p>
   <p>
     <%= hidden_field_tag :clear_checkin_procedures, true %>
