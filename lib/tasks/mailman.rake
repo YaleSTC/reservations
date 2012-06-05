@@ -5,7 +5,7 @@ task :mailman => :environment do
   upcoming_reservations = Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and due_date >= ? and due_date < ?", Time.now.midnight.utc, Time.now.midnight.utc + 1.day])
   puts "Found #{upcoming_reservations.size} reservations due for checkin. Sending reminder emails..."
   upcoming_reservations.each do |upcoming_reservation|
-    Notifier.deliver_upcoming_checkin_notification(upcoming_reservation)
+    UserMailer.upcoming_checkin_notification(upcoming_reservation).deliver
   end
   puts "Done!"
 
@@ -13,7 +13,7 @@ task :mailman => :environment do
   upcoming_reservations = Reservation.find(:all, :conditions => ["checked_out IS NULL and start_date < ? and  start_date >= ?", Time.now.midnight.utc, Time.now.midnight.utc - 1.day])
   puts "Found #{upcoming_reservations.size} reservations overdue for checkout. Sending reminder emails..."
   upcoming_reservations.each do |upcoming_reservation|
-    Notifier.deliver_overdue_checkout_notification(upcoming_reservation)
+    UserMailer.overdue_checkout_notification(upcoming_reservation).deliver
   end
   puts "Done!"
 
@@ -22,7 +22,7 @@ task :mailman => :environment do
   overdue_reservations = Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc])
   puts "Found #{overdue_reservations.size} reservations overdue for checkin. Sending reminder emails..."
   overdue_reservations.each do |overdue_reservation|
-    Notifier.deliver_overdue_checkin_notification(overdue_reservation)
+    UserMailer.overdue_checkin_notification(overdue_reservation).deliver
   end
   puts "Done!"
 
@@ -45,11 +45,11 @@ task :mailman => :environment do
     current_count = inventory_count.count - reserved_count.count - overdue_count.count
     if current_count < 0
       reserved_count.each do |reserved_count|
-        Notifier.deliver_warning_missing_equipment_notification(reserved_count)
+        UserMailer.warning_missing_equipment_notification(reserved_count).deliver
       end
     else
       reserved_count.each do |reserved_count|
-        Notifier.deliver_upcoming_checkout_notification(reserved_count)
+        UserMailer.upcoming_checkout_notification(reserved_count).deliver
       end
     end
   end
