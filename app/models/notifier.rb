@@ -24,20 +24,20 @@ class Notifier < ActionMailer::Base
 #     body       :reservation => reservation
 #   end
 
-  def overdue_checkin_notification(reservation)
-    recipients reservation.reserver.email
-#    cc         Settings.admin_email
-    from       "no-reply@reservations.app"
-    subject    "[Reservation] OVERDUE: equipment checkin"
-    body       :reservation => reservation
-  end
+#   def overdue_checkin_notification(reservation)
+#     recipients reservation.reserver.email
+# #    cc         Settings.admin_email
+#     from       "no-reply@reservations.app"
+#     subject    "[Reservation] OVERDUE: equipment checkin"
+#     body       :reservation => reservation
+#   end
 
-  def warning_missing_equipment_notification(reservation)
-    recipients reservation.reserver.email
-#    cc         Settings.admin_email
-    from       "no-reply@reservations.app"
-    subject    "[Reservation] WARNING: missing equipment"
-    body       :reservation => reservation
-  end
+#   def warning_missing_equipment_notification(reservation)
+#     recipients reservation.reserver.email
+# #    cc         Settings.admin_email
+#     from       "no-reply@reservations.app"
+#     subject    "[Reservation] WARNING: missing equipment"
+#     body       :reservation => reservation
+#   end
 end
 
