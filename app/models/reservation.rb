@@ -76,7 +76,7 @@ class Reservation < ActiveRecord::Base
       reservations.each do |reservation|
 
         #Check if category limit has been reached
-        if user_current_categories.count(reservation.equipment_model.category.id) >= (reservation.equipment_model.category.max_per_user)
+        if !reservation.equipment_model.category.max_per_user.nil? && user_current_categories.count(reservation.equipment_model.category.id) >= (reservation.equipment_model.category.max_per_user)
           error_messages += "Category limit for #{reservation.equipment_model.category.name} has been reached."
         end
 

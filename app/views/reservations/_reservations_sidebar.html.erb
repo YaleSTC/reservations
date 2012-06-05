@@ -5,9 +5,13 @@
   <% else %>
   <small>
     <ul>
-      <% current_user.reservations.active.each do |reservation| %>
-        <li><%= link_to "#{EquipmentModel.find(reservation.equipment_model_id).name}: #{reservation.start_date.to_date.to_s(:long)} &ndash; #{reservation.due_date.to_date.to_s(:long)}".html_safe, reservation %></li>
-      <% end %>
+    <% current_user.reservations.active.each do |reservation| %>
+      <li>
+        <%= link_to "#{EquipmentModel.find(reservation.equipment_model_id).name}:
+                     #{reservation.start_date.to_date.to_s(:long)} &ndash;
+                     #{reservation.due_date.to_date.to_s(:long)}".html_safe, reservation %>
+      </li>
+    <% end %>
     </ul>
   </small>
   <% end %>
