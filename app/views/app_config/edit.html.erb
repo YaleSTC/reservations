@@ -2,54 +2,55 @@
 
 <%= form_tag update_app_config_path do %>
   <p>
-    <%= label_tag "Admin email address" %><br />
+    <%= label_tag "Admin email address" %><br>
     <%= text_field_tag :admin_email, Settings.admin_email %>
   </p>
   <p>
-    <%= label_tag "Department name" %><br />
+    <%= label_tag "Department name" %><br>
     <%= text_field_tag :department_name, Settings.department_name %>
   </p>
   <p>
-    <%= label_tag "Contact Link Text" %><br />
-	<small>Set the text of the "Contact Us" link</small></br>
+    <%= label_tag "Contact Link Text" %><br>
+	  <small>Set the text of the "Contact Us" link</small><br>
     <%= text_field_tag :contact_link_text, Settings.contact_link_text %>
   </p>
   <p>
-    <%= label_tag "Contact Link Location" %><br />
-	<small>Set where the "Contact Us" link points.</br>
-	(e.g. http://www.yale.edu/contact/ or mailto:contact@yale.edu)</small></br>
+    <%= label_tag "Contact Link Location" %><br>
+	  <small>Set where the "Contact Us" link points.<br>
+	  (e.g. http://www.yale.edu/contact/ or mailto:contact@yale.edu)</small><br>
     <%= text_field_tag :contact_link_location, Settings.contact_link_location %>
   </p>
   <p>
-    <%= label_tag "Home Link Text" %><br />
-	<small>Set the text of the "Home" link</small></br>
+    <%= label_tag "Home Link Text" %><br>
+	  <small>Set the text of the "Home" link</small><br>
     <%= text_field_tag :home_link_text, Settings.home_link_text %>
   </p>
   <p>
-    <%= label_tag "Home Link Location" %><br />
-	<small>Set where the "Home" link points.</br>
-	(e.g. http://www.yale.edu/its/stc)</small></br>
+    <%= label_tag "Home Link Location" %><br>
+	  <small>Set where the "Home" link points.<br>
+	  (e.g. http://www.yale.edu/its/stc)</small><br>
     <%= text_field_tag :home_link_location, Settings.home_link_location %>
   </p>
   <p>
-    <%= label_tag "Upcoming checkout email body" %><br />
+    <%= label_tag "Upcoming checkout email body" %><br>
     <%= text_area_tag :upcoming_checkout_email_body, Settings.upcoming_checkout_email_body %>
   </p>
   <p>
-    <%= label_tag "Upcoming checkin email body" %><br />
+    <%= label_tag "Upcoming checkin email body" %><br>
     <%= text_area_tag :upcoming_checkin_email_body, Settings.upcoming_checkin_email_body %>
   </p>
   <p>
-    <%= label_tag "Overdue checkout email body" %><br />
+    <%= label_tag "Overdue checkout email body" %><br>
     <%= text_area_tag :overdue_checkout_email_body, Settings.overdue_checkout_email_body %>
   </p>
   <p>
-    <%= label_tag "Overdue checkin email body" %><br />
+    <%= label_tag "Overdue checkin email body" %><br>
     <%= text_area_tag :overdue_checkin_email_body, Settings.overdue_checkin_email_body %>
   </p>
   <p>
-    <%= label_tag "Warning missing equipment email body" %><br />
-    <%= text_area_tag :warning_missing_equipment_email_body, Settings.warning_missing_equipment_email_body %>
+    <%= label_tag "Warning missing equipment email body" %><br>
+    <%= text_area_tag :warning_missing_equipment_email_body,
+                      Settings.warning_missing_equipment_email_body %>
   </p>
   <p>
     <%= label_tag "Reservation Confirmation email body" %><br />
@@ -59,4 +60,3 @@
     <%= submit_tag "Save changes" %>
   </p>
 <% end %>
-
