@@ -25,7 +25,9 @@ class UserMailer < ActionMailer::Base
       @reservation = reservation
       mail(:to => reservation.reserver.email, :subject => "[Reservation] WARNING: missing equipment")
     end
-
-
+    
+    def reservation_confirmation(reservation)
+      mail(:to => reservation.reserver.email, :subject => "[Reservation] Confirmation")
+    end
 
 end
