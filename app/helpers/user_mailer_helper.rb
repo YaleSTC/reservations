@@ -1,7 +1,7 @@
 module UserMailerHelper
   def replace_variables(body)
     return "" if body.nil?
-    body.gsub("@user@", @reservation.reserver.name)
+    body.gsub("@user@", "Maria")
     body.gsub("@reservation_id@", @reservation.id.to_s)
     body.gsub("@department_name@", Settings.department_name)
     body.gsub("@equipment_list@", @reservation.equipment_model.name)
