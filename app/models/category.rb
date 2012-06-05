@@ -2,8 +2,8 @@ class Category < ActiveRecord::Base
   has_many :equipment_models
   validates_presence_of :name
   validates_uniqueness_of :name
-  validates_numericality_of :max_per_user, :allow_nil => true
-  validates_numericality_of :max_checkout_length, :allow_nil => true
+  validates_numericality_of :max_per_user, :allow_nil => true, :only_integer => true, :greater_than_or_equal_to => 1
+  validates_numericality_of :max_checkout_length, :allow_nil => true, :only_integer => true, :greater_than_or_equal_to => 1
   
   attr_accessible :name, :max_per_user, :max_checkout_length
   
