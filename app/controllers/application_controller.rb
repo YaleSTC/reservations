@@ -11,47 +11,13 @@ class ApplicationController < ActionController::Base
   before_filter :first_run
   before_filter :first_time_user
   before_filter :cart
-  before_filter :department_chooser
-
-  def department_chooser
-    if (params[:a_mode] && current_user.is_admin)
-      current_user.update_attribute(:adminmode, 1)
-	 current_user.update_attribute(:checkoutpersonmode, 0)
-	 current_user.update_attribute(:normalusermode, 0)
-	 current_user.update_attribute(:bannedmode, 0)
-      flash[:notice] = "Viewing as Admin"
-      redirect_to :action => "index" and return
-    end
-if (params[:c_mode] && current_user.is_admin)
-	 current_user.update_attribute(:adminmode, 0)
-	 current_user.update_attribute(:checkoutpersonmode, 1)
-	 current_user.update_attribute(:normalusermode, 0)
-	 current_user.update_attribute(:bannedmode, 0)
-      flash[:notice] = "Viewing as Checkout Person"
-      redirect_to :action => "index" and return
-    end
-if (params[:n_mode] && current_user.is_admin)
-	 current_user.update_attribute(:adminmode, 0)
-	 current_user.update_attribute(:checkoutpersonmode, 0)
-	 current_user.update_attribute(:normalusermode, 1)
-	 current_user.update_attribute(:bannedmode, 0)
-      flash[:notice] = "Viewing as Normal User"
-      redirect_to :action => "index" and return
-    end
-if (params[:b_mode] && current_user.is_admin)
-	 current_user.update_attribute(:adminmode, 0)
-      current_user.update_attribute(:checkoutpersonmode, 0)
-	 current_user.update_attribute(:normalusermode, 0)
-      current_user.update_attribute(:bannedmode, 1)
-      flash[:notice] = "Viewing as Banned User"
-      redirect_to :action => "index" and return
-    end
-  end
+  before_filter :set_view_mode
 
   def current_user
     @current_user ||= User.find_by_login(session[:cas_user])
   end
   
+  #-------- before_filter methods --------
   def first_run
     Category.find_or_create_by_name("Accessories")
   end
@@ -67,7 +33,43 @@ if (params[:b_mode] && current_user.is_admin)
   def cart
     session[:cart] ||= Cart.new
   end
-  
+
+  def set_view_mode #(Analogous to department_chooser in shifts)
+    if (params[:a_mode] && current_user.is_admin)
+      current_user.update_attribute(:adminmode, 1)
+	    current_user.update_attribute(:checkoutpersonmode, 0)
+	    current_user.update_attribute(:normalusermode, 0)
+	    current_user.update_attribute(:bannedmode, 0)
+      flash[:notice] = "Viewing as Admin"
+      redirect_to :action => "index" and return
+    end
+    if (params[:c_mode] && current_user.is_admin)
+      current_user.update_attribute(:adminmode, 0)
+	    current_user.update_attribute(:checkoutpersonmode, 1)
+	    current_user.update_attribute(:normalusermode, 0)
+	    current_user.update_attribute(:bannedmode, 0)
+      flash[:notice] = "Viewing as Checkout Person"
+      redirect_to :action => "index" and return
+    end
+    if (params[:n_mode] && current_user.is_admin)
+	    current_user.update_attribute(:adminmode, 0)
+	    current_user.update_attribute(:checkoutpersonmode, 0)
+	    current_user.update_attribute(:normalusermode, 1)
+	    current_user.update_attribute(:bannedmode, 0)
+      flash[:notice] = "Viewing as Normal User"
+      redirect_to :action => "index" and return
+    end
+    if (params[:b_mode] && current_user.is_admin)
+	    current_user.update_attribute(:adminmode, 0)
+      current_user.update_attribute(:checkoutpersonmode, 0)
+	    current_user.update_attribute(:normalusermode, 0)
+      current_user.update_attribute(:bannedmode, 1)
+      flash[:notice] = "Viewing as Banned User"
+      redirect_to :action => "index" and return
+    end
+  end
+  #-------- end before_filter methods --------
+
   def update_cart
     session[:cart].set_start_date(Date.civil(params[:cart][:"start_date(1i)"].to_i,params[:cart][:"start_date(2i)"].to_i,params[:cart][:"start_date(3i)"].to_i))
     session[:cart].set_due_date(Date.civil(params[:cart][:"due_date(1i)"].to_i,params[:cart][:"due_date(2i)"].to_i,params[:cart][:"due_date(3i)"].to_i))
@@ -86,12 +88,12 @@ if (params[:b_mode] && current_user.is_admin)
     RubyCAS::Filter.logout(self)
   end
   
-  def require_admin
-    restricted_redirect_to(root_path) unless current_user.is_admin_in_adminmode?
+  def require_admin(new_path=root_path)
+    restricted_redirect_to(new_path) unless current_user.is_admin_in_adminmode?
   end
   
-  def require_checkout_person
-    restricted_redirect_to(root_path) unless current_user.can_checkout?
+  def require_checkout_person(new_path=root_path)
+    restricted_redirect_to(new_path) unless current_user.can_checkout?
   end
   
   def require_login
@@ -110,7 +112,7 @@ if (params[:b_mode] && current_user.is_admin)
   end
   
   def restricted_redirect_to(new_path=root_path)
-    flash[:error] = "Sorry, that action is restricted."
+    flash[:error] = "Sorry, that action or page is restricted."
     redirect_to new_path
   end
 end
