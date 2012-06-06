@@ -34,6 +34,7 @@ class ReservationsController < ApplicationController
     end
   end
 
+# old method that does not split reservations by item, needs to be deleted by end of summer 12
   # def create
   #   @reservation = Reservation.new(params[:reservation])
   #   cart.items.each do |item|
@@ -56,6 +57,7 @@ class ReservationsController < ApplicationController
         @reservation.save
       end
     end
+    UserMailer.reservation_confirmation(@reservation).deliver
     flash[:notice] = "Your reservations have been made."
     session[:cart] = Cart.new
     redirect_to catalog_path

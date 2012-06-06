@@ -27,7 +27,7 @@
       <% end %>
     </div>
     <%= link_to_function "[add checkout procedure]" do |document|
-      document.insert_html :bottom, :checkout_procedures, :partial => 'checkout_procedure'
+      document.insert_html(:bottom, :checkout_procedures, :partial => 'checkout_procedure')
     end %>
   </p>
   <p>
