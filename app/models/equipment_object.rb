@@ -2,8 +2,7 @@ class EquipmentObject < ActiveRecord::Base
   belongs_to :equipment_model
   has_many :reservations
  
-  validates_presence_of :name
-  validates_presence_of :equipment_model
+  validates :name, :equipment_model, :presence => true
 
   nilify_blanks :only => [:deleted_at]
   
