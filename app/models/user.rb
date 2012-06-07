@@ -34,6 +34,18 @@ class User < ActiveRecord::Base
     self.reservations.collect{|r| r.equipment_objects}.flatten
   end
   
+  def checked_out_models
+    #Make an array of the checked out eq. models and their counts for the user
+    model_ids = self.reservations.collect do |r|
+    #Check which of the reservations are checked out but not checked in yet      
+      if (!r.checked_out.nil? && r.checked_in.nil?)      
+        r.equipment_model_id        
+      end        
+    end
+    #Remove nils, then count the number of unique model ids, and store the counts in a sub hash, and finally sort by model_id
+    model_ids.compact.inject(Hash.new(0)) {|h,x| h[x]+=1;h}.sort
+  end
+  
   def self.search_ldap(login)
     ldap = Net::LDAP.new(:host => "directory.yale.edu", :port => 389)
     filter = Net::LDAP::Filter.eq("uid", login)
