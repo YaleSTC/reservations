@@ -3,7 +3,11 @@ class CategoriesController < ApplicationController
   skip_before_filter :require_admin, :only => [:index, :show]
   
   def index
-    @categories = Category.all
+    if (params[:show_deleted])
+      @categories = Category.all
+    else
+      @categories = Category.not_deleted.all
+    end
   end
   
   def show

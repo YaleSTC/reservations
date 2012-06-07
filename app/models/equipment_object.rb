@@ -1,11 +1,13 @@
 class EquipmentObject < ActiveRecord::Base
   belongs_to :equipment_model
   has_many :reservations
-  
+ 
   validates_presence_of :name
   validates_presence_of :equipment_model
+
+  nilify_blanks :only => [:deleted_at]
   
-  attr_accessible :name, :serial, :equipment_model_id
+  attr_accessible :name, :serial, :equipment_model_id, :deleted_at
   
   def status
     # last_reservation = Reservation.find(self.reservation_ids.last.to_s)

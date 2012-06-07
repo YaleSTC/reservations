@@ -20,7 +20,8 @@ class EquipmentModel < ActiveRecord::Base
   validates_numericality_of :max_per_user, :allow_nil => true, :integer_only => true, :greater_than_or_equal_to => 1
   validates_presence_of :category
 
-  attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, :max_per_user, :document_attributes, :accessory_ids, :checkout_procedures, :checkin_procedures
+  nilify_blanks :only => [:deleted_at]
+  attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, :max_per_user, :document_attributes, :accessory_ids, :checkout_procedures, :checkin_procedures, :deleted_at
 
   #inherits from category if not defined
   def maximum_per_user

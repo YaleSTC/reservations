@@ -54,12 +54,17 @@ GEM
     mime-types (1.18)
     mysql2 (0.2.18)
     net-ldap (0.3.1)
+    nilify_blanks (1.0.0)
+      activerecord (>= 3.0.0)
+      activesupport (>= 3.0.0)
     paperclip (3.0.4)
       activemodel (>= 3.0.0)
       activerecord (>= 3.0.0)
       activesupport (>= 3.0.0)
       cocaine (>= 0.0.2)
       mime-types
+    permanent_records (2.1.2)
+      activerecord
     polyglot (0.3.3)
     pry (0.9.9.6)
       coderay (~> 1.0.5)
@@ -111,7 +116,9 @@ DEPENDENCIES
   dynamic_form
   mysql2 (= 0.2.18)
   net-ldap
+  nilify_blanks
   paperclip
+  permanent_records (~> 2.1.2)
   pry
   pry-rails
   rails (= 3.0.12)

@@ -8,15 +8,29 @@
     <th>Sort Order</th>
   </tr>
   <% for category in @categories %>
-    <tr>
+    <% if category.deleted_at %> 
+      <tr class="deactivated">
+      <% @toggle = "link_to \"Activate\", activate_path(:categories,category)" %>
+    <% else %>
+      <tr class= "activated">
+      <% @toggle = "link_to \"De-Activate\", deactivate_path(:categories,category)" %>
+    <% end %>
       <td><%= link_to category.name, category %></td>
       <td><%= category.maximum_per_user %></td>
       <td><%= category.maximum_checkout_length %></td>
       <td><%= category.sort_order %></td>
       <td><%= link_to "Edit", edit_category_path(category) %></td>
+      <td><%= eval @toggle %></td>
       <td><%= link_to "Destroy", category, :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>
   <% end %>
 </table>
 
-<p><%= link_to "New Category", new_category_path %></p>
+<p>
+  <%= link_to "New Category", new_category_path %>
+  <% if params[:show_deleted] %>
+   | <%= link_to "Hide Old Categories from List", categories_path %>
+  <% else %>
+   | <%= link_to "Show Old Categories in List", categories_path(:show_deleted => true) %>
+  <% end %>
+</p>

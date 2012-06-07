@@ -115,4 +115,17 @@ class ApplicationController < ActionController::Base
     flash[:error] = "Sorry, that action or page is restricted."
     redirect_to new_path
   end
+
+  def deactivate
+    params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]).destroy
+    flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + "."
+    redirect_to(:back)   # Or use redirect_to request.referer. <-This may pass more tests
+  end
+
+  def activate
+    params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]).revive
+    flash[:notice] = "Successfully reactivated " + params[:controller].singularize.titleize + "."
+    redirect_to(:back)   # Or use redirect_to request.referer. <-This may pass more tests
+  end
+
 end

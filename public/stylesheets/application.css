@@ -73,7 +73,7 @@
   list-style: disc;
 }
 
-table, td, tr, th{
+table, tr, th{
 	border: 1px solid #000;
 	margin: 0;
 	padding: 5px;
@@ -83,6 +83,9 @@ table, td, tr, th{
 
 td{
 	border: 1px solid #999;
+        margin: 0;
+	padding: 5px;
+	border-collapse: collapse;
 }
 
 h1{
@@ -196,4 +199,12 @@ ul.catalog h3{
 textarea{
 	width: 100%;
 	min-height: 100px;
+}
+
+tr.deactivated {
+        background: pink;
+}
+
+tr.activated {
+        background: transparent;
 }

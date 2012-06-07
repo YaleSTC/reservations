@@ -1,8 +1,8 @@
 require 'net/ldap'
 class User < ActiveRecord::Base
   has_many :reservations, :foreign_key => 'reserver_id'
-  
-  attr_accessible :login, :first_name, :last_name, :nickname, :phone, :email, :affiliation, :is_banned, :is_checkout_person, :is_admin, :adminmode, :checkoutpersonmode, :normalusermode, :bannedmode
+  nilify_blanks :only => [:deleted_at] 
+  attr_accessible :login, :first_name, :last_name, :nickname, :phone, :email, :affiliation, :is_banned, :is_checkout_person, :is_admin, :adminmode, :checkoutpersonmode, :normalusermode, :bannedmode, :deleted_at
   
   validates_presence_of :first_name
   validates_presence_of :last_name
@@ -51,7 +51,7 @@ class User < ActiveRecord::Base
             :email       => result[0][:mail][0],
             :affiliation => [result[0][:curriculumshortname], result[0][:college], result[0][:class]].select{|s| s.length > 0}.join(" ")} unless result.empty?
   end
-  
+
   def self.select_options
     self.find(:all, :order => 'last_name ASC').collect{|item| ["#{item.last_name}, #{item.first_name}", item.id]}
   end

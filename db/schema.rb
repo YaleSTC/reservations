@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120604201512) do
+ActiveRecord::Schema.define(:version => 20120605165432) do
 
   create_table "accessories_equipment_models", :force => true do |t|
     t.integer  "accessory_id"
@@ -27,6 +27,8 @@ ActiveRecord::Schema.define(:version => 20120604201512) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sort_order"
+    t.boolean  "active",              :default => true
+    t.string   "deleted_at"
   end
 
   create_table "documents", :force => true do |t|
@@ -51,6 +53,7 @@ ActiveRecord::Schema.define(:version => 20120604201512) do
     t.datetime "updated_at"
     t.text     "checkout_procedures"
     t.text     "checkin_procedures"
+    t.string   "deleted_at"
   end
 
   create_table "equipment_models_reservations", :force => true do |t|
@@ -68,6 +71,7 @@ ActiveRecord::Schema.define(:version => 20120604201512) do
     t.integer  "equipment_model_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "deleted_at"
   end
 
   create_table "equipment_objects_reservations", :force => true do |t|
@@ -125,10 +129,12 @@ ActiveRecord::Schema.define(:version => 20120604201512) do
     t.boolean  "is_checkout_person", :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "active",             :default => true
     t.boolean  "adminmode",          :default => true
     t.boolean  "checkoutpersonmode", :default => false
     t.boolean  "normalusermode",     :default => false
     t.boolean  "bannedmode",         :default => false
+    t.string   "deleted_at"
   end
 
 end

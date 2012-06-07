@@ -4,9 +4,9 @@ class Category < ActiveRecord::Base
   validates_uniqueness_of :name
   validates_numericality_of :max_per_user, :allow_nil => true, :only_integer => true, :greater_than_or_equal_to => 1
   validates_numericality_of :max_checkout_length, :allow_nil => true, :only_integer => true, :greater_than_or_equal_to => 1
-  
-  attr_accessible :name, :max_per_user, :max_checkout_length
-  
+  attr_accessible :name, :max_per_user, :max_checkout_length, :deleted_at
+  nilify_blanks :only => [:deleted_at]  
+
   def maximum_per_user
     max_per_user || "unrestricted"
   end

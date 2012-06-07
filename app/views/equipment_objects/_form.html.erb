@@ -16,5 +16,9 @@
     <%= f.label :serial %><br />
     <%= f.text_field :serial %>
   </p>
+  <p>
+    <%= f.label :Disabled %><br />
+    <%= f.check_box :deleted_at, (@equipment_object.deleted_at.blank? ? {:checked => false} : {:checked => true}), Time.now, nil %>
+  </p>
   <p><%= f.submit "Submit" %></p>
 <% end %>
