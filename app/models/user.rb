@@ -4,18 +4,14 @@ class User < ActiveRecord::Base
   nilify_blanks :only => [:deleted_at] 
   attr_accessible :login, :first_name, :last_name, :nickname, :phone, :email, :affiliation, :is_banned, :is_checkout_person, :is_admin, :adminmode, :checkoutpersonmode, :normalusermode, :bannedmode, :deleted_at
   
-  validates_presence_of :first_name
-  validates_presence_of :last_name
-  validates_presence_of :phone
-  validates_presence_of :email
-  validates_presence_of :affiliation
+  validates :first_name, :last_name, :affiliation, :presence => true
+  validates :phone, :presence => true, :format => { :with => /\A\S[0-9\+\/\(\)\s\-]*\z/i }
+  validates :email, :presence => true, :format => { :with => /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i }
+  validates :nickname, :format => { :with => /^[^0-9`!@#\$%\^&*+_=]+$/ }, :allow_blank => true
+  
   
   def name
-    if nickname.nil? or nickname == ""
-      first_name + " " + last_name
-    else
-      nickname + " " + last_name
-    end
+     [((nickname.nil? or nickname.length == 0) ? first_name : nickname), last_name].join(" ")
   end
   
   def can_checkout?
