@@ -57,7 +57,7 @@ class ReservationsController < ApplicationController
         @reservation.save
       end
     end
-    #UserMailer.reservation_confirmation(@reservation).deliver
+    UserMailer.reservation_confirmation(@reservation).deliver
     flash[:notice] = "Your reservations have been made."
     session[:cart] = Cart.new
     redirect_to catalog_path

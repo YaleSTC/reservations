@@ -27,7 +27,6 @@ ActiveRecord::Schema.define(:version => 20120605165432) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sort_order"
-    t.boolean  "active",              :default => true
     t.string   "deleted_at"
   end
 
@@ -129,7 +128,6 @@ ActiveRecord::Schema.define(:version => 20120605165432) do
     t.boolean  "is_checkout_person", :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "active",             :default => true
     t.boolean  "adminmode",          :default => true
     t.boolean  "checkoutpersonmode", :default => false
     t.boolean  "normalusermode",     :default => false
