@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   attr_accessible :login, :first_name, :last_name, :nickname, :phone, :email, :affiliation, :is_banned, :is_checkout_person, :is_admin, :adminmode, :checkoutpersonmode, :normalusermode, :bannedmode, :deleted_at
   
   validates :first_name, :last_name, :affiliation, :presence => true
-  validates :phone, :presence => true, :format => { :with => /\A\S[0-9\+\/\(\)\s\-]*\z/i }
+  validates :phone, :presence => true, :format => { :with => /\A\S[0-9\+\/\(\)\s\-]*\z/i }, :length => { :minimum => 10 }
   validates :email, :presence => true, :format => { :with => /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i }
   validates :nickname, :format => { :with => /^[^0-9`!@#\$%\^&*+_=]+$/ }, :allow_blank => true
   
