@@ -26,7 +26,7 @@
           <!--print number of equipment objects available-->
           (<%= equipment_model.available?(cart.start_date..cart.due_date) || "0" %>
            available from
-           <%= cart.start_date %> to <%= cart.due_date %>)
+           <%= cart.start_date.strftime("%b %d, %Y") %> to <%= cart.due_date.strftime("%b %d, %Y") %>)
           <br>
           <!--print add to cart link-->
           <%= link_to "[add to cart]", {:url => add_to_cart_path(equipment_model)},
