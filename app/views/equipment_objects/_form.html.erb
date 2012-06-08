@@ -5,7 +5,7 @@
   <% else %>
     <p>
       <%= f.label :equipment_model_id %><br />
-      <%= f.select :equipment_model_id, EquipmentModel.select_options, :prompt => true %>
+      <%= f.select :equipment_model_id, EquipmentModel.not_deleted.select_options, :prompt => true %>
     </p>
   <% end %>
   <p>
