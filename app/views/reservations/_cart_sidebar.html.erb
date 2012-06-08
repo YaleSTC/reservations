@@ -22,12 +22,12 @@
   <p>
     <%= label_tag :start_date, 'Start of reservation' %><br />
     <%= date_select :cart, :start_date, :order => [:month, :day, :year],
-                    :default => cart.start_date %>
+                    :default => Date.today %>
   </p>
   <p>
     <%= label_tag :due_date, 'End of reservation' %><br />
     <%= date_select :cart, :due_date, :order => [:month, :day, :year],
-                    :default => cart.due_date %>
+                    :default => (Date.today + 7) %>
   </p>
   <p><%= submit_tag "Update dates", :style => 'float: right' %></p>
 <% end %>
