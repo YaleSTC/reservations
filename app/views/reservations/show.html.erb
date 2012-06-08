@@ -18,7 +18,13 @@
   	<%= @reservation.equipment_model.name %>
   	<%= @reservation.equipment_object.nil? ? "(unassigned)" : "(#{@reservation.equipment_object.name})" %>
   </p>
-  <% if @reservation.checked_out %>
+ 
+	<p>
+		<strong>Notes:</strong>
+		<%= @reservation.notes %>
+	</p>
+
+		<% if @reservation.checked_out %>
     <p>
       Checked out <%= @reservation.checked_out.to_s(:long) %>
       by <%= @reservation.checkout_handler.nil? ? "unknown" : @reservation.checkout_handler.name %>

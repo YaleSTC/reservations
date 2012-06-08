@@ -25,7 +25,7 @@ class ApplicationController < ActionController::Base
   def first_time_user
     if current_user.nil?
       flash[:notice] = "Hey there! Since this is your first time making a reservation, we'll
-        need you to supply us with some basic contact information first."
+        need you to supply us with some basic contact information."
       redirect_to new_user_path
     end
   end
