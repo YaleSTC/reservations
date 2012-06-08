@@ -1,3 +1,7 @@
+<%= stylesheet_link_tag('application', :media => :screen) %>
+<%= stylesheet_link_tag('print', :media => :print) %>
+
+
 <% title "Single Reservation Check in" %>
 <%= form_tag( {:controller => 'reservations', :action => "update"}, :method => "put" ) do %>
  
@@ -41,6 +45,11 @@
   
   <br>
   <%= submit_tag "Check in equipment" %>
+
+	<p>
+	<%=link_to_function("Print this Page", "javascript:print()")%> 
+	</p>
+
 
 <% end %>
 

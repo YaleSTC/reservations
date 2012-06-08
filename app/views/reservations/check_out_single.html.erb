@@ -1,3 +1,6 @@
+<%= stylesheet_link_tag('application', :media => :screen) %>
+<%= stylesheet_link_tag('print', :media => :print) %>
+
 <% title "Single Reservation Checkout" %>
 <%= form_tag( {:controller => 'reservations', :action => "update"}, :method => "put" ) do %>
 
