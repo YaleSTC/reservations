@@ -7,7 +7,7 @@
   <% else %>
     <p>
       <%= f.label :category_id %><br />
-      <%= f.select :category_id, Category.select_options, :prompt => true %> <%= link_to "[add new category]", new_category_path %>
+      <%= f.select :category_id, Category.not_deleted.select_options, :prompt => true %> <%= link_to "[add new category]", new_category_path %>
     </p>
   <% end %>
   <p>
