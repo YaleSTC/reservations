@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
   helper_method :current_user
   helper_method :cart
-  
+
   before_filter RubyCAS::Filter
   before_filter :first_run
   before_filter :first_time_user
@@ -16,12 +16,14 @@ class ApplicationController < ActionController::Base
   def current_user
     @current_user ||= User.find_by_login(session[:cas_user])
   end
-  
+
   #-------- before_filter methods --------
   def first_run
-    Category.find_or_create_by_name("Accessories")
+    if Category.count == 0
+      Category.create(:name => "Accessories")
+    end
   end
-  
+
   def first_time_user
     if current_user.nil?
       flash[:notice] = "Hey there! Since this is your first time making a reservation, we'll
@@ -29,7 +31,7 @@ class ApplicationController < ActionController::Base
       redirect_to new_user_path
     end
   end
-  
+
   def cart
     session[:cart] ||= Cart.new
   end
@@ -76,41 +78,41 @@ class ApplicationController < ActionController::Base
     flash[:notice] = "Cart dates updated."
     redirect_to root_path
   end
-  
+
   def empty_cart
     session[:cart] = Cart.new
     flash[:notice] = "Cart emptied."
     redirect_to root_path
   end
-  
+
   def logout
     @current_user = nil
     RubyCAS::Filter.logout(self)
   end
-  
+
   def require_admin(new_path=root_path)
     restricted_redirect_to(new_path) unless current_user.is_admin_in_adminmode?
   end
-  
+
   def require_checkout_person(new_path=root_path)
     restricted_redirect_to(new_path) unless current_user.can_checkout?
   end
-  
+
   def require_login
     if current_user.nil?
       flash[:error] = "Sorry, that action requires you to log in."
       redirect_to root_path
     end
   end
-  
+
   def require_user(user, new_path=root_path)
     restricted_redirect_to(new_path) unless current_user == user or current_user.is_admin_in_adminmode?
   end
-  
+
   def require_user_or_checkout_person(user, new_path=root_path)
     restricted_redirect_to(new_path) unless current_user == user or current_user.can_checkout?
   end
-  
+
   def restricted_redirect_to(new_path=root_path)
     flash[:error] = "Sorry, that action or page is restricted."
     redirect_to new_path
