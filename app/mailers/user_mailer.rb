@@ -27,6 +27,7 @@ class UserMailer < ActionMailer::Base
     end
     
     def reservation_confirmation(reservation)
+      @reservation = reservation
       mail(:to => reservation.reserver.email, :subject => "[Reservation] Confirmation of your equipment reservation")
     end
 
