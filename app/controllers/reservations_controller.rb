@@ -54,15 +54,17 @@ class ReservationsController < ApplicationController
       for q in 1..item.quantity     # accounts for reserving multiple equipment objects of the same equipment model (mainly for admins)
         @reservation = Reservation.new(params[:reservation])
         @reservation.equipment_model =  item.equipment_model
-        @reservation.save
+        if @reservation.save
+          UserMailer.reservation_confirmation(@reservation).deliver
+          flash[:notice] = "Your reservations have been made."
+          session[:cart] = Cart.new
+          redirect_to catalog_path
+        else 
+          flash[:error] = "Oops, something went wrong with making your reservation."
+          render :action => 'new'
+        end 
       end
     end
-    UserMailer.reservation_confirmation(@reservation).deliver
-    flash[:notice] = "Your reservations have been made."
-    session[:cart] = Cart.new
-    redirect_to catalog_path
-  rescue
-    flash.now[:error] = "Oops, something went wrong with making your reservation."
   end
 
 
