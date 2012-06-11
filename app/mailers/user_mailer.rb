@@ -30,5 +30,15 @@ class UserMailer < ActionMailer::Base
       @reservation = reservation
       mail(:to => reservation.reserver.email, :subject => "[Reservation] Confirmation of your equipment reservation")
     end
+    
+    def checkout_receipt(reservation)
+      @reservation = reservation
+      mail(:to => reservation.reserver.email, :subject => "[Reservation] Your equipment checkout receipt")
+    end
+    
+    def checkin_receipt(reservation)
+      @reservation = reservation
+      mail(:to => reservation.reserver.email, :subject => "[Reservation] Your equipment return receipt")
+    end
 
 end

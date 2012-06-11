@@ -28,6 +28,8 @@ Reservations::Application.routes.draw do
       get :check_out_single
       get :check_in_single
       get :show_all
+      get :checkout_email
+      get :checkin_email
     end
   end
 

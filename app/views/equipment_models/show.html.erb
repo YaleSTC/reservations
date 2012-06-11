@@ -142,6 +142,7 @@
   <%= link_to "View all "+@equipment_model.name.singularize+" objects", equipment_model_equipment_objects_path(@equipment_model) %>
 </p> -->
 
+
 <p>
   <% if current_user.is_admin_in_adminmode? %>
     <%= link_to "Edit "+@equipment_model.category.name.singularize, edit_equipment_model_path(@equipment_model) %> |

@@ -4,6 +4,17 @@
   overflow: hidden;
 }
 
+/*The next two divs are for buttons to display in the same line. */
+#left_stuff {
+	width: 30%;
+	float: left;
+}
+
+#right_stuff {
+	width: 70%;
+	float: right;
+}
+
 #itg_wrapper {
 	width: 920px;
 }

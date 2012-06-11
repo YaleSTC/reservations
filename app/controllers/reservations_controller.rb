@@ -112,7 +112,7 @@ class ReservationsController < ApplicationController
         reservation.save
       end
       flash[:notice] = error_msgs.empty? ? "Successfully checked out equipment!" : error_msgs #Allows admins to see all errors, but still checkout successfully
-      redirect_to :action => 'index' and return
+      redirect_to :action => 'show' and return
 
     elsif params[:commit] == "Check in equipment"
 
@@ -145,7 +145,7 @@ class ReservationsController < ApplicationController
           reservation.save
         end
         flash[:notice] = "Successfully checked in equipment!"
-        redirect_to :action => 'index' and return
+        redirect_to :action => 'show' and return
       end
 
     elsif params[:commit] == "Submit" #For editing reservations
@@ -183,5 +183,27 @@ class ReservationsController < ApplicationController
     @reservation =  Reservation.find(params[:id])
   end
 
+  def checkout_email
+    @reservation =  Reservation.find(params[:id])
+    if UserMailer.checkout_receipt(@reservation).deliver
+      redirect_to :back
+      flash[:notice] = "Delivered receipt email."
+    else 
+      redirect_to @reservation
+      flash[:error] = "Unable to deliver receipt email. Please contact administrator for more support. "
+    end
+  end
+  
+  def checkin_email
+    @reservation =  Reservation.find(params[:id])
+    if UserMailer.checkin_receipt(@reservation).deliver
+      redirect_to :back
+      flash[:notice] = "Delivered receipt email."
+    else 
+      redirect_to @reservation
+      flash[:error] = "Unable to deliver receipt email. Please contact administrator for more support. "
+    end
+  end
+  
 end
 
