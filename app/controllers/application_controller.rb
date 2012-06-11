@@ -31,7 +31,16 @@ class ApplicationController < ActionController::Base
   end
   
   def cart
-    session[:cart] ||= Cart.new
+    if session[:cart]
+      session[:cart]
+      # binding.pry
+    else
+      session[:cart]= Cart.new
+      session[:cart].set_reserver_id(current_user.id)
+      binding.pry
+    end
+    # session[:cart].valid?
+    #     binding.pry
   end
 
   def set_view_mode #(Analogous to department_chooser in shifts)

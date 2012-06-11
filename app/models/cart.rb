@@ -1,10 +1,19 @@
 class Cart
-  attr_reader :items, :start_date, :due_date
+  include ActiveModel::Validations
+  
+  validates :reserver_id, :start_date, :due_date, :presence => true
+  validate :reserver_valid?
+  
+  attr_accessor :reserver_id, :items, :start_date, :due_date
 
   def initialize
     @items = []
     @start_date = Date.today
     @due_date = Date.today
+  end
+  
+  def persisted?
+     false
   end
 
   def add_equipment_model(equipment_model)
@@ -58,13 +67,41 @@ class Cart
   def set_due_date(date)
     @due_date = date
   end
-
-  def logical_start_and_due_dates?
-    @due_date >= @start_date && @start_date >= Date.today
+  
+  def set_reserver_id(user_id)
+    @reserver_id = user_id
   end
-
+  
   def duration #in days
     @due_date - @start_date + 1
   end
+  
+  ## Validations
+  
+  def logical_start_and_due_dates?
+    unless @due_date >= @start_date && @start_date >= Date.today
+      errors.add(:base,"Dates are not logical")
+      return false
+    end
+    return true
+  end
+  
+  def reserver_valid?
+    user = User.find(@reserver_id)
+    binding.pry
+    unless !user.nil? && user.valid?
+      errors.add(:reserver_id,"Reserver_id points to an invalid User")
+      return false
+    end
+    return true
+  end
+  
+  def too_many_equipment_objects?
+    @items.each do |item|
+      unless item 
+    end
+    return true
+  end
+  
 end
 
