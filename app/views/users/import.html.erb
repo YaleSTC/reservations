@@ -1,0 +1,7 @@
+<% title "Import Users From CSV" %>
+<h3>Please upload a csv file in which the columns are thus: username, first name, nick name, last name, email, employee id number, and one role.</h3>
+<% form_tag url_for(:action => 'verify_import'), :multipart => true do %>
+   <p> <label for="file">File to Upload</label> <%= file_field_tag "file" %></p>
+    <p><%= submit_tag "Upload" %><p>
+  <% end %>
+

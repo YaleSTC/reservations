@@ -119,7 +119,9 @@ class ApplicationController < ActionController::Base
   end
 
   def deactivate
-    params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]).destroy
+    @objects_class2 = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current object
+    deactivateX(@objects_class2)
+    @objects_class2.destroy #Deactivate the object you had originally intended to deactivate
     flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + "."
     redirect_to(:back)   # Or use redirect_to request.referer. <-This may pass more tests
   end
