@@ -96,12 +96,14 @@ class Cart
     return true
   end
   
-  def too_many_equipment_objects?
-    @items.each do |item|
-      unless item 
-    end
-    return true
-  end
+  # def too_many_equipment_objects?
+  #   @items.each do |item|
+  #     unless item.equipment_model
+  #       
+  #     end
+  #   end
+  #   return true
+  # end
   
 end
 
