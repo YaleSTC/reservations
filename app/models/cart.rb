@@ -24,6 +24,8 @@ class Cart
       current_item = CartItem.new(equipment_model)
       @items << current_item
     end
+    if self.valid?
+    end
     current_item
   end
 
@@ -86,9 +88,9 @@ class Cart
     return true
   end
   
+  #Check if the reserver exists and is a valid user
   def reserver_valid?
     user = User.find(@reserver_id)
-    binding.pry
     unless !user.nil? && user.valid?
       errors.add(:reserver_id,"Reserver_id points to an invalid User")
       return false
@@ -96,14 +98,55 @@ class Cart
     return true
   end
   
-  # def too_many_equipment_objects?
-  #   @items.each do |item|
-  #     unless item.equipment_model
-  #       
-  #     end
-  #   end
-  #   return true
-  # end
+  #Check if the user exceeds the maximum number of any equipment models 
+  def too_many_of_equipment_model?
+    user = User.find(@reserver_id)
+    user_model_counts = user.checked_out_models
+    @items.each do |item|
+      eq_model = item.equipment_model
+      curr_model_count = user_model_counts[eq_model.id]
+      
+      # This thing with unrestricted makes me upset
+      if eq_model.maximum_per_user != "unrestricted"
+        unless eq_model.maximum_per_user >= item.quantity + curr_model_count
+          errors.add(:items, user.name + " has too many of " + eq_model.name)
+          return false
+        end
+      end
+    end
+    return true
+  end
   
+  #Check if the user exceeds the maximum number of any equipment models 
+  def too_many_of_category?
+    user = User.find(@reserver_id)
+    h = user.checked_out_models
+    
+    #Make an array of the equipment models for the user and their respective categories
+    eq_model_and_cats = EquipmentModel.find(h.keys).collect {|model| [model.id, model.category_id]}
+    catHash = Hash[*eq_model_and_cats.flatten]
+    #Make sure the keys align with the equipment models
+    catArr = h.keys.collect {|i| catHash[i]}
+    user_categories = catArr.uniq
+    
+    #Collect a count of the number of objects a user has in a category
+    user_category_counts = user_categories.collect do |category|
+      inCat = catHash.rassoc(category)
+      inCat.inject(0) {|sum,k| sum + h[k]}
+    end
+    user_category_counts = Hash[*user_categories.zip(user_category_counts).flatten]
+    
+    #Test each of the categories to see if the user exceeds the limit
+    user_categories.each do |category_id|
+      curr_cat_count = user_category_counts[category_id]
+      curr_cat = Category.find(category_id)
+      if curr_cat.maximum_per_user != "unrestricted"
+        unless curr_cat.maximum_per_user >= item.quantity + curr_cat_count
+          errors.add(:items, user.name + " has too many of " + curr_cat.name)
+          return false
+        end
+      end
+    end
+  end
 end
 
