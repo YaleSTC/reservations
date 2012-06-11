@@ -4,3 +4,11 @@
 //= require jquery_ujs
 //= require_self
 //= require_tree .
+
+$(document).ready(function() {
+   $('.toggleLink').click(function() {
+     $('#quicksearch_hidden').toggle('slow', function() {
+       // Animation complete.
+     });
+   });
+ });

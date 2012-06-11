@@ -1,6 +1,6 @@
 <div id="quicksearch">
   <p>
-    Know what you're looking for? <%= link_to_function "Find it quickly.", "$('quicksearch_hidden').toggle()" %>
+    Know what you're looking for? <div class="toggleLink"><input class="roundedcornersbuttonbig orangebutton" type="submit" value="Find it quickly" /></div>
   </p>
   <div id="quicksearch_hidden" style="display:none">
     <%= form_tag :action => 'search' do %>
