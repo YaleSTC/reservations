@@ -35,7 +35,7 @@ class User < ActiveRecord::Base
   end
   
   def checked_out_models
-    #Make an array of the checked out eq. models and their counts for the user
+    #Make a hash of the checked out eq. models and their counts for the user
     model_ids = self.reservations.collect do |r|
     #Check which of the reservations are checked out but not checked in yet      
       if (!r.checked_out.nil? && r.checked_in.nil?)      
@@ -43,7 +43,11 @@ class User < ActiveRecord::Base
       end        
     end
     #Remove nils, then count the number of unique model ids, and store the counts in a sub hash, and finally sort by model_id
-    model_ids.compact.inject(Hash.new(0)) {|h,x| h[x]+=1;h}.sort
+    arr = model_ids.compact.inject(Hash.new(0)) {|h,x| h[x]+=1;h}.sort
+    #Change into a hash of model_id => quantities
+    Hash[*arr.flatten]
+    
+    #There might be a better way of doing this, but I realized that I wanted a hash instead of an array of hashes
   end
   
   def self.search_ldap(login)
