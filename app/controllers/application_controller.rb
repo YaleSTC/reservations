@@ -37,7 +37,7 @@ class ApplicationController < ActionController::Base
     else
       session[:cart]= Cart.new
       session[:cart].set_reserver_id(current_user.id)
-      binding.pry
+      # binding.pry
     end
     # session[:cart].valid?
     #     binding.pry
@@ -83,7 +83,7 @@ class ApplicationController < ActionController::Base
     session[:cart].set_start_date(Date.civil(params[:cart][:"start_date(1i)"].to_i,params[:cart][:"start_date(2i)"].to_i,params[:cart][:"start_date(3i)"].to_i))
     session[:cart].set_due_date(Date.civil(params[:cart][:"due_date(1i)"].to_i,params[:cart][:"due_date(2i)"].to_i,params[:cart][:"due_date(3i)"].to_i))
     flash[:notice] = "Cart dates updated."
-    binding.pry
+    # binding.pry
     redirect_to root_path
   end
   
