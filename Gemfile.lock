@@ -114,6 +114,7 @@ PLATFORMS
 
 DEPENDENCIES
   dynamic_form
+  mail (= 2.2.19)
   mysql2 (= 0.2.18)
   net-ldap
   nilify_blanks

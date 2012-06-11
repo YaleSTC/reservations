@@ -39,20 +39,6 @@ module Reservations
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
     
-    config.action_mailer.delivery_method = :smtp
-    config.action_mailer.smtp_settings = {
-      :address => "mail.yale.edu",
-      :port => 587,
-      :domain => "yale.edu",
-      # with these disabled, the server must be connected to the yale network for email to work
-      #:authentication => :login,
-      #:user_name => "username",
-      #:password => "password",
-    }
-    
-    config.action_mailer.raise_delivery_errors = true
-    config.action_mailer.default_charset = "utf-8"
-
     config.rubycas.cas_base_url = 'https://secure.its.yale.edu/cas/'
 
   end

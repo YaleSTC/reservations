@@ -35,7 +35,8 @@ begin
   Thank you,
   @department_name@"
   
-  Settings.reservation_confirmation_email_body ||= "Dear @user@, this is a confirmation of your reservation. You will be notified when the equipment you reserved is available for checkout. 
+  Settings.reservation_confirmation_email_body ||= "Dear @user@, 
+  This is a confirmation of your reservation. You will be notified when the equipment you reserved is available for checkout. 
   
   Thank you, 
   @department_name@"
