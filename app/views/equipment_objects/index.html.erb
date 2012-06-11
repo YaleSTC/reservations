@@ -8,7 +8,7 @@
     <th>Status</th>
   </tr>
   <% for equipment_object in @equipment_objects %>
-    <% if equipment_object.deleted_at %> 
+    <% if equipment_object.deleted_at %>
       <tr class="deactivated">
       <% @toggle = "link_to \"Activate\", activate_path(:equipment_objects,equipment_object)" %>
     <% else %>
@@ -19,9 +19,11 @@
       <td><%= link_to equipment_object.name, equipment_object %></td>
       <td><%= equipment_object.serial %></td>
       <td><%= equipment_object.status %></td>
-      <td><%= link_to "Edit", edit_equipment_object_path(equipment_object) %></td>
-      <td><%= eval @toggle %></td>
-      <td><%= link_to "Destroy", equipment_object, :confirm => 'Are you sure?', :method => :delete %></td>
+      <% if current_user.is_admin_in_adminmode? %>
+        <td><%= link_to "Edit", edit_equipment_object_path(equipment_object) %></td>
+        <td><%= eval @toggle %></td>
+        <td><%= link_to "Destroy", equipment_object, :confirm => 'Are you sure?', :method => :delete %></td>
+      <% end %>
     </tr>
   <% end %>
 </table>
