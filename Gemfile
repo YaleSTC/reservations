@@ -15,7 +15,6 @@ gem "pry-rails"
 gem "dynamic_form"
 gem 'jquery_datepicker'
 gem "jquery-rails"
-gem "seed-fu"
 gem "ffaker"
 
 # Gems used only for assets and not required

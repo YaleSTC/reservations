@@ -31,9 +31,6 @@ GEM
       activesupport (= 3.1.3)
       arel (~> 2.2.1)
       tzinfo (~> 0.3.29)
-    activerecord-import (0.2.9)
-      activerecord (~> 3.0)
-      activerecord (~> 3.0)
     activeresource (3.1.3)
       activemodel (= 3.1.3)
       activesupport (= 3.1.3)
@@ -123,9 +120,6 @@ GEM
       railties (~> 3.1.0)
       sass (>= 3.1.10)
       tilt (~> 1.3.2)
-    seed-fu (2.2.0)
-      activerecord (~> 3.1)
-      activesupport (~> 3.1)
     slop (2.4.4)
     sprockets (2.0.4)
       hike (~> 1.2)
@@ -148,7 +142,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activerecord-import (>= 0.2.0)
   coffee-rails
   dynamic_form
   ffaker
@@ -166,6 +159,5 @@ DEPENDENCIES
   rubycas-client (= 2.2.1)
   rubycas-client-rails
   sass-rails
-  seed-fu
   uglifier
   whenever

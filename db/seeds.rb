@@ -5,7 +5,6 @@
 # model you want to seed in the database, every time you create a model that isn't already here.
 # Right now, it only generates Users, Categories, EquipmentModels, and EquipmentObjects.
 
-require 'seed-fu'
 require 'ffaker'
 
 #Method for prompting the user for the number of records per model they want to seed into the database.
@@ -26,7 +25,7 @@ else
 
   if entered_num.integer? && entered_num >= 0
     entered_num.times do
-      User.seed do |u|
+      User.create! do |u|
         u.first_name = Faker::Name.first_name
         u.last_name = Faker::Name.last_name
         u.nickname = Faker::Name.first_name
@@ -36,6 +35,7 @@ else
         u.affiliation = "YC " + ["BK", "BR", "CC", "DC", "ES", "JE", "MC", "PC", "SM", "SY", "TC", "TD"].sample + " " + r.rand(2012..2015).to_s
       end
     end
+    STDOUT.puts "#{entered_num} records successfully created!"
   else
     STDOUT.puts "Please enter a whole number."
     entered_num = STDIN.gets.chomp.to_i
@@ -47,13 +47,14 @@ else
 
   if entered_num.integer? && entered_num > 0
     category = entered_num.times.map do
-        Category.seed do |c|
-        c.name = Faker::Product.brand
+        Category.create! do |c|
+        c.name = Faker::Product.brand + " " + r.rand(1..9001).to_s
         c.max_per_user = r.rand(1..40)
         c.max_checkout_length = r.rand(1..40)
         c.sort_order = r.rand(100)
       end
     end
+    STDOUT.puts "#{entered_num} records successfully created!"
   else
     STDOUT.puts "Please enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
@@ -65,8 +66,8 @@ else
 
   if entered_num.integer? && entered_num > 0
     equipment_model = entered_num.times.map do
-      EquipmentModel.seed do |em|
-        em.name = Faker::Product.product
+      EquipmentModel.create! do |em|
+        em.name = Faker::Product.product + " " + r.rand(1..9001).to_s
         em.description = Faker::Lorem.paragraph(4)
         em.late_fee = r.rand(50.00..1000.00).round(2).to_d
         em.replacement_fee = r.rand(50.00..1000.00).round(2).to_d
@@ -77,6 +78,7 @@ else
         em.category_id = category.flatten[r.rand(0...category.length)].id
       end
     end
+    STDOUT.puts "#{entered_num} records successfully created!"
   else
     STDOUT.puts "Please enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
@@ -88,13 +90,14 @@ else
 
   if entered_num.integer? && entered_num >= 0
     entered_num.times do
-      EquipmentObject.seed do |eo|
-        eo.name = "Number #{(0...3).map{65.+(rand(25)).chr}.join}"
+      EquipmentObject.create! do |eo|
+        eo.name = "Number #{(0...3).map{65.+(rand(25)).chr}.join}" + r.rand(1..9001).to_s
         eo.serial = (0...8).map{65.+(rand(25)).chr}.join
         eo.active = true
         eo.equipment_model_id = equipment_model.flatten[r.rand(0...equipment_model.length)].id
       end
     end
+    STDOUT.puts "#{entered_num} records successfully created!"
   else
     STDOUT.puts "Please enter a whole number."
     entered_num = STDIN.gets.chomp.to_i
