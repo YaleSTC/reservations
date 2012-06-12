@@ -6,15 +6,6 @@ begin
   Settings.contact_link_location ||= "mailto:contact.us@change.com"
   Settings.home_link_text  ||= "Home"
   Settings.home_link_location ||= "http://clc.yale.edu"
-  Settings.upcoming_checkout_email_body ||= "Dear @user@,
-  Please remember to come pick up the following equipment that you reserved:
-
-  @equipment_list@
-
-  If you do not intend to check these items out, you must cancel your reservation at least 24 hours before it is due for check out. If you frequently miss your reservations then the privilege to make further reservations for the rest of the term will be revoked.
-
-  Thank you,
-  @department_name@"
   Settings.upcoming_checkin_email_body ||= "Dear @user@,
   Please remember to return the equipment you borrowed from us:
 
