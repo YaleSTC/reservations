@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120612163247) do
+ActiveRecord::Schema.define(:version => 20120612164714) do
 
   create_table "accessories_equipment_models", :force => true do |t|
     t.integer  "accessory_id"
@@ -53,6 +53,11 @@ ActiveRecord::Schema.define(:version => 20120612163247) do
     t.text     "checkout_procedures"
     t.text     "checkin_procedures"
     t.string   "deleted_at"
+  end
+
+  create_table "equipment_models_associated_equipment_models", :id => false, :force => true do |t|
+    t.integer "equipment_model_id"
+    t.integer "associated_equipment_model_id"
   end
 
   create_table "equipment_models_reservations", :force => true do |t|
