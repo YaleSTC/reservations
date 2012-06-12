@@ -16,16 +16,16 @@ ActiveRecord::Schema.define(:version => 20120612164714) do
   create_table "accessories_equipment_models", :force => true do |t|
     t.integer  "accessory_id"
     t.integer  "equipment_model_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
   end
 
   create_table "categories", :force => true do |t|
     t.string   "name"
     t.integer  "max_per_user"
     t.integer  "max_checkout_length"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
     t.integer  "sort_order"
     t.string   "deleted_at"
   end
@@ -36,8 +36,8 @@ ActiveRecord::Schema.define(:version => 20120612164714) do
     t.string   "data_content_type"
     t.integer  "data_file_size"
     t.integer  "equipment_model_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
   end
 
   create_table "equipment_models", :force => true do |t|
@@ -48,27 +48,24 @@ ActiveRecord::Schema.define(:version => 20120612164714) do
     t.integer  "max_per_user"
     t.boolean  "active",                                             :default => true
     t.integer  "category_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                                                           :null => false
+    t.datetime "updated_at",                                                           :null => false
     t.text     "checkout_procedures"
     t.text     "checkin_procedures"
     t.string   "deleted_at"
-<<<<<<< HEAD
-=======
   end
 
   create_table "equipment_models_associated_equipment_models", :id => false, :force => true do |t|
     t.integer "equipment_model_id"
     t.integer "associated_equipment_model_id"
->>>>>>> cocoon
   end
 
   create_table "equipment_models_reservations", :force => true do |t|
     t.integer  "equipment_model_id"
     t.integer  "reservation_id"
     t.integer  "quantity"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
   end
 
   create_table "equipment_objects", :force => true do |t|
@@ -76,16 +73,16 @@ ActiveRecord::Schema.define(:version => 20120612164714) do
     t.string   "serial"
     t.boolean  "active",             :default => true
     t.integer  "equipment_model_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                           :null => false
+    t.datetime "updated_at",                           :null => false
     t.string   "deleted_at"
   end
 
   create_table "equipment_objects_reservations", :force => true do |t|
     t.integer  "equipment_object_id"
     t.integer  "reservation_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
   end
 
   create_table "reservations", :force => true do |t|
@@ -96,8 +93,8 @@ ActiveRecord::Schema.define(:version => 20120612164714) do
     t.datetime "due_date"
     t.datetime "checked_out"
     t.datetime "checked_in"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
     t.integer  "equipment_model_id"
     t.integer  "equipment_object_id"
     t.text     "notes"
@@ -106,8 +103,8 @@ ActiveRecord::Schema.define(:version => 20120612164714) do
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false
     t.text     "data"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
@@ -118,8 +115,8 @@ ActiveRecord::Schema.define(:version => 20120612164714) do
     t.text     "value"
     t.integer  "thing_id"
     t.string   "thing_type", :limit => 30
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",               :null => false
+    t.datetime "updated_at",               :null => false
   end
 
   add_index "settings", ["thing_type", "thing_id", "var"], :name => "index_settings_on_thing_type_and_thing_id_and_var", :unique => true
@@ -135,8 +132,8 @@ ActiveRecord::Schema.define(:version => 20120612164714) do
     t.boolean  "is_banned",          :default => false
     t.boolean  "is_admin",           :default => false
     t.boolean  "is_checkout_person", :default => false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
     t.boolean  "adminmode",          :default => true
     t.boolean  "checkoutpersonmode", :default => false
     t.boolean  "normalusermode",     :default => false

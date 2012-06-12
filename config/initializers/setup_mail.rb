@@ -1,5 +1,5 @@
 ActionMailer::Base.raise_delivery_errors = true
-ActionMailer::Base.default_charset = "utf-8"
+#ActionMailer::Base.default_charset = "utf-8" #doesn't work in rails 3.2
 ActionMailer::Base.smtp_settings = {
   :address              => "mail.yale.edu", 
   :port                 => 587, 
