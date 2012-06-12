@@ -36,9 +36,9 @@ class CatalogController < ApplicationController
       redirect_to catalog_path
     else
       #update dates
-      session[:cart].set_start_date(Date.civil(params[:cart][:"start_date(1i)"].to_i,params[:cart][:"start_date(2i)"].to_i,params[:cart][:"start_date(3i)"].to_i))
-      session[:cart].set_due_date(Date.civil(params[:cart][:"due_date(1i)"].to_i,params[:cart][:"due_date(2i)"].to_i,params[:cart][:"due_date(3i)"].to_i))
-    
+      session[:cart].set_start_date(Date.strptime(params[:cart][:start_date],'%m/%d/%Y'))
+      session[:cart].set_due_date(Date.strptime(params[:cart][:due_date],'%m/%d/%Y'))
+
       @category = Category.find(params[:category])
       @equipment_models = @category.equipment_models.select{|e| e.available?(cart.start_date..cart.due_date)}
       @equipment_models_by_category = @equipment_models.sort_by(&:name).group_by(&:category)

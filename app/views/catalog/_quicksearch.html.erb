@@ -6,8 +6,9 @@
     <%= form_tag :action => 'search' do %>
       <p>
         I need a <%= select_tag :category, Category.singular_select_options %> from<br />
-        <%= date_select :cart, :start_date, :order => [:month, :day, :year], :default => cart.start_date %> to<br />
-        <%= date_select :cart, :due_date, :order => [:month, :day, :year], :default => cart.due_date %>.
+        <%= datepicker_input "cart", "start_date", :value => cart.start_date.strftime('%m/%d/%Y') %>
+        to
+        <%= datepicker_input "cart", "due_date", :value => cart.due_date.strftime('%m/%d/%Y') %>
       </p>
       <p>
         <%= submit_tag 'Narrow your search' %>
