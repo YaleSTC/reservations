@@ -7,6 +7,10 @@ class EquipmentModel < ActiveRecord::Base
   # has_and_belongs_to_many :reservations
   # has_many :equipment_models_reservations
   has_many :reservations
+  has_and_belongs_to_many :associated_equipment_models,
+    :class_name => "EquipmentModel",
+    :association_foreign_key => "associated_equipment_model_id",
+    :join_table => "equipment_models_associated_equipment_models"
 
   #associates with itself for accessories/recommended related models
   has_many :accessories_equipment_models, :foreign_key => :equipment_model_id
