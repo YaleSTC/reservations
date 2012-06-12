@@ -8,6 +8,10 @@
   <%= f.input :replacement_fee %>
   <%= f.input :max_per_user, label: "Maximum per user", hint: "leave blank to default to category value" %>
   <%= f.input :deleted_at, label: "Active", as: :check_boxes %>
+  <%= f.simple_fields_for :checkout_procedures do |procedure| %>
+    <%= procedure.input :step %>
+  <% end %>
+  <%= link_to_add_association 'add step', f, :checkout_procedure %>
   <%= f.error :base %>
   <%= f.button :submit %>
 <% end %>

@@ -39,6 +39,7 @@ GEM
     builder (3.0.0)
     chronic (0.6.7)
     cocaine (0.2.1)
+    cocoon (1.0.21)
     coderay (1.0.6)
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
@@ -146,6 +147,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  cocoon (= 1.0.21)
   coffee-rails
   dynamic_form
   jquery-rails

@@ -19,6 +19,7 @@ gem "mail"
 gem "simple_form"
 gem 'jquery_datepicker'
 gem "jquery-rails"
+gem "cocoon"
 
 # Gems used only for assets and not required
 # in production environments by default.
