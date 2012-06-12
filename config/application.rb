@@ -2,24 +2,12 @@ require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
 
-if defined?(Bundler)
-  # If you precompile assets before deploying to production, use this line
-  Bundler.require *Rails.groups(:assets => %w(development test))
-  # If you want your assets lazily compiled in production, use this line
-  # Bundler.require(:default, :assets, Rails.env)
-end
+# If you have a Gemfile, require the gems listed there, including any gems
+# you've limited to :test, :development, or :production.
+Bundler.require(:default, Rails.env) if defined?(Bundler)
 
 module Reservations
   class Application < Rails::Application
-    # Enable the asset pipeline
-    config.assets.enabled = true
-
-    # Version of your assets, change this if you want to expire all your assets
-    config.assets.version = '1.0'
-
-    # Change the path that assets are served from
-    # config.assets.prefix = "/assets"
-
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -51,20 +39,6 @@ module Reservations
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
     
-    config.action_mailer.delivery_method = :smtp
-    config.action_mailer.smtp_settings = {
-      :address => "mail.yale.edu",
-      :port => 587,
-      :domain => "yale.edu",
-      # with these disabled, the server must be connected to the yale network for email to work
-      #:authentication => :login,
-      #:user_name => "username",
-      #:password => "password",
-    }
-    
-    config.action_mailer.raise_delivery_errors = true
-    config.action_mailer.default_charset = "utf-8"
-
     config.rubycas.cas_base_url = 'https://secure.its.yale.edu/cas/'
 
   end

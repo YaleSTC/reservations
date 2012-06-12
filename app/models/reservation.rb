@@ -6,13 +6,13 @@ class Reservation < ActiveRecord::Base
   belongs_to :checkout_handler, :class_name => 'User'
   belongs_to :checkin_handler, :class_name => 'User'
 
-  validates_presence_of :reserver
-  validates_presence_of :start_date
-  validates_presence_of :due_date
+  validates :reserver, :start_date, :due_date, :presence => true
+  
   validate :not_empty
+  validate :start_date_before_due_date
   #Currently this prevents checking in overdue items. We can work on a better fix.
   #validate :not_in_past
-  validate :start_date_before_due_date
+  
 
   scope :recent, order('start_date, due_date, reserver_id')
   scope :pending, where("checked_out IS NULL and checked_in IS NULL").recent

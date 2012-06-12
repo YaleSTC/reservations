@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">
   <head profile="http://gmpg.org/xfn/11">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <%= csrf_meta_tag %>
     <title><%= ("Collaborative Learning Center" + ( content_for?(:title) ? " &raquo; #{yield(:title)}" : "")).html_safe %></title>
 
     <link rel="stylesheet" href="http://clc.yale.edu/wp-content/themes/clc/style.css" type="text/css" media="screen" />
@@ -28,9 +29,9 @@
     #itgAdminFooter { display:none; }
     --></style>
     
-    <%= stylesheet_link_tag 'application' %>
-    <%= javascript_include_tag 'application' %>
-    <%= csrf_meta_tag %>
+    <%= stylesheet_link_tag 'application', 'forms' %>
+    <%= javascript_include_tag 'application', 'jquery', 'jrails'%>
+    <%= javascript_include_tag :defaults %>
     <%= yield(:head) %>
   </head>
   <body>

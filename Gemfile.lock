@@ -65,15 +65,19 @@ GEM
       treetop (~> 1.4.8)
     method_source (0.7.1)
     mime-types (1.18)
-    multi_json (1.3.6)
-    mysql2 (0.3.11)
+    mysql2 (0.2.18)
     net-ldap (0.3.1)
+    nilify_blanks (1.0.0)
+      activerecord (>= 3.0.0)
+      activesupport (>= 3.0.0)
     paperclip (3.0.4)
       activemodel (>= 3.0.0)
       activerecord (>= 3.0.0)
       activesupport (>= 3.0.0)
       cocaine (>= 0.0.2)
       mime-types
+    permanent_records (2.1.2)
+      activerecord
     polyglot (0.3.3)
     pry (0.9.9.6)
       coderay (~> 1.0.5)
@@ -102,7 +106,7 @@ GEM
       rack-ssl (~> 1.3.2)
       rake (>= 0.8.7)
       rdoc (~> 3.4)
-      thor (~> 0.14.6)
+      thor (~> 0.14.4)
     rake (0.9.2.2)
     rdoc (3.12)
       json (~> 1.4)
@@ -122,14 +126,10 @@ GEM
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
     thor (0.14.6)
-    tilt (1.3.3)
     treetop (1.4.10)
       polyglot
       polyglot (>= 0.3.1)
     tzinfo (0.3.33)
-    uglifier (1.2.4)
-      execjs (>= 0.3.0)
-      multi_json (>= 1.0.2)
     whenever (0.7.3)
       activesupport (>= 2.3.4)
       chronic (~> 0.6.3)
@@ -138,13 +138,13 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  coffee-rails
   dynamic_form
-  jquery-rails
-  jquery_datepicker
-  mysql2
+  mail (= 2.2.19)
+  mysql2 (= 0.2.18)
   net-ldap
+  nilify_blanks
   paperclip
+  permanent_records (~> 2.1.2)
   pry
   pry-rails
   rails (= 3.2.0)
@@ -153,6 +153,5 @@ DEPENDENCIES
   rdoc
   rubycas-client (= 2.2.1)
   rubycas-client-rails
-  sass-rails
-  uglifier
+  simple_form
   whenever

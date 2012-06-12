@@ -46,6 +46,10 @@
     <strong>Is Banned:</strong>
     <%= @user.is_banned %>
   </p>
+  <p>
+    <strong>Is Activated:</strong>
+    <%= @user.deleted_at == nil %>
+  </p>
 <% end %>
 
 <p>

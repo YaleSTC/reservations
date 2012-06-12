@@ -3,7 +3,11 @@ class UsersController < ApplicationController
   before_filter :require_admin, :only => :index
 
   def index
-    @users = User.find(:all, :order => 'login ASC')
+    if params[:show_deleted]
+      @users = User.find(:all, :order => 'login ASC')
+    else
+      @users = User.not_deleted.find(:all, :order => 'login ASC')
+    end
   end
 
   def show
@@ -56,5 +60,5 @@ class UsersController < ApplicationController
     flash[:notice] = "Successfully destroyed user."
     redirect_to users_url
   end
-end
 
+end

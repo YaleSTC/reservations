@@ -8,9 +8,11 @@ class EquipmentObjectsController < ApplicationController
       @equipment_model = EquipmentModel.find(params[:equipment_model_id])
       @equipment_objects = @equipment_model.equipment_objects
     elsif params[:show_accessories]
+      @equipment_objects = EquipmentObject.not_deleted.find(:all, :include => :equipment_model, :order => 'equipment_models.name ASC, equipment_objects.name ASC')
+    elsif params[:show_deleted]
       @equipment_objects = EquipmentObject.find(:all, :include => :equipment_model, :order => 'equipment_models.name ASC, equipment_objects.name ASC')
     else
-      @equipment_objects = EquipmentObject.find(:all, :include => :equipment_model, :order => 'equipment_models.name ASC, equipment_objects.name ASC')
+      @equipment_objects = EquipmentObject.not_deleted.find(:all, :include => :equipment_model, :order => 'equipment_models.name ASC, equipment_objects.name ASC')
       @equipment_objects = @equipment_objects.select{|e| e.equipment_model.category.name != "Accessories"}
     end
   end

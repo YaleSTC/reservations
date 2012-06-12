@@ -31,7 +31,7 @@
             <%# We now have a second check that now accounts for total equipment during checkout %>
             <% if item.equipment_model.maximum_per_user != "unrestricted" and item.quantity > item.equipment_model.maximum_per_user %><br /><small>
               <% acceptable_reservation = false %>
-              <strong class="error">You may not check out this many of this item.</strong> Users may rent
+              <strong class="error">You may not check out this many <%= item.equipment_model.name %>.</strong> Users may rent
               only <%= item.equipment_model.maximum_per_user %> of this item during any given period. Please use
               the cart menu in the right sidebar to either remove this item
               or to change the dates of your reservation.</small>

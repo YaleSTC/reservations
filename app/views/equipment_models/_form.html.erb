@@ -1,73 +1,40 @@
-<%= form_for @equipment_model, :html => { :multipart => true } do |f| %>
-  <%= f.error_messages %>
-  <%= hidden_field_tag "product[category_ids][]", "" %><%# for HABTM checkboxes %>
-  
-  <% if @category %>
-    <%= f.hidden_field :category_id, :value => @category.id %>
-  <% else %>
-    <p>
-      <%= f.label :category_id %><br />
-      <%= f.select :category_id, Category.select_options, :prompt => true %> <%= link_to "[add new category]", new_category_path %>
-    </p>
-  <% end %>
-  <p>
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
-  </p>
-  <p>
-    <%= f.label :description %><br />
-    <%= f.text_area :description %>
-  </p>
-  <p>
-    <%= hidden_field_tag :clear_checkout_procedures, true %>
-    <%= f.label :checkout_procedures %>
-    <div id="checkout_procedures">
-      <% unless @equipment_model.checkout_procedures.nil? %>
-        <%= render :partial => 'checkout_procedure', :collection => @equipment_model.checkout_procedures %>
-      <% end %>
-    </div>
-<!-- broken in rails3.1
-    <%#= link_to_function "[add checkout procedure]" do |document| %>
-      <%#= document.insert_html(:bottom, :checkout_procedures, :partial => 'checkout_procedure') %>
-    <%# end %>
--->
-  </p>
-  <p>
-    <%= hidden_field_tag :clear_checkin_procedures, true %>
-    <%= f.label :checkin_procedures %>
-    <div id="checkin_procedures">
-      <% unless @equipment_model.checkin_procedures.nil? %>
-        <%= render :partial => 'checkin_procedure', :collection => @equipment_model.checkin_procedures %>
-      <% end %>
-    </div>
-<!-- broken in rails3.1
-    <%#= link_to_function "[add checkin procedure]" do |document| %>
-      <%#= document.insert_html :bottom, :checkin_procedures, :partial => 'checkin_procedure' %>
-    <%# end %>
--->
-  </p>
-  <p>
-    <%= f.label :late_fee %><br />
-    $<%= f.text_field :late_fee, :class => 'number_input' %> / day
-  </p>
-  <p>
-    <%= f.label :replacement_fee %><br />
-    $<%= f.text_field :replacement_fee, :class => 'number_input' %>
-  </p>
-  <p>
-    <%= f.label :max_per_user, "Maximum per user (leave blank to default to category value)" %><br />
-    <%= f.text_field :max_per_user, :class => 'number_input' %>
-  </p>
-  
-  <p>
-    <%= f.label :accessories %><br />
-    <% Category.find_by_name("Accessories").equipment_models.each do |equipment_model| %>
-      <li>
-        <%= check_box_tag 'equipment_model[accessory_ids][]', equipment_model.id %> 
-        <%= link_to equipment_model.name, equipment_model %>
-      </li>
-    <% end %>
-  </p>
-  
-  <p><%= f.submit "Submit" %></p>
+<%= simple_form_for @equipment_model do |f| %>
+  <%= f.error_notification %>
+  <%= f.association :category, include_blank: false %> <%= link_to "[add new category]", new_category_path %>
+  <%= f.association :associated_equipment_models %>
+  <%= f.input :name %>
+  <%= f.input :description, as: :text %>
+  <%= f.input :late_fee %>
+  <%= f.input :replacement_fee %>
+  <%= f.input :max_per_user, label: "Maximum per user", hint: "leave blank to default to category value" %>
+  <%= f.input :deleted_at, label: "Active", as: :check_boxes %>
+  <%= f.error :base %>
+  <%= f.button :submit %>
 <% end %>
+
+<%# We're missing stuff! these are the nested models that've been giving me trouble. This is next. %>
+
+<%#<p>%>
+    <%#<%= hidden_field_tag :clear_checkout_procedures, true %>
+    <%#<%= f.label :checkout_procedures %>
+    <%#<div id="checkout_procedures">%>
+      <%#<% unless @equipment_model.checkout_procedures.nil? %>
+        <%#<%= render :partial => 'checkout_procedure', :collection => @equipment_model.checkout_procedures %>
+      <%#<% end %>
+    <%#</div>%>
+    <%#<%= link_to_function "[add checkout procedure]" do |document|%>
+      <%#document.insert_html(:bottom, :checkout_procedures, :partial => 'checkout_procedure')%>
+    <%#end %>
+  <%#</p>%>
+  <%#<p>%>
+    <%#<%= hidden_field_tag :clear_checkin_procedures, true %>
+    <%#<%= f.label :checkin_procedures %>
+    <%#<div id="checkin_procedures">%>
+      <%#<% unless @equipment_model.checkin_procedures.nil? %>
+        <%#<%= render :partial => 'checkin_procedure', :collection => @equipment_model.checkin_procedures %>
+      <%#<% end %>
+    <%#</div>%>
+    <%#<%= link_to_function "[add checkin procedure]" do |document|%>
+      <%#document.insert_html :bottom, :checkin_procedures, :partial => 'checkin_procedure'%>
+    <%#end %>
+  <%#</p>%>

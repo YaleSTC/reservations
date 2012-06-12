@@ -1,0 +1,25 @@
+Hi <%= @reservation.reserver.name %>,
+<br />
+
+<p>This is a receipt for your equipment return. </p>
+
+<p>Equipment returned: <%= @reservation.equipment_model.name%> (<%= @reservation.equipment_object.name %>) <br />
+Checkout date: <%= @reservation.checked_out.strftime(" %B %e, %Y at %l:%M%P") %> <br /> 
+Return date: <%= @reservation.checked_in.strftime(" %B %e, %Y at %l:%M%P") %> <br />
+
+<% unless @reservation.notes.nil? %> 
+Notes: <%= @reservation.notes %> <br />
+<% end %>
+</p>
+
+<p> <% if (@reservation.due_date - @reservation.checked_in ) < 86400 %>
+			Since the equipment was returned late, you will be charged a late fee of 
+			<%= number_to_currency(@reservation.equipment_model.late_fee) %> per day, 
+			for a total of <%= number_to_currency(((@reservation.checked_in - @reservation.due_date )/86400).to_i*(@reservation.equipment_model.late_fee))%>. </p>
+		<% end %></p>
+			
+			
+
+
+Sincerely, <br />
+<%= Settings.department_name %>

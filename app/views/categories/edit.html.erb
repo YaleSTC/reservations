@@ -4,5 +4,6 @@
 
 <p>
   <%= link_to "Show", @category %> |
-  <%= link_to "View All", categories_path %>
+  <%= link_to "View All", categories_path %> |
+  <%= link_to "Destroy", @category, :confirm => 'Are you sure? This could have unintended consequences', :method => :delete %>
 </p>

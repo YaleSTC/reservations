@@ -7,7 +7,8 @@ class Document < ActiveRecord::Base
   scope :not_images, where("data_content_type NOT LIKE ?", "image%")
   
   before_save :change_name
-  validates_presence_of :name
+  
+  validates :name, :presence => true
   
   attr_accessible :name, :data, :data_file_name, :data_content_type, :data_file_size
   

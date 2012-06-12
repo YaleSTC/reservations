@@ -7,20 +7,22 @@ class EquipmentModel < ActiveRecord::Base
   # has_and_belongs_to_many :reservations
   # has_many :equipment_models_reservations
   has_many :reservations
+  has_and_belongs_to_many :associated_equipment_models,
+    :class_name => "EquipmentModel",
+    :association_foreign_key => "associated_equipment_model_id",
+    :join_table => "equipment_models_associated_equipment_models"
 
   #associates with itself for accessories/recommended related models
   has_many :accessories_equipment_models, :foreign_key => :equipment_model_id
   has_many :accessories, :through => :accessories_equipment_models
 
-  validates_presence_of :name
-  validates_uniqueness_of :name
-  validates_presence_of :description
-  validates_numericality_of :late_fee, :greater_than_or_equal_to => 0
-  validates_numericality_of :replacement_fee, :greater_than_or_equal_to => 0
-  validates_numericality_of :max_per_user, :allow_nil => true, :integer_only => true, :greater_than_or_equal_to => 1
-  validates_presence_of :category
+  validates :name, :description, :category, :presence => true
+  validates :name, :uniqueness => true
+  validates :late_fee, :replacement_fee, :numericality => { :greater_than_or_equal_to => 0 }
+  validates :max_per_user, :numericality => { :allow_nil => true, :integer_only => true, :greater_than_or_equal_to => 1 }
 
-  attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, :max_per_user, :document_attributes, :accessory_ids, :checkout_procedures, :checkin_procedures
+  nilify_blanks :only => [:deleted_at]
+  attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, :max_per_user, :document_attributes, :accessory_ids, :checkout_procedures, :checkin_procedures, :deleted_at
 
   #inherits from category if not defined
   def maximum_per_user

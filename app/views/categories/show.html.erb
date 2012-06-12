@@ -12,7 +12,10 @@
   <strong>Sort Order:</strong>
   <%= @category.sort_order %>
 </p>
-
+<p>
+  <strong>Activated:</strong>
+  <%= @category.deleted_at == nil %>
+</p>
 <p>
   <%= link_to "Add new "+@category.name.singularize+" model", new_category_equipment_model_path(@category) %> | 
   <%= link_to "View all "+@category.name.singularize+" models", category_equipment_models_path(@category) %>
@@ -20,6 +23,6 @@
 
 <p>
   <%= link_to "Edit Category", edit_category_path(@category) %> |
-  <%= link_to "Destroy Category", @category, :confirm => 'Are you sure?', :method => :delete %> |
+  <%= link_to "Destroy Category", @category, :confirm => 'Are you sure? This could have unintended consequences', :method => :delete %> |
   <%= link_to "View All Categories", categories_path %>
 </p>

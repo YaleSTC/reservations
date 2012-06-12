@@ -1,25 +1,42 @@
 <% title "Catalog" %>
 
+<!--show quicksearch box-->
 <%= render :partial => 'quicksearch' %>
 
 <% if @equipment_models_by_category.empty? %>
   <p>Sorry, no equipment models were found.</p>
 <% else %>
   <% @equipment_models_by_category.each do |category, equipment_models| %>
-    <h2 class="catalog"><%= link_to category.name, category_equipment_models_path(category) %></h2>
+    <h2 class="catalog">
+      <!--print category name-->
+      <%= link_to category.name, category_equipment_models_path(category) %>
+    </h2>    
     <ul class="catalog">
     <% unless equipment_models.nil? %>
       <% equipment_models.each do |equipment_model| %>
         <li>
-          <%= (link_to (image_tag equipment_model.photos.first.data.url(:small), :class => 'product_small'), equipment_model, :target => '_blank' ) unless equipment_model.photos.empty? %>
-          <h3><%= link_to equipment_model.name, equipment_model %></h3>
-          (<%= equipment_model.available?(cart.start_date..cart.due_date) || "0" %> available from <%= cart.start_date %> to <%= cart.due_date %>)<br />
-          <%= link_to "[add to cart]", {:url => add_to_cart_path(equipment_model)}, :href => add_to_cart_path(equipment_model), :remote => true %><br /><br />
-       <% # Using both the ":url" and ":href" symbols seems redundant. Remove one? %>
+          <!--show equipment model image-->
+          <%= (link_to (image_tag equipment_model.photos.first.data.url(:small),
+                        :class => 'product_small'),
+                       equipment_model, :target => '_blank') unless equipment_model.photos.empty? %>
+          <h3>
+            <!--print equipment model name-->
+            <%= link_to equipment_model.name, equipment_model %>
+          </h3>
+          <!--print number of equipment objects available-->
+          (<%= equipment_model.available?(cart.start_date..cart.due_date) || "0" %>
+           available from
+           <%= cart.start_date.strftime("%b %d, %Y") %> to <%= cart.due_date.strftime("%b %d, %Y") %>)
+          <br>
+          <!--print add to cart link-->
+          <%= link_to "[add to cart]", {:url => add_to_cart_path(equipment_model)},
+                      :href => add_to_cart_path(equipment_model), :remote => true %>
+          <% # (Using both the ":url" and ":href" symbols seems redundant. Remove one?) %>
+          <br>
+          <br>
         </li>
       <% end %>
     <% end %>
     </ul>
   <% end %>
 <% end %>
-

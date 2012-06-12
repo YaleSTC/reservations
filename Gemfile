@@ -13,6 +13,10 @@ gem "rails-settings", :git => "git://github.com/100hz/rails-settings.git"
 gem "pry"
 gem "pry-rails"
 gem "dynamic_form"
+gem "permanent_records", "~> 2.1.2"
+gem "nilify_blanks"
+gem "mail", "2.2.19"
+gem "simple_form"
 gem 'jquery_datepicker'
 gem "jquery-rails"
 
