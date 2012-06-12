@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120607175319) do
+ActiveRecord::Schema.define(:version => 20120612163247) do
 
   create_table "accessories_equipment_models", :force => true do |t|
     t.integer  "accessory_id"
