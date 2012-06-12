@@ -15,7 +15,7 @@ gem "pry-rails"
 gem "dynamic_form"
 gem "permanent_records", "~> 2.1.2"
 gem "nilify_blanks"
-gem "mail", "2.2.19"
+gem "mail"
 gem "simple_form"
 gem 'jquery_datepicker'
 gem "jquery-rails"
