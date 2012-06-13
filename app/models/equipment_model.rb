@@ -1,6 +1,4 @@
 class EquipmentModel < ActiveRecord::Base
-  serialize :checkout_procedures
-  serialize :checkin_procedures
   belongs_to :category
   has_many :equipment_objects
   has_many :documents
@@ -11,6 +9,10 @@ class EquipmentModel < ActiveRecord::Base
     :class_name => "EquipmentModel",
     :association_foreign_key => "associated_equipment_model_id",
     :join_table => "equipment_models_associated_equipment_models"
+  has_many :checkin_procedures, :dependent => :destroy
+  accepts_nested_attributes_for :checkin_procedures, :reject_if => :all_blank, :allow_destroy => true
+  has_many :checkout_procedures, :dependent => :destroy
+  accepts_nested_attributes_for :checkout_procedures, :reject_if => :all_blank, :allow_destroy => true
 
   #associates with itself for accessories/recommended related models
   has_many :accessories_equipment_models, :foreign_key => :equipment_model_id
@@ -22,7 +24,7 @@ class EquipmentModel < ActiveRecord::Base
   validates :max_per_user, :numericality => { :allow_nil => true, :integer_only => true, :greater_than_or_equal_to => 1 }
 
   nilify_blanks :only => [:deleted_at]
-  attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, :max_per_user, :document_attributes, :accessory_ids, :checkout_procedures, :checkin_procedures, :deleted_at
+  attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, :max_per_user, :document_attributes, :accessory_ids, :deleted_at, :checkout_procedures_attributes, :checkin_procedures_attributes
 
   #inherits from category if not defined
   def maximum_per_user
