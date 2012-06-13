@@ -4,13 +4,17 @@ class ReservationsController < ApplicationController
 
   def index
     if current_user.can_checkout?
-      if params[:show_returned]
-        @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.pending, Reservation.returned ].delete_if{|a| a.empty?} #remove empty arrays from set
-      else
-        @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.pending ].delete_if{|a| a.empty?}
+      if params[:show_missed]
+        @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved, Reservation.missed].delete_if{|a| a.empty?}
+      elsif params[:show_returned]
+        @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved, Reservation.returned].delete_if{|a| a.empty?} #remove empty arrays from set
+      elsif params[:show_returned && :show_missed]
+        @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved, Reservation.missed, Reservation.returned].delete_if{|a| a.empty?}
+      elsif
+        @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved].delete_if{|a| a.empty?}
       end
     else
-      @reservations_set = [current_user.reservations.overdue, current_user.reservations.checked_out, current_user.reservations.pending ].delete_if{|a| a.empty?}
+      @reservations_set = [current_user.reservations.overdue, current_user.reservations.checked_out, current_user.reservations.reserved ].delete_if{|a| a.empty?}
     end
   end
 

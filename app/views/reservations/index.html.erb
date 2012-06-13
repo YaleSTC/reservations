@@ -1,9 +1,12 @@
 <% title (current_user.can_checkout? ? "" : "Your ")+"Reservations" %>
 <p>
-  <% if params[:show_returned] %>
+	<% if params[:show_missed] %>
+		<%= link_to "Hide Missed Reservations from List", reservations_path %>
+  <% elsif params[:show_returned] %>
     <%= link_to "Hide Returned Reservations from List", reservations_path %>
-  <% else %>
-    <%= link_to "Show Returned Reservations in List", reservations_path(:show_returned => true) %>
+  <% elsif %>
+    <%= link_to "Show Returned Reservations in List", reservations_path(:show_returned => true) %> | 
+		<%= link_to "Show Missed Reservations in List", reservations_path(:show_missed => true)%>
   <% end %>
 </p>
 
