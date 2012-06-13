@@ -33,7 +33,7 @@
   
 	<p>
 	<strong>Notes:</strong>
-	<%= @reservation.notes %>
+	<%= text_area_tag @reservation.notes, @reservation.notes %>
 	</p>
 	
 	<% if @reservation.due_date.to_date < Date.today %>

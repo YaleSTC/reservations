@@ -55,7 +55,7 @@
 <p>
   <%= link_to "Edit Information", edit_user_path(@user) %>
   <% if current_user.is_admin_in_adminmode? %>
-    | <%= link_to "Destroy User", @user, :confirm => 'Are you sure?', :method => :delete %>
+    | <%= link_to "Destroy User", @user, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete %>
     | <%= link_to "View All Users", users_path %>
   <% end %>
 </p>

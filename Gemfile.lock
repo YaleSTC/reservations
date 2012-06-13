@@ -152,11 +152,17 @@ DEPENDENCIES
   cocoon
   coffee-rails
   dynamic_form
+<<<<<<< HEAD
   jquery-datatables-rails
   jquery-rails
   jquery_datepicker
   mail
   mysql2
+=======
+  ffaker
+  mail (= 2.2.19)
+  mysql2 (= 0.2.18)
+>>>>>>> rails3_stable
   net-ldap
   nilify_blanks
   paperclip

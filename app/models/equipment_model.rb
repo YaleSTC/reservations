@@ -24,6 +24,7 @@ class EquipmentModel < ActiveRecord::Base
   validates :max_per_user, :numericality => { :allow_nil => true, :integer_only => true, :greater_than_or_equal_to => 1 }
 
   nilify_blanks :only => [:deleted_at]
+  include ApplicationHelper
   attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, :max_per_user, :document_attributes, :accessory_ids, :deleted_at, :checkout_procedures_attributes, :checkin_procedures_attributes
 
   #inherits from category if not defined
@@ -83,5 +84,6 @@ class EquipmentModel < ActiveRecord::Base
   def available_object_select_options
     self.equipment_objects.select{|e| e.available?}.sort_by(&:name).collect{|item| "<option value=#{item.id}>#{item.name}</option>"}.join.html_safe
   end
+
 end
 

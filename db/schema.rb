@@ -110,6 +110,8 @@ ActiveRecord::Schema.define(:version => 20120604201512) do
     t.datetime "updated_at",          :null => false
     t.integer  "equipment_model_id"
     t.integer  "equipment_object_id"
+    t.text     "notes"
+    t.boolean  "notes_unsent",        :default => true
   end
 
   create_table "sessions", :force => true do |t|

@@ -28,7 +28,7 @@
       <% if current_user.is_admin_in_adminmode? %>
        <td><%= link_to "Edit", edit_category_path(category) %></td>
        <td><%= eval @toggle %></td>
-       <td><%= link_to "Destroy", category, :confirm => 'Are you sure?', :method => :delete %></td>
+       <td><%= link_to "Destroy", category, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete %></td>
       <% end %>
     </tr>
   <% end %>
@@ -36,10 +36,12 @@
 </table>
 
 <p>
-  <%= link_to "New Category", new_category_path %>
+  <% if current_user.is_admin_in_adminmode? %>
+    <%= link_to "New Category", new_category_path %> |
+  <% end %>
   <% if params[:show_deleted] %>
-   | <%= link_to "Hide Old Categories from List", categories_path %>
+    <%= link_to "Hide Old Categories from List", categories_path %>
   <% else %>
-   | <%= link_to "Show Old Categories in List", categories_path(:show_deleted => true) %>
+    <%= link_to "Show Old Categories in List", categories_path(:show_deleted => true) %>
   <% end %>
 </p>

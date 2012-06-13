@@ -21,6 +21,7 @@ gem 'jquery_datepicker'
 gem "jquery-rails"
 gem 'jquery-datatables-rails'
 gem "cocoon"
+gem "ffaker"
 
 # Gems used only for assets and not required
 # in production environments by default.

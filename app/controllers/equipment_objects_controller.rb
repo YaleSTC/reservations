@@ -1,7 +1,8 @@
 class EquipmentObjectsController < ApplicationController
   before_filter :require_admin, :except => :index
   before_filter :require_checkout_person, :only => :index
-  
+  include ApplicationHelper
+
   def index
     @equipment_objects = EquipmentObject.all
     if params[:equipment_model_id]
@@ -56,8 +57,8 @@ class EquipmentObjectsController < ApplicationController
   
   def destroy
     @equipment_object = EquipmentObject.find(params[:id])
-    @equipment_model = @equipment_object.equipment_model
-    @equipment_object.destroy
+    @equipment_model = @equipment_object.equipment_model #We need this so that we know where to re-direct (look down 4 lines)
+    @equipment_object.destroy(:force)
     flash[:notice] = "Successfully destroyed equipment object."
     redirect_to @equipment_model
   end

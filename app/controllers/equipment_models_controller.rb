@@ -1,7 +1,8 @@
 class EquipmentModelsController < ApplicationController
   before_filter :require_admin
   skip_before_filter :require_admin, :only => [:index, :show]
-  
+  include ApplicationHelper
+
   def index
     if params[:category_id]
       @category = Category.find(params[:category_id])
@@ -46,10 +47,10 @@ class EquipmentModelsController < ApplicationController
       render :action => 'edit'
     end
   end
-  
+
   def destroy
     @equipment_model = EquipmentModel.find(params[:id])
-    @equipment_model.destroy
+    @equipment_model.destroy(:force)
     flash[:notice] = "Successfully destroyed equipment model."
     redirect_to equipment_models_url
   end

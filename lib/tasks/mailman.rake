@@ -26,6 +26,17 @@ task :mailman => :environment do
   end
   puts "Done!"
 
+  #gets all reservations with notes and sends an email to the admin of the application, to alert them. 
+  notes_reservations = Reservation.find(:all, :conditions => ["notes IS NOT NULL and checked_out IS NOT NULL and notes_unsent = ? or checked_in IS NOT NULL", true])
+  puts "Found #{notes_reservations.size} reservations with notes. Sending a reminder email..."
+  unless notes_reservations.empty?
+    AdminMailer.notes_reservation_notification(notes_reservations).deliver
+  end
+  notes_reservations.each do |notes_reservation| 
+    notes_reservation.notes_unsent = false
+    notes_reservation.save
+  end
+  puts "Done!"
 
   puts "Mailman done."
 end
