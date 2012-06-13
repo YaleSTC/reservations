@@ -43,8 +43,8 @@ GEM
     dynamic_form (1.1.4)
     erubis (2.6.6)
       abstract (>= 1.0.0)
-    i18n (0.5.0)
     ffaker (1.14.0)
+    i18n (0.5.0)
     json (1.7.3)
     mail (2.2.19)
       activesupport (>= 2.3.6)
@@ -115,9 +115,9 @@ PLATFORMS
 
 DEPENDENCIES
   dynamic_form
+  ffaker
   mail (= 2.2.19)
   mysql2 (= 0.2.18)
-  ffaker
   net-ldap
   nilify_blanks
   paperclip
