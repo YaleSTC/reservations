@@ -1,19 +1,23 @@
 class CategoriesController < ApplicationController
   before_filter :require_admin
   skip_before_filter :require_admin, :only => [:index, :show]
-  
+
   def index
-    @categories = Category.all
+    if (params[:show_deleted])
+      @categories = Category.all
+    else
+      @categories = Category.not_deleted.all
+    end
   end
-  
+
   def show
     @category = Category.find(params[:id])
   end
-  
+
   def new
     @category = Category.new
   end
-  
+
   def create
     @category = Category.new(params[:category])
     @category.sort_order = params[:category][:sort_order].to_i
@@ -24,11 +28,11 @@ class CategoriesController < ApplicationController
       render :action => 'new'
     end
   end
-  
+
   def edit
     @category = Category.find(params[:id])
   end
-  
+
   def update
     @category = Category.find(params[:id])
     @category.sort_order = params[:category][:sort_order].to_i
@@ -39,7 +43,7 @@ class CategoriesController < ApplicationController
       render :action => 'edit'
     end
   end
-  
+
   def destroy
     @category = Category.find(params[:id])
     @category.destroy

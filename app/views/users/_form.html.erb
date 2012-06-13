@@ -46,6 +46,10 @@
       <%= f.label :is_admin %><br />
       <%= f.check_box :is_admin %>
     </p>
+    <p>
+      <%= f.label :Disabled %><br />
+      <%= f.check_box :deleted_at, (@user.deleted_at.blank? ? {:checked => false} : {:checked => true}), Time.now, nil %>
+    </p>
   <% end %>
   <p><%= f.submit "Submit" %></p>
 <% end %>

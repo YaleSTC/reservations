@@ -8,7 +8,7 @@
   <strong>Checkin procedures:</strong>
   <ul>
     <% if check_in_item.equipment_model.checkin_procedures.nil? %>
-      no checkin procedures
+      no check in procedures
     <% else %>
       <% check_in_item.equipment_model.checkin_procedures.each do |checkin_procedure| %>
         <li style="list-style: none">

@@ -34,6 +34,7 @@ class ReservationsController < ApplicationController
     end
   end
 
+# old method that does not split reservations by item, needs to be deleted by end of summer 12
   # def create
   #   @reservation = Reservation.new(params[:reservation])
   #   cart.items.each do |item|
@@ -53,14 +54,17 @@ class ReservationsController < ApplicationController
       for q in 1..item.quantity     # accounts for reserving multiple equipment objects of the same equipment model (mainly for admins)
         @reservation = Reservation.new(params[:reservation])
         @reservation.equipment_model =  item.equipment_model
-        @reservation.save
+        if @reservation.save
+          UserMailer.reservation_confirmation(@reservation).deliver
+          flash[:notice] = "Your reservations have been made."
+          session[:cart] = Cart.new
+          redirect_to catalog_path
+        else 
+          flash[:error] = "Oops, something went wrong with making your reservation."
+          render :action => 'new'
+        end 
       end
     end
-    flash[:notice] = "Your reservations have been made."
-    session[:cart] = Cart.new
-    redirect_to catalog_path
-  rescue
-    flash.now[:error] = "Oops, something went wrong with making your reservation."
   end
 
 
@@ -108,7 +112,7 @@ class ReservationsController < ApplicationController
         reservation.save
       end
       flash[:notice] = error_msgs.empty? ? "Successfully checked out equipment!" : error_msgs #Allows admins to see all errors, but still checkout successfully
-      redirect_to :action => 'index' and return
+      redirect_to :action => 'show' and return
 
     elsif params[:commit] == "Check in equipment"
 
@@ -141,7 +145,7 @@ class ReservationsController < ApplicationController
           reservation.save
         end
         flash[:notice] = "Successfully checked in equipment!"
-        redirect_to :action => 'index' and return
+        redirect_to :action => 'show' and return
       end
 
     elsif params[:commit] == "Submit" #For editing reservations
@@ -179,5 +183,27 @@ class ReservationsController < ApplicationController
     @reservation =  Reservation.find(params[:id])
   end
 
+  def checkout_email
+    @reservation =  Reservation.find(params[:id])
+    if UserMailer.checkout_receipt(@reservation).deliver
+      redirect_to :back
+      flash[:notice] = "Delivered receipt email."
+    else 
+      redirect_to @reservation
+      flash[:error] = "Unable to deliver receipt email. Please contact administrator for more support. "
+    end
+  end
+  
+  def checkin_email
+    @reservation =  Reservation.find(params[:id])
+    if UserMailer.checkin_receipt(@reservation).deliver
+      redirect_to :back
+      flash[:notice] = "Delivered receipt email."
+    else 
+      redirect_to @reservation
+      flash[:error] = "Unable to deliver receipt email. Please contact administrator for more support. "
+    end
+  end
+  
 end
 

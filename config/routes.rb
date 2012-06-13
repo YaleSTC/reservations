@@ -28,6 +28,8 @@ Reservations::Application.routes.draw do
       get :check_out_single
       get :check_in_single
       get :show_all
+      get :checkout_email
+      get :checkin_email
     end
   end
 
@@ -43,6 +45,9 @@ Reservations::Application.routes.draw do
   match '/cart/empty' => 'application#empty_cart', :as => :empty_cart
   match '/cart/update' => 'application#update_cart', :as => :update_cart
   
+  match '/:controller/:id/deactivate' => ':controller#deactivate', :as => 'deactivate'
+  match '/:controller/:id/activate' => ':controller#activate', :as => 'activate'
+
   match '/logout' => 'application#logout', :as => :logout
   
   match '/app_config/edit' => 'app_config#edit', :as => :edit_app_config

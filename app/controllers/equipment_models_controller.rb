@@ -6,9 +6,11 @@ class EquipmentModelsController < ApplicationController
     if params[:category_id]
       @category = Category.find(params[:category_id])
       @equipment_models = @category.equipment_models
+    elsif params[:show_deleted]
+      @equipment_models = EquipmentModel.find(:all, :include => :category, :order => 'categories.name ASC, equipment_models.name ASC')
     else
       #@equipment_models = EquipmentModel.find(:all, :order => )
-      @equipment_models = EquipmentModel.find(:all, :include => :category, :order => 'categories.name ASC, equipment_models.name ASC')
+      @equipment_models = EquipmentModel.not_deleted.find(:all, :include => :category, :order => 'categories.name ASC, equipment_models.name ASC')
     end
   end
   
@@ -37,8 +39,6 @@ class EquipmentModelsController < ApplicationController
   
   def update
     @equipment_model = EquipmentModel.find(params[:id])
-    @equipment_model.checkout_procedures = nil if params[:clear_checkout_procedures]
-    @equipment_model.checkin_procedures = nil if params[:clear_checkin_procedures]
     if @equipment_model.update_attributes(params[:equipment_model])
       flash[:notice] = "Successfully updated equipment model."
       redirect_to @equipment_model

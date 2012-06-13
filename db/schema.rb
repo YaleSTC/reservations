@@ -29,6 +29,20 @@ ActiveRecord::Schema.define(:version => 20120604201512) do
     t.integer  "sort_order"
   end
 
+  create_table "checkin_procedures", :force => true do |t|
+    t.integer  "equipment_model_id"
+    t.string   "step"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+  end
+
+  create_table "checkout_procedures", :force => true do |t|
+    t.integer  "equipment_model_id"
+    t.string   "step"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+  end
+
   create_table "documents", :force => true do |t|
     t.string   "name"
     t.string   "data_file_name"
@@ -51,6 +65,12 @@ ActiveRecord::Schema.define(:version => 20120604201512) do
     t.datetime "updated_at",                                                           :null => false
     t.text     "checkout_procedures"
     t.text     "checkin_procedures"
+    t.string   "deleted_at"
+  end
+
+  create_table "equipment_models_associated_equipment_models", :id => false, :force => true do |t|
+    t.integer "equipment_model_id"
+    t.integer "associated_equipment_model_id"
   end
 
   create_table "equipment_models_reservations", :force => true do |t|
@@ -68,6 +88,7 @@ ActiveRecord::Schema.define(:version => 20120604201512) do
     t.integer  "equipment_model_id"
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
+    t.string   "deleted_at"
   end
 
   create_table "equipment_objects_reservations", :force => true do |t|

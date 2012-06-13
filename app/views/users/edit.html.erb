@@ -5,6 +5,7 @@
 <% if current_user.is_admin_in_adminmode? %>
   <p>
     <%= link_to "Show", @user %> |
-    <%= link_to "View All", users_path %>
+    <%= link_to "View All", users_path %> |
+    <%= link_to "Destroy", @user, :confirm => 'Are you sure? This could have unintended consequences', :method => :delete %>
   </p>
 <% end %>

@@ -1,13 +1,25 @@
 /*
 *= require_self
 *= require dataTables/jquery.dataTables
-*= require_tree .
+*= require forms
 */
+
 
 .clear {
   clear: both;
   height: 0;
   overflow: hidden;
+}
+
+/*The next two divs are for buttons to display in the same line. */
+#left_stuff {
+	width: 30%;
+	float: left;
+}
+
+#right_stuff {
+	width: 70%;
+	float: right;
 }
 
 #itg_wrapper {
@@ -79,7 +91,7 @@
   list-style: disc;
 }
 
-table, td, tr, th{
+table, tr, th{
 	border: 1px solid #000;
 	margin: 0;
 	padding: 5px;
@@ -89,6 +101,9 @@ table, td, tr, th{
 
 td{
 	border: 1px solid #999;
+        margin: 0;
+	padding: 5px;
+	border-collapse: collapse;
 }
 
 h1{
@@ -203,3 +218,12 @@ textarea{
 	width: 100%;
 	min-height: 100px;
 }
+
+tr.deactivated {
+        background: pink;
+}
+
+tr.activated {
+        background: transparent;
+}
+

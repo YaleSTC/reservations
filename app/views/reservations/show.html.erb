@@ -1,3 +1,6 @@
+<%= stylesheet_link_tag('application', :media => :screen) %>
+<%= stylesheet_link_tag('print', :media => :print) %>
+
 <% if current_user.can_checkout? || current_user == @reservation.reserver %>
   <% title "Reservation ##{@reservation.id}" + (@reservation.status == "reserved" ? "" : " (#{@reservation.status})") %>
 
@@ -18,7 +21,13 @@
   	<%= @reservation.equipment_model.name %>
   	<%= @reservation.equipment_object.nil? ? "(unassigned)" : "(#{@reservation.equipment_object.name})" %>
   </p>
-  <% if @reservation.checked_out %>
+ 
+	<p>
+		<strong>Notes:</strong>
+		<%= @reservation.notes %>
+	</p>
+
+		<% if @reservation.checked_out %>
     <p>
       Checked out <%= @reservation.checked_out.to_s(:long) %>
       by <%= @reservation.checkout_handler.nil? ? "unknown" : @reservation.checkout_handler.name %>
@@ -30,6 +39,17 @@
       by <%= @reservation.checkin_handler.nil? ? "unknown" : @reservation.checkin_handler.name %>
     </p>
   <% end %>
+
+	<p>
+<div id="left_stuff">	<%=link_to_function("Print this page", "javascript:print()")%></div>
+	<% if @reservation.status == "checked out"%> 
+<div id="right_stuff"><%=link_to "Email checkout receipt", :method => "get", :action => "checkout_email", :id => @reservation %></div>
+	<% elsif @reservation.status == "returned" %> 
+<div id="right_stuff"><%=link_to "Email return receipt", :action => "checkin_email", :id => @reservation, :method => "get" %></div>
+	<% end %>
+	</p> <br /> <br />
+
+
   <p>
   <% if current_user.can_checkout? %>
     <% if @reservation.status == "reserved" %>

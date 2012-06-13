@@ -12,11 +12,18 @@
   </thead>
   <tbody>
   <% for equipment_model in @equipment_models %>
-    <tr>
+    <% if equipment_model.deleted_at %> 
+      <tr class="deactivated">
+      <% @toggle = "link_to \"Activate\", activate_path(:equipment_models,equipment_model)" %>
+    <% else %>
+      <tr class= "activated">
+      <% @toggle = "link_to \"De-Activate\", deactivate_path(:equipment_models,equipment_model)" %>
+    <% end %>
       <td><%= link_to equipment_model.name, equipment_model %></td>
       <%= ("<td>" + (link_to equipment_model.category.name.singularize, equipment_model.category) + "</td>").html_safe unless @category %>
       <% if current_user.is_admin_in_adminmode? %>
         <td><%= link_to "Edit", edit_equipment_model_path(equipment_model) %></td>
+        <td><%= eval @toggle %></td>
         <td><%= link_to "Destroy", equipment_model, :confirm => 'Are you sure?', :method => :delete %></td>
       <% end %>
     </tr>
@@ -32,5 +39,10 @@
     <%= link_to "View All Equipment Models", equipment_models_path %>
   <% elsif current_user.is_admin_in_adminmode? %>
     <%= link_to "New Equipment Model", new_equipment_model_path %>
+  <% end %>
+  <% if params[:show_deleted] %>
+   | <%= link_to "Hide Deactivated Equipment Models from List", equipment_models_path %>
+  <% else %>
+   | <%= link_to "Show Deactivated Equipment Models in List", equipment_models_path(:show_deleted => true) %>
   <% end %>
 </p>

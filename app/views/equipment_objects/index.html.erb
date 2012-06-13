@@ -15,13 +15,20 @@
   </thead>
   <tbody>
   <% for equipment_object in @equipment_objects %>
-    <tr>
+    <% if equipment_object.deleted_at %>
+      <tr class="deactivated">
+      <% @toggle = "link_to \"Activate\", activate_path(:equipment_objects,equipment_object)" %>
+    <% else %>
+      <tr class= "activated">
+      <% @toggle = "link_to \"De-Activate\", deactivate_path(:equipment_objects,equipment_object)" %>
+    <% end %>
       <td><%= link_to equipment_object.equipment_model.name, equipment_object.equipment_model %></td>
       <td><%= link_to equipment_object.name, equipment_object %></td>
       <td><%= equipment_object.serial %></td>
-			<td><%= equipment_object.status %></td>
-			<% if current_user.is_admin_in_adminmode? %>
+      <td><%= equipment_object.status %></td>
+      <% if current_user.is_admin_in_adminmode? %>
         <td><%= link_to "Edit", edit_equipment_object_path(equipment_object) %></td>
+        <td><%= eval @toggle %></td>
         <td><%= link_to "Destroy", equipment_object, :confirm => 'Are you sure?', :method => :delete %></td>
       <% end %>
     </tr>
@@ -37,19 +44,22 @@
 
 <p>
   <% if params[:show_accessories] %>
-    <%= link_to "Hide Accessories from List", equipment_objects_path %>
+    <%= link_to "Hide Accessories", equipment_objects_path %>
   <% else %>
-    <%= link_to "Show Accessories in List", equipment_objects_path(:show_accessories => true) %>
+    <%= link_to "Show Accessories", equipment_objects_path(:show_accessories => true) %>
   <% end %>
-</p>
-
-<% if current_user.is_admin_in_adminmode? %>
-  <p>
+  <% if current_user.is_admin_in_adminmode? %>
     <% if @equipment_model %>
-      <%= link_to ("New "+@equipment_model.name.singularize), new_equipment_model_equipment_object_path(@equipment_model) %> |
-      <%= link_to "View All Equipment Objects", equipment_objects_path %>
+     | <%= link_to ("New "+@equipment_model.name.singularize), new_equipment_model_equipment_object_path(@equipment_model) %>
+     | <%= link_to "View All Equipment Objects", equipment_objects_path %>
     <% else %>
-      <%= link_to "New Equipment Object", new_equipment_object_path %>
+     | <%= link_to "New Equipment Object", new_equipment_object_path %>
     <% end %>
+
+    <% if params[:show_deleted] %>
+   | <%= link_to "Hide Deactivated Objects", equipment_objects_path %>
+  <% else %>
+   | <%= link_to "Show Deactivated Objects", equipment_objects_path(:show_deleted => true) %>
+  <% end %>
   </p>
 <% end %>

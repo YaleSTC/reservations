@@ -6,6 +6,8 @@
 //= require dataTables/jquery.dataTables
 //= require_self
 //= require_tree .
+//= require cocoon
+
 
 $(document).ready(function() {
    $('.toggleLink').click(function() {

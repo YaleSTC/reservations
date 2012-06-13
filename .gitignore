@@ -6,4 +6,5 @@ tmp/
 config/database.yml
 config/database.yml~
 .DS_Store
+.rbenv-version
 .sass-cache/

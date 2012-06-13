@@ -5,4 +5,5 @@
 <p>
   <%= link_to "Show", @equipment_model %> |
   <%= link_to "View All", equipment_models_path %>
+  <%= link_to "Destroy", @equipment_model, :confirm => 'Are you sure? This could have unintended consequences', :method => :delete %>
 </p>

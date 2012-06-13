@@ -5,7 +5,7 @@
   <% else %>
     <p>
       <%= f.label :equipment_model_id %><br />
-      <%= f.select :equipment_model_id, EquipmentModel.select_options, :prompt => true %>
+      <%= f.select :equipment_model_id, EquipmentModel.not_deleted.select_options, :prompt => true %>
     </p>
   <% end %>
   <p>
@@ -15,6 +15,10 @@
   <p>
     <%= f.label :serial %><br />
     <%= f.text_field :serial %>
+  </p>
+  <p>
+    <%= f.label :Disabled %><br />
+    <%= f.check_box :deleted_at, (@equipment_object.deleted_at.blank? ? {:checked => false} : {:checked => true}), Time.now, nil %>
   </p>
   <p><%= f.submit "Submit" %></p>
 <% end %>

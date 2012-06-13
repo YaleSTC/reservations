@@ -11,14 +11,27 @@
   </thead>
   <tbody>
   <% for user in @users %>
-    <tr>
-      <td><%= user.login %></td>
-      <td><%= link_to user.name, user %></td>
-      <td><%= link_to "Edit", edit_user_path(user) %></td>
-      <td><%= link_to "Destroy", user, :confirm => 'Are you sure?', :method => :delete %></td>
+    <% if user.deleted_at %> 
+      <tr class="deactivated">
+      <% @toggle = "link_to \"Activate\", activate_path(:users,user.id)" %>
+    <% else %>
+      <tr class= "activated">
+      <% @toggle = "link_to \"De-Activate\", deactivate_path(:users,user)" %>
+    <% end %>
+    <td><%= user.login %></td>
+    <td><%= link_to user.name, user %></td>
+    <td><%= link_to "Edit", edit_user_path(user) %></td>
+    <td><%= eval @toggle %></td>
+    <td><%= link_to "Destroy", user, :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>
   <% end %>
   </tbody>
 </table>
-
-<p><%= link_to "New User", new_user_path %></p>
+<p> 
+  <%= link_to "New User", new_user_path %> | 
+  <% if params[:show_deleted] %>
+    <%= link_to "Hide Deactivated Users from List", users_path %>
+  <% else %>
+    <%= link_to "Show Deactivated Users in List", users_path(:show_deleted => true) %>
+  <% end %>
+</p>
