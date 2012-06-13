@@ -2,7 +2,7 @@ class Cart
   include ActiveModel::Validations
   
   validates :reserver_id, :start_date, :due_date, :presence => true
-  validate :reserver_valid?
+  validate :reserver_valid?, :logical_start_and_due_dates?
   
   attr_accessor :reserver_id, :items, :start_date, :due_date
 
@@ -148,5 +148,19 @@ class Cart
       end
     end
   end
+  
+  # Check if the duration is longer than the maximum checkout length for any of the item
+  def duration_too_long?
+    @items.each do |item|
+      eq_model = item.equipment_model
+      category = eq_model.category
+      unless !category.max_checkout_length.nil? && self.duration <= category.max_checkout_length
+        errors.add(:items, "You can only check out " + eq_model.name + " for " + category.max_checkout_length.to_s + " days")
+        return false
+      end
+    end
+    return true
+  end
+  
 end
 
