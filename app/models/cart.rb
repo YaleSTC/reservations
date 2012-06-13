@@ -1,20 +1,41 @@
 class Cart
   include ActiveModel::Validations
+  extend ActiveModel::Naming
   
   validates :reserver_id, :start_date, :due_date, :presence => true
-  validate :reserver_valid?, :logical_start_and_due_dates?
+  validate :reserver_valid?, :logical_start_and_due_dates?, 
+           :too_many_of_category?, :too_many_of_equipment_model?,
+           :duration_too_long?
   
   attr_accessor :reserver_id, :items, :start_date, :due_date
-
+  attr_reader   :errors
+  
   def initialize
+    @errors = ActiveModel::Errors.new(self)
     @items = []
     @start_date = Date.today
     @due_date = Date.today
   end
   
   def persisted?
-     false
+    false
   end
+  
+  ## functions for error handling
+  
+  def read_attribute_for_validation(attr)
+    send(attr)
+  end
+
+  def Cart.human_attribute_name(attr, options = {})
+    attr
+  end
+
+  def Cart.lookup_ancestors
+    [self]
+  end
+
+  ## end of functions for error handling
 
   def add_equipment_model(equipment_model)
     current_item = @items.find {|item| item.equipment_model == equipment_model}
@@ -154,6 +175,7 @@ class Cart
     @items.each do |item|
       eq_model = item.equipment_model
       category = eq_model.category
+      binding.pry
       unless !category.max_checkout_length.nil? && self.duration <= category.max_checkout_length
         errors.add(:items, "You can only check out " + eq_model.name + " for " + category.max_checkout_length.to_s + " days")
         return false
@@ -161,6 +183,5 @@ class Cart
     end
     return true
   end
-  
 end
 
