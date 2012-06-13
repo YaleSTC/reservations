@@ -1,10 +1,15 @@
 <% title "Users" %>
 
-<table>
+<table id="table_woo">
+  <thead>
   <tr>
     <th>NetID</th>
     <th>Name</th>
+    <th> </th>
+    <th> </th>
   </tr>
+  </thead>
+  <tbody>
   <% for user in @users %>
     <tr>
       <td><%= user.login %></td>
@@ -13,6 +18,7 @@
       <td><%= link_to "Destroy", user, :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>
   <% end %>
+  </tbody>
 </table>
 
 <p><%= link_to "New User", new_user_path %></p>

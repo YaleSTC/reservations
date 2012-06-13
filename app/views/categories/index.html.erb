@@ -1,12 +1,18 @@
 <% title "Categories" %>
 
-<table>
+<table id="table_woo">
+  <thead>
   <tr>
     <th>Name</th>
     <th>Max Per User</th>
     <th>Max Checkout Length</th>
     <th>Sort Order</th>
+<%# these blank TH's necessary for the sort function %>
+    <th> </th>
+    <th> </th>
   </tr>
+  </thead>
+  <tbody>
   <% for category in @categories %>
     <tr>
       <td><%= link_to category.name, category %></td>
@@ -17,6 +23,7 @@
       <td><%= link_to "Destroy", category, :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>
   <% end %>
+  </tbody>
 </table>
 
 <p><%= link_to "New Category", new_category_path %></p>

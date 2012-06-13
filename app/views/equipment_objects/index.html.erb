@@ -1,20 +1,32 @@
 <% title (@equipment_model.nil? ? "Equipment Objects" : @equipment_model.name.pluralize) %>
 
-<table id="equipment_model_table">
+<!-- old code: <table id="equipment_model_table"> -->
+<table id="table_woo">
+  <thead>
   <tr>
     <th>Equipment Model</th>
     <th>Name</th>
     <th>Serial (optional)</th>
     <th>Status</th>
+<%# these blank TH's necessary for the sort function %>
+    <th> </th>
+    <th> </th>
   </tr>
+  </thead>
+  <tbody>
   <% for equipment_object in @equipment_objects %>
     <tr>
       <td><%= link_to equipment_object.equipment_model.name, equipment_object.equipment_model %></td>
       <td><%= link_to equipment_object.name, equipment_object %></td>
       <td><%= equipment_object.serial %></td>
 			<td><%= equipment_object.status %></td>
+			<% if current_user.is_admin_in_adminmode? %>
+        <td><%= link_to "Edit", edit_equipment_object_path(equipment_object) %></td>
+        <td><%= link_to "Destroy", equipment_object, :confirm => 'Are you sure?', :method => :delete %></td>
+      <% end %>
     </tr>
   <% end %>
+  </tbody>
 </table>
 
 <% if @equipment_model %>

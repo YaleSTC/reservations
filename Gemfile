@@ -15,6 +15,7 @@ gem "pry-rails"
 gem "dynamic_form"
 gem 'jquery_datepicker'
 gem "jquery-rails"
+gem 'jquery-datatables-rails'
 
 # Gems used only for assets and not required
 # in production environments by default.
