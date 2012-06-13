@@ -139,11 +139,11 @@
       <% if @equipment_model.checkout_procedures.nil? %>
         none
       <% else %>
-        <ul>
+        <ol>
           <% @equipment_model.checkout_procedures.each do |checkout_procedure| %>
-            <li><%= checkout_procedure %></li>
+            <li><%= checkout_procedure.step %></li>
           <% end %>
-        </ul>
+        </ol>
       <% end %>
     </p>
     <p>
@@ -151,11 +151,11 @@
       <% if @equipment_model.checkin_procedures.nil? %>
         none
       <% else %>
-        <ul>
+        <ol>
           <% @equipment_model.checkin_procedures.each do |checkin_procedure| %>
-            <li><%= checkin_procedure %></li>
+            <li><%= checkin_procedure.step %></li>
           <% end %>
-        </ul>
+        </ol>
       <% end %>
     </p>
   <% end %>
