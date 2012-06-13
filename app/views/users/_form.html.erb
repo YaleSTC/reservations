@@ -1,55 +1,24 @@
-<%= form_for @user do |f| %>
-  <%= f.error_messages %>
-  <p>
-    <%= f.label :login %><br />
-    <% if current_user and current_user.is_admin_in_adminmode? %>
-      <%= f.text_field :login %>
-    <% else %>
-      <%= @user.login %>
-      <%= f.hidden_field :login, :value => @user.login %>
-    <% end %>
-  </p>
-  <p>
-    <%= f.label :first_name %><br />
-    <%= f.text_field :first_name %>
-  </p>
-  <p>
-    <%= f.label :last_name %><br />
-    <%= f.text_field :last_name %>
-  </p>
-  <p>
-    <%= f.label :nickname %><br />
-    <%= f.text_field :nickname %>
-  </p>
-  <p>
-    <%= f.label :phone %><br />
-    <%= f.text_field :phone %>
-  </p>
-  <p>
-    <%= f.label :email %><br />
-    <%= f.text_field :email %>
-  </p>
-  <p>
-    <%= f.label :affiliation, "Affiliation (including college, year, etc)" %><br />
-    <%= f.text_field :affiliation %>
-  </p>
-  <% if current_user and current_user.is_admin_in_adminmode? %>
-    <p>
-      <%= f.label :is_banned %><br />
-      <%= f.check_box :is_banned %>
-    </p>
-    <p>
-      <%= f.label :is_checkout_person %><br />
-      <%= f.check_box :is_checkout_person %>
-    </p>
-    <p>
-      <%= f.label :is_admin %><br />
-      <%= f.check_box :is_admin %>
-    </p>
-    <p>
-      <%= f.label :Disabled %><br />
-      <%= f.check_box :deleted_at, (@user.deleted_at.blank? ? {:checked => false} : {:checked => true}), Time.now, nil %>
-    </p>
-  <% end %>
-  <p><%= f.submit "Submit" %></p>
+<%= simple_form_for @user do |f| %>
+  <%= f.error_notification %>
+  
+    <%#= f.label :login %>
+    <%# if current_user and current_user.is_admin_in_adminmode? %>
+      <%#= f.text_field :login %>
+    <%# else %>
+      <%#= @user.login %>
+      <%#= f.hidden_field :login, :value => @user.login %>
+    <%#end %>
+    <%= f.input :first_name %>
+    <%= f.input :last_name %>
+    <%= f.input :nickname %>
+    <%= f.input :phone %>
+    <%= f.input :email %>
+    <%= f.input :affiliation, label: "Affiliation", hint: "including college, year, etc"%>
+    
+  <%# if current_user and current_user.is_admin_in_adminmode? %>
+      <%= f.input :is_banned, :as => :boolean %>
+      <%= f.input :is_checkout_person, :as => :boolean %>
+      <%= f.input :is_admin, :as => :boolean %>
+      <%= f.input :deleted_at, label: "Disabled", :as => :deleted %>
+      <%= f.button :submit %>
 <% end %>
