@@ -7,11 +7,11 @@
   <%= link_to "[add to cart]", {:url => add_to_cart_path(@equipment_model)}, :href => add_to_cart_path(@equipment_model), :remote => true %>
 </p>
 
-<% unless @equipment_model.accessories.empty? %>
+<% unless @equipment_model.associated_equipment_models.empty? %>
   <fieldset>
-    <legend>Recommended accessories:</legend>
+    <legend>Recommended Items:</legend>
     <ul>
-      <% @equipment_model.accessories.each do |accessory| %>
+      <% @equipment_model.associated_equipment_models.each do |accessory| %>
         <li><%= accessory.name %> <%= link_to "[add to cart]", {:url => add_to_cart_path(accessory)}, :href => add_to_cart_path(accessory), :remote => true %></li>
       <% end %>
     </ul>
@@ -39,9 +39,13 @@
       <% if @equipment_model.documents.images.empty? %>
         none
         <% if current_user.is_admin_in_adminmode? %>
-          <small><%= link_to_function "[add image]" do |document|
+          <small>
+<!-- broken in rails3.1
+          <%#= link_to_function "[add image]" do |document|
             document.insert_html :bottom, :images, :partial => 'documents/add_image_form', :object => Document.new
-          end %></small>
+          end %>
+-->
+          </small>
         <% end %>
       <% else %>
         <ul>
@@ -51,9 +55,13 @@
           <% end %>
           <% if current_user.is_admin_in_adminmode? %>
             <li style="list-style:none">
-              <small><%= link_to_function "[add image]" do |document|
+              <small>
+<!-- broken in rails3.1
+              <%#= link_to_function "[add image]" do |document|
                 document.insert_html :bottom, :images, :partial => 'documents/add_image_form', :object => Document.new
-              end %></small>
+              end %>
+-->
+              </small>
             </li>
           <% end %>
         </ul>
@@ -65,9 +73,13 @@
     <% if @equipment_model.documents.not_images.empty? %>
       none
       <% if current_user.is_admin_in_adminmode? %>
-        <small><%= link_to_function "[add document]" do |document|
+        <small>
+<!-- broken in rails3.1
+        <%#= link_to_function "[add document]" do |document|
           document.insert_html :bottom, :documents, :partial => 'documents/add_document_form', :object => Document.new
-        end %></small>
+        end %>
+-->
+        </small>
       <% end %>
     <% else %>
       <ul>
@@ -77,9 +89,13 @@
         <% end %>
         <% if current_user.is_admin_in_adminmode? %>
           <li style="list-style:none">
-            <small><%= link_to_function "[add document]" do |document|
+            <small>
+<!-- broken in rails3.1
+            <%#= link_to_function "[add document]" do |document|
               document.insert_html :bottom, :documents, :partial => 'documents/add_document_form', :object => Document.new
-            end %></small>
+            end %>
+-->
+            </small>
           </li>
         <% end %>
       </ul>
@@ -90,9 +106,13 @@
       <strong>Equipment Objects:</strong>
       <% if @equipment_model.equipment_objects.empty? %>
         none
-        <small><%= link_to_function "[add equipment object]" do |document|
+        <small>
+<!-- broken in rails3.1
+        <%#= link_to_function "[add equipment object]" do |document|
           document.insert_html :bottom, :equipment_objects, :partial => 'equipment_objects/add_equipment_object_form', :object => EquipmentObject.new
-        end %></small>
+        end %>
+-->
+        </small>
       <% else %>
         <ul>
           <% @equipment_model.equipment_objects.each do |equipment_object| %>
@@ -103,9 +123,13 @@
             </li>
           <% end %>
           <li style="list-style:none">
-            <small><%= link_to_function "[add equipment object]" do |document|
+            <small>
+<!-- broken in rails3.1
+            <%#= link_to_function "[add equipment object]" do |document|
               document.insert_html :bottom, :equipment_objects, :partial => 'equipment_objects/add_equipment_object_form', :object => EquipmentObject.new
-            end %></small>
+            end %>
+-->
+            </small>
           </li>
         </ul>
       <% end %>
@@ -115,11 +139,11 @@
       <% if @equipment_model.checkout_procedures.nil? %>
         none
       <% else %>
-        <ul>
+        <ol>
           <% @equipment_model.checkout_procedures.each do |checkout_procedure| %>
-            <li><%= checkout_procedure %></li>
+            <li><%= checkout_procedure.step %></li>
           <% end %>
-        </ul>
+        </ol>
       <% end %>
     </p>
     <p>
@@ -127,20 +151,19 @@
       <% if @equipment_model.checkin_procedures.nil? %>
         none
       <% else %>
-        <ul>
+        <ol>
           <% @equipment_model.checkin_procedures.each do |checkin_procedure| %>
-            <li><%= checkin_procedure %></li>
+            <li><%= checkin_procedure.step %></li>
           <% end %>
-        </ul>
+        </ol>
       <% end %>
     </p>
   <% end %>
 </fieldset>
 
-<!-- <p>
-  <%= link_to "Add new "+@equipment_model.name.singularize+" object", new_equipment_model_equipment_object_path(@equipment_model) %> | 
-  <%= link_to "View all "+@equipment_model.name.singularize+" objects", equipment_model_equipment_objects_path(@equipment_model) %>
-</p> -->
+<p>
+  <%= link_to "Add new "+@equipment_model.name.singularize+" object", new_equipment_model_equipment_object_path(@equipment_model) %>
+</p>
 
 
 <p>

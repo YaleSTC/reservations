@@ -1,4 +1,5 @@
-<h2>Your cart</h2>
+<div id="cart">
+  <h2>Your cart</h2>
 
 <!--list items in cart-->
 <% if cart.items.size == 0 %>
@@ -21,13 +22,11 @@
 <%= form_tag update_cart_path do %>
   <p>
     <%= label_tag :start_date, 'Start of reservation' %><br />
-    <%= date_select :cart, :start_date, :order => [:month, :day, :year],
-                    :default => cart.start_date %>
+    <%= datepicker_input "cart", "start_date_cart", :value => cart.start_date.strftime('%m/%d/%Y') %>
   </p>
   <p>
     <%= label_tag :due_date, 'End of reservation' %><br />
-    <%= date_select :cart, :due_date, :order => [:month, :day, :year],
-                    :default => cart.due_date %>
+    <%= datepicker_input "cart", "due_date_cart", :value => cart.due_date.strftime('%m/%d/%Y') %>
   </p>
   <p><%= submit_tag "Update dates", :style => 'float: right' %></p>
 <% end %>
@@ -41,3 +40,4 @@
   <%= button_to "Make reservation", new_reservation_path %>
   </p>
 <% end %>
+</div>

@@ -1,5 +1,6 @@
 <h3><%= reservations_list.first.status.capitalize %></h3>
-<table>
+<table id="table_woo">
+  <thead>
   <tr>
     <th>Reservation #</th>
     <th>User</th>
@@ -7,6 +8,8 @@
     <th>Start Date</th>
     <th>Due Date</th>
   </tr>
+  </thead>
+  <tbody>
   <% for reservation in reservations_list %>
     <tr>
       <td><%= link_to reservation.id, reservation %></td>
@@ -20,5 +23,6 @@
       <td><%= reservation.due_date.to_date.to_s(:long) %></td>
     </tr>
   <% end %>
+  </tbody>
 </table>
 

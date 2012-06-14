@@ -1,25 +1,14 @@
-<%= form_for @category do |f| %>
-  <%= f.error_messages %>
-  <p>
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
-  </p>
-  <p>
-    <%= f.label :max_per_user, "Maximum per user (leave blank if unrestricted)" %><br />
-    <%= f.text_field :max_per_user, :class => 'number_input' %>
-  </p>
-  <p>
-    <%= f.label :max_checkout_length, "Maximum checkout length (leave blank if unrestricted)"%><br />
-    <%= f.text_field :max_checkout_length, :class => 'number_input' %> days
-  </p>
-  <p>
-    <%= f.label :sort_order, "Sort order (lowest at top)"%><br />
-    <%= f.text_field :sort_order, :class => 'number_input' %>
-  </p>
-  <p>
-    <%= f.label :Disabled %><br />
-    <%= f.check_box :deleted_at, (@category.deleted_at.blank? ? {:checked => false} : {:checked => true}), Time.now, nil %>
-  </p>
-
-  <p><%= f.submit "Submit" %></p>
-<% end %>
+<%= simple_form_for @category do |f| %>
+  <%= f.error_notification %>
+  <%= f.input :name %>
+  <%= f.input :max_per_user, label: "Maximum per user", hint: "leave blank if unrestricted" %>
+  <%= f.input :max_checkout_length, label: "Maximum checkout length", hint: "leave blank if unrestricted" %>
+  <%= f.input :sort_order, :hint => "lowest at top" %>
+  <%= f.input :deleted_at, label: "Active", as: :check_boxes %>
+  <%= f.error :base %>
+  <%= f.button :submit %>
+<% end %>  
+  <%#<p>%>
+    <%#<%= f.label :Disabled %><br />
+    <%#<%= f.check_box :deleted_at, (@category.deleted_at.blank? ? {:checked => false} : {:checked => true}), Time.now, nil %>
+  <%#</p>%>

@@ -29,9 +29,8 @@
     #itgAdminFooter { display:none; }
     --></style>
     
-    <%= stylesheet_link_tag 'application' %>
-    <%= javascript_include_tag 'application', 'jquery', 'jrails'%>
-    <%= javascript_include_tag :defaults %>
+    <%= stylesheet_link_tag 'application', 'forms' %>
+    <%= javascript_include_tag 'application'%>
     <%= yield(:head) %>
   </head>
   <body>
@@ -179,9 +178,7 @@
     	      <%= link_to "[log out]", logout_path %>
   	      </div>
     	  <% end %>
-    	    <div id="cart">
       	    <%= render :partial => 'reservations/cart_sidebar' %>
-    	    </div>
     	    <br style="clear: both" />
     	    <%= render :partial => 'reservations/reservations_sidebar' if current_user %>
   	    <% unless current_user.nil? or current_user.reservations.empty? %>

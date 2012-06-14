@@ -1,10 +1,15 @@
 <% title "Users" %>
 
-<table>
+<table id="table_woo">
+  <thead>
   <tr>
     <th>NetID</th>
     <th>Name</th>
+    <th> </th>
+    <th> </th>
   </tr>
+  </thead>
+  <tbody>
   <% for user in @users %>
     <% if user.deleted_at %> 
       <tr class="deactivated">
@@ -17,9 +22,9 @@
     <td><%= link_to user.name, user %></td>
     <td><%= link_to "Edit", edit_user_path(user) %></td>
     <td><%= eval @toggle %></td>
-    <td><%= link_to "Destroy", user, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete %></td>
     </tr>
   <% end %>
+  </tbody>
 </table>
 <p> 
   <%= link_to "New User", new_user_path %> | 

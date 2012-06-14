@@ -4,8 +4,8 @@ gem "whenever"
 gem "net-ldap"
 gem "paperclip"
 gem "rake"
-gem "rails", "3.0.12"
-gem "mysql2", "0.2.18"
+gem "rails", "3.2.0"
+gem "mysql2"
 gem "rdoc"
 gem "rubycas-client-rails"
 gem "rubycas-client", "2.2.1"
@@ -15,4 +15,18 @@ gem "pry-rails"
 gem "dynamic_form"
 gem "permanent_records", "~> 2.1.2"
 gem "nilify_blanks"
-gem "mail", "2.2.19"
+gem "mail"
+gem "simple_form"
+gem 'jquery_datepicker'
+gem "jquery-rails"
+gem 'jquery-datatables-rails'
+gem "cocoon"
+gem "ffaker"
+
+# Gems used only for assets and not required
+# in production environments by default.
+group :assets do
+  gem 'sass-rails'
+  gem 'coffee-rails'
+  gem 'uglifier'
+end
