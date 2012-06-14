@@ -46,8 +46,6 @@ class Cart
       current_item = CartItem.new(equipment_model)
       @items << current_item
     end
-    if self.valid?
-    end
     current_item
   end
 
