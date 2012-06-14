@@ -28,11 +28,25 @@ class EquipmentModel < ActiveRecord::Base
   
   attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, 
                   :max_per_user, :document_attributes, :accessory_ids, :deleted_at, 
-                  :checkout_procedures_attributes, :checkin_procedures_attributes
+                  :checkout_procedures_attributes, :checkin_procedures_attributes, :photo
 
   #Code necessary for Paperclip and image uploading
-  has_attached_file :photo, :styles => { :medium => "300x300>", :thumb => "100x100>" }
+ # validates_with AttachmentPresenceValidator, :attributes => :photo
+ # validates_attachment :avatar, :presence => true, :content_type => { :content_type => "image/jpg" "image/png" "image/jpeg" }, :size => { :in => 0..3.megabytes }
   
+  has_attached_file :photo, #generates profile picture 
+      :styles => { :large => "500x500>", :medium => "250x250>", :small => "150x150>", :thumbnail => "100x100#"}
+     # :default_url => ActionController::Base.helpers.asset_path('missing_:style.png')
+
+
+  Paperclip.interpolates :normalized_photo_name do |attachment, style|
+    attachment.instance.normalized_photo_name
+  end
+  
+  def normalized_photo_name
+    "#{self.id}-#{self.photo_file_name.gsub( /[^a-zA-Z0-9_\.]/, '_')}" 
+  end
+  #end of Paperclip code. 
 
   #inherits from category if not defined
   def maximum_per_user
