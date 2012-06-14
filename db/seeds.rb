@@ -73,8 +73,8 @@ else
         em.replacement_fee = r.rand(50.00..1000.00).round(2).to_d
         em.max_per_user = r.rand(1..40)
         em.active = true
-        em.checkout_procedures = Faker::Lorem.sentences(4)
-        em.checkin_procedures = Faker::Lorem.sentences(4)
+        #em.checkout_procedures = Faker::Lorem.sentences(4)
+        #em.checkin_procedures = Faker::Lorem.sentences(4)
         em.category_id = category.flatten[r.rand(0...category.length)].id
       end
     end
