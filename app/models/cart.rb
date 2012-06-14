@@ -5,7 +5,7 @@ class Cart
   validates :reserver_id, :start_date, :due_date, :presence => true
   validate :reserver_valid?, :logical_start_and_due_dates?, 
            :too_many_of_category?, :too_many_of_equipment_model?,
-           :duration_too_long?
+           :duration_too_long?, :has_overdue_reservations?
   
   attr_accessor :reserver_id, :items, :start_date, :due_date
   attr_reader   :errors
@@ -119,11 +119,21 @@ class Cart
     return true
   end
   
+  def has_overdue_reservations?
+    user = User.find(@reserver_id)
+    unless !user.reservations.overdue_reservations?(user)
+      errors.add(:reserver_id, user.name + " has overdue reservations")
+      return false
+    end
+    return true
+  end
+  
   #Check if the user exceeds the maximum number of any equipment models 
   def too_many_of_equipment_model?
     user = User.find(@reserver_id)
     user_model_counts = user.checked_out_models
     @items.each do |item|
+      #If the user has none of the model checked out, count = 0
       eq_model = item.equipment_model
       curr_model_count = user_model_counts[eq_model.id]
       curr_model_count ||= 0
@@ -141,12 +151,15 @@ class Cart
   #Check if the user exceeds the maximum number of any equipment models 
   def too_many_of_category?
     user = User.find(@reserver_id)
+    #Creates a hash of the number of models a user has checked out
+    #e.g. {model_id1 => count1, model_id2 => count2}
     h = user.checked_out_models
     
     #Make a hash of the user's counts for each category
+    #e.g {category1=>cat1_count, category2 =>cat2_count} for the user
     eq_models = EquipmentModel.find(h.keys)
     user_categories = eq_models.collect{|model| model.category_id}.uniq
-    cat_and_counts_arr = user_categories.collect do |category_id|
+    user_cat_and_counts_arr = user_categories.collect do |category_id|
       count = 0
       eq_models.each do |model|
         count += h[model.id] if model.category_id == category_id
@@ -154,9 +167,10 @@ class Cart
       [category_id, count]
     end
     
-    user_category_counts = Hash[*cat_and_counts_arr.flatten]
+    user_category_counts = Hash[*user_cat_and_counts_arr.flatten]
     
-    #Make a hash of the cart's counts for each 
+    #Make a hash of the cart's counts for each category
+    #e.g. {category1=>cat1_count, category2 =>cat2_count} for the cart
     cart_categories = @items.collect {|item| item.equipment_model.category_id}.uniq
     cart_cat_and_counts_arr = cart_categories.collect do |category_id|
       count = 0
@@ -167,17 +181,16 @@ class Cart
     end
     cart_cat_counts = Hash[*cart_cat_and_counts_arr.flatten]
     
-    # binding.pry
     #Test each of the categories to see if the user exceeds the limit
     cart_categories.each do |category_id|
       curr_cat_user_count = user_category_counts[category_id]
       curr_cat_user_count ||= 0
       curr_cat = Category.find(category_id)
       if curr_cat.maximum_per_user != "unrestricted"
-        # binding.pry
+        # Sum the number of items for a category in the cart and the number of items in a category a user has out 
         unless curr_cat.maximum_per_user >= cart_cat_counts[category_id] + curr_cat_user_count
           errors.add(:items, user.name + " has too many " + curr_cat.name)
-          # return false
+          return false
         end
       end
     end
