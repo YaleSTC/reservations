@@ -7,11 +7,11 @@
   <%= link_to "[add to cart]", {:url => add_to_cart_path(@equipment_model)}, :href => add_to_cart_path(@equipment_model), :remote => true %>
 </p>
 
-<% unless @equipment_model.accessories.empty? %>
+<% unless @equipment_model.associated_equipment_models.empty? %>
   <fieldset>
-    <legend>Recommended accessories:</legend>
+    <legend>Recommended Items:</legend>
     <ul>
-      <% @equipment_model.accessories.each do |accessory| %>
+      <% @equipment_model.associated_equipment_models.each do |accessory| %>
         <li><%= accessory.name %> <%= link_to "[add to cart]", {:url => add_to_cart_path(accessory)}, :href => add_to_cart_path(accessory), :remote => true %></li>
       <% end %>
     </ul>
@@ -161,10 +161,9 @@
   <% end %>
 </fieldset>
 
-<!-- <p>
-  <%= link_to "Add new "+@equipment_model.name.singularize+" object", new_equipment_model_equipment_object_path(@equipment_model) %> | 
-  <%= link_to "View all "+@equipment_model.name.singularize+" objects", equipment_model_equipment_objects_path(@equipment_model) %>
-</p> -->
+<p>
+  <%= link_to "Add new "+@equipment_model.name.singularize+" object", new_equipment_model_equipment_object_path(@equipment_model) %>
+</p>
 
 
 <p>
