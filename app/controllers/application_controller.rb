@@ -73,8 +73,8 @@ class ApplicationController < ActionController::Base
   #-------- end before_filter methods --------
 
   def update_cart
-    session[:cart].set_start_date(Date.strptime(params[:cart][:start_date],'%m/%d/%Y'))
-    session[:cart].set_due_date(Date.strptime(params[:cart][:due_date],'%m/%d/%Y'))
+    session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
+    session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
     flash[:notice] = "Cart dates updated."
     redirect_to root_path
   end
