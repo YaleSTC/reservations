@@ -80,7 +80,8 @@ class ApplicationController < ActionController::Base
     if cart.valid?
       flash[:notice] = "Cart dates updated."
     else
-      flash[:error] = cart.errors.values
+      # cart.errors.values
+      flash[:error] = cart.errors.values.flatten.join(", ")
     end
     redirect_to root_path
   end
