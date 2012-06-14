@@ -1,26 +1,15 @@
-<%= form_for @reservation do |f| %>
-  <%= f.error_messages %>
-
+<%= simple_form_for @reservation do |f| %>
+  <%= f.error_notification %>
   <% if current_user and current_user.is_admin_in_adminmode? %>
-    <%= f.select :reserver_id, User.select_options, :prompt => true %>
-  <% else %>
+    <%= f.input :reserver_id, :as => :select, :collection => User.select_options %>
+  <%else %>
     <%= current_user.name %>
-    <%= f.hidden_field :reserver_id, :value => current_user.id %>
+    <%= f.input :reserver_id, :as => :hidden, :input_html => {:value => current_user.id} %>
   <% end %>
+  
+    <%= f.input :start_date, :as => :datetime %>
+    <%= f.input :due_date, :as => :datetime %>
+    <%=f.input :notes, :as => :text %>
 
-  <p>
-    <%= f.label :start_date %><br />
-    <%= f.datetime_select :start_date %>
-  </p>
-
-  <p>
-    <%= f.label :due_date %><br />
-    <%= f.datetime_select :due_date %>
-  </p>
-
-	<p>
-		<%= f.label :notes %>
-		<%= f.text_area :notes %>
-
-  <p><%= f.submit "Submit" %></p>
+    <%= f.button :submit %></p>
 <% end %>

@@ -8,7 +8,6 @@ class ApplicationController < ActionController::Base
   helper_method :cart
 
   before_filter RubyCAS::Filter
-  before_filter :first_run
   before_filter :first_time_user
   before_filter :cart
   before_filter :set_view_mode
@@ -18,12 +17,6 @@ class ApplicationController < ActionController::Base
   end
 
   #-------- before_filter methods --------
-  def first_run
-    if Category.count == 0
-      Category.create(:name => "Accessories")
-    end
-  end
-
   def first_time_user
     if current_user.nil?
       flash[:notice] = "Hey there! Since this is your first time making a reservation, we'll
