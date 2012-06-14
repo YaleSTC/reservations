@@ -15,6 +15,7 @@ class Cart
     @items = []
     @start_date = Date.today
     @due_date = Date.today
+    @reserver_id = []
   end
   
   def persisted?
