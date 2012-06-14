@@ -4,16 +4,20 @@
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
-  helper_method :current_user
-  helper_method :cart
 
   before_filter RubyCAS::Filter
   before_filter :first_time_user
   before_filter :cart
   before_filter :set_view_mode
+  before_filter :current_user
+
+  helper_method :current_user
+  helper_method :cart
+
 
   def current_user
-    @current_user ||= User.find_by_login(session[:cas_user])
+    @current_user ||= User.find_by_login(session[:cas_user]) if session[:cas_user]
+	User.current ||= @current_user
   end
 
   #-------- before_filter methods --------
