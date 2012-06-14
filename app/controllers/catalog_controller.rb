@@ -10,7 +10,7 @@ class CatalogController < ApplicationController
     cart.add_equipment_model(@equipment_model)
     respond_to do |format|
       format.html{redirect_to root_path}
-      format.js
+      format.js{render :action => "update_cart"}
     end
   rescue ActiveRecord::RecordNotFound 
     logger.error("Attempt to add invalid equipment model #{params[:id]}") 
@@ -23,7 +23,7 @@ class CatalogController < ApplicationController
     cart.remove_equipment_model(@equipment_model)
     respond_to do |format|
       format.html{redirect_to root_path}
-      format.js
+      format.js{render :action => "update_cart"}
     end
   rescue ActiveRecord::RecordNotFound 
     logger.error("Attempt to remove invalid equipment model #{params[:id]}") 

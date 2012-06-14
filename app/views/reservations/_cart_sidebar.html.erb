@@ -1,4 +1,5 @@
-<h2>Your cart</h2>
+<div id="cart">
+  <h2>Your cart</h2>
 
 <!--list items in cart-->
 <% if cart.items.size == 0 %>
@@ -39,3 +40,4 @@
   <%= button_to "Make reservation", new_reservation_path %>
   </p>
 <% end %>
+</div>
