@@ -126,7 +126,7 @@ class Cart
     @items.each do |item|
       eq_model = item.equipment_model
       curr_model_count = user_model_counts[eq_model.id]
-      
+      curr_model_count ||= 0
       # This thing with unrestricted makes me upset
       if eq_model.maximum_per_user != "unrestricted"
         unless eq_model.maximum_per_user >= item.quantity + curr_model_count
@@ -143,31 +143,45 @@ class Cart
     user = User.find(@reserver_id)
     h = user.checked_out_models
     
-    #Make an array of the equipment models for the user and their respective categories
-    eq_model_and_cats = EquipmentModel.find(h.keys).collect {|model| [model.id, model.category_id]}
-    catHash = Hash[*eq_model_and_cats.flatten]
-    #Make sure the keys align with the equipment models
-    catArr = h.keys.collect {|i| catHash[i]}
-    user_categories = catArr.uniq
-    
-    #Collect a count of the number of objects a user has in a category
-    user_category_counts = user_categories.collect do |category|
-      inCat = catHash.rassoc(category)
-      inCat.inject(0) {|sum,k| sum + h[k]}
+    #Make a hash of the user's counts for each category
+    eq_models = EquipmentModel.find(h.keys)
+    user_categories = eq_models.collect{|model| model.category_id}.uniq
+    cat_and_counts_arr = user_categories.collect do |category_id|
+      count = 0
+      eq_models.each do |model|
+        count += h[model.id] if model.category_id == category_id
+      end
+      [category_id, count]
     end
-    user_category_counts = Hash[*user_categories.zip(user_category_counts).flatten]
     
+    user_category_counts = Hash[*cat_and_counts_arr.flatten]
+    
+    #Make a hash of the cart's counts for each 
+    cart_categories = @items.collect {|item| item.equipment_model.category_id}.uniq
+    cart_cat_and_counts_arr = cart_categories.collect do |category_id|
+      count = 0
+      @items.each do |item|
+        count += item.quantity if item.equipment_model.category_id == category_id
+      end
+      [category_id, count]
+    end
+    cart_cat_counts = Hash[*cart_cat_and_counts_arr.flatten]
+    
+    # binding.pry
     #Test each of the categories to see if the user exceeds the limit
-    user_categories.each do |category_id|
-      curr_cat_count = user_category_counts[category_id]
+    cart_categories.each do |category_id|
+      curr_cat_user_count = user_category_counts[category_id]
+      curr_cat_user_count ||= 0
       curr_cat = Category.find(category_id)
       if curr_cat.maximum_per_user != "unrestricted"
-        unless curr_cat.maximum_per_user >= item.quantity + curr_cat_count
-          errors.add(:items, user.name + " has too many of " + curr_cat.name)
-          return false
+        # binding.pry
+        unless curr_cat.maximum_per_user >= cart_cat_counts[category_id] + curr_cat_user_count
+          errors.add(:items, user.name + " has too many " + curr_cat.name)
+          # return false
         end
       end
     end
+    return true
   end
   
   # Check if the duration is longer than the maximum checkout length for any of the item
@@ -175,8 +189,7 @@ class Cart
     @items.each do |item|
       eq_model = item.equipment_model
       category = eq_model.category
-      binding.pry
-      unless !category.max_checkout_length.nil? && self.duration <= category.max_checkout_length
+      unless category.max_checkout_length.nil? || self.duration <= category.max_checkout_length
         errors.add(:items, "You can only check out " + eq_model.name + " for " + category.max_checkout_length.to_s + " days")
         return false
       end
