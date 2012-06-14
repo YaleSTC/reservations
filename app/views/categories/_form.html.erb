@@ -4,7 +4,7 @@
   <%= f.input :max_per_user, label: "Maximum per user", hint: "leave blank if unrestricted" %>
   <%= f.input :max_checkout_length, label: "Maximum checkout length", hint: "leave blank if unrestricted" %>
   <%= f.input :sort_order, :hint => "lowest at top" %>
-  <%= f.input :deleted_at, label: "Active", as: :check_boxes %>
+  <%= f.input :deleted_at, label: "Inactive", as: :deleted %>
   <%= f.error :base %>
   <%= f.button :submit %>
 <% end %>  
