@@ -7,9 +7,11 @@
     <th>Max Per User</th>
     <th>Max Checkout Length</th>
     <th>Sort Order</th>
-<%# these blank TH's necessary for the sort function %>
+  <%# these blank TH's necessary for the sort function %>
+  <% if current_user.is_admin_in_adminmode? %>
     <th> </th>
     <th> </th>
+  <% end %>
   </tr>
   </thead>
   <tbody>
@@ -28,7 +30,6 @@
       <% if current_user.is_admin_in_adminmode? %>
        <td><%= link_to "Edit", edit_category_path(category) %></td>
        <td><%= eval @toggle %></td>
-       <td><%= link_to "Destroy", category, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete %></td>
       <% end %>
     </tr>
   <% end %>
