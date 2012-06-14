@@ -14,8 +14,8 @@
   <%#= collection_select(:@reservation, :equipment_object_id, item.equipment_model.equipment_objects, :id, :name, {:prompt => true}) %>
 	
 	<p>
-		<%= label_tag "Notes" %> <br />
-		<%= text_area_tag :notes %>
+		<%= label_tag :notes %> <br />
+		<%= text_area_tag :notes, @reservation.notes %>
 	</p>
 	
 	<p>

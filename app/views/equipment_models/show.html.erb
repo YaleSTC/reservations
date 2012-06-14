@@ -39,9 +39,13 @@
       <% if @equipment_model.documents.images.empty? %>
         none
         <% if current_user.is_admin_in_adminmode? %>
-          <small><%= link_to_function "[add image]" do |document|
+          <small>
+<!-- broken in rails3.1
+          <%#= link_to_function "[add image]" do |document|
             document.insert_html :bottom, :images, :partial => 'documents/add_image_form', :object => Document.new
-          end %></small>
+          end %>
+-->
+          </small>
         <% end %>
       <% else %>
         <ul>
@@ -51,9 +55,13 @@
           <% end %>
           <% if current_user.is_admin_in_adminmode? %>
             <li style="list-style:none">
-              <small><%= link_to_function "[add image]" do |document|
+              <small>
+<!-- broken in rails3.1
+              <%#= link_to_function "[add image]" do |document|
                 document.insert_html :bottom, :images, :partial => 'documents/add_image_form', :object => Document.new
-              end %></small>
+              end %>
+-->
+              </small>
             </li>
           <% end %>
         </ul>
@@ -65,9 +73,13 @@
     <% if @equipment_model.documents.not_images.empty? %>
       none
       <% if current_user.is_admin_in_adminmode? %>
-        <small><%= link_to_function "[add document]" do |document|
+        <small>
+<!-- broken in rails3.1
+        <%#= link_to_function "[add document]" do |document|
           document.insert_html :bottom, :documents, :partial => 'documents/add_document_form', :object => Document.new
-        end %></small>
+        end %>
+-->
+        </small>
       <% end %>
     <% else %>
       <ul>
@@ -77,9 +89,13 @@
         <% end %>
         <% if current_user.is_admin_in_adminmode? %>
           <li style="list-style:none">
-            <small><%= link_to_function "[add document]" do |document|
+            <small>
+<!-- broken in rails3.1
+            <%#= link_to_function "[add document]" do |document|
               document.insert_html :bottom, :documents, :partial => 'documents/add_document_form', :object => Document.new
-            end %></small>
+            end %>
+-->
+            </small>
           </li>
         <% end %>
       </ul>
@@ -90,22 +106,30 @@
       <strong>Equipment Objects:</strong>
       <% if @equipment_model.equipment_objects.empty? %>
         none
-        <small><%= link_to_function "[add equipment object]" do |document|
+        <small>
+<!-- broken in rails3.1
+        <%#= link_to_function "[add equipment object]" do |document|
           document.insert_html :bottom, :equipment_objects, :partial => 'equipment_objects/add_equipment_object_form', :object => EquipmentObject.new
-        end %></small>
+        end %>
+-->
+        </small>
       <% else %>
         <ul>
           <% @equipment_model.equipment_objects.each do |equipment_object| %>
             <li>
               <%= link_to equipment_object.name, equipment_object %> 
-              (<%= equipment_object.status %>) <%= link_to "[x]", equipment_object, :confirm => 'Are you sure you want to delete this equipment object?', :method => :delete %>
+              (<%= equipment_object.status %>) <%= link_to "[x]", equipment_object, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete %>
               <%= "<br>&nbsp;&nbsp;<small>Serial #: #{equipment_object.serial}</small>".html_safe unless equipment_object.serial.blank? %>
             </li>
           <% end %>
           <li style="list-style:none">
-            <small><%= link_to_function "[add equipment object]" do |document|
+            <small>
+<!-- broken in rails3.1
+            <%#= link_to_function "[add equipment object]" do |document|
               document.insert_html :bottom, :equipment_objects, :partial => 'equipment_objects/add_equipment_object_form', :object => EquipmentObject.new
-            end %></small>
+            end %>
+-->
+            </small>
           </li>
         </ul>
       <% end %>
@@ -115,11 +139,11 @@
       <% if @equipment_model.checkout_procedures.nil? %>
         none
       <% else %>
-        <ul>
+        <ol>
           <% @equipment_model.checkout_procedures.each do |checkout_procedure| %>
-            <li><%= checkout_procedure %></li>
+            <li><%= checkout_procedure.step %></li>
           <% end %>
-        </ul>
+        </ol>
       <% end %>
     </p>
     <p>
@@ -127,11 +151,11 @@
       <% if @equipment_model.checkin_procedures.nil? %>
         none
       <% else %>
-        <ul>
+        <ol>
           <% @equipment_model.checkin_procedures.each do |checkin_procedure| %>
-            <li><%= checkin_procedure %></li>
+            <li><%= checkin_procedure.step %></li>
           <% end %>
-        </ul>
+        </ol>
       <% end %>
     </p>
   <% end %>
@@ -146,7 +170,7 @@
 <p>
   <% if current_user.is_admin_in_adminmode? %>
     <%= link_to "Edit "+@equipment_model.category.name.singularize, edit_equipment_model_path(@equipment_model) %> |
-    <%= link_to "Destroy "+@equipment_model.category.name.singularize, @equipment_model, :confirm => 'Are you sure?', :method => :delete %> |
+    <%= link_to "Destroy "+@equipment_model.category.name.singularize, @equipment_model, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete %> |
   <% end %>
   <%= link_to "View All "+@equipment_model.category.name.pluralize, category_equipment_models_path(@equipment_model.category) %>
 </p>

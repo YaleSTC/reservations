@@ -73,8 +73,8 @@ class ApplicationController < ActionController::Base
   #-------- end before_filter methods --------
 
   def update_cart
-    session[:cart].set_start_date(Date.civil(params[:cart][:"start_date(1i)"].to_i,params[:cart][:"start_date(2i)"].to_i,params[:cart][:"start_date(3i)"].to_i))
-    session[:cart].set_due_date(Date.civil(params[:cart][:"due_date(1i)"].to_i,params[:cart][:"due_date(2i)"].to_i,params[:cart][:"due_date(3i)"].to_i))
+    session[:cart].set_start_date(Date.strptime(params[:cart][:start_date],'%m/%d/%Y'))
+    session[:cart].set_due_date(Date.strptime(params[:cart][:due_date],'%m/%d/%Y'))
     flash[:notice] = "Cart dates updated."
     redirect_to root_path
   end
@@ -119,15 +119,31 @@ class ApplicationController < ActionController::Base
   end
 
   def deactivate
-    params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]).destroy
-    flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + "."
-    redirect_to(:back)   # Or use redirect_to request.referer. <-This may pass more tests
-  end
+    if (current_user.is_admin)
+      @objects_class2 = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (User, EM, EO, Category)
+      if (params[:controller] != "users") #Search for children is not necessary if we are altering users.
+        deactivateChildren(@objects_class2)
+      end
+      @objects_class2.destroy #Deactivate the model you had originally intended to deactivate
+      flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + ". Any child objects have been deactivated as well."
+    else
+      flash[:notice] = "Only administrators can do that!"
+    end
+    redirect_to request.referer   # Or use redirect_to(back). 
+ end
 
   def activate
-    params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]).revive
-    flash[:notice] = "Successfully reactivated " + params[:controller].singularize.titleize + "."
-    redirect_to(:back)   # Or use redirect_to request.referer. <-This may pass more tests
+    if (current_user.is_admin)
+      @model_to_activate = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (User, EM, EO, Category)
+      if (params[:controller] != "users") #Search for parents is not necessary if we are altering users.
+        activateParents(@model_to_activate)
+      end
+      @model_to_activate.revive #Activate the model you had originally intended to activate
+      flash[:notice] = "Successfully reactivated " + params[:controller].singularize.titleize + ". Any parent objects have been reactivated as well."
+    else
+      flash[:notice] = "Only administrators can do that!"
+    end   
+    redirect_to request.referer  # Or use redirect_to(back)
   end
 
 end

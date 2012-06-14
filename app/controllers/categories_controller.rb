@@ -1,6 +1,7 @@
 class CategoriesController < ApplicationController
   before_filter :require_admin
   skip_before_filter :require_admin, :only => [:index, :show]
+  include ApplicationHelper
 
   def index
     if (params[:show_deleted])
@@ -46,7 +47,7 @@ class CategoriesController < ApplicationController
 
   def destroy
     @category = Category.find(params[:id])
-    @category.destroy
+    @category.destroy(:force)
     flash[:notice] = "Successfully destroyed category."
     redirect_to categories_url
   end
