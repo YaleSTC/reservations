@@ -8,7 +8,6 @@ class ApplicationController < ActionController::Base
   helper_method :cart
 
   before_filter RubyCAS::Filter
-  before_filter :first_run
   before_filter :first_time_user
   before_filter :cart
   before_filter :set_view_mode
