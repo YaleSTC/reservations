@@ -25,7 +25,14 @@ class EquipmentModel < ActiveRecord::Base
 
   nilify_blanks :only => [:deleted_at]
   include ApplicationHelper
-  attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, :max_per_user, :document_attributes, :accessory_ids, :deleted_at, :checkout_procedures_attributes, :checkin_procedures_attributes
+  
+  attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, 
+                  :max_per_user, :document_attributes, :accessory_ids, :deleted_at, 
+                  :checkout_procedures_attributes, :checkin_procedures_attributes
+
+  #Code necessary for Paperclip and image uploading
+  has_attached_file :photo, :styles => { :medium => "300x300>", :thumb => "100x100>" }
+  
 
   #inherits from category if not defined
   def maximum_per_user
