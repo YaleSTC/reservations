@@ -31,11 +31,12 @@ class EquipmentModel < ActiveRecord::Base
                   :checkout_procedures_attributes, :checkin_procedures_attributes, :photo
 
   #Code necessary for Paperclip and image uploading
- # validates_with AttachmentPresenceValidator, :attributes => :photo
- # validates_attachment :avatar, :presence => true, :content_type => { :content_type => "image/jpg" "image/png" "image/jpeg" }, :size => { :in => 0..3.megabytes }
+  validates_with AttachmentPresenceValidator, :attributes => :photo
   
   has_attached_file :photo, #generates profile picture 
-      :styles => { :large => "500x500>", :medium => "250x250>", :small => "150x150>", :thumbnail => "100x100#"}
+      :styles => { :large => "500x500>", :medium => "250x250>", :small => "150x150>", :thumbnail => "100x100#"},
+      :url  => "/equipment_models/:attachment/:id/:style/:basename.:extension",
+      :path => ":rails_root/public/equipment_models/:attachment/:id/:style/:basename.:extension"
      # :default_url => ActionController::Base.helpers.asset_path('missing_:style.png')
 
 
