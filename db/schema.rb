@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120607175319) do
+ActiveRecord::Schema.define(:version => 20120613153342) do
 
   create_table "accessories_equipment_models", :force => true do |t|
     t.integer  "accessory_id"
@@ -93,6 +93,7 @@ ActiveRecord::Schema.define(:version => 20120607175319) do
     t.integer  "equipment_model_id"
     t.integer  "equipment_object_id"
     t.text     "notes"
+    t.boolean  "notes_unsent",        :default => true
   end
 
   create_table "sessions", :force => true do |t|
