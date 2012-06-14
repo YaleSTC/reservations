@@ -23,6 +23,12 @@ gem 'jquery-datatables-rails'
 gem "cocoon"
 gem "ffaker"
 
+group :development, :test do
+  gem "factory_girl_rails"
+  gem 'rspec-rails'
+  gem 'capybara'
+end
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
