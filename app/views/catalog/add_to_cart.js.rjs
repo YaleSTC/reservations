@@ -1,1 +1,0 @@
-page.replace_html :cart, :partial => 'reservations/cart_sidebar'
