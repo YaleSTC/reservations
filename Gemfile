@@ -24,6 +24,7 @@ gem "jquery-rails"
 gem 'jquery-datatables-rails'
 gem "cocoon"
 gem "ffaker"
+gem "rails3-jquery-autocomplete"
 
 # Gems used only for assets and not required
 # in production environments by default.
