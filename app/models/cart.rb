@@ -1,15 +1,17 @@
 class Cart
   include ActiveModel::Validations
   extend ActiveModel::Naming
-  
+
   validates :reserver_id, :start_date, :due_date, :presence => true
-  validate :reserver_valid?, :logical_start_and_due_dates?, 
-           :too_many_of_category?, :too_many_of_equipment_model?,
-           :duration_too_long?, :has_overdue_reservations?
-  
+  validate :reserver_valid?, :logical_start_and_due_dates?,
+           :not_too_many_of_category?, :not_too_many_of_equipment_model?,
+           :duration_not_too_long?, :no_overdue_reservations?
+           #reserver_valid? doesn't work because of empty?
+           #too_many_of_category? and too_many_of_equipment_model? don't work because of maximum_per_reserver
+
   attr_accessor :reserver_id, :items, :start_date, :due_date
   attr_reader   :errors
-  
+
   def initialize
     @errors = ActiveModel::Errors.new(self)
     @items = []
@@ -17,13 +19,13 @@ class Cart
     @due_date = Date.today
     @reserver_id = nil
   end
-  
+
   def persisted?
     false
   end
-  
+
   ## functions for error handling
-  
+
   def read_attribute_for_validation(attr)
     send(attr)
   end
@@ -38,6 +40,7 @@ class Cart
 
   ## end of functions for error handling
 
+  # adds equipment model to @items (works with add_to_cart application controller method); throws errors that don't stop add_to_cart from working
   def add_equipment_model(equipment_model)
     current_item = @items.find {|item| item.equipment_model == equipment_model}
     if current_item
@@ -46,7 +49,11 @@ class Cart
       current_item = CartItem.new(equipment_model)
       @items << current_item
     end
+    if !current_item.available?(@start_date..@due_date)
+      errors.add(:start_date, "is before item is available")
+    end
     current_item
+    binding.pry
   end
 
   def remove_equipment_model(equipment_model)
@@ -74,14 +81,6 @@ class Cart
     @items.empty?
   end
 
-  def available?
-    return false if start_date.nil? or due_date.nil?
-    @items.each do |item|
-      return false if !item.available?(start_date..due_date)
-    end
-    return true
-  end
-
   def set_start_date(date)
     @start_date = date
   end
@@ -89,49 +88,63 @@ class Cart
   def set_due_date(date)
     @due_date = date
   end
-  
+
   def set_reserver_id(user_id)
     @reserver_id = user_id
   end
-  
+
   def duration #in days
     @due_date - @start_date + 1
   end
-  
+
+  def reserver
+    @reserver_id ||= User.current.id
+    reserver = User.find(@reserver_id)
+  end
+
   ## Validations
-  
+
+  # Check that all items are available
+  def available?
+    return false if start_date.nil? or due_date.nil?
+    @items.each do |item|
+      if !item.available?(start_date..due_date)
+        errors.add(:items, item.equipment_model + " is not available for all or part of the reservation length.")
+        return false
+      end
+    end
+    return true
+  end
+
+  # Check that reservation start date is not in the past and is before or the same as reservation due date
   def logical_start_and_due_dates?
     unless @due_date >= @start_date && @start_date >= Date.today
-      errors.add(:base,"Dates are not logical")
+      errors.add(:base, "Dates are not logical")
       return false
     end
     return true
   end
-  
-  #Check if the reserver exists and is a valid reserver
+
+  #Check that the reserver exists and is a valid reserver
   def reserver_valid?
-    unless !reserver.nil? && reserver.valid?
-      errors.add(:reserver_id,"Reserver_id points to an invalid reserver")
+    unless !reserver.empty? && reserver.valid?
+      errors.add(:reserver_id, "Reserver_id points to an invalid reserver")
       return false
     end
     return true
   end
-  
-  def has_overdue_reservations?
+
+  # Check that reserver has no overdue reservations
+  def no_overdue_reservations?
     unless !reserver.reservations.overdue_reservations?(reserver)
       errors.add(:reserver_id, reserver.name + " has overdue reservations")
       return false
     end
     return true
   end
-  
-  def reserver
-    @reserver_id ||= User.current.id
-    reserver = User.find(@reserver_id)
-  end
 
-  #Check if the reserver exceeds the maximum number of any equipment models 
-  def too_many_of_equipment_model?
+  #Check that the reserver does not exceeds the maximum number of any equipment models
+  def not_too_many_of_equipment_model?
     reserver_model_counts = reserver.checked_out_models
     @items.each do |item|
       #If the reserver has none of the model checked out, count = 0
@@ -148,13 +161,13 @@ class Cart
     end
     return true
   end
-  
-  #Check if the reserver exceeds the maximum number of any equipment models 
-  def too_many_of_category?
+
+  # Check that the reserver does not exceeds the maximum number of any equipment models
+  def not_too_many_of_category?
     #Creates a hash of the number of models a reserver has checked out
     #e.g. {model_id1 => count1, model_id2 => count2}
     h = reserver.checked_out_models
-    
+
     #Make a hash of the reserver's counts for each category
     #e.g {category1=>cat1_count, category2 =>cat2_count} for the reserver
     eq_models = EquipmentModel.find(h.keys)
@@ -166,9 +179,9 @@ class Cart
       end
       [category_id, count]
     end
-    
+
     reserver_category_counts = Hash[*reserver_cat_and_counts_arr.flatten]
-    
+
     #Make a hash of the cart's counts for each category
     #e.g. {category1=>cat1_count, category2 =>cat2_count} for the cart
     cart_categories = @items.collect {|item| item.equipment_model.category_id}.uniq
@@ -180,14 +193,14 @@ class Cart
       [category_id, count]
     end
     cart_cat_counts = Hash[*cart_cat_and_counts_arr.flatten]
-    
+
     #Test each of the categories to see if the reserver exceeds the limit
     cart_categories.each do |category_id|
       curr_cat_reserver_count = reserver_category_counts[category_id]
       curr_cat_reserver_count ||= 0
       curr_cat = Category.find(category_id)
       if curr_cat.maximum_per_reserver != "unrestricted"
-        # Sum the number of items for a category in the cart and the number of items in a category a reserver has out 
+        # Sum the number of items for a category in the cart and the number of items in a category a reserver has out
         unless curr_cat.maximum_per_reserver >= cart_cat_counts[category_id] + curr_cat_reserver_count
           errors.add(:items, reserver.name + " has too many " + curr_cat.name)
           return false
@@ -196,18 +209,18 @@ class Cart
     end
     return true
   end
-  
-  # Check if the duration is longer than the maximum checkout length for any of the item
-  def duration_too_long?
+
+  # Check that the duration is not longer than the maximum checkout length for any of the item
+  def duration_not_too_long?
+    is_too_long = false
     @items.each do |item|
       eq_model = item.equipment_model
       category = eq_model.category
       unless category.max_checkout_length.nil? || self.duration <= category.max_checkout_length
         errors.add(:items, "You can only check out " + eq_model.name + " for " + category.max_checkout_length.to_s + " days")
-        return false
+        is_too_long = true
       end
     end
-    return true
+    !is_too_long
   end
 end
-
