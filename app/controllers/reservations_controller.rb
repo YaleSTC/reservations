@@ -25,12 +25,11 @@ class ReservationsController < ApplicationController
 
   def new
     if cart.items.empty?
-      flash[:error] = "You need to add items to your cart before making a reservation!"
+      flash[:error] = "You need to add items to your cart before making a reservation."
       redirect_to catalog_path
     else
-      @reservation = Reservation.new
-      @reservation.start_date = cart.start_date
-      @reservation.due_date = cart.due_date
+      #this is used to initialize each reservation later
+      @reservation = Reservation.new(start_date: cart.start_date, due_date: cart.due_date)
     end
   end
 

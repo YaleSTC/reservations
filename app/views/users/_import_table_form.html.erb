@@ -1,5 +1,4 @@
 <%= CSV.foreach(@file.path) do |f| %>
- <%= binding.pry %>
     <tr >
       <td class="activable"><%=f.text_field(:users, :login, :class => "table_field") %></td>
       <td class="activable"><%=f.text_field(:first_name, "index"=>@users.index(@user), :class => "table_field")%></td>

@@ -110,7 +110,7 @@ class Cart
   
   #Check if the reserver exists and is a valid reserver
   def reserver_valid?
-    unless !reserver.empty? && reserver.valid?
+    unless !reserver.nil? && reserver.valid?
       errors.add(:reserver_id,"Reserver_id points to an invalid reserver")
       return false
     end
@@ -153,7 +153,6 @@ class Cart
   def too_many_of_category?
     #Creates a hash of the number of models a reserver has checked out
     #e.g. {model_id1 => count1, model_id2 => count2}
-    binding.pry
     h = reserver.checked_out_models
     
     #Make a hash of the reserver's counts for each category

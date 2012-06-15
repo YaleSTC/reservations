@@ -76,7 +76,6 @@ class ApplicationController < ActionController::Base
   def update_cart
     session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
     session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
-       
     if cart.valid?
       flash[:notice] = "Cart dates updated."
     else
