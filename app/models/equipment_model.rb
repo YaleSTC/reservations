@@ -28,17 +28,27 @@ class EquipmentModel < ActiveRecord::Base
   
   attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, 
                   :max_per_user, :document_attributes, :accessory_ids, :deleted_at, 
-                  :checkout_procedures_attributes, :checkin_procedures_attributes, :photo
+                  :checkout_procedures_attributes, :checkin_procedures_attributes, :photo, 
+                  :documentation
 
-  #Code necessary for Paperclip and image uploading
-  validates_with AttachmentPresenceValidator, :attributes => :photo
-  
+  #Code necessary for Paperclip and image/pdf uploading
+  # validates_attachment :photo, :presence => true,
+  #     :content_type => { :content_type => "image/jpg" },
+  #     :size => { :in => 0..10.kilobytes }
+    
+      
   has_attached_file :photo, #generates profile picture 
       :styles => { :large => "500x500>", :medium => "250x250>", :small => "150x150>", :thumbnail => "100x100#"},
       :url  => "/equipment_models/:attachment/:id/:style/:basename.:extension",
       :path => ":rails_root/public/equipment_models/:attachment/:id/:style/:basename.:extension"
      # :default_url => ActionController::Base.helpers.asset_path('missing_:style.png')
 
+  has_attached_file :documentation, #generates document
+      :content_type => 'application/pdf'
+    
+    
+  #validates_attachment :documentation, :content_type => { :content_type => "appplication/pdf" }
+  
 
   Paperclip.interpolates :normalized_photo_name do |attachment, style|
     attachment.instance.normalized_photo_name

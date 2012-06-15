@@ -24,9 +24,12 @@
   <div class="links">
     <%= link_to_add_association 'add step', f, :checkin_procedures %>
   </div>
-
-  <%= f.input :photo, :as => :file, :label => "Upload File" %>
-
+<p>
+  <%= f.input :photo, :as => :file, :label => "Upload Photo" %>
+</p>
+<p>
+  <%= f.input :documentation, :as => :file, :label => "Upload Documentation" %>
+</p>
 	
 
   <%= f.error :base %>
