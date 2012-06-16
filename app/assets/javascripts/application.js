@@ -7,6 +7,7 @@
 //= require_self
 //= require_tree .
 //= require cocoon
+//= require autocomplete-rails
 
 
 $(document).ready(function() {

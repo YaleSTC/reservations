@@ -7,6 +7,7 @@ Reservations::Application.routes.draw do
   
   resources :equipment_models do
     resources :equipment_objects
+    get :autocomplete_category_name, :on => :collection
   end
   
   resources :categories do
@@ -31,7 +32,7 @@ Reservations::Application.routes.draw do
       get :checkout_email
       get :checkin_email
     end
-    get :autocomplete_user_login, :on => :collection
+    get :autocomplete_user_last_name, :on => :collection
   end
 
   
