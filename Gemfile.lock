@@ -220,7 +220,7 @@ DEPENDENCIES
   mysql2
   net-ldap
   nilify_blanks
-  paperclip
+  paperclip (~> 3.0)
   permanent_records (~> 2.1.2)
   pry
   pry-debugger
