@@ -8,6 +8,7 @@ class Cart
           :not_in_past?,
           :not_too_many_of_category?, :not_too_many_of_equipment_model?,
           :duration_allowed?, :no_overdue_reservations?, :available?
+          #available? isn't working: NoMethodError: undefined method `+' for #<EquipmentModel:0x00000006b4da88> from /home/nmradar/.rbenv/versions/1.9.3-p194/lib/ruby/gems/1.9.1/gems/activemodel-3.2.0/lib/active_model/attribute_methods.rb:407:in `method_missing'
 
   attr_accessor :reserver_id, :items, :start_date, :due_date
   attr_reader   :errors
@@ -159,11 +160,11 @@ class Cart
     return false if start_date.nil? or due_date.nil?
     @items.each do |item|
       if !item.available?(start_date..due_date)
-        errors.add(:items, item.equipment_model + " is not available for all or part of the reservation length.")
+        errors.add(:items, item.name + " is not available for all or part of the reservation length.")
         available = false
       end
     end
-    return available
+    available
   end
 
   #Check that the reserver does not exceeds the maximum number of any equipment models
