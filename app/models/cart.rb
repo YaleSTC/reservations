@@ -6,7 +6,7 @@ class Cart
 
   validate :reserver_valid?, :start_date_before_due_date?,
           :not_in_past?,
-          :not_too_many_of_category?, :not_too_many_of_equipment_model?,
+          :allowable_number_category?, :allowable_number_equipment_model?,
           :duration_allowed?, :no_overdue_reservations?, :available?
           #available? isn't working: NoMethodError: undefined method `+' for #<EquipmentModel:0x00000006b4da88> from /home/nmradar/.rbenv/versions/1.9.3-p194/lib/ruby/gems/1.9.1/gems/activemodel-3.2.0/lib/active_model/attribute_methods.rb:407:in `method_missing'
 
@@ -168,7 +168,8 @@ class Cart
   end
 
   #Check that the reserver does not exceeds the maximum number of any equipment models
-  def not_too_many_of_equipment_model?
+  def allowable_number_equipment_model?
+    too_many = false
     reserver_model_counts = reserver.checked_out_models
     @items.each do |item|
       #If the reserver has none of the model checked out, count = 0
@@ -179,15 +180,16 @@ class Cart
       if eq_model.maximum_per_user != "unrestricted"
         unless eq_model.maximum_per_user >= item.quantity + curr_model_count
           errors.add(:items, reserver.name + " has too many of " + eq_model.name)
-          return false
+          too_many = true
         end
       end
     end
-    return true
+    !too_many
   end
 
   # Check that the reserver does not exceeds the maximum number of any equipment models
-  def not_too_many_of_category?
+  def allowable_number_category?
+    too_many = false
     # Creates a hash of the number of models a reserver has checked out
     # e.g. {model_id1 => count1, model_id2 => count2}
     h = reserver.checked_out_models
@@ -227,11 +229,11 @@ class Cart
         # Sum the number of items for a category in the cart and the number of items in a category a reserver has out
         unless curr_cat.maximum_per_user >= cart_cat_counts[category_id] + curr_cat_reserver_count
           errors.add(:items, reserver.name + " has too many " + curr_cat.name)
-          return false
+          too_many = true
         end
       end
     end
-    return true
+    !too_many
   end
 
   # User Validations
