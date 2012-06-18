@@ -26,6 +26,12 @@ gem "cocoon"
 gem "ffaker"
 gem "rails3-jquery-autocomplete", :git => "git://github.com/slash4/rails3-jquery-autocomplete.git"
 
+group :development, :test do
+  gem "factory_girl_rails"
+  gem 'rspec-rails'
+  gem 'capybara'
+end
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
