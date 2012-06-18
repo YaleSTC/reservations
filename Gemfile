@@ -2,7 +2,7 @@
 source "https://rubygems.org"
 gem "whenever"
 gem "net-ldap"
-gem "paperclip", " ~> 3.0"
+gem "paperclip"
 gem "rake"
 gem "rails", "3.2.0"
 gem "mysql2"
