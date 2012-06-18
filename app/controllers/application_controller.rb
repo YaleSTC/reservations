@@ -1,4 +1,4 @@
-  # Filters added to this controller apply to all controllers in the application.
+# Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
@@ -10,10 +10,15 @@ class ApplicationController < ActionController::Base
   before_filter :cart
   before_filter :set_view_mode
   before_filter :current_user
+  #before_filter :bind_pry_before_everything
 
   helper_method :current_user
   helper_method :cart
 
+
+  def bind_pry_before_everything
+    binding.pry
+  end
 
   def current_user
     @current_user ||= User.find_by_login(session[:cas_user]) if session[:cas_user]
@@ -30,11 +35,11 @@ class ApplicationController < ActionController::Base
   end
 
   def cart
-      session[:cart] ||= Cart.new
-      if session[:cart].reserver_id.nil?
-        session[:cart].set_reserver_id(current_user.id) if current_user
-      end
-      session[:cart]
+    session[:cart] ||= Cart.new
+    if session[:cart].reserver_id.nil?
+      session[:cart].set_reserver_id(current_user.id) if current_user
+    end
+    session[:cart]
   end
 
   def set_view_mode #(Analogous to department_chooser in shifts)

@@ -50,13 +50,14 @@ class ReservationsController < ApplicationController
 
   def create
     cart.items.each do |item|
-      for q in 1..item.quantity     # accounts for reserving multiple equipment objects of the same equipment model (mainly for admins)
+      item.quantity.times do |q|    # accounts for reserving multiple equipment objects of the same equipment model (mainly for admins)
         @reservation = Reservation.new(params[:reservation])
         @reservation.equipment_model =  item.equipment_model
         if @reservation.save
           UserMailer.reservation_confirmation(@reservation).deliver
           flash[:notice] = "Your reservations have been made."
           session[:cart] = Cart.new
+          binding.pry
           redirect_to catalog_path
         else 
           flash[:error] = "Oops, something went wrong with making your reservation."
