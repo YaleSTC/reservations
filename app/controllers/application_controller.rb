@@ -10,10 +10,15 @@ class ApplicationController < ActionController::Base
   before_filter :cart
   before_filter :set_view_mode
   before_filter :current_user
+  #before_filter :bind_pry_before_everything
 
   helper_method :current_user
   helper_method :cart
 
+
+  def bind_pry_before_everything
+    binding.pry
+  end
 
   def current_user
     @current_user ||= User.find_by_login(session[:cas_user]) if session[:cas_user]

@@ -1,5 +1,5 @@
 class CartItem
-  attr_reader :equipment_model, :quantity
+  attr_accessor :equipment_model, :quantity
   
   def initialize(equipment_model)
     @equipment_model = equipment_model
