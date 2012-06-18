@@ -25,37 +25,7 @@ class EquipmentModel < ActiveRecord::Base
 
   nilify_blanks :only => [:deleted_at]
   include ApplicationHelper
-  
-  attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, 
-                  :max_per_user, :document_attributes, :accessory_ids, :deleted_at, 
-                  :checkout_procedures_attributes, :checkin_procedures_attributes, :photo, 
-                  :documentation
-
-  #Code necessary for Paperclip and image/pdf uploading
-      
-  has_attached_file :photo, #generates profile picture 
-      :styles => { :large => "500x500>", :medium => "250x250>", :small => "150x150>", :thumbnail => "100x100#"},
-      :url  => "/equipment_models/:attachment/:id/:style/:basename.:extension",
-      :path => ":rails_root/public/equipment_models/:attachment/:id/:style/:basename.:extension",
-      :default_url => "/fat_cat.jpeg"
-
-  has_attached_file :documentation, #generates document
-      :content_type => 'application/pdf'
-      
-  validates_attachment_content_type :photo, :content_type => ["image/jpg", "image/png", "image/jpeg"]
-    
-    
-  #validates_attachment :documentation, :content_type => { :content_type => "appplication/pdf" }
-  
-
-  Paperclip.interpolates :normalized_photo_name do |attachment, style|
-    attachment.instance.normalized_photo_name
-  end
-  
-  def normalized_photo_name
-    "#{self.id}-#{self.photo_file_name.gsub( /[^a-zA-Z0-9_\.]/, '_')}" 
-  end
-  #end of Paperclip code. 
+  attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, :max_per_user, :document_attributes, :accessory_ids, :deleted_at, :checkout_procedures_attributes, :checkin_procedures_attributes
 
   #inherits from category if not defined
   def maximum_per_user

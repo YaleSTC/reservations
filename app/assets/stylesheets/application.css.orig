@@ -1,9 +1,11 @@
 /*
 *= require_self
-
+<<<<<<< HEAD
 *= require dataTables/jquery.dataTables
 *= require_tree .
+=======
 *= require forms
+>>>>>>> cocoon3
 */
 
 
