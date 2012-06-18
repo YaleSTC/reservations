@@ -1,0 +1,17 @@
+<div id="list_items_in_cart">
+<% if cart.items.size == 0 %>
+  (empty)
+<% else %>
+  <ul>
+  <% cart.items.each do |item| %>
+    <li><%= item.quantity %> x <%= link_to item.name, item.equipment_model %>
+      <small>
+        <%= link_to "[remove]", {:url => remove_from_cart_path(item.equipment_model)},
+                                :href => remove_from_cart_path(item.equipment_model),
+                                :remote => true %>
+      </small>
+    </li>
+  <% end %>
+  </ul>
+<% end %>
+</div>
