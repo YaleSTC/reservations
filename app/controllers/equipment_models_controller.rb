@@ -10,7 +10,6 @@ class EquipmentModelsController < ApplicationController
     elsif params[:show_deleted]
       @equipment_models = EquipmentModel.find(:all, :include => :category, :order => 'categories.name ASC, equipment_models.name ASC')
     else
-      #@equipment_models = EquipmentModel.find(:all, :order => )
       @equipment_models = EquipmentModel.not_deleted.find(:all, :include => :category, :order => 'categories.name ASC, equipment_models.name ASC')
     end
   end

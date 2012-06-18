@@ -60,7 +60,7 @@ class ReservationsController < ApplicationController
           session[:cart] = Cart.new
           redirect_to catalog_path
         else 
-          flash[:error] = "Oops, something went wrong with making your reservation."
+          flash[:error] = "Oops, something went wrong with making your reservation. Please contact the administrator for more support."
           render :action => 'new'
         end 
       end
@@ -183,11 +183,12 @@ class ReservationsController < ApplicationController
     @reservation =  Reservation.find(params[:id])
   end
 
+  #two paths to create receipt emails for checking in and checking out items.
   def checkout_email
     @reservation =  Reservation.find(params[:id])
     if UserMailer.checkout_receipt(@reservation).deliver
       redirect_to :back
-      flash[:notice] = "Delivered receipt email."
+      flash[:notice] = "Successfuly delivered receipt email."
     else 
       redirect_to @reservation
       flash[:error] = "Unable to deliver receipt email. Please contact administrator for more support. "
@@ -198,7 +199,7 @@ class ReservationsController < ApplicationController
     @reservation =  Reservation.find(params[:id])
     if UserMailer.checkin_receipt(@reservation).deliver
       redirect_to :back
-      flash[:notice] = "Delivered receipt email."
+      flash[:notice] = "Sucessfully delivered receipt email."
     else 
       redirect_to @reservation
       flash[:error] = "Unable to deliver receipt email. Please contact administrator for more support. "
