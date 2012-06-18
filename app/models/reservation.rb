@@ -154,6 +154,6 @@ class Reservation < ActiveRecord::Base
   #     equipment_objects << EquipmentObject.find(id)
   #   end
   # end
-
+  
 end
 

@@ -12,6 +12,8 @@
 }
 
 /*The next two divs are for buttons to display in the same line. */
+
+
 #left_stuff {
 	width: 30%;
 	float: left;
@@ -225,5 +227,10 @@ tr.deactivated {
 
 tr.activated {
         background: transparent;
+
+
+ui-autocomplete, ui-menu, ui-widget, ui-widget-content, ui-corner-all{
+	clear:both;
+	position:static;
 }
 
