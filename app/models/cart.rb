@@ -3,6 +3,7 @@ class Cart
   extend ActiveModel::Naming
 
   validates :reserver_id, :start_date, :due_date, :presence => true
+
 #  validate :reserver_valid?, :logical_start_and_due_dates?,
 #          :not_too_many_of_category?, :not_too_many_of_equipment_model?,
 #           :duration_not_too_long?, :no_overdue_reservations?, :available?
@@ -52,9 +53,11 @@ class Cart
       errors.add(:start_date, "is before item is available")
     end
     current_item
+    binding.pry
   end
 
   def remove_equipment_model(equipment_model)
+    binding.pry
     current_item = @items.find {|item| item.equipment_model == equipment_model}
     current_item.decrement_quantity
     if current_item.quantity == 0
@@ -85,7 +88,6 @@ class Cart
 
   def set_due_date(date)
     @due_date = date
-    binding.pry
   end
 
   def set_reserver_id(user_id)
@@ -104,6 +106,15 @@ class Cart
   ## VALIDATIONS ##
 
   ## Date Validations
+
+  # Checks all date-related validations
+  def valid_dates?
+    valid = true
+    valid = false if not_in_past? == false
+    valid = false if start_date_before_due_date? == false
+    valid = false if duration_allowed? == false
+    return valid
+  end
 
   # Checks that neither start date nor due date are in the past
   def not_in_past?
@@ -146,14 +157,15 @@ class Cart
 
   # Check that all items are available
   def available?
+    available = true
     return false if start_date.nil? or due_date.nil?
     @items.each do |item|
       if !item.available?(start_date..due_date)
         errors.add(:items, item.equipment_model + " is not available for all or part of the reservation length.")
-        return false
+        available = false
       end
     end
-    return true
+    return available
   end
 
   #Check that the reserver does not exceeds the maximum number of any equipment models
@@ -224,15 +236,6 @@ class Cart
 #  end
 
   ## User Validations
-
-  #Check that the reserver exists and is a valid reserver -- is this necessary?
-#  def reserver_valid?
-#    unless !reserver.nil? && reserver.valid?
-#      errors.add(:reserver_id, "Reserver_id points to an invalid reserver")
-#      return false
-#   end
-#  return true
-#  end
 
   # Check that reserver has no overdue reservations
 #  def no_overdue_reservations?
