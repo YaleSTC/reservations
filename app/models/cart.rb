@@ -4,7 +4,7 @@ class Cart
 
   validates :reserver_id, :start_date, :due_date, :presence => true
 
-  validate :reserver_valid?, :start_date_before_due_date?,
+  validate :start_date_before_due_date?,
           :not_in_past?,
           :allowable_number_category?, :allowable_number_equipment_model?,
           :duration_allowed?, :no_overdue_reservations?, :available?

@@ -64,7 +64,7 @@ class ReservationsController < ApplicationController
           session[:cart] = Cart.new
           format.html {redirect_to catalog_path, :flash => {:notice => "Reservation created" } }
         rescue
-          format.html {render catalog_path, :flash => {:error => "Oops, something went wrong with making your reservation"} }
+          format.html {redirect_to catalog_path, :flash => {:error => "Oops, something went wrong with making your reservation"} }
           raise ActiveRecord::Rollback
         end
       end
