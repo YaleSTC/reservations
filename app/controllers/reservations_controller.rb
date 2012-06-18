@@ -208,6 +208,6 @@ class ReservationsController < ApplicationController
       flash[:error] = "Unable to deliver receipt email. Please contact administrator for more support. "
     end
   end
-  
+  autocomplete :user, [:last_name, :first_name, :login], :extra_data => [:first_name, :login], :display_value => :render_name
 end
 

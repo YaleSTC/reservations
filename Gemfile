@@ -24,6 +24,7 @@ gem "jquery-rails"
 gem 'jquery-datatables-rails'
 gem "cocoon"
 gem "ffaker"
+gem "rails3-jquery-autocomplete", :git => "git://github.com/slash4/rails3-jquery-autocomplete.git"
 
 group :development, :test do
   gem "factory_girl_rails"

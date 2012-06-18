@@ -7,6 +7,7 @@
 //= require_self
 //= require_tree .
 //= require cocoon
+//= require autocomplete-rails
 
 
 $(document).ready(function() {
@@ -20,3 +21,7 @@ $(document).ready(function() {
 $(document).ready(function() {
   $('#table_woo').dataTable()
 });
+
+$.datepicker.setDefaults({
+   minDate: new Date(),
+   prevText: '' });

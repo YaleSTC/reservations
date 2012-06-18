@@ -89,4 +89,8 @@ class User < ActiveRecord::Base
   def self.select_options
     self.find(:all, :order => 'last_name ASC').collect{ |item| ["#{item.last_name}, #{item.first_name}", item.id] }
   end
+  
+  def render_name
+     self.first_name + ' ' + self.last_name + ' ' + self.login
+  end
 end

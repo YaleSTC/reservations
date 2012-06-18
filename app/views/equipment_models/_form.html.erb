@@ -1,6 +1,8 @@
 <%= simple_form_for @equipment_model do |f| %>
   <%= f.error_notification %>
-  <%= f.association :category, include_blank: false %> <%= link_to "[add new category]", new_category_path %>
+  <%= f.association :category %> 
+  <input class="hidden" id="category" name="MODELNAME[category]" type="hidden">
+  <%= link_to "[add new category]", new_category_path %>
   <%= f.association :associated_equipment_models %>
   <%= f.input :name %>
   <%= f.input :description, as: :text %>
