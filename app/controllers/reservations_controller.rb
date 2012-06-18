@@ -54,17 +54,17 @@ class ReservationsController < ApplicationController
       Reservation.transaction do
         begin
           cart.items.each do |item|
+            emodel = item.equipment_model
             item.quantity.times do |q|    # accounts for reserving multiple equipment objects of the same equipment model (mainly for admins)
               @reservation = Reservation.new(params[:reservation])
-              @reservation.equipment_model =  item.equipment_model
-              @reservation.save
+              @reservation.equipment_model =  emodel
             end
           end
           UserMailer.reservation_confirmation(@reservation).deliver
           session[:cart] = Cart.new
-          format.html {redirect_to catalog_path, :flash => {:success => "Reservation created" } }
+          format.html {redirect_to catalog_path, :flash => {:notice => "Reservation created" } }
         rescue
-          format.html {render reservation_new_path, :flash => {:error => "Oops, something went wrong with making your reservation"} }
+          format.html {render catalog_path, :flash => {:error => "Oops, something went wrong with making your reservation"} }
           raise ActiveRecord::Rollback
         end
       end

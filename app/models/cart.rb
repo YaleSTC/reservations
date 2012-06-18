@@ -53,7 +53,6 @@ class Cart
       errors.add(:start_date, "is before item is available")
     end
     current_item
-    binding.pry
   end
 
   def remove_equipment_model(equipment_model)
