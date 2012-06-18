@@ -155,5 +155,8 @@ class Reservation < ActiveRecord::Base
   #   end
   # end
   
+  def fake_reserver_id # Necessary for auto-complete feature
+  end
+  
 end
 

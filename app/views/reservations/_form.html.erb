@@ -1,7 +1,8 @@
 <%= simple_form_for @reservation do |f| %>
   <%= f.error_notification %>
   <% if current_user and current_user.is_admin_in_adminmode? %>
-    <%= f.input :reserver_id, :as => :select, :collection => User.select_options %>
+    <%= f.input :fake_reserver_id, :as => :autocomplete, :url => autocomplete_user_last_name_reservations_path %>
+    <%= f.input :reserver_id, as: :hidden, %>
   <%else %>
     <%= current_user.name %>
     <%= f.input :reserver_id, :as => :hidden, :input_html => {:value => current_user.id} %>

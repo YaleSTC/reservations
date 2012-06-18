@@ -7,7 +7,6 @@ Reservations::Application.routes.draw do
   
   resources :equipment_models do
     resources :equipment_objects
-    get :autocomplete_category_name, :on => :collection
   end
   
   resources :categories do

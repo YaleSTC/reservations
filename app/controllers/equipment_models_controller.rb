@@ -54,6 +54,4 @@ class EquipmentModelsController < ApplicationController
     flash[:notice] = "Successfully destroyed equipment model."
     redirect_to equipment_models_url
   end
-  
-  autocomplete :category, :name
 end
