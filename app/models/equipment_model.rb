@@ -32,10 +32,6 @@ class EquipmentModel < ActiveRecord::Base
                   :documentation
 
   #Code necessary for Paperclip and image/pdf uploading
-  validates_attachment :photo, :presence => true,
-        :content_type => { :content_type => "image/jpg" },
-        :size => { :in => 0..10.kilobytes }
-      
       
   has_attached_file :photo, #generates profile picture 
       :styles => { :large => "500x500>", :medium => "250x250>", :small => "150x150>", :thumbnail => "100x100#"},
@@ -45,6 +41,8 @@ class EquipmentModel < ActiveRecord::Base
 
   has_attached_file :documentation, #generates document
       :content_type => 'application/pdf'
+      
+  validates_attachment_content_type :photo, :content_type => ["image/jpg", "image/png", "image/jpeg"]
     
     
   #validates_attachment :documentation, :content_type => { :content_type => "appplication/pdf" }
