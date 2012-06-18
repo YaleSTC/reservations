@@ -1,7 +1,6 @@
 <%= simple_form_for @equipment_object do |f| %>
   <%= f.error_notification %>
-  
-  <%=f.input :equipment_model_id, :as => :select, :collection => EquipmentModel.not_deleted.select_options %>
+  <%= f.association :equipment_model%>
   <%=f.input :name%>
   <%=f.input :serial%>
   <%=f.input :deleted_at, :as => :deleted, label: "Disabled"%>

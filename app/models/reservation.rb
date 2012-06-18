@@ -154,6 +154,9 @@ class Reservation < ActiveRecord::Base
   #     equipment_objects << EquipmentObject.find(id)
   #   end
   # end
-
+  
+  def fake_reserver_id # Necessary for auto-complete feature
+  end
+  
 end
 

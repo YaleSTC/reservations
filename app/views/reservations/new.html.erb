@@ -4,7 +4,7 @@
   <%= f.error_messages %>
   <p>The following equipment will be reserved by
     <% if current_user and (current_user.is_admin_in_adminmode? || current_user.is_admin_in_checkoutpersonmode? || current_user.is_checkout_person?) %>
-      <%= f.select :reserver_id, User.select_options, :prompt => true %>
+      <%= f.autocomplete_field :fake_reserver_id, autocomplete_user_last_name_reservations_path %>
     <% else %>
       <%= current_user.name %>
       <%= f.hidden_field :reserver_id, :value => current_user.id %>

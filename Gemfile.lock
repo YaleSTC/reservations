@@ -5,6 +5,13 @@ GIT
     rails-settings (0.1.2)
       rails (>= 3.0.0)
 
+GIT
+  remote: git://github.com/slash4/rails3-jquery-autocomplete.git
+  revision: 393786627734720f5cdae2265bc4a74609756452
+  specs:
+    rails3-jquery-autocomplete (1.0.4)
+      rails (~> 3.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -228,6 +235,7 @@ DEPENDENCIES
   pry-stack_explorer
   rails (= 3.2.0)
   rails-settings!
+  rails3-jquery-autocomplete!
   rake
   rdoc
   rspec-rails
