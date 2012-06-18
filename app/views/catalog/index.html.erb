@@ -16,9 +16,7 @@
       <% equipment_models.each do |equipment_model| %>
         <li>
           <!--show equipment model image-->
-          <%= (link_to (image_tag equipment_model.photos.first.data.url(:small),
-                        :class => 'product_small'),
-                       equipment_model, :target => '_blank') unless equipment_model.photos.empty? %>
+						<%= image_tag equipment_model.photo.url(:small) %>
           <h3>
             <!--print equipment model name-->
             <%= link_to equipment_model.name, equipment_model %>

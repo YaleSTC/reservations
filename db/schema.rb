@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120613153342) do
+ActiveRecord::Schema.define(:version => 20120615215526) do
 
   create_table "accessories_equipment_models", :force => true do |t|
     t.integer  "accessory_id"
@@ -57,16 +57,22 @@ ActiveRecord::Schema.define(:version => 20120613153342) do
   create_table "equipment_models", :force => true do |t|
     t.string   "name"
     t.text     "description"
-    t.decimal  "late_fee",            :precision => 10, :scale => 2
-    t.decimal  "replacement_fee",     :precision => 10, :scale => 2
+    t.decimal  "late_fee",                   :precision => 10, :scale => 2
+    t.decimal  "replacement_fee",            :precision => 10, :scale => 2
     t.integer  "max_per_user"
-    t.boolean  "active",                                             :default => true
+    t.boolean  "active",                                                    :default => true
     t.integer  "category_id"
-    t.datetime "created_at",                                                           :null => false
-    t.datetime "updated_at",                                                           :null => false
-    t.text     "checkout_procedures"
-    t.text     "checkin_procedures"
+    t.datetime "created_at",                                                                  :null => false
+    t.datetime "updated_at",                                                                  :null => false
     t.string   "deleted_at"
+    t.string   "photo_file_name"
+    t.string   "photo_content_type"
+    t.integer  "photo_file_size"
+    t.datetime "photo_updated_at"
+    t.string   "documentation_file_name"
+    t.string   "documentation_content_type"
+    t.integer  "documentation_file_size"
+    t.datetime "documentation_updated_at"
   end
 
   create_table "equipment_models_associated_equipment_models", :id => false, :force => true do |t|

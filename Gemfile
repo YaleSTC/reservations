@@ -2,7 +2,7 @@
 source "https://rubygems.org"
 gem "whenever"
 gem "net-ldap"
-gem "paperclip"
+gem "paperclip", " ~> 3.0"
 gem "rake"
 gem "rails", "3.2.0"
 gem "mysql2"
@@ -24,6 +24,12 @@ gem "jquery-rails"
 gem 'jquery-datatables-rails'
 gem "cocoon"
 gem "ffaker"
+
+group :development, :test do
+  gem "factory_girl_rails"
+  gem 'rspec-rails'
+  gem 'capybara'
+end
 
 # Gems used only for assets and not required
 # in production environments by default.
