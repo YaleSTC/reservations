@@ -49,20 +49,24 @@ class ReservationsController < ApplicationController
   # end
 
   def create
-    cart.items.each do |item|
-      item.quantity.times do |q|    # accounts for reserving multiple equipment objects of the same equipment model (mainly for admins)
-        @reservation = Reservation.new(params[:reservation])
-        @reservation.equipment_model =  item.equipment_model
-        if @reservation.save
+    #using http://stackoverflow.com/questions/7233859/ruby-on-rails-updating-multiple-models-from-the-one-controller as inspiration
+    respond_to do |format|
+      Reservation.transaction do
+        begin
+          cart.items.each do |item|
+            item.quantity.times do |q|    # accounts for reserving multiple equipment objects of the same equipment model (mainly for admins)
+              @reservation = Reservation.new(params[:reservation])
+              @reservation.equipment_model =  item.equipment_model
+              @reservation.save
+            end
+          end
           UserMailer.reservation_confirmation(@reservation).deliver
-          flash[:notice] = "Your reservations have been made."
           session[:cart] = Cart.new
-          binding.pry
-          redirect_to catalog_path
-        else 
-          flash[:error] = "Oops, something went wrong with making your reservation."
-          render :action => 'new'
-        end 
+          format.html {redirect_to catalog_path, :flash => {:success => "Reservation created" } }
+        rescue
+          format.html {render reservation_new_path, :flash => {:error => "Oops, something went wrong with making your reservation"} }
+          raise ActiveRecord::Rollback
+        end
       end
     end
   end
