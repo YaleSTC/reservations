@@ -4,10 +4,10 @@ class Cart
 
   validates :reserver_id, :start_date, :due_date, :presence => true
 
-#  validate :reserver_valid?, :logical_start_and_due_dates?,
-#          :not_too_many_of_category?, :not_too_many_of_equipment_model?,
-#           :duration_not_too_long?, :no_overdue_reservations?, :available?
-           #too_many_of_category? and too_many_of_equipment_model? don't work because of maximum_per_user
+  validate :reserver_valid?, :start_date_before_due_date?,
+          :not_in_past?,
+          :not_too_many_of_category?, :not_too_many_of_equipment_model?,
+          :duration_allowed?, :no_overdue_reservations?, :available?
 
   attr_accessor :reserver_id, :items, :start_date, :due_date
   attr_reader   :errors
