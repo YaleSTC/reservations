@@ -22,15 +22,6 @@ $(document).ready(function() {
   $('#table_woo').dataTable()
 });
 
-/* necessary to run datePickerOptions after all partials have
-   loaded; (document).ready() executes after DOM tree loads
-   and partials have not yet loaded by this point */
-var datePickerOptions = function() {
-  $(".hasDatepicker").datepicker("option", "minDate", new Date());
-  $('.hasDatepicker').datepicker("option", "prevText", "");
-};
-
-window.addEventListener ?
-window.addEventListener("load",datePickerOptions,false) :
-window.attachEvent && window.attachEvent("onload",datePickerOptions);
-// end datePickerOptions
+$.datepicker.setDefaults({
+   minDate: new Date(),
+   prevText: '' });
