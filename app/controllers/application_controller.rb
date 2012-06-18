@@ -35,11 +35,11 @@ class ApplicationController < ActionController::Base
   end
 
   def cart
-      session[:cart] ||= Cart.new
-      if session[:cart].reserver_id.nil?
-        session[:cart].set_reserver_id(current_user.id) if current_user
-      end
-      session[:cart]
+    session[:cart] ||= Cart.new
+    if session[:cart].reserver_id.nil?
+      session[:cart].set_reserver_id(current_user.id) if current_user
+    end
+    session[:cart]
   end
 
   def set_view_mode #(Analogous to department_chooser in shifts)

@@ -41,11 +41,11 @@ class Cart
 
   # Adds equipment model to @items (works with add_to_cart application controller method); throws errors that don't stop add_to_cart from working
   def add_equipment_model(equipment_model)
-    current_item = @items.find {|item| item.equipment_model == equipment_model}
+    current_item = @items.find {|item| item.equipment_model_id == equipment_model.id}
     if current_item
       current_item.increment_quantity
     else
-      current_item = CartItem.new(equipment_model)
+      current_item = CartItem.new(equipment_model.id)
       @items << current_item
     end
     if !current_item.available?(@start_date..@due_date)
@@ -55,7 +55,7 @@ class Cart
   end
 
   def remove_equipment_model(equipment_model)
-    current_item = @items.find {|item| item.equipment_model == equipment_model}
+    current_item = @items.find {|item| item.equipment_model_id == equipment_model.id}
     current_item.decrement_quantity
     if current_item.quantity == 0
       @items.delete(current_item)

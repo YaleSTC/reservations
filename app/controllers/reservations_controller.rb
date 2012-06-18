@@ -50,7 +50,6 @@ class ReservationsController < ApplicationController
 
   def create
     cart.items.each do |item|
-      binding.pry
       item.quantity.times do |q|    # accounts for reserving multiple equipment objects of the same equipment model (mainly for admins)
         @reservation = Reservation.new(params[:reservation])
         @reservation.equipment_model =  item.equipment_model

@@ -1,8 +1,8 @@
 class CartItem
-  attr_accessor :equipment_model, :quantity
+  attr_accessor :equipment_model_id, :quantity
   
-  def initialize(equipment_model)
-    @equipment_model = equipment_model
+  def initialize(equipment_model_id)
+    @equipment_model_id = equipment_model_id
     @quantity = 1
   end
   
@@ -16,15 +16,19 @@ class CartItem
     end
   end
   
-  def details
-    detail = {
-      :equipment_model => @equipment_model,
-      :quantity => @quantity
-    }
+  def equipment_model
+    equipment_model = EquipmentModel.find(@equipment_model_id)
   end
   
   def name
-    @equipment_model.name
+    equipment_model.name
+  end
+  
+  def details
+    detail = {
+      :equipment_model => equipment_model,
+      :quantity => @quantity
+    }
   end
   
   def available?(range_of_dates)
