@@ -29,6 +29,7 @@ class EquipmentModelsController < ApplicationController
       flash[:notice] = "Successfully created equipment model."
       redirect_to @equipment_model
     else
+      flash[:error] = "Please review the errors below. "
       render :action => 'new'
     end
   end

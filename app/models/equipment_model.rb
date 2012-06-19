@@ -46,16 +46,14 @@ class EquipmentModel < ActiveRecord::Base
                     :content_type => 'application/pdf'
       
   validates_attachment_content_type :photo, 
-                                    :content_type => ["image/jpg", "image/png", "image/jpeg"]
+                                    :content_type => ["image/jpg", "image/png", "image/jpeg"], 
+                                    :message => "must be jpeg, jpg, or png."
+  validates_attachment_size         :photo, 
+                                    :less_than => 500.kilobytes,
+                                    :message => "must be less than 500 kb"
   
-  def paperclip_errors
-    errors[:photo] =  "must be a jpeg. "
-  end
-    
-    
   #validates_attachment :documentation, :content_type => { :content_type => "appplication/pdf" }
   
-
   Paperclip.interpolates :normalized_photo_name do |attachment, style|
     attachment.instance.normalized_photo_name
   end
