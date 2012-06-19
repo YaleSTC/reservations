@@ -26,6 +26,7 @@ class CategoriesController < ApplicationController
       flash[:notice] = "Successfully created category."
       redirect_to @category
     else
+      flash[:error] = "Oops! Something went wrong with creating the category."
       render :action => 'new'
     end
   end

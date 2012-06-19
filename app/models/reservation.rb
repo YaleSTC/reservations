@@ -6,7 +6,10 @@ class Reservation < ActiveRecord::Base
   belongs_to :checkout_handler, :class_name => 'User'
   belongs_to :checkin_handler, :class_name => 'User'
 
-  validates :reserver, :start_date, :due_date, :presence => true
+  validates :reserver, 
+            :start_date, 
+            :due_date, 
+            :presence => true
   
   validate :not_empty
   validate :start_date_before_due_date

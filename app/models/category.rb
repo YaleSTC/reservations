@@ -1,12 +1,18 @@
 class Category < ActiveRecord::Base
   has_many :equipment_models
   
-  validates :name, :presence => true, :uniqueness => true 
-  validates :max_per_user, :numericality => { :only_integer => true }, :length => { :minimum => 1 }, :allow_nil => true
-  validates :max_checkout_length, :numericality => { :only_integer => true }, :length => { :minimum => 1 },  :allow_nil => true
+  validates :name,                :presence => true, 
+                                  :uniqueness => true 
+  validates :max_per_user,        :numericality => { :only_integer => true }, 
+                                  :length => { :minimum => 1 }, 
+                                  :allow_nil => true
+  validates :max_checkout_length, :numericality => { :only_integer => true }, 
+                                  :length => { :minimum => 1 },  
+                                  :allow_nil => true
   
   
   attr_accessible :name, :max_per_user, :max_checkout_length, :deleted_at
+  
   nilify_blanks :only => [:deleted_at]  
 
   def maximum_per_user
