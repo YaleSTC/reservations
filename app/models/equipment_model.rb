@@ -1,4 +1,6 @@
 class EquipmentModel < ActiveRecord::Base
+  ## Associations ##
+
   belongs_to :category
   has_many :equipment_objects
   has_many :documents
@@ -14,9 +16,29 @@ class EquipmentModel < ActiveRecord::Base
   has_many :checkout_procedures, :dependent => :destroy
   accepts_nested_attributes_for :checkout_procedures, :reject_if => :all_blank, :allow_destroy => true
 
-  #associates with itself for accessories/recommended related models
-  has_many :accessories_equipment_models, :foreign_key => :equipment_model_id
-  has_many :accessories, :through => :accessories_equipment_models
+  # Equipment Models are associated with other equipment models to help us recommend items that go together.
+  # Ex: a camera, camera lens, and tripod
+  has_and_belongs_to_many :associated_equipment_models,
+    :class_name => "EquipmentModel",
+    :association_foreign_key => "associated_equipment_model_id",
+    :join_table => "equipment_models_associated_equipment_models"
+
+  #Checkin/out procedures are stored as an independent object each.
+  #These nested models are displayed in the equipment_model/_form.html.erb by the cocoon gem
+  has_many :checkin_procedures, :dependent => :destroy
+  accepts_nested_attributes_for :checkin_procedures, :reject_if => :all_blank, :allow_destroy => true
+  has_many :checkout_procedures, :dependent => :destroy
+  accepts_nested_attributes_for :checkout_procedures, :reject_if => :all_blank, :allow_destroy => true
+
+  #This old style of associating with accessories we've removed from the program.
+  #If you're reading this line, it's probably safe to remove these lines by now.
+  ##associates with itself for accessories/recommended related models
+  ##has_many :accessories_equipment_models, :foreign_key => :equipment_model_id
+  ##has_many :accessories, :through => :accessories_equipment_models
+
+
+
+  ## Validations ##
 
   validates :name, :description, :category, :presence => true
   validates :name, :uniqueness => true
@@ -26,6 +48,10 @@ class EquipmentModel < ActiveRecord::Base
   nilify_blanks :only => [:deleted_at]
   include ApplicationHelper
   attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, :max_per_user, :document_attributes, :accessory_ids, :deleted_at, :checkout_procedures_attributes, :checkin_procedures_attributes
+
+
+  ## Functions ##
+
 
   #inherits from category if not defined
   def maximum_per_user
