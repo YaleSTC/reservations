@@ -29,7 +29,6 @@ class EquipmentObjectsController < ApplicationController
   
   def create
     @equipment_object = EquipmentObject.new(params[:equipment_object])
-    # raise params.to_yaml
     if @equipment_object.serial == "Enter serial # (optional)"
       @equipment_object.serial = nil
     end

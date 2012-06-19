@@ -1,4 +1,6 @@
 class EquipmentModel < ActiveRecord::Base
+  ## Associations ##
+
   belongs_to :category
   has_many :equipment_objects
   has_many :documents
@@ -6,24 +8,48 @@ class EquipmentModel < ActiveRecord::Base
   # has_many :equipment_models_reservations
   has_many :reservations
   has_and_belongs_to_many :associated_equipment_models,
-    :class_name => "EquipmentModel",
-    :association_foreign_key => "associated_equipment_model_id",
-    :join_table => "equipment_models_associated_equipment_models"
+                          :class_name => "EquipmentModel",
+                          :association_foreign_key => "associated_equipment_model_id",
+                          :join_table => "equipment_models_associated_equipment_models"
   has_many :checkin_procedures, :dependent => :destroy
   accepts_nested_attributes_for :checkin_procedures, :reject_if => :all_blank, :allow_destroy => true
   has_many :checkout_procedures, :dependent => :destroy
   accepts_nested_attributes_for :checkout_procedures, :reject_if => :all_blank, :allow_destroy => true
 
-  #associates with itself for accessories/recommended related models
-  has_many :accessories_equipment_models, :foreign_key => :equipment_model_id
-  has_many :accessories, :through => :accessories_equipment_models
+  # Equipment Models are associated with other equipment models to help us recommend items that go together.
+  # Ex: a camera, camera lens, and tripod
+  has_and_belongs_to_many :associated_equipment_models,
+    :class_name => "EquipmentModel",
+    :association_foreign_key => "associated_equipment_model_id",
+    :join_table => "equipment_models_associated_equipment_models"
 
-  validates :name, :description, :category, :presence => true
-  validates :name, :uniqueness => true
-  validates :late_fee, :replacement_fee, :numericality => { :greater_than_or_equal_to => 0 }
+  #Checkin/out procedures are stored as an independent object each.
+  #These nested models are displayed in the equipment_model/_form.html.erb by the cocoon gem
+  has_many :checkin_procedures, :dependent => :destroy
+  accepts_nested_attributes_for :checkin_procedures, :reject_if => :all_blank, :allow_destroy => true
+  has_many :checkout_procedures, :dependent => :destroy
+  accepts_nested_attributes_for :checkout_procedures, :reject_if => :all_blank, :allow_destroy => true
+
+  #This old style of associating with accessories we've removed from the program.
+  #If you're reading this line, it's probably safe to remove these lines by now.
+  ##associates with itself for accessories/recommended related models
+  ##has_many :accessories_equipment_models, :foreign_key => :equipment_model_id
+  ##has_many :accessories, :through => :accessories_equipment_models
+
+
+
+  ## Validations ##
+
+  validates :name, 
+            :description,
+            :category,     :presence => true
+  validates :name,         :uniqueness => true
+  validates :late_fee,     :replacement_fee, 
+                           :numericality => { :greater_than_or_equal_to => 0 }
   validates :max_per_user, :numericality => { :allow_nil => true, :integer_only => true, :greater_than_or_equal_to => 1 }
 
   nilify_blanks :only => [:deleted_at]
+  
   include ApplicationHelper
   
   attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, 
@@ -32,7 +58,6 @@ class EquipmentModel < ActiveRecord::Base
                   :documentation
 
   #Code necessary for Paperclip and image/pdf uploading
-      
   has_attached_file :photo, #generates profile picture 
       :styles => { :large => "500x500>", :medium => "250x250>", :small => "150x150>", :thumbnail => "100x100#"},
       :url  => "/equipment_models/:attachment/:id/:style/:basename.:extension",
@@ -40,14 +65,17 @@ class EquipmentModel < ActiveRecord::Base
       :default_url => "/fat_cat.jpeg"
 
   has_attached_file :documentation, #generates document
-      :content_type => 'application/pdf'
+                    :content_type => 'application/pdf'
       
-  validates_attachment_content_type :photo, :content_type => ["image/jpg", "image/png", "image/jpeg"]
-    
-    
+  # validates_attachment_content_type :photo, 
+  #                                     :content_type => ["image/jpg", "image/png", "image/jpeg"], 
+  #                                     :message => "must be jpeg, jpg, or png."
+  #   validates_attachment_size         :photo, 
+  #                                     :less_than => 500.kilobytes,
+  #                                     :message => "must be less than 500 kb"
+  
   #validates_attachment :documentation, :content_type => { :content_type => "appplication/pdf" }
   
-
   Paperclip.interpolates :normalized_photo_name do |attachment, style|
     attachment.instance.normalized_photo_name
   end
@@ -56,6 +84,10 @@ class EquipmentModel < ActiveRecord::Base
     "#{self.id}-#{self.photo_file_name.gsub( /[^a-zA-Z0-9_\.]/, '_')}" 
   end
   #end of Paperclip code. 
+
+
+  ## Functions ##
+
 
   #inherits from category if not defined
   def maximum_per_user

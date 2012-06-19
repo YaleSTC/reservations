@@ -29,18 +29,24 @@
     	<% if @reservation.equipment_model.checkout_procedures.nil? %>
       There are no checkout procedures
     	<% else %>
-      	<% @reservation.equipment_model.checkout_procedures.each do |checkout_procedure| %>
-      	<li style="list-style: none">
-        	<%= check_box_tag "reservations[#{@reservation.id}][checkout_procedures][]" %>
-        	<%= checkout_procedure %>
-      	</li>
-     		<% end %>
+        <ol>
+          <% @reservation.equipment_model.checkout_procedures.each do |checkout_procedure| %>
+            <li>
+            <div class="step">
+              <%= checkout_procedure.step %>
+            </div>
+            <div class="checkbox">
+              <%= check_box_tag "reservations[#{@reservation.id}][checkout_procedures][]" %>
+            </div>
+            </li>
+          <% end %>
+        </ol>
     	<% end %>
   	</ul>
 	</p>
-	
+
+
 	<%= submit_tag "Check out equipment" %>
-  
 
 <% end %>
 

@@ -4,13 +4,17 @@ class ReservationsController < ApplicationController
 
   def index
     if current_user.can_checkout?
-      if params[:show_returned]
-        @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.pending, Reservation.returned ].delete_if{|a| a.empty?} #remove empty arrays from set
-      else
-        @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.pending ].delete_if{|a| a.empty?}
+      if params[:show_missed]
+        @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved, Reservation.missed].delete_if{|a| a.empty?}
+      elsif params[:show_returned]
+        @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved, Reservation.returned].delete_if{|a| a.empty?} #remove empty arrays from set
+      elsif params[:show_returned && :show_missed]
+        @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved, Reservation.missed, Reservation.returned].delete_if{|a| a.empty?}
+      elsif
+        @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved].delete_if{|a| a.empty?}
       end
     else
-      @reservations_set = [current_user.reservations.overdue, current_user.reservations.checked_out, current_user.reservations.pending ].delete_if{|a| a.empty?}
+      @reservations_set = [current_user.reservations.overdue, current_user.reservations.checked_out, current_user.reservations.reserved ].delete_if{|a| a.empty?}
     end
   end
 
@@ -25,12 +29,11 @@ class ReservationsController < ApplicationController
 
   def new
     if cart.items.empty?
-      flash[:error] = "You need to add items to your cart before making a reservation!"
+      flash[:error] = "You need to add items to your cart before making a reservation."
       redirect_to catalog_path
     else
-      @reservation = Reservation.new
-      @reservation.start_date = cart.start_date
-      @reservation.due_date = cart.due_date
+      #this is used to initialize each reservation later
+      @reservation = Reservation.new(start_date: cart.start_date, due_date: cart.due_date)
     end
   end
 
@@ -50,19 +53,26 @@ class ReservationsController < ApplicationController
   # end
 
   def create
-    cart.items.each do |item|
-      for q in 1..item.quantity     # accounts for reserving multiple equipment objects of the same equipment model (mainly for admins)
-        @reservation = Reservation.new(params[:reservation])
-        @reservation.equipment_model =  item.equipment_model
-        if @reservation.save
-          UserMailer.reservation_confirmation(@reservation).deliver
-          flash[:notice] = "Your reservations have been made."
+    #using http://stackoverflow.com/questions/7233859/ruby-on-rails-updating-multiple-models-from-the-one-controller as inspiration
+    respond_to do |format|
+      Reservation.transaction do
+        begin
+          cart.items.each do |item|
+            emodel = item.equipment_model
+            item.quantity.times do |q|    # accounts for reserving multiple equipment objects of the same equipment model (mainly for admins)
+              @reservation = Reservation.new(params[:reservation])
+              @reservation.equipment_model =  emodel
+              @reservation.save
+            end
+          end
+          #We do want an email to be sent, but this needs to be tweaked - it currently doesn't work ~Casey
+          #UserMailer.reservation_confirmation(@reservation).deliver
           session[:cart] = Cart.new
-          redirect_to catalog_path
-        else 
-          flash[:error] = "Oops, something went wrong with making your reservation."
-          render :action => 'new'
-        end 
+          format.html {redirect_to catalog_path, :flash => {:notice => "Successfully created reservation. " } }
+        rescue
+          format.html {redirect_to catalog_path, :flash => {:error => "Oops, something went wrong with making your reservation."} }
+          raise ActiveRecord::Rollback
+        end
       end
     end
   end
@@ -183,11 +193,12 @@ class ReservationsController < ApplicationController
     @reservation =  Reservation.find(params[:id])
   end
 
+  #two paths to create receipt emails for checking in and checking out items.
   def checkout_email
     @reservation =  Reservation.find(params[:id])
     if UserMailer.checkout_receipt(@reservation).deliver
       redirect_to :back
-      flash[:notice] = "Delivered receipt email."
+      flash[:notice] = "Successfuly delivered receipt email."
     else 
       redirect_to @reservation
       flash[:error] = "Unable to deliver receipt email. Please contact administrator for more support. "
@@ -198,7 +209,7 @@ class ReservationsController < ApplicationController
     @reservation =  Reservation.find(params[:id])
     if UserMailer.checkin_receipt(@reservation).deliver
       redirect_to :back
-      flash[:notice] = "Delivered receipt email."
+      flash[:notice] = "Sucessfully delivered receipt email."
     else 
       redirect_to @reservation
       flash[:error] = "Unable to deliver receipt email. Please contact administrator for more support. "

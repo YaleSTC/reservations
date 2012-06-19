@@ -6,7 +6,10 @@ class Reservation < ActiveRecord::Base
   belongs_to :checkout_handler, :class_name => 'User'
   belongs_to :checkin_handler, :class_name => 'User'
 
-  validates :reserver, :start_date, :due_date, :presence => true
+  validates :reserver, 
+            :start_date, 
+            :due_date, 
+            :presence => true
   
   validate :not_empty
   validate :start_date_before_due_date
@@ -15,11 +18,14 @@ class Reservation < ActiveRecord::Base
   
 
   scope :recent, order('start_date, due_date, reserver_id')
-  scope :pending, where("checked_out IS NULL and checked_in IS NULL").recent
+  
+  scope :reserved, lambda { where("checked_out IS NULL and checked_in IS NULL and due_date >= ?", Time.now.midnight.utc).recent}
   scope :checked_out, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date >=  ?", Time.now.midnight.utc).recent }
   scope :overdue, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc ).recent }
-  scope :active, where("checked_in IS NULL") #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
   scope :returned, where("checked_in IS NOT NULL and checked_out IS NOT NULL")
+  scope :missed, lambda {where("checked_out IS NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc).recent}
+  
+  scope :active, where("checked_in IS NULL") #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
   scope :notes_unsent, :conditions => {:notes_unsent => true}
   
   attr_accessible :reserver, :reserver_id, :checkout_handler, :checkout_handler_id, 
@@ -29,8 +35,10 @@ class Reservation < ActiveRecord::Base
 
   def status
     #TODO: check this logic
-    if checked_out.nil?
+    if checked_out.nil? && due_date >= Date.today
       "reserved"
+    elsif checked_out.nil? && due_date < Date.today
+      "missed"
     elsif checked_in.nil?
       due_date < Date.today ? "overdue" : "checked out"
     else

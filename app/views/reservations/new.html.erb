@@ -4,7 +4,8 @@
   <%= f.error_messages %>
   <p>The following equipment will be reserved by
     <% if current_user and (current_user.is_admin_in_adminmode? || current_user.is_admin_in_checkoutpersonmode? || current_user.is_checkout_person?) %>
-      <%= f.autocomplete_field :fake_reserver_id, autocomplete_user_last_name_reservations_path %>
+      <%= f.hidden_field :reserver_id %>
+      <%= f.autocomplete_field :fake_reserver_id, autocomplete_user_last_name_reservations_path, :id_element => '#reservation_reserver_id'%>
     <% else %>
       <%= current_user.name %>
       <%= f.hidden_field :reserver_id, :value => current_user.id %>
@@ -17,87 +18,12 @@
     <%= f.hidden_field :due_date, :value => cart.due_date %>
   </p>
   <p>
-    <% acceptable_reservation = true %>
-    <% if cart.items.empty? %>
-      <% acceptable_reservation = false %>
-      <%# redundant? %>
-      <strong class="error">Your cart is empty!</strong> You need to add items to your cart before you can make a reservation.
-    <% else %>
-      <ul>
-        <% cart.items.each do |item| %>
-          <li>
-            <%= item.quantity %> x <%= link_to item.name, item.equipment_model %>
-            <%# TODO: make this check against the user's total equipment, not just this reservation %>
-            <%# We now have a second check that now accounts for total equipment during checkout %>
-            <% if item.equipment_model.maximum_per_user != "unrestricted" and item.quantity > item.equipment_model.maximum_per_user %><br /><small>
-              <% acceptable_reservation = false %>
-              <strong class="error">You may not check out this many <%= item.equipment_model.name %>.</strong> Users may rent
-              only <%= item.equipment_model.maximum_per_user %> of this item during any given period. Please use
-              the cart menu in the right sidebar to either remove this item
-              or to change the dates of your reservation.</small>
-            <% end %>
-            <% if !item.available?(cart.start_date..cart.due_date) %><br /><small>
-              <% acceptable_reservation = false %>
-              <strong class="error">This item is not available for the specified period.</strong> Please use
-              the cart menu in the right sidebar to either remove this item
-              or to change the dates of your reservation.</small>
-            <% end %>
-          </li>
-        <% end %>
-        <%# check to see if this reservation goes over any category maximums %>
-        <% cart.items.group_by{|i| i.equipment_model.category}.each do |category, items| %>
-          <% total_items = items.map{|item| item.quantity}.sum %>
-          <% if category.maximum_per_user != "unrestricted" and total_items.to_i > category.maximum_per_user.to_i %>
-            <% acceptable_reservation = false %>
-            <li>
-              <small>
-                <strong class="error">You may not check out this many <%= category.name.pluralize %>.</strong>
-                Users are limited to <%= category.maximum_per_user %> of this kind of equipment.
-                Please use the cart menu in the right sidebar to either remove a <%= category.name.singularize %>
-                or to change the dates of your reservation.
-              </small>
-            </li>
-          <% end %>
-          <% if category.maximum_checkout_length != "unrestricted" and category.max_checkout_length < cart.duration %>
-            <% acceptable_reservation = false %>
-            <li>
-              <small>
-                <strong class="error">You may not check out a <%= category.name.singularize %> for more than
-                <%= category.max_checkout_length %> days.</strong>
-                Please use the cart menu in the right sidebar to either remove all <%= category.name.pluralize %>
-                from your order or to change the dates of your reservation.
-              </small>
-            </li>
-          <% end %>
-          <% if !cart.logical_start_and_due_dates? %>
-            <% acceptable_reservation = false %>
-            <li>
-              <small>
-                <strong class="error">Your cart dates don't make sense.</strong>
-                Please use the cart menu in the right sidebar to change the dates of your reservation.
-              </small>
-            </li>
-          <% end %>
-        <% end %>
-        <li style="list-style: none"><small><%= link_to "Go back to the catalog", catalog_path %></small></li>
-      </ul>
-    <% end %>
+    <ul>
+      <% cart.items.each do |item| %>
+        <li><%= item.quantity %> x <%= link_to item.name, item.equipment_model %></li>
+      <% end %>
+      <li style="list-style: none"><small><%= link_to "Go back to the catalog", catalog_path %></small></li>
+    </ul>
   </p>
-  <% if !acceptable_reservation and !current_user.is_admin_in_adminmode? %>
-    <p>
-      <strong>Your reservation cannot be made for one or more reasons. Please resolve the issues
-        listed above, then return here to finalize your reservation. Thank you.</strong>
-    </p>
-  <% else %>
-    <% if !acceptable_reservation %><%#admin checkout%>
-      <p>
-        <strong>NOTE: As an administrator, you can approve the above reservation despite the issues
-          mentioned above.</strong>
-        However, please remember that these restrictions exist for a reason, and should not be
-        overridden without careful thought. Thank you :)
-      </p>
-    <% end %>
-    <p><%= f.submit "Finalize reservation" %></p>
-  <% end %>
+  <p><%= f.submit "Finalize reservation" %></p>
 <% end %>
-
