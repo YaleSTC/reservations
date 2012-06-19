@@ -1,5 +1,19 @@
+<<<<<<< HEAD
 <%= simple_form_for @equipment_model do |f| %>
   <%= f.error_notification %>
+=======
+<%= simple_form_for @equipment_model, :html => { :multipart => true } do |f| %>
+
+<!-- Paperclip currently does not support simple form and validations and will fail silently. 
+This code is necessary until they introduce a bug fix (Github issue #266) -->
+<ul>
+	  <% @equipment_model.errors.full_messages.each do |msg| %>
+	  <li><%= msg %></li>
+	  <% end %>
+</ul>
+	
+  <%#= f.error_notification %>
+>>>>>>> rails3_errors
   <%= f.association :category %> 
   <input class="hidden" id="category" name="MODELNAME[category]" type="hidden">
   <%= link_to "[add new category]", new_category_path %>
@@ -26,7 +40,19 @@
   <div class="links">
     <%= link_to_add_association 'add step', f, :checkin_procedures %>
   </div>
+<<<<<<< HEAD
 
   <%= f.error :base %>
+=======
+<p>
+  <%= f.input :photo, :as => :file, :label => "Upload Photo" %>
+</p>
+
+<p>
+  <%= f.input :documentation, :as => :file, :label => "Upload Documentation" %>
+</p>
+	
+  <%#= f.error :base %>
+>>>>>>> rails3_errors
   <%= f.button :submit %>
 <% end %>

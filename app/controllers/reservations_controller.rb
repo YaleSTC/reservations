@@ -63,9 +63,9 @@ class ReservationsController < ApplicationController
           #We do want an email to be sent, but this needs to be tweaked - it currently doesn't work ~Casey
           #UserMailer.reservation_confirmation(@reservation).deliver
           session[:cart] = Cart.new
-          format.html {redirect_to catalog_path, :flash => {:notice => "Reservation created" } }
+          format.html {redirect_to catalog_path, :flash => {:notice => "Successfully created reservation. " } }
         rescue
-          format.html {redirect_to catalog_path, :flash => {:error => "Oops, something went wrong with making your reservation"} }
+          format.html {redirect_to catalog_path, :flash => {:error => "Oops, something went wrong with making your reservation."} }
           raise ActiveRecord::Rollback
         end
       end
@@ -188,11 +188,12 @@ class ReservationsController < ApplicationController
     @reservation =  Reservation.find(params[:id])
   end
 
+  #two paths to create receipt emails for checking in and checking out items.
   def checkout_email
     @reservation =  Reservation.find(params[:id])
     if UserMailer.checkout_receipt(@reservation).deliver
       redirect_to :back
-      flash[:notice] = "Delivered receipt email."
+      flash[:notice] = "Successfuly delivered receipt email."
     else 
       redirect_to @reservation
       flash[:error] = "Unable to deliver receipt email. Please contact administrator for more support. "
@@ -203,7 +204,7 @@ class ReservationsController < ApplicationController
     @reservation =  Reservation.find(params[:id])
     if UserMailer.checkin_receipt(@reservation).deliver
       redirect_to :back
-      flash[:notice] = "Delivered receipt email."
+      flash[:notice] = "Sucessfully delivered receipt email."
     else 
       redirect_to @reservation
       flash[:error] = "Unable to deliver receipt email. Please contact administrator for more support. "
