@@ -11,6 +11,14 @@ class UsersController < ApplicationController
     end
   end
 
+  def new_button
+    @user = User.new
+    respond_to do |format|
+      format.html{redirect_to root_path}
+      format.js{render :action => "fancybox_new_user"}
+    end
+  end
+
   def show
     @user = User.find(params[:id])
     require_user(@user)
@@ -28,11 +36,15 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(params[:user])
-    @user.login = session[:cas_user] unless current_user and current_user.is_admin_in_adminmode?
+    @user.login = session[:cas_user] unless current_user and (current_user.is_admin_in_adminmode? or current_user.is_admin_in_checkoutpersonmode? or current_user.is_checkout_person?)
     @user.is_admin = true if User.count == 0
     if @user.save
       flash[:notice] = "Successfully created user."
-      redirect_to (current_user.is_admin_in_adminmode? ? @user : root_path)
+#   redirect to New Reservations page iff logged in as admin or
+#   checkout person
+      redirect_to ((current_user.is_admin_in_adminmode? or current_user.is_admin_in_checkoutpersonmode? or current_user.is_checkout_person?) ? new_reservation_path : root_path)
+#   old redirect behavior below
+#      redirect_to (current_user.is_admin_in_adminmode? ? @user : root_path)
     else
       render :action => 'new'
     end

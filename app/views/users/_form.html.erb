@@ -1,6 +1,6 @@
 <%= simple_form_for @user do |f| %>
   <%= f.error_notification %>
-  <% if current_user and current_user.is_admin_in_adminmode? %>
+  <% if current_user and (current_user.is_admin_in_adminmode? or ((current_user.is_admin_in_checkoutpersonmode? or current_user.is_checkout_person?) and @user.id == NIL)) %>
     <%= f.input :login %>
     <% else %>
       <%= f.input :login, :readonly => true, :input_html => {:value => @user.login}%>
