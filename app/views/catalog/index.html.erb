@@ -2,7 +2,7 @@
 
 <!--show quicksearch box-->
 <%= render :partial => 'quicksearch' %>
-
+<%= paginate @paginated_equipment_models_by_category %>
 <% if @equipment_models_by_category.empty? %>
   <p>Sorry, no equipment models were found.</p>
 <% else %>

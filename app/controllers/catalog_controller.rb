@@ -1,6 +1,8 @@
 class CatalogController < ApplicationController
   def index
-    @equipment_models_by_category = EquipmentModel.not_deleted.order('categories.sort_order ASC, equipment_models.name ASC').includes(:category).group_by(&:category)
+    @paginated_equipment_models_by_category = EquipmentModel.not_deleted.order('categories.sort_order ASC, equipment_models.name ASC').includes(:category).page(params[:page])
+    @equipment_models_by_category = @paginated_equipment_models_by_category.to_a.group_by(&:category)
+    
     #push accessories to bottom by removing and reinserting
     #@equipment_models_by_category[Category.find_by_name("Accessories")] = @equipment_models_by_category.delete(Category.find_by_name("Accessories"))
   end
