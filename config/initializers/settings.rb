@@ -6,6 +6,7 @@ begin
   Settings.contact_link_location ||= "mailto:contact.us@change.com"
   Settings.home_link_text  ||= "Home"
   Settings.home_link_location ||= "http://clc.yale.edu"
+  Settings.default_per_cat_page ||= 20
   Settings.upcoming_checkin_email_body ||= "Dear @user@,
   Please remember to return the equipment you borrowed from us:
 
