@@ -1,20 +1,13 @@
 class EquipmentModel < ActiveRecord::Base
-<<<<<<< Updated upstream
-  serialize :checkout_procedures
-  serialize :checkin_procedures
-=======
 
   ## Associations ##
 
->>>>>>> Stashed changes
   belongs_to :category
   has_many :equipment_objects
   has_many :documents
   # has_and_belongs_to_many :reservations
   # has_many :equipment_models_reservations
   has_many :reservations
-<<<<<<< Updated upstream
-=======
 
   # Equipment Models are associated with other equipment models to help us recommend items that go together.
   # Ex: a camera, camera lens, and tripod
@@ -22,14 +15,13 @@ class EquipmentModel < ActiveRecord::Base
     :class_name => "EquipmentModel",
     :association_foreign_key => "associated_equipment_model_id",
     :join_table => "equipment_models_associated_equipment_models"
-  
+
   #Checkin/out procedures are stored as an independent object each.
   #These nested models are displayed in the equipment_model/_form.html.erb by the cocoon gem
   has_many :checkin_procedures, :dependent => :destroy
   accepts_nested_attributes_for :checkin_procedures, :reject_if => :all_blank, :allow_destroy => true
   has_many :checkout_procedures, :dependent => :destroy
   accepts_nested_attributes_for :checkout_procedures, :reject_if => :all_blank, :allow_destroy => true
->>>>>>> Stashed changes
 
   #This old style of associating with accessories we've removed from the program.
   #If you're reading this line, it's probably safe to remove these lines by now.
