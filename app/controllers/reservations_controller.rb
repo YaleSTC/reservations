@@ -60,7 +60,8 @@ class ReservationsController < ApplicationController
               @reservation.equipment_model =  emodel
             end
           end
-          UserMailer.reservation_confirmation(@reservation).deliver
+          #We do want an email to be sent, but this needs to be tweaked - it currently doesn't work ~Casey
+          #UserMailer.reservation_confirmation(@reservation).deliver
           session[:cart] = Cart.new
           format.html {redirect_to catalog_path, :flash => {:notice => "Reservation created" } }
         rescue
