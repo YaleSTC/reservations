@@ -2,6 +2,7 @@
 *= require_self
 *= require dataTables/jquery.dataTables
 *= require forms
+*= require autocomplete
 */
 
 
@@ -229,32 +230,5 @@ tr.activated {
         background: transparent;
 }
 
-/* Following block is for the autocomplete feature */
 
-ul.ui-autocomplete {
-  position: absolute;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  border: solid 1px #999;
-  cursor: default; 
-}
-
-ul.ui-autocomplete li {
-	background-color: #FFF;
-	border-top: solid 1px #DDD;
-	margin: 0;
-	padding: 0; 
-}
-
-ul.ui-autocomplete li a {
-	color: #000;
-	display: block;
-	padding: 3px; 
-}
-ul.ui-autocomplete li a.ui-state-hover, ul.ui-autocomplete li a.ui-state-active {
-     background-color: #FFFCB2; 
-}
-
-/* end autocomplete */
 
