@@ -18,17 +18,22 @@
   
 	<p>
   <strong>Checkin procedures:</strong>
-  <ul>
 		<% if @reservation.equipment_model.checkin_procedures.nil? %>
     	There are no check in procedures
     <% else %>
-    	<% @reservation.equipment_model.checkin_procedures.each do |checkin_procedure| %>
-      	<li style="list-style: none">
-        <%= check_box_tag "reservations[#{@reservation.id}][checkin_procedures][]" %> <%= checkin_procedure %>
-        </li>
-			<% end %>
+      <ol>
+    	  <% @reservation.equipment_model.checkin_procedures.each do |checkin_procedure| %>
+          <li>
+          <div class="step">
+            <%= checkin_procedure.step %>
+          </div>
+          <div class="checkbox">
+            <%= check_box_tag "reservations[#{@reservation.id}][checkin_procedures][]" %>
+          </div>
+          </li>
+			  <% end %>
+      </ol>
     <% end %>
-	</ul>
   </p>
   
 	<p>

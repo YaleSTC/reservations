@@ -1,19 +1,28 @@
-  # Filters added to this controller apply to all controllers in the application.
+# Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
-  helper_method :current_user
-  helper_method :cart
 
   before_filter RubyCAS::Filter
   before_filter :first_time_user
   before_filter :cart
   before_filter :set_view_mode
+  before_filter :current_user
+  #before_filter :bind_pry_before_everything
+
+  helper_method :current_user
+  helper_method :cart
+
+
+  def bind_pry_before_everything
+    binding.pry
+  end
 
   def current_user
-    @current_user ||= User.find_by_login(session[:cas_user])
+    @current_user ||= User.find_by_login(session[:cas_user]) if session[:cas_user]
+	User.current ||= @current_user
   end
 
   #-------- before_filter methods --------
@@ -27,6 +36,10 @@ class ApplicationController < ActionController::Base
 
   def cart
     session[:cart] ||= Cart.new
+    if session[:cart].reserver_id.nil?
+      session[:cart].set_reserver_id(current_user.id) if current_user
+    end
+    session[:cart]
   end
 
   def set_view_mode #(Analogous to department_chooser in shifts)
@@ -68,12 +81,18 @@ class ApplicationController < ActionController::Base
   def update_cart
     session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
     session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
-    flash[:notice] = "Cart dates updated."
+    if cart.valid?
+      flash[:notice] = "Cart dates updated."
+    else
+      # cart.errors.values
+      flash[:error] = cart.errors.values.flatten.join(", ")
+    end
     redirect_to root_path
   end
 
   def empty_cart
     session[:cart] = Cart.new
+    session[:cart].set_reserver_id(current_user.id)
     flash[:notice] = "Cart emptied."
     redirect_to root_path
   end

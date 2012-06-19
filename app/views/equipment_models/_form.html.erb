@@ -1,4 +1,4 @@
-<%= simple_form_for @equipment_model, :html => { :multipart => true } do |f| %>
+<%= simple_form_for @equipment_model do |f| %>
   <%= f.error_notification %>
   <%= f.association :category %> 
   <input class="hidden" id="category" name="MODELNAME[category]" type="hidden">
@@ -26,13 +26,6 @@
   <div class="links">
     <%= link_to_add_association 'add step', f, :checkin_procedures %>
   </div>
-<p>
-  <%= f.input :photo, :as => :file, :label => "Upload Photo" %>
-</p>
-<p>
-  <%= f.input :documentation, :as => :file, :label => "Upload Documentation" %>
-</p>
-	
 
   <%= f.error :base %>
   <%= f.button :submit %>

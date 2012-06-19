@@ -1,11 +1,11 @@
 <% title @equipment_model.category.name.singularize + ": "+@equipment_model.name %>
-<%= image_tag @equipment_model.photo.url(:small) %>
-
-<p><%= @equipment_model.formatted_description.html_safe %></p>
-
-<p><%= link_to "[add to cart]", {:url => add_to_cart_path(@equipment_model)}, 
-																 :href => add_to_cart_path(@equipment_model), 
-																 :remote => true %></p>
+<%= (link_to (image_tag @equipment_model.photos.first.data.url(:small), :class => 'product_small'), @equipment_model.photos.first.data.url, :target => '_blank' ) unless @equipment_model.photos.empty? %>
+<p>
+  <%= @equipment_model.formatted_description.html_safe %>
+</p>
+<p>
+  <%= link_to "[add to cart]", {:url => add_to_cart_path(@equipment_model)}, :href => add_to_cart_path(@equipment_model), :remote => true %>
+</p>
 
 <% unless @equipment_model.associated_equipment_models.empty? %>
   <fieldset>
@@ -17,7 +17,6 @@
     </ul>
   </fieldset>
 <% end %>
-
 <fieldset>
   <legend>Further details:</legend>
   <p>
@@ -34,12 +33,86 @@
       <%= @equipment_model.maximum_per_user %>
     </p>
   <% end %>
-
+  <% if current_user.is_admin_in_adminmode? %>
+    <p id="images">
+      <strong>Images:</strong>
+      <% if @equipment_model.documents.images.empty? %>
+        none
+        <% if current_user.is_admin_in_adminmode? %>
+          <small>
+<!-- broken in rails3.1
+          <%#= link_to_function "[add image]" do |document|
+            document.insert_html :bottom, :images, :partial => 'documents/add_image_form', :object => Document.new
+          end %>
+-->
+          </small>
+        <% end %>
+      <% else %>
+        <ul>
+          <% @equipment_model.documents.images.each do |document| %>
+            <li><%= link_to document.name, document.data.url %> <%= link_to "[x]", document, :confirm => 'Are you sure you want to delete this document?', :method => :delete %>
+            </li>
+          <% end %>
+          <% if current_user.is_admin_in_adminmode? %>
+            <li style="list-style:none">
+              <small>
+<!-- broken in rails3.1
+              <%#= link_to_function "[add image]" do |document|
+                document.insert_html :bottom, :images, :partial => 'documents/add_image_form', :object => Document.new
+              end %>
+-->
+              </small>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+    </p>
+  <% end %>
+  <p id="documents">
+    <strong>Documentation:</strong>
+    <% if @equipment_model.documents.not_images.empty? %>
+      none
+      <% if current_user.is_admin_in_adminmode? %>
+        <small>
+<!-- broken in rails3.1
+        <%#= link_to_function "[add document]" do |document|
+          document.insert_html :bottom, :documents, :partial => 'documents/add_document_form', :object => Document.new
+        end %>
+-->
+        </small>
+      <% end %>
+    <% else %>
+      <ul>
+        <% @equipment_model.documents.not_images.each do |document| %>
+          <li><%= link_to document.name, document.data.url %> <%= link_to "[x]", document, :confirm => 'Are you sure you want to delete this document?', :method => :delete %>
+          </li>
+        <% end %>
+        <% if current_user.is_admin_in_adminmode? %>
+          <li style="list-style:none">
+            <small>
+<!-- broken in rails3.1
+            <%#= link_to_function "[add document]" do |document|
+              document.insert_html :bottom, :documents, :partial => 'documents/add_document_form', :object => Document.new
+            end %>
+-->
+            </small>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </p>
   <% if current_user.is_admin_in_adminmode? %>
     <p id="equipment_objects">
       <strong>Equipment Objects:</strong>
       <% if @equipment_model.equipment_objects.empty? %>
         none
+        <small>
+<!-- broken in rails3.1
+        <%#= link_to_function "[add equipment object]" do |document|
+          document.insert_html :bottom, :equipment_objects, :partial => 'equipment_objects/add_equipment_object_form', :object => EquipmentObject.new
+        end %>
+-->
+        </small>
       <% else %>
         <ul>
           <% @equipment_model.equipment_objects.each do |equipment_object| %>
@@ -50,6 +123,13 @@
             </li>
           <% end %>
           <li style="list-style:none">
+            <small>
+<!-- broken in rails3.1
+            <%#= link_to_function "[add equipment object]" do |document|
+              document.insert_html :bottom, :equipment_objects, :partial => 'equipment_objects/add_equipment_object_form', :object => EquipmentObject.new
+            end %>
+-->
+            </small>
           </li>
         </ul>
       <% end %>
@@ -79,10 +159,6 @@
       <% end %>
     </p>
   <% end %>
-
-	<%= link_to @equipment_model.documentation.url %>
-
-
 </fieldset>
 
 <p>

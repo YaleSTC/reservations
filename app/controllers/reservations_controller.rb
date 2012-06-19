@@ -25,12 +25,11 @@ class ReservationsController < ApplicationController
 
   def new
     if cart.items.empty?
-      flash[:error] = "You need to add items to your cart before making a reservation!"
+      flash[:error] = "You need to add items to your cart before making a reservation."
       redirect_to catalog_path
     else
-      @reservation = Reservation.new
-      @reservation.start_date = cart.start_date
-      @reservation.due_date = cart.due_date
+      #this is used to initialize each reservation later
+      @reservation = Reservation.new(start_date: cart.start_date, due_date: cart.due_date)
     end
   end
 
@@ -50,19 +49,24 @@ class ReservationsController < ApplicationController
   # end
 
   def create
-    cart.items.each do |item|
-      for q in 1..item.quantity     # accounts for reserving multiple equipment objects of the same equipment model (mainly for admins)
-        @reservation = Reservation.new(params[:reservation])
-        @reservation.equipment_model =  item.equipment_model
-        if @reservation.save
+    #using http://stackoverflow.com/questions/7233859/ruby-on-rails-updating-multiple-models-from-the-one-controller as inspiration
+    respond_to do |format|
+      Reservation.transaction do
+        begin
+          cart.items.each do |item|
+            emodel = item.equipment_model
+            item.quantity.times do |q|    # accounts for reserving multiple equipment objects of the same equipment model (mainly for admins)
+              @reservation = Reservation.new(params[:reservation])
+              @reservation.equipment_model =  emodel
+            end
+          end
           UserMailer.reservation_confirmation(@reservation).deliver
-          flash[:notice] = "Your reservations have been made."
           session[:cart] = Cart.new
-          redirect_to catalog_path
-        else 
-          flash[:error] = "Oops, something went wrong with making your reservation."
-          render :action => 'new'
-        end 
+          format.html {redirect_to catalog_path, :flash => {:notice => "Reservation created" } }
+        rescue
+          format.html {redirect_to catalog_path, :flash => {:error => "Oops, something went wrong with making your reservation"} }
+          raise ActiveRecord::Rollback
+        end
       end
     end
   end

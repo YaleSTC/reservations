@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   skip_before_filter :first_time_user, :only => [:new, :create]
+  skip_before_filter :cart, :only => [:new, :create]
   before_filter :require_admin, :only => :index
 
   def index
