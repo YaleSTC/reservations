@@ -62,6 +62,7 @@ class ReservationsController < ApplicationController
             item.quantity.times do |q|    # accounts for reserving multiple equipment objects of the same equipment model (mainly for admins)
               @reservation = Reservation.new(params[:reservation])
               @reservation.equipment_model =  emodel
+              @reservation.save
             end
           end
           #We do want an email to be sent, but this needs to be tweaked - it currently doesn't work ~Casey
