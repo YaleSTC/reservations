@@ -1,7 +1,9 @@
 <% title "Catalog" %>
 
 <!--show quicksearch box-->
-<%= render :partial => 'quicksearch' %>
+
+<!-- Commented out quicksearch for now until we replace it with a better search functionality - mnquintana -->
+<%# render :partial => 'quicksearch' %>
 
 <% if @equipment_models_by_category.empty? %>
   <p>Sorry, no equipment models were found.</p>
