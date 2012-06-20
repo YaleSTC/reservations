@@ -6,6 +6,12 @@
 <% if @equipment_models_by_category.empty? %>
   <p>Sorry, no equipment models were found.</p>
 <% else %>
+  <%= paginate @paginated_equipment_models_by_category %>
+  <%= form_tag catalog_path do %>
+    <%= label_tag "Items per page" %>
+    <%= select_tag :user_cat_items_per_page, options_for_select(@user_per_page_opts, session[:user_per_cat_page]) %>
+    <%= submit_tag "Go" %>
+  <% end %>
   <% @equipment_models_by_category.each do |category, equipment_models| %>
     <h2 class="catalog">
       <!--print category name-->
@@ -39,4 +45,5 @@
     <% end %>
     </ul>
   <% end %>
+  <%= paginate @paginated_equipment_models_by_category %>
 <% end %>

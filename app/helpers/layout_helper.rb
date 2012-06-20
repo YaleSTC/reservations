@@ -19,4 +19,8 @@ module LayoutHelper
   def javascript(*args)
     content_for(:head) { javascript_include_tag(*args) }
   end
+  
+  def site_title
+    @site_title = Settings.site_title.strip
+  end
 end

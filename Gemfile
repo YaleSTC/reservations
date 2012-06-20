@@ -25,6 +25,7 @@ gem 'jquery-datatables-rails'
 gem "cocoon"
 gem "ffaker"
 gem "rails3-jquery-autocomplete"
+gem "kaminari"
 
 group :development, :test do
   gem "factory_girl_rails"

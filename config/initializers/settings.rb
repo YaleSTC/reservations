@@ -1,11 +1,13 @@
 #initial app settings, editable through the app_config interface
 begin
+  Settings.site_title ||= "Reservations"
   Settings.admin_email ||= "admin@admin.admin"
   Settings.department_name ||= "School of Art Digital Technology Office"
   Settings.contact_link_text ||= "Contact Us"
   Settings.contact_link_location ||= "mailto:contact.us@change.com"
   Settings.home_link_text  ||= "Home"
   Settings.home_link_location ||= "http://clc.yale.edu"
+  Settings.default_per_cat_page ||= 20
   Settings.upcoming_checkin_email_body ||= "Dear @user@,
   Please remember to return the equipment you borrowed from us:
 

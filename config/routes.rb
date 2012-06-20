@@ -12,6 +12,8 @@ Reservations::Application.routes.draw do
   resources :categories do
     resources :equipment_models
   end
+
+  match '/users/new_button' => 'users#new_button', :as => :new_button
   
   resources :users do
     collection do
