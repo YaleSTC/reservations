@@ -165,6 +165,27 @@ class Reservation < ActiveRecord::Base
   
   def fake_reserver_id # Necessary for auto-complete feature
   end
+
+  def max_renewal_length_available
+  # available_period is what is returned by the function
+  # initialize to NIL because once it's set we escape the while loop below
+    available_period = NIL
+    renewal_length = self.equipment_model.max_renewal_length
+    while (renewal_length > 0) and (available_period == NIL)
+      # the available? method cannot accept dates with time zones, and due_date has a time zone
+      possible_dates_range = (self.due_date + 1.day).to_date..(self.due_date+(renewal_length.days)).to_date
+      if (self.equipment_model.available?(possible_dates_range) > 0)
+        # if it's available for the period, set available_period and escape loop
+        available_period = renewal_length
+      else
+        # otherwise shorten reservation renewal period by one day and try again
+        renewal_length -= 1
+      end
+    end
+    # need this case to account for when renewal_length == 0 and it escapes the while loop
+    # before available_period is set
+    return available_period = renewal_length
+  end
   
 end
 

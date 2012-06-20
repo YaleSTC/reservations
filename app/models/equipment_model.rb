@@ -131,7 +131,7 @@ class EquipmentModel < ActiveRecord::Base
     end
     overall_count
   end
-
+  
   def available_count(date)
     # get the total number of objects of this kind
     # then subtract the total quantity currently checked out, reserved, or overdue
@@ -146,8 +146,17 @@ class EquipmentModel < ActiveRecord::Base
   def available_object_select_options
     self.equipment_objects.select{|e| e.available?}.sort_by(&:name).collect{|item| "<option value=#{item.id}>#{item.name}</option>"}.join.html_safe
   end
+  
   def fake_category_id
     self
   end
-end
 
+  def max_renewal_times
+    max_renewal_times = 3 # eventually want this to be admin-pref
+  end
+  
+  def max_renewal_length # in days
+    max_renewal_length = 3 # eventually want this to be admin-pref
+  end
+
+end

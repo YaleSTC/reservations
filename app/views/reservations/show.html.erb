@@ -27,16 +27,23 @@
 		<%= @reservation.notes %>
 	</p>
 
-		<% if @reservation.checked_out %>
-    <p>
-      Checked out <%= @reservation.checked_out.to_s(:long) %>
-      by <%= @reservation.checkout_handler.nil? ? "unknown" : @reservation.checkout_handler.name %>
-    </p>
+  <% if @reservation.checked_out %>
+  <p>
+    Checked out <%= @reservation.checked_out.to_s(:long) %>
+    by <%= @reservation.checkout_handler.nil? ? "unknown" : @reservation.checkout_handler.name %>
+  </p>
   <% end %>
   <% if @reservation.checked_in %>
     <p>
       Checked in <%= @reservation.checked_in.to_s(:long) %>
       by <%= @reservation.checkin_handler.nil? ? "unknown" : @reservation.checkin_handler.name %>
+    </p>
+  <% end %>
+  <% if (@reservation.due_date.to_date == Date.today) or (@reservation.due_date.to_date == Date.tomorrow) %>
+    <p>
+    <% binding.pry %>
+      At this time, you are eligible to renew your <%= @reservation.equipment_model.name %>
+      reservation for <strong><%= @reservation.max_renewal_length_available.to_s %> days</strong>.
     </p>
   <% end %>
 
