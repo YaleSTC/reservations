@@ -209,12 +209,28 @@ class ReservationsController < ApplicationController
     @reservation =  Reservation.find(params[:id])
     if UserMailer.checkin_receipt(@reservation).deliver
       redirect_to :back
-      flash[:notice] = "Sucessfully delivered receipt email."
+      flash[:notice] = "Successfully delivered receipt email."
     else 
       redirect_to @reservation
       flash[:error] = "Unable to deliver receipt email. Please contact administrator for more support. "
     end
   end
   autocomplete :user, [:last_name, :first_name, :login], :extra_data => [:first_name, :login], :display_value => :render_name
+  
+  def renew
+    @reservation = Reservation.find(params[:id])
+    @reservation.due_date += @reservation.max_renewal_length_available.days
+    if @reservation.save
+      flash[:notice] = "Successfully updated reservation dates."
+    else
+      redirect_to @reservation
+      flash[:error] = "Unable to update reservation dates. Please contact us for support."
+    end
+    respond_to do |format|
+      format.html{redirect_to root_path}
+      format.js{render :action => "renew_box"}
+    end
+  end
+
 end
 

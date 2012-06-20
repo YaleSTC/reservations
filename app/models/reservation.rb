@@ -187,5 +187,11 @@ class Reservation < ActiveRecord::Base
     return available_period = renewal_length
   end
   
+  # this function has not been implemented anywhere and 
+  # is probably safe to delete if you're reading this
+  ##def due_date_in_howmany_days
+  ##  due_date_in_howmany_days = (self.due_date.to_date - Date.today).to_i
+  ##end
+
 end
 
