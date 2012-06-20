@@ -1,5 +1,6 @@
 #initial app settings, editable through the app_config interface
 begin
+  Settings.site_title ||= "Reservations"
   Settings.admin_email ||= "admin@admin.admin"
   Settings.department_name ||= "School of Art Digital Technology Office"
   Settings.contact_link_text ||= "Contact Us"
