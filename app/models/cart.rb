@@ -87,14 +87,10 @@ class Cart
 
   def set_start_date(date)
     @start_date = date
-    return @start_date if valid_dates?
-    valid_dates?
   end
 
   def set_due_date(date)
     @due_date = date
-    return @due_date if valid_dates?
-    valid_dates?
   end
 
   def set_reserver_id(user_id)

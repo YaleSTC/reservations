@@ -81,11 +81,10 @@ class ApplicationController < ActionController::Base
   def update_cart
     session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
     session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
-    if cart.valid?
-      flash[:notice] = "Cart dates updated."
-    else
-      # cart.errors.values
-      flash[:error] = cart.errors.values.flatten.join(", ")
+    flash[:notice] = "Cart dates updated."
+    if !cart.valid_dates?
+      flash[:error] = cart.errors.values.flatten.join("<br/>").html_safe
+      cart.errors.clear
     end
     redirect_to root_path
   end
@@ -141,7 +140,7 @@ class ApplicationController < ActionController::Base
     else
       flash[:notice] = "Only administrators can do that!"
     end
-    redirect_to request.referer   # Or use redirect_to(back). 
+    redirect_to request.referer   # Or use redirect_to(back).
  end
 
   def activate
@@ -154,7 +153,7 @@ class ApplicationController < ActionController::Base
       flash[:notice] = "Successfully reactivated " + params[:controller].singularize.titleize + ". Any parent objects have been reactivated as well."
     else
       flash[:notice] = "Only administrators can do that!"
-    end   
+    end
     redirect_to request.referer  # Or use redirect_to(back)
   end
 
