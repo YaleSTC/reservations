@@ -216,11 +216,13 @@ class ReservationsController < ApplicationController
     end
   end
   
-  autocomplete :user, [:last_name, :first_name, :login], :extra_data => [:first_name, :login], :display_value => :render_name
+  autocomplete :user, :last_name, :extra_data => [:first_name, :login], :display_value => :render_name
   
   def get_autocomplete_items(parameters)
-    items = User.select("DISTINCT CONCAT_WS(' ', first_name, last_name, login) AS full_name, first_name, last_name, login").where(["CONCAT_WS(' ', first_name, last_name, login) LIKE ?", "%#{parameters[:term]}%"])
+    items = User.select("first_name, last_name, login, id").where(["CONCAT_WS(' ', first_name, last_name, login) LIKE ?", "%#{parameters[:term]}%"])
   end
+  
+  
 
 end
 
