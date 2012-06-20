@@ -4,11 +4,9 @@ class Cart
 
   validates :reserver_id, :start_date, :due_date, :presence => true
 
-  validate :start_date_before_due_date?,
-          :not_in_past?,
-          :allowable_number_category?, :allowable_number_equipment_model?,
-          :duration_allowed?, :no_overdue_reservations?, :available?
-          #available? isn't working: NoMethodError: undefined method `+' for #<EquipmentModel:0x00000006b4da88> from /home/nmradar/.rbenv/versions/1.9.3-p194/lib/ruby/gems/1.9.1/gems/activemodel-3.2.0/lib/active_model/attribute_methods.rb:407:in `method_missing'
+  validate :start_date_before_due_date?, :not_in_past?,
+           :allowable_number_category?, :allowable_number_equipment_model?,
+           :duration_allowed?, :no_overdue_reservations?, :available?
 
   attr_accessor :reserver_id, :items, :start_date, :due_date
   attr_reader   :errors
@@ -41,9 +39,11 @@ class Cart
 
   ## End of functions for error handling
 
-  # Adds equipment model to @items (works with add_to_cart application controller method); throws errors that don't stop add_to_cart from working
   def add_equipment_model(equipment_model)
-    current_item = @items.find {|item| item.equipment_model_id == equipment_model.id}
+    current_item = nil
+    @items.find do |item|
+      current_item = item if item.equipment_model_id == equipment_model.id
+    end
     if current_item
       current_item.increment_quantity
     else
@@ -53,11 +53,15 @@ class Cart
     if !current_item.available?(@start_date..@due_date)
       errors.add(:start_date, "is before item is available")
     end
-    current_item
+    return current_item if self.valid?
+    self.valid?
   end
 
   def remove_equipment_model(equipment_model)
-    current_item = @items.find {|item| item.equipment_model_id == equipment_model.id}
+    current_item = nil
+    @items.find do |item|
+      current_item = item if item.equipment_model_id == equipment_model.id
+    end
     current_item.decrement_quantity
     if current_item.quantity == 0
       @items.delete(current_item)
@@ -83,10 +87,14 @@ class Cart
 
   def set_start_date(date)
     @start_date = date
+    return @start_date if valid_dates?
+    valid_dates?
   end
 
   def set_due_date(date)
     @due_date = date
+    return @due_date if valid_dates?
+    valid_dates?
   end
 
   def set_reserver_id(user_id)
@@ -109,10 +117,11 @@ class Cart
   # Checks all date-related validations
   def valid_dates?
     valid = true
-    valid = false if not_in_past? == false
-    valid = false if start_date_before_due_date? == false
-    valid = false if duration_allowed? == false
-    return valid
+    valid = false if !not_in_past?
+    valid = false if !start_date_before_due_date?
+    valid = false if !duration_allowed?
+    valid = false if !available?
+    valid
   end
 
   # Checks that neither start date nor due date are in the past
@@ -120,11 +129,11 @@ class Cart
     in_past = false
     if start_date < Date.today
       in_past = true
-      errors.add(:start_date, "cannot be before today")
+      errors.add(:start_date, "Start date cannot be before today")
     end
     if due_date < Date.today
       in_past = true
-      errors.add(:due_date, "cannot be before today")
+      errors.add(:due_date, "Due date cannot be before today")
     end
     return !in_past
   end
@@ -132,7 +141,7 @@ class Cart
   # Checks that start date is before due date
   def start_date_before_due_date?
     if start_date > due_date
-      errors.add(:start_date, "cannot be after due date")
+      errors.add(:start_date, "Start date cannot be after due date")
       return false
     end
     return true
@@ -145,14 +154,12 @@ class Cart
       eq_model = item.equipment_model
       category = eq_model.category
       unless category.max_checkout_length.nil? || self.duration <= category.max_checkout_length
-        errors.add(:items, ": You can only check out " + eq_model.name + " for " + category.max_checkout_length.to_s + " days")
+        errors.add(:items, "You can only check out " + eq_model.name + " for " + category.max_checkout_length.to_s + " days")
         is_too_long = true
       end
     end
     !is_too_long
   end
-
-  ## Item validations
 
   # Check that all items are available
   def available?
@@ -166,6 +173,8 @@ class Cart
     end
     available
   end
+
+  ## Item validations
 
   #Check that the reserver does not exceeds the maximum number of any equipment models
   def allowable_number_equipment_model?
@@ -236,7 +245,7 @@ class Cart
     !too_many
   end
 
-  # User Validations
+  # User Validation
 
  # Check that reserver has no overdue reservations
   def no_overdue_reservations?
