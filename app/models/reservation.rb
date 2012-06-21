@@ -188,6 +188,7 @@ class Reservation < ActiveRecord::Base
   end
   
   def times_renewed
+    # times_renewed cannot be NIL because we use it in comparisons
     times_renewed = 0 if times_renewed == NIL
   end
   
