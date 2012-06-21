@@ -33,7 +33,7 @@ class ReservationsController < ApplicationController
       redirect_to catalog_path
     else
       #this is used to initialize each reservation later
-      @reservation = Reservation.new(start_date: cart.start_date, due_date: cart.due_date)
+      @reservation = Reservation.new(start_date: cart.start_date, due_date: cart.due_date, reserver_id: cart.reserver_id)
     end
   end
 
