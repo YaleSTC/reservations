@@ -17,6 +17,7 @@ begin
 
   Thank you,
   @department_name@"
+  Settings.upcoming_checkin_email_active ||= 1
   Settings.overdue_checkout_email_body ||= "Dear @user@,
   You have missed a scheduled equipment checkout, so your equipment may be released and checked out to other students.
 

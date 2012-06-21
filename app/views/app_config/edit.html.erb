@@ -40,7 +40,7 @@
     <%= number_field_tag :default_per_cat_page, Settings.default_per_cat_page, :in => 5..100, :step => 5 %>
   </p>
   <p>
-    <%= label_tag "Upcoming checkin email body" %><br />
+    <%= label_tag "Upcoming checkin email body" %> (Active: <%= check_box_tag :upcoming_checkin_email_active %>) <br />
     <%= text_area_tag :upcoming_checkin_email_body, Settings.upcoming_checkin_email_body %>
   </p>
   <p>
