@@ -66,6 +66,9 @@ else
         c.max_per_user = r.rand(1..40)
         c.max_checkout_length = r.rand(1..40)
         c.sort_order = r.rand(100)
+        c.max_renewal_times = r.rand(0..40)
+        c.max_renewal_length = r.rand(0..40)
+        c.renewal_days_before_due = r.rand(0..9001)
       end
     end
     STDOUT.puts "#{entered_num} records successfully created!"
@@ -90,6 +93,9 @@ else
         #em.checkout_procedures = Faker::HipsterIpsum.sentences(4)
         #em.checkin_procedures = Faker::HipsterIpsum.sentences(4)
         em.category_id = category.flatten[r.rand(0...category.length)].id
+        em.max_renewal_times = r.rand(0..40)
+        em.max_renewal_length = r.rand(0..40)
+        em.renewal_days_before_due = r.rand(0..9001)
       end
     end
     STDOUT.puts "#{entered_num} records successfully created!"
