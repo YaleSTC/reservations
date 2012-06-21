@@ -170,7 +170,7 @@ class Reservation < ActiveRecord::Base
   # available_period is what is returned by the function
   # initialize to NIL because once it's set we escape the while loop below
     available_period = NIL
-    renewal_length = self.equipment_model.max_renewal_length
+    renewal_length = self.equipment_model.maximum_renewal_length
     while (renewal_length > 0) and (available_period == NIL)
       # the available? method cannot accept dates with time zones, and due_date has a time zone
       possible_dates_range = (self.due_date + 1.day).to_date..(self.due_date+(renewal_length.days)).to_date
@@ -197,21 +197,21 @@ class Reservation < ActiveRecord::Base
     # 
     # we need to test if any of the variables are set to NIL, because in that case comparision
     # is undefined; that's also why we can't set variables to these values before the if statements
-    if self.equipment_model.max_renewal_times == NIL
-      if self.equipment_model.renewal_days_before_due == NIL
+    if self.equipment_model.maximum_renewal_times == "unrestricted"
+      if self.equipment_model.maximum_renewal_days_before_due == "unrestricted"
         # if they're both NIL
         true
       else
         # due_date has a time zone, eradicate with to_date; use to_i to change to integer;
         # are we within the date range for which the button should appear?
-        ((self.due_date.to_date - Date.today).to_i < self.equipment_model.renewal_days_before_due)
+        ((self.due_date.to_date - Date.today).to_i < self.equipment_model.maximum_renewal_days_before_due)
       end
-    elsif (self.equipment_model.renewal_days_before_due == NIL)
+    elsif (self.equipment_model.maximum_renewal_days_before_due == "unrestricted")
       # implicitly, max_renewal_times != NIL, so we can check it
-      self.times_renewed < self.equipment_model.max_renewal_times
+      self.times_renewed < self.equipment_model.maximum_renewal_times
     else
       # if neither is NIL, check both
-      ((self.due_date.to_date - Date.today).to_i < self.equipment_model.renewal_days_before_due) and (self.times_renewed < self.equipment_model.max_renewal_times)
+      ((self.due_date.to_date - Date.today).to_i < self.equipment_model.maximum_renewal_days_before_due) and (self.times_renewed < self.equipment_model.maximum_renewal_times)
     end
   end
 

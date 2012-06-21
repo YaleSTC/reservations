@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120621161037) do
+ActiveRecord::Schema.define(:version => 20120621174747) do
 
   create_table "accessories_equipment_models", :force => true do |t|
     t.integer  "accessory_id"
@@ -24,10 +24,13 @@ ActiveRecord::Schema.define(:version => 20120621161037) do
     t.string   "name"
     t.integer  "max_per_user"
     t.integer  "max_checkout_length"
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
+    t.datetime "created_at",              :null => false
+    t.datetime "updated_at",              :null => false
     t.integer  "sort_order"
     t.string   "deleted_at"
+    t.integer  "max_renewal_times"
+    t.integer  "max_renewal_length"
+    t.integer  "renewal_days_before_due"
   end
 
   create_table "checkin_procedures", :force => true do |t|

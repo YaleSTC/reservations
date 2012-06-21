@@ -96,6 +96,18 @@ class EquipmentModel < ActiveRecord::Base
   def maximum_per_user
     max_per_user || category.maximum_per_user
   end
+  
+  def maximum_renewal_length
+    max_renewal_length || category.maximum_renewal_length
+  end
+  
+  def maximum_renewal_times
+    max_renewal_times || category.maximum_renewal_times
+  end
+  
+  def maximum_renewal_days_before_due
+    renewal_days_before_due || category.maximum_renewal_days_before_due
+  end
 
   def self.select_options
     self.order('name ASC').collect{|item| [item.name, item.id]}
