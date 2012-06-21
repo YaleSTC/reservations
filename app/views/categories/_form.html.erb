@@ -5,6 +5,12 @@
   <%= f.input :max_checkout_length, label: "Maximum checkout length", hint: "leave blank if unrestricted" %>
   <%= f.input :sort_order, :hint => "lowest at top" %>
   <%= f.input :deleted_at, label: "Inactive", :as => :deleted %>
+  
+  <strong>Default Renewal Options</strong>
+  <%= f.input :max_renewal_times, label: 'Maximum number of times this item may be renewed', hint: 'leave blank for unrestricted' %>
+  <%= f.input :max_renewal_length, label: 'Maximum time allotted for each renewal period', hint: 'actual renewal period will depend on availability' %>
+  <%= f.input :renewal_days_before_due, label: 'How many days before the due date should the Renew button become available?', hint: 'leave blank to give the option to renew at any time' %>
+  
   <%= f.error :base %>
   <%= f.button :submit %>
 <% end %>  

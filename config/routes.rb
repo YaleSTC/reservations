@@ -22,7 +22,9 @@ Reservations::Application.routes.draw do
     end
     resources :reservations
   end
-  
+
+  match '/reservations/renew/:id' => 'reservations#renew', :as => :renew
+
   resources :reservations do
     member do
       get :check_out

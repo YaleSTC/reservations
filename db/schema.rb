@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120619213311) do
+ActiveRecord::Schema.define(:version => 20120621174747) do
 
   create_table "accessories_equipment_models", :force => true do |t|
     t.integer  "accessory_id"
@@ -24,10 +24,13 @@ ActiveRecord::Schema.define(:version => 20120619213311) do
     t.string   "name"
     t.integer  "max_per_user"
     t.integer  "max_checkout_length"
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
+    t.datetime "created_at",              :null => false
+    t.datetime "updated_at",              :null => false
     t.integer  "sort_order"
     t.string   "deleted_at"
+    t.integer  "max_renewal_times"
+    t.integer  "max_renewal_length"
+    t.integer  "renewal_days_before_due"
   end
 
   create_table "checkin_procedures", :force => true do |t|
@@ -57,14 +60,17 @@ ActiveRecord::Schema.define(:version => 20120619213311) do
   create_table "equipment_models", :force => true do |t|
     t.string   "name"
     t.text     "description"
-    t.decimal  "late_fee",        :precision => 10, :scale => 2
-    t.decimal  "replacement_fee", :precision => 10, :scale => 2
+    t.decimal  "late_fee",                :precision => 10, :scale => 2
+    t.decimal  "replacement_fee",         :precision => 10, :scale => 2
     t.integer  "max_per_user"
-    t.boolean  "active",                                         :default => true
+    t.boolean  "active",                                                 :default => true
     t.integer  "category_id"
-    t.datetime "created_at",                                                       :null => false
-    t.datetime "updated_at",                                                       :null => false
+    t.datetime "created_at",                                                               :null => false
+    t.datetime "updated_at",                                                               :null => false
     t.string   "deleted_at"
+    t.integer  "max_renewal_times"
+    t.integer  "max_renewal_length"
+    t.integer  "renewal_days_before_due"
   end
 
   create_table "equipment_models_associated_equipment_models", :id => false, :force => true do |t|
@@ -111,6 +117,7 @@ ActiveRecord::Schema.define(:version => 20120619213311) do
     t.integer  "equipment_object_id"
     t.text     "notes"
     t.boolean  "notes_unsent",        :default => true
+    t.integer  "times_renewed"
   end
 
   create_table "sessions", :force => true do |t|

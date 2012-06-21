@@ -12,10 +12,10 @@
     <strong>Start Date:</strong>
     <%= @reservation.start_date.to_date.to_s(:long) %>
   </p>
-  <p>
+  <div id="due_date_box">
     <strong>Due Date:</strong>
     <%= @reservation.due_date.to_date.to_s(:long) %>
-  </p>
+  </div>
   <p>
     <strong>Equipment:</strong>
   	<%= @reservation.equipment_model.name %>
@@ -27,16 +27,27 @@
 		<%= @reservation.notes %>
 	</p>
 
-		<% if @reservation.checked_out %>
-    <p>
-      Checked out <%= @reservation.checked_out.to_s(:long) %>
-      by <%= @reservation.checkout_handler.nil? ? "unknown" : @reservation.checkout_handler.name %>
-    </p>
+  <% if @reservation.checked_out %>
+  <p>
+    Checked out <%= @reservation.checked_out.to_s(:long) %>
+    by <%= @reservation.checkout_handler.nil? ? "unknown" : @reservation.checkout_handler.name %>
+  </p>
   <% end %>
   <% if @reservation.checked_in %>
     <p>
       Checked in <%= @reservation.checked_in.to_s(:long) %>
       by <%= @reservation.checkin_handler.nil? ? "unknown" : @reservation.checkin_handler.name %>
+    </p>
+  <% end %>
+  <%# shows renew button if due_date is today, tomorrow, or the day after %>
+  <% if @reservation.is_eligible_for_renew? and (@reservation.max_renewal_length_available != 0)%>
+    <div id="renew_box">
+      At this time, you are eligible to renew your <%= @reservation.equipment_model.name.singularize %>
+      reservation for <strong><%= pluralize(@reservation.max_renewal_length_available, 'day') %></strong>. <%= link_to "Renew Now", renew_path, :remote => true %>
+    </div>
+  <% else %>
+    <p>
+      This item is not currently eligible for renewal. Please remember to return your <%= @reservation.equipment_model.name.singularize %> to our office on <strong><%= @reservation.due_date.to_date.to_s(:long) %></strong>.
     </p>
   <% end %>
 
