@@ -40,14 +40,14 @@
     </p>
   <% end %>
 
-	<p>
-<div id="left_stuff">	<%=link_to_function("Print this page", "javascript:print()")%></div>
+  <p>
+  <div id="left_stuff">	<%=button_to_function("Print this page", "javascript:print()")%></div>
 	<% if @reservation.status == "checked out"%> 
-<div id="right_stuff"><%=link_to "Email checkout receipt", :method => "get", :action => "checkout_email", :id => @reservation %></div>
+    <div id="right_stuff"><%=button_to "Email checkout receipt", {:controller => :reservations, :action => "checkout_email", :id => @reservation}, :method => "get" %></div>
 	<% elsif @reservation.status == "returned" %> 
-<div id="right_stuff"><%=link_to "Email return receipt", :action => "checkin_email", :id => @reservation, :method => "get" %></div>
-	<% end %>
-	</p> <br /> <br />
+    <div id="right_stuff"><%=button_to "Email return receipt", {:controller => :reservations, :action => "checkin_email", :id => @reservation}, :method => "get" %></div>
+  <% end %>
+  </p> <br /> <br />
 
 
   <p>
