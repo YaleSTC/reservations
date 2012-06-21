@@ -31,7 +31,7 @@ class Reservation < ActiveRecord::Base
   attr_accessible :reserver, :reserver_id, :checkout_handler, :checkout_handler_id, 
                   :checkin_handler, :checkin_handler_id, :start_date, :due_date, 
                   :checked_out,:checked_in, :equipment_object, :equipment_model_id, 
-                  :equipment_object_id, :notes, :notes_unsent
+                  :equipment_object_id, :notes, :notes_unsent, :times_renewed
 
   def status
     #TODO: check this logic
@@ -187,11 +187,33 @@ class Reservation < ActiveRecord::Base
     return available_period = renewal_length
   end
   
-  # this function has not been implemented anywhere and 
-  # is probably safe to delete if you're reading this
-  ##def due_date_in_howmany_days
-  ##  due_date_in_howmany_days = (self.due_date.to_date - Date.today).to_i
-  ##end
+  def times_renewed
+    times_renewed = 0 if times_renewed == NIL
+  end
+  
+  def is_eligible_for_renew?
+    # determines if a reservation is eligible for renewal, based on how many days before the due
+    # date it is and the max number of times one is allowed to renew
+    # 
+    # we need to test if any of the variables are set to NIL, because in that case comparision
+    # is undefined; that's also why we can't set variables to these values before the if statements
+    if self.equipment_model.max_renewal_times == NIL
+      if self.equipment_model.renewal_days_before_due == NIL
+        # if they're both NIL
+        true
+      else
+        # due_date has a time zone, eradicate with to_date; use to_i to change to integer;
+        # are we within the date range for which the button should appear?
+        ((self.due_date.to_date - Date.today).to_i < self.equipment_model.renewal_days_before_due)
+      end
+    elsif (self.equipment_model.renewal_days_before_due == NIL)
+      # implicitly, max_renewal_times != NIL, so we can check it
+      self.times_renewed < self.equipment_model.max_renewal_times
+    else
+      # if neither is NIL, check both
+      ((self.due_date.to_date - Date.today).to_i < self.equipment_model.renewal_days_before_due) and (self.times_renewed < self.equipment_model.max_renewal_times)
+    end
+  end
 
 end
 

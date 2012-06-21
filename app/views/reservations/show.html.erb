@@ -40,9 +40,9 @@
     </p>
   <% end %>
   <%# shows renew button if due_date is today, tomorrow, or the day after %>
-  <% if (@reservation.due_date.to_date == Date.today) or (@reservation.due_date.to_date == Date.tomorrow) or (@reservation.due_date.to_date == (Date.today + 2)) %>
+  <% if @reservation.is_eligible_for_renew? and (@reservation.max_renewal_length_available != 0)%>
     <div id="renew_box">
-      At this time, you are eligible to renew your <%= @reservation.equipment_model.name %>
+      At this time, you are eligible to renew your <%= @reservation.equipment_model.name.singularize %>
       reservation for <strong><%= @reservation.max_renewal_length_available.to_s %> days</strong>. <%= link_to "Renew Now", renew_path, :remote => true %>
     </div>
   <% end %>

@@ -27,6 +27,19 @@
     <strong>Replacement Fee:</strong>
     <%= number_to_currency(@equipment_model.replacement_fee) %>
   </p>
+  <p>
+    <strong>Maximum Renewal Period:</strong>
+    <%= @equipment_model.max_renewal_length %>
+  </p>
+  <p>
+    <strong>Maximum Renewals per Reservation:</strong>
+    <%= @equipment_model.max_renewal_times %>
+  </p>
+  <p>
+    This item is available for renewal <strong>
+    <%= @equipment_model.renewal_days_before_due %>
+    days</strong> before the reservation due date.
+  </p>
   <% if current_user.is_admin_in_adminmode? %>
     <p>
       <strong>Max Per User:</strong>

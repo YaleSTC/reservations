@@ -197,7 +197,7 @@ class ReservationsController < ApplicationController
   def checkout_email
     @reservation =  Reservation.find(params[:id])
     if UserMailer.checkout_receipt(@reservation).deliver
-      redirect_to :back
+      redirect_to @reservation
       flash[:notice] = "Successfuly delivered receipt email."
     else 
       redirect_to @reservation
@@ -220,9 +220,13 @@ class ReservationsController < ApplicationController
   def renew
     @reservation = Reservation.find(params[:id])
     @reservation.due_date += @reservation.max_renewal_length_available.days
-    if @reservation.save
-      flash[:notice] = "Successfully updated reservation dates."
+    if @reservation.times_renewed == NIL # this check can be removed? just run the else now?
+      @reservation.times_renewed = 1
     else
+      @reservation.times_renewed += 1
+    end
+
+    if !@reservation.save
       redirect_to @reservation
       flash[:error] = "Unable to update reservation dates. Please contact us for support."
     end

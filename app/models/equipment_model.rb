@@ -47,6 +47,9 @@ class EquipmentModel < ActiveRecord::Base
   validates :late_fee,     :replacement_fee, 
                            :numericality => { :greater_than_or_equal_to => 0 }
   validates :max_per_user, :numericality => { :allow_nil => true, :integer_only => true, :greater_than_or_equal_to => 1 }
+  validates :max_renewal_length,       :numericality => { :allow_nil => false, :integer_only => true, :greater_than_or_equal_to => 0 }
+  validates :max_renewal_times,
+            :renewal_days_before_due,  :numericality => { :allow_nil => true, :integer_only => true, :greater_than_or_equal_to => 0 }
 
   nilify_blanks :only => [:deleted_at]
   
@@ -55,7 +58,7 @@ class EquipmentModel < ActiveRecord::Base
   attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, 
                   :max_per_user, :document_attributes, :accessory_ids, :deleted_at, 
                   :checkout_procedures_attributes, :checkin_procedures_attributes, :photo, 
-                  :documentation
+                  :documentation, :max_renewal_times, :max_renewal_length, :renewal_days_before_due
 
   #Code necessary for Paperclip and image/pdf uploading
   has_attached_file :photo, #generates profile picture 
@@ -151,12 +154,14 @@ class EquipmentModel < ActiveRecord::Base
     self
   end
 
-  def max_renewal_times
-    max_renewal_times = 3 # eventually want this to be admin-pref
-  end
+#  def max_renewal_times # number of times you're allowed to renew an item
+#  end
   
-  def max_renewal_length # in days
-    max_renewal_length = 3 # eventually want this to be admin-pref
-  end
+#  def max_renewal_length # in days
+#    max_renewal_length = 0 if max_renewal_length == NIL # MUST SET AN INTEGER VALUE
+#  end
+  
+#  def renewal_days_before_due # in days
+#  end
 
 end

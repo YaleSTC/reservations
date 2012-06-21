@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120615215526) do
+ActiveRecord::Schema.define(:version => 20120621161037) do
 
   create_table "accessories_equipment_models", :force => true do |t|
     t.integer  "accessory_id"
@@ -73,6 +73,9 @@ ActiveRecord::Schema.define(:version => 20120615215526) do
     t.string   "documentation_content_type"
     t.integer  "documentation_file_size"
     t.datetime "documentation_updated_at"
+    t.integer  "max_renewal_times"
+    t.integer  "max_renewal_length"
+    t.integer  "renewal_days_before_due"
   end
 
   create_table "equipment_models_associated_equipment_models", :id => false, :force => true do |t|
@@ -119,6 +122,7 @@ ActiveRecord::Schema.define(:version => 20120615215526) do
     t.integer  "equipment_object_id"
     t.text     "notes"
     t.boolean  "notes_unsent",        :default => true
+    t.integer  "times_renewed"
   end
 
   create_table "sessions", :force => true do |t|
