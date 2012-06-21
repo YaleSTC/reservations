@@ -1,9 +1,10 @@
 <% title "Create Reservation" %>
 
-<%= form_for @reservation do |f| %>
+<%= simple_form_for @reservation do |f| %>
   <%= f.error_messages %>
   <p>The following equipment will be reserved by
     <% reserver_id= params[:reserver_id]%>
+    <%=f.input :reserver_id, :as => :hidden, :value => reserver_id%>
     <%# if current_user and (current_user.is_admin_in_adminmode? || current_user.is_admin_in_checkoutpersonmode? || current_user.is_checkout_person?) %>
       <%#= f.hidden_field :reserver_id, :value => current_user.id %>
       <%#= f.autocomplete_field :fake_reserver_id, autocomplete_user_last_name_reservations_path, :id_element => '#reservation_reserver_id',
@@ -17,10 +18,10 @@
     <%#end %>
     from
     <%= cart.start_date.to_s(:long) %>
-    <%= f.hidden_field :start_date, :value => cart.start_date %>
+    <%= f.input :start_date, :as => :hidden, :value => cart.start_date %>
     to
     <%= cart.due_date.to_s(:long) %>:
-    <%= f.hidden_field :due_date, :value => cart.due_date %>
+    <%= f.input :due_date, :as => :hidden, :value => cart.due_date %>
   </p>
   <p>
     <ul>
@@ -30,5 +31,5 @@
       <li style="list-style: none"><small><%= link_to "Go back to the catalog", catalog_path %></small></li>
     </ul>
   </p>
-  <p><%= f.submit "Finalize reservation" %></p>
+  <p><%= f.button :submit, "Finalize Reservation" %></p>
 <% end %>
