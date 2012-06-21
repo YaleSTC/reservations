@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">
+  <head profile="http://gmpg.org/xfn/11">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <%= csrf_meta_tag %>
+    <title><%= ("#{site_title}" + ( content_for?(:title) ? " &raquo; #{yield(:title)}" : "")).html_safe %></title>
+
+    <link rel="stylesheet" href="http://clc.yale.edu/wp-content/themes/clc/style.css" type="text/css" media="screen" />
+    <link rel="alternate" type="application/rss+xml" title="Collaborative Learning Center RSS Feed" href="http://clc.yale.edu/feed/" />
+    <link rel="pingback" href="http://clc.yale.edu/xmlrpc.php" />
+
+    <!--[if IE 6]>
+    <link rel="stylesheet" type="text/css" href="http://clc.yale.edu/wp-content/themes/clc/style_ie.css" />
+    <![endif]-->
+    <!--[if IE 7]>
+    <link rel="stylesheet" type="text/css" href="http://clc.yale.edu/wp-content/themes/clc/style_ie.css" />
+    <![endif]-->
+
+    <script src="http://www.yale.edu/its/resources/code/scripts.js" type="text/javascript"></script>
+
+    <link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://clc.yale.edu/xmlrpc.php?rsd" />
+    <link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://clc.yale.edu/wp-includes/wlwmanifest.xml" /> 
+    <meta name="generator" content="WordPress 2.6.2" />
+    <style type='text/css'>
+    <!--
+    #defaultHeader { display:block; }
+    #itgAdminHeader { display:none; }
+    #defaultFooter { display:block; }
+    #itgAdminFooter { display:none; }
+    --></style>
+    
+    <%= stylesheet_link_tag 'application', 'forms' %>
+    <%= javascript_include_tag 'application'%>
+    <%= yield(:head) %>
+  </head>
+  <body>
+    <div id="itg_wrapper">
+
+      <!-- ================ STANDARD YALE UNIVERSITY HEADER ================ -->
+      <div id="yaleHeader">
+        <h2 class="yaleHeader"><a href="http://www.yale.edu/" title="Yale University">Yale University</a></h2>
+        <div id="searchTools">
+          <ul id="yaleHeaderLinks">
+            <li><a href="http://events.yale.edu/opa/ChooseDate.jsp">Calendar</a></li>
+            <li class="last"><a href="http://www.yale.edu/search/index_a_z.html">A-Z Index</a></li>
+          </ul>
+          <form method="get" id="searchform" action="http://clc.yale.edu/">
+            <div><input type="text" value="" name="s" id="s" />
+                 <input type="submit" id="searchsubmit" value="Search" />
+            </div>
+          </form>
+          <div id="myContainer">
+            <a href="javascript:;" onclick="togLyr('my-menu','1');">
+            <img id="my-button" src="http://clc.yale.edu/wp-content/themes/clc/images/yaleHeader/y_menu_btn3.gif" alt="Y-Menu" width="28" height="21" border="0" /></a>    
+            <div id="my-wrapper">
+              <div id="my-menu" onmouseover="togLyr('my-menu','1');" onmouseout="togLyr('my-menu','0');">
+                <ul>
+                  <li><a href="http://www.yale.edu/">Yale home</a></li>
+                  <li><a href="http://www.yale.edu/about/index.html">About Yale</a></li>
+                  <li><a href="http://www.yale.edu/academics/index.html">Academic programs</a></li>
+                  <li><a href="http://www.yale.edu/admissions/index.html">Admissions</a></li>
+                  <li><a href="http://www.yale.edu/medicine/index.html">Health &amp; medicine</a></li>
+                  <li><a href="http://www.yale.edu/work/index.html">Working at Yale</a></li>
+                  <li><a href="http://www.yale.edu/newhaven/index.html">Yale &amp; New Haven</a></li>
+                  <li><a href="http://world.yale.edu">Yale &amp; the World</a></li> 
+                  <li><a href="http://www.yale.edu/tomorrow/index.html">Yale Tomorrow</a></li>
+                  <li><a href="http://www.yale.edu/opa">News</a></li>
+                </ul>
+                <ul class="lower">
+                  <li><a href="http://www.yale.edu/gateways/prosp_students.html">Prospective students</a></li>
+                  <li><a href="http://www.yale.edu/gateways/students.html">Students</a></li>
+                  <li><a href="http://www.yale.edu/gateways/parents.html">Parents</a></li>
+                  <li><a href="http://www.yale.edu/gateways/faculty.html">Faculty</a></li>
+                  <li><a href="http://www.yale.edu/gateways/staff.html">Staff</a></li>
+                  <li><a href="http://www.yale.edu/gateways/alumni.html">Alumni</a></li>
+                  <li><a href="http://www.yale.edu/gateways/foundations.html">Foundations &amp; corporations</a></li>
+                  <li><a href="http://www.yale.edu/gateways/patients.html">Patients</a></li>
+                  <li><a href="http://www.yale.edu/gateways/visitors.html">Visitors</a></li>
+                </ul>
+              </div><!-- closes my-menu -->
+            </div><!-- closes my-wrapper -->
+          </div><!-- closes myContainer -->
+        </div><!-- closes searchTools -->
+      </div><!-- closes yaleHeader -->
+      <!-- ================ END STANDARD YALE UNIVERSITY HEADER ================ -->
+      
+      <!--spacing-->
+     	<div style="clear:both;height:0px;"></div>
+      
+      <!--header image-->
+      <div id="header">
+      	<a href="http://clc.yale.edu/"><img class="headimg" src="http://clc.yale.edu/wp-content/themes/clc/images/clcheader.jpg" alt="Collaborative Learning Center" /></a>
+        <div id="itgAdminHeader"></div>
+      </div>
+
+      <!--flash messages, if any-->
+      <%- flash.each do |name, msg| -%>
+        <%= content_tag :div, msg, :id => "flash_#{name}" %>
+      <%- end -%>
+      
+      <!-- ================ LEFT SIDEBAR ================ -->
+    	<div id="sidebar-left">
+    	  <div id="sidebarbottom">
+      	  <ul>
+  			    <ul>
+              <li><%= link_to "Catalog", catalog_path %></li>
+            <% if current_user.nil? %>
+              <li><%= link_to "Sign In" %></li>
+            <% elsif current_user.is_admin_in_adminmode? %>
+              <li><%= link_to "Users", users_path %></li>
+            <% else %>
+              <li><%= link_to "My Profile", user_path(current_user) %></li>
+            <% end %>
+            <% if current_user and current_user.is_admin_in_adminmode? %>
+              <li><%= link_to "Categories", categories_path %></li>
+              <li><%= link_to "Equipment Models", equipment_models_path %></li>
+            <% end %>
+            <% if current_user and current_user.can_checkout? %>
+              <li><%= link_to "Equipment Objects", equipment_objects_path %></li>
+            <% end %>
+              <li><%= link_to "Reservations", reservations_path %></li>
+            <% if current_user and current_user.is_admin_in_adminmode? %>
+              <li><%= link_to "App Settings", edit_app_config_path %></li>
+            <% end %>
+              <li><%= link_to Settings.home_link_text, Settings.home_link_location %></li>
+              <li><%= link_to Settings.contact_link_text, Settings.contact_link_location %></li>
+              
+              <!-- ==== VIEW-AS MODE ==== -->
+			      <% if current_user and current_user.is_admin? %>
+		          <li>View as:</li>
+		          <% if current_user.adminmode? %>
+              Admin
+		          <% else %>
+              <%= link_to 'Admin', {:a_mode => 'ON'}%>
+              <% end %>
+		          <br>
+		          <% if current_user.checkoutpersonmode? %>
+              Checkout Person
+		          <% else %>
+              <%= link_to 'Checkout Person', {:c_mode => 'ON'}%>
+              <% end %>
+		          <br>
+		          <% if current_user.normalusermode? %>
+              Normal User
+		          <% else %>
+              <%= link_to 'Normal User', {:n_mode => 'ON'}%>
+              <% end %>
+		          <br>
+		          <% if current_user.bannedmode? %>
+              Banned User
+		          <% else %>
+              <%= link_to 'Banned User', {:b_mode => 'ON'}%>
+              <% end %>
+	          <% end %>
+              <!-- ==== END VIEW-AS MODE ==== -->
+            </ul>
+          </ul>
+          <%= yield(:left_sidebar) %>
+    	  </div>
+    	</div>
+      <!-- ================ END LEFT SIDEBAR ================ -->
+
+    	<!-- ================ MAIN PAGE CONTENT ================ -->
+      <div id="content">
+    	  <%- if show_title? -%>
+          <h1><%= yield(:title) %></h1>
+        <%- end -%>
+    		<%= content_for?(:body) ? yield(:body) : yield %>
+			</div>
+      <!-- ================ END MAIN PAGE CONTENT ================ -->
+
+      <!-- ================ RIGHT SIDEBAR ================ -->
+    	<div id="sidebar-right">
+    	  <div id="sidebarbottom">
+    	  <% if current_user %>
+    	    <div id="logged_in">
+    	      logged in as <%= link_to current_user.name, current_user %>
+    	      <%= link_to "[log out]", logout_path %>
+  	      </div>
+    	  <% end %>
+      	    <%= render :partial => 'reservations/cart_sidebar' %>
+    	    <br style="clear: both" />
+    	    <%= render :partial => 'reservations/reservations_sidebar' if current_user %>
+  	    <% unless current_user.nil? or current_user.reservations.empty? %>
+    	    <div id="equipment">
+            <h3>Your current equipment:</h3>
+            <%= render :partial => 'users/current_equipment', :object => current_user %>
+          </div>
+  	    <% end %>
+        <%= yield(:right_sidebar) %>
+    	  </div>
+    	</div>
+      <!-- ================ END RIGHT SIDEBAR ================ -->
+      
+      <hr />
+
+      <!-- ================ FOOTER ================ -->
+      <div id="footer">
+        <div id="defaultFooter">
+          <div id="yaleshield"></div>
+          <div class="ftext" align="right">
+            &copy; 2009 Yale University<br />
+            This site powered by <a href="http://wordpress.org/">WordPress</a><br />
+            <a href="http://clc.yale.edu/feed/">News Items (RSS)</a> and <a href="http://clc.yale.edu/comments/feed/">Comments (RSS)</a>
+          </div>
+        </div>
+        <div id="itgAdminFooter"></div>
+      </div>
+      <!-- ================ END FOOTER ================ -->
+    
+    </div><!-- closes itg_wrapper -->
+		  
+    <script src="http://stats.wordpress.com/e-200940.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      st_go({blog:'3222115',v:'ext',post:'2'});
+      var load_cmc = function(){linktracker_init(3222115,2,2);};
+      if ( typeof addLoadEvent != 'undefined' ) addLoadEvent(load_cmc);
+      else load_cmc();
+    </script>
+
+  </body>
+</html>

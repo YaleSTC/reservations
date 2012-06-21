@@ -23,4 +23,16 @@ module LayoutHelper
   def site_title
     @site_title = Settings.site_title.strip
   end
+  
+  def favicon_path
+    @favicon_path = "favicon.ico"
+  end
+  
+  def reservations_count
+    if current_user.is_admin? || current_user.is_checkout_person?
+      @count = Reservation.where(:checked_in => nil).size
+    else
+      @count = Reservation.where(:reserver_id => current_user.id).size
+    end
+  end
 end

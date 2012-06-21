@@ -10,9 +10,14 @@
 //= require_tree .
 //= require cocoon
 //= require autocomplete-rails
+//= require bootstrap
 
 $(document).ready(function() {
   $('#table_woo').dataTable()
+
+	$(".alert .close").click( function() {
+	     $(this).parent().addClass("fade");
+	});
 });
 
 $.datepicker.setDefaults({
