@@ -1,10 +1,15 @@
 <div id="cart">
   <h2>Your cart</h2>
 <%= form_tag update_cart_path do %>
-   <%= label_tag :reserver_id, 'Reserver'%><br />
-   <%= autocomplete_field_tag 'fake_reserver_id', '', autocomplete_user_last_name_reservations_path, :size => 30, :update_elements => {:id => '#reserver_id'}
+  <%= label_tag :reserver_id, 'Reserver'%><br />
+  <% if current_user and (current_user.is_admin_in_adminmode? || current_user.is_admin_in_checkoutpersonmode? || current_user.is_checkout_person?) %>
+    <%= autocomplete_field_tag 'fake_reserver_id', '', autocomplete_user_last_name_reservations_path, :size => 30, :update_elements => {:id => '#reserver_id'}
     %>
-   <%= hidden_field_tag 'reserver_id' %>
+    <%= hidden_field_tag 'reserver_id' %>
+  <% else %>
+    <%= text_field_tag 'fake_reserver_id', current_user.name, :value => current_user.name, :disabled => true%>
+    <%= hidden_field_tag 'reserver_id', current_user.id%>
+  <% end %>
 <!--list items in cart-->
 <%= render :partial => 'reservations/list_items_in_cart' %>
 
