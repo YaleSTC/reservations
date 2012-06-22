@@ -1,29 +1,17 @@
 <div id="cart">
   <h2>Your cart</h2>
-<%= form_tag update_cart_path do %>
-  <%= label_tag :reserver_id, 'Reserver'%><br />
-  <% if current_user && (current_user.is_admin_in_adminmode? || current_user.is_admin_in_checkoutpersonmode? || current_user.is_checkout_person?) %>
-    <%= autocomplete_field_tag 'fake_reserver_id', User.find(cart.reserver_id).render_name, autocomplete_user_last_name_reservations_path, :size => 30, :update_elements => {:id => '#reserver_id'} %>
-    <%= hidden_field_tag 'reserver_id' %>
-  <% elsif ! current_user %>
-      Please sign in <br>
-  <%else %>
-    <%= text_field_tag 'fake_reserver_id', current_user.name, :value => current_user.name, :disabled => true%>
-    <%= hidden_field_tag 'reserver_id', current_user.id%>
-  <% end %>
-<!--list items in cart-->
-<%= render :partial => 'reservations/list_items_in_cart' %>
+<%= form_tag update_cart_path, :remote => true do %>
+
+<% end %>
+
 
 <!--allow user to set start/end dates-->
 <%= render :partial => 'reservations/cart_dates' %>
 
+<!--list items in cart-->
+<%= render :partial => 'reservations/list_items_in_cart' %>
 <br />
 
-<!--print Empty cart and Make reservation buttons-->
-<% if cart.items.size > 0 %>
-  <p>
-  <%= button_to "Empty cart", empty_cart_path %>
-  <%= button_to "Make reservation", new_reservation_path %>
-  </p>
-<% end %>
+<!--print Make reservation button-->
+<%= button_to "Make reservation", new_reservation_path %>
 </div>

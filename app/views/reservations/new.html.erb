@@ -3,14 +3,14 @@
 <%= simple_form_for @reservation do |f| %>
   <%= f.error_messages %>
   <p>The following equipment will be reserved by
-  <%= f.input :fake_reserver_id, :disabled => true, :label => false, :input_html => {:value => User.find(cart.reserver_id).render_name} %>
+  <%= User.find(cart.reserver_id).name %>
+  from
+  <%= cart.start_date.to_s(:long) %> to
+  <%= cart.due_date.to_s(:long) %>:
+  <%# hidden fields needed for data submission %>
   <%= f.input :reserver_id, :as => :hidden, :value => cart.reserver_id %>
-    from
-    <%= cart.start_date.to_s(:long) %>
-    <%= f.input :start_date, :as => :hidden, :value => cart.start_date %>
-    to
-    <%= cart.due_date.to_s(:long) %>:
-    <%= f.input :due_date, :as => :hidden, :value => cart.due_date %>
+  <%= f.input :start_date, :as => :hidden, :value => cart.start_date %>
+  <%= f.input :due_date, :as => :hidden, :value => cart.due_date %>
   </p>
   <p>
     <ul>
