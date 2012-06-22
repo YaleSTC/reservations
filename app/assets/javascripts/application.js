@@ -33,13 +33,3 @@ $.datepicker.setDefaults({
 $('.submittable').live('change', function() {
   $(this).parents('form:first').submit();
 });
-
-//var minDateDueFetch = document.getElementById('cart_start_date_cart');
-
-/*
-$("#cart_due_date_cart").click({
-  var minDateDueFetch = document.getElementById('cart_start_date_cart');
-  var minDateDue = new Date(Date.parse(minDateDueFetch.value,"mm/dd/yyyy"));
-  $('#cart_due_date_cart').datepicker('option', 'minDate', minDateDue);
-});
-*/

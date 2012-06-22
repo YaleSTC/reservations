@@ -86,7 +86,10 @@ class ApplicationController < ActionController::Base
       flash[:error] = cart.errors.values.flatten.join("<br/>").html_safe
       cart.errors.clear
     end
-    redirect_to root_path
+    respond_to do |format|
+      format.html{redirect_to root_path}
+      format.js{render :file => "reservations/cart_dates_js"}
+    end
   end
 
   def empty_cart

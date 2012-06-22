@@ -26,12 +26,5 @@ module ApplicationHelper
       Category.find(currentModel.category_id).revive #Reactivate the category
     end
   end
-  
-  def min_due_date(start_date,due_date)
-    if due_date < start_date
-      due_date = start_date
-    end
-    return due_date
-  end
-  
+
 end
