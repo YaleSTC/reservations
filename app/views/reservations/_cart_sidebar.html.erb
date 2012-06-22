@@ -1,11 +1,21 @@
 <div id="cart">
   <h2>Your cart</h2>
-
+<%= form_tag update_cart_path do %>
+  <%= label_tag :reserver_id, 'Reserver'%><br />
+  <% if current_user && (current_user.is_admin_in_adminmode? || current_user.is_admin_in_checkoutpersonmode? || current_user.is_checkout_person?) %>
+    <%= autocomplete_field_tag 'fake_reserver_id', User.find(cart.reserver_id).render_name, autocomplete_user_last_name_reservations_path, :size => 30, :update_elements => {:id => '#reserver_id'} %>
+    <%= hidden_field_tag 'reserver_id' %>
+  <% elsif ! current_user %>
+      Please sign in <br>
+  <%else %>
+    <%= text_field_tag 'fake_reserver_id', current_user.name, :value => current_user.name, :disabled => true%>
+    <%= hidden_field_tag 'reserver_id', current_user.id%>
+  <% end %>
 <!--list items in cart-->
 <%= render :partial => 'reservations/list_items_in_cart' %>
 
 <!--allow user to set start/end dates-->
-<%= form_tag update_cart_path do %>
+
   <p>
     <%= label_tag :start_date, 'Start of reservation' %><br />
     <%= datepicker_input "cart", "start_date_cart", :value => cart.start_date.strftime('%m/%d/%Y') %>
@@ -14,7 +24,7 @@
     <%= label_tag :due_date, 'End of reservation' %><br />
     <%= datepicker_input "cart", "due_date_cart", :value => cart.due_date.strftime('%m/%d/%Y') %>
   </p>
-  <p><%= submit_tag "Update dates", :style => 'float: right' %></p>
+  <p><%= submit_tag "Update cart", :style => 'float: right' %></p>
 <% end %>
 
 <br>

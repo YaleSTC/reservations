@@ -35,7 +35,7 @@ class ApplicationController < ActionController::Base
 
   def cart
     session[:cart] ||= Cart.new
-    if session[:cart].reserver_id.nil?
+    if session[:cart].reserver_id.nil? || session[:cart].reserver_id == ""
       session[:cart].set_reserver_id(current_user.id) if current_user
     end
     session[:cart]
@@ -80,12 +80,13 @@ class ApplicationController < ActionController::Base
   def update_cart
     session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
     session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
+    session[:cart].set_reserver_id(params[:reserver_id])
     flash[:notice] = "Cart dates updated."
     if !cart.valid_dates?
       flash[:error] = cart.errors.values.flatten.join("<br/>").html_safe
       cart.errors.clear
     end
-    redirect_to root_path
+    redirect_to :back
   end
 
   def empty_cart
