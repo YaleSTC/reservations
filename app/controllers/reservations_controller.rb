@@ -69,7 +69,6 @@ class ReservationsController < ApplicationController
   end
 
   def update
-
     error_msgs = ""
     if params[:commit] == "Check out equipment"
 

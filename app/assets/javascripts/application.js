@@ -30,6 +30,6 @@ $.datepicker.setDefaults({
    prevText: ''
 });
 
-$('.submittable').live('change', function() {
+$('.submittable').on('change', function() {
   $(this).parents('form:first').submit();
 });
