@@ -3,19 +3,8 @@
 <%= simple_form_for @reservation do |f| %>
   <%= f.error_messages %>
   <p>The following equipment will be reserved by
-    <% reserver_id= params[:reserver_id]%>
-    <%=f.input :reserver_id, :as => :hidden, :value => reserver_id%>
-    <%# if current_user and (current_user.is_admin_in_adminmode? || current_user.is_admin_in_checkoutpersonmode? || current_user.is_checkout_person?) %>
-      <%#= f.hidden_field :reserver_id, :value => current_user.id %>
-      <%#= f.autocomplete_field :fake_reserver_id, autocomplete_user_last_name_reservations_path, :id_element => '#reservation_reserver_id',
-      :value => current_user.render_name %>
-      or 
-      <%#= link_to "New User", new_button_path, :remote => true %>
-      <div id="addUser"></div>
-    <%#else %>
-      <%#= current_user.name %>
-      <%#= f.hidden_field :reserver_id, :value => current_user.id %>
-    <%#end %>
+  <%= f.input :fake_reserver_id, :disabled => true, :label => false, :input_html => {:value => User.find(cart.reserver_id).render_name} %>
+  <%= f.input :reserver_id, :as => :hidden, :value => cart.reserver_id %>
     from
     <%= cart.start_date.to_s(:long) %>
     <%= f.input :start_date, :as => :hidden, :value => cart.start_date %>
