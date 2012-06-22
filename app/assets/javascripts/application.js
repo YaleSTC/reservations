@@ -27,4 +27,9 @@ $(document).ready(function() {
 
 $.datepicker.setDefaults({
    minDate: new Date(),
-   prevText: '' });
+   prevText: ''
+});
+
+$('.submittable').live('change', function() {
+  $(this).parents('form:first').submit();
+});

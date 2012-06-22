@@ -26,5 +26,5 @@ module ApplicationHelper
       Category.find(currentModel.category_id).revive #Reactivate the category
     end
   end
-  
+
 end
