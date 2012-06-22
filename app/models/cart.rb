@@ -87,10 +87,12 @@ class Cart
 
   def set_start_date(date)
     @start_date = date
+    fix_due_date
   end
 
   def set_due_date(date)
     @due_date = date
+    fix_due_date
   end
 
   def set_reserver_id(user_id)
@@ -103,6 +105,12 @@ class Cart
 
   def reserver
     reserver = User.find(@reserver_id)
+  end
+
+  def fix_due_date
+    if @start_date > @due_date
+      @due_date = @start_date
+    end
   end
 
   ## VALIDATIONS ##
@@ -136,7 +144,7 @@ class Cart
   # Checks that start date is before due date
   def start_date_before_due_date?
     if start_date > due_date
-      errors.add(:start_date, "Start date cannot be after due date")
+      errors.add(:due_date, "Due date cannot be before start date.")
       return false
     end
     return true

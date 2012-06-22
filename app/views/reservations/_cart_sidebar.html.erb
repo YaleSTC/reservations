@@ -15,19 +15,9 @@
 <%= render :partial => 'reservations/list_items_in_cart' %>
 
 <!--allow user to set start/end dates-->
+<%= render :partial => 'reservations/cart_dates' %>
 
-  <p>
-    <%= label_tag :start_date, 'Start of reservation' %><br />
-    <%= datepicker_input "cart", "start_date_cart", :value => cart.start_date.strftime('%m/%d/%Y') %>
-  </p>
-  <p>
-    <%= label_tag :due_date, 'End of reservation' %><br />
-    <%= datepicker_input "cart", "due_date_cart", :value => cart.due_date.strftime('%m/%d/%Y') %>
-  </p>
-  <p><%= submit_tag "Update cart", :style => 'float: right' %></p>
-<% end %>
-
-<br>
+<br />
 
 <!--print Empty cart and Make reservation buttons-->
 <% if cart.items.size > 0 %>
