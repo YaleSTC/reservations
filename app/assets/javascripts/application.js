@@ -25,7 +25,7 @@ $(document).ready(function() {
 	  "sPaginationType": "bootstrap",
 		"sScrollX": "100%",
 		"aoColumnDefs": [
-		      { "bSortable": false, "aTargets": [ 2, 3 ] }
+		      { "bSortable": false, "aTargets": [ "no_sort" ] }
 		    ]
 	});
 
