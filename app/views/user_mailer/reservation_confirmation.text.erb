@@ -1,1 +1,4 @@
-<%= replace_variables(Settings.reservation_confirmation_email_body) %>
+<%#= replace_variables(Settings.reservation_confirmation_email_body) %>
+<% @complete_reservation.each do |r| %>
+<%= r.reserver.name %>
+<% end %>

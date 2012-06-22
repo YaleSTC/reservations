@@ -37,22 +37,8 @@ class ReservationsController < ApplicationController
     end
   end
 
-# old method that does not split reservations by item, needs to be deleted by end of summer 12
-  # def create
-  #   @reservation = Reservation.new(params[:reservation])
-  #   cart.items.each do |item|
-  #     @reservation.equipment_models_reservations << EquipmentModelsReservation.new(:equipment_model_id => item.equipment_model.id, :quantity => item.quantity)
-  #   end
-  #   if @reservation.save
-  #     flash[:notice] = "Successfully created reservation."
-  #     session[:cart] = Cart.new
-  #     redirect_to @reservation
-  #   else
-  #     render :action => 'new'
-  #   end
-  # end
-
   def create
+    complete_reservation = []
     #using http://stackoverflow.com/questions/7233859/ruby-on-rails-updating-multiple-models-from-the-one-controller as inspiration
     respond_to do |format|
       Reservation.transaction do
@@ -63,14 +49,14 @@ class ReservationsController < ApplicationController
               @reservation = Reservation.new(params[:reservation])
               @reservation.equipment_model =  emodel
               @reservation.save
+              complete_reservation << @reservation
             end
           end
-          #We do want an email to be sent, but this needs to be tweaked - it currently doesn't work ~Casey
-          #UserMailer.reservation_confirmation(@reservation).deliver
           session[:cart] = Cart.new
+          UserMailer.reservation_confirmation(complete_reservation).deliver
           format.html {redirect_to catalog_path, :flash => {:notice => "Successfully created reservation. " } }
-        rescue
-          format.html {redirect_to catalog_path, :flash => {:error => "Oops, something went wrong with making your reservation."} }
+        #rescue
+         # format.html {redirect_to catalog_path, :flash => {:error => "Oops, something went wrong with making your reservation."} }
           raise ActiveRecord::Rollback
         end
       end
