@@ -22,7 +22,6 @@ class ApplicationController < ActionController::Base
 
   def current_user
     @current_user ||= User.find_by_login(session[:cas_user]) if session[:cas_user]
-	User.current ||= @current_user
   end
 
   #-------- before_filter methods --------

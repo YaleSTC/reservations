@@ -18,14 +18,6 @@ class User < ActiveRecord::Base
                           :format      => { :with => /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i }
   validates :nickname,    :format      => { :with => /^[^0-9`!@#\$%\^&*+_=]+$/ },
                           :allow_blank => true
-  
-  def self.current
-    Thread.current[:user]
-  end
-  
-  def self.current=(user)
-    Thread.current[:user] = user
-  end
 
   def name
      [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name].join(" ")

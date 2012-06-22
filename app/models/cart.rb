@@ -102,7 +102,6 @@ class Cart
   end
 
   def reserver
-    @reserver_id ||= User.current.id
     reserver = User.find(@reserver_id)
   end
 
