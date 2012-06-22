@@ -88,7 +88,7 @@ class ApplicationController < ActionController::Base
     end
     respond_to do |format|
       format.html{redirect_to root_path}
-      format.js{render :file => "reservations/cart_dates_js"}
+      format.js{render :template => "reservations/cart_dates_js"}
     end
   end
 
