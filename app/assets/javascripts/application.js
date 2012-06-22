@@ -24,7 +24,7 @@ $(document).ready(function() {
 	  "sDom": "<'row'<'span3'l><'span4'f>r>t<'row'<'span2'i><'span5'p>>",
 	  "sPaginationType": "bootstrap",
 		"sScrollX": "100%",
-		"aoColumnDefs": [ 
+		"aoColumnDefs": [
 		      { "bSortable": false, "aTargets": [ 2, 3 ] }
 		    ]
 	});
