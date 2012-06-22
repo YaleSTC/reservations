@@ -1,4 +1,4 @@
-<%= simple_form_for @document do |f| %>
+<%= simple_form_for @document, :html => { :class => "form-horizontal" } do |f| %>
   <%= f.error_notification %>
     <%= f.input :name %>
     <%= f.input :data_file_name %>

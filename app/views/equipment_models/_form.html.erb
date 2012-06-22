@@ -1,4 +1,4 @@
-<%= simple_form_for @equipment_model, :html => { :multipart => true } do |f| %>
+<%= simple_form_for @equipment_model, :html => { :multipart => true, :class => "form-horizontal" } do |f| %>
 
 <!-- Paperclip currently does not support simple form and validations and will fail silently. 
 This code is necessary until they introduce a bug fix (Github issue #266) -->
