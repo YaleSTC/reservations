@@ -49,13 +49,13 @@
      | <%= link_to ("New "+@equipment_model.name.singularize), new_equipment_model_equipment_object_path(@equipment_model) %>
      | <%= link_to "View All Equipment Objects", equipment_objects_path %> |
     <% else %>
-      <%= link_to "New Equipment Object", new_equipment_object_path %>
+      <%= link_to "New Equipment Object", new_equipment_object_path, :class => "btn btn-primary" %>
     <% end %>
 
     <% if params[:show_deleted] %>
-   | <%= link_to "Hide Deactivated Objects", equipment_objects_path %>
+   | <%= link_to "Hide Deactivated Objects", equipment_objects_path, :class => "btn" %>
   <% else %>
-   | <%= link_to "Show Deactivated Objects", equipment_objects_path(:show_deleted => true) %>
+   | <%= link_to "Show Deactivated Objects", equipment_objects_path(:show_deleted => true), :class => "btn" %>
   <% end %>
   </p>
 <% end %>

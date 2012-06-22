@@ -28,10 +28,10 @@
 </table>
 <hr />
 <p> 
-  <%= link_to "New User", new_user_path %> | 
+  <%= link_to "New User", new_user_path, :class => "btn btn-primary" %> | 
   <% if params[:show_deleted] %>
-    <%= link_to "Hide Deactivated Users from List", users_path %>
+    <%= link_to "Hide Deactivated Users from List", users_path, :class => "btn" %>
   <% else %>
-    <%= link_to "Show Deactivated Users in List", users_path(:show_deleted => true) %>
+    <%= link_to "Show Deactivated Users in List", users_path(:show_deleted => true), :class => "btn" %>
   <% end %>
 </p>
