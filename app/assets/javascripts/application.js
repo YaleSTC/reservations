@@ -3,18 +3,33 @@
 //= require jquery
 //= require jquery_ujs
 //= require jquery-ui
+//= require_self
+//= require cocoon
+//= require autocomplete-rails
 //= require dataTables/jquery.dataTables
 //= require dataTables_numhtml_sort.js
 //= require dataTables_numhtml_detect.js
-//= require_self
-//= require_tree .
-//= require cocoon
-//= require autocomplete-rails
+//= require dataTables/jquery.dataTables.bootstrap
 //= require bootstrap
 
 $(document).ready(function() {
-  $('#table_woo').dataTable()
+   $('.toggleLink').click(function() {
+     $('#quicksearch_hidden').toggle('slow', function() {
+       // Animation complete.
+     });
+   });
+ 
+// For DataTables and Bootstrap
+	$('.datatable').dataTable({
+	  "sDom": "<'row'<'span3'l><'span4'f>r>t<'row'<'span2'i><'span5'p>>",
+	  "sPaginationType": "bootstrap",
+		"sScrollX": "100%",
+		"aoColumnDefs": [ 
+		      { "bSortable": false, "aTargets": [ 2, 3 ] }
+		    ]
+	});
 
+// For fading out flash notices
 	$(".alert .close").click( function() {
 	     $(this).parent().addClass("fade");
 	});

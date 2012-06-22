@@ -18,3 +18,4 @@ body { padding-top: 60px; }
 }
 
 .nav > li > a { display: inline-block;}
+.ui-datepicker { @extend .well; }
