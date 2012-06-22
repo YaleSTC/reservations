@@ -41,5 +41,5 @@ group :assets do
   gem 'coffee-rails'
   gem 'uglifier'
   gem 'bootstrap-sass', '~> 2.0.3'
-  gem 'font-awesome-rails'
+  gem 'font-awesome-sass-rails'
 end

@@ -83,8 +83,9 @@ GEM
       railties (>= 3.0.0)
     ffaker (1.14.0)
     ffi (1.0.11)
-    font-awesome-rails (0.2.1)
-      railties (~> 3.1)
+    font-awesome-sass-rails (2.0.0.0)
+      railties (>= 3.1.1)
+      sass-rails (>= 3.1.1)
     hike (1.2.1)
     i18n (0.6.0)
     journey (1.0.4)
@@ -227,7 +228,7 @@ DEPENDENCIES
   dynamic_form
   factory_girl_rails
   ffaker
-  font-awesome-rails
+  font-awesome-sass-rails
   jquery-datatables-rails
   jquery-rails
   jquery_datepicker
