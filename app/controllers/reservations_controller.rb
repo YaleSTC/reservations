@@ -209,20 +209,38 @@ class ReservationsController < ApplicationController
     @reservation =  Reservation.find(params[:id])
     if UserMailer.checkin_receipt(@reservation).deliver
       redirect_to :back
-      flash[:notice] = "Sucessfully delivered receipt email."
+      flash[:notice] = "Successfully delivered receipt email."
     else 
       redirect_to @reservation
       flash[:error] = "Unable to deliver receipt email. Please contact administrator for more support. "
     end
   end
-  
+
   autocomplete :user, :last_name, :extra_data => [:first_name, :login], :display_value => :render_name
   
   def get_autocomplete_items(parameters)
     items = User.select("first_name, last_name, login, id").where(["CONCAT_WS(' ', first_name, last_name, login) LIKE ?", "%#{parameters[:term]}%"])
   end
-  
-  
+
+  def renew
+    @reservation = Reservation.find(params[:id])
+    @reservation.due_date += @reservation.max_renewal_length_available.days
+    binding.pry
+    if @reservation.times_renewed == NIL # this check can be removed? just run the else now?
+      @reservation.times_renewed = 1
+    else
+      @reservation.times_renewed += 1
+    end
+
+    if !@reservation.save
+      redirect_to @reservation
+      flash[:error] = "Unable to update reservation dates. Please contact us for support."
+    end
+    respond_to do |format|
+      format.html{redirect_to root_path}
+      format.js{render :action => "renew_box"}
+    end
+  end
 
 end
 

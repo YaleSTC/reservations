@@ -27,6 +27,32 @@
     <strong>Replacement Fee:</strong>
     <%= number_to_currency(@equipment_model.replacement_fee) %>
   </p>
+  <% if (@equipment_model.maximum_renewal_length != 0) and (@equipment_model.maximum_renewal_times != 0) %>
+    <p>
+      <strong>Maximum Renewal Period:</strong>
+      <%= pluralize(@equipment_model.maximum_renewal_length, 'day') %>
+    </p>
+    <% if @equipment_model.maximum_renewal_days_before_due != "unrestricted" %>
+      <p>
+        This item is available for renewal <strong>
+        <%= pluralize(@equipment_model.maximum_renewal_days_before_due, 'day') %>
+        </strong> before the reservation due date.
+      </p>
+    <% else %>
+      <p>
+        This item may be renewed <strong>at any time</strong>.
+      </p>
+    <% end %>
+    <p>
+      <strong>Maximum Renewals per Reservation:</strong>
+      <%= @equipment_model.maximum_renewal_times %>
+    </p>
+  <% else %>
+    <p>
+      <strong><em>This item is not available for renewal.</em></strong>
+    </p>
+  <% end %>
+
   <% if current_user.is_admin_in_adminmode? %>
     <p>
       <strong>Max Per User:</strong>

@@ -19,8 +19,13 @@ This code is necessary until they introduce a bug fix (Github issue #266) -->
   <%= f.input :replacement_fee %>
   <%= f.input :max_per_user, label: "Maximum per user", hint: "leave blank to default to category value" %>
   <%= f.input :deleted_at, label: "Inactive", as: :deleted %>
+  
+  <strong>Renewal Options</strong>
+  <%= f.input :max_renewal_times, label: 'Maximum number of times this item may be renewed', hint: 'leave blank to default to category value' %>
+  <%= f.input :max_renewal_length, label: 'Maximum time allotted for each renewal period', hint: 'actual renewal period will depend on availability' %>
+  <%= f.input :renewal_days_before_due, label: 'How many days before the due date should the Renew button become available?', hint: 'leave blank to default to category value' %>
 
-  Checkout Procedures
+  <strong>Checkout Procedures</strong>
   <%= f.simple_fields_for :checkout_procedures do |procedure| %>
     <%= render 'checkout_procedure_fields', :f => procedure %>
   <% end %>

@@ -4,12 +4,14 @@
 //= require jquery_ujs
 //= require jquery-ui
 //= require dataTables/jquery.dataTables
+//= require dataTables_numhtml_sort.js
+//= require dataTables_numhtml_detect.js
 //= require_self
 //= require_tree .
 //= require cocoon
 //= require autocomplete-rails
 
-
+/* quicksearch is gone
 $(document).ready(function() {
    $('.toggleLink').click(function() {
      $('#quicksearch_hidden').toggle('slow', function() {
@@ -17,7 +19,8 @@ $(document).ready(function() {
      });
    });
  });
- 
+*/
+
 $(document).ready(function() {
   $('#table_woo').dataTable()
 });
