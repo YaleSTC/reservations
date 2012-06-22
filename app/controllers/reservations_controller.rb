@@ -220,6 +220,8 @@ class ReservationsController < ApplicationController
   
   def get_autocomplete_items(parameters)
     items = User.select("first_name, last_name, login, id").where(["CONCAT_WS(' ', first_name, last_name, login) LIKE ?", "%#{parameters[:term]}%"])
+    #items = User.select("first_name, last_name, login, id").where(["first_name || ' ' || last_name || ' ' || login LIKE ?", "%#{parameters[:term]}%])
+    # The first line is MYSQL, the second one is Postgres/plain SQL#
   end
 
   def renew
