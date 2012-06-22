@@ -27,4 +27,11 @@ module ApplicationHelper
     end
   end
   
+  def min_due_date(start_date,due_date)
+    if due_date < start_date
+      due_date = start_date
+    end
+    return due_date
+  end
+  
 end
