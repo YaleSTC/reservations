@@ -11,23 +11,12 @@
 //= require cocoon
 //= require autocomplete-rails
 
-/* quicksearch is gone
-$(document).ready(function() {
-   $('.toggleLink').click(function() {
-     $('#quicksearch_hidden').toggle('slow', function() {
-       // Animation complete.
-     });
-   });
- });
-*/
-
 $(document).ready(function() {
   $('#table_woo').dataTable()
 });
 
 $.datepicker.setDefaults({
    minDate: new Date(),
-   prevText: ''
 });
 
 $('.submittable').on('change', function() {
