@@ -36,7 +36,8 @@ class Category < ActiveRecord::Base
   end
   
   def maximum_checkout_length
-    self.max_checkout_length ? ("#{max_checkout_length} days") : "unrestricted"
+    max_checkout_length || "unrestricted"
+#    self.max_checkout_length ? ("#{max_checkout_length} days") : "unrestricted"
   end
   
   def self.select_options

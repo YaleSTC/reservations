@@ -6,7 +6,11 @@
 </p>
 <p>
   <strong>Max Checkout Length:</strong>
-  <%= @category.maximum_checkout_length %>
+  <% if @category.maximum_checkout_length == "unrestricted" %>
+    <%= @category.maximum_checkout_length %>
+  <% else %>
+    <%= pluralize(@category.maximum_checkout_length, 'day') %>
+  <% end %>
 </p>
 <p>
   <strong>Sort Order:</strong>
