@@ -19,15 +19,21 @@ $.datepicker.setDefaults({
    minDate: new Date(),
 });
 
-$('.submittable').on('change', function() {
-  $(this).parents('form:first').submit();
-});
-
-$('#fake_reserver_id').on('change', function() {
+// auto-save the reserver_id, on any click outside the box
+$('.submittable').live('blur', function() {
   $.ajax({
        url: '/cart/update/',
        data: { 'reserver_id': reserver_id.value,
-               'cart.start_date_cart': start_date.value,
-               'cart.due_date_cart': due_date.value }
+               'start_date_cart': cart_start_date_cart.value,
+               'due_date_cart': cart_due_date_cart.value }
+  });
+});
+// the datepicker function needs to be submitted on change
+$('.submitchange').live('change', function() {
+  $.ajax({
+       url: '/cart/update/',
+       data: { 'reserver_id': reserver_id.value,
+               'start_date_cart': cart_start_date_cart.value,
+               'due_date_cart': cart_due_date_cart.value }
   });
 });
