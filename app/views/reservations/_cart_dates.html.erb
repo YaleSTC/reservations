@@ -9,7 +9,7 @@
         Please sign in <br />
     <% else %>
       <%= text_field_tag 'fake_reserver_id', current_user.name, :value => current_user.name, :disabled => true %>
-      <%= hidden_field_tag 'reserver_id', current_user.id %>
+      <%= hidden_field_tag 'reserver_id', fake_reserver_id  %>
     <% end %>
     <p>
       <%= label_tag :start_date, 'Start of reservation' %><br />
@@ -19,5 +19,6 @@
       <%= label_tag :due_date, 'End of reservation' %><br />
       <%= datepicker_input "cart", "due_date_cart", :class => 'submittable', :value => cart.due_date.strftime('%m/%d/%Y'), :minDate => cart.start_date.strftime('%m/%d/%Y') %>
     </p>
+    <%= button_to "Make reservation", '', :class => 'submittable' %>
   <% end %>
 </div>

@@ -22,3 +22,13 @@ $.datepicker.setDefaults({
 $('.submittable').on('change', function() {
   $(this).parents('form:first').submit();
 });
+
+$('#fake_reserver_id').on('change', function() {
+  var reserver_id = fake_reserver_id.value
+  $.ajax({
+       url: '/cart/update/',
+       data: { 'reserver_id': this.id,
+               'start_date_cart': start_date_cart,
+               'due_date_cart': due_date_cart },
+  });
+});
