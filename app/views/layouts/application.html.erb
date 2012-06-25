@@ -35,7 +35,7 @@
       <!-- ================ LEFT SIDEBAR ================ -->
     	<div id="sidebar-left">
     	  <div id="sidebarbottom" class="span2">
-  			    <ul class="nav nav-list">
+  			    <ul class="nav nav-list well">
               <li class="active"><%= link_to "Catalog", catalog_path %></li>
             <% if current_user.nil? %>
               <li><%= link_to "Sign In" %></li>
@@ -51,7 +51,7 @@
             <% if current_user and current_user.can_checkout? %>
               <li><%= link_to "Equipment Objects", equipment_objects_path %></li>
             <% end %>
-              <li><%= link_to "Reservations", reservations_path %> <span class="badge"><%= reservations_count %></span></li>
+              <li><%= link_to "Reservations", reservations_path %></li>
             <% if current_user and current_user.is_admin_in_adminmode? %>
               <li><%= link_to "App Settings", edit_app_config_path %></li>
             <% end %>

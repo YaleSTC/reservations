@@ -37,8 +37,8 @@
            <%= cart.start_date.strftime("%b %d, %Y") %> to <%= cart.due_date.strftime("%b %d, %Y") %>)
           <br>
           <!--print add to cart link-->
-          <%= link_to "[add to cart]", {:url => add_to_cart_path(equipment_model)},
-                      :href => add_to_cart_path(equipment_model), :remote => true %>
+          <%= link_to "Add to Cart", {:url => add_to_cart_path(equipment_model)},
+                      :href => add_to_cart_path(equipment_model), :remote => true, :class => "btn" %>
           <% # (Using both the ":url" and ":href" symbols seems redundant. Remove one?) %>
           <br>
           <br>
