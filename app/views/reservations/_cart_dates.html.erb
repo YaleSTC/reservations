@@ -4,7 +4,9 @@
     <% if current_user && (current_user.is_admin_in_adminmode? || current_user.is_admin_in_checkoutpersonmode? || current_user.is_checkout_person?) %>
       <%= autocomplete_field_tag 'fake_reserver_id', User.find(cart.reserver_id).render_name, autocomplete_user_last_name_reservations_path, :size => 30, :update_elements => {:id => '#reserver_id'} %>
       <%# we're watching ('submittable') the hidden field because watching the autocomplete catches fakereserver which will cause it to fail in application_controller#update_cart %>
-      <%= hidden_field_tag 'reserver_id', current_user.id, :class => 'submittable' %>
+    <%# if cart.reserver_id %>
+      <%= hidden_field_tag 'reserver_id', cart.reserver_id %>
+    <%# end %>
     <% elsif ! current_user %>
         Please sign in <br />
     <% else %>
