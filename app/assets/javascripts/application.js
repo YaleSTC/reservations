@@ -22,7 +22,7 @@ $.datepicker.setDefaults({
 // auto-save the reserver_id, on any click outside the box
 $('.submittable').live('blur', function() {
   $.ajax({
-       url: '/cart/update/',
+       url: update_cart_path.value, // defined in _cart_dates in hidden field
        data: { 'reserver_id': reserver_id.value,
                'start_date_cart': cart_start_date_cart.value,
                'due_date_cart': cart_due_date_cart.value }
@@ -31,7 +31,7 @@ $('.submittable').live('blur', function() {
 // the datepicker function needs to be submitted on change
 $('.submitchange').live('change', function() {
   $.ajax({
-       url: '/cart/update/',
+       url: update_cart_path.value, // defined in _cart_dates in hidden field
        data: { 'reserver_id': reserver_id.value,
                'start_date_cart': cart_start_date_cart.value,
                'due_date_cart': cart_due_date_cart.value }

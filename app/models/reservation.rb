@@ -193,6 +193,9 @@ class Reservation < ActiveRecord::Base
     # 
     # we need to test if any of the variables are set to NIL, because in that case comparision
     # is undefined; that's also why we can't set variables to these values before the if statements
+    if self.times_renewed == NIL
+      self.times_renewed = 0
+    end
     if self.equipment_model.maximum_renewal_times == "unrestricted"
       if self.equipment_model.maximum_renewal_days_before_due == "unrestricted"
         # if they're both NIL
