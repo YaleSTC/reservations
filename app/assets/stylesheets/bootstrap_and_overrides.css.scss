@@ -14,11 +14,6 @@ $gridColumns: 12;
 @import "font-awesome";
 @import "dataTables/jquery.dataTables.bootstrap";
 
-.navbar .brand {
-  color: #FAFFB8;
-}
-
-.ui-datepicker { @extend .well; }
 label { font-weight: bold; }
 
 //For DataTables sorting styling with Bootstrap

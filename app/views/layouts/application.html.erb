@@ -24,7 +24,7 @@
           <h1><%= "#{site_title}" %></h1>
         </div>
       </div>
-      <!--flash messages, if any-->
+      <% # flash messages, if any %>
       <% flash.each do |name, msg| %>
         <%= content_tag :div, :id => "flash_#{name}", :class => "alert alert-#{name == :notice ? "success" : "error"}" do %>
           <%= msg %>

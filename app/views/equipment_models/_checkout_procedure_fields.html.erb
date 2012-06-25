@@ -1,8 +1,8 @@
 <div class="checkout_procedure, nested-fields">
-  <table>
-    <tr>
-      <td><%= f.input :step %></td>
-      <td><%= link_to_remove_association "remove step", f %></td>
-    </tr>
-  </table>
+
+      <div class="input-append">
+<%= f.input :step %>
+      <%= link_to_remove_association "Remove Step", f, :class => "btn add-on" %>
+      </div>
+
 </div>
