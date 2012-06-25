@@ -20,6 +20,7 @@ $gridColumns: 12;
 
 .nav > li > a { display: inline-block;}
 .ui-datepicker { @extend .well; }
+label { font-weight: bold; }
 
 //For DataTables sorting styling with Bootstrap
 
