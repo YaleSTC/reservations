@@ -24,6 +24,7 @@ class Reservation < ActiveRecord::Base
   scope :overdue, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc ).recent }
   scope :returned, where("checked_in IS NOT NULL and checked_out IS NOT NULL")
   scope :missed, lambda {where("checked_out IS NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc).recent}
+  scope :upcoming, lambda {where("checked_out IS NULL and checked_in IS NULL and start_date = ? and due_date > ?", Time.now.midnight.utc, Time.now.midnight.utc).recent }
   
   scope :active, where("checked_in IS NULL") #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
   scope :notes_unsent, :conditions => {:notes_unsent => true}
@@ -34,7 +35,6 @@ class Reservation < ActiveRecord::Base
                   :equipment_object_id, :notes, :notes_unsent, :times_renewed
 
   def status
-    #TODO: check this logic
     if checked_out.nil? && due_date >= Date.today
       "reserved"
     elsif checked_out.nil? && due_date < Date.today
@@ -193,6 +193,9 @@ class Reservation < ActiveRecord::Base
     # 
     # we need to test if any of the variables are set to NIL, because in that case comparision
     # is undefined; that's also why we can't set variables to these values before the if statements
+    if self.times_renewed == NIL
+      self.times_renewed = 0
+    end
     if self.equipment_model.maximum_renewal_times == "unrestricted"
       if self.equipment_model.maximum_renewal_days_before_due == "unrestricted"
         # if they're both NIL

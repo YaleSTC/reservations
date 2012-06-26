@@ -4,7 +4,7 @@
   <%= @equipment_model.formatted_description.html_safe %>
 </p>
 <p>
-  <%= link_to "[add to cart]", {:url => add_to_cart_path(@equipment_model)}, :href => add_to_cart_path(@equipment_model), :remote => true %>
+  <%= link_to "Add to Cart", {:url => add_to_cart_path(@equipment_model)}, :href => add_to_cart_path(@equipment_model), :remote => true, :class => "btn btn-primary" %>
 </p>
 
 <% unless @equipment_model.associated_equipment_models.empty? %>
@@ -12,7 +12,7 @@
     <legend>Recommended Items:</legend>
     <ul>
       <% @equipment_model.associated_equipment_models.each do |accessory| %>
-        <li><%= accessory.name %> <%= link_to "[add to cart]", {:url => add_to_cart_path(accessory)}, :href => add_to_cart_path(accessory), :remote => true %></li>
+        <li><%= accessory.name %> <%= link_to "Add to Cart", {:url => add_to_cart_path(accessory)}, :href => add_to_cart_path(accessory), :remote => true, :class => "btn btn-primary" %></li>
       <% end %>
     </ul>
   </fieldset>

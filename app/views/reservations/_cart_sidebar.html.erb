@@ -1,5 +1,6 @@
-<div id="cart">
-  <h2>Your cart</h2>
+<br />
+<div id="cart" class="well">
+  <h2>Your cart</h2><br />
 
 <!--allow user to set start/end dates-->
 <%= render :partial => 'reservations/cart_dates' %>
@@ -9,5 +10,8 @@
 <br />
 
 <!--print Make reservation button-->
-<%= button_to "Make reservation", new_reservation_path %>
+<%= button_to "Make reservation", new_reservation_path, :class => "btn btn-inverse" %>
+
 </div>
+<hr />
+

@@ -1,5 +1,4 @@
 <% title "Catalog" %>
-
 <!--show quicksearch box-->
 
 <!-- Commented out quicksearch for now until we replace it with a better search functionality - mnquintana -->
@@ -8,11 +7,10 @@
 <% if @equipment_models_by_category.empty? %>
   <p>Sorry, no equipment models were found.</p>
 <% else %>
-  <%= paginate @paginated_equipment_models_by_category %>
-  <%= form_tag catalog_path do %>
-    <%= label_tag "Items per page" %>
-    <%= select_tag :user_cat_items_per_page, options_for_select(@user_per_page_opts, session[:user_per_cat_page]) %>
-    <%= submit_tag "Go" %>
+  <%= paginate @paginated_equipment_models_by_category, :theme => "twitter-bootstrap" %>
+  <%= form_tag update_user_per_cat_page_path, :class => "form-inline", :remote => true do %>
+    <%= label_tag "Items per page:" %>
+    <%= select_tag :user_cat_items_per_page, options_for_select(@user_per_page_opts, session[:user_per_cat_page]), :class => 'span1 autosubmitme' %>
   <% end %>
   <% @equipment_models_by_category.each do |category, equipment_models| %>
     <h2 class="catalog">
@@ -36,10 +34,14 @@
            available from
            <%= cart.start_date.strftime("%b %d, %Y") %> to <%= cart.due_date.strftime("%b %d, %Y") %>)
           <br>
+          <% if equipment_model.available?(cart.start_date..cart.due_date) %>
           <!--print add to cart link-->
-          <%= link_to "[add to cart]", {:url => add_to_cart_path(equipment_model)},
-                      :href => add_to_cart_path(equipment_model), :remote => true %>
-          <% # (Using both the ":url" and ":href" symbols seems redundant. Remove one?) %>
+            <%= link_to "Add to Cart", {:url => add_to_cart_path(equipment_model)},
+                        :href => add_to_cart_path(equipment_model), :remote => true, :class => "btn" %>
+            <% # (Using both the ":url" and ":href" symbols seems redundant. Remove one?) %>
+          <% else %>
+            <%= button_tag "Add to Cart", :class => "btn disabled" %>
+          <% end %>
           <br>
           <br>
         </li>
@@ -47,5 +49,5 @@
     <% end %>
     </ul>
   <% end %>
-  <%= paginate @paginated_equipment_models_by_category %>
+  <%= paginate @paginated_equipment_models_by_category, :theme => "twitter-bootstrap" %>
 <% end %>

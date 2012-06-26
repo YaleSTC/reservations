@@ -61,10 +61,11 @@
   </p> <br /> <br />
 
 
-  <p>
+  <p><div class="form-actions">
   <% if current_user.can_checkout? %>
     <% if @reservation.status == "reserved" %>
       <%= link_to "Check out", check_out_single_reservation_path(@reservation) %> |
+    <% elsif @reservation.status == 'missed' %>
     <% elsif @reservation.status != "returned" %>
       <%= link_to "Check in", check_in_single_reservation_path(@reservation) %> |
     <% end %>
@@ -78,6 +79,6 @@
   <% else %>
     <%= link_to "View all your reservations", reservations_path %>
   <% end %>
-  </p>
+  </div></p>
 <% end %>
 
