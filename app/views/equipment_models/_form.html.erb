@@ -1,7 +1,7 @@
-<%= simple_form_for @equipment_model, :html => { :multipart => true } do |f| %>
+<%= simple_form_for @equipment_model, :html => { :multipart => true, :class => "form-horizontal" } do |f| %>
 
-<!-- Paperclip currently does not support simple form and validations and will fail silently. 
-This code is necessary until they introduce a bug fix (Github issue #266) -->
+<% # Paperclip currently does not support simple form and validations and will fail silently. %>
+<% # This code is necessary until they introduce a bug fix (Github issue #266) %>
 <ul>
 	  <% @equipment_model.errors.full_messages.each do |msg| %>
 	  <li><%= msg %></li>
@@ -9,15 +9,14 @@ This code is necessary until they introduce a bug fix (Github issue #266) -->
 </ul>
 	
   <%#= f.error_notification %>
-  <%= f.association :category %> 
+  <%= f.association :category, :hint => "#{link_to "Add New Category", new_category_path, :class => "btn"}" %> 
   <input class="hidden" id="category" name="MODELNAME[category]" type="hidden">
-  <%= link_to "[add new category]", new_category_path %>
   <%= f.association :associated_equipment_models %>
   <%= f.input :name %>
   <%= f.input :description, as: :text %>
   <%= f.input :late_fee %>
   <%= f.input :replacement_fee %>
-  <%= f.input :max_per_user, label: "Maximum per user", hint: "leave blank to default to category value" %>
+  <%= f.input :max_per_user, label: "Maximum per user", hint: "Leave blank to default to category value" %>
   <%= f.input :deleted_at, label: "Inactive", as: :deleted %>
   
   <strong>Renewal Options</strong>
@@ -30,15 +29,15 @@ This code is necessary until they introduce a bug fix (Github issue #266) -->
     <%= render 'checkout_procedure_fields', :f => procedure %>
   <% end %>
   <div class="links">
-    <%= link_to_add_association 'add step', f, :checkout_procedures %>
+    <%= link_to_add_association 'Add Step', f, :checkout_procedures, :class => "btn" %>
   </div>
-
-  Checkin Procedures
-  <%= f.simple_fields_for :checkin_procedures do |procedure| %>
+  </div>
+  <%= label_tag "Checkin Procedures" %>
+  <%= f.simple_fields_for :checkin_procedures, :html => { :class => "form-inline" } do |procedure| %>
     <%= render 'checkin_procedure_fields', :f => procedure %>
   <% end %>
   <div class="links">
-    <%= link_to_add_association 'add step', f, :checkin_procedures %>
+    <%= link_to_add_association 'Add Step', f, :checkin_procedures, :class => "btn" %>
   </div>
 <p>
   <%= f.input :photo, :as => :file, :label => "Upload Photo" %>
@@ -49,5 +48,7 @@ This code is necessary until they introduce a bug fix (Github issue #266) -->
 </p>
 	
   <%#= f.error :base %>
+  <div class="form-actions">
   <%= f.button :submit %>
+  </div>
 <% end %>

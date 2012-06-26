@@ -26,6 +26,7 @@ gem "cocoon"
 gem "ffaker"
 gem "rails3-jquery-autocomplete"
 gem "kaminari"
+gem 'bootstrap-kaminari-views'
 
 group :development, :test do
   gem "factory_girl_rails"
@@ -39,4 +40,6 @@ group :assets do
   gem 'sass-rails'
   gem 'coffee-rails'
   gem 'uglifier'
+  gem 'bootstrap-sass', '~> 2.0.3'
+  gem 'font-awesome-sass-rails'
 end

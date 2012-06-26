@@ -1,4 +1,4 @@
-<%= simple_form_for @category do |f| %>
+<%= simple_form_for @category, :html => { :class => "form-horizontal" } do |f| %>
   <%= f.error_notification %>
   <%= f.input :name %>
   <%= f.input :max_per_user, label: "Maximum per user", hint: "leave blank if unrestricted" %>
@@ -12,5 +12,7 @@
   <%= f.input :renewal_days_before_due, label: 'How many days before the due date should the Renew button become available?', hint: 'leave blank to give the option to renew at any time' %>
   
   <%= f.error :base %>
+  <div class="form-actions">
   <%= f.button :submit %>
+  </div>
 <% end %>  

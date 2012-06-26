@@ -1,14 +1,14 @@
 <% title (@category.nil? ? "Equipment Models" : @category.name.pluralize) %>
 
-<table id="table_woo">
+<table id="table_woo" class="datatable table table-striped table-bordered">
   <thead>
   <tr>
     <th>Name</th>
     <%= "<th>Type</th>".html_safe unless @category %>
   <%# these blank TH's necessary for the sort function %>
   <% if current_user.is_admin_in_adminmode? %>
-    <th> </th>
-    <th> </th>
+    <th class="no_sort"> </th>
+    <th class="no_sort"> </th>
   <% end %>
   </tr>
   </thead>
@@ -16,22 +16,22 @@
   <% for equipment_model in @equipment_models %>
     <% if equipment_model.deleted_at %>
       <tr class="deactivated">
-      <% @toggle = "link_to \"Activate\", activate_path(:equipment_models,equipment_model)" %>
+      <% @toggle = "link_to \"Activate\", activate_path(:equipment_models,equipment_model), :class => \"btn btn-success\"" %>
     <% else %>
       <tr class= "activated">
-      <% @toggle = "link_to \"De-Activate\", deactivate_path(:equipment_models,equipment_model)" %>
+      <% @toggle = "link_to \"Deactivate\", deactivate_path(:equipment_models,equipment_model), :class => \"btn btn-danger\"" %>
     <% end %>
       <td><%= link_to equipment_model.name, equipment_model %></td>
       <%= ("<td>" + (link_to equipment_model.category.name.singularize, equipment_model.category) + "</td>").html_safe unless @category %>
       <% if current_user.is_admin_in_adminmode? %>
-        <td><%= link_to "Edit", edit_equipment_model_path(equipment_model) %></td>
+        <td><%= link_to "Edit", edit_equipment_model_path(equipment_model), :class => "btn" %></td>
         <td><%= eval @toggle %></td>
       <% end %>
     </tr>
   <% end %>
   </tbody>
 </table>
-
+<hr />
 <p>
   <% if @category %>
     <% if current_user.is_admin_in_adminmode? %>
@@ -39,11 +39,11 @@
     <% end %>
     <%= link_to "View All Equipment Models", equipment_models_path %> |
   <% elsif current_user.is_admin_in_adminmode? %>
-    <%= link_to "New Equipment Model", new_equipment_model_path %> |
+    <%= link_to "New Equipment Model", new_equipment_model_path, :class => "btn btn-primary" %> |
   <% end %>
   <% if params[:show_deleted] %>
-    <%= link_to "Hide Deactivated Equipment Models from List", equipment_models_path %>
+    <%= link_to "Hide Deactivated Equipment Models from List", equipment_models_path, :class => "btn" %>
   <% else %>
-    <%= link_to "Show Deactivated Equipment Models in List", equipment_models_path(:show_deleted => true) %>
+    <%= link_to "Show Deactivated Equipment Models in List", equipment_models_path(:show_deleted => true), :class => "btn" %>
   <% end %>
 </p>

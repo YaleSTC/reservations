@@ -1,6 +1,6 @@
 <% title "Categories" %>
 
-<table id="table_woo">
+<table id="table_woo" class="datatable table table-striped table-bordered">
   <thead>
   <tr>
     <th>Name</th>
@@ -9,8 +9,8 @@
     <th>Sort Order</th>
   <%# these blank TH's necessary for the sort function %>
   <% if current_user.is_admin_in_adminmode? %>
-    <th> </th>
-    <th> </th>
+    <th class="no_sort"> </th>
+    <th class="no_sort"> </th>
   <% end %>
   </tr>
   </thead>
@@ -18,31 +18,31 @@
   <% for category in @categories %>
     <% if category.deleted_at %>
       <tr class="deactivated">
-      <% @toggle = "link_to \"Activate\", activate_path(:categories,category)" %>
+      <% @toggle = "link_to \"Activate\", activate_path(:categories,category), :class => \"btn btn-success\"" %>
     <% else %>
       <tr class= "activated">
-      <% @toggle = "link_to \"De-Activate\", deactivate_path(:categories,category)" %>
+      <% @toggle = "link_to \"Deactivate\", deactivate_path(:categories,category), :class => \"btn btn-danger\"" %>
     <% end %>
       <td><%= link_to category.name, category %></td>
       <td><%= category.maximum_per_user %></td>
       <td><%= category.maximum_checkout_length %></td>
       <td><%= category.sort_order %></td>
       <% if current_user.is_admin_in_adminmode? %>
-       <td><%= link_to "Edit", edit_category_path(category) %></td>
+       <td><%= link_to "Edit", edit_category_path(category), :class => "btn" %></td>
        <td><%= eval @toggle %></td>
       <% end %>
     </tr>
   <% end %>
   </tbody>
 </table>
-
+<hr />
 <p>
   <% if current_user.is_admin_in_adminmode? %>
-    <%= link_to "New Category", new_category_path %> |
+    <%= link_to "New Category", new_category_path, :class => "btn btn-primary" %> |
   <% end %>
   <% if params[:show_deleted] %>
-    <%= link_to "Hide Old Categories from List", categories_path %>
+    <%= link_to "Hide Old Categories from List", categories_path, :class => "btn" %>
   <% else %>
-    <%= link_to "Show Old Categories in List", categories_path(:show_deleted => true) %>
+    <%= link_to "Show Old Categories in List", categories_path(:show_deleted => true), :class => "btn" %>
   <% end %>
 </p>

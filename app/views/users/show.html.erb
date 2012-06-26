@@ -1,6 +1,6 @@
 <% title @user.name + ((@user.is_banned || @user.is_admin_in_bannedmode?) ? " (banned)" : "") %>
 
-<div id="current_equipment"
+<div id="current_equipment">
   <strong>User's current equipment:</strong><br />
   <%= render :partial => 'current_equipment', :object => @user %>
 </div>
@@ -52,10 +52,11 @@
   </p>
 <% end %>
 
-<p>
+<p><div class="form-actions">
   <%= link_to "Edit Information", edit_user_path(@user) %>
   <% if current_user.is_admin_in_adminmode? %>
     | <%= link_to "Destroy User", @user, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete %>
     | <%= link_to "View All Users", users_path %>
   <% end %>
+  </div>
 </p>
