@@ -6,7 +6,11 @@
     <%= link_to "Hide Returned Reservations from List", reservations_path, :class => "btn" %>
   <% elsif %>
     <%= link_to "Show Returned Reservations in List", reservations_path(:show_returned => true), :class => "btn" %> | 
-		<%= link_to "Show Missed Reservations in List", reservations_path(:show_missed => true), :class => "btn" %>
+		<%= link_to "Show Missed Reservations in List", reservations_path(:show_missed => true), :class => "btn" %> 
+	<p>	
+		<%= link_to "Today's Hold List", reservations_path(:upcoming => true), :class => "btn" %> 
+	</p>
+		
   <% end %>
 </p>
 
