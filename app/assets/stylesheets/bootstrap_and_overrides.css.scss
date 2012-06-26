@@ -2,19 +2,14 @@
 //$iconSpritePath: image-path('glyphicons-halflings.png');
 //$iconWhiteSpritePath: image-path('glyphicons-halflings-white.png');
 
-$navbarBackground: #555;
-$navbarBackgroundHighlight: #888;
-$navbarText: #eee;
-$navbarLinkColor: #eee;
-
-$gridColumns: 12;
-
+//Variables go here
 
 @import "bootstrap";
 @import "font-awesome";
 @import "dataTables/jquery.dataTables.bootstrap";
 
 label { font-weight: bold; }
+body { padding: 60px; }
 
 //For DataTables sorting styling with Bootstrap
 
