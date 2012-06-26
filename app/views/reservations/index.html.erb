@@ -1,4 +1,4 @@
-<% title (current_user.can_checkout? ? "" : "Your ")+"Reservations" %>
+<% title (current_user.can_checkout? ? "" : "My ")+"Reservations" %>
 <p>
 	<% if params[:show_missed] %>
 		<%= link_to "Hide Missed Reservations from List", reservations_path, :class => "btn" %>

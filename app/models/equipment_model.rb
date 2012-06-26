@@ -142,7 +142,8 @@ class EquipmentModel < ActiveRecord::Base
     date_range.each do |date|
       available_on_date = available_count(date)
       overall_count = available_on_date if available_on_date < overall_count
-      return false if overall_count == 0
+#      no idea why this would return a boolean sometimes? that breaks other things
+#      return false if overall_count == 0
     end
     overall_count
   end

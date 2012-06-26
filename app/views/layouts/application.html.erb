@@ -51,7 +51,7 @@
             <% if current_user and current_user.can_checkout? %>
               <li><%= link_to "Equipment Objects", equipment_objects_path %></li>
             <% end %>
-              <li><%= link_to "Reservations", reservations_path %></li>
+              <li><%= link_to (current_user.can_checkout? ? "Reservations" : "My Reservations"), reservations_path %></li>
             <% if current_user and current_user.is_admin_in_adminmode? %>
               <li><%= link_to "App Settings", edit_app_config_path %></li>
             <% end %>
@@ -118,7 +118,7 @@
     	    <%= render :partial => 'reservations/reservations_sidebar' if current_user %>
   	    <% unless current_user.nil? or current_user.reservations.empty? %>
     	    <div id="equipment">
-            <h3>Your current equipment:</h3>
+            <h3>My current equipment:</h3>
             <%= render :partial => 'users/current_equipment', :object => current_user %>
           </div>
   	    <% end %>
