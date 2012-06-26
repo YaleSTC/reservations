@@ -8,7 +8,6 @@
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
     <![endif]-->
     
-    
     <%= stylesheet_link_tag 'application' %>
     <%= javascript_include_tag 'application'%>
     <%= yield(:head) %>
@@ -20,16 +19,12 @@
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <%= link_to "#{site_title.html_safe}", root_path, :class => 'brand' %>
+          <%= link_to "<i class=\"icon-th-list\"></i> #{site_title}".html_safe, root_path, :class => 'brand' %>
           <ul class="nav">
             <li class="active"><%= link_to "Catalog", catalog_path %></li>
-          <% if current_user.nil? %>
-            <li><%= link_to "Sign In" %></li>
-          <% elsif current_user.is_admin_in_adminmode? %>
+          <% if current_user.is_admin_in_adminmode? %>
             <li><%= link_to "Users", users_path %></li>
-          <% else %>
-            <li><%= link_to "My Profile", user_path(current_user) %></li>
-          <% end %>
+            <% end %>
           <% if current_user.can_checkout? %>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Equipment <b class="caret"></b></a>
@@ -59,10 +54,7 @@
                 </ul>
               </li>
             <li class="divider-vertical"></li>
-            
-            
             <!-- ==== VIEW-AS MODE ==== -->
-            
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"> View As <b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -73,38 +65,42 @@
                     <li><%= link_to 'Admin', {:a_mode => 'ON'}%></li>
                     <% end %>
         	          <% if current_user.checkoutpersonmode? %>
-                    <li>Checkout Person</li>
+                    <li class="active">Checkout Person</li>
         	          <% else %>
                     <li><%= link_to 'Checkout Person', {:c_mode => 'ON'}%></li>
                     <% end %>
         	          <% if current_user.normalusermode? %>
-                    <li>Normal User</li>
+                    <li class="active">Normal User</li>
         	          <% else %>
                     <li><%= link_to 'Normal User', {:n_mode => 'ON'}%></li>
                     <% end %>
         	          <% if current_user.bannedmode? %>
-                    <li>Banned User</li>
+                    <li class="active">Banned User</li>
         	          <% else %>
                     <li><%= link_to 'Banned User', {:b_mode => 'ON'}%></li>
                     <% end %>
                   <% end %>
                 </ul>
               </li>
-            
-            
-            
-
           </ul>
-          
+          <!-- Current User Dropdown -->
           <ul class="nav pull-right" id="logged_in">
-            <% if current_user %>
-        	      logged in as <%= link_to current_user.name, current_user %>
-        	      <%= link_to "[log out]", logout_path %>
-        	  <% end %>
-          </ul>
-        </div>
+          <% if current_user.nil? %>
+            <li><%= link_to "Sign In" %></li>
+          <% elsif current_user %>
+          	<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user"></i> 
+            	<%= current_user.name %>
+          	  <b class="caret"></b></a>
+            	<ul class="dropdown-menu">
+              	<li><%= link_to "My Profile", current_user %></li>
+          	    <li><%= link_to "Log Out", logout_path %></li>
+        	    </ul>
+      	    </li>
+      	  <% end %>
+        </ul>
       </div>
     </div>
+  </div>
     
     
     <div class="container">
