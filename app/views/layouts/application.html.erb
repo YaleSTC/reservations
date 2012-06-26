@@ -65,25 +65,22 @@
 		          <% if current_user.adminmode? %>
               Admin
 		          <% else %>
-              <%= link_to 'Admin', {:a_mode => 'ON'}%>
+              <li><%= link_to 'Admin', {:a_mode => 'ON'}%></li>
               <% end %>
-		          <br>
 		          <% if current_user.checkoutpersonmode? %>
               Checkout Person
 		          <% else %>
-              <%= link_to 'Checkout Person', {:c_mode => 'ON'}%>
+              <li><%= link_to 'Checkout Person', {:c_mode => 'ON'}%></li>
               <% end %>
-		          <br>
 		          <% if current_user.normalusermode? %>
               Normal User
 		          <% else %>
-              <%= link_to 'Normal User', {:n_mode => 'ON'}%>
+              <li><%= link_to 'Normal User', {:n_mode => 'ON'}%></li>
               <% end %>
-		          <br>
 		          <% if current_user.bannedmode? %>
               Banned User
 		          <% else %>
-              <%= link_to 'Banned User', {:b_mode => 'ON'}%>
+              <li><%= link_to 'Banned User', {:b_mode => 'ON'}%></li>
               <% end %>
 	          <% end %>
               <!-- ==== END VIEW-AS MODE ==== -->

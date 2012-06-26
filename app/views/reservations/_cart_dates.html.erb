@@ -12,8 +12,9 @@
     <div class="cart_reserver">
       <%= link_to cart.reserver.name, user_path(cart.reserver) %>
       <%= hidden_field_tag 'reserver_id', cart.reserver.id  %>
-    <% end %>
     </div>
+    <% end %>
+
       <%= label_tag :start_date, 'Start of reservation' %>
       <%= datepicker_input "cart", "start_date_cart", :class => 'submittable', :class => 'submitchange input-medium', :value => cart.start_date.strftime('%m/%d/%Y') %>
       
