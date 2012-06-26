@@ -210,7 +210,7 @@ class Cart
     
     unless reservations_to_renew.empty?
       eq_model_names.each do |eq_model_name|
-        errors.add(:items, reserver.name +" should renew " + eq_model_name)
+        errors.add(:items, reserver.name + " should renew " + eq_model_name)
         none_to_renew = false
       end
     end
