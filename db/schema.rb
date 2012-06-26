@@ -11,13 +11,19 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120621174747) do
+ActiveRecord::Schema.define(:version => 20120626155902) do
 
   create_table "accessories_equipment_models", :force => true do |t|
     t.integer  "accessory_id"
     t.integer  "equipment_model_id"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
+  end
+
+  create_table "app_configs", :force => true do |t|
+    t.boolean "upcoming_checkin_email_active",         :default => true
+    t.boolean "overdue_checkout_email_active",         :default => true
+    t.boolean "reservation_confirmation_email_active", :default => true
   end
 
   create_table "categories", :force => true do |t|
@@ -60,22 +66,14 @@ ActiveRecord::Schema.define(:version => 20120621174747) do
   create_table "equipment_models", :force => true do |t|
     t.string   "name"
     t.text     "description"
-    t.decimal  "late_fee",                   :precision => 10, :scale => 2
-    t.decimal  "replacement_fee",            :precision => 10, :scale => 2
+    t.decimal  "late_fee",                :precision => 10, :scale => 2
+    t.decimal  "replacement_fee",         :precision => 10, :scale => 2
     t.integer  "max_per_user"
-    t.boolean  "active",                                                    :default => true
+    t.boolean  "active",                                                 :default => true
     t.integer  "category_id"
-    t.datetime "created_at",                                                                  :null => false
-    t.datetime "updated_at",                                                                  :null => false
+    t.datetime "created_at",                                                               :null => false
+    t.datetime "updated_at",                                                               :null => false
     t.string   "deleted_at"
-    t.string   "photo_file_name"
-    t.string   "photo_content_type"
-    t.integer  "photo_file_size"
-    t.datetime "photo_updated_at"
-    t.string   "documentation_file_name"
-    t.string   "documentation_content_type"
-    t.integer  "documentation_file_size"
-    t.datetime "documentation_updated_at"
     t.integer  "max_renewal_times"
     t.integer  "max_renewal_length"
     t.integer  "renewal_days_before_due"

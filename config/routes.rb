@@ -4,6 +4,8 @@ Reservations::Application.routes.draw do
 
   resources :documents
   resources :equipment_objects
+
+  resources :app_configs, :only => [:edit, :update]
   
   resources :equipment_models do
     resources :equipment_objects
