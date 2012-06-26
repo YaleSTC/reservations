@@ -34,10 +34,15 @@
            available from
            <%= cart.start_date.strftime("%b %d, %Y") %> to <%= cart.due_date.strftime("%b %d, %Y") %>)
           <br>
+          <% if equipment_model.available?(cart.start_date..cart.due_date) %>
           <!--print add to cart link-->
-          <%= link_to "Add to Cart", {:url => add_to_cart_path(equipment_model)},
-                      :href => add_to_cart_path(equipment_model), :remote => true, :class => "btn" %>
-          <% # (Using both the ":url" and ":href" symbols seems redundant. Remove one?) %>
+            <%= link_to "Add to Cart", {:url => add_to_cart_path(equipment_model)},
+                        :href => add_to_cart_path(equipment_model), :remote => true, :class => "btn" %>
+            <% # (Using both the ":url" and ":href" symbols seems redundant. Remove one?) %>
+          <% else %>
+            <%= link_to "Add to Cart", {:url => add_to_cart_path(equipment_model)},
+                        :href => add_to_cart_path(equipment_model), :remote => true, :class => "btn disabled" %>
+          <% end %>
           <br>
           <br>
         </li>
