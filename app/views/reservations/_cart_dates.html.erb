@@ -9,8 +9,8 @@
     <% elsif ! current_user %>
         Please sign in <br />
     <% else %>
-      <%= text_field_tag 'fake_reserver_id', current_user.name, :value => current_user.name, :disabled => true %>
-      <%#= hidden_field_tag 'reserver_id', fake_reserver_id  %>
+      <%= link_to cart.reserver.name, user_path(cart.reserver) %>
+      <%= hidden_field_tag 'reserver_id', cart.reserver.id  %>
     <% end %>
     
       <%= label_tag :start_date, 'Start of reservation' %>
