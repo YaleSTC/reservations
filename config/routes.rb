@@ -34,6 +34,7 @@ Reservations::Application.routes.draw do
       get :show_all
       get :checkout_email
       get :checkin_email
+      get :upcoming
     end
     get :autocomplete_user_last_name, :on => :collection
   end
