@@ -1,5 +1,4 @@
 <% title "Catalog" %>
-
 <!--show quicksearch box-->
 
 <!-- Commented out quicksearch for now until we replace it with a better search functionality - mnquintana -->
@@ -9,10 +8,9 @@
   <p>Sorry, no equipment models were found.</p>
 <% else %>
   <%= paginate @paginated_equipment_models_by_category, :theme => "twitter-bootstrap" %>
-  <%= form_tag catalog_path, :class => "form-inline" do %>
+  <%= form_tag update_user_per_cat_page_path, :class => "form-inline", :remote => true do %>
     <%= label_tag "Items per page:" %>
-    <%= select_tag :user_cat_items_per_page, options_for_select(@user_per_page_opts, session[:user_per_cat_page]), :class => "span1" %>
-    <%= submit_tag "Go", :class => "btn" %>
+    <%= select_tag :user_cat_items_per_page, options_for_select(@user_per_page_opts, session[:user_per_cat_page]), :class => "span1", :class => 'autosubmitme' %>
   <% end %>
   <% @equipment_models_by_category.each do |category, equipment_models| %>
     <h2 class="catalog">

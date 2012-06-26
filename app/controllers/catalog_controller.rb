@@ -62,4 +62,13 @@ class CatalogController < ApplicationController
       end
     end
   end
+  
+  def update_user_per_cat_page
+    session[:user_per_cat_page] = params[:user_cat_items_per_page] if !params[:user_cat_items_per_page].blank?
+    respond_to do |format|
+      format.html{redirect_to root_path}
+      format.js{render :action => "cat_pagination"}
+    end
+  end
+  
 end

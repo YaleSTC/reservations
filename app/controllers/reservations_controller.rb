@@ -210,7 +210,6 @@ class ReservationsController < ApplicationController
   def renew
     @reservation = Reservation.find(params[:id])
     @reservation.due_date += @reservation.max_renewal_length_available.days
-    binding.pry
     if @reservation.times_renewed == NIL # this check can be removed? just run the else now?
       @reservation.times_renewed = 1
     else

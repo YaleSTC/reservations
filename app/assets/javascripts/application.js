@@ -57,3 +57,7 @@ $('.submitchange').live('change', function() {
                'due_date_cart': cart_due_date_cart.value }
   });
 });
+// general submit on change class
+$('.autosubmitme').live('change', function() {
+  $(this).parents('form:first').submit();
+});

@@ -43,6 +43,8 @@ Reservations::Application.routes.draw do
   match '/reservations/check_out/for_user/:user_id' => 'reservations#check_out', :as => :check_out_reservations_for_user
   match '/reservations/check_in/for_user/:user_id' => 'reservations#check_in', :as => :check_in_reservations_for_user
   
+  match '/catalog/update_view' => 'catalog#update_user_per_cat_page', :as => :update_user_per_cat_page
+  
   match '/catalog' => 'catalog#index', :as => :catalog
   match '/catalog/add_to_cart/:id' => 'catalog#add_to_cart', :as => :add_to_cart
   match '/catalog/remove_from_cart/:id' => 'catalog#remove_from_cart', :as => :remove_from_cart
