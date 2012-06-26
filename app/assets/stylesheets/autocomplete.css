@@ -1,6 +1,6 @@
 /* Following block is for the autocomplete feature */
 
-/*ul.ui-autocomplete {
+ul.ui-autocomplete {
   position: absolute;
   list-style: none;
   margin: 0;
@@ -23,6 +23,6 @@ ul.ui-autocomplete li a {
 }
 ul.ui-autocomplete li a.ui-state-hover, ul.ui-autocomplete li a.ui-state-active {
      background-color: #FFFCB2; 
-}*/
+}
 
 /* end autocomplete */

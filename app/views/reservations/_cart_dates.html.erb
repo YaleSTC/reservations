@@ -10,7 +10,7 @@
         Please sign in <br />
     <% else %>
       <%= text_field_tag 'fake_reserver_id', current_user.name, :value => current_user.name, :disabled => true %>
-      <%= hidden_field_tag 'reserver_id', fake_reserver_id  %>
+      <%#= hidden_field_tag 'reserver_id', fake_reserver_id  %>
     <% end %>
     
       <%= label_tag :start_date, 'Start of reservation' %>
