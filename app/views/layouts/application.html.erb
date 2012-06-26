@@ -21,9 +21,9 @@
         <div class="container">
           <%= link_to "<i class=\"icon-th-list\"></i> #{site_title}".html_safe, root_path, :class => 'brand' %>
           <ul class="nav">
-            <li class="active"><%= link_to "Catalog", catalog_path %></li>
+            <li <%= navigation_active catalog_path %><%= navigation_active root_path %>><%= link_to "Catalog", catalog_path %></li>
           <% if current_user.is_admin_in_adminmode? %>
-            <li><%= link_to "Users", users_path %></li>
+            <li <%= navigation_active users_path %>><%= link_to "Users", users_path %></li>
             <% end %>
           <% if current_user.can_checkout? %>
             <li class="dropdown">
@@ -40,9 +40,9 @@
                 </ul>
               </li>
           <% end %>
-            <li><%= link_to (current_user.can_checkout? ? "Reservations" : "My Reservations"), reservations_path %></li>
+            <li <%= navigation_active reservations_path %>><%= link_to (current_user.can_checkout? ? "Reservations" : "My Reservations"), reservations_path %></li>
           <% if current_user and current_user.is_admin_in_adminmode? %>
-            <li><%= link_to "App Settings", edit_app_config_path %></li>
+            <li <%= navigation_active edit_app_config_path %>><%= link_to "App Settings", edit_app_config_path %></li>
           <% end %>
             <li class="divider-vertical"></li>            
             <li class="dropdown">
