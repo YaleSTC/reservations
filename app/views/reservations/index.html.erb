@@ -11,7 +11,7 @@
 		<%= link_to "Today's Hold List", reservations_path(:upcoming => true), :class => "btn" %> 
 	</p>
 		
-  <% end %>
+  <% end %>	
 </p>
 
 <%= render :partial => "reservations_list", :collection => @reservations_set %>
