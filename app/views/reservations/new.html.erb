@@ -1,25 +1,16 @@
 <% title "Create Reservation" %>
 
-<%= form_for @reservation do |f| %>
+<%= simple_form_for @reservation do |f| %>
   <%= f.error_messages %>
   <p>The following equipment will be reserved by
-    <% if current_user and (current_user.is_admin_in_adminmode? || current_user.is_admin_in_checkoutpersonmode? || current_user.is_checkout_person?) %>
-      <%= f.hidden_field :reserver_id, :value => current_user.id %>
-      <%= f.autocomplete_field :fake_reserver_id, autocomplete_user_last_name_reservations_path, :id_element => '#reservation_reserver_id',
-      :value => current_user.render_name %>
-      or 
-      <%= link_to "New User", new_button_path, :remote => true %>
-      <div id="addUser"></div>
-    <% else %>
-      <%= current_user.name %>
-      <%= f.hidden_field :reserver_id, :value => current_user.id %>
-    <% end %>
-    from
-    <%= cart.start_date.to_s(:long) %>
-    <%= f.hidden_field :start_date, :value => cart.start_date %>
-    to
-    <%= cart.due_date.to_s(:long) %>:
-    <%= f.hidden_field :due_date, :value => cart.due_date %>
+  <%= User.find(cart.reserver_id).name %>
+  from
+  <%= cart.start_date.to_s(:long) %> to
+  <%= cart.due_date.to_s(:long) %>:
+  <%# hidden fields needed for data submission %>
+  <%= f.input :reserver_id, :as => :hidden, :value => cart.reserver_id %>
+  <%= f.input :start_date, :as => :hidden, :value => cart.start_date %>
+  <%= f.input :due_date, :as => :hidden, :value => cart.due_date %>
   </p>
   <p>
     <ul>
@@ -29,5 +20,5 @@
       <li style="list-style: none"><small><%= link_to "Go back to the catalog", catalog_path %></small></li>
     </ul>
   </p>
-  <p><%= f.submit "Finalize reservation" %></p>
+  <p><%= f.button :submit, "Finalize Reservation" %></p>
 <% end %>

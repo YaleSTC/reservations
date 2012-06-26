@@ -38,6 +38,10 @@ GEM
     addressable (2.2.8)
     arel (3.0.2)
     binding_of_caller (0.6.7)
+    bootstrap-kaminari-views (0.0.2)
+      kaminari (>= 0.13)
+      rails (>= 3.1)
+    bootstrap-sass (2.0.3.1)
     builder (3.0.0)
     capybara (1.1.2)
       mime-types (>= 1.16)
@@ -79,6 +83,9 @@ GEM
       railties (>= 3.0.0)
     ffaker (1.14.0)
     ffi (1.0.11)
+    font-awesome-sass-rails (2.0.0.0)
+      railties (>= 3.1.1)
+      sass-rails (>= 3.1.1)
     hike (1.2.1)
     i18n (0.6.0)
     journey (1.0.4)
@@ -213,12 +220,15 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  bootstrap-kaminari-views
+  bootstrap-sass (~> 2.0.3)
   capybara
   cocoon
   coffee-rails
   dynamic_form
   factory_girl_rails
   ffaker
+  font-awesome-sass-rails
   jquery-datatables-rails
   jquery-rails
   jquery_datepicker

@@ -10,16 +10,16 @@ ul.ui-autocomplete {
 }
 
 ul.ui-autocomplete li {
-	background-color: #FFF;
-	border-top: solid 1px #DDD;
-	margin: 0;
-	padding: 0; 
+  background-color: #FFF;
+  border-top: solid 1px #DDD;
+  margin: 0;
+  padding: 0; 
 }
 
 ul.ui-autocomplete li a {
-	color: #000;
-	display: block;
-	padding: 3px; 
+  color: #000;
+  display: block;
+  padding: 3px; 
 }
 ul.ui-autocomplete li a.ui-state-hover, ul.ui-autocomplete li a.ui-state-active {
      background-color: #FFFCB2; 

@@ -24,6 +24,7 @@ class Reservation < ActiveRecord::Base
   scope :overdue, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc ).recent }
   scope :returned, where("checked_in IS NOT NULL and checked_out IS NOT NULL")
   scope :missed, lambda {where("checked_out IS NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc).recent}
+  scope :upcoming, lambda {where("checked_out IS NULL and checked_in IS NULL and start_date = ? and due_date > ?", Time.now.midnight.utc, Time.now.midnight.utc).recent }
   
   scope :active, where("checked_in IS NULL") #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
   scope :notes_unsent, :conditions => {:notes_unsent => true}
@@ -31,10 +32,9 @@ class Reservation < ActiveRecord::Base
   attr_accessible :reserver, :reserver_id, :checkout_handler, :checkout_handler_id, 
                   :checkin_handler, :checkin_handler_id, :start_date, :due_date, 
                   :checked_out,:checked_in, :equipment_object, :equipment_model_id, 
-                  :equipment_object_id, :notes, :notes_unsent
+                  :equipment_object_id, :notes, :notes_unsent, :times_renewed
 
   def status
-    #TODO: check this logic
     if checked_out.nil? && due_date >= Date.today
       "reserved"
     elsif checked_out.nil? && due_date < Date.today
@@ -165,6 +165,54 @@ class Reservation < ActiveRecord::Base
   
   def fake_reserver_id # Necessary for auto-complete feature
   end
+
+  def max_renewal_length_available
+  # available_period is what is returned by the function
+  # initialize to NIL because once it's set we escape the while loop below
+    available_period = NIL
+    renewal_length = self.equipment_model.maximum_renewal_length
+    while (renewal_length > 0) and (available_period == NIL)
+      # the available? method cannot accept dates with time zones, and due_date has a time zone
+      possible_dates_range = (self.due_date + 1.day).to_date..(self.due_date+(renewal_length.days)).to_date
+      if (self.equipment_model.available?(possible_dates_range) > 0)
+        # if it's available for the period, set available_period and escape loop
+        available_period = renewal_length
+      else
+        # otherwise shorten reservation renewal period by one day and try again
+        renewal_length -= 1
+      end
+    end
+    # need this case to account for when renewal_length == 0 and it escapes the while loop
+    # before available_period is set
+    return available_period = renewal_length
+  end
   
+  def is_eligible_for_renew?
+    # determines if a reservation is eligible for renewal, based on how many days before the due
+    # date it is and the max number of times one is allowed to renew
+    # 
+    # we need to test if any of the variables are set to NIL, because in that case comparision
+    # is undefined; that's also why we can't set variables to these values before the if statements
+    if self.times_renewed == NIL
+      self.times_renewed = 0
+    end
+    if self.equipment_model.maximum_renewal_times == "unrestricted"
+      if self.equipment_model.maximum_renewal_days_before_due == "unrestricted"
+        # if they're both NIL
+        true
+      else
+        # due_date has a time zone, eradicate with to_date; use to_i to change to integer;
+        # are we within the date range for which the button should appear?
+        ((self.due_date.to_date - Date.today).to_i < self.equipment_model.maximum_renewal_days_before_due)
+      end
+    elsif (self.equipment_model.maximum_renewal_days_before_due == "unrestricted")
+      # implicitly, max_renewal_times != NIL, so we can check it
+      self.times_renewed < self.equipment_model.maximum_renewal_times
+    else
+      # if neither is NIL, check both
+      ((self.due_date.to_date - Date.today).to_i < self.equipment_model.maximum_renewal_days_before_due) and (self.times_renewed < self.equipment_model.maximum_renewal_times)
+    end
+  end
+
 end
 

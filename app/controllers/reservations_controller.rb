@@ -8,9 +8,9 @@ class ReservationsController < ApplicationController
         @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved, Reservation.missed].delete_if{|a| a.empty?}
       elsif params[:show_returned]
         @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved, Reservation.returned].delete_if{|a| a.empty?} #remove empty arrays from set
-      elsif params[:show_returned && :show_missed]
-        @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved, Reservation.missed, Reservation.returned].delete_if{|a| a.empty?}
-      elsif
+      elsif params[:upcoming]
+        @reservations_set = [Reservation.upcoming].delete_if{|a| a.empty?}
+      else
         @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved].delete_if{|a| a.empty?}
       end
     else
@@ -33,26 +33,12 @@ class ReservationsController < ApplicationController
       redirect_to catalog_path
     else
       #this is used to initialize each reservation later
-      @reservation = Reservation.new(start_date: cart.start_date, due_date: cart.due_date)
+      @reservation = Reservation.new(start_date: cart.start_date, due_date: cart.due_date, reserver_id: cart.reserver_id)
     end
   end
 
-# old method that does not split reservations by item, needs to be deleted by end of summer 12
-  # def create
-  #   @reservation = Reservation.new(params[:reservation])
-  #   cart.items.each do |item|
-  #     @reservation.equipment_models_reservations << EquipmentModelsReservation.new(:equipment_model_id => item.equipment_model.id, :quantity => item.quantity)
-  #   end
-  #   if @reservation.save
-  #     flash[:notice] = "Successfully created reservation."
-  #     session[:cart] = Cart.new
-  #     redirect_to @reservation
-  #   else
-  #     render :action => 'new'
-  #   end
-  # end
-
   def create
+    complete_reservation = []
     #using http://stackoverflow.com/questions/7233859/ruby-on-rails-updating-multiple-models-from-the-one-controller as inspiration
     respond_to do |format|
       Reservation.transaction do
@@ -63,11 +49,11 @@ class ReservationsController < ApplicationController
               @reservation = Reservation.new(params[:reservation])
               @reservation.equipment_model =  emodel
               @reservation.save
+              complete_reservation << @reservation
             end
           end
-          #We do want an email to be sent, but this needs to be tweaked - it currently doesn't work ~Casey
-          #UserMailer.reservation_confirmation(@reservation).deliver
           session[:cart] = Cart.new
+          UserMailer.reservation_confirmation(complete_reservation).deliver
           format.html {redirect_to catalog_path, :flash => {:notice => "Successfully created reservation. " } }
         rescue
           format.html {redirect_to catalog_path, :flash => {:error => "Oops, something went wrong with making your reservation."} }
@@ -83,7 +69,6 @@ class ReservationsController < ApplicationController
   end
 
   def update
-
     error_msgs = ""
     if params[:commit] == "Check out equipment"
 
@@ -174,6 +159,10 @@ class ReservationsController < ApplicationController
     flash[:notice] = "Successfully destroyed reservation."
     redirect_to reservations_url
   end
+  
+  def upcoming
+    @reservations_set = [Reservation.upcoming].delete_if{|a| a.empty?}
+  end
 
   def check_out
     @user = User.find(params[:user_id])
@@ -209,20 +198,38 @@ class ReservationsController < ApplicationController
     @reservation =  Reservation.find(params[:id])
     if UserMailer.checkin_receipt(@reservation).deliver
       redirect_to :back
-      flash[:notice] = "Sucessfully delivered receipt email."
+      flash[:notice] = "Successfully delivered receipt email."
     else 
       redirect_to @reservation
       flash[:error] = "Unable to deliver receipt email. Please contact administrator for more support. "
     end
   end
-  
+
   autocomplete :user, :last_name, :extra_data => [:first_name, :login], :display_value => :render_name
   
   def get_autocomplete_items(parameters)
     items = User.select("first_name, last_name, login, id").where(["CONCAT_WS(' ', first_name, last_name, login) LIKE ?", "%#{parameters[:term]}%"])
   end
-  
-  
+
+  def renew
+    @reservation = Reservation.find(params[:id])
+    @reservation.due_date += @reservation.max_renewal_length_available.days
+    binding.pry
+    if @reservation.times_renewed == NIL # this check can be removed? just run the else now?
+      @reservation.times_renewed = 1
+    else
+      @reservation.times_renewed += 1
+    end
+
+    if !@reservation.save
+      redirect_to @reservation
+      flash[:error] = "Unable to update reservation dates. Please contact us for support."
+    end
+    respond_to do |format|
+      format.html{redirect_to root_path}
+      format.js{render :action => "renew_box"}
+    end
+  end
 
 end
 

@@ -1,13 +1,17 @@
 <% title (current_user.can_checkout? ? "" : "Your ")+"Reservations" %>
 <p>
 	<% if params[:show_missed] %>
-		<%= link_to "Hide Missed Reservations from List", reservations_path %>
+		<%= link_to "Hide Missed Reservations from List", reservations_path, :class => "btn" %>
   <% elsif params[:show_returned] %>
-    <%= link_to "Hide Returned Reservations from List", reservations_path %>
+    <%= link_to "Hide Returned Reservations from List", reservations_path, :class => "btn" %>
   <% elsif %>
-    <%= link_to "Show Returned Reservations in List", reservations_path(:show_returned => true) %> | 
-		<%= link_to "Show Missed Reservations in List", reservations_path(:show_missed => true)%>
-  <% end %>
+    <%= link_to "Show Returned Reservations in List", reservations_path(:show_returned => true), :class => "btn" %> | 
+		<%= link_to "Show Missed Reservations in List", reservations_path(:show_missed => true), :class => "btn" %> 
+	<p>	
+		<%= link_to "Today's Hold List", reservations_path(:upcoming => true), :class => "btn" %> 
+	</p>
+		
+  <% end %>	
 </p>
 
 <%= render :partial => "reservations_list", :collection => @reservations_set %>

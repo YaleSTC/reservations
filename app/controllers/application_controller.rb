@@ -22,7 +22,6 @@ class ApplicationController < ActionController::Base
 
   def current_user
     @current_user ||= User.find_by_login(session[:cas_user]) if session[:cas_user]
-	User.current ||= @current_user
   end
 
   #-------- before_filter methods --------
@@ -79,14 +78,20 @@ class ApplicationController < ActionController::Base
   #-------- end before_filter methods --------
 
   def update_cart
-    session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
-    session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
+    session[:cart].set_start_date(Date.strptime(params[:start_date_cart],'%m/%d/%Y'))
+    session[:cart].set_due_date(Date.strptime(params[:due_date_cart],'%m/%d/%Y'))
+#    session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
+#    session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
+    session[:cart].set_reserver_id(params[:reserver_id])
     flash[:notice] = "Cart dates updated."
     if !cart.valid_dates?
       flash[:error] = cart.errors.values.flatten.join("<br/>").html_safe
       cart.errors.clear
     end
-    redirect_to root_path
+    respond_to do |format|
+      format.html{redirect_to root_path}
+      format.js{render :template => "reservations/cart_dates_js"}
+    end
   end
 
   def empty_cart

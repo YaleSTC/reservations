@@ -43,8 +43,6 @@ class UsersController < ApplicationController
 #   redirect to New Reservations page iff logged in as admin or
 #   checkout person
       redirect_to ((current_user.is_admin_in_adminmode? or current_user.is_admin_in_checkoutpersonmode? or current_user.is_checkout_person?) ? @user : root_path)
-#   old redirect behavior below
-#      redirect_to (current_user.is_admin_in_adminmode? ? @user : root_path)
     else
       render :action => 'new'
     end

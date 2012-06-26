@@ -1,4 +1,4 @@
-<%= simple_form_for @user do |f| %>
+<%= simple_form_for @user, :html => { :class => "form-horizontal" } do |f| %>
   <%= f.error_notification %>
   <% if current_user and (current_user.is_admin_in_adminmode? or ((current_user.is_admin_in_checkoutpersonmode? or current_user.is_checkout_person?) and @user.id == NIL)) %>
     <%= f.input :login %>
@@ -18,5 +18,7 @@
       <%= f.input :is_admin %>
       <%= f.input :deleted_at, label: "Disabled", :as => :deleted %>
   <% end %>
+  <div class="form-actions">
   <%= f.button :submit %>
+  </div>
 <% end %>
