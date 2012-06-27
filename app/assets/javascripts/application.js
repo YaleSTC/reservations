@@ -61,3 +61,6 @@ $('.submitchange').live('change', function() {
 $('.autosubmitme').live('change', function() {
   $(this).parents('form:first').submit();
 });
+
+//Load the user/new into the modal div for the new reserver button in the cart
+$('#userModal').load('users/new #content');
