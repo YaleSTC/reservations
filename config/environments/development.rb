@@ -27,5 +27,8 @@ Reservations::Application.configure do
 
   # Expands the lines which load the assets
   config.assets.debug = true
+  
+  # Activate observers that should always be running.
+  config.active_record.observers = :app_config_observer
 end
 
