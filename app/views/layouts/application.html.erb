@@ -50,8 +50,8 @@
             <% end %>
             <% if current_user and current_user.can_checkout? %>
               <li><%= link_to "Equipment Objects", equipment_objects_path %></li>
-            <% end %>
               <li><%= link_to (current_user.can_checkout? ? "Reservations" : "My Reservations"), reservations_path %></li>
+            <% end %>
             <% if current_user and current_user.is_admin_in_adminmode? %>
               <li><%= link_to "App Settings", edit_app_config_path %></li>
             <% end %>
