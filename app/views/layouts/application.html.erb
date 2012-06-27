@@ -115,8 +115,8 @@
       <% # flash messages, if any %>
       <% flash.each do |name, msg| %>
         <%= content_tag :div, :id => "flash_#{name}", :class => "alert alert-#{name == :notice ? "success" : "error"}" do %>
+          <button class="close" data-dismiss="alert">×</button>          
           <%= msg %>
-          <button class="close" data-dismiss="alert">×</button>
         <% end %>
       <% end %>
       <div class="row">
