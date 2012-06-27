@@ -1,88 +1,19 @@
 <% title "Edit Application Settings" %>
 
-<%= form_tag update_app_config_path, :method => 'post', :class => 'form-horizontal' do %>
-  <div class="control-group">
-    <%= label_tag :site_title, "Site Title", :class => 'control-label' %>
-    <div class="controls">
-      <%= text_field_tag :site_title, Settings.site_title %>
-    </div>
-  </div>
-  
-  <div class="control-group">
-    <%= label_tag :admin_email, "Admin email address", :class => 'control-label' %>
-    <div class="controls">
-      <%= text_field_tag :admin_email, Settings.admin_email %>
-    </div>
-  </div>
-  
-  <div class="control-group">
-    <%= label_tag :department_name, "Department name", :class => 'control-label' %>
-    <div class="controls">
-      <%= text_field_tag :department_name, Settings.department_name %>
-    </div>
-  </div>
-  
-  <div class="control-group">
-    <%= label_tag :contact_link_text, "Contact Link Text", :class => 'control-label' %>
-    <div class="controls">
-      <%= text_field_tag :contact_link_text, Settings.contact_link_text %>
-      <p class="help-block">Set the text of the "Contact Us" link</p>
-    </div>
-  </div>
-  
-  <div class="control-group">
-    <%= label_tag :contact_link_location, "Contact Link Location", :class => 'control-label' %>
-    <div class="controls"><%= text_field_tag :contact_link_location, Settings.contact_link_location %>
-      <p class="help-block">Set where the "Contact Us" link points.
-  	  (e.g. http://www.yale.edu/contact/ or mailto:contact@yale.edu)</p>
-	  </div>
-  </div>
-  
-  <div class="control-group">
-    <%= label_tag :home_link_text, "Home Link Text", :class => 'control-label' %>
-    <div class="controls"><%= text_field_tag :home_link_text, Settings.home_link_text %>
-  	  <p class="help-block">Set the text of the "Home" link</p>
-	  </div>
-  </div>
-  
-  <div class="control-group">
-    <%= label_tag :home_link_location, "Home Link Location", :class => 'control-label'%>
-    <div class="controls"><%= text_field_tag :home_link_location, Settings.home_link_location %>
-  	  <p class="help-block">Set where the "Home" link points.
-  	  (e.g. http://www.yale.edu/its/stc)</p>
-	  </div>
-  </div>
-  
-  <div class="control-group">
-    <%= label_tag :default_per_cat_page, "Items per Page", :class => 'control-label' %>
-    <div class="controls">
-      <%= number_field_tag :default_per_cat_page, Settings.default_per_cat_page, :in => 5..100, :step => 5 %>
-      <p class="help-block">Default number of items to display per page in the Catalog</p>
-    </div>
-  </div>
-  
-  <div class="control-group">
-    <%= label_tag :upcoming_checkin_email_body, "Upcoming checkin email body", :class => 'control-label' %> (Active: <%= check_box_tag :upcoming_checkin_email_active %>)
-    <div class="controls">
-      <%= text_area_tag :upcoming_checkin_email_body, Settings.upcoming_checkin_email_body, :class => 'input-xlarge', :rows => 18 %>
-    </div>
-  </div>
-  
-  <div class="control-group">
-    <%= label_tag :overdue_checkout_email_body, "Overdue checkout email body", :class => 'control-label' %>
-    <div class="controls">
-      <%= text_area_tag :overdue_checkout_email_body, Settings.overdue_checkout_email_body, :class => 'input-xlarge', :rows => 18 %>
-    </div>
-  </div>
-  
-  <div class="control-group">
-    <%= label_tag :overdue_checkin_email_body, "Overdue checkin email body", :class => 'control-label' %>
-    <div class="controls">
-      <%= text_area_tag :overdue_checkin_email_body, Settings.overdue_checkin_email_body, :class => 'input-xlarge', :rows => 18 %>
-    </div>
-  </div>
-  
-  <div class="form-actions">
-    <%= submit_tag "Save changes", :class => "btn btn-primary" %>
-  </div>
+<%= simple_form_for @app_config, :html => { :class => "form-horizontal" } do |f| %>
+	
+<%= f.input :site_title %>
+<%= f.input :admin_email %>
+<%= f.input :department_name %>
+<%= f.input :contact_link_text %>
+<%= f.input :contact_link_location %>
+<%= f.input :default_per_cat_page %>
+<%= f.input :upcoming_checkin_email_body %>
+<%= f.input :overdue_checkout_email_body %>
+<%= f.input :overdue_checkin_email_body %>
+
+<div class="form-actions">
+<%= f.button :submit %></p>
+</div>
+
 <% end %>

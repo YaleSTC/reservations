@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120626155902) do
+ActiveRecord::Schema.define(:version => 20120627185735) do
 
   create_table "accessories_equipment_models", :force => true do |t|
     t.integer  "accessory_id"
@@ -24,6 +24,17 @@ ActiveRecord::Schema.define(:version => 20120626155902) do
     t.boolean "upcoming_checkin_email_active",         :default => true
     t.boolean "overdue_checkout_email_active",         :default => true
     t.boolean "reservation_confirmation_email_active", :default => true
+    t.string  "site_title"
+    t.string  "admin_email"
+    t.string  "department_name"
+    t.string  "contact_link_text"
+    t.string  "contact_link_location"
+    t.string  "home_link_text"
+    t.string  "home_link_location"
+    t.integer "default_per_cat_page"
+    t.text    "upcoming_checkin_email_body"
+    t.text    "overdue_checkout_email_body"
+    t.text    "overdue_checkin_email_body"
   end
 
   create_table "categories", :force => true do |t|

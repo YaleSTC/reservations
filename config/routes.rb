@@ -4,8 +4,6 @@ Reservations::Application.routes.draw do
 
   resources :documents
   resources :equipment_objects
-
-  resources :app_configs, :only => [:edit, :update]
   
   resources :equipment_models do
     resources :equipment_objects
@@ -58,8 +56,10 @@ Reservations::Application.routes.draw do
 
   match '/logout' => 'application#logout', :as => :logout
   
-  #match '/app_configs/edit' => 'app_configs#edit', :as => :edit_app_configs
- # match '/app_configs/update' => 'app_configs#update', :as => :update_app_configs 
+  match '/app_configs/edit' => 'app_configs#edit', :as => :edit_app_configs
+  match '/app_configs/update' => 'app_configs#update', :as => :update_app_configs 
+  
+  resources :app_configs
   
   match ':controller(/:action(/:id(.:format)))'
 
