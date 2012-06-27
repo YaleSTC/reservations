@@ -71,7 +71,7 @@ $(document).ready(function() {
 		after: ".more_info",
 		watch: 'window',
 		});
-		
+
 	$(".equipment_title").dotdotdot({
 		height: 54, // must match .equipment_title height
 		watch: 'window'

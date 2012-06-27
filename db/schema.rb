@@ -20,6 +20,17 @@ ActiveRecord::Schema.define(:version => 20120629190015) do
     t.datetime "updated_at",         :null => false
   end
 
+  create_table "black_outs", :force => true do |t|
+    t.integer  "equipment_model"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.text     "notice"
+    t.integer  "created_by"
+    t.integer  "type"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+  end
+
   create_table "categories", :force => true do |t|
     t.string   "name"
     t.integer  "max_per_user"
@@ -47,6 +58,16 @@ ActiveRecord::Schema.define(:version => 20120629190015) do
     t.datetime "updated_at",         :null => false
   end
 
+  create_table "documents", :force => true do |t|
+    t.string   "name"
+    t.string   "data_file_name"
+    t.string   "data_content_type"
+    t.integer  "data_file_size"
+    t.integer  "equipment_model_id"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+  end
+
   create_table "equipment_models", :force => true do |t|
     t.string   "name"
     t.text     "description"
@@ -55,8 +76,8 @@ ActiveRecord::Schema.define(:version => 20120629190015) do
     t.integer  "max_per_user"
     t.boolean  "active",                                                    :default => true
     t.integer  "category_id"
-    t.datetime "created_at",                                                                  :null => false
-    t.datetime "updated_at",                                                                  :null => false
+    t.datetime "created_at",                                                               :null => false
+    t.datetime "updated_at",                                                               :null => false
     t.string   "deleted_at"
     t.string   "photo_file_name"
     t.string   "photo_content_type"

@@ -1,0 +1,16 @@
+<%= simple_form_for(@black_out) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.input :equipment_model %>
+    <%= f.input :start_date %>
+    <%= f.input :end_date %>
+    <%= f.input :notice %>
+    <%= f.input :created_by %>
+    <%= f.input :type %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

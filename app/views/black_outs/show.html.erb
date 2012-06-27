@@ -1,0 +1,35 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Equipment model:</b>
+  <%= @black_out.equipment_model %>
+</p>
+
+<p>
+  <b>Start date:</b>
+  <%= @black_out.start_date %>
+</p>
+
+<p>
+  <b>End date:</b>
+  <%= @black_out.end_date %>
+</p>
+
+<p>
+  <b>Notice:</b>
+  <%= @black_out.notice %>
+</p>
+
+<p>
+  <b>Created by:</b>
+  <%= @black_out.created_by %>
+</p>
+
+<p>
+  <b>Type:</b>
+  <%= @black_out.type %>
+</p>
+
+
+<%= link_to 'Edit', edit_black_out_path(@black_out) %> |
+<%= link_to 'Back', black_outs_path %>

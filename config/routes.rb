@@ -1,5 +1,7 @@
 Reservations::Application.routes.draw do
 
+  resources :black_outs
+
   root :to => 'catalog#index'
 
   resources :documents
