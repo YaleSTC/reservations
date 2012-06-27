@@ -3,6 +3,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require jquery-ui
+//= require jquery.sticky
 //= require_self
 //= require cocoon
 //= require autocomplete-rails
@@ -33,7 +34,11 @@ $(document).ready(function() {
 	$(".alert .close").click( function() {
 	     $(this).parent().addClass("fade");
 	});
+	
+	$("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
 });
+
+
 
 $.datepicker.setDefaults({
    minDate: new Date(),

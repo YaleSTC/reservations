@@ -19,6 +19,9 @@ body { padding: 50px; }
   color: #BDBDBD;
   white-space: nowrap;
 }
+.is-sticky { @extend .span3; }
+
+
 
 //For DataTables sorting styling with Bootstrap
 
