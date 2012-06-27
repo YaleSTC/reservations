@@ -2,19 +2,26 @@
 //$iconSpritePath: image-path('glyphicons-halflings.png');
 //$iconWhiteSpritePath: image-path('glyphicons-halflings-white.png');
 
-$navbarBackground: #555;
-$navbarBackgroundHighlight: #888;
-$navbarText: #eee;
-$navbarLinkColor: #eee;
-
-$gridColumns: 12;
-
+//Variables go here
 
 @import "bootstrap";
+
+body { padding-top: 50px; }
+
+@import "bootstrap-responsive";
 @import "font-awesome";
 @import "dataTables/jquery.dataTables.bootstrap";
 
 label { font-weight: bold; }
+.dropdown-menu li.active {
+  display: block;
+  padding: 3px 15px;
+  clear: both;
+  font-weight: normal;
+  line-height: 18px;
+  color: #BDBDBD;
+  white-space: nowrap;
+}
 
 //For DataTables sorting styling with Bootstrap
 
