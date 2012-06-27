@@ -5,11 +5,14 @@
 //Variables go here
 
 @import "bootstrap";
+
+body { padding-top: 50px; }
+
+@import "bootstrap-responsive";
 @import "font-awesome";
 @import "dataTables/jquery.dataTables.bootstrap";
 
 label { font-weight: bold; }
-body { padding-top: 50px; }
 .dropdown-menu li.active {
   display: block;
   padding: 3px 15px;

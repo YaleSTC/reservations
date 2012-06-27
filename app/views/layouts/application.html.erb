@@ -20,6 +20,12 @@
       <div class="navbar-inner">
         <div class="container">
           <%= link_to "<i class=\"icon-th-list\"></i> #{site_title}".html_safe, root_path, :class => 'brand' %>
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <div class="nav-collapse">
           <ul class="nav">
             <li <%= navigation_active catalog_path %><%= navigation_active root_path %>><%= link_to "Catalog", catalog_path %></li>
           <% if current_user.is_admin_in_adminmode? %>
@@ -98,6 +104,7 @@
       	    </li>
       	  <% end %>
         </ul>
+        </div>
       </div>
     </div>
   </div>
