@@ -4,6 +4,7 @@ Reservations::Application.routes.draw do
 
   resources :documents
   resources :equipment_objects
+  resources :reports
   
   resources :equipment_models do
     resources :equipment_objects

@@ -1,0 +1,18 @@
+<% title ("Reports") %>
+
+<table id="table_woo" class="datatable table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th>Reservation Set</th>
+      <th>Count</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @res_counts.each do |key, count| %>
+    <tr>
+      <td><%=h key %></td>
+      <td><%=h count %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
