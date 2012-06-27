@@ -35,4 +35,10 @@ module LayoutHelper
       @count = Reservation.where(:reserver_id => current_user.id).size
     end
   end
+  
+  def navigation_active controller_path
+    if current_page?(controller_path)
+      @active = 'class=active'
+    end
+  end
 end
