@@ -138,7 +138,7 @@ class ApplicationController < ActionController::Base
         deactivateChildren(@objects_class2)
       end
       @objects_class2.destroy #Deactivate the model you had originally intended to deactivate
-      flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + ". Any child objects have been deactivated as well."
+      flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + ". Any related reservations or equipment have been deactivated as well."
     else
       flash[:notice] = "Only administrators can do that!"
     end
@@ -152,7 +152,7 @@ class ApplicationController < ActionController::Base
         activateParents(@model_to_activate)
       end
       @model_to_activate.revive #Activate the model you had originally intended to activate
-      flash[:notice] = "Successfully reactivated " + params[:controller].singularize.titleize + ". Any parent objects have been reactivated as well."
+      flash[:notice] = "Successfully reactivated " + params[:controller].singularize.titleize + ". Any related reservations or equipment have been reactivated as well."
     else
       flash[:notice] = "Only administrators can do that!"
     end
