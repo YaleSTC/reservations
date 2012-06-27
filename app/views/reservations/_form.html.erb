@@ -11,7 +11,5 @@
     <%= f.input :start_date, :as => :datetime %>
     <%= f.input :due_date, :as => :datetime %>
     <%=f.input :notes, :as => :text %>
-    <div class="form-actions">
-    <%= f.button :submit %></p>
-    </div>
+    <%= f.button :wrapped, :cancel => reservations_path %> 
 <% end %>

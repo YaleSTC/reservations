@@ -12,7 +12,5 @@
   <%= f.input :renewal_days_before_due, label: 'How many days before the due date should the Renew button become available?', hint: 'leave blank to give the option to renew at any time' %>
   
   <%= f.error :base %>
-  <div class="form-actions">
-  <%= f.button :submit %>
-  </div>
+  <%= f.button :wrapped, :cancel => categories_path %> 
 <% end %>  

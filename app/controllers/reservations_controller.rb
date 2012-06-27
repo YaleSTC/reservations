@@ -8,9 +8,9 @@ class ReservationsController < ApplicationController
         @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved, Reservation.missed].delete_if{|a| a.empty?}
       elsif params[:show_returned]
         @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved, Reservation.returned].delete_if{|a| a.empty?} #remove empty arrays from set
-      elsif params[:show_returned && :show_missed]
-        @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved, Reservation.missed, Reservation.returned].delete_if{|a| a.empty?}
-      elsif
+      elsif params[:upcoming]
+        @reservations_set = [Reservation.upcoming].delete_if{|a| a.empty?}
+      else
         @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved].delete_if{|a| a.empty?}
       end
     else
@@ -159,6 +159,10 @@ class ReservationsController < ApplicationController
     flash[:notice] = "Successfully destroyed reservation."
     redirect_to reservations_url
   end
+  
+  def upcoming
+    @reservations_set = [Reservation.upcoming].delete_if{|a| a.empty?}
+  end
 
   def check_out
     @user = User.find(params[:user_id])
@@ -212,7 +216,6 @@ class ReservationsController < ApplicationController
   def renew
     @reservation = Reservation.find(params[:id])
     @reservation.due_date += @reservation.max_renewal_length_available.days
-    binding.pry
     if @reservation.times_renewed == NIL # this check can be removed? just run the else now?
       @reservation.times_renewed = 1
     else

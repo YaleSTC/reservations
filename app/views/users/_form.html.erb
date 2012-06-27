@@ -4,7 +4,7 @@
     <%= f.input :login %>
     <% else %>
       <%= f.input :login, :readonly => true, :input_html => {:value => @user.login}%>
-    <%end %>
+    <% end %>
     <%= f.input :first_name %>
     <%= f.input :last_name %>
     <%= f.input :nickname %>
@@ -16,9 +16,7 @@
       <%= f.input :is_banned %>
       <%= f.input :is_checkout_person %>
       <%= f.input :is_admin %>
-      <%= f.input :deleted_at, label: "Disabled", :as => :deleted %>
+      <%= f.input :deleted_at, label: "Disabled", :as => :deleted %>    
   <% end %>
-  <div class="form-actions">
-  <%= f.button :submit %>
-  </div>
+  <%= f.button :wrapped, :cancel => users_path %> 
 <% end %>

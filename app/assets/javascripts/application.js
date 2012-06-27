@@ -21,7 +21,7 @@ $(document).ready(function() {
  
 // For DataTables and Bootstrap
 	$('.datatable').dataTable({
-	  "sDom": "<'row'<'span3'l><'span4'f>r>t<'row'<'span2'i><'span5'p>>",
+	  "sDom": "<'row'<'span4'l><'span5'f>r>t<'row'<'span3'i><'span6'p>>",
 	  "sPaginationType": "bootstrap",
 		"sScrollX": "100%",
 		"aoColumnDefs": [
@@ -56,4 +56,8 @@ $('.submitchange').live('change', function() {
                'start_date_cart': cart_start_date_cart.value,
                'due_date_cart': cart_due_date_cart.value }
   });
+});
+// general submit on change class
+$('.autosubmitme').live('change', function() {
+  $(this).parents('form:first').submit();
 });

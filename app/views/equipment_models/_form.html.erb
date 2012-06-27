@@ -31,7 +31,6 @@
   <div class="links">
     <%= link_to_add_association 'Add Step', f, :checkout_procedures, :class => "btn" %>
   </div>
-  </div>
   <%= label_tag "Checkin Procedures" %>
   <%= f.simple_fields_for :checkin_procedures, :html => { :class => "form-inline" } do |procedure| %>
     <%= render 'checkin_procedure_fields', :f => procedure %>
@@ -48,7 +47,5 @@
 </p>
 	
   <%#= f.error :base %>
-  <div class="form-actions">
-  <%= f.button :submit %>
-  </div>
+<%= f.button :wrapped, :cancel => equipment_models_path %> 
 <% end %>

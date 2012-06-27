@@ -4,7 +4,5 @@
   <%=f.input :name%>
   <%=f.input :serial%>
   <%=f.input :deleted_at, :as => :deleted, label: "Disabled"%>
-  <div class="form-actions">
-  <%=f.button :submit%>
-  </div>
+  <%= f.button :wrapped, :cancel => equipment_objects_path %> 
 <% end %>
