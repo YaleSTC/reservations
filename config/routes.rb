@@ -58,8 +58,8 @@ Reservations::Application.routes.draw do
 
   match '/logout' => 'application#logout', :as => :logout
   
-  match '/app_config/edit' => 'app_config#edit', :as => :edit_app_config
-  match '/app_config/update' => 'app_config#update', :as => :update_app_config  
+  #match '/app_configs/edit' => 'app_configs#edit', :as => :edit_app_configs
+ # match '/app_configs/update' => 'app_configs#update', :as => :update_app_configs 
   
   match ':controller(/:action(/:id(.:format)))'
 
