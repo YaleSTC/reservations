@@ -21,14 +21,14 @@ ActiveRecord::Schema.define(:version => 20120629190015) do
   end
 
   create_table "black_outs", :force => true do |t|
-    t.integer  "equipment_model"
+    t.integer  "equipment_model_id"
     t.datetime "start_date"
     t.datetime "end_date"
     t.text     "notice"
     t.integer  "created_by"
-    t.integer  "type"
-    t.datetime "created_at",      :null => false
-    t.datetime "updated_at",      :null => false
+    t.text     "black_out_type"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
   end
 
   create_table "categories", :force => true do |t|

@@ -2,14 +2,18 @@
   <%= f.error_notification %>
 
   <div class="form-inputs">
-    <%= f.input :equipment_model %>
-    <%= f.input :start_date %>
-    <%= f.input :end_date %>
-    <%= f.input :notice %>
-    <%= f.input :created_by %>
-    <%= f.input :type %>
-  </div>
+    <%= f.association :equipment_model %>
 
+    <%= label_tag :start_date, 'Start of black out' %>
+      <%= datepicker_input "black_out", "start_date" %>
+
+    <%= label_tag :end_date, 'End of black out' %>
+      <%= datepicker_input "black_out", "end_date" %>
+
+    <%= f.input :notice %>
+    <%# f.input :created_by, :collection => User.select_options %>
+    <%= f.select :black_out_type, [['Blackout',1],['Notice Only',2]]   %>
+  </div>
   <div class="form-actions">
     <%= f.button :submit %>
   </div>
