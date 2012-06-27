@@ -60,4 +60,4 @@ $.datepicker.setDefaults({
   $(document).on('change', '.autosubmitme', function() {
     $(this).parents('form:first').submit();
   });
-});	
+
