@@ -21,7 +21,7 @@ $(document).ready(function() {
  
 // For DataTables and Bootstrap
 	$('.datatable').dataTable({
-	  "sDom": "<'row'<'span3'l><'span4'f>r>t<'row'<'span2'i><'span5'p>>",
+	  "sDom": "<'row'<'span4'l><'span5'f>r>t<'row'<'span3'i><'span6'p>>",
 	  "sPaginationType": "bootstrap",
 		"sScrollX": "100%",
 		"aoColumnDefs": [
