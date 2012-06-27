@@ -1,8 +1,8 @@
-<div id="reservations">
-  <h2>My current reservations</h2>
-  <% if current_user.reservations.active.empty? %>
-    (none)
+<% if current_user.reservations.active.empty? %>
   <% else %>
+  <hr />
+  <div id="reservations">
+    <h2>My current reservations</h2>
   <small>
     <ul>
     <% current_user.reservations.active.each do |reservation| %>
@@ -14,5 +14,5 @@
     <% end %>
     </ul>
   </small>
-  <% end %>
-</div>
+  </div>
+<% end %>

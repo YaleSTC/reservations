@@ -3,6 +3,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require jquery-ui
+//= require jquery.sticky
 //= require_self
 //= require cocoon
 //= require autocomplete-rails
@@ -28,10 +29,12 @@ $(document).ready(function() {
 	     $(this).parent().addClass("fade");
 	});
 	
-// to disable selection of dates in the past with datepicker
-  $.datepicker.setDefaults({
-       minDate: new Date(),
-  });
+	$("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
+});
+
+$.datepicker.setDefaults({
+   minDate: new Date(),
+});
 
 // auto-submit cart dates #only-cart-dates
   $(document).on('change', '.submitchange', function() {
