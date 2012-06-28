@@ -32,7 +32,7 @@ $(document).ready(function() {
 	
 	$("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
 
-	$(".equipment_descr").dotdotdot({height: 40});
+	$(".caption").dotdotdot({height: 180});
 });
 
 $.datepicker.setDefaults({
