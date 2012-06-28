@@ -4,6 +4,7 @@
 //= require jquery_ujs
 //= require jquery-ui
 //= require jquery.sticky
+//= require jquery.dotdotdot-1.5.1
 //= require cocoon
 //= require autocomplete-rails
 //= require dataTables/jquery.dataTables
@@ -30,6 +31,8 @@ $(document).ready(function() {
 	});
 	
 	$("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
+
+	$(".equipment_descr").dotdotdot({height: 40});
 });
 
 $.datepicker.setDefaults({
