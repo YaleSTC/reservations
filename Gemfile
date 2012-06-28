@@ -31,6 +31,8 @@ group :development, :test do
   gem "factory_girl_rails"
   gem 'rspec-rails'
   gem 'capybara'
+  gem 'guard-livereload'
+  gem 'yajl-ruby'
 end
 
 # Gems used only for assets and not required
