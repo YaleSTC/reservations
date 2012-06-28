@@ -12,3 +12,7 @@
   overflow-y: scroll;
   border: 1px solid #000;
   }
+.thumbnail {
+  height: 400px;
+}
+.btn#add_to_cart { float: bottom;}

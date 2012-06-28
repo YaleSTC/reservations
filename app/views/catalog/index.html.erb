@@ -36,14 +36,14 @@
             <h3><%= link_to equipment_model.name, equipment_model %></h3>
             <p>(<%= equipment_model.available?(cart.start_date..cart.due_date) || "0" %>
              available from <%= cart.start_date.strftime("%b %d, %Y") %> to <%= cart.due_date.strftime("%b %d, %Y") %>)</p>
-            <p><%= equipment_model.description %></p>
+            <p><%= (truncate equipment_model.description, :length => 240, :omission => "... #{link_to "more info", equipment_model}").html_safe %></p>
             <% if equipment_model.available?(cart.start_date..cart.due_date) > 0 %>
             <!--print add to cart link-->
               <%= link_to "Add to Cart", {:url => add_to_cart_path(equipment_model)},
-                          :href => add_to_cart_path(equipment_model), :remote => true, :class => "btn" %>
+                          :href => add_to_cart_path(equipment_model), :remote => true, :class => "btn", :id => "add_to_cart" %>
               <% # (Using both the ":url" and ":href" symbols seems redundant. Remove one?) %>
             <% else %>
-              <%= button_tag "Add to Cart", :class => "btn disabled" %>
+              <%= button_tag "Add to Cart", :class => "btn disabled", :id => "add_to_cart" %>
             <% end %>
           </div>
         </li>
