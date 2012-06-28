@@ -21,37 +21,43 @@ class ReportsController < ApplicationController
     res_rels[:upcoming]     = full_set.upcoming
     
     res_sets = [:all_models]
-    # binding.pry
+    
     # should this be redone?  Mostly done in two parts to only collect the uniq ids
-    eq_model_ids = [nil]
-    eq_model_ids += full_set.collect {|res| res.equipment_model_id}.uniq 
+    eq_model_ids = full_set.collect {|res| res.equipment_model_id}.uniq 
+    eq_models = EquipmentModel.includes(:category).find(eq_model_ids)
     
     eq_model_names = {}
-    EquipmentModel.find(eq_model_ids).each do |em|
-      eq_model_names[em.id] = em.name.to_sym
-    end
+    category_names = {}
     
-    
-    eq_model_ids.each do |model_id|
-      res_counts = {}
-      res_rels.each do |key, rel|
-        if model_id
-          res_counts[key] = rel.where(:equipment_model_id => model_id).count
-        else
-          res_counts[key] = rel.count
-        end
-      end
-      if model_id
-        @res_stat_sets[eq_model_names[model_id]] = res_counts
+    eq_models.each do |em|
+      eq_model_names[em.name.to_sym] = [em.id]
+      
+      cat_name = em.category.name.to_sym
+      
+      if category_names[cat_name]
+        category_names[cat_name] << em.id
       else
-        @res_stat_sets[:"All Models"] = res_counts
+        category_names[cat_name] = [em.id]
       end
     end
     
-    
-    # scopes.each do |scope|
-    #       res_counts[scope] = res_set.method(scope).call.count
-    #     end
+    # take all the sets of reservations and get stats on them
+    # sets of reservations are passed in by name then models associated
+    res_sets = [{:"All Models" => nil}, category_names, eq_model_names]
+    res_sets.each do |name_hash|
+      name_hash.each do |name, model_ids|
+        res_counts = {}
+        res_rels.each do |key, rel|
+          if model_ids
+            res_counts[key] = rel.select{|res| model_ids.include?(res.equipment_model_id)}.count
+          else
+            res_counts[key] = rel.count
+          end
+        end
+        
+        @res_stat_sets[name] = res_counts
+      end
+    end
     
     #durations
     
