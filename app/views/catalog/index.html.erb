@@ -38,8 +38,8 @@
              <% end %>
              
              <div class="caption">
-                <h3><%= link_to equipment_model.name, equipment_model %></h3>
-                <p>(<%= equipment_model.available?(cart.start_date..cart.due_date) || "0" %> available from <%= cart.start_date.strftime("%b %d, %Y") %> to <%= cart.due_date.strftime("%b %d, %Y") %>)</p>
+                <h3 class="equipment_title"><%= link_to equipment_model.name, equipment_model %></h3><hr class ="special-hr"/>
+                <p>(<%= equipment_model.available?(cart.start_date..cart.due_date) || "0" %> available from <br /><%= cart.start_date.strftime("%b %d, %Y") %> to <%= cart.due_date.strftime("%b %d, %Y") %>)</p>
             
 
                   <p class="equipment_descr">

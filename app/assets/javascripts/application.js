@@ -34,7 +34,8 @@ $(document).ready(function() {
 
 	$(".caption").dotdotdot({
 		height: 180,
-		after: ".more_info"
+		after: ".more_info",
+		watch: 'window',
 		});
 });
 
