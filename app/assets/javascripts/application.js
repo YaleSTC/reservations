@@ -32,7 +32,10 @@ $(document).ready(function() {
 	
 	$("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
 
-	$(".caption").dotdotdot({height: 180});
+	$(".caption").dotdotdot({
+		height: 180,
+		after: ".more_info"
+		});
 });
 
 $.datepicker.setDefaults({
