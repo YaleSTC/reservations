@@ -1,0 +1,14 @@
+@import "autocomplete";
+@import "bootstrap_and_overrides";
+@import "jquery-ui-1.8.16.custom";
+
+.cart_reserver { margin-bottom: 7px; }
+.thumbnail {
+  height: 420px;
+  position: relative;
+  line-height: $baseLineHeight;
+  }
+#add_to_cart { 
+  position: absolute;
+  bottom: 13px;
+  }
