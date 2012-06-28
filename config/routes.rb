@@ -13,7 +13,7 @@ Reservations::Application.routes.draw do
     resources :equipment_models
   end
   
-  match '/users/:id/checkout/' => 'reservations#check_out_by_user', :as => :checkout
+#  match '/users/:id/checkout/' => 'reservations#check_out_by_user', :as => :checkout_by_user
   
 # do we really want / need this block?
   resources :users do
@@ -44,7 +44,10 @@ Reservations::Application.routes.draw do
 
   
   match '/reservations/show_all/for_user/:user_id' => 'reservations#show_all', :as => :show_all_reservations_for_user
-  match '/reservations/check_out/for_user/:user_id' => 'reservations#check_out', :as => :check_out_reservations_for_user
+  match '/reservations/check_out/for_user/:user_id' => 'reservations#check_out_by_user', :as => :check_out_reservations_for_user
+  
+  match '/reservations/check_out/for_user/:user_id/do' => 'reservations#update_by_user', :as => :update_reservations_by_user
+  
   match '/reservations/check_in/for_user/:user_id' => 'reservations#check_in', :as => :check_in_reservations_for_user
   
   match '/catalog/update_view' => 'catalog#update_user_per_cat_page', :as => :update_user_per_cat_page

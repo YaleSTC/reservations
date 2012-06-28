@@ -57,4 +57,8 @@ $(document).ready(function() {
   $(document).on('change', '.autosubmitme', function() {
     $(this).parents('form:first').submit();
   });
+// general submit on click class
+  $(document).on('click', '.autosubmitmeclick', function() {
+    $(this).parents('form:first').submit();
+  });
 });	

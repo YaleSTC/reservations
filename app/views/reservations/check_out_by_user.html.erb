@@ -1,7 +1,8 @@
 <% title "Reservation Checkout" %>
+<%# {:controller => 'reservations', :action => "update"} %>
+<%# binding.pry %>
 <% @user_current_checkouts.each do |reservation| %>
   <% @reservation = reservation %>
   <%= render :partial => 'reservations/check_out_form' %>
-  <%# binding.pry %>
   <br />
 <% end %>

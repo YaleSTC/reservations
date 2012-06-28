@@ -1,4 +1,5 @@
-<%= form_tag( {:controller => 'reservations', :action => "update"}, :method => "put" ) do %>
+<div id="<%= @reservation.id %>">
+<%= form_tag( update_reservations_by_user_path, :method => "put", :remote => true ) do %>
 
 	<p>
   <strong><%= @user.name %> is picking up the following equipment:</strong>
@@ -44,7 +45,8 @@
   	</ul>
 	</p>
 
-
-	<%= submit_tag "Check out equipment" %>
+  <button style='btn' class='autosubmitmeclick' value='Check out this equipment'>Check out this equipment</button>
+	<%#= submit_tag "Check out equipment" %>
 
 <% end %>
+</div>
