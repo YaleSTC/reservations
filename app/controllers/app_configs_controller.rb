@@ -1,5 +1,10 @@
 class AppConfigsController < ApplicationController
   before_filter :require_admin
+  # before_filter :bind_pry
+  # 
+  # def bind_pry
+  #   binding.pry
+  # end
   
   def edit
        @app_config = AppConfig.first || AppConfig.new
