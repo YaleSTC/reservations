@@ -25,6 +25,8 @@ class BlackOutsController < ApplicationController
   # GET /black_outs/new.json
   def new
     @black_out = BlackOut.new
+    @black_out[:start_date] = Date.today
+    @black_out[:end_date] = Date.today
 
     respond_to do |format|
       format.html # new.html.erb
@@ -40,10 +42,13 @@ class BlackOutsController < ApplicationController
   # POST /black_outs
   # POST /black_outs.json
   def create
+    params[:black_out][:start_date] = Date.strptime(params[:black_out][:start_date],'%m/%d/%Y')
+    params[:black_out][:end_date] = Date.strptime(params[:black_out][:end_date],'%m/%d/%Y')
     @black_out = BlackOut.new(params[:black_out])
 
     respond_to do |format|
       if @black_out.save
+
         format.html { redirect_to @black_out, notice: 'Black out was successfully created.' }
         format.json { render json: @black_out, status: :created, location: @black_out }
       else
@@ -57,6 +62,10 @@ class BlackOutsController < ApplicationController
   # PUT /black_outs/1.json
   def update
     @black_out = BlackOut.find(params[:id])
+
+    params[:black_out][:start_date] = Date.strptime(params[:black_out][:start_date],'%m/%d/%Y')
+
+    params[:black_out][:end_date] = Date.strptime(params[:black_out][:end_date],'%m/%d/%Y')
 
     respond_to do |format|
       if @black_out.update_attributes(params[:black_out])

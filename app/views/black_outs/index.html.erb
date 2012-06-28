@@ -6,7 +6,7 @@
     <th>Start date</th>
     <th>End date</th>
     <th>Notice</th>
-    <th>Created by</th>
+    <th>Last Edited by</th>
     <th>Type</th>
     <th></th>
     <th></th>
@@ -16,10 +16,10 @@
 <% @black_outs.each do |black_out| %>
   <tr>
     <td><%= black_out.equipment_model.name %></td>
-    <td><%= black_out.start_date %></td>
-    <td><%= black_out.end_date %></td>
+    <td><%= black_out[:start_date].strftime('%m/%d/%Y') %></td>
+    <td><%= black_out[:end_date].strftime('%m/%d/%Y') %></td>
     <td><%= black_out.notice %></td>
-    <td><%= black_out.created_by %></td>
+    <td><%= (black_out[:created_by]) %></td>
     <td><%= black_out.black_out_type %></td>
     <td><%= link_to 'Show', black_out %></td>
     <td><%= link_to 'Edit', edit_black_out_path(black_out) %></td>

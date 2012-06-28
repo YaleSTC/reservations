@@ -4,14 +4,15 @@
   <div class="form-inputs">
     <%= f.association :equipment_model %>
 
+
     <%= label_tag :start_date, 'Start of black out' %>
-      <%= datepicker_input "black_out", "start_date" %>
+      <%= datepicker_input "black_out", "start_date", :value => @black_out[:start_date].strftime('%m/%d/%Y') %>
 
     <%= label_tag :end_date, 'End of black out' %>
-      <%= datepicker_input "black_out", "end_date" %>
+      <%= datepicker_input "black_out", "end_date", :value => @black_out[:end_date].strftime('%m/%d/%Y') %>
 
     <%= f.input :notice %>
-    <%# f.input :created_by, :collection => User.select_options %>
+    <%= f.input :created_by, :value => current_user.id %>
     <%= f.select :black_out_type, [['Blackout',1],['Notice Only',2]]   %>
   </div>
   <div class="form-actions">

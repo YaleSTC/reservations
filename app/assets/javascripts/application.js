@@ -90,7 +90,7 @@ $(document).ready(function() {
 });
 // to disable selection of dates in the past with datepicker
 $.datepicker.setDefaults({
-   minDate: new Date(),
+   minDate: new Date()
 });
 
 // auto-submit cart dates #only-cart-dates

@@ -2,7 +2,7 @@
 
 <p>
   <b>Equipment model:</b>
-  <%= @black_out.equipment_model %>
+  <%= @black_out.equipment_model.name %>
 </p>
 
 <p>
@@ -21,8 +21,8 @@
 </p>
 
 <p>
-  <b>Created by:</b>
-  <%= @black_out.created_by %>
+  <b>Last Edited by:</b>
+  <%= User.find(@black_out.created_by).name %>
 </p>
 
 <p>
