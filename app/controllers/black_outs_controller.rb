@@ -49,7 +49,6 @@ class BlackOutsController < ApplicationController
 
     respond_to do |format|
       if @black_out.save
-
         format.html { redirect_to @black_out, notice: 'Black out was successfully created.' }
         format.json { render json: @black_out, status: :created, location: @black_out }
       else
