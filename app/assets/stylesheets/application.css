@@ -1,9 +1,9 @@
 /*
-*= require_self
 *= require forms
 *= require autocomplete
 *= require bootstrap_and_overrides
 *= require jquery-ui-1.8.16.custom
+*= require_self
 */
 
 .cart_reserver { margin-bottom: 7px; }
@@ -13,6 +13,11 @@
   border: 1px solid #000;
   }
 .thumbnail {
-  height: 400px;
-}
-.btn#add_to_cart { float: bottom;}
+  height: 420px;
+  position: relative;
+  line-height: 18px;
+  }
+#add_to_cart { 
+  position: absolute;
+  bottom: 13px;
+  }

@@ -4,7 +4,6 @@
 //= require jquery_ujs
 //= require jquery-ui
 //= require jquery.sticky
-//= require_self
 //= require cocoon
 //= require autocomplete-rails
 //= require dataTables/jquery.dataTables
@@ -12,6 +11,7 @@
 //= require dataTables_numhtml_detect.js
 //= require dataTables/jquery.dataTables.bootstrap
 //= require bootstrap
+//= require_self
 
 $(document).ready(function() {
 // For DataTables and Bootstrap
