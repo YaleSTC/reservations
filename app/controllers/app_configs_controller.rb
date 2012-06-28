@@ -6,6 +6,8 @@ class AppConfigsController < ApplicationController
   #   binding.pry
   # end
   
+  
+  
   def edit
        @app_config = AppConfig.first || AppConfig.new
   end

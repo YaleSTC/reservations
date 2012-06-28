@@ -57,6 +57,5 @@ module Reservations
     
     # Activate observers that should always be running.
     config.active_record.observers = :app_config_observer
-
   end
 end
