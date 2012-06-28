@@ -1,9 +1,0 @@
-  <% title "Reservation Checkout" %>
-<%= form_tag( {:controller => 'reservations', :action => "update"}, :method => "put" ) do %>
-<p>
-  <%= @user.name %> is picking up the following equipment:
-</p>
-<%= render :partial => "check_out_item", :collection => @check_out_set %>
-  <%= submit_tag "Check out equipment" %>
-<% end %>
-

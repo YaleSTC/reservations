@@ -168,6 +168,14 @@ class ReservationsController < ApplicationController
     @user = User.find(params[:user_id])
     @check_out_set = Reservation.due_for_checkout(@user)
   end
+  
+  def check_out_by_user
+    @user = User.find(params[:id])
+#    @reservation.reserver = @user
+#    current_user.reservations.reserved
+#   binding.pry
+    @user_current_checkouts = Reservation.due_for_checkout(@user)
+  end
 
   def check_out_single
     @reservation = Reservation.find(params[:id])

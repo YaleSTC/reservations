@@ -13,6 +13,9 @@ Reservations::Application.routes.draw do
     resources :equipment_models
   end
   
+  match '/users/:id/checkout/' => 'reservations#check_out_by_user', :as => :checkout
+  
+# do we really want / need this block?
   resources :users do
     collection do
       get :check_out
