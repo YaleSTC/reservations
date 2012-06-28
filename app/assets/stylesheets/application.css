@@ -7,11 +7,6 @@
 */
 
 .cart_reserver { margin-bottom: 7px; }
-#list_items_in_cart { 
-  max-height: 150px;
-  overflow-y: scroll;
-  border: 1px solid #000;
-  }
 .thumbnail {
   height: 420px;
   position: relative;
