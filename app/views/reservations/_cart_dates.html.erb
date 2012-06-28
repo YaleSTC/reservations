@@ -1,7 +1,7 @@
 <div id="cart_dates">
   <%= form_tag update_cart_path, :remote => true, :class => "form-vertical" do %>
     <%= label_tag :reserver_id, 'Reserver' %>
-    <%# application.js needs to know the update path %>
+    <%# application.js needs to know the update_cart_path and the new_user_path %>
     <%= hidden_field_tag 'update_cart_path', update_cart_path %>
     <%= hidden_field_tag 'new_user_path', "#{new_user_path} #content" %>
     <% if current_user && (current_user.is_admin_in_adminmode? || current_user.is_admin_in_checkoutpersonmode? || current_user.is_checkout_person?) %>

@@ -65,6 +65,6 @@ $('.autosubmitme').live('change', function() {
 //Load the user/new into the modal div for the new reserver button in the cart
 $().ready(function() {
   $('#modal').click(function() {
-    $('#userModal').load(new_user_path.value, {from_cart : true });
+    $('#userModal').load(new_user_path.value, {from_cart : true }); // new_user_path defined in _cart_dates
   });
 });
