@@ -22,10 +22,12 @@ Reservations::Application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
-  # Do not compress assets
+  
+  #Rails 3 assets
+  config.assets.compile = true
   config.assets.compress = false
+  config.assets.debug = false
+  config.assets.digest = false
 
-  # Expands the lines which load the assets
-  config.assets.debug = true
 end
 

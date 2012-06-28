@@ -3,6 +3,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require jquery-ui
+//= require jquery.sticky
 //= require_self
 //= require cocoon
 //= require autocomplete-rails
@@ -13,12 +14,6 @@
 //= require bootstrap
 
 $(document).ready(function() {
-   $('.toggleLink').click(function() {
-     $('#quicksearch_hidden').toggle('slow', function() {
-       // Animation complete.
-     });
-   });
- 
 // For DataTables and Bootstrap
 	$('.datatable').dataTable({
 	  "sDom": "<'row'<'span4'l><'span5'f>r>t<'row'<'span3'i><'span6'p>>",
@@ -33,34 +28,38 @@ $(document).ready(function() {
 	$(".alert .close").click( function() {
 	     $(this).parent().addClass("fade");
 	});
+	
+	$("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
 });
 
 $.datepicker.setDefaults({
    minDate: new Date(),
 });
 
-// auto-save the reserver_id, on any click outside the box
-$('.submittable').live('blur', function() {
-  $.ajax({
-       url: update_cart_path.value, // defined in _cart_dates in hidden field
-       data: { 'reserver_id': reserver_id.value,
-               'start_date_cart': cart_start_date_cart.value,
-               'due_date_cart': cart_due_date_cart.value }
+// auto-submit cart dates #only-cart-dates
+  $(document).on('change', '.submitchange', function() {
+      $('#cart_dates').load( update_cart_path.value, // defined in _cart_dates in hidden field
+// params need to be passed
+        { 'reserver_id': reserver_id.value,
+          'start_date_cart': cart_start_date_cart.value,
+          'due_date_cart': cart_due_date_cart.value }
+      );
   });
-});
-// the datepicker function needs to be submitted on change
-$('.submitchange').live('change', function() {
-  $.ajax({
-       url: update_cart_path.value, // defined in _cart_dates in hidden field
-       data: { 'reserver_id': reserver_id.value,
-               'start_date_cart': cart_start_date_cart.value,
-               'due_date_cart': cart_due_date_cart.value }
+
+// auto-submit cart dates #only-cart-reserver
+  $(document).on('blur', '.submittable', function() {
+      $('#cart_dates').load( update_cart_path.value, // defined in _cart_dates in hidden field
+// params need to be passed
+        { 'reserver_id': reserver_id.value,
+          'start_date_cart': cart_start_date_cart.value,
+          'due_date_cart': cart_due_date_cart.value }
+      );
   });
-});
+
 // general submit on change class
-$('.autosubmitme').live('change', function() {
-  $(this).parents('form:first').submit();
-});
+  $(document).on('change', '.autosubmitme', function() {
+    $(this).parents('form:first').submit();
+  });
 
 //Load the user/new into the modal div for the new reserver button in the cart
 $().ready(function() {
