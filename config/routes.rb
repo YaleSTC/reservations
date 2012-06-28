@@ -59,7 +59,7 @@ Reservations::Application.routes.draw do
   match '/app_configs/edit' => 'app_configs#edit', :as => :edit_app_configs
   match '/app_configs/update' => 'app_configs#update', :as => :update_app_configs 
   
-  resources :app_configs
+  resources :app_configs, :only => [:edit, :update]
   
   match ':controller(/:action(/:id(.:format)))'
 
