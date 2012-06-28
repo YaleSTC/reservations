@@ -1,1 +1,1 @@
-$('#<%= @reservation_id %>').replaceWith('<div class="btn"><strong><em>Reservation successful.</strong></div>');
+$('#<%= @reservation.id %>').replaceWith('<div id="<%= @reservation.id %>" class="well"><strong><em><%= @reservation.equipment_model.name %> successfully checked out.</strong></div>');

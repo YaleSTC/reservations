@@ -152,15 +152,12 @@ class ReservationsController < ApplicationController
     end
   end
 
-  def update_by_user
-    binding.pry
-    @reservation_id = params[:reservations].keys[0] # set the reservation id
-#    binding.pry
+  def checkout_by_user
+    @reservation = Reservation.find(params[:reservations].keys[0]) # set the reservation
     error_msgs = ""
-#    if params[:commit] == "Check out equipment"
-      reservations_to_be_checked_out = []
-      reservation_check_out_procedures_count = []
-      params[:reservations].each do |reservation_id, reservation_hash|
+    reservations_to_be_checked_out = []
+    reservation_check_out_procedures_count = []
+    params[:reservations].each do |reservation_id, reservation_hash|
         if reservation_hash[:checkout?] == "1" then #update attributes for all equipment that is checked off
           r = Reservation.find(reservation_id)
           r.checkout_handler = current_user
@@ -190,63 +187,13 @@ class ReservationsController < ApplicationController
         end
       end
       reservations_to_be_checked_out.each do |reservation| #updates to reservations are saved
-        reservation.save
+        reservation.save # save!
       end
       flash[:notice] = error_msgs.empty? ? "Successfully checked out equipment!" : error_msgs #Allows admins to see all errors, but still checkout successfully
-#      binding.pry
       respond_to do |format|
         format.html{redirect_to check_out_reservations_for_user_path }
-#        format.html{render :action => "check_out_update"}
-#        format.html{redirect_to root_path}
         format.js{render :action => "check_out_update"}
-      end and return
-#      redirect_to :action => 'show' and return
-
-#    elsif params[:commit] == "Check in equipment"
-
-#      if params[:reservations].nil? #Prevents the nil error from not selecting any reservations
-#        flash[:error] = "No reservation selected!"
-#        redirect_to :back and return
-#      end
-
-#      reservations_to_be_checked_in = []
-#      reservation_check_in_procedures_count = []
-#      params[:reservations].each do |reservation_id, reservation_hash|
-#        if reservation_hash[:checkin?] == "1"  then
-#          r = Reservation.find(reservation_id)
-#          r.checkin_handler = current_user
-#          r.checked_in = Time.now
-#          reservations_to_be_checked_in << r
-#          reservation_check_in_procedures_count << (reservation_hash[:checkin_procedures] || []).count #Like above, accounting for check in procedures count using two arrays
-#        else
-#          flash[:error] = "You filled out check in procedures without selecting the reservation!" #Prevents the nil error from selecting checkout procedures, but no reservations.
-#          redirect_to :back and return
-#        end
-#      end
-
-##      error_msgs = reservations_to_be_checked_in.first.check_in_permissions(reservations_to_be_checked_in, reservation_check_in_procedures_count) #This method currently just counts the check in procedures to make sure they are all checked off
-##      if !error_msgs.empty?
-##        flash[:error] = error_msgs
-##        redirect_to :back and return
-##      else
-##        reservations_to_be_checked_in.each do |reservation|
-##          reservation.save
-##        end
-##        flash[:notice] = "Successfully checked in equipment!"
-##        redirect_to :action => 'show' and return
-##      end
-
-##    elsif params[:commit] == "Submit" #For editing reservations
-##      @reservation = Reservation.find(params[:id])
-##      if @reservation.update_attributes(params[:reservation])
-##        flash[:notice] = "Successfully edited reservation."
-##        redirect_to @reservation
-##      end
-#      respond_to do |format|
-#        format.html{redirect_to check_out_reservations_for_user_path }
-#        format.js{render :action => "check_out_update"}
-#      end
-#    end
+      end
   end
 
   def destroy

@@ -1,17 +1,12 @@
-<div id="<%= @reservation.id %>">
-<%= form_tag( update_reservations_by_user_path, :method => "put", :remote => true ) do %>
-
-	<p>
-  <strong><%= @user.name %> is picking up the following equipment:</strong>
-	</p>
+<div id="<%= @reservation.id %>" class="well">
+<%= form_tag( checkout_by_user_path, :method => "put", :remote => true ) do %>
 
 	<%= check_box_tag "reservations[#{@reservation.id}][checkout?]" %>
 	<strong>
 	<%= @reservation.equipment_model.name %>
 	</strong>
 
-	<%= select_tag "reservations[#{@reservation.id}][equipment_object_id]", @reservation.equipment_model.available_object_select_options, :prompt => true %>
-  <%#= collection_select(:@reservation, :equipment_object_id, item.equipment_model.equipment_objects, :id, :name, {:prompt => true}) %>
+	<%= select_tag "reservations[#{@reservation.id}][equipment_object_id]", @reservation.equipment_model.available_object_select_options %>
 	
 	<p>
 		<%= label_tag :notes %> <br />

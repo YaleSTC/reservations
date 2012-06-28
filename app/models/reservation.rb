@@ -145,8 +145,11 @@ class Reservation < ActiveRecord::Base
   def late_fee
     self.equipment_model.late_fee.to_f
   end
+  
+  def fake_reserver_id # this is necessary for autocomplete! delete me not!
+  end
 
-  def equipment_list
+  def equipment_list  # delete?
     raw_text = ""
     #Reservation.where("reserver_id = ?", @user.id).each do |reservation|
     #if reservation.equipment_model
@@ -155,15 +158,6 @@ class Reservation < ActiveRecord::Base
     #  raw_text += "1 x *equipment deleted*\r\n"
     #end
     raw_text
-  end
-
-  # def equipment_object_id=(ids)
-  #   ids.each do |id|
-  #     equipment_objects << EquipmentObject.find(id)
-  #   end
-  # end
-  
-  def fake_reserver_id # Necessary for auto-complete feature
   end
 
   def max_renewal_length_available
@@ -192,7 +186,8 @@ class Reservation < ActiveRecord::Base
     # date it is and the max number of times one is allowed to renew
     # 
     # we need to test if any of the variables are set to NIL, because in that case comparision
-    # is undefined; that's also why we can't set variables to these values before the if statements
+    # is undefined; that's also why we can't set variables to these function values before 
+    # the if statements
     if self.times_renewed == NIL
       self.times_renewed = 0
     end

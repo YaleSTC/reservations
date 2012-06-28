@@ -1,6 +1,5 @@
 <% title "Reservation Checkout" %>
-<%# {:controller => 'reservations', :action => "update"} %>
-<%# binding.pry %>
+<h3><%= @user.name %> has reserved the following equipment:</h3>
 <% @user_current_checkouts.each do |reservation| %>
   <% @reservation = reservation %>
   <%= render :partial => 'reservations/check_out_form' %>
