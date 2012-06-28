@@ -4,14 +4,18 @@
   <thead>
     <tr>
       <th>Reservation Set</th>
-      <th>Count</th>
+      <% @res_stat_sets.values.first.each do |key, count| %>
+      <th><%=h key %></th>
+      <% end %>
     </tr>
   </thead>
   <tbody>
-    <% @res_counts.each do |key, count| %>
+    <% @res_stat_sets.each do |key, stat_set| %>
     <tr>
       <td><%=h key %></td>
-      <td><%=h count %></td>
+      <% stat_set.each do |key, count| %>
+        <td><%=h count %></td>
+      <% end %>
     </tr>
     <% end %>
   </tbody>
