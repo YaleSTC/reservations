@@ -208,9 +208,17 @@ class ReservationsController < ApplicationController
   autocomplete :user, :last_name, :extra_data => [:first_name, :login], :display_value => :render_name
   
   def get_autocomplete_items(parameters)
-    items = User.select("first_name, last_name, login, id, deleted_at").where(["CONCAT_WS(' ', first_name, last_name, login) LIKE ?", "%#{parameters[:term]}%"]).reject {|user| ! user.deleted_at.nil?}
-    #items = User.select("first_name, last_name, login, id").where(["first_name || ' ' || last_name || ' ' || login LIKE ?", "%#{parameters[:term]}%])
-    # The first line is MYSQL, the second one is Postgres/plain SQL#
+    parameters[:term] = parameters[:term].downcase
+    users=User.select("nickname, first_name, last_name,login, id, deleted_at").reject {|user| ! user.deleted_at.nil?}
+    @search_result = []
+    users.each do |user|
+        if user.login.downcase.include?(parameters[:term]) || 
+          user.name.downcase.include?(parameters[:term]) ||
+          user.first_name.include?(parameters[:term])
+          @search_result << user
+        end
+      end
+      users = @search_result
   end
 
   def renew

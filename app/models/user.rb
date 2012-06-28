@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
   attr_accessible :login, :first_name, :last_name, :nickname, :phone, :email,
                   :affiliation, :is_banned, :is_checkout_person, :is_admin,
                   :adminmode, :checkoutpersonmode, :normalusermode, :bannedmode, :deleted_at
+  attr_accessor(:full_query)
 
   validates :login,       :presence => true,
                           :uniqueness => true
