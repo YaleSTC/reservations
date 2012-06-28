@@ -87,4 +87,5 @@ class User < ActiveRecord::Base
   def render_name
     self.first_name + ' ' + self.last_name + ' ' + self.login
   end
+  
 end

@@ -3,6 +3,7 @@
     <%= label_tag :reserver_id, 'Reserver' %>
     <%# application.js needs to know the update path %>
     <%= hidden_field_tag 'update_cart_path', update_cart_path %>
+    <%= hidden_field_tag 'new_user_path', "#{new_user_path} #content" %>
     <% if current_user && (current_user.is_admin_in_adminmode? || current_user.is_admin_in_checkoutpersonmode? || current_user.is_checkout_person?) %>
       <%= autocomplete_field_tag 'fake_reserver_id', User.find(cart.reserver_id).render_name, autocomplete_user_last_name_reservations_path, :size => 30, :update_elements => {:id => '#reserver_id'}, :class => 'submittable span2' %>
       <%= hidden_field_tag 'reserver_id', cart.reserver_id %>

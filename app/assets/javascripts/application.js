@@ -63,4 +63,8 @@ $('.autosubmitme').live('change', function() {
 });
 
 //Load the user/new into the modal div for the new reserver button in the cart
-$('#userModal').load('users/new #content');
+$().ready(function() {
+  $('#modal').click(function() {
+    $('#userModal').load(new_user_path.value, {from_cart : true });
+  });
+});

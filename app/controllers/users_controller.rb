@@ -37,12 +37,20 @@ class UsersController < ApplicationController
   def create
     @user = User.new(params[:user])
     @user.login = session[:cas_user] unless current_user and (current_user.is_admin_in_adminmode? or current_user.is_admin_in_checkoutpersonmode? or current_user.is_checkout_person?)
+        binding.pry
     @user.is_admin = true if User.count == 0
     if @user.save
       flash[:notice] = "Successfully created user."
 #   redirect to New Reservations page iff logged in as admin or
 #   checkout person
+      if params[:from_cart] == "true" #updates the cart and redirects to catalog if new reserver button in cart was used
+        binding.pry
+        session[:cart].set_reserver_id(@user.id)
+        binding.pry
+        redirect_to root_path
+      else
       redirect_to ((current_user.is_admin_in_adminmode? or current_user.is_admin_in_checkoutpersonmode? or current_user.is_checkout_person?) ? @user : root_path)
+      end
     else
       render :action => 'new'
     end
