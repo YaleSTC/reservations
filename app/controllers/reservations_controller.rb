@@ -157,20 +157,20 @@ class ReservationsController < ApplicationController
     reservations_to_be_checked_out = []
     reservation_check_out_procedures_count = []
     
-    # throw all the valid reservations into an array
+    # throw all the reservations that are being checked out into an array
     params[:reservations].each do |reservation_id, reservation_hash|
         if reservation_hash[:equipment_object_id] != ('' or NIL) then #update attributes for all equipment that is checked off
           r = Reservation.find(reservation_id)
           r.checkout_handler = current_user
           r.checked_out = Time.now
           r.equipment_object = EquipmentObject.find(reservation_hash[:equipment_object_id])
-          
+      # method start    
           # deal with checkout procedures
           procedures_not_done = '' # initialize
           r.equipment_model.checkout_procedures.each do |check|
-            if reservation_hash[:checkout_procedures] == NIL
+            if reservation_hash[:checkout_procedures] == NIL # if none were checked, note that
               procedures_not_done += '* ' + check.step + '\n'
-            elsif !reservation_hash[:checkout_procedures].keys.include?(check.id.to_s)
+            elsif !reservation_hash[:checkout_procedures].keys.include?(check.id.to_s) # if you didn't check it of, add to string
               procedures_not_done += '* ' + check.step + '\n'
             end
           end
@@ -184,7 +184,7 @@ class ReservationsController < ApplicationController
           else # if there is a note and some checkout procedures were not done
             r.notes = reservation_hash[:notes] + '\n\nThe following checkout procedures were not performed:\n' + procedures_not_done
           end
-
+       # method end
           # put the data into the container we defined at the beginning of this action
           reservations_to_be_checked_out << r # david if you name the function this change this name
           
@@ -199,23 +199,26 @@ class ReservationsController < ApplicationController
       if reservations_to_be_checked_out.first.nil? #Prevents the nil error from not selecting any reservations
         flash[:error] = "No reservation selected."
         redirect_to :back and return
+      # move method to user model TODO
       elsif Reservation.overdue_reservations?(reservations_to_be_checked_out.first.reserver) #Checks for any overdue equipment
         error_msgs += "User has overdue equipment."
       end
       
       #Checks that must be iterated over each individual reservation
-      # TODO what does this line do?
+      # TODO what does this line do? it shouldn't need to be run again since done when finalizing reservation, talk with erin
       error_msgs += reservations_to_be_checked_out.first.check_out_permissions(reservations_to_be_checked_out, reservation_check_out_procedures_count) #This method checks the Category Max Per User, Equipment Model Max per User, and whether all the checkout procedures have been checked off
       
       # act on the errors
       if !error_msgs.empty? # If any requirements are not met...
         if current_user.is_admin_in_adminmode? # Admins can ignore them
-          error_msgs += " Admin Override: Equipment has been successfully checked out even though "
+          error_msgs = " Admin Override: Equipment has been successfully checked out even though " + error_msgs
         else # everyone else is redirected
           flash[:error] = error_msgs
           redirect_to :back and return
         end
       end
+      
+      # transaction this process ^downarrow
       
       # save reservations
       reservations_to_be_checked_out.each do |reservation| # updates to reservations are saved

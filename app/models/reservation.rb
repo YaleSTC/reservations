@@ -99,7 +99,6 @@ class Reservation < ActiveRecord::Base
           end
         end
 
-
       end
     end
     error_messages
