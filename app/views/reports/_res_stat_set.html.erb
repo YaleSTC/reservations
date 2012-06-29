@@ -1,0 +1,13 @@
+<table id="table_woo" class="datatable table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th>Reservation Set</th>
+      <% @table_col_names.each do |name| %>
+      <th><%=h name %></th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render :partial => "report_row", :collection => res_stat_set %>
+  </tbody>
+</table>

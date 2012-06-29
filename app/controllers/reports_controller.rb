@@ -20,8 +20,6 @@ class ReportsController < ApplicationController
     res_rels[:missed]       = full_set.missed
     res_rels[:upcoming]     = full_set.upcoming
     
-    res_sets = [:all_models]
-    
     # should this be redone?  Mostly done in two parts to only collect the uniq ids
     eq_model_ids = full_set.collect {|res| res.equipment_model_id}.uniq 
     eq_models = EquipmentModel.includes(:category).find(eq_model_ids)
@@ -44,22 +42,33 @@ class ReportsController < ApplicationController
     # take all the sets of reservations and get stats on them
     # sets of reservations are passed in by name then models associated
     res_sets = [{:"All Models" => nil}, category_names, eq_model_names]
+    @res_stat_sets = []
+    @table_col_names = res_rels.keys + [:"User Counts"]
+    
     res_sets.each do |name_hash|
+      stat_set = []
       name_hash.each do |name, model_ids|
-        res_counts = {}
+        res_counts = [name]
         res_rels.each do |key, rel|
           if model_ids
-            res_counts[key] = rel.select{|res| model_ids.include?(res.equipment_model_id)}.count
+            res_counts << rel.select{|res| model_ids.include?(res.equipment_model_id)}.count
           else
-            res_counts[key] = rel.count
+            res_counts << rel.count
           end
         end
         
-        @res_stat_sets[name] = res_counts
+        #ugly way of selecting counts for all users for a model, probably will merge into the overall loop
+        if model_ids
+          matching_models = full_set.select{|res| model_ids.include?(res.equipment_model_id)}
+          res_counts << matching_models.collect{|res| res.reserver_id}.uniq.count
+        else
+          res_counts << full_set.collect{|res| res.reserver_id}.uniq.count
+        end
+        
+        stat_set << res_counts
       end
+      @res_stat_sets << stat_set
     end
-    
-    #durations
     
   end
   
