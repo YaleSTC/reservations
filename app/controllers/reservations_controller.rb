@@ -28,12 +28,13 @@ class ReservationsController < ApplicationController
   end
 
   def new
+    #this is used to initialize each reservation later
+    @reservation = Reservation.new(start_date: cart.start_date, due_date: cart.due_date, reserver_id: cart.reserver_id)
     if cart.items.empty?
       flash[:error] = "You need to add items to your cart before making a reservation."
       redirect_to catalog_path
-    else
-      #this is used to initialize each reservation later
-      @reservation = Reservation.new(start_date: cart.start_date, due_date: cart.due_date, reserver_id: cart.reserver_id)
+    elsif !cart.valid?
+      flash[:error] = "Please fix the following errors before finalizing your reservation:<br/>".html_safe + cart.errors.values.flatten.join("<br/>").html_safe
     end
   end
 
@@ -159,7 +160,7 @@ class ReservationsController < ApplicationController
     flash[:notice] = "Successfully destroyed reservation."
     redirect_to reservations_url
   end
-  
+
   def upcoming
     @reservations_set = [Reservation.upcoming].delete_if{|a| a.empty?}
   end
@@ -188,25 +189,25 @@ class ReservationsController < ApplicationController
     if UserMailer.checkout_receipt(@reservation).deliver
       redirect_to :back
       flash[:notice] = "Successfuly delivered receipt email."
-    else 
+    else
       redirect_to @reservation
       flash[:error] = "Unable to deliver receipt email. Please contact administrator for more support. "
     end
   end
-  
+
   def checkin_email
     @reservation =  Reservation.find(params[:id])
     if UserMailer.checkin_receipt(@reservation).deliver
       redirect_to :back
       flash[:notice] = "Successfully delivered receipt email."
-    else 
+    else
       redirect_to @reservation
       flash[:error] = "Unable to deliver receipt email. Please contact administrator for more support. "
     end
   end
 
   autocomplete :user, :last_name, :extra_data => [:first_name, :login], :display_value => :render_name
-  
+
   def get_autocomplete_items(parameters)
     parameters[:term] = parameters[:term].downcase
     users=User.select("nickname, first_name, last_name,login, id, deleted_at").reject {|user| ! user.deleted_at.nil?}
@@ -241,4 +242,3 @@ class ReservationsController < ApplicationController
   end
 
 end
-

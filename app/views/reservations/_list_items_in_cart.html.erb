@@ -11,10 +11,10 @@
       <tr>
       <td rowspan="2"><%= item.quantity.to_s + " item(s)" %></td>
       <td rowspan="2"><%= link_to "Remove", {:url => remove_from_cart_path(item.equipment_model)},
-                                :href => remove_from_cart_path(item.equipment_model),
+                                :href => remove_from_cart_path(item),
                                 :remote => true, :class => 'btn btn-mini' %></td>
                                 </tr>
-    </tr>                 
+    </tr>
     </tbody>
   <% end %>
   </table>

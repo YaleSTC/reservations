@@ -83,10 +83,6 @@ class ApplicationController < ActionController::Base
     session[:cart].set_due_date(Date.strptime(params[:due_date_cart],'%m/%d/%Y'))
     session[:cart].set_reserver_id(params[:reserver_id])
     flash[:notice] = "Cart dates updated."
-    if !cart.valid_dates?
-      flash[:error] = cart.errors.values.flatten.join("<br/>").html_safe
-      cart.errors.clear
-    end
     respond_to do |format|
       format.html{render :partial => "reservations/cart_dates"}
     end

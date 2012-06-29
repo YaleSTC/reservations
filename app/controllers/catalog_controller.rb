@@ -17,7 +17,7 @@ class CatalogController < ApplicationController
 
   def add_to_cart
     @equipment_model = EquipmentModel.find(params[:id])
-    cart.add_equipment_model(@equipment_model)
+    cart.add_item(@equipment_model)
     respond_to do |format|
       format.html{redirect_to root_path}
       format.js{render :action => "update_cart"}
@@ -28,9 +28,11 @@ class CatalogController < ApplicationController
     redirect_to root_path
   end
 
+  #make params[:id] just hold the resevation so just the reservation can be deleted
+  #no need to use equipment_model. will params[:id] even work with current code?
   def remove_from_cart
     @equipment_model = EquipmentModel.find(params[:id])
-    cart.remove_equipment_model(@equipment_model)
+    cart.remove_item(@equipment_model)
     respond_to do |format|
       format.html{redirect_to root_path}
       format.js{render :action => "update_cart"}
@@ -62,7 +64,7 @@ class CatalogController < ApplicationController
       end
     end
   end
-  
+
   def update_user_per_cat_page
     session[:user_per_cat_page] = params[:user_cat_items_per_page] if !params[:user_cat_items_per_page].blank?
     respond_to do |format|
@@ -70,5 +72,5 @@ class CatalogController < ApplicationController
       format.js{render :action => "cat_pagination"}
     end
   end
-  
+
 end

@@ -1,14 +1,16 @@
+#TODO: deal with @items being Reservations that do not store quantity
 class Cart
   include ActiveModel::Validations
   extend ActiveModel::Naming
 
-  validates :reserver_id, :start_date, :due_date, :presence => true
+  validates :start_date, :due_date, :presence => true
 
-  validate :start_date_before_due_date?, :not_in_past?,
-           :allowable_number_category?, :allowable_number_equipment_model?,
-           :duration_allowed?, :no_overdue_reservations?, :available?
+#  validate :start_date_before_due_date?, :not_in_past?,
+#          :allowable_number_category?, :allowable_number_equipment_model?,
+#          :duration_allowed?, :no_overdue_reservations?, :available?
 
-  attr_accessor :reserver_id, :items, :start_date, :due_date
+  attr_accessor :items, :start_date, :due_date,
+ #              :reserver_id
   attr_reader   :errors
 
   def initialize
@@ -16,7 +18,7 @@ class Cart
     @items = []
     @start_date = Date.today
     @due_date = Date.today
-    @reserver_id = nil
+#    @reserver_id = nil
   end
 
   def persisted?
@@ -39,48 +41,25 @@ class Cart
 
   ## End of functions for error handling
 
-  def add_equipment_model(equipment_model)
-    current_item = nil
-    @items.find do |item|
-      current_item = item if item.equipment_model_id == equipment_model.id
-    end
-    if current_item
-      current_item.increment_quantity
-    else
-      current_item = CartItem.new(equipment_model.id)
-      @items << current_item
-    end
-    if !current_item.available?(@start_date..@due_date)
-      errors.add(:start_date, "is before item is available")
-    end
-    return current_item if self.valid?
-    self.valid?
+  #TODO: does this work? pass user_id?
+  def add_item(equipment_model)
+    current_item = Reservation.new(:start_date => @start_date,
+      :due_date => @due_date, :equipment_model => equipment_model)
+    @items << current_item
   end
 
-  def remove_equipment_model(equipment_model)
-    current_item = nil
-    @items.find do |item|
-      current_item = item if item.equipment_model_id == equipment_model.id
-    end
-    current_item.decrement_quantity
-    if current_item.quantity == 0
-      @items.delete(current_item)
-    end
-    current_item
-  end
-
-  def get_cart_items
-    items = []
-    @items.each do |item|
-      items << item.details
-    end
-    items
+  #TODO: make sure catalog_controller call works; make sure it only deletes one at a time
+  def remove_item(item)
+    #@items.index(item) returns the index of the first item
+    #so this should only delete one copy of item at a time
+    @items.delete_at(@items.index(item))
   end
 
   def total_items
     @items.sum{ |item| item.quantity }
   end
 
+  #TODO: is this necessary?
   def empty?
     @items.empty?
   end
@@ -95,17 +74,19 @@ class Cart
     fix_due_date
   end
 
-  def set_reserver_id(user_id)
-    @reserver_id = user_id
-  end
+  #TODO: this needs to be stored by the reservations instead
+#  def set_reserver_id(user_id)
+#    @reserver_id = user_id
+#  end
 
   def duration #in days
     @due_date - @start_date + 1
   end
 
-  def reserver
-    reserver = User.find(@reserver_id)
-  end
+  #TODO: this should no longer be necessary (called through reservations)
+#  def reserver
+#    reserver = User.find(@reserver_id)
+#  end
 
   def fix_due_date
     if @start_date >= @due_date
@@ -113,44 +94,32 @@ class Cart
       @due_date = @start_date + 1.day
     end
   end
-  
+
   #Create an array of all the reservations that should be renewed instead of having a new reservation
+  #TODO: edit this to allow for reservations in @items (equipment_model_id works?)
   def renewable_reservations
     user_reservations = reserver.reservations
     renewable_reservations = []
     @items.each do |item|
-      cart_item_count = item.quantity #renew up to this many of the item
       matching_reservations = user_reservations.each do |res|
         # the end date should be the same as the start date
         # the reservation should be renewable
         # also the user should only renew as many reservations as they have in their cart
-        if (res.due_date.to_date == @start_date &&                
+        if (res.due_date.to_date == @start_date &&
            res.equipment_model_id == item.equipment_model_id &&
-           cart_item_count > 0 &&
            res.is_eligible_for_renew?)
           renewable_reservations << res
-          cart_item_count-= 1
         end
       end
     end
     return renewable_reservations
   end
-  
+
 
   ## VALIDATIONS ##
+  ##TODO: move all these to Reservation##
 
   ## Date Validations
-
-  # Checks all date-related validations
-  def valid_dates?
-    valid = true
-    valid = false if !not_in_past?
-    valid = false if !start_date_before_due_date?
-    valid = false if !duration_allowed?
-    valid = false if !available?
-    valid
-  end
-
   # Checks that neither start date nor due date are in the past
   def not_in_past?
     in_past = false
@@ -175,6 +144,7 @@ class Cart
   end
 
   # Check that the duration is not longer than the maximum checkout length for any of the item
+  #TODO: item.equipment_model won't work
   def duration_allowed?
     is_too_long = false
     @items.each do |item|
@@ -189,6 +159,7 @@ class Cart
   end
 
   # Check that all items are available
+  #TODO: item.name won't work, item.available? won't work
   def available?
     available = true
     return false if start_date.nil? or due_date.nil?
@@ -206,9 +177,9 @@ class Cart
   def no_renewable_models?
     none_to_renew = true
     reservations_to_renew = renewable_reservations
-    
+
     eq_model_names = reservations_to_renew.collect {|r| EquipmentModel.find(r.equipment_model_id).name}.uniq
-    
+
     unless reservations_to_renew.empty?
       eq_model_names.each do |eq_model_name|
         errors.add(:items, reserver.name + " should renew " + eq_model_name)
@@ -217,8 +188,9 @@ class Cart
     end
     return none_to_renew
   end
-  
+
   #Check that the reserver does not exceeds the maximum number of any equipment models
+  #TODO: item.equipment_model won't work
   def allowable_number_equipment_model?
     too_many = false
     reserver_model_counts = reserver.checked_out_models
@@ -261,6 +233,7 @@ class Cart
 
     # Make a hash of the cart's counts for each category
     # e.g. {category1=>cat1_count, category2 =>cat2_count} for the cart
+    #TODO: item.equipment_model won't work
     cart_categories = @items.collect {|item| item.equipment_model.category_id}.uniq
     cart_cat_and_counts_arr = cart_categories.collect do |category_id|
       count = 0

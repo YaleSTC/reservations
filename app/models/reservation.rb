@@ -6,32 +6,29 @@ class Reservation < ActiveRecord::Base
   belongs_to :checkout_handler, :class_name => 'User'
   belongs_to :checkin_handler, :class_name => 'User'
 
-  validates :reserver, 
-            :start_date, 
-            :due_date, 
+  validates :reserver,
+            :start_date,
+            :due_date,
             :presence => true
-  
+
   validate :not_empty
-  validate :start_date_before_due_date
-  #Currently this prevents checking in overdue items. We can work on a better fix.
-  #validate :not_in_past
-  
+
 
   scope :recent, order('start_date, due_date, reserver_id')
-  
+
   scope :reserved, lambda { where("checked_out IS NULL and checked_in IS NULL and due_date >= ?", Time.now.midnight.utc).recent}
   scope :checked_out, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date >=  ?", Time.now.midnight.utc).recent }
   scope :overdue, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc ).recent }
   scope :returned, where("checked_in IS NOT NULL and checked_out IS NOT NULL")
   scope :missed, lambda {where("checked_out IS NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc).recent}
   scope :upcoming, lambda {where("checked_out IS NULL and checked_in IS NULL and start_date = ? and due_date > ?", Time.now.midnight.utc, Time.now.midnight.utc).recent }
-  
+
   scope :active, where("checked_in IS NULL") #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
   scope :notes_unsent, :conditions => {:notes_unsent => true}
-  
-  attr_accessible :reserver, :reserver_id, :checkout_handler, :checkout_handler_id, 
-                  :checkin_handler, :checkin_handler_id, :start_date, :due_date, 
-                  :checked_out,:checked_in, :equipment_object, :equipment_model_id, 
+
+  attr_accessible :reserver, :reserver_id, :checkout_handler, :checkout_handler_id,
+                  :checkin_handler, :checkin_handler_id, :start_date, :due_date,
+                  :checked_out,:checked_in, :equipment_object, :equipment_model_id,
                   :equipment_object_id, :notes, :notes_unsent, :times_renewed
 
   def status
@@ -46,9 +43,13 @@ class Reservation < ActiveRecord::Base
     end
   end
 
+  ## Validations
+
   def not_empty
     errors.add_to_base("A reservation must contain at least one item.") if self.equipment_model.nil?
   end
+
+  ## End of validations
 
   def self.due_for_checkin(user)
     Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
@@ -121,6 +122,7 @@ class Reservation < ActiveRecord::Base
     Reservation.where("checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
   end
 
+
   def self.check_out_procedures_exist?(reservation)
     !reservation.equipment_model.checkout_procedures.nil?
   end
@@ -131,15 +133,6 @@ class Reservation < ActiveRecord::Base
 
   def self.empty_reservation?(reservation)
     reservation.equipment_object.nil?
-  end
-
-  #These two methods (not_in_past and start_date_before_due_date) don't seem to be working
-  def not_in_past
-    errors.add_to_base("A reservation cannot be made in the past!") if self.due_date < Time.now.midnight
-  end
-
-  def start_date_before_due_date
-    errors.add_to_base("A reservation's due date must come after its start date.") if self.due_date < self.start_date
   end
 
   def late_fee
@@ -162,7 +155,7 @@ class Reservation < ActiveRecord::Base
   #     equipment_objects << EquipmentObject.find(id)
   #   end
   # end
-  
+
   def fake_reserver_id # Necessary for auto-complete feature
   end
 
@@ -186,11 +179,11 @@ class Reservation < ActiveRecord::Base
     # before available_period is set
     return available_period = renewal_length
   end
-  
+
   def is_eligible_for_renew?
     # determines if a reservation is eligible for renewal, based on how many days before the due
     # date it is and the max number of times one is allowed to renew
-    # 
+    #
     # we need to test if any of the variables are set to NIL, because in that case comparision
     # is undefined; that's also why we can't set variables to these values before the if statements
     if self.times_renewed == NIL
@@ -215,4 +208,3 @@ class Reservation < ActiveRecord::Base
   end
 
 end
-
