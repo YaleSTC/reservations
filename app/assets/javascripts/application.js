@@ -4,7 +4,7 @@
 //= require jquery_ujs
 //= require jquery-ui
 //= require jquery.sticky
-//= require_self
+//= require jquery.dotdotdot-1.5.1
 //= require cocoon
 //= require autocomplete-rails
 //= require dataTables/jquery.dataTables
@@ -12,6 +12,7 @@
 //= require dataTables_numhtml_detect.js
 //= require dataTables/jquery.dataTables.bootstrap
 //= require bootstrap
+//= require_self
 
 $(document).ready(function() {
 // For DataTables and Bootstrap
@@ -30,6 +31,28 @@ $(document).ready(function() {
 	});
 	
 	$("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
+
+	$(".caption_cat").dotdotdot({
+		height: 126,
+		after: ".more_info",
+		watch: 'window',
+		});
+		
+	$(".equipment_title").dotdotdot({
+		height: 54, // must match .equipment_title height
+		watch: 'window'
+		});
+
+	$(".equipment_title").each(function(){
+		$(this).trigger("isTruncated", function( isTruncated ) {
+		  if ( isTruncated ) {
+		   	$(this).children(".equipment_title_link").tooltip();
+		  }
+		});
+	});
+	
+	
+
 });
 
 $.datepicker.setDefaults({
