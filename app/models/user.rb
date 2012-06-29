@@ -88,7 +88,7 @@ class User < ActiveRecord::Base
   end
   
   def render_name
-    self.first_name + ' ' + self.last_name + ' ' + self.login
+     [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name, login].join(" ")
   end
-  
+
 end
