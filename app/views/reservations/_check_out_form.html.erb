@@ -1,13 +1,12 @@
 <div id="<%= @reservation.id %>" class="well-nomargin span4">
-<%= form_tag( checkout_by_user_path, :method => "put", :remote => true ) do %>
 
 	<h4><%= @reservation.equipment_model.name %></h4>
 
-	<%= select_tag "reservations[#{@reservation.id}][equipment_object_id]", @reservation.equipment_model.available_object_select_options, :prompt => 'Please select..' %>
+	<%= select_tag "reservations[#{@reservation.id}][equipment_object_id]", @reservation.equipment_model.available_object_select_options, :prompt => 'Please select..', :class => 'dropdown' %>
 	
 	<p>
 		<%= label_tag :notes %> <br />
-		<%= text_area_tag :notes, @reservation.notes %>
+		<%= text_area_tag "reservations[#{@reservation.id}][notes]", @reservation.notes %>
 	</p>
 	
 	<p>
@@ -19,7 +18,7 @@
   	<strong>Checkout procedures:</strong>
   	<ul>
     	<% if @reservation.equipment_model.checkout_procedures.nil? %>
-          <em>There are no checkout procedures</em>
+          <em>There are no checkout procedures.</em>
     	<% else %>
         <ol>
           <% @reservation.equipment_model.checkout_procedures.each do |checkout_procedure| %>
@@ -32,9 +31,4 @@
     	<% end %>
   	</ul>
 	</p>
-
-  <button style='btn' class='autosubmitmeclick'>Check out this equipment</button>
-	<%#= submit_tag "Check out equipment" %>
-
-<% end %>
 </div>

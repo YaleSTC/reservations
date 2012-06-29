@@ -153,40 +153,40 @@ class ReservationsController < ApplicationController
   end
 
   def checkout_by_user
-    @reservation = Reservation.find(params[:reservations].keys[0]) # set the reservation
     error_msgs = ""
     reservations_to_be_checked_out = []
     reservation_check_out_procedures_count = []
     params[:reservations].each do |reservation_id, reservation_hash|
-        if reservation_hash[:equipment_object_id] != NIL then #update attributes for all equipment that is checked off
+        if reservation_hash[:equipment_object_id] != ('' or NIL) then #update attributes for all equipment that is checked off
           r = Reservation.find(reservation_id)
           r.checkout_handler = current_user
           r.checked_out = Time.now
           r.equipment_object = EquipmentObject.find(reservation_hash[:equipment_object_id])
           procedures_not_done = '' # initialize
           r.equipment_model.checkout_procedures.each do |check|
-            if !reservation_hash[:checkout_procedures].keys.include?(check.id.to_s)
-              procedures_not_done += check.step + ', '
+            if reservation_hash[:checkout_procedures] == NIL
+              procedures_not_done += '* ' + check.step + '\n'
+            elsif !reservation_hash[:checkout_procedures].keys.include?(check.id.to_s)
+              procedures_not_done += '* ' + check.step + '\n'
             end
           end
           # we want procedures_not_done == '' => NIL because email is only sent to admin if r.notes != NIL
           if procedures_not_done == ''
             procedures_not_done = NIL
           end
-          if params[:notes] == ('' or NIL)
+          if reservation_hash[:notes] == ('' or NIL)
             if procedures_not_done != NIL
-              r.notes = 'On checkout did not do: ' + procedures_not_done
+              r.notes = 'The following checkout procedures were not performed:\n' + procedures_not_done
             end
           elsif procedures_not_done == NIL
-            r.notes = params[:notes]
+            r.notes = reservation_hash[:notes]
           else
-            r.notes = params[:notes] + '. On checkout did not do: ' + procedures_not_done
+            r.notes = reservation_hash[:notes] + '\n\nThe following checkout procedures were not performed:\n' + procedures_not_done
           end
           reservations_to_be_checked_out << r
           reservation_check_out_procedures_count << (reservation_hash[:checkout_procedures] || []).count #There is no editable "checkout procedures count" attribute for reservations. For now, I have these two arrays, and compare them in a hash to make sure that all checkout procedures are checked off
         end
       end
-
       #All-encompassing checks, only need to be done once
       if reservations_to_be_checked_out.first.nil? #Prevents the nil error from not selecting any reservations
         flash[:error] = "No reservation selected!"
@@ -194,7 +194,6 @@ class ReservationsController < ApplicationController
       elsif Reservation.overdue_reservations?(reservations_to_be_checked_out.first.reserver) #Checks for any overdue equipment
         error_msgs += "User has overdue equipment."
       end
-
       #Checks that must be iterated over each individual reservation
       error_msgs += reservations_to_be_checked_out.first.check_out_permissions(reservations_to_be_checked_out, reservation_check_out_procedures_count) #This method checks the Category Max Per User, Equipment Model Max per User, and whether all the checkout procedures have been checked off
       if !error_msgs.empty? #If any requirements are not met...
@@ -209,10 +208,19 @@ class ReservationsController < ApplicationController
         reservation.save # save!
       end
       flash[:notice] = error_msgs.empty? ? "Successfully checked out equipment!" : error_msgs #Allows admins to see all errors, but still checkout successfully
-      respond_to do |format|
-        format.html{redirect_to check_out_reservations_for_user_path }
-        format.js{render :action => "check_out_update"}
+      if !error_msgs.empty? #If any requirements are not met...
+        if current_user.is_admin_in_adminmode? #Admins can ignore them
+          error_msgs = " Admin Override: Equipment has been successfully checked out even though " + error_msgs
+        else #everyone else is redirected
+          flash[:error] = error_msgs
+          redirect_to :back and return
+        end
       end
+      reservations_to_be_checked_out.each do |reservation| #updates to reservations are saved
+        reservation.save
+      end
+      flash[:notice] = error_msgs.empty? ? "Successfully checked out equipment!" : error_msgs #Allows admins to see all errors, but still checkout successfully
+      redirect_to reservations_path and return # eventually redirect to a new 'reservation successful' page to allow printing of receipts, etc
   end
 
   def destroy
