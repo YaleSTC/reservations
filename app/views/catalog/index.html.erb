@@ -23,15 +23,14 @@
     <% unless equipment_models.nil? %>
       <ul class="thumbnails">
       <% equipment_models.each do |equipment_model| %>
-
         <li class="span3">      
           <div class="thumbnail">
             
-            <% unless equipment_model.photos.empty? %>
+            <% unless !equipment_model.photo.exists? %>
               <% #show equipment model image %>
-              <%= (link_to (image_tag equipment_model.photos.first.data.url(:small),
-                          :class => 'product_small'),
-                          equipment_model, :target => '_blank') %>
+              
+              <%= image_tag equipment_model.photo.url(:thumbnail) %>
+
              <% else %>              
               <%= image_tag "no-image.gif" %>
              <% end %>
