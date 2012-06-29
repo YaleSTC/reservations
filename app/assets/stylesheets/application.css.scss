@@ -49,3 +49,8 @@ $user_label-size: 1.5;
 	line-height: 14px;
 	margin-right: 10px;
 }
+
+.current_equip_num, .current_res_num, .overdue_num, .past_equip_num, .missed_res_num, .past_overdue_num {
+	font-size: $baseFontSize * 3;
+	line-height: $baseLineHeight * 3;
+}

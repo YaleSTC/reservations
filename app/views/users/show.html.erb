@@ -42,6 +42,51 @@
     </p>
 
   </div>
+  
+  <div class="span4 well">
+    <div id="current_equip_count" class="span1">
+      <h4>Current Equipment</h4>
+      <div class="current_equip_num">
+        <%= current_user.reservations.select{|r| (r.status == "checked out") || (r.status == "overdue")}.size %>
+      </div>
+    </div>
+    
+    <div id="current_res_count" class="span1">
+      <h4>Current Reservations</h4>
+      <div class="current_res_num">
+        <%= current_user.reservations.upcoming.size %>
+      </div>
+    </div>
+    
+    <div id="overdue_count" class="span1">
+      <h4>Overdue Equipment</h4>
+      <div class="overdue_num">
+        <%= current_user.reservations.overdue.size %>
+      </div>
+    </div>
+    
+    <div id="past_equip_count" class="span1">
+      <h4>Past Equipment</h4>
+      <div class="past_equip_num">
+        <%= current_user.reservations.returned.size %>
+      </div>
+    </div>
+    
+    <div id="missed_res_count" class="span1">
+      <h4>Missed Reservations</h4>
+      <div class="missed_res_num">
+        <%= current_user.reservations.missed.size %>
+      </div>
+    </div>
+    
+    <div id="past_overdue_count" class="span1">
+      <h4>Past Overdue E</h4>
+      <div class="past_overdue_num">
+        <%= current_user.reservations.returned.select{|r| r.checked_in > r.due_date}.size %>
+      </div>
+    </div>
+    
+  </div>
 </div>
 
 <div class="row">
