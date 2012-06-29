@@ -11,7 +11,6 @@ class ApplicationController < ActionController::Base
   before_filter :set_view_mode
   before_filter :current_user
   #before_filter :bind_pry_before_everything
-  before_filter :cache_users
 
   helper_method :current_user
   helper_method :cart
@@ -77,10 +76,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def cache_users
-    @@users_array ||= User.select("first_name, last_name, login, id, deleted_at").reject { |user| ! user.deleted_at.nil?}
-    @@users_array
-  end
   #-------- end before_filter methods --------
 
   def update_cart
