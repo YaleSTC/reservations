@@ -33,7 +33,7 @@
                           :class => 'product_small'),
                           equipment_model, :target => '_blank') %>
              <% else %>              
-               <img src="http://lorempixel.com/260/180/technics" alt="">
+              <%= image_tag "no-image.gif" %>
              <% end %>
               <h3 class="equipment_title"><%= link_to equipment_model.name, equipment_model, :class => 'equipment_title_link', :rel => 'tooltip', :title => equipment_model.name %></h3>
              <div class="caption_cat">
