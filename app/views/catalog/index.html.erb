@@ -32,9 +32,10 @@
              <% else %>              
                <img src="http://placehold.it/260x180" alt="">
              <% end %>
-             
-             <div class="caption">
-                <h3 class="equipment_title" id=<%= equipment_model.id %>><%= link_to equipment_model.name, equipment_model, :class => 'equipment_title_link', :rel => 'tooltip', :title => equipment_model.name %></h3><hr class ="special-hr"/>
+              <h3 class="equipment_title"><%= link_to equipment_model.name, equipment_model, :class => 'equipment_title_link', :rel => 'tooltip', :title => equipment_model.name %></h3>
+             <div class="caption_cat">
+
+                <hr class ="special-hr"/>
                 <p>(<%= equipment_model.available?(cart.start_date..cart.due_date) || "0" %> available from <br /><%= cart.start_date.strftime("%b %d, %Y") %> to <%= cart.due_date.strftime("%b %d, %Y") %>)</p>
                   <p class="equipment_descr">
                     <%= equipment_model.description + " " %><%= link_to "More Info", equipment_model, :class => 'more_info' %>

@@ -32,8 +32,8 @@ $(document).ready(function() {
 	
 	$("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
 
-	$(".caption").dotdotdot({
-		height: 180,
+	$(".caption_cat").dotdotdot({
+		height: 126,
 		after: ".more_info",
 		watch: 'window',
 		});
