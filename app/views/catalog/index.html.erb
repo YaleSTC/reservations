@@ -1,12 +1,11 @@
 <% title "Catalog" %>
-<!--show quicksearch box-->
 
-<!-- Commented out quicksearch for now until we replace it with a better search functionality - mnquintana -->
-<%# render :partial => 'quicksearch' %>
-
-<% if @equipment_models_by_category.empty? %>
+<% if @equipment_models_by_category.empty? && current_user.is_admin_in_adminmode? %>
+  <p>Sorry, no equipment models were found.</p>
+<% elsif @equipment_models_by_category.empty? %>
   <p>Sorry, no equipment models were found.</p>
 <% else %>
+  <%# for kaminari pagination %>
   <%= paginate @paginated_equipment_models_by_category %>
   <%= form_tag update_user_per_cat_page_path, :class => "form-inline", :remote => true do %>
     <%= label_tag "Items per page:" %>
@@ -21,11 +20,8 @@
     <% unless equipment_models.nil? %>
       <ul class="thumbnails">
       <% equipment_models.each do |equipment_model| %>
-      
 
-        <li class="span3">
-          
-          
+        <li class="span3">      
           <div class="thumbnail">
             
             <% unless equipment_model.photos.empty? %>
@@ -38,10 +34,8 @@
              <% end %>
              
              <div class="caption">
-                <h3 class="equipment_title"><%= link_to equipment_model.name, equipment_model %></h3><hr class ="special-hr"/>
+                <h3 class="equipment_title" id=<%= equipment_model.id %>><%= link_to equipment_model.name, equipment_model, :class => 'equipment_title_link', :rel => 'tooltip', :title => equipment_model.name %></h3><hr class ="special-hr"/>
                 <p>(<%= equipment_model.available?(cart.start_date..cart.due_date) || "0" %> available from <br /><%= cart.start_date.strftime("%b %d, %Y") %> to <%= cart.due_date.strftime("%b %d, %Y") %>)</p>
-            
-
                   <p class="equipment_descr">
                     <%= equipment_model.description + " " %><%= link_to "More Info", equipment_model, :class => 'more_info' %>
                   </p>
@@ -59,11 +53,8 @@
                   <%= button_tag "Add to Cart", :class => "btn disabled", :id => 'add_to_cart' %>
                   </div>
                 <% end %>
-                
-            
           </div>
         </li>
-
 
       <% end %>
       </ul>
