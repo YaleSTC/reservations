@@ -3,6 +3,7 @@
 @import "jquery-ui-1.8.16.custom";
 
 $h3-line-height: 27px;
+$user_label-size: 1.5;
 
 .cart_reserver { margin-bottom: 7px; }
 .thumbnail {
@@ -32,9 +33,19 @@ $h3-line-height: 27px;
 	}
 }
 
-
-
 .alert { 
 	margin-bottom: 0px;
 	margin-top: 18px; 
+
+#bool_labels {
+	margin-bottom: 20px;
+}
+
+.user_label {
+	@extend .label;
+	@include border-radius(5px);
+	padding: $user_label-size*1px $user_label-size*4px $user_label-size*2px;
+	font-size: $baseFontSize * 1.5;
+	line-height: 14px;
+	margin-right: 10px;
 }
