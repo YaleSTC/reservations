@@ -1,62 +1,62 @@
 <% title @user.name + ((@user.is_banned || @user.is_admin_in_bannedmode?) ? " (banned)" : "") %>
-
-<div id="current_equipment">
-  <strong>User's current equipment:</strong><br />
-  <%= render :partial => 'current_equipment', :object => @user %>
+<div class="row">
+  <div id="bool_labels" class="span9">
+    <% if current_user.is_admin_in_adminmode? %>
+      <%= "<span class=\"user_label label-important\">Banned</span>".html_safe if @user.is_banned? %>
+      <%= "<span class=\"user_label label-warning\">Deactivated</span>".html_safe if @user.deleted_at %>
+      <%= "<span class=\"user_label label-success\">Admin</span>".html_safe if @user.is_admin? %>
+      <%= "<span class=\"user_label\">Checkout Person</span>".html_safe if @user.is_checkout_person? %>
+    <% end %>
+  </div>
 </div>
 
-<p>
-  <strong>Login:</strong>
-  <%= @user.login %>
-</p>
-<p>
-  <strong>First Name:</strong>
-  <%= @user.first_name %>
-</p>
-<p>
-  <strong>Last Name:</strong>
-  <%= @user.last_name %>
-</p>
-<p>
-  <strong>Nickname:</strong>
-  <%= @user.nickname %>
-</p>
-<p>
-  <strong>Phone:</strong>
-  <%= @user.phone %>
-</p>
-<p>
-  <strong>Email:</strong>
-  <%= @user.email %>
-</p>
-<p>
-  <strong>Affiliation:</strong>
-  <%= @user.affiliation %>
-</p>
-<% if current_user.is_admin_in_adminmode? %>
-  <p>
-    <strong>Is Admin:</strong>
-    <%= @user.is_admin %>
-  </p>
-  <p>
-    <strong>Is Checkout Person:</strong>
-    <%= @user.is_checkout_person %>
-  </p>
-  <p>
-    <strong>Is Banned:</strong>
-    <%= @user.is_banned %>
-  </p>
-  <p>
-    <strong>Is Activated:</strong>
-    <%= @user.deleted_at == nil %>
-  </p>
-<% end %>
+<div class="row">
+  <div id="user_info" class="span4 well">
+    <p>
+      <strong>Login:</strong>
+      <%= @user.login %>
+    </p>
+    <p>
+      <strong>First Name:</strong>
+      <%= @user.first_name %>
+    </p>
+    <p>
+      <strong>Last Name:</strong>
+      <%= @user.last_name %>
+    </p>
+    <p>
+      <strong>Nickname:</strong>
+      <%= @user.nickname %>
+    </p>
+    <p>
+      <strong>Phone:</strong>
+      <%= @user.phone %>
+    </p>
+    <p>
+      <strong>Email:</strong>
+      <%= @user.email %>
+    </p>
+    <p>
+      <strong>Affiliation:</strong>
+      <%= @user.affiliation %>
+    </p>
 
-<p><div class="form-actions">
-  <%= link_to "Edit Information", edit_user_path(@user) %>
-  <% if current_user.is_admin_in_adminmode? %>
-    | <%= link_to "Destroy User", @user, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete %>
-    | <%= link_to "View All Users", users_path %>
-  <% end %>
   </div>
-</p>
+</div>
+
+<div class="row">
+  <div id="current_equipment" class="span9">
+    <strong>User's current equipment:</strong><br />
+    <%= render :partial => 'current_equipment', :object => @user %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="form-actions span9">
+    <%= link_to "Edit Information", edit_user_path(@user) %>
+    <% if current_user.is_admin_in_adminmode? %>
+      | <%= link_to "Destroy User", @user, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete %>
+      | <%= link_to "View All Users", users_path %>
+    <% end %>
+  </div>
+</div>
