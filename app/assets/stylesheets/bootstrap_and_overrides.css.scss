@@ -23,6 +23,12 @@ label { font-weight: bold; }
   white-space: nowrap;
 }
 
+.well-nomargin { 
+  @extend .well;
+  margin-right: 20px;
+  margin-left: 0px;
+  }
+
 //For DataTables sorting styling with Bootstrap
 
 //table.table thead .sorting,

@@ -1,7 +1,7 @@
 <% title "Reservation Checkout" %>
 <h3><%= @user.name %> has reserved the following equipment:</h3>
+<br />
 <% @user_current_checkouts.each do |reservation| %>
   <% @reservation = reservation %>
   <%= render :partial => 'reservations/check_out_form' %>
-  <br />
 <% end %>
