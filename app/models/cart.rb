@@ -108,8 +108,9 @@ class Cart
   end
 
   def fix_due_date
-    if @start_date > @due_date
-      @due_date = @start_date
+    if @start_date >= @due_date
+      #TODO: allow admin to set default reservation length and respect that length here
+      @due_date = @start_date + 1.day
     end
   end
   

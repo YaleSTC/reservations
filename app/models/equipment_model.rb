@@ -62,22 +62,24 @@ class EquipmentModel < ActiveRecord::Base
 
   #Code necessary for Paperclip and image/pdf uploading
   has_attached_file :photo, #generates profile picture 
-      :styles => { :large => "500x500>", :medium => "250x250>", :small => "150x150>", :thumbnail => "100x100#"},
+      :styles => { :large => "500x500>", :medium => "250x250>", :small => "150x150>", :thumbnail => "260x180#"},
       :url  => "/equipment_models/:attachment/:id/:style/:basename.:extension",
       :path => ":rails_root/public/equipment_models/:attachment/:id/:style/:basename.:extension",
       :default_url => "/fat_cat.jpeg"
 
   has_attached_file :documentation, #generates document
-                    :content_type => 'application/pdf'
+                    :content_type => 'application/pdf',
+                    :url => "/equipment_models/:attachment/:id/:style/:basename.:extension",
+                    :path => ":rails_root/public/equipment_models/:attachment/:id/:style/:basename.:extension"
       
-  # validates_attachment_content_type :photo, 
-  #                                     :content_type => ["image/jpg", "image/png", "image/jpeg"], 
-  #                                     :message => "must be jpeg, jpg, or png."
-  #   validates_attachment_size         :photo, 
-  #                                     :less_than => 500.kilobytes,
-  #                                     :message => "must be less than 500 kb"
+  validates_attachment_content_type :photo, 
+                                      :content_type => ["image/jpg", "image/png", "image/jpeg"], 
+                                      :message => "must be jpeg, jpg, or png."
+    validates_attachment_size         :photo, 
+                                      :less_than => 500.kilobytes,
+                                      :message => "must be less than 500 kb"
   
-  #validates_attachment :documentation, :content_type => { :content_type => "appplication/pdf" }
+  validates_attachment :documentation, :content_type => { :content_type => "application/pdf" }
   
   Paperclip.interpolates :normalized_photo_name do |attachment, style|
     attachment.instance.normalized_photo_name
