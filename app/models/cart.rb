@@ -52,6 +52,7 @@ class Cart
   def remove_item(item)
     #@items.index(item) returns the index of the first item
     #so this should only delete one copy of item at a time
+    #maybe don't need this because all reservations should be different? how much are we storing in these dummy reservations? how many attributes are we setting up?
     @items.delete_at(@items.index(item))
   end
 
