@@ -155,7 +155,6 @@ class ReservationsController < ApplicationController
   def checkout_by_user
     @reservation = Reservation.find(params[:reservations].keys[0]) # set the reservation
     error_msgs = ""
-#    binding.pry
     reservations_to_be_checked_out = []
     reservation_check_out_procedures_count = []
     params[:reservations].each do |reservation_id, reservation_hash|
@@ -164,9 +163,26 @@ class ReservationsController < ApplicationController
           r.checkout_handler = current_user
           r.checked_out = Time.now
           r.equipment_object = EquipmentObject.find(reservation_hash[:equipment_object_id])
-          r.notes = params[:notes]
+          procedures_not_done = '' # initialize
+          r.equipment_model.checkout_procedures.each do |check|
+            if !reservation_hash[:checkout_procedures].keys.include?(check.id.to_s)
+              procedures_not_done += check.step + ', '
+            end
+          end
+          # we want procedures_not_done == '' => NIL because email is only sent to admin if r.notes != NIL
+          if procedures_not_done == ''
+            procedures_not_done = NIL
+          end
+          if params[:notes] == ('' or NIL)
+            if procedures_not_done != NIL
+              r.notes = 'On checkout did not do: ' + procedures_not_done
+            end
+          elsif procedures_not_done == NIL
+            r.notes = params[:notes]
+          else
+            r.notes = params[:notes] + '. On checkout did not do: ' + procedures_not_done
+          end
           reservations_to_be_checked_out << r
-#          binding.pry
           reservation_check_out_procedures_count << (reservation_hash[:checkout_procedures] || []).count #There is no editable "checkout procedures count" attribute for reservations. For now, I have these two arrays, and compare them in a hash to make sure that all checkout procedures are checked off
         end
       end
