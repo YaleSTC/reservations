@@ -44,55 +44,75 @@
   </div>
   
   <div class="span4 well">
-    <div id="current_equip_count" class="span1">
+    <a id="current_equip_count" class="span1" href="#current_equipment">
       <h4>Current Equipment</h4>
       <div class="current_equip_num">
-        <%= current_user.reservations.select{|r| (r.status == "checked out") || (r.status == "overdue")}.size %>
+        <%= @current_equipment.size %>
       </div>
-    </div>
+    </a>
     
-    <div id="current_res_count" class="span1">
+    <a id="current_res_count" class="span1" href="#current_reservations">
       <h4>Current Reservations</h4>
       <div class="current_res_num">
-        <%= current_user.reservations.upcoming.size %>
+        <%= @current_reservations.size %>
       </div>
-    </div>
+    </a>
     
-    <div id="overdue_count" class="span1">
+    <a id="overdue_count" class="span1" href="#overdue_equipment">
       <h4>Overdue Equipment</h4>
       <div class="overdue_num">
-        <%= current_user.reservations.overdue.size %>
+        <%= @overdue_equipment.size %>
       </div>
-    </div>
+    </a>
     
-    <div id="past_equip_count" class="span1">
+    <a id="past_equip_count" class="span1" href="#past_equipment">
       <h4>Past Equipment</h4>
       <div class="past_equip_num">
-        <%= current_user.reservations.returned.size %>
+        <%= @past_equipment.size %>
       </div>
-    </div>
+    </a>
     
-    <div id="missed_res_count" class="span1">
+    <a id="missed_res_count" class="span1" href="#missed_reservations">
       <h4>Missed Reservations</h4>
       <div class="missed_res_num">
-        <%= current_user.reservations.missed.size %>
+        <%= @missed_reservations.size %>
       </div>
-    </div>
+    </a>
     
-    <div id="past_overdue_count" class="span1">
+    <a id="past_overdue_count" class="span1" href="#past_overdue">
       <h4>Past Overdue E</h4>
       <div class="past_overdue_num">
-        <%= current_user.reservations.returned.select{|r| r.checked_in > r.due_date}.size %>
+        <%= @past_overdue.size %>
       </div>
-    </div>
+    </a>
     
   </div>
 </div>
 
 <div class="row">
   <div id="current_equipment" class="span9">
-    <strong>User's current equipment:</strong><br />
+    <strong>Current Equipment</strong><br />
     <%= render :partial => 'current_equipment', :object => @user %>
+  </div>
+  
+  <div id="current_reservations" class="span9">
+    <strong>Current Reservations</strong><br />
+  </div>
+  
+  <div id="overdue_equipment" class="span9">
+    <strong>Overdue Equipment</strong><br />
+  </div>
+  
+  <div id="past_equipment" class="span9">
+    <strong>Past Equipment</strong><br />
+  </div>
+  
+  <div id="missed_reservations" class="span9">
+    <strong>Missed Reservations</strong><br />
+  </div>
+  
+  <div id="past_overdue" class="span9">
+    <strong>Past Overdue Equipment</strong><br />
   </div>
 </div>
 

@@ -23,6 +23,12 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     require_user(@user)
     @all_equipment = Reservation.active_user_reservations(@user)
+    @current_equipment = current_user.reservations.select{|r| (r.status == "checked out") || (r.status == "overdue")}
+    @current_reservations = current_user.reservations.upcoming
+    @overdue_equipment = current_user.reservations.overdue
+    @past_equipment = current_user.reservations.returned
+    @missed_reservations = current_user.reservations.missed
+    @past_overdue = current_user.reservations.returned.select{|r| r.checked_in > r.due_date}
   end
 
   def new
