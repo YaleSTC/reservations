@@ -68,7 +68,9 @@ class EquipmentModel < ActiveRecord::Base
       :default_url => "/fat_cat.jpeg"
 
   has_attached_file :documentation, #generates document
-                    :content_type => 'application/pdf'
+                    :content_type => 'application/pdf',
+                    :url => "/equipment_models/:attachment/:id/:style/:basename.:extension",
+                    :path => ":rails_root/public/equipment_models/:attachment/:id/:style/:basename.:extension"
       
   validates_attachment_content_type :photo, 
                                       :content_type => ["image/jpg", "image/png", "image/jpeg"], 
