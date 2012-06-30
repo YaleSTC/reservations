@@ -11,7 +11,7 @@
 </div>
 
 <div class="row">
-  <div id="user_info" class="span4 well">
+  <div id="user_info" class="span2 well">
     <p>
       <strong>Login:</strong>
       <%= @user.login %>
@@ -43,85 +43,189 @@
 
   </div>
   
-  <div class="span4 well">
-    <a id="current_equip_count" class="span1" href="#current_equipment">
+  <div class="span6 well">
+    <div class="row">
+    <div id="current_equip_count" class="span2">
       <h4>Current Equipment</h4>
       <div class="current_equip_num">
+        <i class="icon-camera-retro"></i>
         <%= @current_equipment.size %>
       </div>
-    </a>
+    </div>
     
-    <a id="current_res_count" class="span1" href="#current_reservations">
+    <div id="current_res_count" class="span2">
       <h4>Current Reservations</h4>
       <div class="current_res_num">
+        <i class="icon-list-alt"></i>
         <%= @current_reservations.size %>
       </div>
-    </a>
+    </div>
     
-    <a id="overdue_count" class="span1" href="#overdue_equipment">
+    <div id="overdue_count" class="span2">
       <h4>Overdue Equipment</h4>
       <div class="overdue_num">
+        <i class="icon-exclamation-sign"></i>
         <%= @overdue_equipment.size %>
       </div>
-    </a>
+    </div>
+    </div>
     
-    <a id="past_equip_count" class="span1" href="#past_equipment">
+    <div class="row">
+    <div id="past_equip_count" class="span2">
       <h4>Past Equipment</h4>
       <div class="past_equip_num">
+        <i class="icon-time"></i>
         <%= @past_equipment.size %>
       </div>
-    </a>
+    </div>
     
-    <a id="missed_res_count" class="span1" href="#missed_reservations">
+    <div id="missed_res_count" class="span2">
       <h4>Missed Reservations</h4>
       <div class="missed_res_num">
+        <i class="icon-minus-sign"></i>
         <%= @missed_reservations.size %>
       </div>
-    </a>
+    </div>
     
-    <a id="past_overdue_count" class="span1" href="#past_overdue">
-      <h4>Past Overdue E</h4>
+    <div id="past_overdue_count" class="span2">
+      <h4>Past Overdue Equipment</h4>
       <div class="past_overdue_num">
+        <i class="icon-thumbs-down"></i>
         <%= @past_overdue.size %>
       </div>
-    </a>
+    </div>
+    </div>
+    
+  </div>
+</div>
+<hr />
+
+<div class="row">
+  <div class="tabbable tabs-left span9">
+  
+    <ul class="nav nav-tabs">
+      <li class="active"><a id="current_equipment" href="#tab1" data-toggle="tab">Current Equipment</a></li>
+      <li><a id="current_reservations" href="#tab2" data-toggle="tab">Current Reservations</a></li>
+      <li><a id="overdue_equipment" href="#tab3" data-toggle="tab">Overdue Equipment</a></li>
+      <li><a id="past_equipment" href="#tab4" data-toggle="tab">Past Equipment</a></li>
+      <li><a id="missed_reservations" href="#tab5" data-toggle="tab">Missed Reservations</a></li>
+      <li><a id="past_overdue" href="#tab6" data-toggle="tab">Past Overdue Equipment</a></li>
+    </ul>
+    
+    <div class="tab-content">
+      <div class="tab-pane active" id="tab1">
+        <p>
+          <% unless @current_equipment.empty? %>
+            <ul>
+              <% @current_equipment.each do |r| %>
+                <li>
+                  <%= link_to r.equipment_model.name, r.equipment_model %>
+                  (<%= link_to r.equipment_object.name, r.equipment_object %>)
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            Nothing to see here!
+          <% end %>
+        </p>
+      </div>
+      
+      <div class="tab-pane" id="tab2">
+        <p>
+          <% unless @current_reservations.empty? %>
+            <ul>
+              <% @current_reservations.each do |r| %>
+                <li>
+                  <%= link_to r.equipment_model.name, r.equipment_model %>
+                  (<%= link_to r.equipment_object.name, r.equipment_object %>)
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            Nothing to see here!
+          <% end %>
+        </p>
+      </div>
+      
+      <div class="tab-pane" id="tab3">
+        <p>
+          <% unless @overdue_equipment.empty? %>
+            <ul>
+              <% @overdue_equipment.each do |r| %>
+                <li>
+                  <%= link_to r.equipment_model.name, r.equipment_model %>
+                  (<%= link_to r.equipment_object.name, r.equipment_object %>)
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            Nothing to see here!
+          <% end %>
+        </p>
+      </div>
+      
+      <div class="tab-pane" id="tab4">
+        <p>
+          <% unless @past_equipment.empty? %>
+            <ul>
+              <% @past_equipment.each do |r| %>
+                <li>
+                  <%= link_to r.equipment_model.name, r.equipment_model %>
+                  (<%= link_to r.equipment_object.name, r.equipment_object %>)
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            Nothing to see here!
+          <% end %>
+        </p>
+      </div>
+      
+      <div class="tab-pane" id="tab5">
+        <p>
+          <% unless @missed_reservations.empty? %>
+            <ul>
+              <% @missed_reservations.each do |r| %>
+                <li>
+                  <%= link_to r.equipment_model.name, r.equipment_model %>
+                  (<%= link_to r.equipment_object.name, r.equipment_object %>)
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            Nothing to see here!
+          <% end %>
+        </p>
+      </div>
+      
+      <div class="tab-pane" id="tab6">
+        <p>
+          <% unless @past_overdue.empty? %>
+            <ul>
+              <% @past_overdue.each do |r| %>
+                <li>
+                  <%= link_to r.equipment_model.name, r.equipment_model %>
+                  (<%= link_to r.equipment_object.name, r.equipment_object %>)
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            Nothing to see here!
+          <% end %>
+        </p>
+      </div>
+      
+    </div>
     
   </div>
 </div>
 
-<div class="row">
-  <div id="current_equipment" class="span9">
-    <strong>Current Equipment</strong><br />
-    <%= render :partial => 'current_equipment', :object => @user %>
-  </div>
-  
-  <div id="current_reservations" class="span9">
-    <strong>Current Reservations</strong><br />
-  </div>
-  
-  <div id="overdue_equipment" class="span9">
-    <strong>Overdue Equipment</strong><br />
-  </div>
-  
-  <div id="past_equipment" class="span9">
-    <strong>Past Equipment</strong><br />
-  </div>
-  
-  <div id="missed_reservations" class="span9">
-    <strong>Missed Reservations</strong><br />
-  </div>
-  
-  <div id="past_overdue" class="span9">
-    <strong>Past Overdue Equipment</strong><br />
-  </div>
-</div>
 
-<div class="row">
-  <div class="form-actions span9">
-    <%= link_to "Edit Information", edit_user_path(@user) %>
-    <% if current_user.is_admin_in_adminmode? %>
-      | <%= link_to "Destroy User", @user, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete %>
-      | <%= link_to "View All Users", users_path %>
-    <% end %>
-  </div>
+<div class="form-actions">
+  <%= link_to "Edit Information", edit_user_path(@user), :class => 'btn' %>
+  <% if current_user.is_admin_in_adminmode? %>
+    <%= link_to "Destroy User", @user, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete, :class => 'btn btn-danger' %>
+    <%= link_to "View All Users", users_path, :class => 'btn', :id => 'view_all_users' %>
+  <% end %>
+
 </div>
