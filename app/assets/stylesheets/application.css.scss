@@ -46,3 +46,7 @@ $user_label-size: 1.5;
 	font-size: $baseFontSize * 3;
 	line-height: $baseLineHeight * 3;
 }
+
+.btn#view_all_users {
+	float: right;
+}
