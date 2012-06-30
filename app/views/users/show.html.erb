@@ -1,4 +1,5 @@
-<% title @user.name + ((@user.is_banned || @user.is_admin_in_bannedmode?) ? " (banned)" : "") %>
+<% title @user.first_name + " " + (!@user.nickname.blank? ? "(#{@user.nickname}) " : "") + @user.last_name %>
+<% subtitle @user.login %>
 <div class="row">
   <div id="bool_labels" class="span9">
     <% if current_user.is_admin_in_adminmode? %>
@@ -11,39 +12,34 @@
 </div>
 
 <div class="row">
-  <div id="user_info" class="span2 well">
-    <p>
-      <strong>Login:</strong>
-      <%= @user.login %>
-    </p>
-    <p>
-      <strong>First Name:</strong>
-      <%= @user.first_name %>
-    </p>
-    <p>
-      <strong>Last Name:</strong>
-      <%= @user.last_name %>
-    </p>
-    <p>
-      <strong>Nickname:</strong>
-      <%= @user.nickname %>
-    </p>
-    <p>
-      <strong>Phone:</strong>
-      <%= @user.phone %>
-    </p>
-    <p>
-      <strong>Email:</strong>
-      <%= @user.email %>
-    </p>
-    <p>
-      <strong>Affiliation:</strong>
-      <%= @user.affiliation %>
-    </p>
-
-  </div>
   
-  <div class="span6 well">
+  
+  <dl id="user_info" class="dl-horizontal span3">
+    <dt>Login</dt>
+    <dd><%= @user.login %></dd>
+    
+    <dt>First Name</dt>
+    <dd><%= @user.first_name %></dd>
+    
+    <dt>Last Name</dt>
+    <dd><%= @user.last_name %></dd>
+    
+    <dt>Nickname</dt>
+    <dd><%= !@user.nickname.blank? ? @user.nickname : "(none)" %></dd>
+    
+    <dt>Phone</dt>
+    <dd><%= @user.phone %></dd>
+    
+    <dt>Email</dt>
+    <dd><%= @user.email %></dd>
+    
+    <dt>Affiliation</dt>
+    <dd><%= @user.affiliation %></dd>
+    
+  </dl>
+  
+  
+  <div id="user_stats" class="span6">
     <div class="row">
     <div id="current_equip_count" class="span2">
       <h4>Current Equipment</h4>
@@ -98,7 +94,11 @@
     
   </div>
 </div>
+<div class="row">
+  <h2 class="span9">Reservation History</h2>
+</div>
 <hr />
+
 
 <div class="row">
   <div class="tabbable tabs-left span9">

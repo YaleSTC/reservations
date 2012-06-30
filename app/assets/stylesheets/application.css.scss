@@ -55,6 +55,25 @@ $user_label-size: 1.5;
 	line-height: $baseLineHeight * 3;
 }
 
+// User show page
+
 .btn#view_all_users {
 	float: right;
+}
+
+dl#user_info {
+	margin-top: 0px;
+	
+	dt {
+		width: 90px;
+	}
+	dd {
+		margin-left: 100px;
+		width: 180px;
+		@include text-overflow;
+	}
+	dd, dt {
+		line-height: $baseLineHeight * 1.5;
+		text-align: left;
+	}
 }

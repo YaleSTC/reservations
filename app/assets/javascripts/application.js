@@ -50,7 +50,7 @@ $(document).ready(function() {
 		  }
 		});
 	});
-	
+
 	$(".btn#modal").tooltip();
 
 });
