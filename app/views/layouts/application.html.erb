@@ -32,26 +32,31 @@
           <div class="nav-collapse">
           <ul class="nav">
             <li <%= navigation_active catalog_path %><%= navigation_active root_path %>><%= link_to "Catalog", catalog_path %></li>
+          
           <% if current_user && current_user.can_checkout? %>
-            <% if current_user.is_admin_in_adminmode? %>
-            <li <%= navigation_active users_path %>><%= link_to "Users", users_path %></li>
-            <% end %>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Equipment <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                  <% if current_user.is_admin_in_adminmode? %>
-                  <li><%= link_to "Categories", categories_path %></li>
-                  <li><%= link_to "Equipment Models", equipment_models_path %></li>
-                  <% end %>
+            
+              <% if current_user.is_admin_in_adminmode? %>
+              <li <%= navigation_active users_path %>><%= link_to "Users", users_path %></li>
+              <% end %>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Equipment <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <% if current_user.is_admin_in_adminmode? %>
+                    <li><%= link_to "Categories", categories_path %></li>
+                    <li><%= link_to "Equipment Models", equipment_models_path %></li>
+                    <% end %>
                   
-                  <li><%= link_to "Equipment Objects", equipment_objects_path %></li>
-                </ul>
-            </li>
+                    <li><%= link_to "Equipment Objects", equipment_objects_path %></li>
+                  </ul>
+              </li>
+            <% end %>
             <li <%= navigation_active reservations_path %>><%= link_to (current_user.can_checkout? ? "Reservations" : "My Reservations"), reservations_path %></li>
             <% if current_user.is_admin_in_adminmode? %>
-            <li <%= navigation_active edit_app_config_path %>><%= link_to "App Settings", edit_app_config_path %></li>
+              <li <%= navigation_active edit_app_config_path %>><%= link_to "App Settings", edit_app_config_path %></li>
             <% end %>
-          <% end %>
+            
+          
+          
             <li class="divider-vertical"></li>            
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Links <b class="caret"></b>
