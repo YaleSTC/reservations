@@ -1,4 +1,4 @@
-<% title "New User" %>
+<% title "New User" unless params[:from_cart] == "true" %>
 
 <%= render :partial => 'form' %>
 
