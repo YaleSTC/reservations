@@ -1,7 +1,10 @@
 <br />
 <div id="cart" class="well">
-  <h2>My cart</h2><br />
-
+  <% unless current_user.can_checkout? %>
+    <h2>My Cart</h2><br />
+  <% else %>
+    <h2>Cart</h2><br />
+  <% end %>
 <!--allow user to set start/end dates-->
 <%= render :partial => 'reservations/cart_dates' %>
 <h3>Items</h3>
