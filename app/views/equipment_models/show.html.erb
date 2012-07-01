@@ -1,11 +1,16 @@
 <% title @equipment_model.category.name.singularize + ": "+@equipment_model.name %>
-<%= image_tag @equipment_model.photo.url(:small) %>
+<% unless !@equipment_model.photo.exists? %>
+  <%= image_tag @equipment_model.photo.url(:small) %>
+<% else %>
+  <%= image_tag "no-image.gif" %>
+<% end %>
+
 
 <p><%= @equipment_model.formatted_description.html_safe %></p>
 
-<p><%= link_to "[add to cart]", {:url => add_to_cart_path(@equipment_model)}, 
+<p><%= link_to "Add to Cart", {:url => add_to_cart_path(@equipment_model)}, 
 																 :href => add_to_cart_path(@equipment_model), 
-																 :remote => true %></p>
+																 :remote => true, :class => 'btn' %></p>
 
 <% unless @equipment_model.associated_equipment_models.empty? %>
   <fieldset>
@@ -80,8 +85,9 @@
     </p>
   <% end %>
 
-	<%= link_to @equipment_model.documentation_file_name, @equipment_model.documentation.url %>
-
+<p>	
+  <%= (link_to @equipment_model.documentation_file_name, @equipment_model.documentation.url) unless !@equipment_model.documentation.exists? %>
+</p>
 
 </fieldset>
 
