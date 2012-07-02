@@ -3,7 +3,7 @@
 
 <% if current_user.can_checkout? || current_user == @user %>
   <h2>
-    Reserved by <%= link_to @user.name, @user %>
+    Reserved by <%= link_to @user.name, show_all_reservations_for_user_path(@user) %>
   </h2>
   <br />
   <p>

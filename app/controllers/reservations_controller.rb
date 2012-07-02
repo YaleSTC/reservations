@@ -66,11 +66,11 @@ class ReservationsController < ApplicationController
     end
   end
 
-
   def edit
     @reservation = Reservation.find(params[:id])
   end
 
+# delete this code after 10 july 2012 if no issues
 #  def update
 #    error_msgs = ""
 #    if params[:commit] == "Check out equipment"
@@ -154,11 +154,19 @@ class ReservationsController < ApplicationController
 #      end
 #    end
 #  end
+  
+  def update # for editing reservations; not for checkout or check-in
+    @reservation = Reservation.find(params[:id])
+    if @reservation.update_attributes(params[:reservation])
+      flash[:notice] = "Successfully edited reservation."
+      redirect_to @reservation
+    end
+  end
 
   def checkout_by_user
     error_msgs = ""
     reservations_to_be_checked_out = []
-    reservation_check_out_procedures_count = [] # TODO delete? we're no longer counting
+#    reservation_check_out_procedures_count = [] # TODO delete? we're no longer counting
     
     # throw all the reservations that are being checked out into an array
     params[:reservations].each do |reservation_id, reservation_hash|
@@ -236,73 +244,55 @@ class ReservationsController < ApplicationController
   end
   
   def check_in_by_user
+
+    reservations_to_be_checked_in = []
+#    reservation_check_in_procedures_count = [] # delete?
     
-    if params[:reservations].nil? # Prevents the nil error from not selecting any reservations
+    params[:reservations].each do |reservation_id, reservation_hash|
+      if reservation_hash[:checkin?] == "1" then # update attributes for all equipment that is checked off
+        r = Reservation.find(reservation_id)
+        r.checkin_handler = current_user
+        r.checked_in = Time.now
+    # method start    
+        # deal with checkout procedures
+        procedures_not_done = '' # initialize
+        r.equipment_model.checkin_procedures.each do |check|
+          if reservation_hash[:checkin_procedures] == NIL # if none were checked, note that
+            procedures_not_done += '* ' + check.step + '\n'
+          elsif !reservation_hash[:checkin_procedures].keys.include?(check.id.to_s) # if you didn't check it of, add to string
+            procedures_not_done += '* ' + check.step + '\n'
+          end
+        end
+
+        # add procedures_not_done to r.notes so admin gets the errors
+        # if no notes and some procedures not done
+        if (reservation_hash[:notes] == ('' or NIL)) and (!procedures_not_done.blank?)
+          r.notes = '\n\nThe following check-in procedures were not performed:\n' + procedures_not_done
+        elsif procedures_not_done.blank? # if all procedures were done
+          r.notes = '\n\n' + reservation_hash[:notes] # add blankline because there may well have been previous notes
+        else # if there is a note and some checkout procedures were not done
+          r.notes = '\n\n' + reservation_hash[:notes] + '\n\nThe following check-in procedures were not performed:\n' + procedures_not_done
+        end
+     # method end
+        # put the data into the container we defined at the beginning of this action
+        reservations_to_be_checked_in << r # david if you name the function this change this name
+      end
+    end
+  
+    # flash errors
+    if reservations_to_be_checked_in.empty?
       flash[:error] = "No reservation selected!"
       redirect_to :back and return
     end
-
-    reservations_to_be_checked_in = []
-    reservation_check_in_procedures_count = [] # delete?
+  
+    # save the reservations
+    reservations_to_be_checked_in.each do |reservation|
+      reservation.save
+    end
     
-    params[:reservations].each do |reservation_id, reservation_hash|
-        if reservation_hash[:checkin?] == "1" then # update attributes for all equipment that is checked off
-          r = Reservation.find(reservation_id)
-          r.checkin_handler = current_user
-          r.checked_in = Time.now
-      # method start    
-          # deal with checkout procedures
-          procedures_not_done = '' # initialize
-          r.equipment_model.checkin_procedures.each do |check|
-            if reservation_hash[:checkin_procedures] == NIL # if none were checked, note that
-              procedures_not_done += '* ' + check.step + '\n'
-            elsif !reservation_hash[:checkin_procedures].keys.include?(check.id.to_s) # if you didn't check it of, add to string
-              procedures_not_done += '* ' + check.step + '\n'
-            end
-          end
-
-          # add procedures_not_done to r.notes so admin gets the errors
-          # if no notes and some procedures not done
-          if (reservation_hash[:notes] == ('' or NIL)) and (!procedures_not_done.blank?)
-            r.notes = '\n\nThe following check-in procedures were not performed:\n' + procedures_not_done
-          elsif procedures_not_done.blank? # if all procedures were done
-            r.notes = '\n\n' + reservation_hash[:notes] # add blankline because there may well have been previous notes
-          else # if there is a note and some checkout procedures were not done
-            r.notes = '\n\n' + reservation_hash[:notes] + '\n\nThe following check-in procedures were not performed:\n' + procedures_not_done
-          end
-       # method end
-          # put the data into the container we defined at the beginning of this action
-          reservations_to_be_checked_in << r # david if you name the function this change this name
-          
-          # TODO delete this next line? we're now recording which aren't done
-#          reservation_check_out_procedures_count << (reservation_hash[:checkout_procedures] || []).count #There is no editable "checkout procedures count" attribute for reservations. For now, I have these two arrays, and compare them in a hash to make sure that all checkout procedures are checked off
-        end
-      end
-    
-#    params[:reservations].each do |reservation_id, reservation_hash|
-#      if reservation_hash[:checkin?] == "1"  then
-#        r = Reservation.find(reservation_id)
-#        r.checkin_handler = current_user
-#        r.checked_in = Time.now
-#        reservations_to_be_checked_in << r
-#        reservation_check_in_procedures_count << (reservation_hash[:checkin_procedures] || []).count # Like above, accounting for check in procedures count using two arrays
-#      else
-#        flash[:error] = "You filled out check in procedures without selecting the reservation!" # Prevents the nil error from selecting checkout procedures, but no reservations.
-#        redirect_to :back and return
-#      end
-#    end
-
-#    error_msgs = reservations_to_be_checked_in.first.check_in_permissions(reservations_to_be_checked_in, reservation_check_in_procedures_count) #This method currently just counts the check in procedures to make sure they are all checked off
-#    if !error_msgs.empty?
-#      flash[:error] = error_msgs
-#      redirect_to :back and return
-#    else
-      reservations_to_be_checked_in.each do |reservation|
-        reservation.save
-      end
-      flash[:notice] = "Successfully checked in equipment!"
-      redirect_to show_all_reservations_for_user_path and return
-#    end
+    # exit
+    flash[:notice] = "Successfully checked in equipment!"
+    redirect_to show_all_reservations_for_user_path and return
   end
 
   def destroy
@@ -317,7 +307,7 @@ class ReservationsController < ApplicationController
     @reservations_set = [Reservation.upcoming].delete_if{|a| a.empty?}
   end
 
-  def check_out
+  def check_out # delete?
     @user = User.find(params[:user_id])
     @check_out_set = Reservation.due_for_checkout(@user)
   end
@@ -327,7 +317,7 @@ class ReservationsController < ApplicationController
     @user_current_checkouts = Reservation.due_for_checkout(@user)
   end
 
-  def check_out_single
+  def check_out_single # delete?
     @reservation = Reservation.find(params[:id])
   end
 
@@ -336,7 +326,7 @@ class ReservationsController < ApplicationController
     @check_in_set = Reservation.due_for_checkin(@user)
   end
 
-  def check_in_single
+  def check_in_single # delete?
     @reservation =  Reservation.find(params[:id])
   end
 
@@ -345,7 +335,7 @@ class ReservationsController < ApplicationController
     @reservation =  Reservation.find(params[:id])
     if UserMailer.checkout_receipt(@reservation).deliver
       redirect_to :back
-      flash[:notice] = "Successfuly delivered receipt email."
+      flash[:notice] = "Successfully delivered receipt email."
     else 
       redirect_to @reservation
       flash[:error] = "Unable to deliver receipt email. Please contact administrator for more support. "
