@@ -45,6 +45,7 @@ Reservations::Application.routes.draw do
   match '/reservations/check_in/for_user/:user_id' => 'reservations#check_in', :as => :check_in_reservations_for_user
   
   match '/reservations/check_out/for_user/:user_id/do' => 'reservations#checkout_by_user', :as => :checkout_by_user
+  match '/reservations/check_in/for_user/:user_id/do' => 'reservations#check_in_by_user', :as => :check_in_by_user
   
   match '/catalog/update_view' => 'catalog#update_user_per_cat_page', :as => :update_user_per_cat_page
   

@@ -1,14 +1,11 @@
 #header {
 	display: none;
 }
-	
-#yaleHeader {
-	display: none;
+
+#navigation_bar {
+  display: none;
 }
 
-#sidebar-left {
-	display: none;
-}
 
 #sidebar-right {
 	display: none;

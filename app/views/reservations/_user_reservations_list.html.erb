@@ -1,24 +1,18 @@
-<table id="table_woo" class="datatable table table-striped table-bordered">
+<table class="table table-striped table-bordered">
   <thead>
   <tr>
     <th>#</th>
-    <th>User</th>
     <th>Equipment</th>
     <th>Item</th>
     <th>Start Date</th>
     <th>Due Date</th>
-    <th>Late Fee</th>
+    <th>Late Fee (per day)</th>
   </tr>
   </thead>
   <tbody>
   <% for reservation in user_reservations_list %>
     <tr>
       <td><%= link_to reservation.id, reservation %></td>
-      <% if (reservation.reserver)%>
-        <td><%= link_to reservation.reserver.name, show_all_reservations_for_user_path(reservation.reserver.id) %></td>
-      <% else %>
-        <td>User no longer exists</td>
-      <% end %>
       <td><%= reservation.equipment_model.name %></td>
       <td>
         <% if !reservation.equipment_object.nil? %>
