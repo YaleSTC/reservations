@@ -44,6 +44,7 @@ class BlackOutsController < ApplicationController
   def create
     params[:black_out][:start_date] = Date.strptime(params[:black_out][:start_date],'%m/%d/%Y')
     params[:black_out][:end_date] = Date.strptime(params[:black_out][:end_date],'%m/%d/%Y')
+    params[:black_out][:created_by] = current_user[:id]
     @black_out = BlackOut.new(params[:black_out])
 
     respond_to do |format|
@@ -64,8 +65,8 @@ class BlackOutsController < ApplicationController
     @black_out = BlackOut.find(params[:id])
 
     params[:black_out][:start_date] = Date.strptime(params[:black_out][:start_date],'%m/%d/%Y')
-
     params[:black_out][:end_date] = Date.strptime(params[:black_out][:end_date],'%m/%d/%Y')
+    params[:black_out][:created_by] = current_user[:id]
 
     respond_to do |format|
       if @black_out.update_attributes(params[:black_out])

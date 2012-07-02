@@ -1,5 +1,27 @@
 <%# for kaminari pagination, defines variables %>
 <% prepare_pagination %>
+
+<!-- Commented out quicksearch for now until we replace it with a better search functionality - mnquintana -->
+<%# render :partial => 'quicksearch' %>
+
+   <% if (BlackOut.date_is_blacked_out(cart.start_date)) && (BlackOut.date_is_blacked_out(cart.due_date)) %>
+      <% flash[:error] = "We apologize for the inconvenience, but your start date and due date have been blacked out in our system, and you will not be able to start and end your reservation on the selected dates. " + (BlackOut.where(:equipment_model_id => 0).where(:start_date => cart.start_date).first.notice) %>
+   <% elsif (BlackOut.date_is_blacked_out(cart.start_date)) %>
+      <% flash[:error] = "We apologize for the inconvenience, but your start date has been blacked out in our system, and you will not be able to start your reservation on the selected date. " + (BlackOut.where(:equipment_model_id => 0).where(:start_date => cart.start_date).first.notice) %>
+   <% elsif (BlackOut.date_is_blacked_out(cart.due_date)) %>
+      <% flash[:error] = "We apologize for the inconvenience, but your start date has been blacked out in our system, and you will not be able to start your reservation on the selected date. " + (BlackOut.where(:equipment_model_id => 0).where(:end_date => cart.due_date).first.notice) %>
+   <% end %>
+
+<% if @equipment_models_by_category.empty? %>
+  <p>Sorry, no equipment models were found.</p>
+<% else %>
+  <%# for kaminari pagination %>
+  <%= paginate @paginated_equipment_models_by_category %>
+  <%= form_tag update_user_per_cat_page_path, :class => "form-inline", :remote => true do %>
+    <%= label_tag "Items per page:" %>
+    <%= select_tag :user_cat_items_per_page, options_for_select(@user_per_page_opts, session[:user_per_cat_page]), :class => 'span1 autosubmitme' %>
+  <% end %>
+
 <% if @equipment_models_by_category.empty? && current_user.is_admin_in_adminmode? %>
   <p>Oops! No equipment found. Try creating some
     <%= link_to "Equipment Models", new_equipment_model_path %>

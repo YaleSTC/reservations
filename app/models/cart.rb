@@ -52,7 +52,10 @@ class Cart
     end
     if !current_item.available?(@start_date..@due_date)
       errors.add(:start_date, "is before item is available")
-    end
+    end 
+    #if blacked_out
+    # errors.add(
+    #end
     return current_item if self.valid?
     self.valid?
   end
@@ -148,6 +151,7 @@ class Cart
     valid = false if !start_date_before_due_date?
     valid = false if !duration_allowed?
     valid = false if !available?
+    valid = false if !item_not_blacked_out?
     valid
   end
 
@@ -285,6 +289,36 @@ class Cart
       end
     end
     !too_many
+  end
+
+  def duration_allowed?
+    is_too_long = false
+    @items.each do |item|
+      eq_model = item.equipment_model
+      category = eq_model.category
+      unless category.max_checkout_length.nil? || self.duration <= category.max_checkout_length
+        errors.add(:items, "You can only check out " + eq_model.name + " for " + category.max_checkout_length.to_s + " days")
+        is_too_long = true
+      end
+    end
+    !is_too_long
+  end
+
+  #Need to include check incase there are no items currently in basket.
+  # Check that the item is not blacked out on the dates it is being reserved for
+  def item_not_blacked_out?
+     if (BlackOut.date_is_blacked_out(start_date) || BlackOut.date_is_blacked_out(due_date))
+        errors.add(:start_date, "Item cannot be reserved for pick up or checkout on this day.")
+        return false
+      end
+     binding.pry
+     items.each do |item|
+       eq_model = item.equipment_model
+       if EquipmentModel.blackout_on_start_or_end_date(start_date..due_date,eq_model.id)
+         return false
+       end
+     end
+    return true
   end
 
   # User Validation

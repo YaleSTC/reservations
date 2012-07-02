@@ -1,8 +1,8 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <b>Equipment model:</b>
-  <%= @black_out.equipment_model.name %>
+  <b>Equipment model affected:</b>
+  <%= (@black_out.equipment_model_id == 0) ? "All Equipment Models" : EquipmentModel.find(@black_out.equipment_model_id).name %>
 </p>
 
 <p>
