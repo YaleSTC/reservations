@@ -28,7 +28,7 @@ class Reservation < ActiveRecord::Base
 
   attr_accessible :reserver, :reserver_id, :checkout_handler, :checkout_handler_id,
                   :checkin_handler, :checkin_handler_id, :start_date, :due_date,
-                  :checked_out,:checked_in, :equipment_object, :equipment_model_id,
+                  :checked_out, :checked_in, :equipment_object, :equipment_model_id,
                   :equipment_object_id, :notes, :notes_unsent, :times_renewed
 
   def status
@@ -46,7 +46,47 @@ class Reservation < ActiveRecord::Base
   ## Validations
 
   def not_empty
-    errors.add_to_base("A reservation must contain at least one item.") if self.equipment_model.nil?
+    errors.add(:base, "A reservation must contain at least one item.") if self.equipment_model.nil?
+  end
+
+  ## Date validations
+  # Checks that reservation is not in the past (works!)
+  def not_in_past?
+    if (start_date < Date.today) || (due_date < Date.today)
+      errors.add(:base, "Reservations cannot be made in the past")
+      return false
+    end
+    return true
+  end
+
+  # Checks that reservation start date is before end dates (works!)
+  def start_date_before_due_date?
+    if due_date < start_date
+      errors.add(:base, "Due date cannot be before start date")
+      return false
+    end
+    return true
+  end
+
+  # Checks that the reservation is not longer than the max checkout length (not tested)
+  def duration_allowed?
+    duration = start_date - due_date + 1
+    cat_duration = self.equipment_model.category.max_checkout_length
+    if duration > cat_duration
+      errors.add_to_base(self.equipment_model.name + " cannot be checked out for more than "  + cat.duration.to_s + " days")
+      return false
+    end
+    return true
+  end
+
+  ## User validations
+  # Checks if the user has any overdue reservations (not tested)
+  def no_overdue_reservations?
+    if reserver.reservations.overdue_reservations?
+      errors.add(:base, "Users with overdue reservations may not make new reservations")
+      return false
+    end
+    return true
   end
 
   ## End of validations

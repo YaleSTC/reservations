@@ -9,8 +9,8 @@ class Cart
 #          :allowable_number_category?, :allowable_number_equipment_model?,
 #          :duration_allowed?, :no_overdue_reservations?, :available?
 
-  attr_accessor :items, :start_date, :due_date,
- #              :reserver_id
+  attr_accessor :items, :start_date, :due_date
+                :reserver_id
   attr_reader   :errors
 
   def initialize
@@ -18,7 +18,7 @@ class Cart
     @items = []
     @start_date = Date.today
     @due_date = Date.today
-#    @reserver_id = nil
+    @reserver_id = nil
   end
 
   def persisted?
@@ -76,18 +76,18 @@ class Cart
   end
 
   #TODO: this needs to be stored by the reservations instead
-#  def set_reserver_id(user_id)
-#    @reserver_id = user_id
-#  end
+  def set_reserver_id(user_id)
+    @reserver_id = user_id
+  end
 
   def duration #in days
     @due_date - @start_date + 1
   end
 
   #TODO: this should no longer be necessary (called through reservations)
-#  def reserver
-#    reserver = User.find(@reserver_id)
-#  end
+  def reserver
+    reserver = User.find(@reserver_id)
+  end
 
   def fix_due_date
     if @start_date >= @due_date
@@ -122,42 +122,42 @@ class Cart
 
   ## Date Validations
   # Checks that neither start date nor due date are in the past
-  def not_in_past?
-    in_past = false
-    if start_date < Date.today
-      in_past = true
-      errors.add(:start_date, "Start date cannot be before today")
-    end
-    if due_date < Date.today
-      in_past = true
-      errors.add(:due_date, "Due date cannot be before today")
-    end
-    return !in_past
-  end
+#  def not_in_past?
+#    in_past = false
+#    if start_date < Date.today
+#      in_past = true
+#      errors.add(:start_date, "Start date cannot be before today")
+#    end
+#    if due_date < Date.today
+#      in_past = true
+#      errors.add(:due_date, "Due date cannot be before today")
+#    end
+#    return !in_past
+#  end
 
   # Checks that start date is before due date
-  def start_date_before_due_date?
-    if start_date > due_date
-      errors.add(:due_date, "Due date cannot be before start date.")
-      return false
-    end
-    return true
-  end
+#  def start_date_before_due_date?
+#    if start_date > due_date
+#     errors.add(:due_date, "Due date cannot be before start date.")
+#      return false
+#    end
+#    return true
+#  end
 
   # Check that the duration is not longer than the maximum checkout length for any of the item
   #TODO: item.equipment_model won't work
-  def duration_allowed?
-    is_too_long = false
-    @items.each do |item|
-      eq_model = item.equipment_model
-      category = eq_model.category
-      unless category.max_checkout_length.nil? || self.duration <= category.max_checkout_length
-        errors.add(:items, "You can only check out " + eq_model.name + " for " + category.max_checkout_length.to_s + " days")
-        is_too_long = true
-      end
-    end
-    !is_too_long
-  end
+#  def duration_allowed?
+#    is_too_long = false
+#    @items.each do |item|
+#      eq_model = item.equipment_model
+#      category = eq_model.category
+#      unless category.max_checkout_length.nil? || self.duration <= category.max_checkout_length
+#        errors.add(:items, "You can only check out " + eq_model.name + " for " + category.max_checkout_length.to_s + " days")
+#        is_too_long = true
+#      end
+#    end
+#   !is_too_long
+#  end
 
   # Check that all items are available
   #TODO: item.name won't work, item.available? won't work
@@ -264,11 +264,11 @@ class Cart
   # User Validation
 
  # Check that reserver has no overdue reservations
-  def no_overdue_reservations?
-    unless !reserver.reservations.overdue_reservations?(reserver)
-      errors.add(:reserver_id, reserver.name + " has overdue reservations")
-      return false
-    end
-    return true
-  end
+#  def no_overdue_reservations?
+#    unless !reserver.reservations.overdue_reservations?(reserver)
+#      errors.add(:reserver_id, reserver.name + " has overdue reservations")
+#      return false
+#    end
+#    return true
+#  end
 end
