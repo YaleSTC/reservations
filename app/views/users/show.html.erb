@@ -52,7 +52,7 @@
   </div>
 </div>
 <div class="row">
-  <h2 class="span9">Reservation History</h2>
+  <h2 class="span9">History</h2>
 </div>
 <hr />
 
@@ -77,7 +77,7 @@
               <% value.each do |v| %>
                 <li>
                   <%= link_to v.equipment_model.name, v.equipment_model %>
-                  (<%= link_to v.equipment_object.name, v.equipment_object %>)
+                  <%= (link_to "(#{v.equipment_object.name})", v.equipment_object) unless v.equipment_object.blank? %>
                 </li>
               <% end %>
               </ul>

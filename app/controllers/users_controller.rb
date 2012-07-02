@@ -24,12 +24,12 @@ class UsersController < ApplicationController
     require_user(@user)
     @user_reservations = @user.reservations
     @all_equipment = Reservation.active_user_reservations(@user)
-    @show_equipment = { current_equipment: @user_reservations.select{|r| (r.status == "checked out") || (r.status == "overdue")}, 
-                        current_reservations: @user_reservations.reserved, 
-                        overdue_equipment: @user_reservations.overdue, 
-                        past_equipment: @user_reservations.returned,
-                        missed_reservations: @user_reservations.missed, 
-                        past_overdue_equipment: @user_reservations.returned.select{|r| r.checked_in > r.due_date} }
+    @show_equipment = { current_equipment: @user.reservations.select{|r| (r.status == "checked out") || (r.status == "overdue")}, 
+                        current_reservations: @user.reservations.reserved, 
+                        overdue_equipment: @user.reservations.overdue, 
+                        past_equipment: @user.reservations.returned,
+                        missed_reservations: @user.reservations.missed, 
+                        past_overdue_equipment: @user.reservations.returned.select{|r| r.checked_in > r.due_date} }
                         
   end
 
