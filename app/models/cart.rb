@@ -40,6 +40,10 @@ class Cart
   ## End of functions for error handling
 
   def add_equipment_model(equipment_model)
+    unless item_not_blacked_out?
+      errors.add(:start_date, "dates are blacked out")
+      return false
+    end
     current_item = nil
     @items.find do |item|
       current_item = item if item.equipment_model_id == equipment_model.id
@@ -56,6 +60,7 @@ class Cart
     #if blacked_out
     # errors.add(
     #end
+    binding.pry
     return current_item if self.valid?
     self.valid?
   end
@@ -152,7 +157,7 @@ class Cart
     valid = false if !duration_allowed?
     valid = false if !available?
     valid = false if !item_not_blacked_out?
-    valid
+    valid = false
   end
 
   # Checks that neither start date nor due date are in the past
