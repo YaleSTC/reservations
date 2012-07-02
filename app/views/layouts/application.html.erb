@@ -72,33 +72,35 @@
               </li>
             <li class="divider-vertical"></li>
             <!-- ==== VIEW-AS MODE ==== -->
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"> View As <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                  <% if current_user && current_user.is_admin? %>
-        	          <% if current_user && current_user.adminmode? %>
-                    <li class="active">Admin</li>
-        	          <% else %>
-                    <li><%= link_to 'Admin', {:a_mode => 'ON'}%></li>
-                    <% end %>
-        	          <% if current_user && current_user.checkoutpersonmode? %>
-                    <li class="active">Checkout Person</li>
-        	          <% else %>
-                    <li><%= link_to 'Checkout Person', {:c_mode => 'ON'}%></li>
-                    <% end %>
-        	          <% if current_user && current_user.normalusermode? %>
-                    <li class="active">Normal User</li>
-        	          <% else %>
-                    <li><%= link_to 'Normal User', {:n_mode => 'ON'}%></li>
-                    <% end %>
-        	          <% if current_user && current_user.bannedmode? %>
-                    <li class="active">Banned User</li>
-        	          <% else %>
-                    <li><%= link_to 'Banned User', {:b_mode => 'ON'}%></li>
-                    <% end %>
-                  <% end %>
-                </ul>
+            <% if current_user && current_user.is_admin? %>
+              <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"> View As <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                  
+          	          <% if current_user && current_user.adminmode? %>
+                      <li class="active">Admin</li>
+          	          <% else %>
+                      <li><%= link_to 'Admin', {:a_mode => 'ON'}%></li>
+                      <% end %>
+          	          <% if current_user && current_user.checkoutpersonmode? %>
+                      <li class="active">Checkout Person</li>
+          	          <% else %>
+                      <li><%= link_to 'Checkout Person', {:c_mode => 'ON'}%></li>
+                      <% end %>
+          	          <% if current_user && current_user.normalusermode? %>
+                      <li class="active">Normal User</li>
+          	          <% else %>
+                      <li><%= link_to 'Normal User', {:n_mode => 'ON'}%></li>
+                      <% end %>
+          	          <% if current_user && current_user.bannedmode? %>
+                      <li class="active">Banned User</li>
+          	          <% else %>
+                      <li><%= link_to 'Banned User', {:b_mode => 'ON'}%></li>
+                      <% end %>
+                  
+                  </ul>
               </li>
+            <% end %>
           </ul>
           <!-- Current User Dropdown -->
           <ul class="nav pull-right" id="logged_in">
