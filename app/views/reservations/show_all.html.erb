@@ -3,23 +3,30 @@
     <strong>Reserved by:</strong>
     <%= link_to @user.name, @user %>
   </p>
-
-  <table>
-    <tr>
-      <th>Reservation #</th>
-      <th>Equipment</th>
-      <th>Start Date</th>
-      <th>Due Date</th>
-    </tr>
-  <%= render :partial => "user_reservations_list", :collection => @user_reservations_set %>
-  </table>
-
-  <p>
-  <% if current_user.can_checkout? %>
-    <%= link_to "Check out", check_out_reservations_for_user_path(@user.id) %> |
-    <%= link_to "Check in", check_in_reservations_for_user_path(@user.id) %> |
-    <%= link_to "View all reservations", reservations_path %>
+  
+  <% if !@user_overdue_reservations_set.empty? %>
+    <h3>Overdue</h3>
+    <%= render :partial => "user_reservations_list", :collection => @user_overdue_reservations_set %>
   <% end %>
+  <% if !@user_checked_out_today_reservations_set.empty? %>
+    <h3>Checked out today</h3>
+    <%= render :partial => "user_reservations_list", :collection => @user_checked_out_today_reservations_set %>
+  <% end %>
+  <% if !@user_checked_out_previous_reservations_set.empty? %>
+    <h3>Checked out prior to today</h3>
+    <%= render :partial => "user_reservations_list", :collection => @user_checked_out_previous_reservations_set %>
+  <% end %>
+  <% if !@user_reserved_reservations_set.empty? %>
+    <h3>Future reservations</h3>
+    <%= render :partial => "user_reservations_list", :collection => @user_reserved_reservations_set %>
+  <% end %>
+  
+  <p>
+    <% if current_user.can_checkout? %>
+      <%= link_to "Check out", check_out_reservations_for_user_path(@user.id) %> |
+      <%= link_to "Check in", check_in_reservations_for_user_path(@user.id) %> |
+      <%= link_to "View all reservations", reservations_path %>
+    <% end %>
   </p>
 <% end %>
 

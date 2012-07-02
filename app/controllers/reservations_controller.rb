@@ -24,7 +24,10 @@ class ReservationsController < ApplicationController
 
   def show_all #Action called in _reservations_list partial view, allows checkout person to view all current reservations for one user
     @user = User.find(params[:user_id])
-    @user_reservations_set = Reservation.active_user_reservations(@user)
+    @user_overdue_reservations_set = [Reservation.overdue_user_reservations(@user)].delete_if{|a| a.empty?}
+    @user_checked_out_today_reservations_set = [Reservation.checked_out_today_user_reservations(@user)].delete_if{|a| a.empty?}
+    @user_checked_out_previous_reservations_set = [Reservation.checked_out_previous_user_reservations(@user)].delete_if{|a| a.empty?}
+    @user_reserved_reservations_set = [Reservation.reserved_user_reservations(@user)].delete_if{|a| a.empty?}
   end
 
   def new
@@ -225,7 +228,7 @@ class ReservationsController < ApplicationController
         reservation.save # save!
       end
       
-      # flash 'safe successful' messages
+      # flash 'save successful' messages
       flash[:notice] = error_msgs.empty? ? "Successfully checked out equipment!" : error_msgs #Allows admins to see all errors, but still checkout successfully
       
       # now exit

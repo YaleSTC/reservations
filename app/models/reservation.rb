@@ -18,9 +18,11 @@ class Reservation < ActiveRecord::Base
   
 
   scope :recent, order('start_date, due_date, reserver_id')
-  
+
   scope :reserved, lambda { where("checked_out IS NULL and checked_in IS NULL and due_date >= ?", Time.now.midnight.utc).recent}
   scope :checked_out, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date >=  ?", Time.now.midnight.utc).recent }
+  scope :checked_out_today, lambda { where("checked_out >= ? and checked_in IS NULL", Time.now.midnight.utc).recent }
+  scope :checked_out_previous, lambda { where("checked_out < ? and checked_in IS NULL and due_date <= ?", Time.now.midnight.utc, Date.tomorrow.midnight.utc).recent }
   scope :overdue, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc ).recent }
   scope :returned, where("checked_in IS NOT NULL and checked_out IS NOT NULL")
   scope :missed, lambda {where("checked_out IS NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc).recent}
@@ -118,6 +120,22 @@ class Reservation < ActiveRecord::Base
 
   def self.active_user_reservations(user)
     Reservation.where("checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
+  end
+  
+  def self.checked_out_today_user_reservations(user)
+    Reservation.where("checked_out >= ? and checked_in IS NULL and reserver_id = ?", Time.now.midnight.utc, user.id)
+  end
+  
+  def self.checked_out_previous_user_reservations(user)
+    Reservation.where("checked_out < ? and checked_in IS NULL and reserver_id = ? and due_date >= ?", Time.now.midnight.utc, user.id, Time.now.midnight.utc)
+  end
+  
+  def self.reserved_user_reservations(user)
+    Reservation.where("checked_out IS NULL and checked_in IS NULL and due_date >= ? and reserver_id = ?", Time.now.midnight.utc, user.id)
+  end
+  
+  def self.overdue_user_reservations(user)
+    Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and due_date < ? and reserver_id = ?", Time.now.midnight.utc, user.id )
   end
 
   def self.check_out_procedures_exist?(reservation)
