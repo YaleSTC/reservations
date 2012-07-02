@@ -36,6 +36,8 @@ $user_label-size: 1.5;
 .alert { 
 	margin-bottom: 0px;
 	margin-top: 18px; 
+}
+
 
 #bool_labels {
 	margin-bottom: 20px;
@@ -50,7 +52,7 @@ $user_label-size: 1.5;
 	margin-right: 10px;
 }
 
-.current_equip_num, .current_res_num, .overdue_num, .past_equip_num, .missed_res_num, .past_overdue_num {
+.current_equipment_num, .current_reservations_num, .overdue_equipment_num, .past_equipment_num, .missed_reservations_num, .past_overdue_equipment_num {
 	font-size: $baseFontSize * 3;
 	line-height: $baseLineHeight * 3;
 }
@@ -60,6 +62,8 @@ $user_label-size: 1.5;
 .btn#view_all_users {
 	float: right;
 }
+
+a .badge.badge-inverse { float: right;}
 
 dl#user_info {
 	margin-top: 0px;
