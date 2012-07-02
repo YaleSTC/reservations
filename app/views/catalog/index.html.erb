@@ -28,12 +28,14 @@
             
             <% unless !equipment_model.photo.exists? %>
               <% #show equipment model image %>
-              
-              <%= image_tag equipment_model.photo.url(:thumbnail) %>
-
-             <% else %>              
-              <%= image_tag "no-image.gif" %>
-             <% end %>
+              <%= link_to equipment_model do %>
+                <%= image_tag equipment_model.photo.url(:thumbnail) %>
+              <% end %>
+            <% else %>
+              <%= link_to equipment_model do %>
+                <%= image_tag "no-image.gif" %>
+              <% end %>
+            <% end %>
               <h3 class="equipment_title"><%= link_to equipment_model.name, equipment_model, :class => 'equipment_title_link', :rel => 'tooltip', :title => equipment_model.name %></h3>
              <div class="caption_cat">
 

@@ -25,5 +25,16 @@ $h3-line-height: 27px;
 	}
 .caption_cat { padding: 0px 9px 0px 9px; }
 
-#userModal{
-  max-height: 500px;}
+#userModal{ 
+	max-height: 500px; 
+	.modal-body {
+		overflow-x: hidden;
+	}
+}
+
+
+
+.alert { 
+	margin-bottom: 0px;
+	margin-top: 18px; 
+}
