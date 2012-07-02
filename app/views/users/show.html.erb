@@ -32,7 +32,7 @@
     <dd><%= @user.phone %></dd>
     
     <dt>Email</dt>
-    <dd><%= @user.email %></dd>
+    <dd><%= mail_to @user.email, @user.email %></dd>
     
     <dt>Affiliation</dt>
     <dd><%= @user.affiliation %></dd>

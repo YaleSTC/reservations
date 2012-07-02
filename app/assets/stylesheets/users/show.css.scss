@@ -34,6 +34,9 @@ dl#user_info {
 		position: relative;
 		right: 10px;
 		@include text-overflow;
+		a {
+			right: 0;
+		}
 	}
 	dd, dt {
 		line-height: $baseLineHeight * 1.5;
@@ -49,10 +52,12 @@ dl#user_info {
 			width: 90px;
 		}
 		dd {
-	//		margin-left: 100px;
 			position: relative;
 			right: 10px;
 			@include text-overflow;
+			a {
+				right: 0;
+			}
 		}
 		dd, dt {
 			line-height: $baseLineHeight * 1.5;
@@ -73,6 +78,9 @@ dl#user_info {
 			position: relative;
 			right: 10px;
 			@include text-overflow;
+			a {
+				right: 0;
+			}
 		}
 		dd, dt {
 			line-height: $baseLineHeight * 1.5;
@@ -94,6 +102,9 @@ dl#user_info {
 			position: static;
 			right: 0;
 			@include text-overflow;
+			a {
+				right: 0;
+			}
 		}
 		dd, dt {
 			line-height: $baseLineHeight * 1.5;
