@@ -14,7 +14,8 @@
 <div class="row">
   
   
-  <dl id="user_info" class="dl-horizontal span3">
+  <dl id="user_info" class="dl-horizontal span4">
+    <div class="well">
     <dt>Login</dt>
     <dd><%= @user.login %></dd>
     
@@ -35,10 +36,10 @@
     
     <dt>Affiliation</dt>
     <dd><%= @user.affiliation %></dd>
-    
+    </div>
   </dl>
   
-  <div id="user_stats" class="span6">
+  <div id="user_stats" class="span5">
     
   <% @show_equipment.each do |key, value| %>
     <%= content_tag :div, :id => "#{key}_count", :class => 'span2' do %>
@@ -100,5 +101,4 @@
     <%= link_to "Destroy User", @user, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete, :class => 'btn btn-danger' %>
     <%= link_to "View All Users", users_path, :class => 'btn', :id => 'view_all_users' %>
   <% end %>
-
 </div>

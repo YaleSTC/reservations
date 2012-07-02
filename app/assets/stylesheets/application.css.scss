@@ -39,45 +39,5 @@ $user_label-size: 1.5;
 }
 
 
-#bool_labels {
-	margin-bottom: 20px;
-}
-
-.user_label {
-	@extend .label;
-	@include border-radius(5px);
-	padding: $user_label-size*1px $user_label-size*4px $user_label-size*2px;
-	font-size: $baseFontSize * 1.5;
-	line-height: 14px;
-	margin-right: 10px;
-}
-
-.current_equipment_num, .current_reservations_num, .overdue_equipment_num, .past_equipment_num, .missed_reservations_num, .past_overdue_equipment_num {
-	font-size: $baseFontSize * 3;
-	line-height: $baseLineHeight * 3;
-}
-
 // User show page
-
-.btn#view_all_users {
-	float: right;
-}
-
-a .badge.badge-inverse { float: right;}
-
-dl#user_info {
-	margin-top: 0px;
-	
-	dt {
-		width: 90px;
-	}
-	dd {
-		margin-left: 100px;
-		width: 180px;
-		@include text-overflow;
-	}
-	dd, dt {
-		line-height: $baseLineHeight * 1.5;
-		text-align: left;
-	}
-}
+@import "users/show";
