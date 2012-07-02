@@ -127,7 +127,10 @@ dl#user_info {
 }
 
 //Tab Badges
-a .badge.badge-inverse { float: right; }
+a.tab-text {width: 180px;}
+a .tab-badge {
+	float: right;
+}
 
 //View All Button placement
 .btn#view_all_users {

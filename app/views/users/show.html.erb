@@ -64,7 +64,10 @@
     <ul class="nav nav-tabs">
       <% @show_equipment.each do |key, value| %>
         <%= content_tag :li, :class => active_tab(key) do %>
-          <%= link_to key.to_s.titleize, "##{key.to_s}", :"data-toggle" => 'tab' %>
+          <%= link_to "##{key.to_s}", :class => 'tab-text', :"data-toggle" => 'tab' do %>
+            <%= key.to_s.titleize %>
+            <%= content_tag :span, value.size, :class => 'badge tab-badge' %>
+          <% end %>
         <% end %>
       <% end %>
     </ul>
