@@ -39,13 +39,13 @@
           
           <% if current_user && current_user.can_checkout? %>
             
-              <% if current_user.is_admin_in_adminmode? %>
+              <% if current_user && current_user.is_admin_in_adminmode? %>
               <li <%= navigation_active users_path %>><%= link_to "Users", users_path %></li>
               <% end %>
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Equipment <b class="caret"></b></a>
                   <ul class="dropdown-menu">
-                    <% if current_user.is_admin_in_adminmode? %>
+                    <% if current_user && current_user.is_admin_in_adminmode? %>
                     <li><%= link_to "Categories", categories_path %></li>
                     <li><%= link_to "Equipment Models", equipment_models_path %></li>
                     <% end %>
@@ -54,8 +54,8 @@
                   </ul>
               </li>
             <% end %>
-            <li <%= navigation_active reservations_path %>><%= link_to (current_user.can_checkout? ? "Reservations" : "My Reservations"), reservations_path %></li>
-            <% if current_user.is_admin_in_adminmode? %>
+            <li <%= navigation_active reservations_path %>><%= link_to (current_user && current_user.can_checkout? ? "Reservations" : "My Reservations"), reservations_path %></li>
+            <% if current_user && current_user.is_admin_in_adminmode? %>
               <li <%= navigation_active edit_app_config_path %>><%= link_to "App Settings", edit_app_config_path %></li>
             <% end %>
             
@@ -76,22 +76,22 @@
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"> View As <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <% if current_user && current_user.is_admin? %>
-        	          <% if current_user.adminmode? %>
+        	          <% if current_user && current_user.adminmode? %>
                     <li class="active">Admin</li>
         	          <% else %>
                     <li><%= link_to 'Admin', {:a_mode => 'ON'}%></li>
                     <% end %>
-        	          <% if current_user.checkoutpersonmode? %>
+        	          <% if current_user && current_user.checkoutpersonmode? %>
                     <li class="active">Checkout Person</li>
         	          <% else %>
                     <li><%= link_to 'Checkout Person', {:c_mode => 'ON'}%></li>
                     <% end %>
-        	          <% if current_user.normalusermode? %>
+        	          <% if current_user && current_user.normalusermode? %>
                     <li class="active">Normal User</li>
         	          <% else %>
                     <li><%= link_to 'Normal User', {:n_mode => 'ON'}%></li>
                     <% end %>
-        	          <% if current_user.bannedmode? %>
+        	          <% if current_user && current_user.bannedmode? %>
                     <li class="active">Banned User</li>
         	          <% else %>
                     <li><%= link_to 'Banned User', {:b_mode => 'ON'}%></li>

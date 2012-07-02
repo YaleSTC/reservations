@@ -1,6 +1,6 @@
 <br />
 <div id="cart" class="well">
-  <% unless current_user.can_checkout? %>
+  <% unless current_user && current_user.can_checkout? %>
     <h2>My Cart</h2><br />
   <% else %>
     <h2>Cart</h2><br />
