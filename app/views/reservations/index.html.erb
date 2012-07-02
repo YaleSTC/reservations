@@ -14,5 +14,9 @@
   <% end %>	
 </p>
 
-<%= render :partial => "reservations_list", :collection => @reservations_set %>
+<% if params[:upcoming] %>
+	<%= render :partial => "hold_list", :collection => @hold_list %>
+<% else %>
+	<%= render :partial => "reservations_list", :collection => @reservations_set %>
+<% end %>
 
