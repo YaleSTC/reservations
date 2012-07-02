@@ -5,7 +5,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <%= csrf_meta_tag %>
+		<% unless Settings.site_title.nil?%>
     <title><%= sanitize("#{site_title}" + ( content_for?(:title) ? " &raquo; #{yield(:title)}" : "")) %></title>
+		<% end %>
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
     <![endif]-->
@@ -23,7 +25,9 @@
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
+				<% unless Settings.site_title.nil? %>
           <%= link_to sanitize("<i class=\"icon-th-list\"></i> #{site_title}"), root_path, :class => 'brand' %>
+				<% end %>
           <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
