@@ -1,0 +1,20 @@
+<table id="table_woo" class="datatable table table-striped table-bordered">
+  <thead>
+  <tr>
+    <th>Reservation #</th>
+    <th>Equipment</th>
+    <th>Start Date</th>
+    <th>Due Date</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% value.each do |reservation| %>
+    <tr>
+      <td><%= link_to reservation.id, reservation %></td>
+      <td><%= reservation.equipment_model.name %></td>
+      <td><%= reservation.start_date.to_date.to_s(:long) %></td>
+      <td><%= reservation.due_date.to_date.to_s(:long) %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

@@ -75,18 +75,9 @@
     <div class="tab-content">
       <% @show_equipment.each do |key, value| %>
         <p>
-          <%= content_tag :div, :class => "tab-pane #{active_tab(key)}", :id => key do %>
+          <%= content_tag :div, {:class => "tab-pane #{active_tab(key)}", :id => key}, false do %>
             <% unless value.empty? %>
-              <ul>
-              <% value.each do |v| %>
-                <li>
-                  <%= link_to v.equipment_model.name, v.equipment_model %>
-                  <%= (link_to "(#{v.equipment_object.name})", v.equipment_object) unless v.equipment_object.blank? %>
-                </li>
-              <% end %>
-              </ul>
-            <% else %>
-              Nothing to see here!
+              <%= render partial: 'history_table', locals: { :value => value } %>
             <% end %>
           <% end %>
         </p>
