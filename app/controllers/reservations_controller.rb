@@ -143,11 +143,11 @@ class ReservationsController < ApplicationController
         redirect_to :action => 'show' and return
       end
 
-    elsif params[:commit] == "Submit" #For editing reservations
+    elsif params[:commit] == "Update Reservation" #For editing reservations
       @reservation = Reservation.find(params[:id])
       if @reservation.update_attributes(params[:reservation])
         flash[:notice] = "Successfully edited reservation."
-        redirect_to @reservation
+        redirect_to root_path
       end
     end
   end
