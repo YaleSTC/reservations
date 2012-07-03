@@ -8,7 +8,7 @@
       
       <div class="input-append">
         <%# This must all be one one line for the button to display properly, sorry it's so ugly! %>
-        <%= autocomplete_field_tag 'fake_reserver_id', User.find(cart.reserver_id).render_name, autocomplete_user_last_name_reservations_path, :size => 30, :update_elements => {:id => '#reserver_id'}, :class => 'submittable span2' %><%= hidden_field_tag 'reserver_id', cart.reserver_id %><%= link_to sanitize("<i class=\"icon-edit\"></i>"), '#userModal', :class => 'btn', :rel => 'tooltip', :title => 'New Reserver', :"data-toggle" => 'modal' %>
+        <%= autocomplete_field_tag 'fake_reserver_id', User.find(cart.reserver_id).render_name, autocomplete_user_last_name_reservations_path, :size => 30, :update_elements => {:id => '#reserver_id'}, :class => 'submittable span2' %><%= hidden_field_tag 'reserver_id', cart.reserver_id %><%= link_to sanitize("<i class=\"icon-edit\"></i>"), '#userModal', :class => 'btn', :id => 'modal', :rel => 'tooltip', :title => 'New Reserver', :"data-toggle" => 'modal' %>
       </div>
       
       
