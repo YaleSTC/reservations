@@ -24,6 +24,15 @@ $(document).ready(function() {
 		      { "bSortable": false, "aTargets": [ "no_sort" ] }
 		    ]
 	});
+	
+	$('.history_table').dataTable({
+	  "sDom": "<'row'<l><f>r>t<'row'<'span3'i><p>>",
+		"bLengthChange": false,
+	  "sPaginationType": "bootstrap",
+		"aoColumnDefs": [
+		      { "bSortable": false, "aTargets": [ "no_sort" ] }
+		    ]
+	});
 
 // For fading out flash notices
 	$(".alert .close").click( function() {
@@ -50,7 +59,7 @@ $(document).ready(function() {
 		  }
 		});
 	});
-	
+
 	$(".btn#modal").tooltip();
 
 });

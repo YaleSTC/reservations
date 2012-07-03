@@ -8,6 +8,11 @@ module LayoutHelper
     @show_title = show_title
   end
   
+  def subtitle (page_subtitle, show_subtitle = true)
+    content_for(:subtitle) { page_subtitle.to_s }
+    @show_subtitle = show_subtitle
+  end
+  
   def show_title?
     @show_title
   end

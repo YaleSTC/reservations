@@ -3,6 +3,7 @@
 @import "jquery-ui-1.8.16.custom";
 
 $h3-line-height: 27px;
+$user_label-size: 1.5;
 
 .cart_reserver { margin-bottom: 7px; }
 .thumbnail {
@@ -32,9 +33,11 @@ $h3-line-height: 27px;
 	}
 }
 
-
-
 .alert { 
 	margin-bottom: 0px;
 	margin-top: 18px; 
 }
+
+
+// User show page
+@import "users/show";
