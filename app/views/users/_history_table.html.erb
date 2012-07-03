@@ -1,0 +1,30 @@
+<table class="history_table table table-striped table-bordered">
+  <thead>
+  <tr>
+    <th>Reservation #</th>
+    <th>Equipment</th>
+    <% unless key == (:current_reservations || :missed_reservations) %>
+      <th>Item</th>
+    <% end %>
+    <th>Start Date</th>
+    <th>Due Date</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% value.each do |reservation| %>
+    <tr>
+      <td><%= link_to reservation.id, reservation %></td>
+      <td><%= link_to reservation.equipment_model.name, reservation.equipment_model %></td>
+      <% unless key == (:current_reservations || :missed_reservations) %>
+        <td>
+          <% if !reservation.equipment_object.nil? %>
+            <%= link_to_if current_user.can_checkout?, reservation.equipment_object.name %>
+          <% end %>
+        </td>
+      <% end %>
+      <td><%= reservation.start_date.to_date.to_s(:long) %></td>
+      <td><%= reservation.due_date.to_date.to_s(:long) %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

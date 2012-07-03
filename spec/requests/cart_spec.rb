@@ -1,10 +1,15 @@
 require 'spec_helper'
 
-describe 'home page' do
+describe 'remove_item' do
 
-  it 'welcomes the user' do
-    admin = FactoryGirl.create(:admin)
-    visit "/"
-    page.should have_content('Catalog')
+  it 'only removes one copy of the reservation and not all the ones that have the same equipment model' do
+    r = Reservation.new(:start_date => Date.today, :due_date => Date.today)
+    items = []
+    items << r
+    items << r
+    items.delete_at(items.index(r))
+    items.length.should == 1
   end
 end
+
+
