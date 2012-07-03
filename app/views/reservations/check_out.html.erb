@@ -12,5 +12,5 @@
     </div>
   <% end %>
 <% else %>
-  <h3><%= link_to @user.name, show_all_reservations_for_user_path %> does not have any pending reservations.</h3>
+  <h3><%= link_to @user.name, show_all_reservations_for_user_path %> does not have any reservations to check out today.</h3>
 <% end %>
