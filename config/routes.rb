@@ -29,8 +29,6 @@ Reservations::Application.routes.draw do
     member do
       get :check_out
       get :check_in
-      get :check_out_single
-      get :check_in_single
       get :show_all
       get :checkout_email
       get :checkin_email
@@ -39,13 +37,14 @@ Reservations::Application.routes.draw do
     get :autocomplete_user_last_name, :on => :collection
   end
 
-  
+  # reservations views
   match '/reservations/show_all/for_user/:user_id' => 'reservations#show_all', :as => :show_all_reservations_for_user
-  match '/reservations/check_out/for_user/:user_id' => 'reservations#check_out_by_user', :as => :check_out_reservations_for_user  
+  match '/reservations/check_out/for_user/:user_id' => 'reservations#check_out', :as => :check_out_reservations_for_user  
   match '/reservations/check_in/for_user/:user_id' => 'reservations#check_in', :as => :check_in_reservations_for_user
   
-  match '/reservations/check_out/for_user/:user_id/do' => 'reservations#checkout_by_user', :as => :checkout_by_user
-  match '/reservations/check_in/for_user/:user_id/do' => 'reservations#check_in_by_user', :as => :check_in_by_user
+  # reservation checkout / check-in actions
+  match '/reservations/checkout/:user_id' => 'reservations#checkout', :as => :checkout
+  match '/reservations/check-in/:user_id' => 'reservations#checkin', :as => :checkin
   
   match '/catalog/update_view' => 'catalog#update_user_per_cat_page', :as => :update_user_per_cat_page
   
