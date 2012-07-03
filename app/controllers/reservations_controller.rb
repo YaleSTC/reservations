@@ -166,7 +166,6 @@ class ReservationsController < ApplicationController
   def checkout_by_user
     error_msgs = ""
     reservations_to_be_checked_out = []
-#    reservation_check_out_procedures_count = [] # TODO delete? we're no longer counting
     
     # throw all the reservations that are being checked out into an array
     params[:reservations].each do |reservation_id, reservation_hash|
@@ -205,7 +204,7 @@ class ReservationsController < ApplicationController
       end
       
   # done with throwing things into the array
-      
+
       #All-encompassing checks, only need to be done once
       if reservations_to_be_checked_out.first.nil? #Prevents the nil error from not selecting any reservations
         flash[:error] = "No reservation selected."
@@ -214,10 +213,16 @@ class ReservationsController < ApplicationController
       elsif Reservation.overdue_reservations?(reservations_to_be_checked_out.first.reserver) #Checks for any overdue equipment
         error_msgs += "User has overdue equipment."
       end
-      
+
       #Checks that must be iterated over each individual reservation
       # TODO what does this line do? it shouldn't need to be run again since done when finalizing reservation, talk with erin
 #      error_msgs += reservations_to_be_checked_out.first.check_out_permissions(reservations_to_be_checked_out, reservation_check_out_procedures_count) #This method checks the Category Max Per User, Equipment Model Max per User, and whether all the checkout procedures have been checked off
+
+      # make sure we're not checking out the same object in more than one reservation
+      if !reservations_to_be_checked_out.first.checkout_object_uniqueness(reservations_to_be_checked_out) # if objects not unique, flash error
+        flash[:error] = "The same equipment item cannot be simultaneously checked out in multiple reservations."
+        redirect_to :back and return
+      end
       
       # act on the errors
       if !error_msgs.empty? # If any requirements are not met...
@@ -246,7 +251,6 @@ class ReservationsController < ApplicationController
   def check_in_by_user
 
     reservations_to_be_checked_in = []
-#    reservation_check_in_procedures_count = [] # delete?
     
     params[:reservations].each do |reservation_id, reservation_hash|
       if reservation_hash[:checkin?] == "1" then # update attributes for all equipment that is checked off

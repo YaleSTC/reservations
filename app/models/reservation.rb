@@ -117,6 +117,18 @@ class Reservation < ActiveRecord::Base
     end
     error_messages
   end
+  
+  def checkout_object_uniqueness(reservations)
+    object_ids_taken = []
+    reservations.each do |r|
+      if !object_ids_taken.include?(r.equipment_object_id) # check to see if we've already taken that one
+        object_ids_taken << r.equipment_object_id
+      else
+        return false # return false if not unique
+      end
+    end
+    return true # return true if unique
+  end
 
   def self.active_user_reservations(user)
     Reservation.where("checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
