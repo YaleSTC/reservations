@@ -1,6 +1,6 @@
 <% title "Reservation Checkout" %>
 <% if !@user_current_checkouts.empty? %>
-  <h3><%= link_to @user.name, show_all_reservations_for_user_path %> has reserved the following equipment:</h3>
+  <h3><%= link_to @user.name, show_all_reservations_for_user_path %> has reserved the following equipment for today:</h3>
   <br />
   <%= form_tag( checkout_path, :method => "put" ) do %>
     <% @user_current_checkouts.each do |reservation| %>
