@@ -4,7 +4,11 @@ Reservations::Application.routes.draw do
 
   resources :documents
   resources :equipment_objects
-  resources :reports
+  resources :reports do
+    member do
+      get 'for_model'
+    end
+  end
   
   resources :equipment_models do
     resources :equipment_objects
