@@ -1,0 +1,34 @@
+<div id="<%= @reservation.id %>" class="well-nomargin span4">
+
+	<h4><%= @reservation.equipment_model.name %></h4>
+
+	<%= select_tag "reservations[#{@reservation.id}][equipment_object_id]", @reservation.equipment_model.available_object_select_options, :prompt => 'Please select..', :class => 'dropdown' %>
+	
+	<p>
+		<%= label_tag :notes %> <br />
+		<%= text_area_tag "reservations[#{@reservation.id}][notes]", @reservation.notes %>
+	</p>
+	
+	<p>
+  	  This equipment is <strong>due back on <%= @reservation.due_date.to_date.to_s(:long) %>.</strong><br />
+  	  An overdue return will incur a combined late fee of <%= number_to_currency(@reservation.late_fee) %> / day.
+	</p>
+
+	<p>
+  	<strong>Checkout procedures:</strong>
+  	<ul>
+    	<% if @reservation.equipment_model.checkout_procedures.nil? %>
+          <em>There are no checkout procedures.</em>
+    	<% else %>
+        <ol>
+          <% @reservation.equipment_model.checkout_procedures.each do |checkout_procedure| %>
+            <li>
+              <%# index with the checkout_procedure.id %>
+              <%= check_box_tag "reservations[#{@reservation.id}][checkout_procedures][#{checkout_procedure.id}]" %> <%= checkout_procedure.step %>
+            </li>
+          <% end %>
+        </ol>
+    	<% end %>
+  	</ul>
+	</p>
+</div>

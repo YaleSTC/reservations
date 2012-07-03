@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe 'cart' do
+describe 'home' do
 
-  it 'checks that neither start date nor due date are in the past' do
+  it 'should have the word FHQWHGADS (this shows you what an error looks like lol)' do
     admin = FactoryGirl.create(:admin)
     visit "/"
-    page.should have_content('wonka')
+    page.should have_content('fhqwhgads')
   end
 end

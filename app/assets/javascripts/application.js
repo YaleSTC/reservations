@@ -24,6 +24,15 @@ $(document).ready(function() {
 		      { "bSortable": false, "aTargets": [ "no_sort" ] }
 		    ]
 	});
+	
+	$('.history_table').dataTable({
+	  "sDom": "<'row'<l><f>r>t<'row'<'span3'i><p>>",
+		"bLengthChange": false,
+	  "sPaginationType": "bootstrap",
+		"aoColumnDefs": [
+		      { "bSortable": false, "aTargets": [ "no_sort" ] }
+		    ]
+	});
 
 // For fading out flash notices
 	$(".alert .close").click( function() {
@@ -50,11 +59,11 @@ $(document).ready(function() {
 		  }
 		});
 	});
-	
+
 	$(".btn#modal").tooltip();
 
 });
-
+// to disable selection of dates in the past with datepicker
 $.datepicker.setDefaults({
    minDate: new Date(),
 });
@@ -81,6 +90,11 @@ $.datepicker.setDefaults({
 
 // general submit on change class
   $(document).on('change', '.autosubmitme', function() {
+    $(this).parents('form:first').submit();
+  });
+
+// general submit on click class
+  $(document).on('click', '.autosubmitmeclick', function() {
     $(this).parents('form:first').submit();
   });
 

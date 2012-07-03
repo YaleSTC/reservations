@@ -1,9 +1,16 @@
-  <% title "Reservation Checkout" %>
-<%= form_tag( {:controller => 'reservations', :action => "update"}, :method => "put" ) do %>
-<p>
-  <%= @user.name %> is picking up the following equipment:
-</p>
-<%= render :partial => "check_out_item", :collection => @check_out_set %>
-  <%= submit_tag "Check out equipment" %>
+<% title "Reservation Checkout" %>
+<% if !@user_current_checkouts.empty? %>
+  <h3><%= link_to @user.name, show_all_reservations_for_user_path %> has reserved the following equipment for today:</h3>
+  <br />
+  <%= form_tag( checkout_path, :method => "put" ) do %>
+    <% @user_current_checkouts.each do |reservation| %>
+      <% @reservation = reservation %>
+      <%= render :partial => 'reservations/check_out_form' %>
+    <% end %>
+    <div class="span12">
+      <%= submit_tag "Check out equipment" %>
+    </div>
+  <% end %>
+<% else %>
+  <h3><%= link_to @user.name, show_all_reservations_for_user_path %> does not have any reservations to check out today.</h3>
 <% end %>
-

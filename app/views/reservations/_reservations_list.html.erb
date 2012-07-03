@@ -2,9 +2,10 @@
 <table id="table_woo" class="datatable table table-striped table-bordered">
   <thead>
   <tr>
-    <th>Reservation #</th>
+    <th>#</th>
     <th>User</th>
     <th>Equipment</th>
+    <th>Item</th>
     <th>Start Date</th>
     <th>Due Date</th>
   </tr>
@@ -19,6 +20,11 @@
         <td>User no longer exists</td>
       <% end %>
       <td><%= reservation.equipment_model.name %></td>
+      <td>
+        <% if !reservation.equipment_object.nil? %>
+          <%= reservation.equipment_object.name %>
+        <% end %>
+      </td>
       <td><%= reservation.start_date.to_date.to_s(:long) %></td>
       <td><%= reservation.due_date.to_date.to_s(:long) %></td>
     </tr>

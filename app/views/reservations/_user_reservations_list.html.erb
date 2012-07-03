@@ -1,7 +1,28 @@
-<tr>
-  <td><%= link_to user_reservations_list.id, user_reservations_list %></td>
-  <td><%= user_reservations_list.equipment_model.name %></td>
-  <td><%= user_reservations_list.start_date.to_date.to_s(:long) %></td>
-  <td><%= user_reservations_list.due_date.to_date.to_s(:long) %></td>
-</tr>
-
+<table class="table table-striped table-bordered">
+  <thead>
+  <tr>
+    <th>#</th>
+    <th>Equipment</th>
+    <th>Item</th>
+    <th>Start Date</th>
+    <th>Due Date</th>
+    <th>Late Fee (per day)</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% for reservation in user_reservations_list %>
+    <tr>
+      <td><%= link_to reservation.id, reservation %></td>
+      <td><%= reservation.equipment_model.name %></td>
+      <td>
+        <% if !reservation.equipment_object.nil? %>
+          <%= reservation.equipment_object.name %>
+        <% end %>
+      </td>
+      <td><%= reservation.start_date.to_date.to_s(:long) %></td>
+      <td><%= reservation.due_date.to_date.to_s(:long) %></td>
+      <td><%= number_to_currency(reservation.equipment_model.late_fee) %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
