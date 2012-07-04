@@ -1,4 +1,6 @@
-<% title @equipment_model.category.name.singularize + ": "+@equipment_model.name %>
+<% title @equipment_model.name %>
+<% subtitle @equipment_model.category.name.singularize %>
+
 <% unless !@equipment_model.photo.exists? %>
   <%= image_tag @equipment_model.photo.url(:small) %>
 <% else %>
