@@ -70,23 +70,46 @@ $.datepicker.setDefaults({
 
 // auto-submit cart dates #only-cart-dates
   $(document).on('change', '.submitchange', function() {
-      $('#cart_dates').load( update_cart_path.value, // defined in _cart_dates in hidden field
-// params need to be passed
-        { 'reserver_id': reserver_id.value,
-          'start_date_cart': cart_start_date_cart.value,
-          'due_date_cart': cart_due_date_cart.value }
-      );
+    $.ajax({ // we can probably use .get() instead of .ajax(), but this is more flexible going forward since it's essentially the same
+      type: "GET",
+      url: update_cart_path.value, // defined in _cart_dates in hidden field
+      data: { 'reserver_id': reserver_id.value,
+              'start_date_cart': cart_start_date_cart.value,
+              'due_date_cart': cart_due_date_cart.value },
+      dataType: "script"
+    });
   });
-
+  
 // auto-submit cart dates #only-cart-reserver
-  $(document).on('blur', '.submittable', function() {
-      $('#cart_dates').load( update_cart_path.value, // defined in _cart_dates in hidden field
-// params need to be passed
-        { 'reserver_id': reserver_id.value,
-          'start_date_cart': cart_start_date_cart.value,
-          'due_date_cart': cart_due_date_cart.value }
-      );
+  $(document).on('blur', '.submittable', function() {  // we need a different watch function than 'blur', which seems to break frequently
+    $.ajax({ // we can probably use .get() instead of .ajax(), but this is more flexible going forward since it's essentially the same
+      type: "GET",
+      url: update_cart_path.value, // defined in _cart_dates in hidden field
+      data: { 'reserver_id': reserver_id.value,
+              'start_date_cart': cart_start_date_cart.value,
+              'due_date_cart': cart_due_date_cart.value },
+      dataType: "script"
+    });
   });
+  
+// old code to submit cart dates #only-dates and #only-reserver
+//  $(document).on('change', '.submitchange', function() {
+//      $('#cart_dates').load( update_cart_path.value, // defined in _cart_dates in hidden field
+//// params need to be passed
+//        { 'reserver_id': reserver_id.value,
+//          'start_date_cart': cart_start_date_cart.value,
+//          'due_date_cart': cart_due_date_cart.value }
+//      );
+//  });
+//// auto-submit cart dates #only-cart-reserver
+//  $(document).on('blur', '.submittable', function() { 
+//      $('#cart_dates').load( update_cart_path.value, 
+//// params need to be passed
+//        { 'reserver_id': reserver_id.value,
+//          'start_date_cart': cart_start_date_cart.value,
+//          'due_date_cart': cart_due_date_cart.value }
+//      );
+//  });
 
 // general submit on change class
   $(document).on('change', '.autosubmitme', function() {
