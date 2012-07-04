@@ -19,7 +19,7 @@
           <%= @equipment_model.available?(cart.start_date..cart.due_date) || "0"%> available of <%= @equipment_model.equipment_objects.size %>
         </h3>
         <p>    
-          <%= content_tag :div, class: 'progress progress-striped progress-success' do %>
+          <%= content_tag :div, class: "progress progress-striped #{progress_color}" do %>
             <%= content_tag :div, nil, class: 'bar', style: "width: #{bar_progress};" %>
           <% end %>
         </p>
