@@ -1,6 +1,6 @@
 <% title @equipment_model.name %>
 <% subtitle @equipment_model.category.name.singularize %>
-<div class="row">
+<div class="row em_info">
   <div class="span3">
   <% if @equipment_model.photo.exists? %>
     <%= image_tag @equipment_model.photo.url(:small) %>
@@ -8,24 +8,42 @@
     <%= image_tag "no-image-260.gif" %>
   <% end %>
   </div>
+  <div class="span6">
+    <div class="row">  
+      <div class="span4">
+        <h3 class="availability">10 available of 10</h3>
+        <p>    
+          <div class="progress progress-striped progress-success">
+              <div class="bar" style="width: 100%;"></div>
+            </div>
+        </p>
+        <h3 class="availability">from Jul 3, 2012 – Jul 7, 2012</h3>
+      </div>
 
-  <div class="span4">
-    <h3 class="availability">10 available of 10</h3>
-    <p>    
-      <div class="progress progress-striped progress-success">
-          <div class="bar" style="width: 100%;"></div>
+
+      <div class="span2">
+          <%= link_to "Add to Cart", {:url => add_to_cart_path(@equipment_model)}, 
+        															:href => add_to_cart_path(@equipment_model), 
+        															:remote => true, :class => 'btn btn-primary btn-large' %>
+      </div>
+    </div>
+  
+    <div class="associated_em_box">    
+      <div class="row">
+          <div class="span6">
+            <h3>Users Tend to Also Reserve:</h3>
+          </div>
         </div>
-    </p>
-    <h3 class="availability">from Jul 3, 2012 – Jul 7, 2012</h3>
+        <div class="row">
+          <% 6.times do %>
+            <div class="span1">
+              <%= image_tag "no-image-260.gif" %>
+            </div>
+          <% end %>
+        </div>
+    </div>
+    
   </div>
-
-
-<div class="span2">
-    <%= link_to "Add to Cart", {:url => add_to_cart_path(@equipment_model)}, 
-  															:href => add_to_cart_path(@equipment_model), 
-  															:remote => true, :class => 'btn btn-primary btn-large' %>
-
-</div>
   
 </div>
 
@@ -33,13 +51,20 @@
 
 <div class="subnav">
   <ul class="nav nav-pills">
-    <li><a>Description</a></li>
+    <li><a href="#description">Description</a></li>
     <li><a>Details</a></li>
     <li><a>Documentation</a></li>
     <li><a>Items</a></li>
     <li><a>Procedures</a></li>
   </ul>
 </div>
+
+<fieldset>
+  <p><legend id="description">Description</legend></p>
+  <p>
+    <%= @equipment_model.formatted_description.html_safe %>
+  </p>
+</fieldset>
 
 
 <% unless @equipment_model.associated_equipment_models.empty? %>
@@ -54,10 +79,10 @@
 <% end %>
 
 
-<p><%= @equipment_model.formatted_description.html_safe %></p>
+
 
 <fieldset>
-  <legend>Further details:</legend>
+  <legend>Details</legend>
   <p>
     <strong>Late Fee:</strong>
     <%= number_to_currency(@equipment_model.late_fee) %> / day
@@ -129,10 +154,10 @@
 </p>
 
 
-<p>
+<div class="form-actions">
   <% if current_user.is_admin_in_adminmode? %>
-    <%= link_to "Edit "+@equipment_model.category.name.singularize, edit_equipment_model_path(@equipment_model) %> |
-    <%= link_to "Destroy "+@equipment_model.category.name.singularize, @equipment_model, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete %> |
+    <%= link_to "Edit "+@equipment_model.name, edit_equipment_model_path(@equipment_model), :class => 'btn' %>
+    <%= link_to "Destroy "+@equipment_model.name, @equipment_model, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete, :class => 'btn btn-danger' %>
   <% end %>
-  <%= link_to "View All "+@equipment_model.category.name.pluralize, category_equipment_models_path(@equipment_model.category) %>
-</p>
+  <%= link_to "View All "+@equipment_model.category.name.pluralize, category_equipment_models_path(@equipment_model.category), :class => 'btn' %>
+</div>
