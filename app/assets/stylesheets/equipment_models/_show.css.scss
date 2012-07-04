@@ -13,3 +13,11 @@
 	position: absolute;
 	bottom: 0;
 }
+
+.document {
+	font-size: $baseFontSize * 6;
+	line-height: $baseLineHeight * 6;
+}
+.image_box {
+	height: 260px;
+}

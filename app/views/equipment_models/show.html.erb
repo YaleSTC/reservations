@@ -1,23 +1,29 @@
 <% title @equipment_model.name %>
 <% subtitle @equipment_model.category.name.singularize %>
+
 <div class="row em_info">
   <div class="span3">
   <% if @equipment_model.photo.exists? %>
-    <%= image_tag @equipment_model.photo.url(:small) %>
+  <div class="image_box">
+    <%= image_tag @equipment_model.photo.url(:large) %>
+  </div>
+    
   <% else %>
-    <%= image_tag "no-image-260.gif" %>
+      <%= image_tag "no-image-260.gif" %>
   <% end %>
   </div>
   <div class="span6">
     <div class="row">  
       <div class="span4">
-        <h3 class="availability">10 available of 10</h3>
+        <h3 class="availability">
+          <%= @equipment_model.available?(cart.start_date..cart.due_date) || "0"%> available of <%= @equipment_model.equipment_objects.size %>
+        </h3>
         <p>    
-          <div class="progress progress-striped progress-success">
-              <div class="bar" style="width: 100%;"></div>
-            </div>
+          <%= content_tag :div, class: 'progress progress-striped progress-success' do %>
+            <%= content_tag :div, nil, class: 'bar', style: "width: #{bar_progress};" %>
+          <% end %>
         </p>
-        <h3 class="availability">from Jul 3, 2012 – Jul 7, 2012</h3>
+        <h3 class="availability">from <%= cart.start_date.strftime("%b %d, %Y") %> – <%= cart.due_date.strftime("%b %d, %Y") %></h3>
       </div>
 
 
@@ -32,6 +38,16 @@
       <div class="row">
           <div class="span6">
             <h3>Users Tend to Also Reserve:</h3>
+            <% unless @equipment_model.associated_equipment_models.empty? %>
+              <fieldset>
+                <legend>Recommended Items:</legend>
+                <ul>
+                  <% @equipment_model.associated_equipment_models.each do |accessory| %>
+                    <li><%= accessory.name %> <%= link_to "[add to cart]", {:url => add_to_cart_path(accessory)}, :href => add_to_cart_path(accessory), :remote => true %></li>
+                  <% end %>
+                </ul>
+              </fieldset>
+            <% end %>
           </div>
         </div>
         <div class="row">
@@ -48,7 +64,7 @@
 </div>
 
 <hr />
-
+<!-- SUBNAV SECTION -->
 <div class="subnav">
   <ul class="nav nav-pills">
     <li><a href="#description">Description</a></li>
@@ -59,48 +75,46 @@
   </ul>
 </div>
 
-<fieldset>
-  <p><legend id="description">Description</legend></p>
+<!-- SUBBODY SECTION -->
+
+  <h3><legend id="description">Description</legend></h3>
   <p>
     <%= @equipment_model.formatted_description.html_safe %>
   </p>
-</fieldset>
 
 
-<% unless @equipment_model.associated_equipment_models.empty? %>
-  <fieldset>
-    <legend>Recommended Items:</legend>
-    <ul>
-      <% @equipment_model.associated_equipment_models.each do |accessory| %>
-        <li><%= accessory.name %> <%= link_to "[add to cart]", {:url => add_to_cart_path(accessory)}, :href => add_to_cart_path(accessory), :remote => true %></li>
-      <% end %>
-    </ul>
-  </fieldset>
-<% end %>
-
-
-
-
-<fieldset>
-  <legend>Details</legend>
+  <h3><legend id="details">Details</legend></h3>
+  
   <p>
     <strong>Late Fee:</strong>
     <%= number_to_currency(@equipment_model.late_fee) %> / day
-  </p>
-  <p>
     <strong>Replacement Fee:</strong>
     <%= number_to_currency(@equipment_model.replacement_fee) %>
-  </p>
   <% if current_user.is_admin_in_adminmode? %>
-    <p>
       <strong>Max Per User:</strong>
       <%= @equipment_model.maximum_per_user %>
-    </p>
   <% end %>
-
+  
+  <h3><legend id="documentation">Documentation</legend></h3>
+  <%= content_tag :div, :class => 'row' do %>
+    <%= content_tag :div, :class => 'span3' do %>
+      <%= (link_to @equipment_model.documentation_file_name, @equipment_model.documentation.url) unless !@equipment_model.documentation.exists? %>
+    <% end %>
+  <% end %>
+  <%= content_tag :div, :class => 'row' do %>
+    <%= content_tag :div, :class => 'span2' do %>
+      <%= content_tag :i, nil, :class => 'icon-file document' %>
+    <% end %>
+  <% end %>
+  
+  
   <% if current_user.is_admin_in_adminmode? %>
+    <h3><legend id="items">Items</legend></h3>
+    
+    <p>
+      <%= link_to "Create New "+@equipment_model.name.singularize+" Item", new_equipment_model_equipment_object_path(@equipment_model), :class => 'btn' %>
+    </p>
     <p id="equipment_objects">
-      <strong>Equipment Objects:</strong>
       <% if @equipment_model.equipment_objects.empty? %>
         none
       <% else %>
@@ -117,6 +131,9 @@
         </ul>
       <% end %>
     </p>
+    
+    <h3><legend>Procedures</legend></h3>
+    
     <p>
       <strong>Checkout Procedures:</strong>
       <% if @equipment_model.checkout_procedures.nil? %>
@@ -143,15 +160,7 @@
     </p>
   <% end %>
 
-<p>	
-  <%= (link_to @equipment_model.documentation_file_name, @equipment_model.documentation.url) unless !@equipment_model.documentation.exists? %>
-</p>
-
 </fieldset>
-
-<p>
-  <%= link_to "Add new "+@equipment_model.name.singularize+" object", new_equipment_model_equipment_object_path(@equipment_model) %>
-</p>
 
 
 <div class="form-actions">
