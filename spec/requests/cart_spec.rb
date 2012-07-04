@@ -62,9 +62,15 @@ describe 'cart' do
     res2.duration_allowed? == false
   end
 
-  # only tests true. need to add user with overdue reservations and test that
+  # only tests true. need to test with user with overdue reservations
   it 'no_overdue_reservations? works when called on reservations in @items' do
     res.no_overdue_reservations? == true
+  end
+
+  it 'available? works when called on reservations in @items' do
+    res.available? == false
+    obj = FactoryGirl.create(:equipment_object, equipment_model: eq)
+    res.available? == true
   end
 
   it 'valid? works when called reservations in @items' do

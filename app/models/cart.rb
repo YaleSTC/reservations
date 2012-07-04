@@ -40,7 +40,7 @@ class Cart
 
   ## Item methods
 
-  #TODO: THIS WORKS!!!!! -- unless we aren't storing reserver_id in the cart
+  #TODO: store reserver_id in reservations? catalog_controller?
   def add_item(equipment_model)
     current_item = Reservation.new(:start_date => @start_date,
       :due_date => @due_date, :reserver => self.reserver)
@@ -48,7 +48,7 @@ class Cart
     @items << current_item
   end
 
-  #TODO: make sure catalog_controller call works (works!)
+  #TODO: make sure catalog_controller call works
   def remove_item(equipment_model)
     to_be_deleted = nil
     @items.each { |item| to_be_deleted = item if item.equipment_model == equipment_model }
@@ -90,12 +90,12 @@ class Cart
 
   ## Reserver methods
 
-  #TODO: this needs to be stored by the reservations instead -- or does it??
+  #TODO: store reserver_id in reservation?
   def set_reserver_id(user_id)
     @reserver_id = user_id
   end
 
-  #TODO: this should no longer be necessary (called through reservations) -- or does it??
+  #TODO: store reserver in reservation?
   def reserver
     reserver = User.find(@reserver_id)
   end

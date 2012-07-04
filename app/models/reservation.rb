@@ -12,7 +12,7 @@ class Reservation < ActiveRecord::Base
             :presence => true
 
   validate :not_empty?, :not_in_past?, :start_date_before_due_date?,
-           :no_overdue_reservations?, :duration_allowed?
+           :no_overdue_reservations?, :duration_allowed?, :available?
 
 
   scope :recent, order('start_date, due_date, reserver_id')
@@ -53,7 +53,7 @@ class Reservation < ActiveRecord::Base
   end
 
   ## Date validations
-  # Checks that reservation is not in the past (works!)
+  # Checks that reservation is not in the past
   def not_in_past?
     if (start_date < Date.today) || (due_date < Date.today)
       errors.add(:base, "Reservations cannot be made in the past")
@@ -62,7 +62,7 @@ class Reservation < ActiveRecord::Base
     return true
   end
 
-  # Checks that reservation start date is before end dates (works!)
+  # Checks that reservation start date is before end dates
   def start_date_before_due_date?
     if due_date < start_date
       errors.add(:base, "Due date cannot be before start date")
@@ -71,7 +71,7 @@ class Reservation < ActiveRecord::Base
     return true
   end
 
-  # Checks that the reservation is not longer than the max checkout length (not working)
+  # Checks that the reservation is not longer than the max checkout length
   def duration_allowed?
     duration = due_date - start_date + 1
     cat_duration = self.equipment_model.category.max_checkout_length
@@ -82,8 +82,18 @@ class Reservation < ActiveRecord::Base
     return true
   end
 
+  # Checks that the equipment model is available from start date to due date
+  #TODO: needs to check number of reservations with that equipment model and check that that many are available
+  def available?
+    if self.equipment_model.available?(start_date..due_date) == 0
+      errors.add(:base, self.equipment_model.name + " is not available for all or part of the duration")
+      return false
+    end
+    return true
+  end
+
   ## User validations
-  # Checks if the user has any overdue reservations (not working)
+  # Checks if the user has any overdue reservations
   def no_overdue_reservations?
     if reserver.reservations.overdue_reservations?(reserver)
       errors.add(:base, "Users with overdue reservations may not make new reservations")

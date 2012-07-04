@@ -42,7 +42,7 @@ FactoryGirl.define do
 
   factory :equipment_object do
     sequence(:name) {|n| "EquipmentObject#{n}"}
-    serial (10000000...99999999)
+    serial r.rand(10000000...99999999)
     active true
     equipment_model
   end
