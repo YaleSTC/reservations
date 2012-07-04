@@ -73,10 +73,29 @@ class ReservationsController < ApplicationController
   
   def update # for editing reservations; not for checkout or check-in
     @reservation = Reservation.find(params[:id])
-    if @reservation.update_attributes(params[:reservation])
-      flash[:notice] = "Successfully edited reservation."
-      redirect_to @reservation
+    
+    # adjust dates to match intended input of Month / Day / Year
+    start = Date.strptime(params[:reservation][:start_date],'%m/%d/%Y')
+    due = Date.strptime(params[:reservation][:due_date],'%m/%d/%Y')
+    
+    # make sure dates are valid
+    if due < start
+      flash[:error] = 'Due date must be after the start date.'
+      redirect_to :back and return
     end
+    
+    # update attributes
+    @reservation.reserver_id = params[:reservation][:reserver_id]
+    @reservation.start_date = start
+    @reservation.due_date = due
+    @reservation.notes = params[:reservation][:notes]
+    
+    # save changes to database
+    @reservation.save
+
+    # flash success and exit
+    flash[:notice] = "Successfully edited reservation."
+    redirect_to @reservation
   end
 
   def checkout

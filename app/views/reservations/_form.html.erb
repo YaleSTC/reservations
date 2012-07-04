@@ -7,9 +7,14 @@
     <%= current_user.name %>
     <%= f.input :reserver_id, :as => :hidden, :input_html => {:value => current_user.id} %>
   <% end %>
-  
-    <%= f.input :start_date, :as => :datetime %>
-    <%= f.input :due_date, :as => :datetime %>
+    <div class='control-group'>
+      <label class='control-label'>* Start date</label>
+      <%= datepicker_input "reservation", "start_date", :value => @reservation.start_date.strftime('%m/%d/%Y'), :class => 'controls' %>
+    </div>
+    <div class='control-group'>
+      <label class='control-label'>* Due date</label>
+      <%= datepicker_input "reservation", "due_date", :value => @reservation.due_date.strftime('%m/%d/%Y'), :class => 'controls' %>
+    </div>
     <%= f.input :notes, :as => :text %>
     <%= f.button :wrapped, :cancel => reservations_path %> 
 <% end %>
