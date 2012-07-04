@@ -11,7 +11,8 @@ class Reservation < ActiveRecord::Base
             :due_date,
             :presence => true
 
-  validate :not_empty
+  validate :not_empty?, :not_in_past?, :start_date_before_due_date?,
+           :no_overdue_reservations?, :duration_allowed?
 
 
   scope :recent, order('start_date, due_date, reserver_id')
@@ -45,7 +46,9 @@ class Reservation < ActiveRecord::Base
 
   ## Validations
 
-  def not_empty
+  ## Item validations
+  # Checks that the reservation has an equipment model
+  def not_empty?
     errors.add(:base, "A reservation must contain at least one item.") if self.equipment_model.nil?
   end
 
@@ -68,21 +71,21 @@ class Reservation < ActiveRecord::Base
     return true
   end
 
-  # Checks that the reservation is not longer than the max checkout length (not tested)
+  # Checks that the reservation is not longer than the max checkout length (not working)
   def duration_allowed?
-    duration = start_date - due_date + 1
+    duration = due_date - start_date + 1
     cat_duration = self.equipment_model.category.max_checkout_length
     if duration > cat_duration
-      errors.add_to_base(self.equipment_model.name + " cannot be checked out for more than "  + cat.duration.to_s + " days")
+      errors.add(:base, self.equipment_model.name + " cannot be checked out for more than "  + cat_duration.to_s + " days")
       return false
     end
     return true
   end
 
   ## User validations
-  # Checks if the user has any overdue reservations (not tested)
+  # Checks if the user has any overdue reservations (not working)
   def no_overdue_reservations?
-    if reserver.reservations.overdue_reservations?
+    if reserver.reservations.overdue_reservations?(reserver)
       errors.add(:base, "Users with overdue reservations may not make new reservations")
       return false
     end

@@ -9,8 +9,7 @@ class Cart
 #          :allowable_number_category?, :allowable_number_equipment_model?,
 #          :duration_allowed?, :no_overdue_reservations?, :available?
 
-  attr_accessor :items, :start_date, :due_date
-                :reserver_id
+  attr_accessor :items, :start_date, :due_date, :reserver_id
   attr_reader   :errors
 
   def initialize
@@ -39,31 +38,34 @@ class Cart
     [self]
   end
 
-  ## End of functions for error handling
+  ## Item methods
 
-  #TODO: does this work? pass user_id?
+  #TODO: THIS WORKS!!!!! -- unless we aren't storing reserver_id in the cart
   def add_item(equipment_model)
     current_item = Reservation.new(:start_date => @start_date,
-      :due_date => @due_date, :equipment_model => equipment_model)
+      :due_date => @due_date, :reserver => self.reserver)
+    current_item.equipment_model = equipment_model
     @items << current_item
   end
 
-  #TODO: make sure catalog_controller call works; make sure it only deletes one at a time
-  def remove_item(item)
-    #@items.index(item) returns the index of the first item
-    #so this should only delete one copy of item at a time
-    #maybe don't need this because all reservations should be different? how much are we storing in these dummy reservations? how many attributes are we setting up?
-    @items.delete_at(@items.index(item))
+  #TODO: make sure catalog_controller call works (works!)
+  def remove_item(equipment_model)
+    to_be_deleted = nil
+    @items.each { |item| to_be_deleted = item if item.equipment_model == equipment_model }
+    @items.delete(to_be_deleted)
   end
 
-  def total_items
-    @items.sum{ |item| item.quantity }
-  end
+  #TODO: rewrite to deal with duplicates in @items?
+#  def total_items
+#    @items.sum{ |item| item.quantity }
+#  end
 
   #TODO: is this necessary?
   def empty?
     @items.empty?
   end
+
+  ## Date methods
 
   def set_start_date(date)
     @start_date = date
@@ -75,25 +77,27 @@ class Cart
     fix_due_date
   end
 
-  #TODO: this needs to be stored by the reservations instead
-  def set_reserver_id(user_id)
-    @reserver_id = user_id
+  def fix_due_date
+    if @start_date >= @due_date
+      #TODO: allow admin to set default reservation length and respect that length here
+      @due_date = @start_date + 1.day
+    end
   end
 
   def duration #in days
     @due_date - @start_date + 1
   end
 
-  #TODO: this should no longer be necessary (called through reservations)
-  def reserver
-    reserver = User.find(@reserver_id)
+  ## Reserver methods
+
+  #TODO: this needs to be stored by the reservations instead -- or does it??
+  def set_reserver_id(user_id)
+    @reserver_id = user_id
   end
 
-  def fix_due_date
-    if @start_date >= @due_date
-      #TODO: allow admin to set default reservation length and respect that length here
-      @due_date = @start_date + 1.day
-    end
+  #TODO: this should no longer be necessary (called through reservations) -- or does it??
+  def reserver
+    reserver = User.find(@reserver_id)
   end
 
   #Create an array of all the reservations that should be renewed instead of having a new reservation
