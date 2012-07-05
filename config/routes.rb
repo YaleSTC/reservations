@@ -8,6 +8,9 @@ Reservations::Application.routes.draw do
     member do
       get 'for_model'
     end
+    collection do
+      get 'for_model_set'
+    end
   end
   
   resources :equipment_models do

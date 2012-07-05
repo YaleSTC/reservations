@@ -35,7 +35,7 @@ class ReportsController < ApplicationController
     end
     categories = Category.find(cat_info.keys)
     categories.each do |cat|
-      category_names << ResSetInfo.new(cat.name,:equipment_model_id, cat_info[cat.id])
+      category_names << ResSetInfo.new(cat.name,:equipment_model_id, cat_info[cat.id], for_model_set_reports_path({:ids => cat_info[cat.id]}))
     end
 
     # take all the sets of reservations and get stats on them
@@ -50,32 +50,14 @@ class ReportsController < ApplicationController
 
   #sub report for a particular model
   def for_model
-    res_set = Reservation.includes(:equipment_model,:equipment_object).where(:equipment_model_id => params[:id])
-    res_rels = default_relations(res_set)
-    res_rels << ResRelation.new("Average Duration", res_set, {:id_type => :equipment_model_id, :stat_type => :duration})
-    @table_col_names = res_rels.collect{|r| r[:name]}
-    
-    eq_model = EquipmentModel.find(params[:id])
-    eq_info = [ResSetInfo.new(eq_model.name,:equipment_model_id, [eq_model.id])]
-    @stat_set = collect_stat_set(eq_info,res_rels)
-    
-    user_ids = res_set.collect{|r| r.reserver_id}.uniq
-    users = User.find(user_ids)
-    user_info = []
-    users.each do |user|
-      user_info << ResSetInfo.new(user.name,:reserver_id, [user.id])
-    end
-    user_set = collect_stat_set(user_info,res_rels)
-    
-    eq_objects = EquipmentObject.find(:all, :conditions => {:equipment_model_id => eq_model.id})
-    obj_info = []
-    eq_objects.each do |obj|
-      obj_info << ResSetInfo.new(obj.name,:equipment_object_id, [obj.id])
-    end
-    obj_set = collect_stat_set(obj_info,res_rels)
-    @model_tables = {:equipment_model => @stat_set,:equipment_objects => obj_set, :users => user_set}
+    @model_tables = models_subreport([params[:id]])
   end
-
+  
+  #should probably merge with for_model
+  def for_model_set
+    @model_tables = models_subreport(params[:ids])
+  end
+  
   private
   def default_relations(res_set,*conditions)
     # reservation relations for each of the scopes
@@ -98,6 +80,32 @@ class ReportsController < ApplicationController
       end
     end
     return res_rels
+  end
+  
+  def models_subreport(ids)
+    res_set = Reservation.includes(:equipment_model,:equipment_object).where(:equipment_model_id => ids)
+    res_rels = default_relations(res_set)
+    res_rels << ResRelation.new("Average Duration", res_set, {:id_type => :equipment_model_id, :stat_type => :duration})
+    @table_col_names = res_rels.collect{|r| r[:name]}
+    
+    eq_models = EquipmentModel.find(ids)
+    eq_info = eq_models.collect do |em|
+      em_link = ids.size > 1 ? for_model_report_path(:id => em.id) : nil
+      ResSetInfo.new(em.name,:equipment_model_id, [em.id], em_link)
+    end
+    @stat_set = collect_stat_set(eq_info,res_rels)
+    
+    user_ids = res_set.collect{|r| r.reserver_id}.uniq
+    users = User.find(user_ids)
+    user_info = users.collect {|user| ResSetInfo.new(user.name,:reserver_id, [user.id], user_path(:id => user.id))}
+    user_set = collect_stat_set(user_info,res_rels)
+    
+    eq_objects = EquipmentObject.find(:all, :conditions => {:equipment_model_id => ids})
+    obj_info = eq_objects.collect {|obj| ResSetInfo.new(obj.name,:equipment_object_id, [obj.id])}
+    obj_set = collect_stat_set(obj_info,res_rels)
+    
+    model_tables = {:equipment_models => @stat_set,:equipment_objects => obj_set, :users => user_set}
+    return model_tables
   end
 
   def collect_stat_set(info_struct,res_rels)
