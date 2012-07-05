@@ -1,11 +1,4 @@
-<h3><%= hold_list.first.status.capitalize %></h3>
-
-<% for reservation in hold_list %>
-<%= reservation.reserver.name %>
-<%#= render :partial => 'users/current_equipment', :object => reservation.reserver	 %>
-
-<% end %>
-
+<h3>Hold List</h3>
 
 <table id="table_woo" class="datatable table table-striped table-bordered">
   <thead>
