@@ -30,7 +30,9 @@
              <div class="caption_cat">
 
                 <hr class ="special-hr"/>
-                <%= render :partial => 'availability', :locals => { :equipment_model => equipment_model, :cart => cart } %>
+                <div class='availability-dates' id="availability_<%= equipment_model.id %>">
+                  <p>(<%= equipment_model.available?(cart.start_date..cart.due_date) || "0" %> available from <br /><%= cart.start_date.strftime("%b %d, %Y") %> to <%= cart.due_date.strftime("%b %d, %Y") %>)</p>
+                </div>
                 <p class="equipment_descr">
                   <%= equipment_model.description + " " %><%= link_to "More Info", equipment_model, :class => 'more_info' %>
                 </p>

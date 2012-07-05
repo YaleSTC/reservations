@@ -90,13 +90,13 @@ class ApplicationController < ActionController::Base
       flash[:error] = cart.errors.values.flatten.join("<br/>").html_safe
       cart.errors.clear
     end
-    
+
     # prep data for catalogue page refresh TODO this code is copied from the cat controller; bad
     @paginated_equipment_models_by_category = EquipmentModel.not_deleted.order('categories.sort_order ASC, equipment_models.name ASC').includes(:category).page(params[:page]).per(session[:user_per_cat_page])
     @equipment_models_by_category = @paginated_equipment_models_by_category.to_a.group_by(&:category)
     @user_per_page_opts = [10, 20, 25, 30, 50].sort
     @user_per_page_opts = @user_per_page_opts.unshift(@default_user_per).sort if !@default_user_per.blank? && !@user_per_page_opts.include?(@default_user_per)
-    
+
     # reload appropriate divs / exit
     respond_to do |format|
       format.js{render :template => "reservations/cart_dates_reload"}
