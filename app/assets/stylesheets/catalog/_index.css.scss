@@ -1,0 +1,24 @@
+.thumbnail {
+  height: 420px;
+  position: relative;
+  line-height: $baseLineHeight;
+}
+
+#add_to_cart { 
+  position: absolute;
+  bottom: 13px;
+}
+
+.add_to_cart_box { @extend .caption; }
+
+.equipment_title {
+	padding: 9px 9px 0px 9px;
+	height: 2 * $h3-line-height;
+}
+
+.special-hr { 
+	margin-top: 4px;
+	margin-bottom: 10px;
+}
+
+.caption_cat { padding: 0px 9px 0px 9px; }

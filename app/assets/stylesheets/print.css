@@ -1,28 +1,12 @@
 #header {
 	display: none;
 }
-	
-#yaleHeader {
-	display: none;
+
+#navigation_bar {
+  display: none;
 }
 
-#sidebar-left {
-	display: none;
-}
 
 #sidebar-right {
 	display: none;
-}
-
-
-a { 
-	text-decoration:none; 
-	color: White; 
-	background-color: White; 
-	font-size: 0%; 
-}
-
-a:hover { 
-	color: White; 
-	font-size: 0%; 
 }

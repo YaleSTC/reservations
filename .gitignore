@@ -9,3 +9,5 @@ config/database.yml~
 .rbenv-version
 .sass-cache/
 *.orig
+public/system/equipment_models/
+public/equipment_models/

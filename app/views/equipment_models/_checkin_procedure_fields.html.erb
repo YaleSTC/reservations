@@ -1,11 +1,6 @@
 <div class="checkin_procedure, nested-fields">
-  <table>
-    <tr>
-      <div class="input-append">
-      <td><%= f.input :step %></td>
-      <td><%= link_to_remove_association "Remove Step", f %></td>
-      </div>
-    </tr>
-  </table>
+<%= f.input :step, :wrapper => :append do %>
+  <%= f.input_field :step %><%= link_to_remove_association "Remove Step", f, :class => "btn" %>
+<% end %>
 </div>
 

@@ -8,6 +8,11 @@ module LayoutHelper
     @show_title = show_title
   end
   
+  def subtitle (page_subtitle, show_subtitle = true)
+    content_for(:subtitle) { page_subtitle.to_s }
+    @show_subtitle = show_subtitle
+  end
+  
   def show_title?
     @show_title
   end
@@ -33,6 +38,12 @@ module LayoutHelper
       @count = Reservation.where(:checked_in => nil).size
     else
       @count = Reservation.where(:reserver_id => current_user.id).size
+    end
+  end
+  
+  def navigation_active controller_path
+    if current_page?(controller_path)
+      @active = 'class=active'
     end
   end
 end

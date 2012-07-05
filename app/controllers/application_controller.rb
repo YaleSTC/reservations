@@ -6,12 +6,12 @@ class ApplicationController < ActionController::Base
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
   before_filter RubyCAS::Filter
+  before_filter :app_setup, :if => lambda {|u| User.all.count == 0 }  
   before_filter :first_time_user
   before_filter :cart
   before_filter :set_view_mode
   before_filter :current_user
   
-  before_filter :app_setup :if => lambda {|u| User.all.size? = 0 }
   
   #before_filter :bind_pry_before_everything
 
@@ -29,7 +29,7 @@ class ApplicationController < ActionController::Base
   #-------- before_filter methods --------
   
   def app_setup
-      redirect_to app_setup_path
+      redirect_to new_admin_user_path
   end
   
   def first_time_user
@@ -82,13 +82,12 @@ class ApplicationController < ActionController::Base
       redirect_to :action => "index" and return
     end
   end
+
   #-------- end before_filter methods --------
 
   def update_cart
     session[:cart].set_start_date(Date.strptime(params[:start_date_cart],'%m/%d/%Y'))
     session[:cart].set_due_date(Date.strptime(params[:due_date_cart],'%m/%d/%Y'))
-#    session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
-#    session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
     session[:cart].set_reserver_id(params[:reserver_id])
     flash[:notice] = "Cart dates updated."
     if !cart.valid_dates?
@@ -96,8 +95,9 @@ class ApplicationController < ActionController::Base
       cart.errors.clear
     end
     respond_to do |format|
-      format.html{redirect_to root_path}
-      format.js{render :template => "reservations/cart_dates_js"}
+      format.js{render :template => "reservations/cart_dates_reload"}
+        # guys i really don't like how this is rendering a template for js, but :action doesn't work at all
+      format.html{render :partial => "reservations/cart_dates"} # delete this line? replace with redirect_to root_path ?
     end
   end
 
@@ -148,7 +148,7 @@ class ApplicationController < ActionController::Base
         deactivateChildren(@objects_class2)
       end
       @objects_class2.destroy #Deactivate the model you had originally intended to deactivate
-      flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + ". Any child objects have been deactivated as well."
+      flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + ". Any related reservations or equipment have been deactivated as well."
     else
       flash[:notice] = "Only administrators can do that!"
     end
@@ -162,7 +162,7 @@ class ApplicationController < ActionController::Base
         activateParents(@model_to_activate)
       end
       @model_to_activate.revive #Activate the model you had originally intended to activate
-      flash[:notice] = "Successfully reactivated " + params[:controller].singularize.titleize + ". Any parent objects have been reactivated as well."
+      flash[:notice] = "Successfully reactivated " + params[:controller].singularize.titleize + ". Any related reservations or equipment have been reactivated as well."
     else
       flash[:notice] = "Only administrators can do that!"
     end

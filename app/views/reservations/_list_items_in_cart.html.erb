@@ -1,20 +1,22 @@
 <div id="list_items_in_cart">
 <% if cart.items.size == 0 %>
   (empty)
-<% else %>
-  <ul>
-  <% cart.items.each do |item| %>
-    <li><%= item.quantity %> x <%= link_to item.name, item.equipment_model %>
-      <small>
-        <%= link_to "[remove]", {:url => remove_from_cart_path(item.equipment_model)},
-                                :href => remove_from_cart_path(item.equipment_model),
-                                :remote => true %>
-      </small>
-    </li>
-    <p>
-    <%= button_to "Empty cart", empty_cart_path, :class => "btn" %>
-    </p>
-  <% end %>
-  </ul>
-<% end %>
 </div>
+<% else %>
+<table id="table_list_items" class="table table-bordered table-striped table-condensed">
+    <tbody>
+  <% cart.items.each do |item| %>
+    <tr>
+      <td colspan="2"><%= link_to item.name, item.equipment_model %></td>
+      <tr>
+      <td rowspan="2"><%= item.quantity.to_s + " item(s)" %></td>
+      <td rowspan="2"><%= link_to "Remove", {:url => remove_from_cart_path(item.equipment_model)},
+                                :href => remove_from_cart_path(item.equipment_model),
+                                :remote => true, :class => 'btn btn-mini' %></td>
+                                </tr>
+    </tr>                 
+    </tbody>
+  <% end %>
+  </table>
+</div>
+<% end %>

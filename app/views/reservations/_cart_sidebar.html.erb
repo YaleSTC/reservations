@@ -1,17 +1,16 @@
 <br />
 <div id="cart" class="well">
-  <h2>Your cart</h2><br />
-
+  <% unless current_user && current_user.can_checkout? %>
+    <h2>My Cart</h2><br />
+  <% else %>
+    <h2>Cart</h2><br />
+  <% end %>
 <!--allow user to set start/end dates-->
 <%= render :partial => 'reservations/cart_dates' %>
-
+<h3>Items</h3>
 <!--list items in cart-->
 <%= render :partial => 'reservations/list_items_in_cart' %>
-<br />
-
+<%= button_to "Empty cart", empty_cart_path, :class => "btn" %>
 <!--print Make reservation button-->
 <%= button_to "Make reservation", new_reservation_path, :class => "btn btn-inverse" %>
-
 </div>
-<hr />
-

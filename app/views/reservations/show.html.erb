@@ -6,7 +6,7 @@
 
   <p>
     <strong>Reserved by:</strong>
-    <%= link_to @reservation.reserver.name, @reservation.reserver %>
+    <%= link_to @reservation.reserver.name, show_all_reservations_for_user_path(@reservation.reserver) %>
   </p>
   <p>
     <strong>Start Date:</strong>
@@ -40,7 +40,9 @@
     </p>
   <% end %>
   <%# shows renew button if due_date is today, tomorrow, or the day after %>
-  <% if @reservation.is_eligible_for_renew? and (@reservation.max_renewal_length_available != 0)%>
+  <% if @reservation.checked_out == NIL %>
+    <%# you can't renew if you haven't checked it out %>
+  <% elsif @reservation.is_eligible_for_renew? and (@reservation.max_renewal_length_available != 0) and (@reservation.checked_out != NIL) %>
     <div id="renew_box">
       At this time, you are eligible to renew your <%= @reservation.equipment_model.name.singularize %>
       reservation for <strong><%= pluralize(@reservation.max_renewal_length_available, 'day') %></strong>. <%= link_to "Renew Now", renew_path, :remote => true %>
@@ -63,21 +65,11 @@
 
   <p><div class="form-actions">
   <% if current_user.can_checkout? %>
-    <% if @reservation.status == "reserved" %>
-      <%= link_to "Check out", check_out_single_reservation_path(@reservation) %> |
-    <% elsif @reservation.status != "returned" %>
-      <%= link_to "Check in", check_in_single_reservation_path(@reservation) %> |
-    <% end %>
-      <%= link_to "Edit reservation", edit_reservation_path(@reservation) %> |
+    <%= link_to "Edit reservation", edit_reservation_path(@reservation) %> |
   <% end %>
   <% if @reservation.status == "reserved" or current_user.is_admin_in_adminmode? %>
-    <%= link_to "Cancel reservation", @reservation, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete %> |
+    <%= link_to "Cancel reservation", @reservation, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete %>
   <% end %>
-  <% if current_user.can_checkout? %>
-    <%= link_to "View all reservations", reservations_path %>
-  <% else %>
-    <%= link_to "View all your reservations", reservations_path %>
-  <% end %>
-  </div></p>
+  </div>
 <% end %>
 

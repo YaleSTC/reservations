@@ -1,10 +1,8 @@
 <%= simple_form_for @equipment_object, :html => { :class => "form-horizontal" } do |f| %>
   <%= f.error_notification %>
-  <%= f.association :equipment_model%>
+  <%= f.association :equipment_model %>
   <%=f.input :name%>
   <%=f.input :serial%>
   <%=f.input :deleted_at, :as => :deleted, label: "Disabled"%>
-  <div class="form-actions">
-  <%=f.button :submit%>
-  </div>
+  <%= f.button :wrapped, :cancel => equipment_objects_path %> 
 <% end %>

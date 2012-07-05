@@ -9,19 +9,19 @@ class AppConfigsController < ApplicationController
   
   
   def edit
-       @app_config = AppConfig.first || AppConfig.new
+    @app_config = AppConfig.first || AppConfig.new
   end
 
   def update
-     #update each Setting (field names are the same as Settings attribute names)
-     @app_config = AppConfig.first   
-     if @app_config.update_attributes(params[:app_config])
-     flash[:notice] = "Application settings updated successfully."
-     redirect_to :action => 'edit'
-   else
-     flash[:error] = "Error"
-     redirect_to :action => 'edit'
-   end
-   end
+    @app_config = AppConfig.first   
+    if @app_config.update_attributes(params[:app_config])
+      flash[:notice] = "Application settings updated successfully."
+      redirect_to :action => 'edit'
+    else
+      flash[:error] = "Error saving application settings."
+      redirect_to :action => 'edit'
+    end
+  end
+
 end
 

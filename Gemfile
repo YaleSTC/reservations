@@ -26,12 +26,13 @@ gem "cocoon"
 gem "ffaker"
 gem "rails3-jquery-autocomplete"
 gem "kaminari"
-gem 'bootstrap-kaminari-views'
 
 group :development, :test do
   gem "factory_girl_rails"
   gem 'rspec-rails'
   gem 'capybara'
+  gem 'guard-livereload'
+  gem 'yajl-ruby'
 end
 
 # Gems used only for assets and not required

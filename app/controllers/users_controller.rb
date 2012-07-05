@@ -1,6 +1,11 @@
 class UsersController < ApplicationController
-  skip_before_filter :first_time_user, :only => [:new, :create]
-  skip_before_filter :cart, :only => [:new, :create]
+  #necessary to set up initial users and admins
+  skip_filter :first_time_user, :only => [:new, :create]
+  skip_filter :new_admin_user, :only => [:new, :create]
+  skip_filter :app_setup, :only => [:new, :create]
+  
+  
+  skip_filter :cart, :only => [:new, :create]
   before_filter :require_admin, :only => :index
 
   def index
@@ -22,7 +27,15 @@ class UsersController < ApplicationController
   def show
     @user = User.find(params[:id])
     require_user(@user)
+    @user_reservations = @user.reservations
     @all_equipment = Reservation.active_user_reservations(@user)
+    @show_equipment = { current_equipment: @user.reservations.select{|r| (r.status == "checked out") || (r.status == "overdue")}, 
+                        current_reservations: @user.reservations.reserved, 
+                        overdue_equipment: @user.reservations.overdue, 
+                        past_equipment: @user.reservations.returned,
+                        missed_reservations: @user.reservations.missed, 
+                        past_overdue_equipment: @user.reservations.returned.select{|r| r.checked_in > r.due_date} }
+                        
   end
 
   def new
@@ -40,9 +53,13 @@ class UsersController < ApplicationController
     @user.is_admin = true if User.count == 0
     if @user.save
       flash[:notice] = "Successfully created user."
-#   redirect to New Reservations page iff logged in as admin or
-#   checkout person
+      #redirect to New Reservations page iff logged in as admin or checkout person
+      if params[:from_cart] == "true" #updates the cart and redirects to catalog if new reserver button in cart was used
+        session[:cart].set_reserver_id(@user.id)
+        redirect_to root_path
+      else
       redirect_to ((current_user.is_admin_in_adminmode? or current_user.is_admin_in_checkoutpersonmode? or current_user.is_checkout_person?) ? @user : root_path)
+      end
     else
       render :action => 'new'
     end
