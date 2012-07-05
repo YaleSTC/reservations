@@ -14,63 +14,6 @@
 //= require bootstrap
 //= require_self
 
-$(document).ready(function() {
-// For DataTables and Bootstrap
-	$('.datatable').dataTable({
-	  "sDom": "<'row'<'span4'l><'span5'f>r>t<'row'<'span3'i><'span6'p>>",
-	  "sPaginationType": "bootstrap",
-		"sScrollX": "100%",
-		"aoColumnDefs": [
-		      { "bSortable": false, "aTargets": [ "no_sort" ] }
-		    ]
-	});
-	
-	$('.history_table').dataTable({
-	  "sDom": "<'row'<l><f>r>t<'row'<'span3'i><p>>",
-		"bLengthChange": false,
-	  "sPaginationType": "bootstrap",
-		"aoColumnDefs": [
-		      { "bSortable": false, "aTargets": [ "no_sort" ] }
-		    ]
-	});
-
-// perform truncate, defined below
-  truncate();
-
-// For fading out flash notices
-	$(".alert .close").click( function() {
-	     $(this).parent().addClass("fade");
-	});
-	
-	$("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
-
-	$(".btn#modal").tooltip();
-
-});
-// to disable selection of dates in the past with datepicker
-$.datepicker.setDefaults({
-   minDate: new Date(),
-});
-
-// auto-submit cart dates #only-cart-dates
-  $(document).on('change', '.submitchange', function() {
-    $.ajax({ // we can probably use .get() instead of .ajax(), but this is more flexible going forward since it's essentially the same
-      type: "GET",
-      url: update_cart_path.value, // defined in _cart_dates in hidden field
-      beforeSend: function(){
-            $('#catalog').hide('slow');
-            },
-      data: { 'reserver_id': reserver_id.value,
-              'start_date_cart': cart_start_date_cart.value,
-              'due_date_cart': cart_due_date_cart.value },
-      dataType: "script",
-      complete: function(){
-            truncate();
-            $('#catalog').show('slow');
-            }
-    });
-  });
-  
   function truncate() {
 	  $(".caption_cat").dotdotdot({
 		  height: 126,
@@ -91,6 +34,83 @@ $.datepicker.setDefaults({
 		  });
 	  });
 	};
+
+$(document).ready(function() {
+// perform truncate, which is also defined outside of document ready
+// it needs to be both places due to a webkit bug not loading named 
+// JS functions in (document).ready() until AFTER displaying all the things
+  $(".caption_cat").dotdotdot({
+	  height: 126,
+	  after: ".more_info",
+	  watch: 'window',
+	  });
+	
+  $(".equipment_title").dotdotdot({
+	  height: 54, // must match .equipment_title height
+	  watch: 'window'
+	  });
+
+  $(".equipment_title").each(function(){
+	  $(this).trigger("isTruncated", function( isTruncated ) {
+	    if ( isTruncated ) {
+	     	$(this).children(".equipment_title_link").tooltip();
+	    }
+	  });
+  });
+
+// For DataTables and Bootstrap
+	$('.datatable').dataTable({
+	  "sDom": "<'row'<'span4'l><'span5'f>r>t<'row'<'span3'i><'span6'p>>",
+	  "sPaginationType": "bootstrap",
+		"sScrollX": "100%",
+		"aoColumnDefs": [
+		      { "bSortable": false, "aTargets": [ "no_sort" ] }
+		    ]
+	});
+	
+	$('.history_table').dataTable({
+	  "sDom": "<'row'<l><f>r>t<'row'<'span3'i><p>>",
+		"bLengthChange": false,
+	  "sPaginationType": "bootstrap",
+		"aoColumnDefs": [
+		      { "bSortable": false, "aTargets": [ "no_sort" ] }
+		    ]
+	});
+
+// For fading out flash notices
+	$(".alert .close").click( function() {
+	     $(this).parent().addClass("fade");
+	});
+	
+	$("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
+
+	$(".btn#modal").tooltip();
+
+});
+
+// to disable selection of dates in the past with datepicker
+$.datepicker.setDefaults({
+   minDate: new Date(),
+});
+
+// auto-submit cart dates #only-cart-dates
+  $(document).on('change', '.submitchange', function() {
+    $.ajax({ // we can probably use .get() instead of .ajax(), but this is more flexible going forward since it's essentially the same
+      type: "GET",
+      url: update_cart_path.value, // defined in _cart_dates in hidden field
+      beforeSend: function(){
+            $('#catalog').hide('slow');
+            },
+      data: { 'reserver_id': reserver_id.value,
+              'start_date_cart': cart_start_date_cart.value,
+              'due_date_cart': cart_due_date_cart.value },
+      dataType: "script",
+      complete: function(){
+            $('#catalog').show('slow');
+            truncate();
+            }
+    });
+  });
   
 // auto-submit cart dates #only-cart-reserver
 //  $(document).on('blur', '.submittable', function() {  // we need a different watch function than 'blur', which seems to break frequently
