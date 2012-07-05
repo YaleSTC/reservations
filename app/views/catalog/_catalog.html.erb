@@ -1,5 +1,6 @@
 <div id='models-available'>
   <%# for kaminari pagination %>
+  <% prepare_pagination %>
   <%= paginate @paginated_equipment_models_by_category, :params => {:controller => 'catalog', :action => 'index' } %>
   <%= form_tag update_user_per_cat_page_path, :class => "form-inline", :remote => true do %>
     <%= label_tag "Items per page:" %>

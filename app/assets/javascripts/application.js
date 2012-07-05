@@ -89,13 +89,14 @@ $(document).ready(function() {
 });
 
 // to disable selection of dates in the past with datepicker
-$.datepicker.setDefaults({
-   minDate: new Date(),
-});
+  $.datepicker.setDefaults({
+     minDate: new Date(),
+  });
 
-function getURLParameter(name) {
+// grab the page number from the URL to pass for kaminari pagination
+  function getURLParameter(name) {
     return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
-}
+  }
 
 // auto-submit cart dates #only-cart-dates
   $(document).on('change', '.submitchange', function() {
@@ -159,8 +160,8 @@ function getURLParameter(name) {
   });
 
 //Load the user/new into the modal div for the new reserver button in the cart
-$().ready(function() {
-  $('#modal').click(function() {
-    $('#userModal div.modal-body').load(new_user_path.value, {from_cart : true }); // new_user_path defined in _cart_dates
+  $().ready(function() {
+    $('#modal').click(function() {
+      $('#userModal div.modal-body').load(new_user_path.value, {from_cart : true }); // new_user_path defined in _cart_dates
+    });
   });
-});
