@@ -1,5 +1,6 @@
 desc "Send email reminders about upcoming reservations that have not been checked out yet"
 
+if @app_configs.upcoming_checkin_email_active?
 task :mailman => :environment do
   #get all reservations that end today and aren't already checked in
   upcoming_reservations = Reservation.find(:all, :conditions => ["checked_out IS NOT NULL and checked_in IS NULL and due_date >= ? and due_date < ?", Time.now.midnight.utc, Time.now.midnight.utc + 1.day])
@@ -8,6 +9,7 @@ task :mailman => :environment do
     UserMailer.upcoming_checkin_notification(upcoming_reservation).deliver
   end
   puts "Done!"
+else 
 
   #get all reservations that started before today and aren't already checked out
   upcoming_reservations = Reservation.find(:all, :conditions => ["checked_out IS NULL and start_date < ? and  start_date >= ?", Time.now.midnight.utc, Time.now.midnight.utc - 1.day])
