@@ -1,15 +1,5 @@
-<% prepare_pagination %>
 <% title "Catalog" %>
 
-<% if @equipment_models_by_category.empty? && current_user.is_admin_in_adminmode? %>
-  <p>Oops! No equipment found. Try creating some
-    <%= link_to "Equipment Models", new_equipment_model_path %>
-    first!
-  </p>
-<% elsif @equipment_models_by_category.empty? %>
-  <p>Oops! No equipment found.</p>
-<% else %>
-  <div id='catalog'>
-    <%= render :partial => 'catalog' %>
-  </div>
-<% end %>
+<div id='catalog'>
+  <%= render :partial => 'catalog' %>
+</div>

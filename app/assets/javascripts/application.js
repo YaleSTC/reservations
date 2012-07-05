@@ -104,7 +104,8 @@ $(document).ready(function() {
       type: "GET",
       url: update_cart_path.value, // defined in _cart_dates in hidden field
       beforeSend: function(){
-            $('#catalog').hide('slow');
+            $('#catalog').addClass('invisible').fadeOut('slow');
+//            $('#catalog').hide('slow');
             },
       data: { 'reserver_id': reserver_id.value,
               'start_date_cart': cart_start_date_cart.value,
@@ -112,7 +113,8 @@ $(document).ready(function() {
               'page': getURLParameter('page') },
       dataType: "script",
       complete: function(){
-            $('#catalog').show('slow');
+            $('#catalog').removeClass('invisible').fadeIn('slow');
+//            $('#catalog').show('slow');
             truncate();
             }
     });
