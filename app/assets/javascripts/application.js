@@ -93,6 +93,10 @@ $.datepicker.setDefaults({
    minDate: new Date(),
 });
 
+function getURLParameter(name) {
+    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
+}
+
 // auto-submit cart dates #only-cart-dates
   $(document).on('change', '.submitchange', function() {
     $.ajax({ // we can probably use .get() instead of .ajax(), but this is more flexible going forward since it's essentially the same
@@ -103,7 +107,8 @@ $.datepicker.setDefaults({
             },
       data: { 'reserver_id': reserver_id.value,
               'start_date_cart': cart_start_date_cart.value,
-              'due_date_cart': cart_due_date_cart.value },
+              'due_date_cart': cart_due_date_cart.value,
+              'page': getURLParameter('page') },
       dataType: "script",
       complete: function(){
             $('#catalog').show('slow');

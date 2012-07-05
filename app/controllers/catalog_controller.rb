@@ -10,7 +10,6 @@ class CatalogController < ApplicationController
     @user_per_page_opts = [10, 20, 25, 30, 50].sort
     @user_per_page_opts = @user_per_page_opts.unshift(@default_user_per).sort if !@default_user_per.blank? && !@user_per_page_opts.include?(@default_user_per)
 
-
     #push accessories to bottom by removing and reinserting
     #@equipment_models_by_category[Category.find_by_name("Accessories")] = @equipment_models_by_category.delete(Category.find_by_name("Accessories"))
   end

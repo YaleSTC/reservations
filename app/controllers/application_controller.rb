@@ -96,10 +96,10 @@ class ApplicationController < ActionController::Base
     @equipment_models_by_category = @paginated_equipment_models_by_category.to_a.group_by(&:category)
     @user_per_page_opts = [10, 20, 25, 30, 50].sort
     @user_per_page_opts = @user_per_page_opts.unshift(@default_user_per).sort if !@default_user_per.blank? && !@user_per_page_opts.include?(@default_user_per)
-
+    
     # reload appropriate divs / exit
     respond_to do |format|
-      format.js{render :template => "reservations/cart_dates_reload"}
+      format.js{render :template => "reservations/cart_dates_reload" }
         # guys i really don't like how this is rendering a template for js, but :action doesn't work at all
       format.html{render :partial => "reservations/cart_dates"} # delete this line? replace with redirect_to root_path ?
     end
