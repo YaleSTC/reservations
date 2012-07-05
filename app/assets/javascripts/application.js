@@ -41,24 +41,26 @@ $(document).ready(function() {
 	
 	$("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
 
-	$(".caption_cat").dotdotdot({
-		height: 126,
-		after: ".more_info",
-		watch: 'window',
-		});
+  var truncateF = new function truncate() {
+	  $(".caption_cat").dotdotdot({
+		  height: 126,
+		  after: ".more_info",
+		  watch: 'window',
+		  });
 		
-	$(".equipment_title").dotdotdot({
-		height: 54, // must match .equipment_title height
-		watch: 'window'
-		});
+	  $(".equipment_title").dotdotdot({
+		  height: 54, // must match .equipment_title height
+		  watch: 'window'
+		  });
 
-	$(".equipment_title").each(function(){
-		$(this).trigger("isTruncated", function( isTruncated ) {
-		  if ( isTruncated ) {
-		   	$(this).children(".equipment_title_link").tooltip();
-		  }
-		});
-	});
+	  $(".equipment_title").each(function(){
+		  $(this).trigger("isTruncated", function( isTruncated ) {
+		    if ( isTruncated ) {
+		     	$(this).children(".equipment_title_link").tooltip();
+		    }
+		  });
+	  });
+	};
 
 	$(".btn#modal").tooltip();
 
@@ -73,10 +75,16 @@ $.datepicker.setDefaults({
     $.ajax({ // we can probably use .get() instead of .ajax(), but this is more flexible going forward since it's essentially the same
       type: "GET",
       url: update_cart_path.value, // defined in _cart_dates in hidden field
+      beforeSend: function(){
+            $('#catalog').hide('slow');
+            },
       data: { 'reserver_id': reserver_id.value,
               'start_date_cart': cart_start_date_cart.value,
               'due_date_cart': cart_due_date_cart.value },
-      dataType: "script"
+      dataType: "script",
+      complete: function(){
+            $('#catalog').show('slow');
+            }
     });
   });
   
