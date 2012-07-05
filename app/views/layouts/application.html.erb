@@ -149,11 +149,12 @@
       <!-- ================ RIGHT SIDEBAR ================ -->
       <div id="sidebar-right" class="span3">
 
+
+        <div id="sidebarbottom">
+
           <% if current_user && current_user.can_checkout? %>
               <%= render :partial => 'users/find_user' %>
           <% end %>
-
-        <div id="sidebarbottom">
 
           <%= render :partial => 'reservations/cart_sidebar' %>
           <br style="clear: both" />
