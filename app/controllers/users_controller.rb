@@ -11,13 +11,15 @@ class UsersController < ApplicationController
     end
   end
 
-  def new_button
-    @user = User.new
-    respond_to do |format|
-      format.html{redirect_to root_path}
-      format.js{render :action => "fancybox_new_user"}
-    end
-  end
+
+  #from what I can see this code does nothing... uncomment if I am wrong
+  #def new_button
+    #@user = User.new
+    #respond_to do |format|
+      #format.html{redirect_to root_path}
+      #format.js{render :action => "fancybox_new_user"}
+    #end
+  #end
 
   def show
     @user = User.find(params[:id])
@@ -30,7 +32,6 @@ class UsersController < ApplicationController
                         past_equipment: @user.reservations.returned,
                         missed_reservations: @user.reservations.missed, 
                         past_overdue_equipment: @user.reservations.returned.select{|r| r.checked_in > r.due_date} }
-                        
   end
 
   def new
@@ -83,6 +84,20 @@ class UsersController < ApplicationController
     @user.destroy(:force)
     flash[:notice] = "Successfully destroyed user."
     redirect_to users_url
+  end
+
+  def find
+    if params[:fake_searched_id].blank?
+      flash[:alert] = "Search field cannot be blank"
+      redirect_to :back
+    elsif params[:searched_id].blank?
+      flash[:alert] = "Please select a valid user"
+      redirect_to :back
+    else
+      @user = User.find(params[:searched_id])
+    require_user(@user)
+    redirect_to show_all_reservations_for_user_path({:user_id => @user.id})
+    end
   end
 
 end

@@ -133,7 +133,14 @@ class Reservation < ActiveRecord::Base
   end
 
   def self.active_user_reservations(user)
-    Reservation.where("checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
+    prelim = Reservation.where("checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
+    final = [] # initialize
+    prelim.collect do |r|
+      if r.status != "missed" # missed reservations are not actually active
+        final << r
+      end
+    end
+    final
   end
   
   def self.checked_out_today_user_reservations(user)

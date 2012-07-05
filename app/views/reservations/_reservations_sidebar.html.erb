@@ -1,11 +1,11 @@
-<% if current_user.reservations.active.empty? %>
+<% if Reservation.active_user_reservations(current_user).empty? %>
   <% else %>
   <hr />
   <div id="reservations">
     <h2>My current reservations</h2>
   <small>
     <ul>
-    <% current_user.reservations.active.each do |reservation| %>
+    <% Reservation.active_user_reservations(current_user).each do |reservation| %>
       <li>
         <%= link_to "#{EquipmentModel.find(reservation.equipment_model_id).name}:
                      #{reservation.start_date.to_date.to_s(:long)} &ndash;

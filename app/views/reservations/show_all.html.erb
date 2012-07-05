@@ -1,17 +1,10 @@
-<%= stylesheet_link_tag('application', :media => :screen) %>
-<%= stylesheet_link_tag('print', :media => :print) %>
+<% title sanitize("Reserved by #{link_to @user.name, show_all_reservations_for_user_path(@user)}") %>
 
 <% if current_user.can_checkout? || current_user == @user %>
-  <h2>
-    Reserved by <%= link_to @user.name, show_all_reservations_for_user_path(@user) %>
-  </h2>
-  <br />
-  <p>
-    <strong>
-      <%= link_to "Check out", check_out_reservations_for_user_path(@user.id) %> |
-      <%= link_to "Check in", check_in_reservations_for_user_path(@user.id) %>
-    </strong>
-  </p>
+  <div class="btn-group">
+      <%= link_to "Check out".titleize, check_out_reservations_for_user_path(@user.id), class: 'btn' %>
+      <%= link_to "Check in".titleize, check_in_reservations_for_user_path(@user.id), class: 'btn' %>
+  </div>
   <br />
   <% if !@user_overdue_reservations_set.empty? %>
     <h3>Overdue</h3>
@@ -30,6 +23,6 @@
     <%= render :partial => "user_reservations_list", :collection => @user_reserved_reservations_set %>
   <% end %>
   
-  <div id="left_stuff">	<%= button_to_function("Print this page", "javascript:print()")%></div>
+  <div id="left_stuff">	<%= button_to_function("Print this page".titleize, "javascript:print()", class: 'btn')%></div>
 <% end %>
 
