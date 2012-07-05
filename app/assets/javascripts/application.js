@@ -34,33 +34,15 @@ $(document).ready(function() {
 		    ]
 	});
 
+// perform truncate, defined below
+  truncate();
+
 // For fading out flash notices
 	$(".alert .close").click( function() {
 	     $(this).parent().addClass("fade");
 	});
 	
 	$("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
-
-  var truncateF = new function truncate() {
-	  $(".caption_cat").dotdotdot({
-		  height: 126,
-		  after: ".more_info",
-		  watch: 'window',
-		  });
-		
-	  $(".equipment_title").dotdotdot({
-		  height: 54, // must match .equipment_title height
-		  watch: 'window'
-		  });
-
-	  $(".equipment_title").each(function(){
-		  $(this).trigger("isTruncated", function( isTruncated ) {
-		    if ( isTruncated ) {
-		     	$(this).children(".equipment_title_link").tooltip();
-		    }
-		  });
-	  });
-	};
 
 	$(".btn#modal").tooltip();
 
@@ -83,10 +65,32 @@ $.datepicker.setDefaults({
               'due_date_cart': cart_due_date_cart.value },
       dataType: "script",
       complete: function(){
+            truncate();
             $('#catalog').show('slow');
             }
     });
   });
+  
+  function truncate() {
+	  $(".caption_cat").dotdotdot({
+		  height: 126,
+		  after: ".more_info",
+		  watch: 'window',
+		  });
+		
+	  $(".equipment_title").dotdotdot({
+		  height: 54, // must match .equipment_title height
+		  watch: 'window'
+		  });
+
+	  $(".equipment_title").each(function(){
+		  $(this).trigger("isTruncated", function( isTruncated ) {
+		    if ( isTruncated ) {
+		     	$(this).children(".equipment_title_link").tooltip();
+		    }
+		  });
+	  });
+	};
   
 // auto-submit cart dates #only-cart-reserver
 //  $(document).on('blur', '.submittable', function() {  // we need a different watch function than 'blur', which seems to break frequently
