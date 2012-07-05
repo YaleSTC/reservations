@@ -1,14 +1,30 @@
-<table id="table_woo" class="datatable table table-striped table-bordered">
-  <thead>
-    <tr>
-      <th>Reservation Set</th>
-      <% @table_col_names.each do |name| %>
-      <th><%=h name %></th>
+<div class="row">
+  <div class="tabbable tabs-left span9">
+  
+    <ul class="nav nav-tabs">
+      <% @model_tables.each do |key, value| %>
+        <%= content_tag :li, :class => active_tab(key) do %>
+          <%= link_to "##{key.to_s}", :class => 'tab-text', :"data-toggle" => 'tab' do %>
+            <%= key.to_s.titleize %>
+            <%= content_tag :span, value.size, :class => 'badge tab-badge' %>
+          <% end %>
+        <% end %>
       <% end %>
-    </tr>
-  </thead>
-  <tbody>
-    <%= render :partial => "report_row", :collection => @stat_set %>
-    <%= render :partial => "report_row", :collection => @obj_set %>
-  </tbody>
-</table>
+    </ul>
+    
+    <div class="tab-content">
+      <% @model_tables.each do |key, value| %>
+        <p>
+          <%= content_tag :div, {:class => "tab-pane #{active_tab(key)}", :id => key}, false do %>
+            <% unless value.empty? %>
+              <%= render :partial => "res_stat_set" , :object => value%>
+            <% end %>
+          <% end %>
+        </p>
+      <% end %>
+      
+    </div>
+    
+  </div>
+</div>
+
