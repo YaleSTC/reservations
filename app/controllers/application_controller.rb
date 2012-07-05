@@ -11,6 +11,7 @@ class ApplicationController < ActionController::Base
   before_filter :cart
   before_filter :set_view_mode
   before_filter :current_user
+  before_filter :load_configs
   
   
   #before_filter :bind_pry_before_everything
@@ -20,6 +21,10 @@ class ApplicationController < ActionController::Base
 
   def bind_pry_before_everything
     binding.pry
+  end
+  
+  def load_configs
+    @app_configs = AppConfig.first
   end
 
   def current_user

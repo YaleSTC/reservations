@@ -8,7 +8,7 @@ class ApplicationSetupController < ApplicationController
 
   def new_admin_user
     flash[:notice] = "Welcome to Reservations! Create your user and you will be guided 
-                      through a setup to get your application up and running!"
+                      through a setup to get your application up and running."
     if current_user and current_user.is_admin_in_adminmode?
        @user = User.new
      else
