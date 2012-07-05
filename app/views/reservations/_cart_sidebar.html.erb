@@ -4,12 +4,16 @@
   <% else %>
     <h2>Cart</h2><br />
   <% end %>
-<!--allow user to set start/end dates-->
-<%= render :partial => 'reservations/cart_dates' %>
-<h3>Items</h3>
-<!--list items in cart-->
-<%= render :partial => 'reservations/list_items_in_cart' %>
-<%= button_to "Empty cart", empty_cart_path, :class => "btn" %>
-<!--print Make reservation button-->
-<%= button_to "Make reservation", new_reservation_path, :class => "btn btn-inverse" %>
+  <%# allow user to set start/end dates %>
+  <%= render :partial => 'reservations/cart_dates' %>
+  <h3>Items</h3>
+  <%# list items in cart %>
+  <%= render :partial => 'reservations/list_items_in_cart' %>
+  <div class="row">
+    <div class="span3">
+    <%= link_to "Empty cart".titleize, empty_cart_path, :class => "btn", :id => 'empty_cart_btn' %>
+    <%# print Make reservation button %>
+    <%= link_to sanitize("#{content_tag :i, nil, class: "icon-shopping-cart"} #{"Make reservation".titleize}"), new_reservation_path, :class => "btn btn-success" %>
+    </div>
+  </div>
 </div>

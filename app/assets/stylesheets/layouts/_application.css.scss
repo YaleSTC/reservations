@@ -12,4 +12,10 @@ div#searchbox {
 	margin-bottom: 10px;
 }
 
-div#sidebar-right { margin-top: $baseLineHeight; }
+div#sidebar-right { 
+	margin-top: $baseLineHeight; 
+	
+	form {
+		margin-bottom: 0;
+	}
+}
