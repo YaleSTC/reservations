@@ -26,7 +26,7 @@
         <li class="span3">      
           <div class="thumbnail">
             
-            <% unless !equipment_model.photo.exists? %>
+            <% if equipment_model.photo.exists? %>
               <% #show equipment model image %>
               <%= link_to equipment_model do %>
                 <%= image_tag equipment_model.photo.url(:thumbnail) %>

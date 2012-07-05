@@ -12,26 +12,11 @@ body { padding-top: 50px; }
 @import "font-awesome";
 @import "dataTables/jquery.dataTables.bootstrap";
 
-label { font-weight: bold; }
-.dropdown-menu li.active {
-  display: block;
-  padding: 3px 15px;
-  clear: both;
-  font-weight: normal;
-  line-height: 18px;
-  color: #BDBDBD;
-  white-space: nowrap;
-}
 
-.is-sticky { @extend .span3; }
-
-#list_items_in_cart { 
-  max-height: 150px;
-  overflow-y: scroll;
-  border: 1px solid $tableBorder;
-	@include border-radius(4px);
-	padding-bottom: 0px;
-	margin-bottom: 19px;
+.well-nomargin { 
+  @extend .well;
+  margin-right: 20px;
+  margin-left: 0px;
   }
 
 //For DataTables sorting styling with Bootstrap

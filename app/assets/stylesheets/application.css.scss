@@ -2,39 +2,22 @@
 @import "bootstrap_and_overrides";
 @import "jquery-ui-1.8.16.custom";
 
+// Application Variables
+
 $h3-line-height: 27px;
+$user_label-size: 1.5;
 
-.cart_reserver { margin-bottom: 7px; }
-.thumbnail {
-  height: 420px;
-  position: relative;
-  line-height: $baseLineHeight;
-  }
-#add_to_cart { 
-  position: absolute;
-  bottom: 13px;
-  }
-.add_to_cart_box { @extend .caption; }
-.equipment_title {
-	padding: 9px 9px 0px 9px;
-	height: 2 * $h3-line-height;
-}
-.special-hr { 
-	margin-top: 4px;
-	margin-bottom: 10px;
-	}
-.caption_cat { padding: 0px 9px 0px 9px; }
+// Global Application Styles
 
-#userModal{ 
-	max-height: 500px; 
-	.modal-body {
-		overflow-x: hidden;
-	}
-}
-
-
-
+label { font-weight: bold; }
 .alert { 
 	margin-bottom: 0px;
 	margin-top: 18px; 
 }
+
+// Partial Imports
+
+@import "layouts/*";
+@import "reservations/*";
+@import "catalog/*";
+@import "users/*";

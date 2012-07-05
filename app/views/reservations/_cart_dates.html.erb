@@ -7,11 +7,14 @@
     <% if current_user && (current_user.is_admin_in_adminmode? || current_user.is_admin_in_checkoutpersonmode? || current_user.is_checkout_person?) %>
       
       <div class="input-append">
-        <%= autocomplete_field_tag 'fake_reserver_id', User.find(cart.reserver_id).render_name, autocomplete_user_last_name_reservations_path, :size => 30, :update_elements => {:id => '#reserver_id'}, :class => 'submittable span2' %><button class="btn" id="modal" data-toggle="modal" href="#userModal" rel="tooltip" title="New Reserver"><i class="icon-edit"></i></button>
+        <%# This must all be one one line for the button to display properly, sorry it's so ugly! %>
+        <%= hidden_field_tag 'reserver_id', cart.reserver_id %>
+				<%= autocomplete_field_tag 'fake_reserver_id', User.find(cart.reserver_id).render_name, autocomplete_user_last_name_reservations_path, :size => 30, :update_elements => {:id => '#reserver_id'}, :class => 'submittable span2' %>
+				<%= link_to sanitize("<i class=\"icon-plus\"></i>"), '#userModal', :class => 'btn', :id => 'modal', :rel => 'tooltip', :title => 'New Reserver', :"data-toggle" => 'modal' %>
       </div>
       
       
-      <%= hidden_field_tag 'reserver_id', cart.reserver_id %>
+
     <% elsif !current_user %>
         Please sign in <br />
     <% else %>

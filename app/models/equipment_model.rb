@@ -75,9 +75,9 @@ class EquipmentModel < ActiveRecord::Base
   validates_attachment_content_type :photo, 
                                       :content_type => ["image/jpg", "image/png", "image/jpeg"], 
                                       :message => "must be jpeg, jpg, or png."
-    validates_attachment_size         :photo, 
-                                      :less_than => 500.kilobytes,
-                                      :message => "must be less than 500 kb"
+  validates_attachment_size         :photo, 
+                                      :less_than => 1.megabytes,
+                                      :message => "must be less than 1 MB in size"
   
   validates_attachment :documentation, :content_type => { :content_type => "application/pdf" }
   

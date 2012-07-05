@@ -22,6 +22,8 @@ class Reservation < ActiveRecord::Base
   
   scope :reserved, lambda { where("checked_out IS NULL and checked_in IS NULL and due_date >= ?", Time.now.midnight.utc).recent}
   scope :checked_out, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date >=  ?", Time.now.midnight.utc).recent }
+  scope :checked_out_today, lambda { where("checked_out >= ? and checked_in IS NULL", Time.now.midnight.utc).recent }
+  scope :checked_out_previous, lambda { where("checked_out < ? and checked_in IS NULL and due_date <= ?", Time.now.midnight.utc, Date.tomorrow.midnight.utc).recent }
   scope :overdue, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc ).recent }
   scope :returned, where("checked_in IS NOT NULL and checked_out IS NOT NULL")
   scope :missed, lambda {where("checked_out IS NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc).recent}
@@ -100,7 +102,6 @@ class Reservation < ActiveRecord::Base
           end
         end
 
-
       end
     end
     error_messages
@@ -117,9 +118,44 @@ class Reservation < ActiveRecord::Base
     end
     error_messages
   end
+  
+  def checkout_object_uniqueness(reservations)
+    object_ids_taken = []
+    reservations.each do |r|
+      if !object_ids_taken.include?(r.equipment_object_id) # check to see if we've already taken that one
+        object_ids_taken << r.equipment_object_id
+      else
+        return false # return false if not unique
+      end
+    end
+    return true # return true if unique
+  end
 
   def self.active_user_reservations(user)
-    Reservation.where("checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
+    prelim = Reservation.where("checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
+    final = [] # initialize
+    prelim.collect do |r|
+      if r.status != "missed" # missed reservations are not actually active
+        final << r
+      end
+    end
+    final
+  end
+  
+  def self.checked_out_today_user_reservations(user)
+    Reservation.where("checked_out >= ? and checked_in IS NULL and reserver_id = ?", Time.now.midnight.utc, user.id)
+  end
+  
+  def self.checked_out_previous_user_reservations(user)
+    Reservation.where("checked_out < ? and checked_in IS NULL and reserver_id = ? and due_date >= ?", Time.now.midnight.utc, user.id, Time.now.midnight.utc)
+  end
+  
+  def self.reserved_user_reservations(user)
+    Reservation.where("checked_out IS NULL and checked_in IS NULL and due_date >= ? and reserver_id = ?", Time.now.midnight.utc, user.id)
+  end
+  
+  def self.overdue_user_reservations(user)
+    Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and due_date < ? and reserver_id = ?", Time.now.midnight.utc, user.id )
   end
 
   def self.check_out_procedures_exist?(reservation)
@@ -146,8 +182,11 @@ class Reservation < ActiveRecord::Base
   def late_fee
     self.equipment_model.late_fee.to_f
   end
+  
+  def fake_reserver_id # this is necessary for autocomplete! delete me not!
+  end
 
-  def equipment_list
+  def equipment_list  # delete?
     raw_text = ""
     #Reservation.where("reserver_id = ?", @user.id).each do |reservation|
     #if reservation.equipment_model
@@ -156,15 +195,6 @@ class Reservation < ActiveRecord::Base
     #  raw_text += "1 x *equipment deleted*\r\n"
     #end
     raw_text
-  end
-
-  # def equipment_object_id=(ids)
-  #   ids.each do |id|
-  #     equipment_objects << EquipmentObject.find(id)
-  #   end
-  # end
-  
-  def fake_reserver_id # Necessary for auto-complete feature
   end
 
   def max_renewal_length_available
@@ -193,7 +223,8 @@ class Reservation < ActiveRecord::Base
     # date it is and the max number of times one is allowed to renew
     # 
     # we need to test if any of the variables are set to NIL, because in that case comparision
-    # is undefined; that's also why we can't set variables to these values before the if statements
+    # is undefined; that's also why we can't set variables to these function values before 
+    # the if statements
     if self.times_renewed == NIL
       self.times_renewed = 0
     end

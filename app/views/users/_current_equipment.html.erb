@@ -4,12 +4,12 @@
   <small>
     <ul>
     <% current_equipment.reservations.each do |r| %>
-			<%# if (r.status == "checked out") || (r.status == "overdue") %>
+			<% if (r.status == "checked out") || (r.status == "overdue") %>
       <li>
         <%= link_to r.equipment_model.name, r.equipment_model %>
-        (<%#= link_to r.equipment_object.name, r.equipment_object %>)
+        (<%= link_to r.equipment_object.name, r.equipment_object %>)
       </li>
-			<%# end %>
+			<% end %>
     <% end %>
     </ul>
   </small>
