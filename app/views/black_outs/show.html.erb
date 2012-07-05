@@ -1,4 +1,4 @@
-<p id="notice"><%= notice %></p>
+<% title "Black Out of " + (@black_out.equipment_model_id == 0 ? "All Equipment Objects" : EquipmentModel.find(@black_out.equipment_model_id).name) %>
 
 <p>
   <b>Equipment model affected:</b>
@@ -7,12 +7,12 @@
 
 <p>
   <b>Start date:</b>
-  <%= @black_out.start_date %>
+  <%= @black_out.start_date.strftime('%m/%d/%Y') %>
 </p>
 
 <p>
   <b>End date:</b>
-  <%= @black_out.end_date %>
+  <%= @black_out.end_date.strftime('%m/%d/%Y') %>
 </p>
 
 <p>

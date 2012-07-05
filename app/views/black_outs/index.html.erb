@@ -1,5 +1,11 @@
-<h1>Listing black_outs</h1>
+<h1>Listing Equipment Black Outs</h1>
+<br>
+If a user tries to create a reservation for any of the equipment models listed below with a start date or end date within the "black out" period, then they will be presented with a notice (set by the administrator) stating the exceptional circumstances for that date (eg. 'Please note that our offices will only be open from 2:36 AM to 2:37 AM on this date in observance of Arbitrary Day.'). The adminsitrator can also set that no reservation can be created if its start or end date falls within the Black Out period.
+<br>
+ <%= link_to "Flash Message", {:url => flash_message_path},
+                              :href => flash_message_path, :remote => true, :class => "btn", :id => "add_to_cart" %>
 
+<br>
 <table>
   <tr>
     <th>Equipment model</th>
@@ -19,8 +25,8 @@
     <td><%= black_out[:start_date].strftime('%m/%d/%Y') %></td>
     <td><%= black_out[:end_date].strftime('%m/%d/%Y') %></td>
     <td><%= black_out.notice %></td>
-    <td><%= (black_out[:created_by]) %></td>
-    <td><%= black_out.black_out_type %></td>
+    <td><%= User.find((black_out[:created_by])).name %></td>
+    <td><%= black_out.black_out_type == 1 ? "Black Out" : "Notice Only" %></td>
     <td><%= link_to 'Show', black_out %></td>
     <td><%= link_to 'Edit', edit_black_out_path(black_out) %></td>
     <td><%= link_to 'Destroy', black_out, confirm: 'Are you sure?', method: :delete %></td>

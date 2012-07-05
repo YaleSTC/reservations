@@ -60,7 +60,6 @@ class Cart
     #if blacked_out
     # errors.add(
     #end
-    binding.pry
     return current_item if self.valid?
     self.valid?
   end
@@ -316,7 +315,6 @@ class Cart
         errors.add(:start_date, "Item cannot be reserved for pick up or checkout on this day.")
         return false
       end
-     binding.pry
      items.each do |item|
        eq_model = item.equipment_model
        if EquipmentModel.blackout_on_start_or_end_date(start_date..due_date,eq_model.id)

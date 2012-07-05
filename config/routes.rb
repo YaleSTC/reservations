@@ -1,7 +1,15 @@
 Reservations::Application.routes.draw do
 
-  resources :black_outs
 
+
+  match '/black_outs/flash_message' => 'black_outs#flash_message', :as => :flash_message
+
+  resources :black_outs do
+    member do
+      get :flash_message
+    end
+  end
+   
   root :to => 'catalog#index'
 
   resources :documents
@@ -25,7 +33,6 @@ Reservations::Application.routes.draw do
   end
 
   match '/users/new_button' => 'users#new_button', :as => :new_button
-
   match '/reservations/renew/:id' => 'reservations#renew', :as => :renew
 
   resources :reservations do

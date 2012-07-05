@@ -1,5 +1,5 @@
 <div id="cart_dates">
-  <%= form_tag update_cart_path, :remote => true, :class => "form-vertical" do %>
+  <%= form_tag url_for(:action => :update_cart),:remote => true, :class => "form-vertical" do %>
     <%= label_tag :reserver_id, 'Reserver' %>
     <%# application.js needs to know the update_cart_path and the new_user_path %>
     <%= hidden_field_tag 'page', params[:page] %>
