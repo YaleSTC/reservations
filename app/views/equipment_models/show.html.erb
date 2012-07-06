@@ -1,6 +1,7 @@
 <% title @equipment_model.name %>
 <% subtitle @equipment_model.category.name.singularize %>
 
+<!-- EQUIPMENT MODEL INFO BOX -->
 <div class="row em_info">
   <div class="span3">
   <% if @equipment_model.photo.exists? %>
@@ -96,6 +97,7 @@
 
 <!-- DETAILS -->
   <h3><legend id="details">Details</legend></h3>
+  <!-- Title Row -->
   <%= content_tag :div, :class => 'row' do %>
     <%= content_tag :div, :class => 'span4' do %>
       <h4>Late Fee</h4>
@@ -110,6 +112,7 @@
     <% end %>
   <% end %>
   
+  <!-- Content Row -->
   <%= content_tag :div, :class => 'row giant-numbers' do %>
     <%= content_tag :div, :class => 'span4' do %>
       <%= number_to_currency(@equipment_model.late_fee) %> / day
@@ -124,16 +127,18 @@
   
   <!-- DOCUMENTATION -->
   <h3><legend id="documentation">Documentation</legend></h3>
+  <!-- Title Row -->
   <%= content_tag :div, :class => 'row' do %>
     <%= content_tag :div, :class => 'span3' do %>
       <h4>
-        <%= (link_to @equipment_model.documentation_file_name, @equipment_model.documentation.url) unless !@equipment_model.documentation.exists? %>
+        <%= (link_to @equipment_model.documentation_file_name, @equipment_model.documentation.url, target: "_blank") unless !@equipment_model.documentation.exists? %>
       </h4>
     <% end %>
   <% end %>
+  <!-- Content Row -->
   <%= content_tag :div, :class => 'row' do %>
     <%= content_tag :div, :class => 'span2' do %>
-      <%= link_to @equipment_model.documentation.url do %>
+      <%= link_to @equipment_model.documentation.url, target: "_blank" do %>
         <%= content_tag :i, nil, :class => 'icon-file document' %>
       <% end %>
     <% end %>
@@ -155,6 +160,7 @@
     
    <!-- PROCEDURES -->
     <h3><legend id="procedures">Procedures</legend></h3>
+    <!-- Title Row -->
     <%= content_tag :div, :class => 'row' do %>
       <%= content_tag :div, :class => 'span4' do %>
         <p><h4>Check-Out</h4></p>
@@ -164,6 +170,7 @@
       <% end %>
     <% end %>
     
+    <!-- Content Row -->
     <%= content_tag :div, :class => 'row' do %>
       <%= content_tag :div, :class => 'span4' do %>
         <% if @equipment_model.checkout_procedures.empty? %>
