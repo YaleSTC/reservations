@@ -5,7 +5,18 @@
   <div class="span3">
   <% if @equipment_model.photo.exists? %>
   <div class="image_box">
-    <%= image_tag @equipment_model.photo.url(:large) %>
+    <%= link_to "#image_modal", :"data-toggle" => 'modal' do %>
+      <%= image_tag @equipment_model.photo.url(:large) %>
+    <% end %>
+    <div id="image_modal" class="modal hide fade">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h3><%= @equipment_model.name %></h3>
+      </div>
+      <div class="modal-body">
+        <%= image_tag @equipment_model.photo.url(:original) %>
+      </div>
+    </div>
   </div>
     
   <% else %>
@@ -68,21 +79,22 @@
 <div class="subnav">
   <ul class="nav nav-pills">
     <li><a href="#description">Description</a></li>
-    <li><a>Details</a></li>
-    <li><a>Documentation</a></li>
-    <li><a>Items</a></li>
-    <li><a>Procedures</a></li>
+    <li><a href="#details">Details</a></li>
+    <li><a href="#documentation">Documentation</a></li>
+    <li><a href="#items">Items</a></li>
+    <li><a href="#procedures">Procedures</a></li>
   </ul>
 </div>
 
 <!-- SUBBODY SECTION -->
 
+<!-- DESCRIPTION -->
   <h3><legend id="description">Description</legend></h3>
   <p>
     <%= @equipment_model.formatted_description.html_safe %>
   </p>
 
-
+<!-- DETAILS -->
   <h3><legend id="details">Details</legend></h3>
   <%= content_tag :div, :class => 'row' do %>
     <%= content_tag :div, :class => 'span4' do %>
@@ -110,6 +122,7 @@
     <% end %>
   <% end %>
   
+  <!-- DOCUMENTATION -->
   <h3><legend id="documentation">Documentation</legend></h3>
   <%= content_tag :div, :class => 'row' do %>
     <%= content_tag :div, :class => 'span3' do %>
@@ -126,10 +139,9 @@
     <% end %>
   <% end %>
   
-  
+  <!-- ITEMS -->
   <% if current_user.is_admin_in_adminmode? %>
     <h3><legend id="items">Items</legend></h3>
-    
     <p>
       <%= link_to "Create New "+@equipment_model.name.singularize+" Item", new_equipment_model_equipment_object_path(@equipment_model), :class => 'btn' %>
     </p>
@@ -141,7 +153,8 @@
       <% end %>
     </p>
     
-    <h3><legend>Procedures</legend></h3>
+   <!-- PROCEDURES -->
+    <h3><legend id="procedures">Procedures</legend></h3>
     <%= content_tag :div, :class => 'row' do %>
       <%= content_tag :div, :class => 'span4' do %>
         <p><h4>Check-Out</h4></p>
