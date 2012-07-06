@@ -62,6 +62,8 @@ $(document).ready(function() {
 
 	$(".btn#modal").tooltip();
 	
+	// Equipment Model - show - progress bar
+	
   $('.progress .bar').each(function() {
       var me = $(this);
       var perc = me.attr("data-percentage");
@@ -74,10 +76,10 @@ $(document).ready(function() {
               current_perc = perc;
               me.css('width', (current_perc)+'%');
           }
-
       }, 100);
-
   });
+
+$('.associated_em_box img').popover({ placement: 'bottom' });
 
 });
 // to disable selection of dates in the past with datepicker

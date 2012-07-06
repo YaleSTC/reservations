@@ -50,22 +50,13 @@
       <div class="row">
           <div class="span6">
             <h3>You Might Also Like:</h3>
-            <% unless @equipment_model.associated_equipment_models.empty? %>
-              <fieldset>
-                <legend>Recommended Items:</legend>
-                <ul>
-                  <% @equipment_model.associated_equipment_models.each do |accessory| %>
-                    <li><%= accessory.name %> <%= link_to "[add to cart]", {:url => add_to_cart_path(accessory)}, :href => add_to_cart_path(accessory), :remote => true %></li>
-                  <% end %>
-                </ul>
-              </fieldset>
-            <% end %>
           </div>
         </div>
         <div class="row">
+          <!-- placeholder -->
           <% 6.times do %>
             <div class="span1">
-              <%= image_tag "no-image-260.gif" %>
+              <%= image_tag "no-image-260.gif", rel: 'popover', title: @equipment_model.name, :"data-content" => @equipment_model.description.truncate(100) %>
             </div>
           <% end %>
         </div>
