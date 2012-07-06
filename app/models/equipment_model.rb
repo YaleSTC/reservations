@@ -140,6 +140,11 @@ class EquipmentModel < ActiveRecord::Base
   end
 
   def available?(date_range)
+        BlackOut.all.each do |black_out|
+     binding.pry
+     #(black_out.start_date..black_out.end_date) & (date_range)
+    end
+
     overall_count = self.equipment_objects.size
     date_range.each do |date|
       available_on_date = available_count(date)
