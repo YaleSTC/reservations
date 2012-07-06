@@ -29,7 +29,7 @@ describe 'cart' do
     cart.add_item(eq)
     cart.items.size == 2
     cart.remove_item(eq)
-    cart.items == 1
+    cart.items.size == 1
   end
 
   it 'not_empty? works when called on reservations in @items' do
@@ -43,6 +43,10 @@ describe 'cart' do
     res.due_date = Date.yesterday
     res.not_in_past? == false
     res.due_date = Date.today
+    res.not_in_past? == true
+    res.start_date = Date.yesterday
+    res.not_in_past? == false
+    res.start_date = Date.today
     res.not_in_past? == true
   end
 
@@ -67,10 +71,20 @@ describe 'cart' do
     res.no_overdue_reservations? == true
   end
 
+  # only tests one reservations, not an array
   it 'available? works when called on reservations in @items' do
     res.available? == false
     obj = FactoryGirl.create(:equipment_object, equipment_model: eq)
     res.available? == true
+  end
+
+  it 'count works when called on reservations in @items' do
+    res.count(cart.items) == 1
+    res2.count(cart.items) == 1
+    cart.add_item(eq)
+    res.count(cart.items) == 2
+    cart.remove_item(eq2)
+    res2.count(cart.items) == 0
   end
 
   it 'valid? works when called reservations in @items' do

@@ -44,7 +44,9 @@ class Reservation < ActiveRecord::Base
     end
   end
 
-  ## Validations
+  ## VALIDATIONS
+
+  ## For individual reservations only
 
   ## Item validations
   # Checks that the reservation has an equipment model
@@ -82,16 +84,6 @@ class Reservation < ActiveRecord::Base
     return true
   end
 
-  # Checks that the equipment model is available from start date to due date
-  #TODO: needs to check number of reservations with that equipment model and check that that many are available
-  def available?
-    if self.equipment_model.available?(start_date..due_date) == 0
-      errors.add(:base, self.equipment_model.name + " is not available for all or part of the duration")
-      return false
-    end
-    return true
-  end
-
   ## User validations
   # Checks if the user has any overdue reservations
   def no_overdue_reservations?
@@ -102,7 +94,30 @@ class Reservation < ActiveRecord::Base
     return true
   end
 
-  ## End of validations
+  ## For single or multiple reservations
+
+  ## Item validations
+  # Checks that the equipment model is available from start date to due date
+  #TODO: needs to check number of reservations with that equipment model and check that that many are available
+  def available?(reservations = [])
+    reservations << self if reservations.empty?
+    eq_objects_needed = self.count(reservations)
+    if self.equipment_model.available?(start_date..due_date) < count
+      errors.add(:base, self.equipment_model.name + " is not available for all or part of the duration")
+      return false
+    end
+    return true
+  end
+
+  # Returns the number of reservations in the array of reservations it is passed
+  # that have the same equipment model as the reservation count is called on
+  # Assumes that self is in the array of reservations/does not include self
+  # Assumes that all reservations have same start and end date as self
+  def count(reservations)
+    count = 0
+    reservations.each { |res| count += 1 if res.equipment_model_id == self.equipment_model_id }
+    count
+  end
 
   def self.due_for_checkin(user)
     Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
@@ -174,7 +189,6 @@ class Reservation < ActiveRecord::Base
   def self.active_user_reservations(user)
     Reservation.where("checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
   end
-
 
   def self.check_out_procedures_exist?(reservation)
     !reservation.equipment_model.checkout_procedures.nil?
