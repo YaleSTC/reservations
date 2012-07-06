@@ -14,6 +14,27 @@
 //= require bootstrap
 //= require_self
 
+  function truncate() {
+	  $(".caption_cat").dotdotdot({
+		  height: 126,
+		  after: ".more_info",
+		  watch: 'window',
+		  });
+		
+	  $(".equipment_title").dotdotdot({
+		  height: 54, // must match .equipment_title height
+		  watch: 'window'
+		  });
+
+	  $(".equipment_title").each(function(){
+		  $(this).trigger("isTruncated", function( isTruncated ) {
+		    if ( isTruncated ) {
+		     	$(this).children(".equipment_title_link").tooltip();
+		    }
+		  });
+	  });
+	};
+
 $(document).ready(function() {
 // For DataTables and Bootstrap
 	$('.datatable').dataTable({
@@ -38,9 +59,13 @@ $(document).ready(function() {
 	$(".alert .close").click( function() {
 	     $(this).parent().addClass("fade");
 	});
-	
+
+// make the sidebar follow you down the page
 	$("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
 
+// perform truncate, which is also defined outside of document ready
+// it needs to be both places due to a webkit bug not loading named 
+// JS functions in (document).ready() until AFTER displaying all the things
 	$(".caption_cat").dotdotdot({
 		height: 126,
 		after: ".more_info",
@@ -50,7 +75,7 @@ $(document).ready(function() {
 	$(".equipment_title").dotdotdot({
 		height: 54, // must match .equipment_title height
 		watch: 'window'
-		});
+	});
 
 	$(".equipment_title").each(function(){
 		$(this).trigger("isTruncated", function( isTruncated ) {
@@ -69,16 +94,16 @@ $.datepicker.setDefaults({
 });
 
 // auto-submit cart dates #only-cart-dates
-  $(document).on('change', '.submitchange', function() {
-    $.ajax({ // we can probably use .get() instead of .ajax(), but this is more flexible going forward since it's essentially the same
-      type: "GET",
-      url: update_cart_path.value, // defined in _cart_dates in hidden field
-      data: { 'reserver_id': reserver_id.value,
-              'start_date_cart': cart_start_date_cart.value,
-              'due_date_cart': cart_due_date_cart.value },
-      dataType: "script"
-    });
-  });
+//  $(document).on('change', '.submitchange', function() {
+//    $.ajax({ // we can probably use .get() instead of .ajax(), but this is more flexible going forward since it's essentially the same
+//      type: "GET",
+//      url: update_cart_path.value, // defined in _cart_dates in hidden field
+//      data: { 'reserver_id': reserver_id.value,
+//              'start_date_cart': cart_start_date_cart.value,
+//              'due_date_cart': cart_due_date_cart.value },
+//     dataType: "script"
+//    });
+//  });
 
   $(".btn.btn-primary").bind('ajax:beforeSend', function(){
     alert("Test!");

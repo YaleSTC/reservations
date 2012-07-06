@@ -9,7 +9,7 @@ class ReservationsController < ApplicationController
       elsif params[:show_returned]
         @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved, Reservation.returned].delete_if{|a| a.empty?} #remove empty arrays from set
       elsif params[:upcoming]
-        @reservations_set = [Reservation.upcoming].delete_if{|a| a.empty?}
+        @hold_list = [Reservation.upcoming].delete_if{|a| a.empty?}
       else
         @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved].delete_if{|a| a.empty?}
       end

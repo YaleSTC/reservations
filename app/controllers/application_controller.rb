@@ -79,18 +79,23 @@ class ApplicationController < ActionController::Base
   #-------- end before_filter methods --------
 
   def update_cart
-    session[:cart].set_start_date(Date.strptime(params[:start_date_cart],'%m/%d/%Y'))
-    session[:cart].set_due_date(Date.strptime(params[:due_date_cart],'%m/%d/%Y'))
+  # set dates
+    session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
+    session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
     session[:cart].set_reserver_id(params[:reserver_id])
     flash[:notice] = "Cart dates updated."
+    
+    # make sure dates are valid
     if !cart.valid_dates?
       flash[:error] = cart.errors.values.flatten.join("<br/>").html_safe
       cart.errors.clear
     end
+
+    # reload appropriate divs / exit
     respond_to do |format|
-      format.js{render :template => "reservations/cart_dates_reload"}
+      format.js{ render :template => "reservations/cart_dates_reload" }
         # guys i really don't like how this is rendering a template for js, but :action doesn't work at all
-      format.html{render :partial => "reservations/cart_dates"} # delete this line? replace with redirect_to root_path ?
+      format.html{ render :partial => "reservations/cart_dates" } # delete this line? replace with redirect_to root_path ? otherwise it's not doing any harm
     end
   end
 
