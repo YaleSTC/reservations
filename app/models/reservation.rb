@@ -51,7 +51,11 @@ class Reservation < ActiveRecord::Base
   ## Item validations
   # Checks that the reservation has an equipment model
   def not_empty?
-    errors.add(:base, "A reservation must contain at least one item.") if self.equipment_model.nil?
+    if self.equipment_model.nil?
+      errors.add(:base, "A reservation must contain at least one item.")
+      return false
+    end
+    return true
   end
 
   ## Date validations
@@ -102,7 +106,7 @@ class Reservation < ActiveRecord::Base
   def available?(reservations = [])
     reservations << self if reservations.empty?
     eq_objects_needed = self.count(reservations)
-    if self.equipment_model.available?(start_date..due_date) < count
+    if self.equipment_model.available?(start_date..due_date) < eq_objects_needed
       errors.add(:base, self.equipment_model.name + " is not available for all or part of the duration")
       return false
     end

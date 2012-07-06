@@ -9,7 +9,6 @@ describe 'cart' do
   cart.add_item(eq)
   res = cart.items.first
 
-
   it 'initializes' do
     cart.start_date
     cart.due_date
@@ -17,53 +16,54 @@ describe 'cart' do
   end
 
   it 'add_item works' do
-    cart.items.size > 0
+    cart.items.size.should == 1
   end
 
   it 'remove_item works' do
     cart.remove_item(eq)
-    cart.items.size == 0
+    cart.items.size.should == 0
   end
 
   it 'remove_item removes only one item' do
     cart.add_item(eq)
-    cart.items.size == 2
+    cart.add_item(eq)
+    cart.items.size.should == 2
     cart.remove_item(eq)
-    cart.items.size == 1
+    cart.items.size.should == 1
   end
 
   it 'not_empty? works when called on reservations in @items' do
     res.equipment_model = nil
-    res.not_empty? == false
+    res.not_empty?.should == false
     res.equipment_model = eq
-    res.not_empty? == true
+    res.not_empty?.should == true
   end
 
   it 'not_in_past? works when called on reservations in @items' do
     res.due_date = Date.yesterday
-    res.not_in_past? == false
+    res.not_in_past?.should == false
     res.due_date = Date.today
-    res.not_in_past? == true
+    res.not_in_past?.should == true
     res.start_date = Date.yesterday
-    res.not_in_past? == false
+    res.not_in_past?.should == false
     res.start_date = Date.today
-    res.not_in_past? == true
+    res.not_in_past?.should == true
   end
 
   it 'start_date_before_due_date? works when called on reservations in @items' do
     res.due_date = Date.yesterday
-    res.start_date_before_due_date? == false
+    res.start_date_before_due_date?.should == false
     res.due_date = Date.today
-    res.start_date_before_due_date? == true
+    res.start_date_before_due_date?.should == true
   end
 
   it 'duration_allowed? works when called on reservations in @items' do
-    res.duration_allowed? == true
+    res.duration_allowed?.should == true
     allowed_duration = eq.category.max_checkout_length
     cart.set_due_date(Date.tomorrow + allowed_duration)
     cart.add_item(eq)
-    res2 = cart.items.last
-    res2.duration_allowed? == false
+    res1 = cart.items.last
+    res1.duration_allowed?.should == false
   end
 
   # only tests true. need to test with user with overdue reservations
@@ -71,25 +71,26 @@ describe 'cart' do
     res.no_overdue_reservations? == true
   end
 
-  # only tests one reservations, not an array
-  it 'available? works when called on reservations in @items' do
-    res.available? == false
-    obj = FactoryGirl.create(:equipment_object, equipment_model: eq)
-    res.available? == true
+  it 'count works when called on reservations in @items' do
+    res.count(cart.items).should == 2
+    eq2 = FactoryGirl.create(:equipment_model)
+    cart.add_item(eq2)
+    res2 = cart.items.last
+    res2.count(cart.items).should == 1
+    cart.remove_item(eq2)
+    res2.count(cart.items).should == 0
   end
 
-  it 'count works when called on reservations in @items' do
-    res.count(cart.items) == 1
-    res2.count(cart.items) == 1
-    cart.add_item(eq)
-    res.count(cart.items) == 2
-    cart.remove_item(eq2)
-    res2.count(cart.items) == 0
+  # only tests one reservations, not an array
+  it 'available? works when called on reservations in @items' do
+    res.available?.should == false
+    obj = FactoryGirl.create(:equipment_object, equipment_model: eq)
+    res.available?.should == true
   end
 
   it 'valid? works when called reservations in @items' do
     cart.add_item(eq)
     res = cart.items.first
-    res.valid?
+    res.valid?.should == true
   end
 end
