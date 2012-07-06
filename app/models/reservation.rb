@@ -18,7 +18,8 @@ class Reservation < ActiveRecord::Base
   
 
   scope :recent, order('start_date, due_date, reserver_id')
-
+  scope :user_sort, order('reserver_id')
+  
   scope :reserved, lambda { where("checked_out IS NULL and checked_in IS NULL and due_date >= ?", Time.now.midnight.utc).recent}
   scope :checked_out, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date >=  ?", Time.now.midnight.utc).recent }
   scope :checked_out_today, lambda { where("checked_out >= ? and checked_in IS NULL", Time.now.midnight.utc).recent }
@@ -26,7 +27,7 @@ class Reservation < ActiveRecord::Base
   scope :overdue, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc ).recent }
   scope :returned, where("checked_in IS NOT NULL and checked_out IS NOT NULL")
   scope :missed, lambda {where("checked_out IS NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc).recent}
-  scope :upcoming, lambda {where("checked_out IS NULL and checked_in IS NULL and start_date = ? and due_date > ?", Time.now.midnight.utc, Time.now.midnight.utc).recent }
+  scope :upcoming, lambda {where("checked_out IS NULL and checked_in IS NULL and start_date = ? and due_date > ?", Time.now.midnight.utc, Time.now.midnight.utc).user_sort }
   
   scope :reserver_is_in, lambda {|user_id_arr| where(:reserver_id => user_id_arr)}
   scope :starts_on_days, lambda {|start_date, end_date|  where(:start_date => start_date..end_date)}

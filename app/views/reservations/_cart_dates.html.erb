@@ -25,10 +25,10 @@
     <% end %>
 
       <%= label_tag :start_date, 'Start of reservation' %>
-      <%= datepicker_input "cart", "start_date_cart", :class => 'submitchange span2', :value => cart.start_date.strftime('%m/%d/%Y') %>
+      <%= datepicker_input "cart", "start_date_cart", :class => 'autosubmitme span2', :value => cart.start_date.strftime('%m/%d/%Y') %>
       
       <%= label_tag :due_date, 'End of reservation' %>
-      <%= datepicker_input "cart", "due_date_cart", :class => 'submitchange span2', :value => cart.due_date.strftime('%m/%d/%Y'), :minDate => cart.start_date.strftime('%m/%d/%Y') %>
+      <%= datepicker_input "cart", "due_date_cart", :class => 'autosubmitme span2', :value => cart.due_date.strftime('%m/%d/%Y'), :minDate => cart.start_date.strftime('%m/%d/%Y') %>
 
   <% end %>
 </div>
