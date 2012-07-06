@@ -82,8 +82,10 @@
     <li><a href="#description">Description</a></li>
     <li><a href="#details">Details</a></li>
     <li><a href="#documentation">Documentation</a></li>
-    <li><a href="#items">Items</a></li>
-    <li><a href="#procedures">Procedures</a></li>
+    <% if current_user.is_admin_in_adminmode? %>
+      <li><a href="#items">Items</a></li>
+      <li><a href="#procedures">Procedures</a></li>
+    <% end %>
   </ul>
 </div>
 
