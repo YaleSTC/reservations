@@ -59,7 +59,9 @@
             <% if current_user && current_user.is_admin_in_adminmode? %>
               <li <%= navigation_active edit_app_config_path %>><%= link_to "App Settings", edit_app_config_path %></li>
             <% end %>
-            
+            <% if current_user && current_user.is_admin_in_adminmode? %>
+              <li <%= navigation_active reports_path %>><%= link_to "Reports", reports_path %></li>
+            <% end %>
           
           
             <li class="divider-vertical"></li>            

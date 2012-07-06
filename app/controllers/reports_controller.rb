@@ -101,7 +101,6 @@ class ReportsController < ApplicationController
   end
   
   def models_subreport(ids)
-    binding.pry
     res_set = Reservation.includes(:equipment_model,:equipment_object).where(:equipment_model_id => ids)
     res_rels = default_relations(res_set)
     res_rels << ResRelation.new("Average Duration", res_set, {:id_type => :equipment_model_id, :stat_type => :duration})
