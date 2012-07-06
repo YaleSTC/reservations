@@ -5,11 +5,12 @@ class ReportsController < ApplicationController
   ResSetInfo = Struct.new(:name, :id_type, :ids, :link_path) #info for a reservation set
   
   def index
+    
     @res_stat_sets = []
-    @start_date = Date.today.beginning_of_year
-    @end_date = Date.today
+    @start_date = session[:report_start_date] ? session[:report_start_date] : Date.today.beginning_of_year
+    @end_date ||= Date.today
     #need some kind of admin priveleges before hand...
-    users = [current_user]
+    # users = [current_user]
 
     # res_set = Reservation.starts_on_days(@start_date,@end_date).reserver_is_in(users)
     full_set = Reservation.starts_on_days(@start_date,@end_date).includes(:equipment_model)
@@ -21,68 +22,86 @@ class ReportsController < ApplicationController
     eq_model_ids = full_set.collect {|res| res.equipment_model_id}.uniq 
     eq_models = EquipmentModel.includes(:category).find(eq_model_ids)
     
-    eq_model_names = []
-    category_names = []
+    eq_model_info = []
     
-    cat_info = {}
+    cat_em_ids = {}
     eq_models.each do |em|
-      eq_model_names << ResSetInfo.new(em.name, :equipment_model_id, [em.id],for_model_report_path(:id => em.id))
-      if cat_info[em.category.id]
-        cat_info[em.category.id] << em.id
+      eq_model_info << ResSetInfo.new(em.name, :equipment_model_id, [em.id],for_model_report_path(:id => em.id))
+      if cat_em_ids[em.category.id]
+        cat_em_ids[em.category.id] << em.id
       else
-        cat_info[em.category.id] = [em.id]
+        cat_em_ids[em.category.id] = [em.id]
       end
     end
-    categories = Category.find(cat_info.keys)
-    categories.each do |cat|
-      category_names << ResSetInfo.new(cat.name,:equipment_model_id, cat_info[cat.id], for_model_set_reports_path({:ids => cat_info[cat.id]}))
-    end
+    # commented out for speed
+    # reserver_ids = full_set.collect {|res| res.reserver_id}.uniq 
+    #    reservers = User.find(reserver_ids)
+    #    reserver_info = reservers.collect {|user| ResSetInfo.new(user.name,:reserver_id, [user.id],user_path(:id => user.id))}
+    
+    categories = Category.find(cat_em_ids.keys)
+    category_info = categories.collect {|cat| ResSetInfo.new(cat.name,:equipment_model_id, cat_em_ids[cat.id],
+                                                 for_model_set_reports_path({:ids => cat_em_ids[cat.id]})) }
 
     # take all the sets of reservations and get stats on them
     # sets of reservations are passed in by name then models associated
     all_models = [ResSetInfo.new("All Models", :equipment_model_id)]
-    res_sets = [all_models, category_names, eq_model_names]
+    
+    # commented out for speed
+    # res_sets = {:total => all_models, :users => reserver_info, :categories => category_info, :equipment_models => eq_model_info}
+    res_sets = {:total => all_models, :categories => category_info, :equipment_models => eq_model_info}
     @table_col_names = res_rels.collect{|r| r[:name]} # + [:"User Counts"]
-    res_sets.each do |info_struct|
-      @res_stat_sets << collect_stat_set(info_struct,res_rels)
+    @data_tables = {}
+    res_sets.each do |name,info_struct|
+      @data_tables[name] = collect_stat_set(info_struct,res_rels)
     end
   end
 
+  #not working at all right now
+  def update_report
+    @start_date = (Date.strptime(params[:report][:start_date],'%m/%d/%Y'))
+    @end_date = (Date.strptime(params[:report][:end_date],'%m/%d/%Y'))
+    session[:report_start_date] = @start_date
+    session[:report_end_date] = @end_date
+    respond_to do |format|
+      format.js{render :template => "reports/report_dates_reload"}
+        # guys i really don't like how this is rendering a template for js, but :action doesn't work at all
+      format.html{render :partial => "reports/report_dates"} # delete this line? replace with redirect_to root_path ? otherwise it's not doing any harm
+    end
+    # @end_date = (Date.strptime(params[:report][:end_date],'%m/%d/%Y'))
+  end
+
+
   #sub report for a particular model
   def for_model
-    @model_tables = models_subreport([params[:id]])
+    @data_tables = models_subreport([params[:id]])
   end
   
   #should probably merge with for_model
   def for_model_set
-    @model_tables = models_subreport(params[:ids])
+    @data_tables = models_subreport(params[:ids])
   end
   
+
+  
   private
-  def default_relations(res_set,*conditions)
+  def default_relations(res_set,rel_hash = nil,options = nil)
     # reservation relations for each of the scopes
+    rel_hash ||= {:"Total" => nil, :"Reserved" => :reserved, :"Checked Out" => :checked_out, :"Overdue" => :overdue,
+                  :"Returned" => :returned, :"Missed" => :missed, :"Upcoming" => :upcoming}
+    
+    def_options = {:stat_type => :count}
+    def_options.merge!(options) if options
+    
     res_rels = []
-    res_rels << ResRelation.new("Total", res_set)
-    res_rels << ResRelation.new("Reserved", res_set.reserved)
-    res_rels << ResRelation.new("Checked Out", res_set.checked_out)
-    res_rels << ResRelation.new("Overdue", res_set.overdue)
-    res_rels << ResRelation.new("Reserved", res_set.returned)
-    res_rels << ResRelation.new("Missed", res_set.missed)
-    res_rels << ResRelation.new("Upcoming", res_set.upcoming)
-    defaults = {:stat_type => :count}
-    defaults.merge!(conditions.first) unless conditions.empty?
-    res_rels.each do |r|
-      if r.params
-        r.params = defaults
-      else
-        r.params = {}
-        defaults.each {|key, val| r.params[key] ||= val}
-      end
+    rel_hash.each do |key, value|
+      rel = value ? res_set.send(value) : res_set
+      res_rels << ResRelation.new(key.to_s,rel,def_options)
     end
     return res_rels
   end
   
   def models_subreport(ids)
+    binding.pry
     res_set = Reservation.includes(:equipment_model,:equipment_object).where(:equipment_model_id => ids)
     res_rels = default_relations(res_set)
     res_rels << ResRelation.new("Average Duration", res_set, {:id_type => :equipment_model_id, :stat_type => :duration})

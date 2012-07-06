@@ -4,14 +4,14 @@ Reservations::Application.routes.draw do
 
   resources :documents
   resources :equipment_objects
-  resources :reports do
-    member do
-      get 'for_model'
-    end
-    collection do
-      get 'for_model_set'
-    end
-  end
+  # resources :reports do
+  #   member do
+  #     get 'for_model'
+  #   end
+  #   collection do
+  #     get 'for_model_set'
+  #   end
+  # end
   
   resources :equipment_models do
     resources :equipment_objects
@@ -64,6 +64,11 @@ Reservations::Application.routes.draw do
   match '/cart/empty' => 'application#empty_cart', :as => :empty_cart
   match '/cart/update' => 'application#update_cart', :as => :update_cart
   
+  match '/reports/index' => 'reports#index', :as => :reports
+  match '/reports/:id/for_model' => 'reports#for_model', :as => :for_model
+  match '/reports/for_model_set' => 'reports#for_model_set', :as => :for_model_set
+  match '/reports/update' => 'reports#update_report', :as => :update_report
+  
   match '/:controller/:id/deactivate' => ':controller#deactivate', :as => 'deactivate'
   match '/:controller/:id/activate' => ':controller#activate', :as => 'activate'
 
@@ -71,7 +76,7 @@ Reservations::Application.routes.draw do
   
   match '/app_config/edit' => 'app_config#edit', :as => :edit_app_config
   match '/app_config/update' => 'app_config#update', :as => :update_app_config  
-
+  
   #match '/users/find' => 'users#find', :as => :find_user
   
   match ':controller(/:action(/:id(.:format)))'
