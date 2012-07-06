@@ -36,28 +36,6 @@
 	};
 
 $(document).ready(function() {
-// perform truncate, which is also defined outside of document ready
-// it needs to be both places due to a webkit bug not loading named 
-// JS functions in (document).ready() until AFTER displaying all the things
-  $(".caption_cat").dotdotdot({
-	  height: 126,
-	  after: ".more_info",
-	  watch: 'window',
-	  });
-	
-  $(".equipment_title").dotdotdot({
-	  height: 54, // must match .equipment_title height
-	  watch: 'window'
-	  });
-
-  $(".equipment_title").each(function(){
-	  $(this).trigger("isTruncated", function( isTruncated ) {
-	    if ( isTruncated ) {
-	     	$(this).children(".equipment_title_link").tooltip();
-	    }
-	  });
-  });
-
 // For DataTables and Bootstrap
 	$('.datatable').dataTable({
 	  "sDom": "<'row'<'span4'l><'span5'f>r>t<'row'<'span3'i><'span6'p>>",
@@ -81,44 +59,51 @@ $(document).ready(function() {
 	$(".alert .close").click( function() {
 	     $(this).parent().addClass("fade");
 	});
-	
+
+// make the sidebar follow you down the page
 	$("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
+
+// perform truncate, which is also defined outside of document ready
+// it needs to be both places due to a webkit bug not loading named 
+// JS functions in (document).ready() until AFTER displaying all the things
+	$(".caption_cat").dotdotdot({
+		height: 126,
+		after: ".more_info",
+		watch: 'window',
+		});
+		
+	$(".equipment_title").dotdotdot({
+		height: 54, // must match .equipment_title height
+		watch: 'window'
+	});
+
+	$(".equipment_title").each(function(){
+		$(this).trigger("isTruncated", function( isTruncated ) {
+		  if ( isTruncated ) {
+		   	$(this).children(".equipment_title_link").tooltip();
+		  }
+		});
+	});
 
 	$(".btn#modal").tooltip();
 
 });
-
 // to disable selection of dates in the past with datepicker
-  $.datepicker.setDefaults({
-     minDate: new Date(),
-  });
-
-// grab the page number from the URL to pass for kaminari pagination
-  function getURLParameter(name) {
-    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
-  }
+$.datepicker.setDefaults({
+   minDate: new Date(),
+});
 
 // auto-submit cart dates #only-cart-dates
-  $(document).on('change', '.submitchange', function() {
-    $.ajax({ // we can probably use .get() instead of .ajax(), but this is more flexible going forward since it's essentially the same
-      type: "GET",
-      url: update_cart_path.value, // defined in _cart_dates in hidden field
-      beforeSend: function(){
-            $('#catalog').addClass('invisible').fadeOut('slow');
-//            $('#catalog').hide('slow');
-            },
-      data: { 'reserver_id': reserver_id.value,
-              'start_date_cart': cart_start_date_cart.value,
-              'due_date_cart': cart_due_date_cart.value,
-              'page': getURLParameter('page') },
-      dataType: "script",
-      complete: function(){
-            $('#catalog').removeClass('invisible').fadeIn('slow');
-//            $('#catalog').show('slow');
-            truncate();
-            }
-    });
-  });
+//  $(document).on('change', '.submitchange', function() {
+//    $.ajax({ // we can probably use .get() instead of .ajax(), but this is more flexible going forward since it's essentially the same
+//      type: "GET",
+//      url: '/cart/update', // defined in _cart_dates in hidden field
+//      data: { 'reserver_id': 1,
+//              'start_date_cart': cart_start_date_cart.value,
+//              'due_date_cart': cart_due_date_cart.value },
+//      dataType: "script"
+//    });
+//  });
   
 // auto-submit cart dates #only-cart-reserver
 //  $(document).on('blur', '.submittable', function() {  // we need a different watch function than 'blur', which seems to break frequently
@@ -162,8 +147,8 @@ $(document).ready(function() {
   });
 
 //Load the user/new into the modal div for the new reserver button in the cart
-  $().ready(function() {
-    $('#modal').click(function() {
-      $('#userModal div.modal-body').load(new_user_path.value, {from_cart : true }); // new_user_path defined in _cart_dates
-    });
+$().ready(function() {
+  $('#modal').click(function() {
+    $('#userModal div.modal-body').load(new_user_path.value, {from_cart : true }); // new_user_path defined in _cart_dates
   });
+});

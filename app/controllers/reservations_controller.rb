@@ -9,7 +9,7 @@ class ReservationsController < ApplicationController
       elsif params[:show_returned]
         @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved, Reservation.returned].delete_if{|a| a.empty?} #remove empty arrays from set
       elsif params[:upcoming]
-        @reservations_set = [Reservation.upcoming].delete_if{|a| a.empty?}
+        @hold_list = [Reservation.upcoming].delete_if{|a| a.empty?}
       else
         @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved].delete_if{|a| a.empty?}
       end
@@ -104,30 +104,30 @@ class ReservationsController < ApplicationController
     
     # throw all the reservations that are being checked out into an array
     params[:reservations].each do |reservation_id, reservation_hash|
-        if reservation_hash[:equipment_object_id] != ('' or NIL) then #update attributes for all equipment that is checked off
+        if reservation_hash[:equipment_object_id] != ('' or nil) then #update attributes for all equipment that is checked off
           r = Reservation.find(reservation_id)
           r.checkout_handler = current_user
           r.checked_out = Time.now
           r.equipment_object = EquipmentObject.find(reservation_hash[:equipment_object_id])
 
           # deal with checkout procedures
-          procedures_not_done = '' # initialize
+          procedures_not_done = "" # initialize
           r.equipment_model.checkout_procedures.each do |check|
-            if reservation_hash[:checkout_procedures] == NIL # if none were checked, note that
-              procedures_not_done += '* ' + check.step + '\n'
+            if reservation_hash[:checkout_procedures] == nil # if none were checked, note that
+              procedures_not_done += "* " + check.step + "\n"
             elsif !reservation_hash[:checkout_procedures].keys.include?(check.id.to_s) # if you didn't check it of, add to string
-              procedures_not_done += '* ' + check.step + '\n'
+              procedures_not_done += "* " + check.step + "\n"
             end
           end
 
           # add procedures_not_done to r.notes so admin gets the errors
           # if no notes and some procedures not done
           if (reservation_hash[:notes] == ('' or NIL)) and (!procedures_not_done.blank?)
-            r.notes = 'The following checkout procedures were not performed:\n' + procedures_not_done
+            r.notes = "The following checkout procedures were not performed:\n" + procedures_not_done
           elsif procedures_not_done.blank? # if all procedures were done
             r.notes = reservation_hash[:notes]
           else # if there is a note and some checkout procedures were not done
-            r.notes = reservation_hash[:notes] + '\n\nThe following checkout procedures were not performed:\n' + procedures_not_done
+            r.notes = reservation_hash[:notes] + "\n\nThe following checkout procedures were not performed:\n" + procedures_not_done
           end
 
           # put the data into the container we defined at the beginning of this action
@@ -188,23 +188,23 @@ class ReservationsController < ApplicationController
         r.checked_in = Time.now
 
         # deal with checkout procedures
-        procedures_not_done = '' # initialize
+        procedures_not_done = "" # initialize
         r.equipment_model.checkin_procedures.each do |check|
           if reservation_hash[:checkin_procedures] == NIL # if none were checked, note that
-            procedures_not_done += '* ' + check.step + '\n'
-          elsif !reservation_hash[:checkin_procedures].keys.include?(check.id.to_s) # if you didn't check it of, add to string
-            procedures_not_done += '* ' + check.step + '\n'
+            procedures_not_done += "* " + check.step + "\n"
+          elsif !reservation_hash[:checkin_procedures].keys.include?(check.id.to_s) # if you didn"t check it of, add to string
+            procedures_not_done += "* " + check.step + "\n"
           end
         end
 
         # add procedures_not_done to r.notes so admin gets the errors
         # if no notes and some procedures not done
-        if (reservation_hash[:notes] == ('' or NIL)) and (!procedures_not_done.blank?)
-          r.notes = '\n\nThe following check-in procedures were not performed:\n' + procedures_not_done
+        if (reservation_hash[:notes] == ("" or NIL)) and (!procedures_not_done.blank?)
+          r.notes = "\n\nThe following check-in procedures were not performed:\n" + procedures_not_done
         elsif procedures_not_done.blank? # if all procedures were done
-          r.notes = '\n\n' + reservation_hash[:notes] # add blankline because there may well have been previous notes
+          r.notes = "\n\n" + reservation_hash[:notes] # add blankline because there may well have been previous notes
         else # if there is a note and some checkout procedures were not done
-          r.notes = '\n\n' + reservation_hash[:notes] + '\n\nThe following check-in procedures were not performed:\n' + procedures_not_done
+          r.notes = "\n\n" + reservation_hash[:notes] + "\n\nThe following check-in procedures were not performed:\n" + procedures_not_done
         end
 
         # put the data into the container we defined at the beginning of this action
