@@ -19,7 +19,11 @@
 </div>
 
 <% if params[:upcoming] %>
-	<%= render :partial => "hold_list", :collection => @hold_list %>
+  <% unless @hold_list.empty? %>
+	  <%= render :partial => "hold_list", :collection => @hold_list %>
+	<% else %>
+	  <h3>There is no equipment to hold for today.</h3>
+	<% end %>
 <% else %>
 	<%= render :partial => "reservations_list", :collection => @reservations_set %>
 <% end %>
