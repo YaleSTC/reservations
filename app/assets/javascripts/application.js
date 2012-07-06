@@ -87,6 +87,11 @@ $(document).ready(function() {
 
 	$(".btn#modal").tooltip();
 
+  $('#modal').click(function() {
+    //$('#userModal div.modal-body').load(new_user_path.value, {from_cart : true }); // new_user_path defined in _cart_dates
+    $('#userModal div.modal-body').load('/users/new #content', {from_cart : true }); // new_user_path defined in _cart_dates
+  });
+
 });
 // to disable selection of dates in the past with datepicker
 $.datepicker.setDefaults({
@@ -105,7 +110,7 @@ $.datepicker.setDefaults({
 //    });
 //  });
 
-  $(".btn.btn-primary").bind('ajax:beforeSend', function(){
+$(".btn.btn-primary").bind('ajax:success', function(){
     alert("Test!");
   });
   
@@ -151,8 +156,8 @@ $.datepicker.setDefaults({
   });
 
 //Load the user/new into the modal div for the new reserver button in the cart
-$().ready(function() {
-  $('#modal').click(function() {
-    $('#userModal div.modal-body').load(new_user_path.value, {from_cart : true }); // new_user_path defined in _cart_dates
-  });
-});
+//$().ready(function() {
+  //$('#modal').click(function() {
+    //$('#userModal div.modal-body').load(new_user_path.value, {from_cart : true }); // new_user_path defined in _cart_dates
+  //});
+//});

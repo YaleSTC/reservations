@@ -48,25 +48,23 @@ class UsersController < ApplicationController
     @user.login = session[:cas_user] unless current_user and (current_user.is_admin_in_adminmode? or current_user.is_admin_in_checkoutpersonmode? or current_user.is_checkout_person?)
     @user.is_admin = true if User.count == 0
     if @user.save
-      respond_with do |format|
-        format.html{redirect_to root_path}
-      end
-      flash[:notice] = "Successfully created user."
-#   redirect to New Reservations page iff logged in as admin or
-#   checkout person
-      if params[:from_cart] == "true" #updates the cart and redirects to catalog if new reserver button in cart was used
-        session[:cart].set_reserver_id(@user.id)
-        redirect_to root_path
-      else
-      redirect_to ((current_user.is_admin_in_adminmode? or current_user.is_admin_in_checkoutpersonmode? or current_user.is_checkout_person?) ? @user : root_path)
+      respond_to do |format|
+        flash[:notice] = "Successfully created user."
+        #   redirect to New Reservations page iff logged in as admin or
+        #   checkout person
+        if params[:from_cart] == "true" #updates the cart and redirects to catalog if new reserver button in cart was used
+          session[:cart].set_reserver_id(@user.id)
+          binding.pry
+          #format.js {render :action => 'create_success'}
+          format.js {redirect_to "'/catalog"}
+        else
+          format.js {redirect_to ((current_user.is_admin_in_adminmode? || current_user.is_admin_in_checkoutpersonmode? || current_user.is_checkout_person?) ? @user : root_path)}
+        end
       end
     else
       respond_to do |format|
-        #format.js {render :action => '
-        format.json{
-          render :json => @user.errors.to_json
-        }
-        format.html { redirect_to root_path }
+        format.html { render :action => "sdfnew" }
+        format.js {render :action => 'load_validations'}
       end
     end
   end
