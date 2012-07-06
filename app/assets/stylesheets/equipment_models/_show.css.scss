@@ -21,3 +21,7 @@
 .image_box {
 	height: 260px;
 }
+
+.giant-numbers {
+	@include giant-number;
+}

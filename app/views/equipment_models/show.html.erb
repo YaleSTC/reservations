@@ -84,26 +84,45 @@
 
 
   <h3><legend id="details">Details</legend></h3>
+  <%= content_tag :div, :class => 'row' do %>
+    <%= content_tag :div, :class => 'span4' do %>
+      <h4>Late Fee</h4>
+    <% end %>
+    <%= content_tag :div, :class => 'span3' do %>
+      <h4>Replacement Fee</h4>
+    <% end %>
+    <%= content_tag :div, :class => 'span2' do %>
+      <% if current_user.is_admin_in_adminmode? %>
+        <h4>Max. Per User</h4>
+      <% end %>
+    <% end %>
+  <% end %>
   
-  <p>
-    <strong>Late Fee:</strong>
-    <%= number_to_currency(@equipment_model.late_fee) %> / day
-    <strong>Replacement Fee:</strong>
-    <%= number_to_currency(@equipment_model.replacement_fee) %>
-  <% if current_user.is_admin_in_adminmode? %>
-      <strong>Max Per User:</strong>
-      <%= @equipment_model.maximum_per_user %>
+  <%= content_tag :div, :class => 'row giant-numbers' do %>
+    <%= content_tag :div, :class => 'span4' do %>
+      <%= number_to_currency(@equipment_model.late_fee) %> / day
+    <% end %>
+    <%= content_tag :div, :class => 'span3' do %>
+      <%= number_to_currency(@equipment_model.replacement_fee) %>
+    <% end %>
+    <%= content_tag :div, :class => 'span2' do %>      
+      <%= @equipment_model.maximum_per_user if current_user.is_admin_in_adminmode? %>
+    <% end %>
   <% end %>
   
   <h3><legend id="documentation">Documentation</legend></h3>
   <%= content_tag :div, :class => 'row' do %>
     <%= content_tag :div, :class => 'span3' do %>
-      <%= (link_to @equipment_model.documentation_file_name, @equipment_model.documentation.url) unless !@equipment_model.documentation.exists? %>
+      <h4>
+        <%= (link_to @equipment_model.documentation_file_name, @equipment_model.documentation.url) unless !@equipment_model.documentation.exists? %>
+      </h4>
     <% end %>
   <% end %>
   <%= content_tag :div, :class => 'row' do %>
     <%= content_tag :div, :class => 'span2' do %>
-      <%= content_tag :i, nil, :class => 'icon-file document' %>
+      <%= link_to @equipment_model.documentation.url do %>
+        <%= content_tag :i, nil, :class => 'icon-file document' %>
+      <% end %>
     <% end %>
   <% end %>
   
@@ -168,5 +187,5 @@
     <%= link_to "Edit "+@equipment_model.name, edit_equipment_model_path(@equipment_model), :class => 'btn' %>
     <%= link_to "Destroy "+@equipment_model.name, @equipment_model, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete, :class => 'btn btn-danger' %>
   <% end %>
-  <%= link_to "View All "+@equipment_model.category.name.pluralize, category_equipment_models_path(@equipment_model.category), :class => 'btn' %>
+  <%= link_to "View All "+@equipment_model.category.name.pluralize, category_equipment_models_path(@equipment_model.category), :class => 'btn view_all' %>
 </div>

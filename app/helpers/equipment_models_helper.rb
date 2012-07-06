@@ -8,7 +8,6 @@ module EquipmentModelsHelper
   def progress_color
     width = @equipment_model.equipment_objects.size != 0 ? (((@equipment_model.available?(cart.start_date..cart.due_date) || "0").to_i) / 
     @equipment_model.equipment_objects.size) * 100 : 0
-    binding.pry
     a_third = (100 / 3)
     
     if width > (a_third * 2)
