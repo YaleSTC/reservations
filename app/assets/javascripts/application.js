@@ -79,6 +79,10 @@ $.datepicker.setDefaults({
       dataType: "script"
     });
   });
+
+  $(".btn.btn-primary").bind('ajax:beforeSend', function(){
+    alert("Test!");
+  });
   
 // auto-submit cart dates #only-cart-reserver
 //  $(document).on('blur', '.submittable', function() {  // we need a different watch function than 'blur', which seems to break frequently

@@ -48,6 +48,9 @@ class UsersController < ApplicationController
     @user.login = session[:cas_user] unless current_user and (current_user.is_admin_in_adminmode? or current_user.is_admin_in_checkoutpersonmode? or current_user.is_checkout_person?)
     @user.is_admin = true if User.count == 0
     if @user.save
+      respond_with do |format|
+        format.html{redirect_to root_path}
+      end
       flash[:notice] = "Successfully created user."
 #   redirect to New Reservations page iff logged in as admin or
 #   checkout person
@@ -58,7 +61,13 @@ class UsersController < ApplicationController
       redirect_to ((current_user.is_admin_in_adminmode? or current_user.is_admin_in_checkoutpersonmode? or current_user.is_checkout_person?) ? @user : root_path)
       end
     else
-      render :action => 'new'
+      respond_to do |format|
+        #format.js {render :action => '
+        format.json{
+          render :json => @user.errors.to_json
+        }
+        format.html { redirect_to root_path }
+      end
     end
   end
 
