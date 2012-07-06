@@ -10,3 +10,9 @@
   }
 
 .cart_reserver { margin-bottom: 7px; }
+
+@media (min-width: 768px) and (max-width: 1199px) {
+	#empty_cart_btn {
+		margin-bottom: 8px;
+	}
+}
