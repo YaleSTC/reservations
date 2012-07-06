@@ -17,6 +17,7 @@ Reservations::Application.routes.draw do
     collection do
       get :check_out
       get :check_in
+      get :find
     end
     resources :reservations
   end
@@ -62,6 +63,8 @@ Reservations::Application.routes.draw do
   
   match '/app_config/edit' => 'app_config#edit', :as => :edit_app_config
   match '/app_config/update' => 'app_config#update', :as => :update_app_config  
+
+  #match '/users/find' => 'users#find', :as => :find_user
   
   match ':controller(/:action(/:id(.:format)))'
 

@@ -1,0 +1,12 @@
+<div id ="searchbox" class ="well" >
+  <%= form_tag find_users_path do %>
+    <%= label_tag :searched_id, 'Find User' %>
+    <div class="input-append">
+      <%# Must be on one line for button to be appended properly. If you need to edit it, %>
+      <%# feel free to add line breaks while you're working on it, but make sure to return it %>
+      <%# to one line when you're done. %>
+      <%= autocomplete_field_tag 'fake_searched_id','', autocomplete_user_last_name_reservations_path,
+        :size => 30, :update_elements => {:id => '#searched_id'}, :placeholder => "Start typing a name or login",:class => 'submittable span2' %><%= hidden_field_tag 'searched_id' %><%= button_tag sanitize("#{content_tag :i, nil, class: "icon-search"}"), :class => "btn" %>
+    </div>
+  <% end %>
+</div>

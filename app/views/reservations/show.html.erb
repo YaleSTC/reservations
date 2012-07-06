@@ -24,7 +24,7 @@
  
 	<p>
 		<strong>Notes:</strong>
-		<%= @reservation.notes %>
+		<%= simple_format(@reservation.notes) %>
 	</p>
 
   <% if @reservation.checked_out %>
