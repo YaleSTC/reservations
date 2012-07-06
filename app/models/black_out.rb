@@ -4,8 +4,10 @@ class BlackOut < ActiveRecord::Base
   attr_accessible :start_date, :end_date, :notice, :equipment_model_id, :black_out_type, :created_by
  
   def self.date_is_blacked_out(date)
-    unless (BlackOut.where(:equipment_model_id => 0).where(:start_date => date).empty?) &&  (BlackOut.where(:equipment_model_id => 0).where(:end_date => date).empty?)
-      return true
+    BlackOut.all.each do |black_out|
+       if (black_out[:start_date] .. black_out[:end_date]).cover?(date)
+        return black_out
+       end
     end
     return false
   end

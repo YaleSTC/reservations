@@ -45,6 +45,7 @@ class BlackOutsController < ApplicationController
     params[:black_out][:start_date] = Date.strptime(params[:black_out][:start_date],'%m/%d/%Y')
     params[:black_out][:end_date] = Date.strptime(params[:black_out][:end_date],'%m/%d/%Y')
     params[:black_out][:created_by] = current_user[:id]
+    params[:black_out][:equipment_model_id] = 0
     @black_out = BlackOut.new(params[:black_out])
 
     respond_to do |format|
@@ -66,6 +67,7 @@ class BlackOutsController < ApplicationController
     params[:black_out][:start_date] = Date.strptime(params[:black_out][:start_date],'%m/%d/%Y')
     params[:black_out][:end_date] = Date.strptime(params[:black_out][:end_date],'%m/%d/%Y')
     params[:black_out][:created_by] = current_user[:id]
+    params[:black_out][:equipment_model_id] = 0
 
     respond_to do |format|
       if @black_out.update_attributes(params[:black_out])
@@ -89,29 +91,5 @@ class BlackOutsController < ApplicationController
       format.json { head :no_content }
     end
   end
-
-  def flash_message
-   flash.now[:notice] = 'some message'
-    respond_to do |format|
-      format.html{redirect_to root_path}
-      format.js{render :file => "reservations/cart_dates"}
-    end
-   end
-
-
-    def flash_message_from_model
-    session[:cart].set_start_date(Date.strptime(params[:start_date_cart],'%m/%d/%Y'))
-    session[:cart].set_due_date(Date.strptime(params[:due_date_cart],'%m/%d/%Y'))
-    session[:cart].set_reserver_id(params[:reserver_id])
-    flash[:notice] = "Cart dates updated."
-    flash.now[:notice] = 'some message'
-    if !cart.valid_dates?
-      flash[:error] = cart.errors.values.flatten.join("<br/>").html_safe
-      cart.errors.clear
-    end
-    respond_to do |format|
-      format.html{render :partial => "reservations/cart_dates"}
-    end
-  end  
 
 end

@@ -156,7 +156,6 @@ class Cart
     valid = false if !duration_allowed?
     valid = false if !available?
     valid = false if !item_not_blacked_out?
-    valid = false
   end
 
   # Checks that neither start date nor due date are in the past
@@ -309,19 +308,18 @@ class Cart
   end
 
   #Need to include check incase there are no items currently in basket.
+
   # Check that the item is not blacked out on the dates it is being reserved for
   def item_not_blacked_out?
-     if (BlackOut.date_is_blacked_out(start_date) || BlackOut.date_is_blacked_out(due_date))
-        errors.add(:start_date, "Item cannot be reserved for pick up or checkout on this day.")
-        return false
-      end
-     items.each do |item|
-       eq_model = item.equipment_model
-       if EquipmentModel.blackout_on_start_or_end_date(start_date..due_date,eq_model.id)
-         return false
-       end
-     end
-    return true
+    flag = true
+    if (a = BlackOut.date_is_blacked_out(start_date))
+       errors.add(:start_date, "Your start date is not available because " + a.notice + "")
+       flag = false
+    elsif (a = BlackOut.date_is_blacked_out(due_date))
+       errors.add(:due_date, "Your end date is not available because " + a.notice + "")
+       flag = false 
+    end 
+    return flag
   end
 
   # User Validation

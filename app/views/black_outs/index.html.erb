@@ -8,7 +8,7 @@ If a user tries to create a reservation for any of the equipment models listed b
 <br>
 <table>
   <tr>
-    <th>Equipment model</th>
+   <!-- <th>Equipment model</th> -->
     <th>Start date</th>
     <th>End date</th>
     <th>Notice</th>
@@ -21,12 +21,12 @@ If a user tries to create a reservation for any of the equipment models listed b
 
 <% @black_outs.each do |black_out| %>
   <tr>
-    <td><%= (black_out.equipment_model_id == 0) ? "All Equipment Models" : EquipmentModel.find(black_out.equipment_model_id).name %></td>
+   <!-- <td><%# (black_out.equipment_model_id == 0) ? "All Equipment Models" : EquipmentModel.find(black_out.equipment_model_id).name %></td> -->
     <td><%= black_out[:start_date].strftime('%m/%d/%Y') %></td>
     <td><%= black_out[:end_date].strftime('%m/%d/%Y') %></td>
     <td><%= black_out.notice %></td>
     <td><%= User.find((black_out[:created_by])).name %></td>
-    <td><%= black_out.black_out_type == 1 ? "Black Out" : "Notice Only" %></td>
+    <td><%= black_out[:black_out_type] == 1 ? "Black Out" : "Notice Only" %></td>
     <td><%= link_to 'Show', black_out %></td>
     <td><%= link_to 'Edit', edit_black_out_path(black_out) %></td>
     <td><%= link_to 'Destroy', black_out, confirm: 'Are you sure?', method: :delete %></td>
