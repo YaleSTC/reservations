@@ -4,12 +4,12 @@
 <!-- Commented out quicksearch for now until we replace it with a better search functionality - mnquintana -->
 <%# render :partial => 'quicksearch' %>
 
-   <% if (BlackOut.date_is_blacked_out(cart.start_date)) && (BlackOut.date_is_blacked_out(cart.due_date)) %>
-      <% flash[:error] = "We apologize for the inconvenience, but your start date and due date have been blacked out in our system, and you will not be able to start and end your reservation on the selected dates. " + (BlackOut.where(:equipment_model_id => 0).where(:start_date => cart.start_date).first.notice) %>
-   <% elsif (BlackOut.date_is_blacked_out(cart.start_date)) %>
-      <% flash[:error] = "We apologize for the inconvenience, but your start date has been blacked out in our system, and you will not be able to start your reservation on the selected date. " + (BlackOut.where(:equipment_model_id => 0).where(:start_date => cart.start_date).first.notice) %>
-   <% elsif (BlackOut.date_is_blacked_out(cart.due_date)) %>
-      <% flash[:error] = "We apologize for the inconvenience, but your start date has been blacked out in our system, and you will not be able to start your reservation on the selected date. " + (BlackOut.where(:equipment_model_id => 0).where(:end_date => cart.due_date).first.notice) %>
+   <% if (a = BlackOut.date_is_blacked_out(cart.start_date)) && (b = BlackOut.date_is_blacked_out(cart.due_date)) %>
+      <% flash[:error] = a.notice + b.notice %>
+   <% elsif (a = BlackOut.date_is_blacked_out(cart.start_date)) %>
+      <% flash[:error] = a.notice %>
+   <% elsif (a = BlackOut.date_is_blacked_out(cart.due_date)) %>
+      <% flash[:error] = a.notice %>
    <% end %>
 
 <% if @equipment_models_by_category.empty? %>
@@ -89,4 +89,5 @@
     <% end %>
     <%= paginate @paginated_equipment_models_by_category %>
   </div>
+<% end %>
 <% end %>
