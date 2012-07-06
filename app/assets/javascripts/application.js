@@ -69,16 +69,16 @@ $.datepicker.setDefaults({
 });
 
 // auto-submit cart dates #only-cart-dates
-  $(document).on('change', '.submitchange', function() {
-    $.ajax({ // we can probably use .get() instead of .ajax(), but this is more flexible going forward since it's essentially the same
-      type: "GET",
-      url: update_cart_path.value, // defined in _cart_dates in hidden field
-      data: { 'reserver_id': reserver_id.value,
-              'start_date_cart': cart_start_date_cart.value,
-              'due_date_cart': cart_due_date_cart.value },
-      dataType: "script"
-    });
-  });
+//  $(document).on('change', '.submitchange', function() {
+//    $.ajax({ // we can probably use .get() instead of .ajax(), but this is more flexible going forward since it's essentially the same
+//      type: "GET",
+//      url: '/cart/update', // defined in _cart_dates in hidden field
+//      data: { 'reserver_id': 1,
+//              'start_date_cart': cart_start_date_cart.value,
+//              'due_date_cart': cart_due_date_cart.value },
+//      dataType: "script"
+//    });
+//  });
   
 // auto-submit cart dates #only-cart-reserver
 //  $(document).on('blur', '.submittable', function() {  // we need a different watch function than 'blur', which seems to break frequently
