@@ -313,11 +313,15 @@ class Cart
   def item_not_blacked_out?
     flag = true
     if (a = BlackOut.date_is_blacked_out(start_date))
-       errors.add(:start_date, "Your start date is not available because " + a.notice + "")
-       flag = false
+       errors.add(:start_date, a.notice)
+       if (a.black_out_type_is_hard)
+         flag = false
+       end
     elsif (a = BlackOut.date_is_blacked_out(due_date))
-       errors.add(:due_date, "Your end date is not available because " + a.notice + "")
-       flag = false 
+       errors.add(:due_date, a.notice)
+       if (a.black_out_type_is_hard)
+         flag = false
+       end
     end 
     return flag
   end

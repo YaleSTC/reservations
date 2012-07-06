@@ -139,34 +139,22 @@ class EquipmentModel < ActiveRecord::Base
     self.documents.images
   end
 
-  def available?(date_range)
-        BlackOut.all.each do |black_out|
-     binding.pry
-     #(black_out.start_date..black_out.end_date) & (date_range)
-    end
-
+  def available?(date_range) #This does not actually return true or false.
+       if (a = BlackOut.date_is_blacked_out(date_range.first)) && a.black_out_type_is_hard
+         #add Error about the black out date?
+         return 0
+       end
+       if (a = BlackOut.date_is_blacked_out(date_range.first)) && a.black_out_type_is_hard
+         #add Error about the black out date?
+         return 0
+       end
     overall_count = self.equipment_objects.size
     date_range.each do |date|
       available_on_date = available_count(date)
       overall_count = available_on_date if available_on_date < overall_count
-#      no idea why this would return a boolean sometimes? that breaks other things
-#      return false if overall_count == 0
-    end
-    if (BlackOut.date_is_blacked_out(date_range.first) || EquipmentModel.blackout_on_start_or_end_date(date_range,self.id) || BlackOut.date_is_blacked_out(date_range.last))
-        overall_count = 0
     end 
     overall_count
   end
-
-   def self.blackout_on_start_or_end_date(date_range, em_id)
-     startMatches = BlackOut.where(:start_date => date_range.first).where(:equipment_model_id => em_id)
-     endMatches = BlackOut.where(:end_date => date_range.last).where(:equipment_model_id => em_id)
-     if !(startMatches.empty? || endMatches.empty?)
-       return true
-     end
-     return false
-  end
-
   
   def available_count(date)
     # get the total number of objects of this kind

@@ -46,6 +46,14 @@ class BlackOutsController < ApplicationController
     params[:black_out][:end_date] = Date.strptime(params[:black_out][:end_date],'%m/%d/%Y')
     params[:black_out][:created_by] = current_user[:id]
     params[:black_out][:equipment_model_id] = 0
+
+    # make sure dates are valid
+    if params[:black_out][:end_date] < params[:black_out][:start_date]
+      flash[:error] = 'Due date must be after the start date.'
+      redirect_to :back and return
+    end
+    
+
     @black_out = BlackOut.new(params[:black_out])
 
     respond_to do |format|
@@ -69,6 +77,14 @@ class BlackOutsController < ApplicationController
     params[:black_out][:created_by] = current_user[:id]
     params[:black_out][:equipment_model_id] = 0
 
+    
+    # make sure dates are valid
+    if params[:black_out][:end_date] < params[:black_out][:start_date]
+      flash[:error] = 'Due date must be after the start date.'
+      redirect_to :back and return
+    end
+
+
     respond_to do |format|
       if @black_out.update_attributes(params[:black_out])
         format.html { redirect_to @black_out, notice: 'Black out was successfully updated.' }
@@ -84,7 +100,7 @@ class BlackOutsController < ApplicationController
   # DELETE /black_outs/1.json
   def destroy
     @black_out = BlackOut.find(params[:id])
-    @black_out.destroy
+    @black_out.destroy(:force)
 
     respond_to do |format|
       format.html { redirect_to black_outs_url }
