@@ -56,7 +56,9 @@ class ReservationsController < ApplicationController
             end
           end
           session[:cart] = Cart.new
-          UserMailer.reservation_confirmation(complete_reservation).deliver
+          unless AppConfig.first.reservation_confirmation_email_active?
+            UserMailer.reservation_confirmation(complete_reservation).deliver
+          end
           format.html {redirect_to catalog_path, :flash => {:notice => "Successfully created reservation. " } }
         rescue
           format.html {redirect_to catalog_path, :flash => {:error => "Oops, something went wrong with making your reservation."} }

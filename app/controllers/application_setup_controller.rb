@@ -30,7 +30,7 @@ class ApplicationSetupController < ApplicationController
   end
   
   def initialize_app_configs
-     if @app_config.nil?
+     if @app_configs.nil?
        AppConfig.create!({ :site_title => "Reservations",
                            :admin_email => "admin@admin.admin",
                            :department_name => "School of Art Digital Technology Office",
@@ -64,12 +64,12 @@ class ApplicationSetupController < ApplicationController
    
    def new_app_configs
      flash[:notice] = "Edit your application settings here."
-     @app_config = AppConfig.first
+     @app_configs = AppConfig.first
    end
    
    def create_app_configs
-     @app_config = AppConfig.first   
-      if @app_config.update_attributes(params[:app_config])
+     @app_configs = AppConfig.first   
+      if @app_configs.update_attributes(params[:app_config])
         flash[:notice] = "Application settings updated successfully."
         redirect_to root_path
       else
