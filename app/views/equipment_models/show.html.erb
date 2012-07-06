@@ -135,48 +135,47 @@
     </p>
     <p id="equipment_objects">
       <% if @equipment_model.equipment_objects.empty? %>
-        none
+        (none)
       <% else %>
-        <ul>
-          <% @equipment_model.equipment_objects.each do |equipment_object| %>
-            <li>
-              <%= link_to equipment_object.name, equipment_object %> 
-              (<%= equipment_object.status %>) <%= link_to "[x]", equipment_object, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete %>
-              <%= "<br>&nbsp;&nbsp;<small>Serial #: #{equipment_object.serial}</small>".html_safe unless equipment_object.serial.blank? %>
-            </li>
-          <% end %>
-          <li style="list-style:none">
-          </li>
-        </ul>
+            <%= render 'equipment_objects_table' %>
       <% end %>
     </p>
     
     <h3><legend>Procedures</legend></h3>
+    <%= content_tag :div, :class => 'row' do %>
+      <%= content_tag :div, :class => 'span4' do %>
+        <p><h4>Check-Out</h4></p>
+      <% end %>
+      <%= content_tag :div, :class => 'span4' do %>
+        <p><h4>Check-In</h4></p>
+      <% end %>
+    <% end %>
     
-    <p>
-      <strong>Checkout Procedures:</strong>
-      <% if @equipment_model.checkout_procedures.nil? %>
-        none
-      <% else %>
-        <ol>
-          <% @equipment_model.checkout_procedures.each do |checkout_procedure| %>
-            <li><%= checkout_procedure.step %></li>
-          <% end %>
-        </ol>
+    <%= content_tag :div, :class => 'row' do %>
+      <%= content_tag :div, :class => 'span4' do %>
+        <% if @equipment_model.checkout_procedures.empty? %>
+          <p>(none)</p>
+        <% else %>
+          <ol>
+            <% @equipment_model.checkout_procedures.each do |checkout_procedure| %>
+              <li><%= checkout_procedure.step %></li>
+            <% end %>
+          </ol>
+        <% end %>
       <% end %>
-    </p>
-    <p>
-      <strong>Checkin Procedures:</strong>
-      <% if @equipment_model.checkin_procedures.nil? %>
-        none
-      <% else %>
-        <ol>
-          <% @equipment_model.checkin_procedures.each do |checkin_procedure| %>
-            <li><%= checkin_procedure.step %></li>
-          <% end %>
-        </ol>
+      <%= content_tag :div, :class => 'span4' do %>
+        <% if @equipment_model.checkin_procedures.empty? %>
+          (none)
+        <% else %>
+          <ol>
+            <% @equipment_model.checkin_procedures.each do |checkin_procedure| %>
+              <li><%= checkin_procedure.step %></li>
+            <% end %>
+          </ol>
+        <% end %>
       <% end %>
-    </p>
+    <% end %>  
+    
   <% end %>
 
 </fieldset>
