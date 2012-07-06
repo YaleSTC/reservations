@@ -32,7 +32,7 @@
         </h3>
         <p>    
           <%= content_tag :div, class: "progress #{progress_color}" do %>
-            <%= content_tag :div, nil, class: 'bar', style: "width: #{bar_progress};" %>
+            <%= content_tag :div, nil, class: 'bar', style: "width: 0%;", :"data-percentage" => bar_progress.chop %>
           <% end %>
         </p>
         <h3 class="availability">from <%= cart.start_date.strftime("%b %d, %Y") %> – <%= cart.due_date.strftime("%b %d, %Y") %></h3>
@@ -92,12 +92,13 @@
 <!-- SUBBODY SECTION -->
 
 <!-- DESCRIPTION -->
-  <h3><legend id="description">Description</legend></h3>
+  <h3><span id="description">Description</span></h3>
   <p>
     <%= @equipment_model.formatted_description.html_safe %>
   </p>
 
 <!-- DETAILS -->
+<fieldset>
   <h3><legend id="details">Details</legend></h3>
   <!-- Title Row -->
   <%= content_tag :div, :class => 'row' do %>
@@ -113,7 +114,6 @@
       <% end %>
     <% end %>
   <% end %>
-  
   <!-- Content Row -->
   <%= content_tag :div, :class => 'row giant-numbers' do %>
     <%= content_tag :div, :class => 'span4' do %>
@@ -126,6 +126,7 @@
       <%= @equipment_model.maximum_per_user if current_user.is_admin_in_adminmode? %>
     <% end %>
   <% end %>
+  </fieldset>
   
   <!-- DOCUMENTATION -->
   <h3><legend id="documentation">Documentation</legend></h3>
