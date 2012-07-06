@@ -31,7 +31,7 @@
           <%= @equipment_model.available?(cart.start_date..cart.due_date) || "0"%> available of <%= @equipment_model.equipment_objects.size %>
         </h3>
         <p>    
-          <%= content_tag :div, class: "progress progress-striped #{progress_color}" do %>
+          <%= content_tag :div, class: "progress #{progress_color}" do %>
             <%= content_tag :div, nil, class: 'bar', style: "width: #{bar_progress};" %>
           <% end %>
         </p>
@@ -49,7 +49,7 @@
     <div class="associated_em_box">    
       <div class="row">
           <div class="span6">
-            <h3>Users Tend to Also Reserve:</h3>
+            <h3>You Might Also Like:</h3>
             <% unless @equipment_model.associated_equipment_models.empty? %>
               <fieldset>
                 <legend>Recommended Items:</legend>
