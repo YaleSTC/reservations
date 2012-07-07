@@ -21,7 +21,7 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    @current_user ||= User.find_by_login(session[:cas_user]) if session[:cas_user]
+    @current_user ||= User.include_deleted.find_by_login(session[:cas_user]) if session[:cas_user]
   end
 
   #-------- before_filter methods --------

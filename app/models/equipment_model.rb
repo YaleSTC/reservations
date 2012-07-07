@@ -36,8 +36,6 @@ class EquipmentModel < ActiveRecord::Base
   ##has_many :accessories_equipment_models, :foreign_key => :equipment_model_id
   ##has_many :accessories, :through => :accessories_equipment_models
 
-
-
   ## Validations ##
 
   validates :name, 
@@ -59,6 +57,12 @@ class EquipmentModel < ActiveRecord::Base
                   :max_per_user, :document_attributes, :accessory_ids, :deleted_at, 
                   :checkout_procedures_attributes, :checkin_procedures_attributes, :photo, 
                   :documentation, :max_renewal_times, :max_renewal_length, :renewal_days_before_due
+
+   default_scope where(:deleted_at => nil)
+   
+    def self.include_deleted
+      self.unscoped
+    end
 
   #Code necessary for Paperclip and image/pdf uploading
   has_attached_file :photo, #generates profile picture 

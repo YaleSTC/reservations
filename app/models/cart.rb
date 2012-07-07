@@ -111,7 +111,7 @@ class Cart
   end
 
   def reserver
-    reserver = User.find(@reserver_id)
+    reserver = User.include_deleted.find(@reserver_id)
   end
 
   def fix_due_date
@@ -214,7 +214,7 @@ class Cart
     none_to_renew = true
     reservations_to_renew = renewable_reservations
     
-    eq_model_names = reservations_to_renew.collect {|r| EquipmentModel.find(r.equipment_model_id).name}.uniq
+    eq_model_names = reservations_to_renew.collect {|r| EquipmentModel.include_deleted.find(r.equipment_model_id).name}.uniq
     
     unless reservations_to_renew.empty?
       eq_model_names.each do |eq_model_name|
@@ -254,7 +254,7 @@ class Cart
 
     # Make a hash of the reserver's counts for each category
     # e.g {category1=>cat1_count, category2 =>cat2_count} for the reserver
-    eq_models = EquipmentModel.find(h.keys)
+    eq_models = EquipmentModel.include_deleted.find(h.keys)
     reserver_categories = eq_models.collect{|model| model.category_id}.uniq
     reserver_cat_and_counts_arr = reserver_categories.collect do |category_id|
       count = 0
@@ -282,7 +282,7 @@ class Cart
     cart_categories.each do |category_id|
       curr_cat_reserver_count = reserver_category_counts[category_id]
       curr_cat_reserver_count ||= 0
-      curr_cat = Category.find(category_id)
+      curr_cat = Category.include_deleted.find(category_id)
     if curr_cat.maximum_per_user != "unrestricted"
         # Sum the number of items for a category in the cart and the number of items in a category a reserver has out
         unless curr_cat.maximum_per_user >= cart_cat_counts[category_id] + curr_cat_reserver_count

@@ -1,8 +1,8 @@
-<% title "Black Out of " + (@black_out.equipment_model_id == 0 ? "All Equipment Objects" : EquipmentModel.find(@black_out.equipment_model_id).name) %>
+<% title "Black Out of " + (@black_out.equipment_model_id == 0 ? "All Equipment Objects" : EquipmentModel.include_deleted.find(@black_out.equipment_model_id).name) %>
 
 <!--<p>
   <b>Equipment model affected:</b>
-  <%# (@black_out.equipment_model_id == 0) ? "All Equipment Models" : EquipmentModel.find(@black_out.equipment_model_id).name %>
+  <%# (@black_out.equipment_model_id == 0) ? "All Equipment Models" : EquipmentModel.include_deleted.find(@black_out.equipment_model_id).name %>
 </p> -->
 
 <p>
@@ -22,7 +22,7 @@
 
 <p>
   <b>Last Edited by:</b>
-  <%= User.find(@black_out.created_by).name %>
+  <%= User.include_deleted.find(@black_out.created_by).name %>
 </p>
 
 <p>
