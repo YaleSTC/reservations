@@ -50,20 +50,10 @@ class UsersController < ApplicationController
     if @user.save
       respond_to do |format|
         flash[:notice] = "Successfully created user."
-        #   redirect to New Reservations page iff logged in as admin or
-        #   checkout person
-        if params[:from_cart] == "true" #updates the cart and redirects to catalog if new reserver button in cart was used
-          session[:cart].set_reserver_id(@user.id)
-          binding.pry
-          #format.js {render :action => 'create_success'}
-          format.js {redirect_to "'/catalog"}
-        else
-          format.js {redirect_to ((current_user.is_admin_in_adminmode? || current_user.is_admin_in_checkoutpersonmode? || current_user.is_checkout_person?) ? @user : root_path)}
-        end
+        format.js {render :action => 'create_success'}
       end
     else
       respond_to do |format|
-        format.html { render :action => "sdfnew" }
         format.js {render :action => 'load_validations'}
       end
     end
