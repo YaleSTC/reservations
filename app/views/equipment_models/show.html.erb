@@ -82,20 +82,20 @@
     <% end %>
   </ul>
 </div>
-
+<hr />
 <!-- SUBBODY SECTION -->
 
 <!-- DESCRIPTION -->
-  <section id="description">
+<section id="description">
   <h3>Description</h3>
   <p>
     <%= sanitize(@equipment_model.formatted_description) %>
   </p>
-  </section>
+</section>
 
 <!-- DETAILS -->
-<fieldset>
-  <h3><legend id="details">Details</legend></h3>
+<section id="details">
+  <h3>Details</h3>
   <!-- Title Row -->
   <%= content_tag :div, :class => 'row' do %>
     <%= content_tag :div, :class => 'span4' do %>
@@ -122,32 +122,35 @@
       <%= @equipment_model.maximum_per_user if current_user.is_admin_in_adminmode? %>
     <% end %>
   <% end %>
-  </fieldset>
+</section>
   
-  <!-- DOCUMENTATION -->
-  <% if @equipment_model.documentation.exists? %>
-    <h3><legend id="documentation">Documentation</legend></h3>
-    <!-- Title Row -->
-    <%= content_tag :div, :class => 'row' do %>
-      <%= content_tag :div, :class => 'span3' do %>
-        <h4>
-          <%= (link_to @equipment_model.documentation_file_name, @equipment_model.documentation.url, target: "_blank") unless !@equipment_model.documentation.exists? %>
-        </h4>
-      <% end %>
+<!-- DOCUMENTATION -->
+<% if @equipment_model.documentation.exists? %>
+<section id="documentation">
+  <h3>Documentation</h3>
+  <!-- Title Row -->
+  <%= content_tag :div, :class => 'row' do %>
+    <%= content_tag :div, :class => 'span3' do %>
+      <h4>
+        <%= (link_to @equipment_model.documentation_file_name, @equipment_model.documentation.url, target: "_blank") unless !@equipment_model.documentation.exists? %>
+      </h4>
     <% end %>
-    <!-- Content Row -->
-    <%= content_tag :div, :class => 'row' do %>
-      <%= content_tag :div, :class => 'span2' do %>
-        <%= link_to @equipment_model.documentation.url, target: "_blank" do %>
-          <%= content_tag :i, nil, :class => 'icon-file document' %>
-        <% end %>
+  <% end %>
+  <!-- Content Row -->
+  <%= content_tag :div, :class => 'row' do %>
+    <%= content_tag :div, :class => 'span2' do %>
+      <%= link_to @equipment_model.documentation.url, target: "_blank" do %>
+        <%= content_tag :i, nil, :class => 'icon-file document' %>
       <% end %>
     <% end %>
   <% end %>
-  
-  <!-- ITEMS -->
-  <% if current_user.is_admin_in_adminmode? %>
-    <h3><legend id="items">Items</legend></h3>
+  </section>
+<% end %>
+
+<!-- ITEMS -->
+<% if current_user.is_admin_in_adminmode? %>
+  <section id="items">
+    <h3>Items</h3>
     <p>
       <%= link_to "Create New " + @equipment_model.name.singularize.truncate(30) + " Item", new_equipment_model_equipment_object_path(@equipment_model), :class => 'btn' %>
     </p>
@@ -155,51 +158,52 @@
       <% if @equipment_model.equipment_objects.empty? %>
         (none)
       <% else %>
-            <%= render 'equipment_objects_table' %>
+        <%= render 'equipment_objects_table' %>
       <% end %>
     </p>
+  </section>
     
-   <!-- PROCEDURES -->
-    <h3><legend id="procedures">Procedures</legend></h3>
-    <!-- Title Row -->
-    <%= content_tag :div, :class => 'row' do %>
-      <%= content_tag :div, :class => 'span4' do %>
-        <p><h4>Check-Out</h4></p>
-      <% end %>
-      <%= content_tag :div, :class => 'span4' do %>
-        <p><h4>Check-In</h4></p>
+ <!-- PROCEDURES -->
+<section id="procedures">
+  <h3>Procedures</h3>
+  <!-- Title Row -->
+  <%= content_tag :div, :class => 'row' do %>
+    <%= content_tag :div, :class => 'span4' do %>
+      <p><h4>Check-Out</h4></p>
+    <% end %>
+    <%= content_tag :div, :class => 'span4' do %>
+      <p><h4>Check-In</h4></p>
+    <% end %>
+  <% end %>
+  
+  <!-- Content Row -->
+  <%= content_tag :div, :class => 'row' do %>
+    <%= content_tag :div, :class => 'span4' do %>
+      <% if @equipment_model.checkout_procedures.empty? %>
+        <p>(none)</p>
+      <% else %>
+        <ol>
+          <% @equipment_model.checkout_procedures.each do |checkout_procedure| %>
+            <li><%= checkout_procedure.step %></li>
+          <% end %>
+        </ol>
       <% end %>
     <% end %>
-    
-    <!-- Content Row -->
-    <%= content_tag :div, :class => 'row' do %>
-      <%= content_tag :div, :class => 'span4' do %>
-        <% if @equipment_model.checkout_procedures.empty? %>
-          <p>(none)</p>
-        <% else %>
-          <ol>
-            <% @equipment_model.checkout_procedures.each do |checkout_procedure| %>
-              <li><%= checkout_procedure.step %></li>
-            <% end %>
-          </ol>
-        <% end %>
+    <%= content_tag :div, :class => 'span4' do %>
+      <% if @equipment_model.checkin_procedures.empty? %>
+        (none)
+      <% else %>
+        <ol>
+          <% @equipment_model.checkin_procedures.each do |checkin_procedure| %>
+            <li><%= checkin_procedure.step %></li>
+          <% end %>
+        </ol>
       <% end %>
-      <%= content_tag :div, :class => 'span4' do %>
-        <% if @equipment_model.checkin_procedures.empty? %>
-          (none)
-        <% else %>
-          <ol>
-            <% @equipment_model.checkin_procedures.each do |checkin_procedure| %>
-              <li><%= checkin_procedure.step %></li>
-            <% end %>
-          </ol>
-        <% end %>
-      <% end %>
-    <% end %>  
-    
-  <% end %>
+    <% end %>
+  <% end %>  
+  </section>
+<% end %>
 
-</fieldset>
 
 
 <div class="form-actions">
