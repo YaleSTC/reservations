@@ -30,3 +30,8 @@
 .giant-numbers {
 	@include giant-number;
 }
+
+.label.label-success.eo-table {
+	font-size: $baseFontSize;
+	line-height: $baseLineHeight;
+}

@@ -6,7 +6,7 @@ module EquipmentModelsHelper
   
   def progress_color
     define_width  
-    if @width > (1/3 * 2)
+    if @width > 2/3
       @color = "progress-success"
     elsif @width > 1/3
       @color = "progress-warning"

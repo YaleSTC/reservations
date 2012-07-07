@@ -22,7 +22,11 @@
     <% end %>
       <td><%= link_to equipment_object.name, equipment_object %></td>
       <td><%= equipment_object.serial %></td>
-      <td><%= equipment_object.status %></td>
+      <% if equipment_object.status == "available" %>
+        <td><span class="label label-success eo-table">Available</span></td>
+      <% else %>
+        <td><%= equipment_object.status %></td>
+      <% end %>
       <% if current_user.is_admin_in_adminmode? %>
         <td><%= link_to "Edit", edit_equipment_object_path(equipment_object), :class => "btn" %></td>
         <td><%= eval @toggle %></td>
