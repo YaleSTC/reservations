@@ -1,7 +1,7 @@
 class EquipmentObjectsController < ApplicationController
   before_filter :require_admin, :except => :index
   before_filter :require_checkout_person, :only => :index
-  include ApplicationHelper
+
 
   def index
     @equipment_objects = EquipmentObject.all
