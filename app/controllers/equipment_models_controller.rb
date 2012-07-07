@@ -2,6 +2,8 @@ class EquipmentModelsController < ApplicationController
   before_filter :require_admin
   skip_before_filter :require_admin, :only => [:index, :show]    
 
+  include ActivationHelper
+
   def index
     if params[:category_id]
       @category = Category.include_deleted.find(params[:category_id])

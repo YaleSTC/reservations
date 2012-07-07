@@ -2,6 +2,8 @@ class CategoriesController < ApplicationController
   before_filter :require_admin
   skip_before_filter :require_admin, :only => [:index, :show]
 
+  include ActivationHelper
+
   def index
     if (params[:show_deleted])
       @categories = Category.include_deleted.all
