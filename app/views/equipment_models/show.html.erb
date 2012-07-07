@@ -68,11 +68,14 @@
 
 <hr />
 <!-- SUBNAV SECTION -->
-<div class="subnav">
+<div id="subnavbar" class="subnav">
   <ul class="nav nav-pills">
+    <li class="hide"><h4><%= @equipment_model.name %></h4></li>
     <li><a href="#description">Description</a></li>
     <li><a href="#details">Details</a></li>
-    <li><a href="#documentation">Documentation</a></li>
+    <% if @equipment_model.documentation.exists? %>
+      <li><a href="#documentation">Documentation</a></li>
+    <% end %>
     <% if current_user.is_admin_in_adminmode? %>
       <li><a href="#items">Items</a></li>
       <li><a href="#procedures">Procedures</a></li>
@@ -83,10 +86,12 @@
 <!-- SUBBODY SECTION -->
 
 <!-- DESCRIPTION -->
-  <h3><span id="description">Description</span></h3>
+  <section id="description">
+  <h3>Description</h3>
   <p>
-    <%= @equipment_model.formatted_description.html_safe %>
+    <%= sanitize(@equipment_model.formatted_description) %>
   </p>
+  </section>
 
 <!-- DETAILS -->
 <fieldset>
@@ -120,20 +125,22 @@
   </fieldset>
   
   <!-- DOCUMENTATION -->
-  <h3><legend id="documentation">Documentation</legend></h3>
-  <!-- Title Row -->
-  <%= content_tag :div, :class => 'row' do %>
-    <%= content_tag :div, :class => 'span3' do %>
-      <h4>
-        <%= (link_to @equipment_model.documentation_file_name, @equipment_model.documentation.url, target: "_blank") unless !@equipment_model.documentation.exists? %>
-      </h4>
+  <% if @equipment_model.documentation.exists? %>
+    <h3><legend id="documentation">Documentation</legend></h3>
+    <!-- Title Row -->
+    <%= content_tag :div, :class => 'row' do %>
+      <%= content_tag :div, :class => 'span3' do %>
+        <h4>
+          <%= (link_to @equipment_model.documentation_file_name, @equipment_model.documentation.url, target: "_blank") unless !@equipment_model.documentation.exists? %>
+        </h4>
+      <% end %>
     <% end %>
-  <% end %>
-  <!-- Content Row -->
-  <%= content_tag :div, :class => 'row' do %>
-    <%= content_tag :div, :class => 'span2' do %>
-      <%= link_to @equipment_model.documentation.url, target: "_blank" do %>
-        <%= content_tag :i, nil, :class => 'icon-file document' %>
+    <!-- Content Row -->
+    <%= content_tag :div, :class => 'row' do %>
+      <%= content_tag :div, :class => 'span2' do %>
+        <%= link_to @equipment_model.documentation.url, target: "_blank" do %>
+          <%= content_tag :i, nil, :class => 'icon-file document' %>
+        <% end %>
       <% end %>
     <% end %>
   <% end %>
@@ -142,7 +149,7 @@
   <% if current_user.is_admin_in_adminmode? %>
     <h3><legend id="items">Items</legend></h3>
     <p>
-      <%= link_to "Create New "+@equipment_model.name.singularize+" Item", new_equipment_model_equipment_object_path(@equipment_model), :class => 'btn' %>
+      <%= link_to "Create New " + @equipment_model.name.singularize.truncate(30) + " Item", new_equipment_model_equipment_object_path(@equipment_model), :class => 'btn' %>
     </p>
     <p id="equipment_objects">
       <% if @equipment_model.equipment_objects.empty? %>
@@ -197,8 +204,8 @@
 
 <div class="form-actions">
   <% if current_user.is_admin_in_adminmode? %>
-    <%= link_to "Edit "+@equipment_model.name, edit_equipment_model_path(@equipment_model), :class => 'btn' %>
-    <%= link_to "Destroy "+@equipment_model.name, @equipment_model, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete, :class => 'btn btn-danger' %>
+    <%= link_to "Edit "+@equipment_model.name.truncate(30), edit_equipment_model_path(@equipment_model), :class => 'btn' %>
+    <%= link_to "Destroy "+@equipment_model.name.truncate(30), @equipment_model, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete, :class => 'btn btn-danger' %>
   <% end %>
-  <%= link_to "View All "+@equipment_model.category.name.pluralize, category_equipment_models_path(@equipment_model.category), :class => 'btn view_all' %>
+  <%= link_to "View All "+@equipment_model.category.name.pluralize.truncate(30), category_equipment_models_path(@equipment_model.category), :class => 'btn view_all' %>
 </div>
