@@ -81,8 +81,8 @@ class ApplicationController < ActionController::Base
   def update_cart
    #set dates
     flash.clear
-    session[:cart].set_start_date(Date.strptime(params[:start_date_cart],'%m/%d/%Y'))
-    session[:cart].set_due_date(Date.strptime(params[:due_date_cart],'%m/%d/%Y'))
+    session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
+    session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
     session[:cart].set_reserver_id(params[:reserver_id])
     if !cart.valid_dates? #Validations are currently broken, so this always evaluates to false
       flash[:error] = cart.errors.values.flatten.join("<br/>").html_safe
@@ -96,7 +96,7 @@ class ApplicationController < ActionController::Base
     respond_to do |format|
       format.js{render :template => "reservations/cart_dates_reload"}
         # guys i really don't like how this is rendering a template for js, but :action doesn't work at all
-      format.html{render :partial => "reservations/cart_dates"} # delete this line? replace with redirect_to root_path ? otherwise it's not doing any harm
+      format.html{render :partial => "reservations/cart_dates"}
     end
   end
 
