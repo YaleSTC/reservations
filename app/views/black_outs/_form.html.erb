@@ -1,0 +1,21 @@
+<%= simple_form_for(@black_out) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%# f.association :equipment_model, :collection => EquipmentModel.all.map{|em| [em.name,em.id]}.unshift(["All models",0]), :include_blank => false  %>
+
+    <%= f.input :equipment_model_id, :value => 0, :as => :hidden %>
+ 
+    <%= label_tag :start_date, 'Start of black out' %>
+      <%= datepicker_input "black_out", "start_date", :value => @black_out[:start_date].strftime('%m/%d/%Y') %>
+
+    <%= label_tag :end_date, 'End of black out' %>
+      <%= datepicker_input "black_out", "end_date", :value => @black_out[:end_date].strftime('%m/%d/%Y'), :minDate => @black_out[:start_date].strftime('%m/%d/%Y') %>
+
+    <%= f.input :notice, :hint => 'This message will be displayed to users if they attempt to make a reservation on a blackout date' %>
+    <%= f.select :black_out_type, [['Blackout',"hard"],['Notice Only',"soft"]]   %>
+  </div>
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

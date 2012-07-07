@@ -40,6 +40,10 @@ class Cart
   ## End of functions for error handling
 
   def add_equipment_model(equipment_model)
+    unless item_not_blacked_out?
+      errors.add(:start_date, "dates are blacked out")
+      return false
+    end
     current_item = nil
     @items.find do |item|
       current_item = item if item.equipment_model_id == equipment_model.id
@@ -52,7 +56,10 @@ class Cart
     end
     if !current_item.available?(@start_date..@due_date)
       errors.add(:start_date, "is before item is available")
-    end
+    end 
+    #if blacked_out
+    # errors.add(
+    #end
     return current_item if self.valid?
     self.valid?
   end
@@ -148,7 +155,7 @@ class Cart
     valid = false if !start_date_before_due_date?
     valid = false if !duration_allowed?
     valid = false if !available?
-    valid
+    valid = false if !item_not_blacked_out?
   end
 
   # Checks that neither start date nor due date are in the past
@@ -285,6 +292,38 @@ class Cart
       end
     end
     !too_many
+  end
+
+  def duration_allowed?
+    is_too_long = false
+    @items.each do |item|
+      eq_model = item.equipment_model
+      category = eq_model.category
+      unless category.max_checkout_length.nil? || self.duration <= category.max_checkout_length
+        errors.add(:items, "You can only check out " + eq_model.name + " for " + category.max_checkout_length.to_s + " days")
+        is_too_long = true
+      end
+    end
+    !is_too_long
+  end
+
+  #Need to include check incase there are no items currently in basket.
+
+  # Check that the item is not blacked out on the dates it is being reserved for
+  def item_not_blacked_out?
+    flag = true
+    if (a = BlackOut.date_is_blacked_out(start_date))
+       errors.add(:start_date, a.notice)
+       if (a.black_out_type_is_hard)
+         flag = false
+       end
+    elsif (a = BlackOut.date_is_blacked_out(due_date))
+       errors.add(:due_date, a.notice)
+       if (a.black_out_type_is_hard)
+         flag = false
+       end
+    end 
+    return flag
   end
 
   # User Validation

@@ -44,3 +44,8 @@ group :assets do
   gem 'bootstrap-sass', '~> 2.0.3'
   gem 'font-awesome-sass-rails'
 end
+
+group :development do
+  gem 'guard-livereload'
+  gem 'rb-readline'
+end
