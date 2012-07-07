@@ -35,3 +35,12 @@
 	font-size: $baseFontSize;
 	line-height: $baseLineHeight;
 }
+
+.subnav li h4 {
+	padding-top: 11px;
+	padding-bottom: 11px;
+	border-right: 1px solid #E5E5E5;
+	padding-right: 12px;
+	display: block;
+	line-height: 14px;
+}
