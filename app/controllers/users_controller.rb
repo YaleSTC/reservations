@@ -2,12 +2,14 @@ class UsersController < ApplicationController
   skip_before_filter :first_time_user, :only => [:new, :create]
   skip_before_filter :cart, :only => [:new, :create]
   before_filter :require_admin, :only => :index
+     
+  include ActivationHelper
 
   def index
     if params[:show_deleted]
-      @users = User.find(:all, :order => 'login ASC')
+      @users = User.include_deleted.find(:all, :order => 'login ASC')
     else
-      @users = User.not_deleted.find(:all, :order => 'login ASC')
+      @users = User.find(:all, :order => 'login ASC')
     end
   end
 
@@ -22,10 +24,10 @@ class UsersController < ApplicationController
   #end
 
   def show
-    @user = User.find(params[:id])
+    @user = User.include_deleted.find(params[:id])
     require_user(@user)
     @user_reservations = @user.reservations
-    @all_equipment = Reservation.active_user_reservations(@user)
+    @all_equipment = Reservation.include_reservations.active_user_reservations(@user)
     @show_equipment = { current_equipment: @user.reservations.select{|r| (r.status == "checked out") || (r.status == "overdue")}, 
                         current_reservations: @user.reservations.reserved, 
                         overdue_equipment: @user.reservations.overdue, 
@@ -60,12 +62,12 @@ class UsersController < ApplicationController
   end
 
   def edit
-    @user = User.find(params[:id])
+    @user = User.include_deleted.find(params[:id])
     require_user(@user)
   end
 
   def update
-    @user = User.find(params[:id])
+    @user = User.include_deleted.find(params[:id])
     require_user(@user)
     params[:user].delete(:login) unless current_user.is_admin_in_adminmode? #no changing login unless you're an admin
     if @user.update_attributes(params[:user])
@@ -77,7 +79,7 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    @user = User.find(params[:id])
+    @user = User.include_deleted.find(params[:id])
     @user.destroy(:force)
     flash[:notice] = "Successfully destroyed user."
     redirect_to users_url
@@ -91,7 +93,7 @@ class UsersController < ApplicationController
       flash[:alert] = "Please select a valid user"
       redirect_to :back
     else
-      @user = User.find(params[:searched_id])
+      @user = User.include_deleted.find(params[:searched_id])
     require_user(@user)
     redirect_to show_all_reservations_for_user_path({:user_id => @user.id})
     end

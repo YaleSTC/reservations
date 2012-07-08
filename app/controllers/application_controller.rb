@@ -21,7 +21,7 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    @current_user ||= User.find_by_login(session[:cas_user]) if session[:cas_user]
+    @current_user ||= User.include_deleted.find_by_login(session[:cas_user]) if session[:cas_user]
   end
 
   #-------- before_filter methods --------
@@ -81,8 +81,8 @@ class ApplicationController < ActionController::Base
   def update_cart
    #set dates
     flash.clear
-    session[:cart].set_start_date(Date.strptime(params[:start_date_cart],'%m/%d/%Y'))
-    session[:cart].set_due_date(Date.strptime(params[:due_date_cart],'%m/%d/%Y'))
+    session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
+    session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
     session[:cart].set_reserver_id(params[:reserver_id])
     if !cart.valid_dates? #Validations are currently broken, so this always evaluates to false
       flash[:error] = cart.errors.values.flatten.join("<br/>").html_safe
@@ -96,7 +96,7 @@ class ApplicationController < ActionController::Base
     respond_to do |format|
       format.js{render :template => "reservations/cart_dates_reload"}
         # guys i really don't like how this is rendering a template for js, but :action doesn't work at all
-      format.html{render :partial => "reservations/cart_dates"} # delete this line? replace with redirect_to root_path ? otherwise it's not doing any harm
+      format.html{render :partial => "reservations/cart_dates"}
     end
   end
 
@@ -142,7 +142,7 @@ class ApplicationController < ActionController::Base
 
   def deactivate
     if (current_user.is_admin)
-      @objects_class2 = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (User, EM, EO, Category)
+      @objects_class2 = params[:controller].singularize.titleize.delete(' ').constantize.include_deleted.find(params[:id]) #Finds the current model (User, EM, EO, Category)
       if (params[:controller] != "users") #Search for children is not necessary if we are altering users.
         deactivateChildren(@objects_class2)
       end
@@ -156,7 +156,7 @@ class ApplicationController < ActionController::Base
 
   def activate
     if (current_user.is_admin)
-      @model_to_activate = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (User, EM, EO, Category)
+      @model_to_activate = params[:controller].singularize.titleize.delete(' ').constantize.include_deleted.find(params[:id]) #Finds the current model (User, EM, EO, Category)
       if (params[:controller] != "users") #Search for parents is not necessary if we are altering users.
         activateParents(@model_to_activate)
       end

@@ -22,6 +22,12 @@ class User < ActiveRecord::Base
   validates :nickname,    :format      => { :with => /^[^0-9`!@#\$%\^&*+_=]+$/ },
                           :allow_blank => true
 
+   default_scope where(:deleted_at => nil)
+   
+    def self.include_deleted
+      self.unscoped
+    end
+
   def name
      [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name].join(" ")
   end
