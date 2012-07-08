@@ -5,13 +5,12 @@
 <% else %>
 <table id="table_list_items" class="table table-bordered table-striped table-condensed">
     <tbody>
-  <% cart.items.each do |item| %>
+  <% cart.items.each do |res| %>
     <tr>
-      <td colspan="2"><%= link_to item.name, item.equipment_model %></td>
+      <td colspan="2"><%= link_to res.equipment_model.name, res.equipment_model %></td>
       <tr>
-      <td rowspan="2"><%= item.quantity.to_s + " item(s)" %></td>
-      <td rowspan="2"><%= link_to "Remove", {:url => remove_from_cart_path(item.equipment_model)},
-                                :href => remove_from_cart_path(item),
+      <td rowspan="2"><%= link_to "Remove", {:url => remove_from_cart_path(res.equipment_model)},
+                                :href => remove_from_cart_path(res.equipment_model),
                                 :remote => true, :class => 'btn btn-mini' %></td>
                                 </tr>
     </tr>
