@@ -3,6 +3,7 @@ class UsersController < ApplicationController
   skip_before_filter :cart, :only => [:new, :create]
   before_filter :require_admin, :only => :index
      
+  require 'activationhelper'
   include ActivationHelper
 
   def index
