@@ -12,7 +12,8 @@ class Reservation < ActiveRecord::Base
             :presence => true
 
   validate :not_empty?, :not_in_past?, :start_date_before_due_date?,
-           :no_overdue_reservations?, :duration_allowed?, :available?
+           :no_overdue_reservations?, :duration_allowed?, #:available?,
+           :quantity_eq_model_allowed?, :quantity_cat_allowed?
 
 
   scope :recent, order('start_date, due_date, reserver_id')
@@ -44,74 +45,98 @@ class Reservation < ActiveRecord::Base
     end
   end
 
-  ## VALIDATIONS
+  ## Validations ##
 
   ## For individual reservations only
-
-  ## Item validations
   # Checks that the reservation has an equipment model
   def not_empty?
-    if self.equipment_model.nil?
-      errors.add(:base, "A reservation must contain at least one item.")
-      return false
-    end
+    return false if equipment_model.nil?
     return true
   end
 
-  ## Date validations
   # Checks that reservation is not in the past
   def not_in_past?
-    if (start_date < Date.today) || (due_date < Date.today)
-      errors.add(:base, "Reservations cannot be made in the past")
-      return false
-    end
+    return false if (start_date < Date.today) || (due_date < Date.today)
     return true
   end
 
   # Checks that reservation start date is before end dates
   def start_date_before_due_date?
-    if due_date < start_date
-      errors.add(:base, "Due date cannot be before start date")
-      return false
-    end
+    return false if due_date < start_date
     return true
   end
 
   # Checks that the reservation is not longer than the max checkout length
   def duration_allowed?
     duration = due_date - start_date + 1
-    cat_duration = self.equipment_model.category.max_checkout_length
-    if duration > cat_duration
-      errors.add(:base, self.equipment_model.name + " cannot be checked out for more than "  + cat_duration.to_s + " days")
-      return false
-    end
+    cat_duration = equipment_model.category.max_checkout_length
+    return false if duration > cat_duration
     return true
   end
 
-  ## User validations
   # Checks if the user has any overdue reservations
   def no_overdue_reservations?
-    if reserver.reservations.overdue_reservations?(reserver)
-      errors.add(:base, "Users with overdue reservations may not make new reservations")
-      return false
-    end
+    return false if reserver.reservations.overdue_reservations?(reserver)
     return true
   end
 
   ## For single or multiple reservations
-
-  ## Item validations
   # Checks that the equipment model is available from start date to due date
-  #TODO: needs to check number of reservations with that equipment model and check that that many are available
   def available?(reservations = [])
     reservations << self if reservations.empty?
-    eq_objects_needed = self.count(reservations)
-    if self.equipment_model.available?(start_date..due_date) < eq_objects_needed
-      errors.add(:base, self.equipment_model.name + " is not available for all or part of the duration")
-      return false
-    end
+    eq_objects_needed = count(reservations)
+    return false if equipment_model.available?(start_date..due_date) < eq_objects_needed
     return true
   end
+
+  # Checks that the number of equipment models that a user has reservered and in
+  # the array of reservations is less than the equipment model maximum
+  def quantity_eq_model_allowed?(reservations = [])
+    max = equipment_model.max_per_user
+    return true if max == "unrestricted"
+    reservations << self if reservations.empty?
+    reservations.concat(reserver.reservations)
+    num_reservations = count(reservations)
+    return false if num_reservations > max
+    return true
+  end
+
+  # Checks that the number of items that the user has reservered and in the
+  # array of reservations does not exceed the maximum in the category of the
+  # reservation it is called on
+  def quantity_cat_allowed?(reservations = [])
+    max = equipment_model.category.max_per_user
+    return true if max == "unrestricted"
+    reservations << self if reservations.empty?
+    reservations.concat(reserver.reservations)
+    cat_count = 0
+    reservations.each { |res| cat_count += 1 if res.equipment_model.category == self.equipment_model.category }
+    return false if cat_count > max
+    return true
+  end
+
+  ## Set validation
+  # Checks all validations for all saved reservations and the reservations in
+  # the array of reservations passed in (intended for use with cart.items)
+  # Returns an array of error messages or [] if reservations are all valid
+  def self.validate_set(reserver, reservations = [])
+    reservations.concat(reserver.reservations)
+    errors = []
+    reservations.each do |res|
+      errors << "User has overdue reservations that prevent new ones from being created" if !res.no_overdue_reservations?
+      errors << "Reservations cannot be made in the past" if !res.not_in_past?
+      errors << "Reservations must have start dates before due dates" if !res.start_date_before_due_date?
+      errors << "Reservations must have an associated equipment model" if !res.not_empty?
+      errors << "duration problem with " + res.equipment_model.name if !res.duration_allowed?
+#      errors << "availablity problem with " + res.equipment_model.name if !res.available?(reservations)
+      errors << "quantity equipment model problem with " + res.equipment_model.name if !res.quantity_eq_model_allowed?(reservations)
+      errors << "quantity category problem with " + res.equipment_model.category.name if !res.quantity_cat_allowed?(reservations)
+    end
+    #TODO: delete duplicate error messages
+    errors
+  end
+
+  ## Validation helpers ##
 
   # Returns the number of reservations in the array of reservations it is passed
   # that have the same equipment model as the reservation count is called on
