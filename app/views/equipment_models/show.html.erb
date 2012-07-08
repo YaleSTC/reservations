@@ -87,7 +87,7 @@
 
 <!-- DESCRIPTION -->
 <section id="description">
-  <h3>Description</h3>
+  <h2>Description</h2><hr />
   <p>
     <%= sanitize(@equipment_model.formatted_description) %>
   </p>
@@ -95,7 +95,7 @@
 
 <!-- DETAILS -->
 <section id="details">
-  <h3>Details</h3>
+  <h2>Details</h2><hr />
   <!-- Title Row -->
   <%= content_tag :div, :class => 'row' do %>
     <%= content_tag :div, :class => 'span4' do %>
@@ -127,7 +127,7 @@
 <!-- DOCUMENTATION -->
 <% if @equipment_model.documentation.exists? %>
 <section id="documentation">
-  <h3>Documentation</h3>
+  <h2>Documentation</h2><hr />
   <!-- Title Row -->
   <%= content_tag :div, :class => 'row' do %>
     <%= content_tag :div, :class => 'span3' do %>
@@ -150,7 +150,7 @@
 <!-- ITEMS -->
 <% if current_user.is_admin_in_adminmode? %>
   <section id="items">
-    <h3>Items</h3>
+    <h2>Items</h2><hr />
     <p>
       <%= link_to "Create New " + @equipment_model.name.singularize.truncate(30) + " Item", new_equipment_model_equipment_object_path(@equipment_model), :class => 'btn' %>
     </p>
@@ -165,7 +165,7 @@
     
  <!-- PROCEDURES -->
 <section id="procedures">
-  <h3>Procedures</h3>
+  <h2>Procedures</h2><hr />
   <!-- Title Row -->
   <%= content_tag :div, :class => 'row' do %>
     <%= content_tag :div, :class => 'span4' do %>
