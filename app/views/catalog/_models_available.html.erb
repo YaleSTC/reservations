@@ -13,12 +13,12 @@
    <% end %>
 
 <% if @equipment_models_by_category.empty? && current_user.is_admin_in_adminmode? %>
-  <p>Oops! No equipment found. Try creating some
+  <p>No equipment found. Try creating some
     <%= link_to "Equipment Models", new_equipment_model_path %>
     first!
   </p>
 <% elsif @equipment_models_by_category.empty? %>
-  <p>Oops! No equipment found.</p>
+  <p>No equipment found.</p>
 <% else %>
   <div id='models_available'>
     <%# for kaminari pagination %>
