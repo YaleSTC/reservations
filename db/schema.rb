@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(:version => 20120629190015) do
 
   create_table "black_outs", :force => true do |t|
     t.integer  "equipment_model_id"
-    t.date     "start_date"
+    t.date     "bo_start_date"
     t.date     "end_date"
     t.text     "notice"
     t.integer  "created_by"
