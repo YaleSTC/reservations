@@ -1,17 +1,18 @@
 Reservations::Application.routes.draw do
 
+
+
+  match '/black_outs/flash_message' => 'black_outs#flash_message', :as => :flash_message
+
+  resources :black_outs do
+    member do
+      get :flash_message
+    end
+  end
+   
   root :to => 'catalog#index'
 
-  resources :documents
-  resources :equipment_objects
-  # resources :reports do
-  #   member do
-  #     get 'for_model'
-  #   end
-  #   collection do
-  #     get 'for_model_set'
-  #   end
-  # end
+  resources :documents, :equipment_objects
   
   resources :equipment_models do
     resources :equipment_objects
@@ -31,7 +32,6 @@ Reservations::Application.routes.draw do
   end
 
   match '/users/new_button' => 'users#new_button', :as => :new_button
-
   match '/reservations/renew/:id' => 'reservations#renew', :as => :renew
 
   resources :reservations do
@@ -65,20 +65,29 @@ Reservations::Application.routes.draw do
   match '/cart/update' => 'application#update_cart', :as => :update_cart
   
   match '/reports/index' => 'reports#index', :as => :reports
-  match '/reports/:id/for_model' => 'reports#for_model', :as => :for_model
-  match '/reports/for_model_set' => 'reports#for_model_set', :as => :for_model_set
+  match '/reports/:id/for_model' => 'reports#for_model', :as => :for_model_report
+  match '/reports/for_model_set' => 'reports#for_model_set', :as => :for_model_set_reports
   match '/reports/update' => 'reports#update_report', :as => :update_report
   
   match '/:controller/:id/deactivate' => ':controller#deactivate', :as => 'deactivate'
   match '/:controller/:id/activate' => ':controller#activate', :as => 'activate'
 
   match '/logout' => 'application#logout', :as => :logout
-  
-  match '/app_config/edit' => 'app_config#edit', :as => :edit_app_config
-  match '/app_config/update' => 'app_config#update', :as => :update_app_config  
-  
+
   #match '/users/find' => 'users#find', :as => :find_user
+  match '/app_configs/edit' => 'app_configs#edit', :as => :edit_app_configs
+  match '/app_configs/update' => 'app_configs#update', :as => :update_app_configs   
+  resources :app_configs, :only => [:edit, :update]
   
-  match ':controller(/:action(/:id(.:format)))'
+  match '/new_admin_user' => 'application_setup#new_admin_user', :as => :new_admin_user
+  match '/create_admin_user' => 'application_setup#create_admin_user', :as => :create_admin_user
+  resources :application_setup, :only => [:new_admin_user, :create_admin_user]
+  
+  match '/new_app_configs' => 'application_setup#new_app_configs', :as => :new_app_configs
+  match '/create_app_configs' => 'application_setup#create_app_configs', :as => :create_app_configs
+  
+
+  
+  match ':controller(/:action(/:id(.:format)))' 
 
 end

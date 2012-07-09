@@ -1,0 +1,9 @@
+<% if params[:from_cart] == "true" %>
+    <% session[:cart].set_reserver_id(@user.id) %>
+    $('#userModal').modal('hide');
+  $(window.location.replace("<%= root_path %>"));
+<% elsif (current_user.is_admin_in_adminmode? || current_user.is_admin_in_checkoutpersonmode? || current_user.is_checkout_person?) %>
+  $(window.location.replace("<%= user_path(@user) %>"))
+<% else %>
+    $(window.location.replace("<%= root_path %>"))
+<%end %>

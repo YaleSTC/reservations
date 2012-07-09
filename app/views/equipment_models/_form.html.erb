@@ -1,7 +1,7 @@
 <%= simple_form_for @equipment_model, :html => { :multipart => true, :class => "form-horizontal" } do |f| %>
 
-<% # Paperclip currently does not support simple form and validations and will fail silently. %>
-<% # This code is necessary until they introduce a bug fix (Github issue #266) %>
+<%# Paperclip currently does not support simple form and validations and will fail silently. %>
+<%# This code is necessary until they introduce a bug fix (Github issue #266) %>
 <ul>
 	  <% @equipment_model.errors.full_messages.each do |msg| %>
 	  <li><%= msg %></li>
@@ -23,7 +23,7 @@
   <% end %>
   
   <%= f.input :max_per_user, label: "Maximum per user", hint: "Leave blank to default to category value." %>
-  <%= f.input :deleted_at, label: "Inactive", as: :deleted %>
+  <%= f.input :deleted_at, label: "Inactive", as: :deleted, hint: 'Make this equipment model unavailable for checkout.' %>
   
   <fieldset>
     <legend>Renewal Options</legend>

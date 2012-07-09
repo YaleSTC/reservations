@@ -26,7 +26,7 @@ module LayoutHelper
   end
   
   def site_title
-    @site_title = Settings.site_title.strip
+    @site_title = @app_configs.site_title.strip
   end
   
   def favicon_path

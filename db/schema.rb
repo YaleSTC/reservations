@@ -11,11 +11,40 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120629190015) do
+ActiveRecord::Schema.define(:version => 20120705210315) do
 
   create_table "accessories_equipment_models", :force => true do |t|
     t.integer  "accessory_id"
     t.integer  "equipment_model_id"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+  end
+
+  create_table "app_configs", :force => true do |t|
+    t.boolean "upcoming_checkin_email_active",         :default => true
+    t.boolean "overdue_checkout_email_active",         :default => true
+    t.boolean "reservation_confirmation_email_active", :default => true
+    t.string  "site_title"
+    t.string  "admin_email"
+    t.string  "department_name"
+    t.string  "contact_link_text"
+    t.string  "contact_link_location"
+    t.string  "home_link_text"
+    t.string  "home_link_location"
+    t.integer "default_per_cat_page"
+    t.text    "upcoming_checkin_email_body"
+    t.text    "overdue_checkout_email_body"
+    t.text    "overdue_checkin_email_body"
+    t.boolean "overdue_checkin_email_active",          :default => true
+  end
+
+  create_table "black_outs", :force => true do |t|
+    t.integer  "equipment_model_id"
+    t.date     "start_date"
+    t.date     "end_date"
+    t.text     "notice"
+    t.integer  "created_by"
+    t.text     "black_out_type"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
   end
@@ -58,9 +87,6 @@ ActiveRecord::Schema.define(:version => 20120629190015) do
     t.datetime "created_at",                                                                  :null => false
     t.datetime "updated_at",                                                                  :null => false
     t.string   "deleted_at"
-    t.integer  "max_renewal_times"
-    t.integer  "max_renewal_length"
-    t.integer  "renewal_days_before_due"
     t.string   "photo_file_name"
     t.string   "photo_content_type"
     t.integer  "photo_file_size"
@@ -69,6 +95,9 @@ ActiveRecord::Schema.define(:version => 20120629190015) do
     t.string   "documentation_content_type"
     t.integer  "documentation_file_size"
     t.datetime "documentation_updated_at"
+    t.integer  "max_renewal_times"
+    t.integer  "max_renewal_length"
+    t.integer  "renewal_days_before_due"
   end
 
   create_table "equipment_models_associated_equipment_models", :id => false, :force => true do |t|
@@ -127,17 +156,6 @@ ActiveRecord::Schema.define(:version => 20120629190015) do
 
   add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
   add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
-
-  create_table "settings", :force => true do |t|
-    t.string   "var",                      :null => false
-    t.text     "value"
-    t.integer  "thing_id"
-    t.string   "thing_type", :limit => 30
-    t.datetime "created_at",               :null => false
-    t.datetime "updated_at",               :null => false
-  end
-
-  add_index "settings", ["thing_type", "thing_id", "var"], :name => "index_settings_on_thing_type_and_thing_id_and_var", :unique => true
 
   create_table "users", :force => true do |t|
     t.string   "login"

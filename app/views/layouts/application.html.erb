@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <%= csrf_meta_tag %>
-		<% unless Settings.site_title.nil?%>
+		<% unless @app_configs.nil? || @app_configs.site_title.nil?%>
     <title><%= sanitize ("#{site_title}" + ( content_for?(:title) ? " &raquo; #{strip_links yield(:title)}" : "")), :attributes => "&raquo;" %></title>
 		<% end %>
     <!--[if lt IE 9]>
@@ -22,11 +22,11 @@
   </head>
   <!-- ================ END HTML HEAD ================ -->
 
-  <body>
+  <body data-spy="scroll" data-target=".subnav" data-offset="100">
     <div id="navigation_bar" class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-				<% unless Settings.site_title.nil? %>
+				<% unless @app_configs.nil? || @app_configs.site_title.nil? %>
           <%= link_to sanitize("<i class=\"icon-th-list\"></i> #{site_title}"), root_path, :class => 'brand' %>
 				<% end %>
           <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -52,12 +52,15 @@
                     <% end %>
                   
                     <li><%= link_to "Equipment Objects", equipment_objects_path %></li>
+                    <% if current_user && current_user.is_admin_in_adminmode? %>
+                    <li><%= link_to "Black Out Dates", black_outs_path %></li>
+                    <% end %>
                   </ul>
               </li>
             <% end %>
             <li <%= navigation_active reservations_path %>><%= link_to (current_user && current_user.can_checkout? ? "Reservations" : "My Reservations"), reservations_path %></li>
             <% if current_user && current_user.is_admin_in_adminmode? %>
-              <li <%= navigation_active edit_app_config_path %>><%= link_to "App Settings", edit_app_config_path %></li>
+              <li <%= navigation_active edit_app_configs_path %>><%= link_to "Settings", edit_app_configs_path %></li>
             <% end %>
             <% if current_user && current_user.is_admin_in_adminmode? %>
               <li <%= navigation_active reports_path %>><%= link_to "Reports", reports_path %></li>
@@ -69,8 +72,8 @@
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Links <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
-                  <li><%= link_to Settings.home_link_text, Settings.home_link_location %></li>
-                  <li><%= link_to Settings.contact_link_text, Settings.contact_link_location %></li>
+                  <li><%= link_to @app_configs.home_link_text, @app_configs.home_link_location %></li>
+                  <li><%= link_to @app_configs.contact_link_text, @app_configs.contact_link_location %></li>
                 </ul>
               </li>
             <li class="divider-vertical"></li>
@@ -126,13 +129,9 @@
   </div>
     
     <div class="container">
-      <% # flash messages, if any %>
-      <% flash.each do |name, msg| %>
-        <%= content_tag :div, :id => "flash_#{name}", :class => "alert alert-#{name == :notice ? "success" : "error"}" do %>
-          <button class="close" data-dismiss="alert">×</button>          
-          <%= msg %>
-        <% end %>
-      <% end %>
+      <div id="flashes">
+      <%= render :partial => 'reservations/flash_alerts' %>
+      </div> <!-- CLOSE flashes -->
       <div class="row">
 
     	<!-- ================ MAIN PAGE CONTENT ================ -->
@@ -180,7 +179,7 @@
         <div id="footer" class="span12">
           <div class="well">
             Powered by <a href="https://github.com/YaleSTC/reservations">Reservations</a>, an open source equipment reservation app.<br />
-            2012 Yale Student Technology Collaborative
+            © 2012 Yale Student Technology Collaborative
           </div>
         </div>
       </div>

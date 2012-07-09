@@ -1,13 +1,21 @@
 class UsersController < ApplicationController
-  skip_before_filter :first_time_user, :only => [:new, :create]
-  skip_before_filter :cart, :only => [:new, :create]
+  #necessary to set up initial users and admins
+  skip_filter :first_time_user, :only => [:new, :create]
+  skip_filter :new_admin_user, :only => [:new, :create]
+  skip_filter :app_setup, :only => [:new, :create]
+  
+  
+  skip_filter :cart, :only => [:new, :create]
   before_filter :require_admin, :only => :index
+     
+  require 'activationhelper'
+  include ActivationHelper
 
   def index
     if params[:show_deleted]
-      @users = User.find(:all, :order => 'login ASC')
+      @users = User.include_deleted.find(:all, :order => 'login ASC')
     else
-      @users = User.not_deleted.find(:all, :order => 'login ASC')
+      @users = User.find(:all, :order => 'login ASC')
     end
   end
 
@@ -22,7 +30,7 @@ class UsersController < ApplicationController
   #end
 
   def show
-    @user = User.find(params[:id])
+    @user = User.include_deleted.find(params[:id])
     require_user(@user)
     @user_reservations = @user.reservations
     @all_equipment = Reservation.active_user_reservations(@user)
@@ -48,27 +56,24 @@ class UsersController < ApplicationController
     @user.login = session[:cas_user] unless current_user and (current_user.is_admin_in_adminmode? or current_user.is_admin_in_checkoutpersonmode? or current_user.is_checkout_person?)
     @user.is_admin = true if User.count == 0
     if @user.save
-      flash[:notice] = "Successfully created user."
-#   redirect to New Reservations page iff logged in as admin or
-#   checkout person
-      if params[:from_cart] == "true" #updates the cart and redirects to catalog if new reserver button in cart was used
-        session[:cart].set_reserver_id(@user.id)
-        redirect_to root_path
-      else
-      redirect_to ((current_user.is_admin_in_adminmode? or current_user.is_admin_in_checkoutpersonmode? or current_user.is_checkout_person?) ? @user : root_path)
+      respond_to do |format|
+        flash[:notice] = "Successfully created user."
+        format.js {render :action => 'create_success'}
       end
     else
-      render :action => 'new'
+      respond_to do |format|
+        format.js {render :action => 'load_validations'}
+      end
     end
   end
 
   def edit
-    @user = User.find(params[:id])
+    @user = User.include_deleted.find(params[:id])
     require_user(@user)
   end
 
   def update
-    @user = User.find(params[:id])
+    @user = User.include_deleted.find(params[:id])
     require_user(@user)
     params[:user].delete(:login) unless current_user.is_admin_in_adminmode? #no changing login unless you're an admin
     if @user.update_attributes(params[:user])
@@ -80,7 +85,7 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    @user = User.find(params[:id])
+    @user = User.include_deleted.find(params[:id])
     @user.destroy(:force)
     flash[:notice] = "Successfully destroyed user."
     redirect_to users_url
@@ -94,7 +99,7 @@ class UsersController < ApplicationController
       flash[:alert] = "Please select a valid user"
       redirect_to :back
     else
-      @user = User.find(params[:searched_id])
+      @user = User.include_deleted.find(params[:searched_id])
     require_user(@user)
     redirect_to show_all_reservations_for_user_path({:user_id => @user.id})
     end

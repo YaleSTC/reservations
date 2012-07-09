@@ -6,8 +6,8 @@ class ReportsController < ApplicationController
   
   def index
     @res_stat_sets = []
-    @start_date = session[:report_start_date] ? session[:report_start_date] : Date.today.beginning_of_year
-    @end_date = session[:report_end_date] ? session[:report_end_date] : Date.today
+    @start_date = start_date
+    @end_date = end_date
     #need some kind of admin priveleges before hand...
     # users = [current_user]
 
@@ -72,21 +72,31 @@ class ReportsController < ApplicationController
 
   #sub report for a particular model
   def for_model
-    @start_date = session[:report_start_date]
-    @end_date = session[:report_end_date]
+    @start_date = start_date
+    @end_date = end_date
     @data_tables = models_subreport([params[:id]],@start_date,@end_date)
   end
   
   #should probably merge with for_model
   def for_model_set
-    @start_date = session[:report_start_date]
-    @end_date = session[:report_end_date]
+    @start_date = start_date
+    @end_date = end_date
     @data_tables = models_subreport(params[:ids],@start_date,@end_date)
   end
   
 
   
   private
+  def start_date
+    date = session[:report_start_date] ? session[:report_start_date] : Date.today.beginning_of_year
+    return date
+  end
+  
+  def end_date
+    date = session[:report_end_date] ? session[:report_end_date] : Date.today
+    return date
+  end
+  
   def default_relations(res_set,rel_hash = nil,options = nil)
     # reservation relations for each of the scopes
     rel_hash ||= {:"Total" => nil, :"Reserved" => :reserved, :"Checked Out" => :checked_out, :"Overdue" => :overdue,

@@ -1,0 +1,82 @@
+<%# for kaminari pagination, defines variables %>
+<% prepare_pagination %>
+
+<!-- Commented out quicksearch for now until we replace it with a better search functionality - mnquintana -->
+<%# render :partial => 'quicksearch' %>
+
+   <% if (a = BlackOut.date_is_blacked_out(cart.start_date)) && (b = BlackOut.date_is_blacked_out(cart.due_date)) %>
+      <% flash[:error] = a.notice + b.notice %>
+   <% elsif (a = BlackOut.date_is_blacked_out(cart.start_date)) %>
+      <% flash[:error] = a.notice %>
+   <% elsif (a = BlackOut.date_is_blacked_out(cart.due_date)) %>
+      <% flash[:error] = a.notice %>
+   <% end %>
+
+<% if @equipment_models_by_category.empty? && current_user.is_admin_in_adminmode? %>
+  <p>Oops! No equipment found. Try creating some
+    <%= link_to "Equipment Models", new_equipment_model_path %>
+    first!
+  </p>
+<% elsif @equipment_models_by_category.empty? %>
+  <p>Oops! No equipment found.</p>
+<% else %>
+  <div id='models_available'>
+    <%# for kaminari pagination %>
+    <%= paginate @paginated_equipment_models_by_category, :params => {:controller => 'catalog', :action => 'index' } %>
+    <%= form_tag update_user_per_cat_page_path, :class => "form-inline", :remote => true do %>
+      <%= label_tag "Items per page:" %>
+      <%= select_tag :user_cat_items_per_page, options_for_select(@user_per_page_opts, session[:user_per_cat_page]), :class => 'span1 autosubmitme' %>
+    <% end %>
+    <% @equipment_models_by_category.each do |category, equipment_models| %>
+      <h2 class="catalog">
+        <!--print category name-->
+        <%= link_to category.name, category_equipment_models_path(category) %>
+      </h2> 
+      <% unless equipment_models.nil? %>
+        <ul class="thumbnails">
+        <% equipment_models.each do |equipment_model| %>
+          <li class="span3">      
+            <div class="thumbnail">
+              
+              <% if equipment_model.photo.exists? %>
+                <% #show equipment model image %>
+                <%= link_to equipment_model do %>
+                  <%= image_tag equipment_model.photo.url(:thumbnail) %>
+                <% end %>
+              <% else %>
+                <%= link_to equipment_model do %>
+                  <%= image_tag "no-image.gif" %>
+                <% end %>
+              <% end %>
+                <h3 class="equipment_title"><%= link_to equipment_model.name, equipment_model, :class => 'equipment_title_link', :rel => 'tooltip', :title => equipment_model.name %></h3>
+               <div class="caption_cat">
+
+                  <hr class ="special-hr"/>
+                  <p>(<%= equipment_model.available?(cart.start_date..cart.due_date) || "0" %> available from <br /><%= cart.start_date.strftime("%b %d, %Y") %> to <%= cart.due_date.strftime("%b %d, %Y") %>)</p>
+                  <p class="equipment_descr">
+                    <%= equipment_model.description + " " %><%= link_to "More Info", equipment_model, :class => 'more_info' %>
+                  </p>
+                </div>
+                  <% if equipment_model.available?(cart.start_date..cart.due_date) > 0 %>
+                  <!--print add to cart link-->
+                  <div class="add_to_cart_box">  
+                    <%= link_to "Add to Cart", {:url => add_to_cart_path(equipment_model)},
+                                :href => add_to_cart_path(equipment_model), :remote => true, :class => "btn", :id => "add_to_cart" %>
+                    <% # (Using both the ":url" and ":href" symbols seems redundant. Remove one?) %>
+                    </div>
+                  <% else %>
+                    
+                    <div class="add_to_cart_box">
+                    <%= button_tag "Add to Cart", :class => "btn disabled", :id => 'add_to_cart' %>
+                    </div>
+                  <% end %>
+            </div>
+          </li>
+
+        <% end %>
+        </ul>
+      <% end %>
+    <% end %>
+    <%= paginate @paginated_equipment_models_by_category %>
+  </div>
+<% end %>

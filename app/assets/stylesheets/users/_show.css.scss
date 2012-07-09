@@ -14,9 +14,7 @@
 
 //Giant Stats Numbers
 .current_equipment_num, .current_reservations_num, .overdue_equipment_num, .past_equipment_num, .missed_reservations_num, .past_overdue_equipment_num {
-	font-size: $baseFontSize * 3;
-	line-height: $baseLineHeight * 3;
-	margin-bottom: 8px;
+	@include giant-number;
 }
 
 //Description List Display Fixes (including responsive)

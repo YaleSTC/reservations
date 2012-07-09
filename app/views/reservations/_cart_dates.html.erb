@@ -1,19 +1,16 @@
 <div id="cart_dates">
-  <%= form_tag update_cart_path, :remote => true, :class => "form-vertical" do %>
+  <%= form_tag url_for(:action => :update_cart),:remote => true, :class => "form-vertical" do %>
     <%= label_tag :reserver_id, 'Reserver' %>
     <%# application.js needs to know the update_cart_path and the new_user_path %>
-    <%= hidden_field_tag 'update_cart_path', update_cart_path %>
-    <%= hidden_field_tag 'new_user_path', "#{new_user_path} #content" %>
+    <%= hidden_field_tag 'page', params[:page] %>
     <% if current_user && (current_user.is_admin_in_adminmode? || current_user.is_admin_in_checkoutpersonmode? || current_user.is_checkout_person?) %>
       
       <div class="input-append">
         <%# This must all be one one line for the button to display properly, sorry it's so ugly! %>
         <%= hidden_field_tag 'reserver_id', cart.reserver_id %>
-				<%= autocomplete_field_tag 'fake_reserver_id', User.find(cart.reserver_id).render_name, autocomplete_user_last_name_reservations_path, :size => 30, :update_elements => {:id => '#reserver_id'}, :class => 'submittable span2' %>
+				<%= autocomplete_field_tag 'fake_reserver_id', User.include_deleted.find(cart.reserver_id).render_name, autocomplete_user_last_name_reservations_path, :size => 30, :update_elements => {:id => '#reserver_id'}, :class => 'submittable span2' %>
 				<%= link_to sanitize("<i class=\"icon-plus\"></i>"), '#userModal', :class => 'btn', :id => 'modal', :rel => 'tooltip', :title => 'New Reserver', :"data-toggle" => 'modal' %>
       </div>
-      
-      
 
     <% elsif !current_user %>
         Please sign in <br />

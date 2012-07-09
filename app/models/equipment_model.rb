@@ -36,8 +36,6 @@ class EquipmentModel < ActiveRecord::Base
   ##has_many :accessories_equipment_models, :foreign_key => :equipment_model_id
   ##has_many :accessories, :through => :accessories_equipment_models
 
-
-
   ## Validations ##
 
   validates :name, 
@@ -58,7 +56,13 @@ class EquipmentModel < ActiveRecord::Base
   attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, 
                   :max_per_user, :document_attributes, :accessory_ids, :deleted_at, 
                   :checkout_procedures_attributes, :checkin_procedures_attributes, :photo, 
-                  :documentation, :max_renewal_times, :max_renewal_length, :renewal_days_before_due
+                  :documentation, :max_renewal_times, :max_renewal_length, :renewal_days_before_due, :associated_equipment_model_ids
+
+   default_scope where(:deleted_at => nil)
+   
+    def self.include_deleted
+      self.unscoped
+    end
 
   #Code necessary for Paperclip and image/pdf uploading
   has_attached_file :photo, #generates profile picture 
@@ -139,14 +143,20 @@ class EquipmentModel < ActiveRecord::Base
     self.documents.images
   end
 
-  def available?(date_range)
+  def available?(date_range) #This does not actually return true or false.
+       if (a = BlackOut.date_is_blacked_out(date_range.first)) && a.black_out_type_is_hard
+         #add Error about the black out date?
+         return 0
+       end
+       if (a = BlackOut.date_is_blacked_out(date_range.first)) && a.black_out_type_is_hard
+         #add Error about the black out date?
+         return 0
+       end
     overall_count = self.equipment_objects.size
     date_range.each do |date|
       available_on_date = available_count(date)
       overall_count = available_on_date if available_on_date < overall_count
-#      no idea why this would return a boolean sometimes? that breaks other things
-#      return false if overall_count == 0
-    end
+    end 
     overall_count
   end
   
@@ -164,7 +174,7 @@ class EquipmentModel < ActiveRecord::Base
   def available_object_select_options
     self.equipment_objects.select{|e| e.available?}.sort_by(&:name).collect{|item| "<option value=#{item.id}>#{item.name}</option>"}.join.html_safe
   end
-  
+
   def fake_category_id
     self
   end

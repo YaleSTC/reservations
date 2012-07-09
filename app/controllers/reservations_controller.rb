@@ -23,7 +23,7 @@ class ReservationsController < ApplicationController
   end
 
   def show_all #Action called in _reservations_list partial view, allows checkout person to view all current reservations for one user
-    @user = User.find(params[:user_id])
+    @user = User.include_deleted.find(params[:user_id])
     @user_overdue_reservations_set = [Reservation.overdue_user_reservations(@user)].delete_if{|a| a.empty?}
     @user_checked_out_today_reservations_set = [Reservation.checked_out_today_user_reservations(@user)].delete_if{|a| a.empty?}
     @user_checked_out_previous_reservations_set = [Reservation.checked_out_previous_user_reservations(@user)].delete_if{|a| a.empty?}
@@ -56,7 +56,9 @@ class ReservationsController < ApplicationController
             end
           end
           session[:cart] = Cart.new
-          UserMailer.reservation_confirmation(complete_reservation).deliver
+          unless AppConfig.first.reservation_confirmation_email_active?
+            UserMailer.reservation_confirmation(complete_reservation).deliver
+          end
           format.html {redirect_to catalog_path, :flash => {:notice => "Successfully created reservation. " } }
         rescue
           format.html {redirect_to catalog_path, :flash => {:error => "Oops, something went wrong with making your reservation."} }
@@ -241,12 +243,12 @@ class ReservationsController < ApplicationController
   end
   
   def check_out # initializer
-    @user = User.find(params[:user_id])
+    @user = User.include_deleted.find(params[:user_id])
     @user_current_checkouts = Reservation.due_for_checkout(@user)
   end
 
   def check_in # initializer
-    @user =  User.find(params[:user_id])
+    @user =  User.include_deleted.find(params[:user_id])
     @check_in_set = Reservation.due_for_checkin(@user)
   end
 

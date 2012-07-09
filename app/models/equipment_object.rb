@@ -1,7 +1,7 @@
 class EquipmentObject < ActiveRecord::Base
   belongs_to :equipment_model
   has_many :reservations
- 
+
   validates :name, 
             :equipment_model, :presence => true
 
@@ -9,6 +9,13 @@ class EquipmentObject < ActiveRecord::Base
   
   attr_accessible :name, :serial, :equipment_model_id, :deleted_at
   
+   default_scope where(:deleted_at => nil)
+   
+    def self.include_deleted
+      self.unscoped
+    end
+
+
   def status
     # last_reservation = Reservation.find(self.reservation_ids.last.to_s)
     self.reservations.each do |r|

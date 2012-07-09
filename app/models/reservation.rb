@@ -39,6 +39,10 @@ class Reservation < ActiveRecord::Base
                   :checked_out,:checked_in, :equipment_object, :equipment_model_id, 
                   :equipment_object_id, :notes, :notes_unsent, :times_renewed
 
+  def reserver
+    User.include_deleted.find(self.reserver_id)
+  end
+
   def status
     if checked_out.nil? && due_date >= Date.today
       "reserved"
@@ -98,7 +102,7 @@ class Reservation < ActiveRecord::Base
         end
 
         #Check if equipment model limit has been reached
-        if !EquipmentModel.find(reservation.equipment_model_id).max_per_user.nil?
+        if !EquipmentModel.include_deleted.find(reservation.equipment_model_id).max_per_user.nil?
           if user_current_models.count(reservation.equipment_model_id) >= reservation.equipment_model.max_per_user
             error_messages += "Equipment Model limit for #{reservation.equipment_model.name} has been reached."
           end
