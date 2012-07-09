@@ -70,12 +70,12 @@ class ApplicationSetupController < ApplicationController
    
    def new_app_configs
      flash[:notice] = "Edit your application settings here."
-     @app_configs = AppConfig.first
+     @app_config = AppConfig.first
    end
    
    def create_app_configs
-     @app_configs = AppConfig.first   
-      if @app_configs.update_attributes(params[:app_config])
+     @app_config = AppConfig.first   
+      if @app_config.update_attributes(params[:app_config])
         flash[:notice] = "Application settings updated successfully."
         redirect_to root_path
       else
