@@ -179,5 +179,4 @@ class ApplicationController < ActionController::Base
     end
     redirect_to request.referer  # Or use redirect_to(back)
   end
-
 end
