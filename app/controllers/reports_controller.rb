@@ -1,5 +1,5 @@
 class ReportsController < ApplicationController
-  # before_filter :require_admin
+  before_filter :require_admin
   ResRelation = Struct.new(:name, :relation, :params) # relations to build data columns
   StatRow = Struct.new(:name, :data, :link_path) # output structure
   ResSetInfo = Struct.new(:name, :id_type, :ids, :link_path) #info for a reservation set
@@ -8,7 +8,6 @@ class ReportsController < ApplicationController
     @res_stat_sets = []
     @start_date = start_date
     @end_date = end_date
-    #need some kind of admin priveleges before hand...
     # users = [current_user]
 
     # res_set = Reservation.starts_on_days(@start_date,@end_date).reserver_is_in(users)
