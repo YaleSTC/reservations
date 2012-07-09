@@ -19,7 +19,7 @@ ActiveRecord::Schema.define(:version => 20120705210315) do
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
   end
-  
+
   create_table "app_configs", :force => true do |t|
     t.boolean "upcoming_checkin_email_active",         :default => true
     t.boolean "overdue_checkout_email_active",         :default => true
@@ -40,7 +40,7 @@ ActiveRecord::Schema.define(:version => 20120705210315) do
 
   create_table "black_outs", :force => true do |t|
     t.integer  "equipment_model_id"
-    t.date     "bo_start_date"
+    t.date     "start_date"
     t.date     "end_date"
     t.text     "notice"
     t.integer  "created_by"
