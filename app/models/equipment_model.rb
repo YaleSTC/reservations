@@ -64,6 +64,14 @@ class EquipmentModel < ActiveRecord::Base
       self.unscoped
     end
 
+  def self.catalog_search(query)
+    if query.blank? # if the string is blank, return all
+      find(:all)
+    else # in all other cases, search using the query text
+      find(:all, :conditions => ['name LIKE :query OR description LIKE :query', {:query => "%#{query}%"}])
+    end
+  end
+
   #Code necessary for Paperclip and image/pdf uploading
   has_attached_file :photo, #generates profile picture 
       :styles => { :large => "500x500>", :medium => "250x250>", :small => "150x150>", :thumbnail => "260x180#"},

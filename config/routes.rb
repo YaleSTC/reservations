@@ -33,6 +33,7 @@ Reservations::Application.routes.draw do
 
   match '/users/new_button' => 'users#new_button', :as => :new_button
   match '/reservations/renew/:id' => 'reservations#renew', :as => :renew
+  match '/catalog/search' => 'catalog#search', :as => :catalog_search
 
   resources :reservations do
     member do
