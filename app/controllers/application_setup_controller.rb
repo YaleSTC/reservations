@@ -86,7 +86,7 @@ class ApplicationSetupController < ApplicationController
   
   private
     def redirect_if_not_first_run
-      if User.first
+      if User.all.count > 1
         flash[:error] = "The setup wizard can only be run on first launch."
         redirect_to root_path
       end
