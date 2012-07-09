@@ -1,0 +1,102 @@
+<div id="navigation_bar" class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+		<% unless @app_configs.nil? || @app_configs.site_title.nil? %>
+      <%= link_to sanitize("<i class=\"icon-th-list\"></i> #{site_title}"), root_path, :class => 'brand' %>
+		<% end %>
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+      <div class="nav-collapse">
+      <ul class="nav">
+        <li <%= navigation_active catalog_path %><%= navigation_active root_path %>><%= link_to "Catalog", catalog_path %></li>
+      
+      <% if current_user && current_user.can_checkout? %>
+        
+          <% if current_user && current_user.is_admin_in_adminmode? %>
+          <li <%= navigation_active users_path %>><%= link_to "Users", users_path %></li>
+          <% end %>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Equipment <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <% if current_user && current_user.is_admin_in_adminmode? %>
+                <li><%= link_to "Categories", categories_path %></li>
+                <li><%= link_to "Equipment Models", equipment_models_path %></li>
+                <% end %>
+              
+                <li><%= link_to "Equipment Objects", equipment_objects_path %></li>
+                <% if current_user && current_user.is_admin_in_adminmode? %>
+                <li><%= link_to "Black Out Dates", black_outs_path %></li>
+                <% end %>
+              </ul>
+          </li>
+        <% end %>
+        <li <%= navigation_active reservations_path %>><%= link_to (current_user && current_user.can_checkout? ? "Reservations" : "My Reservations"), reservations_path %></li>
+        <% if current_user && current_user.is_admin_in_adminmode? %>
+          <li <%= navigation_active edit_app_configs_path %>><%= link_to "Settings", edit_app_configs_path %></li>
+        <% end %>
+        
+      
+      
+        <li class="divider-vertical"></li>            
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Links <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <li><%= link_to @app_configs.home_link_text, @app_configs.home_link_location %></li>
+              <li><%= link_to @app_configs.contact_link_text, @app_configs.contact_link_location %></li>
+            </ul>
+          </li>
+        <li class="divider-vertical"></li>
+        <!-- ==== VIEW-AS MODE ==== -->
+        <% if current_user && current_user.is_admin? %>
+          <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"> View As <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+              
+      	          <% if current_user && current_user.adminmode? %>
+                  <li class="active">Admin</li>
+      	          <% else %>
+                  <li><%= link_to 'Admin', {:a_mode => 'ON'}%></li>
+                  <% end %>
+      	          <% if current_user && current_user.checkoutpersonmode? %>
+                  <li class="active">Checkout Person</li>
+      	          <% else %>
+                  <li><%= link_to 'Checkout Person', {:c_mode => 'ON'}%></li>
+                  <% end %>
+      	          <% if current_user && current_user.normalusermode? %>
+                  <li class="active">Normal User</li>
+      	          <% else %>
+                  <li><%= link_to 'Normal User', {:n_mode => 'ON'}%></li>
+                  <% end %>
+      	          <% if current_user && current_user.bannedmode? %>
+                  <li class="active">Banned User</li>
+      	          <% else %>
+                  <li><%= link_to 'Banned User', {:b_mode => 'ON'}%></li>
+                  <% end %>
+              
+              </ul>
+          </li>
+        <% end %>
+      </ul>
+      <!-- Current User Dropdown -->
+      <ul class="nav pull-right" id="logged_in">
+      <% if current_user.nil? %>
+        <li><%= link_to "Sign In" %></li>
+      <% elsif current_user %>
+      	<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user"></i> 
+        	<%= current_user.name %>
+      	  <b class="caret"></b></a>
+        	<ul class="dropdown-menu">
+          	<li><%= link_to "My Profile", current_user %></li>
+      	    <li><%= link_to "Log Out", logout_path %></li>
+    	    </ul>
+  	    </li>
+  	  <% end %>
+    </ul>
+    </div>
+  </div>
+</div>
+</div>
