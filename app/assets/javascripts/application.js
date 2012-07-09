@@ -87,6 +87,58 @@ $(document).ready(function() {
 	});
 
 	$(".btn#modal").tooltip();
+	
+	// Equipment Model - show - progress bar
+	
+  $('.progress .bar').each(function() {
+      var me = $(this);
+      var perc = me.attr("data-percentage");
+      var current_perc = 0;
+
+      var progress = setInterval(function() {
+          if (current_perc>=perc) {
+              clearInterval(progress);
+          } else {
+              current_perc = perc;
+              me.css('width', (current_perc)+'%');
+          }
+      }, 100);
+  });
+
+	$('.associated_em_box img').popover({ placement: 'bottom' });
+
+	// fix sub nav on scroll
+	var $win = $(window)
+	  , $nav = $('.subnav')
+	  , navTop = $('.subnav').length && $('.subnav').offset().top - 40
+	  , isFixed = 0
+		, $hiddenName = $('.subnav .hide')
+
+	processScroll()
+
+	// hack sad times - holdover until rewrite for 2.1
+	$nav.on('click', function () {
+	  if (!isFixed) setTimeout(function () {  $win.scrollTop($win.scrollTop() - 47) }, 10)
+	})
+
+	$win.on('scroll', processScroll)
+
+	function processScroll() {
+	  var i, scrollTop = $win.scrollTop()
+	  if (scrollTop >= navTop && !isFixed) {
+	    isFixed = 1
+	    $nav.addClass('subnav-fixed')
+			$hiddenName.removeClass('hide')
+			if (!$('.subnav li').hasClass('active')) {
+				$('.subnav li:eq(1)').addClass('active')
+			}
+	  } else if (scrollTop <= navTop && isFixed) {
+	    isFixed = 0
+	    $nav.removeClass('subnav-fixed')
+			$hiddenName.addClass('hide')
+			$('.subnav li').removeClass('active')
+	  }
+	}
 
   $('#modal').click(function() {
     $('#userModal div.modal-body').load(new_user, {from_cart : true }); // new_user defined in variables.js.erb

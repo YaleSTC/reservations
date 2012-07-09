@@ -1,0 +1,37 @@
+<table id="table_woo" class="datatable table table-striped table-bordered">
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Serial (optional)</th>
+    <th>Status</th>
+<%# these blank TH's necessary for the sort function %>
+  <% if current_user.is_admin_in_adminmode? %>
+    <th class="no_sort"> </th>
+    <th class="no_sort"> </th>
+  <% end %>
+  </tr>
+  </thead>
+  <tbody>
+  <% for equipment_object in @equipment_model.equipment_objects %>
+    <% if equipment_object.deleted_at %>
+      <tr class="deactivated">
+      <% @toggle = "link_to \"Activate\", activate_path(:equipment_objects,equipment_object), :class => \"btn btn-success\"" %>
+    <% else %>
+      <tr class= "activated">
+      <% @toggle = "link_to \"Deactivate\", deactivate_path(:equipment_objects,equipment_object), :class => \"btn btn-danger\"" %>
+    <% end %>
+      <td><%= link_to equipment_object.name, equipment_object %></td>
+      <td><%= equipment_object.serial %></td>
+      <% if equipment_object.status == "available" %>
+        <td><span class="label label-success eo-table">Available</span></td>
+      <% else %>
+        <td><%= equipment_object.status %></td>
+      <% end %>
+      <% if current_user.is_admin_in_adminmode? %>
+        <td><%= link_to "Edit", edit_equipment_object_path(equipment_object), :class => "btn" %></td>
+        <td><%= eval @toggle %></td>
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

@@ -18,6 +18,7 @@ class EquipmentModelsController < ApplicationController
   
   def show
     @equipment_model = EquipmentModel.include_deleted.find(params[:id])
+    @associated_equipment_models = @equipment_model.associated_equipment_models.sample(6)
   end
   
   def new
