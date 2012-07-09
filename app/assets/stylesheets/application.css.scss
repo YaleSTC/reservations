@@ -1,6 +1,7 @@
 @import "autocomplete";
 @import "bootstrap_and_overrides";
 @import "jquery-ui-1.8.16.custom";
+@import "mixins";
 
 // Application Variables
 
@@ -14,6 +15,9 @@ label { font-weight: bold; }
 	margin-bottom: 0px;
 	margin-top: 18px; 
 }
+div.form-actions .view_all {
+	float: right;
+}
 
 // Partial Imports
 
@@ -21,3 +25,4 @@ label { font-weight: bold; }
 @import "reservations/*";
 @import "catalog/*";
 @import "users/*";
+@import "equipment_models/*";
