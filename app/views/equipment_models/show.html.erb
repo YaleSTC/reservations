@@ -49,7 +49,9 @@
     <div class="associated_em_box">    
       <div class="row">
           <div class="span6">
-            <h3>You Might Also Like:</h3>
+            <% unless @associated_equipment_models.empty? %>
+              <h3>You Might Also Like:</h3>
+            <% end %>
           </div>
         </div>
         <div class="row">
