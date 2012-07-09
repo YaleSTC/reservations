@@ -35,6 +35,7 @@
         <% end %>
         <li <%= navigation_active reservations_path %>><%= link_to (current_user && current_user.can_checkout? ? "Reservations" : "My Reservations"), reservations_path %></li>
         <% if current_user && current_user.is_admin_in_adminmode? %>
+          <li <%= navigation_active reports_path %>><%= link_to "Reports", reports_path %></li>
           <li <%= navigation_active edit_app_configs_path %>><%= link_to "Settings", edit_app_configs_path %></li>
         <% end %>
         
