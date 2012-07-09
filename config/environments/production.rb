@@ -51,8 +51,8 @@ Reservations::Application.configure do
   config.assets.compress = true
 
   # Choose the compressors to use
-  # config.assets.js_compressor  = :uglifier
-  # config.assets.css_compressor = :yui
+  config.assets.js_compressor  = :uglifier
+  config.assets.css_compressor = :yui
 
   # Don't fallback to assets pipeline if a precompiled asset is missed
   config.assets.compile = false

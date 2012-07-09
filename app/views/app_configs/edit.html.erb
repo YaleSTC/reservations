@@ -1,6 +1,7 @@
 <% title "Edit Application Settings" %>
 
-<%= simple_form_for @app_configs, :html => { :class => "form-horizontal" } do |f| %>
+<%= simple_form_for @app_config, :html => { :class => "form-horizontal" } do |f| %>
+<%= f.error_notification %>
 	
 <%= f.input :site_title %>
 <%= f.input :admin_email %>
@@ -15,6 +16,7 @@
 <%= f.input :overdue_checkin_email_active%>
 <%= f.input :overdue_checkin_email_body %>
 <%= f.input :reservation_confirmation_email_active%>
+
 
 <div class="form-actions">
 <%= f.button :submit %></p>
