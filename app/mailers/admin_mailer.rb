@@ -3,7 +3,7 @@ class AdminMailer < ActionMailer::Base
   
   def notes_reservation_notification(notes_reservations)
     @notes_reservations = notes_reservations
-    mail(:to => Settings.admin_email, :subject => "[Reservation] Notes for " + (Time.now - 86400).strftime('%m/%d/%y'))
+    mail(:to => @app_configs.admin_email, :subject => "[Reservation] Notes for " + (Time.now - 86400).strftime('%m/%d/%y'))
   end
   
 end

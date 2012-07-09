@@ -1,0 +1,31 @@
+<p><%= simple_form_for @user, :url => url_for( :action => "create_admin_user", :controller => "application_setup"), :html => { :class => "form-horizontal" } do |f| %>
+  <%= f.error_notification %>
+  <% if current_user and (current_user.is_admin_in_adminmode? or ((current_user.is_admin_in_checkoutpersonmode? or current_user.is_checkout_person?) and @user.id == NIL)) %>
+    <%= f.input :login %>
+    <% else %>
+      <%= f.input :login, :readonly => true, :input_html => {:value => @user.login}%>
+    <% end %>
+    <%= f.input :first_name %>
+    <%= f.input :last_name %>
+    <%= f.input :nickname %>
+    <%= f.input :phone %>
+    <%= f.input :email %>
+    <%= f.input :affiliation, label: "Affiliation", hint: "including college, year, etc"%>
+
+    <% if params[:from_cart] == "true" %>
+      <%= hidden_field_tag(:from_cart, true) %>
+      <%#= f.input :from_cart, :as => :hidden, :value  => true %>
+    <% else %>
+      <%= hidden_field_tag(:from_cart, false) %>
+      <%#= f.input :from_cart, :as => :hidden, :value => false %>
+    <% end %>
+    
+  <% if current_user && current_user.is_admin_in_adminmode? %>
+      <%= f.input :is_banned %>
+      <%= f.input :is_checkout_person %>
+      <%= f.input :is_admin %>
+      <%= f.input :deleted_at, label: "Disabled", :as => :deleted %>    
+  <% end %>
+  <%= f.button :wrapped, :cancel => root_path %>
+<% end %>
+</p>
