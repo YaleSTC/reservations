@@ -16,7 +16,7 @@
         <p>
           <%= content_tag :div, {:class => "tab-pane #{active_tab(key)}", :id => key}, false do %>
             <% unless value.empty? %>
-              <%= render :partial => "res_stat_set" , :object => value%>
+              <%= render :partial => "res_stat_set" , :object => value, :locals => {:key => key} %>
             <% end %>
           <% end %>
         </p>

@@ -52,6 +52,10 @@ class ReportsController < ApplicationController
     res_sets.each do |name,info_struct|
       @data_tables[name] = collect_stat_set(info_struct,res_rels)
     end
+    respond_to do |format| 
+      format.html          
+      format.csv { render :layout => false }
+    end
   end
 
   #not working at all right now
