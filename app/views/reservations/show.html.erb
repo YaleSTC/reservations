@@ -53,7 +53,7 @@
     <%# you can't renew if you haven't checked it out, or if you've already checked it in %>
   <% elsif @reservation.is_eligible_for_renew? and (@reservation.max_renewal_length_available != 0) and (@reservation.checked_out != NIL) %>
     <div id="renew_box">
-      At this time, you are eligible to renew your <%= @reservation.equipment_model.name.singularize %>
+      At this time, you are eligible to renew the <%= @reservation.equipment_model.name.singularize %>
       reservation for <strong><%= pluralize(@reservation.max_renewal_length_available, 'day') %></strong>. <%= link_to "Renew Now", renew_path, :remote => true %>
     </div>
   <% else %>

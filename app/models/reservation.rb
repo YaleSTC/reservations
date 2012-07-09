@@ -29,6 +29,8 @@ class Reservation < ActiveRecord::Base
   scope :missed, lambda {where("checked_out IS NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc).recent}
   scope :upcoming, lambda {where("checked_out IS NULL and checked_in IS NULL and start_date = ? and due_date > ?", Time.now.midnight.utc, Time.now.midnight.utc).user_sort }
   
+  scope :reserver_is_in, lambda {|user_id_arr| where(:reserver_id => user_id_arr)}
+  scope :starts_on_days, lambda {|start_date, end_date|  where(:start_date => start_date..end_date)}
   scope :active, where("checked_in IS NULL") #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
   scope :notes_unsent, :conditions => {:notes_unsent => true}
   

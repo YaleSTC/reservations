@@ -65,6 +65,11 @@ Reservations::Application.routes.draw do
   match '/cart/empty' => 'application#empty_cart', :as => :empty_cart
   match '/cart/update' => 'application#update_cart', :as => :update_cart
   
+  match '/reports/index' => 'reports#index', :as => :reports
+  match '/reports/:id/for_model' => 'reports#for_model', :as => :for_model_report
+  match '/reports/for_model_set' => 'reports#for_model_set', :as => :for_model_set_reports
+  match '/reports/update' => 'reports#update_report', :as => :update_report
+  
   match '/:controller/:id/deactivate' => ':controller#deactivate', :as => 'deactivate'
   match '/:controller/:id/activate' => ':controller#activate', :as => 'activate'
 
