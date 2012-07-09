@@ -1,4 +1,6 @@
 class CatalogController < ApplicationController
+  layout 'application_with_sidebar'
+  
   def index
     #push accessories to bottom by removing and reinserting
     #@equipment_models_by_category[Category.find_by_name("Accessories")] = @equipment_models_by_category.delete(Category.find_by_name("Accessories"))

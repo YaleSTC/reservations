@@ -1,4 +1,6 @@
 class ReservationsController < ApplicationController
+  layout 'application_with_sidebar'
+  
   before_filter :require_login, :only => [:index, :show]
   before_filter :require_checkout_person, :only => [:check_out, :check_in]
 
