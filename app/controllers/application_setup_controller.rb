@@ -2,10 +2,11 @@ class ApplicationSetupController < ApplicationController
   skip_filter :first_time_user
   skip_filter :app_setup
   
- # before_filter :redirect_if_not_first_run
   before_filter :load_configs
   before_filter :initialize_app_configs
   before_filter :new_admin_user  
+  before_filter :redirect_if_not_first_run
+  
 
   def new_admin_user
     flash[:notice] = "Welcome to Reservations! Create your user and you will be guided 
