@@ -49,14 +49,18 @@
     <div class="associated_em_box">    
       <div class="row">
           <div class="span6">
-            <h3>You Might Also Like:</h3>
+            <% unless @associated_equipment_models.empty? %>
+              <h3>You Might Also Like:</h3>
+            <% end %>
           </div>
         </div>
         <div class="row">
-          <!-- placeholder -->
-          <% 6.times do %>
+          <!-- associated equipment models -->
+          <% @associated_equipment_models.each do |em| %>
             <div class="span1">
-              <%= image_tag "no-image-260.gif", rel: 'popover', title: @equipment_model.name, :"data-content" => @equipment_model.description.truncate(100) %>
+              <%= link_to em do %>
+                <%= image_tag evaluate_img_presence(em), rel: 'popover', title: em.name, :"data-content" => em.description.truncate(100) %>
+              <% end %>
             </div>
           <% end %>
         </div>
