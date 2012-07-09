@@ -1,4 +1,8 @@
-<% title sanitize("Reserved by #{link_to @user.name, @user}") %>
+<% if current_user.is_admin_in_adminmode? %>
+  <% title sanitize("Reserved by #{link_to @user.name, @user}") %>
+<% else %>
+  <% title "Reserved by #{@user.name}" %>
+<% end %>
 
 <% if current_user.can_checkout? || current_user == @user %>
   <div class="btn-group">
