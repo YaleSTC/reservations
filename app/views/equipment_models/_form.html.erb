@@ -15,7 +15,7 @@
   <%= f.input :name %>
   <%= f.input :description, as: :text %>
   <%= f.input :late_fee, :wrapper => :prepend do %>
-    <%= content_tag :span, "$", :class => "add-on" %><%= f.input_field :late_fee, :type => 'number', :step => 'any' %>
+    <%= content_tag :span, "$", :class => "add-on" %><%= f.input_field :late_fee, :type => 'number', :step => 'any'  %>
   <% end %>
   
   <%= f.input :replacement_fee, :wrapper => :prepend do %>

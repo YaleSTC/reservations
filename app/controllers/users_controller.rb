@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  layout 'application_with_sidebar', only: [:show, :edit]
+  
   #necessary to set up initial users and admins
   skip_filter :first_time_user, :only => [:new, :create]
   skip_filter :new_admin_user, :only => [:new, :create]
