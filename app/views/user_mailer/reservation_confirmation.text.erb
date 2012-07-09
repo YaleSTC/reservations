@@ -2,7 +2,7 @@ Dear <%= @complete_reservation.first.reserver.name%>,
  
 This is a confirmation of your reservation for the following equipment: 
 <% @complete_reservation.each do |r| %>
-<%= r.equipment_model.name %> 
+* <%= r.equipment_model.name %> 
 <% end %>
 
 
