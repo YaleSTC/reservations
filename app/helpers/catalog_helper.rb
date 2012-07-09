@@ -1,6 +1,6 @@
 module CatalogHelper
   def prepare_pagination
-    @default_user_per = Settings.default_per_cat_page.to_i
+    @default_user_per = Settings.default_per_cat_page.to_i unless Settings.default_per_cat_page == ''
 
     session[:user_per_cat_page] ||= @default_user_per
     session[:user_per_cat_page] = params[:user_cat_items_per_page] if !params[:user_cat_items_per_page].blank?

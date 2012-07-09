@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(:version => 20120629190015) do
 
   create_table "black_outs", :force => true do |t|
     t.integer  "equipment_model_id"
-    t.date     "bo_start_date"
+    t.date     "start_date"
     t.date     "end_date"
     t.text     "notice"
     t.integer  "created_by"
@@ -69,9 +69,6 @@ ActiveRecord::Schema.define(:version => 20120629190015) do
     t.datetime "created_at",                                                                  :null => false
     t.datetime "updated_at",                                                                  :null => false
     t.string   "deleted_at"
-    t.integer  "max_renewal_times"
-    t.integer  "max_renewal_length"
-    t.integer  "renewal_days_before_due"
     t.string   "photo_file_name"
     t.string   "photo_content_type"
     t.integer  "photo_file_size"
@@ -80,6 +77,9 @@ ActiveRecord::Schema.define(:version => 20120629190015) do
     t.string   "documentation_content_type"
     t.integer  "documentation_file_size"
     t.datetime "documentation_updated_at"
+    t.integer  "max_renewal_times"
+    t.integer  "max_renewal_length"
+    t.integer  "renewal_days_before_due"
   end
 
   create_table "equipment_models_associated_equipment_models", :id => false, :force => true do |t|
