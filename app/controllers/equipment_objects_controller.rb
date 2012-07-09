@@ -2,6 +2,7 @@ class EquipmentObjectsController < ApplicationController
   before_filter :require_admin, :except => :index
   before_filter :require_checkout_person, :only => :index
 
+  require 'activationhelper'
   include ActivationHelper
 
   def index

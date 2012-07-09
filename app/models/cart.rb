@@ -15,7 +15,7 @@ class Cart
     @errors = ActiveModel::Errors.new(self)
     @items = []
     @start_date = Date.today
-    @due_date = Date.today
+    @due_date = Date.today + 1.day
     @reserver_id = nil
   end
 

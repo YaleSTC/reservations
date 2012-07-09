@@ -3,6 +3,7 @@ class UsersController < ApplicationController
   skip_before_filter :cart, :only => [:new, :create]
   before_filter :require_admin, :only => :index
      
+  require 'activationhelper'
   include ActivationHelper
 
   def index
@@ -27,7 +28,7 @@ class UsersController < ApplicationController
     @user = User.include_deleted.find(params[:id])
     require_user(@user)
     @user_reservations = @user.reservations
-    @all_equipment = Reservation.include_reservations.active_user_reservations(@user)
+    @all_equipment = Reservation.active_user_reservations(@user)
     @show_equipment = { current_equipment: @user.reservations.select{|r| (r.status == "checked out") || (r.status == "overdue")}, 
                         current_reservations: @user.reservations.reserved, 
                         overdue_equipment: @user.reservations.overdue, 

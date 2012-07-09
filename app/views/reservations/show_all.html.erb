@@ -1,4 +1,4 @@
-<% title sanitize("Reserved by #{link_to @user.name, show_all_reservations_for_user_path(@user)}") %>
+<% title sanitize("Reserved by #{link_to @user.name, @user}") %>
 
 <% if current_user.can_checkout? || current_user == @user %>
   <div class="btn-group">
