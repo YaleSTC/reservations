@@ -5,10 +5,9 @@ class ReportsController < ApplicationController
   ResSetInfo = Struct.new(:name, :id_type, :ids, :link_path) #info for a reservation set
   
   def index
-    
     @res_stat_sets = []
     @start_date = session[:report_start_date] ? session[:report_start_date] : Date.today.beginning_of_year
-    @end_date ||= Date.today
+    @end_date = session[:report_end_date] ? session[:report_end_date] : Date.today
     #need some kind of admin priveleges before hand...
     # users = [current_user]
 
@@ -73,12 +72,16 @@ class ReportsController < ApplicationController
 
   #sub report for a particular model
   def for_model
-    @data_tables = models_subreport([params[:id]])
+    @start_date = session[:report_start_date]
+    @end_date = session[:report_end_date]
+    @data_tables = models_subreport([params[:id]],@start_date,@end_date)
   end
   
   #should probably merge with for_model
   def for_model_set
-    @data_tables = models_subreport(params[:ids])
+    @start_date = session[:report_start_date]
+    @end_date = session[:report_end_date]
+    @data_tables = models_subreport(params[:ids],@start_date,@end_date)
   end
   
 
@@ -100,8 +103,8 @@ class ReportsController < ApplicationController
     return res_rels
   end
   
-  def models_subreport(ids)
-    res_set = Reservation.includes(:equipment_model,:equipment_object).where(:equipment_model_id => ids)
+  def models_subreport(ids,start_date,end_date)
+    res_set = Reservation.starts_on_days(start_date,end_date).includes(:equipment_model,:equipment_object).where(:equipment_model_id => ids)
     res_rels = default_relations(res_set)
     res_rels << ResRelation.new("Average Duration", res_set, {:id_type => :equipment_model_id, :stat_type => :duration})
     @table_col_names = res_rels.collect{|r| r[:name]}

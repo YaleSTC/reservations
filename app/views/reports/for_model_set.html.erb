@@ -1,3 +1,2 @@
-<% title ("Reports for " + @start_date.to_s + " to " + @end_date.to_s) %>
-
+<%= render :partial => 'reports/report_dates' %>
 <%= render :partial => "data_tables" , :object => @data_tables%>
