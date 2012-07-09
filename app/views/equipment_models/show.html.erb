@@ -70,7 +70,7 @@
 <!-- SUBNAV SECTION -->
 <div id="subnavbar" class="subnav">
   <ul class="nav nav-pills">
-    <li class="hide"><h4><%= @equipment_model.name.truncate(50) %></h4></li>
+    <li class="hide"><h4><a href="#"><%= @equipment_model.name.truncate(50) %></a></h4></li>
     <li><a href="#description">Description</a></li>
     <li><a href="#details">Details</a></li>
     <% if @equipment_model.documentation.exists? %>
