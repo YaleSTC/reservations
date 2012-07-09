@@ -1,0 +1,18 @@
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <%= csrf_meta_tag %>
+	<% unless @app_configs.nil? || @app_configs.site_title.nil?%>
+  <title><%= sanitize ("#{site_title}" + ( content_for?(:title) ? " &raquo; #{strip_links yield(:title)}" : "")), :attributes => "&raquo;" %></title>
+	<% end %>
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+  <![endif]-->
+  
+  <%= stylesheet_link_tag 'application', media: :screen %>
+  <%= stylesheet_link_tag('print', media: :print) %>
+  <%= javascript_include_tag 'application'%>
+  <%= yield(:head) %>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="/favicon.ico">
+</head>
