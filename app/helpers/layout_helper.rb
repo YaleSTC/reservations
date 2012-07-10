@@ -41,6 +41,10 @@ module LayoutHelper
     end
   end
   
+  def equipment_count
+    @count = @user.reservations.select{|r| (r.status == "checked out") || (r.status == "overdue")}.size
+  end
+  
   def navigation_active controller_path
     if current_page?(controller_path)
       @active = 'class=active'

@@ -37,12 +37,12 @@
         : sanitize("My Reservations &nbsp;<span class=\"badge\">#{reservations_count}</span>")), reservations_path %></li>
         <li>
           <%= link_to_if current_user && !(current_user.is_admin_in_adminmode? || current_user.is_checkout_person?), 
-          sanitize("My Equipment &nbsp;<span class=\"badge\">#{reservations_count}</span>"), '#' %>
+          sanitize("My Equipment &nbsp;<span class=\"badge\">#{equipment_count}</span>"), '#' %>
         </li>
         <% if current_user && current_user.is_admin_in_adminmode? %>
           <li class="divider-vertical"></li>
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Admin <b class="caret"></b>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
                   <li <%= navigation_active reports_path %>><%= link_to "Reports", reports_path %></li>
@@ -53,7 +53,7 @@
       
         <li class="divider-vertical"></li>            
         <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Links <b class="caret"></b>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Links <b class="caret"></b>
             </a>
             <ul class="dropdown-menu">
               <li><%= link_to @app_configs.home_link_text, @app_configs.home_link_location %></li>
