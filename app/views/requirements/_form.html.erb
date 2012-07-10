@@ -1,0 +1,24 @@
+<%= simple_form_for(@requirement) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+   <%= f.input :equipment_model_id, :as => :select, :collection => EquipmentModel.select_options %>
+   <%= f.input :contact_info %>
+   <%= f.input :notes %>
+  </div>
+
+
+Requirements that need to be met before a user can check out this item (drag to re-order): <br>
+<fieldset>
+    <p><legend>Requirement Step</legend></p>
+    <%= f.simple_fields_for :requirement_steps do |reqstep| %>
+      <%= render 'requirement_step_fields', :f => reqstep %>
+    <% end %>
+    <div class="links">
+      <p><%= link_to_add_association 'Add Step', f, :requirement_steps, :class => "btn" %></p>
+    </div>
+  </fieldset>
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

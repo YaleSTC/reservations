@@ -1,0 +1,48 @@
+<h1>Listing requirements</h1>
+
+<table>
+  <tr>
+    <th>Equipment Model</th>
+    <th>Contact Information</th>
+  </tr>
+
+<% @requirements.each do |requirement| %>
+  
+  <tr>
+    <td><%= EquipmentModel.find(requirement.equipment_model_id).name %></td>
+    <td><%= requirement.contact_info %></td>
+    <td><%= link_to 'Show', requirement %></td>
+    <td><%= link_to 'Edit', edit_requirement_path(requirement) %></td>
+    <td><%= link_to 'Destroy', requirement, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+<br>
+<%= link_to 'New Requirement', new_requirement_path %>
+
+<br><br>
+<h1>Listing users with special permission</h1>
+
+<table>
+  <tr>
+    <th>User</th>
+    <th>Equipment Model</th>
+  </tr>
+
+<% Requirement.get_users_with_permissions.each do |user| %>
+  
+  <tr>
+    <td><%= user.name %></td>
+    <td><%= Requirement.get_all_ems_for_user(user).join(", \n") %></td>
+    <td><%= link_to 'Show', MetRequirement.where(:user_id => user.id).first  %></td>
+    <td><%= link_to 'Edit', edit_met_requirement_path(MetRequirement.where(:user_id => user.id).first) %></td>   
+  </tr>
+<% end %>
+</table>
+
+
+
+<br />
+
+ 
+<%= link_to 'New Met Requirement', new_met_requirement_path %>
