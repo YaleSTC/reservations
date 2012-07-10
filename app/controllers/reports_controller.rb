@@ -39,7 +39,7 @@ class ReportsController < ApplicationController
     categories = Category.find(cat_em_ids.keys)
     category_info = categories.collect {|cat| ResSetInfo.new(cat.name,:equipment_model_id, cat_em_ids[cat.id],
                                                  for_model_set_reports_path({:ids => cat_em_ids[cat.id]})) }
-
+    
     # take all the sets of reservations and get stats on them
     # sets of reservations are passed in by name then models associated
     all_models = [ResSetInfo.new("All Models", :equipment_model_id)]
@@ -51,6 +51,10 @@ class ReportsController < ApplicationController
     @data_tables = {}
     res_sets.each do |name,info_struct|
       @data_tables[name] = collect_stat_set(info_struct,res_rels)
+    end
+    respond_to do |format| 
+      format.html          
+      format.csv { render :layout => false }
     end
   end
 
@@ -68,7 +72,6 @@ class ReportsController < ApplicationController
     # @end_date = (Date.strptime(params[:report][:end_date],'%m/%d/%Y'))
   end
 
-
   #sub report for a particular model
   def for_model
     @start_date = start_date
@@ -82,8 +85,6 @@ class ReportsController < ApplicationController
     @end_date = end_date
     @data_tables = models_subreport(params[:ids],@start_date,@end_date)
   end
-  
-
   
   private
   def start_date
