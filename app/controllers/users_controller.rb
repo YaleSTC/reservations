@@ -8,7 +8,7 @@ class UsersController < ApplicationController
   
   
   skip_filter :cart, :only => [:new, :create]
-  before_filter :require_admin, :only => :index
+  before_filter :require_checkout_person, :only => :index
      
   require 'activationhelper'
   include ActivationHelper
