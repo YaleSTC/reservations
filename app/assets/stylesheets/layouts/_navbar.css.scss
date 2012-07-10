@@ -1,4 +1,10 @@
-.dropdown-menu .nav-header {
-	text-transform: lowercase;
-	font-variant: small-caps;
+.dropdown-menu {
+	max-height: 440px;
+	overflow-y: auto;
+	
+	.nav-header {
+		text-transform: lowercase;
+		font-variant: small-caps;
+	}
 }
+
