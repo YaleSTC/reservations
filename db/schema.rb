@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120705210315) do
+ActiveRecord::Schema.define(:version => 20120710142457) do
 
   create_table "accessories_equipment_models", :force => true do |t|
     t.integer  "accessory_id"
@@ -130,6 +130,34 @@ ActiveRecord::Schema.define(:version => 20120705210315) do
     t.datetime "updated_at",          :null => false
   end
 
+  create_table "met_requirements", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "requirement_step_id"
+    t.datetime "deleted_at"
+    t.text     "notes"
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
+  end
+
+  create_table "requirement_steps", :force => true do |t|
+    t.integer  "requirement_id"
+    t.text     "step"
+    t.integer  "position"
+    t.boolean  "completed"
+    t.integer  "user_id"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+  end
+
+  create_table "requirements", :force => true do |t|
+    t.integer  "equipment_model_id"
+    t.string   "contact_info"
+    t.datetime "deleted_at"
+    t.text     "notes"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+  end
+
   create_table "reservations", :force => true do |t|
     t.integer  "reserver_id"
     t.integer  "checkout_handler_id"
@@ -175,6 +203,11 @@ ActiveRecord::Schema.define(:version => 20120705210315) do
     t.boolean  "normalusermode",     :default => false
     t.boolean  "bannedmode",         :default => false
     t.string   "deleted_at"
+  end
+
+  create_table "users_requirements", :id => false, :force => true do |t|
+    t.integer "user_id"
+    t.integer "requirement_id"
   end
 
 end
