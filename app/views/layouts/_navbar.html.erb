@@ -53,9 +53,20 @@
           
         </li>
         
-        <li>
+        <li class="dropdown">
           <%= link_to_if current_user && !(current_user.is_admin_in_adminmode? || current_user.is_checkout_person?), 
-          sanitize("My Equipment &nbsp;<span class=\"badge\">#{equipment_count}</span>"), '#' %>
+          sanitize("My Equipment &nbsp;<span class=\"badge\">#{equipment_count}</span>"), '#', 
+          class: 'dropdown-toggle', :"data-toggle" => 'dropdown' %>
+          <ul class="dropdown-menu">
+            <% @current_equipment.each do |res| %>
+            <li>
+              <%= link_to "#{res.equipment_model.name} (#{res.equipment_object.name})", res.equipment_model %>
+            </li>
+            <% end %>
+
+            <li class="divider"></li>
+            <li><%= link_to "See More...", reservations_path %></li>
+          </ul>
         </li>
         
         <% end %>

@@ -35,15 +35,16 @@ module LayoutHelper
   
   def reservations_count
     if current_user && current_user.is_admin_in_adminmode? || current_user.is_checkout_person?
-      @count = Reservation.where(:checked_in => nil).size
+      count = Reservation.where(:checked_in => nil).size
     else
       @current_reservations = current_user.reservations
-      @count = @current_reservations.size
+      count = @current_reservations.size
     end
   end
   
   def equipment_count
-    @count = current_user.reservations.select{|r| (r.status == "checked out") || (r.status == "overdue")}.size
+    @current_equipment = current_user.reservations.select{|r| (r.status == "checked out") || (r.status == "overdue")}
+    count = @current_equipment.size
   end
   
   def navigation_active controller_path
