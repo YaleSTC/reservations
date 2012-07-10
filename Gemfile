@@ -47,4 +47,5 @@ end
 group :development do
   gem 'guard-livereload'
   gem 'rb-readline'
+	gem 'thin'
 end
