@@ -26,18 +26,23 @@
               
                 <li><%= link_to "Equipment Objects", equipment_objects_path %></li>
                 <% if current_user && current_user.is_admin_in_adminmode? %>
-                <li><%= link_to "Black Out Dates", black_outs_path %></li>
+                <li><%= link_to "Blackout Dates", black_outs_path %></li>
                 <% end %>
               </ul>
           </li>
         <% end %>
         <li <%= navigation_active reservations_path %>><%= link_to (current_user && current_user.can_checkout? ? "Reservations" : "My Reservations"), reservations_path %></li>
         <% if current_user && current_user.is_admin_in_adminmode? %>
-          <li <%= navigation_active reports_path %>><%= link_to "Reports", reports_path %></li>
-          <li <%= navigation_active edit_app_configs_path %>><%= link_to "Settings", edit_app_configs_path %></li>
+          <li class="divider-vertical"></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Admin <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                  <li <%= navigation_active reports_path %>><%= link_to "Reports", reports_path %></li>
+                  <li <%= navigation_active edit_app_configs_path %>><%= link_to "Settings", edit_app_configs_path %></li>
+                </ul>
+              </li> 
         <% end %>
-        
-      
       
         <li class="divider-vertical"></li>            
         <li class="dropdown">

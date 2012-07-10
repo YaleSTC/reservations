@@ -1,0 +1,8 @@
+<div>
+  <%= form_tag catalog_search_path, class: 'form-search' do %>
+    <div class="input-append">
+      <%= search_field_tag 'query', (params[:query] unless params[:query].blank?), class: 'search-query', placeholder: 'Search the catalog' %><%= 
+      button_tag sanitize("#{content_tag :i, nil, class: "icon-search"}"), class: 'btn' %>
+    </div>
+  <% end %>
+</div>

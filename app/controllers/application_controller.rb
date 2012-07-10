@@ -100,7 +100,7 @@ class ApplicationController < ActionController::Base
       flash[:error] = cart.errors.values.flatten.join("<br/>").html_safe
       cart.errors.clear
       if flash[:error].blank?
-        flash[:notice] = "Cart dates updated"
+        flash[:notice] = "Cart updated"
       end
     end
 
@@ -179,5 +179,4 @@ class ApplicationController < ActionController::Base
     end
     redirect_to request.referer  # Or use redirect_to(back)
   end
-
 end

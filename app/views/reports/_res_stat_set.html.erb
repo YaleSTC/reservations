@@ -1,14 +1,15 @@
 <!-- <table id="table_woo" class="datatable table table-striped table-bordered"> -->
+<%= link_to "Export to csv", request.parameters.merge({:format => :csv, :key => key})%>
 <table class="history_table table table-striped table-bordered">
   <thead>
     <tr>
-      <th>Name</th>
-      <% @table_col_names.each do |name| %>
+      <th><%= key.to_s.titleize %></th>
+      <% res_stat_set[:col_names].each do |name| %>
       <th><%= name %></th>
       <% end %>
     </tr>
   </thead>
   <tbody>
-    <%= render :partial => "report_row", :collection => res_stat_set %>
+    <%= render :partial => "report_row", :collection => res_stat_set[:rows] %>
   </tbody>
 </table>
