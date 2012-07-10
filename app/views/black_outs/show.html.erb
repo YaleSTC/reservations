@@ -1,4 +1,4 @@
-<% title "Black Out of " + (@black_out.equipment_model_id == 0 ? "All Equipment Objects" : EquipmentModel.include_deleted.find(@black_out.equipment_model_id).name) %>
+<% title "Blackout of " + (@black_out.equipment_model_id == 0 ? "All Equipment Objects" : EquipmentModel.include_deleted.find(@black_out.equipment_model_id).name) %>
 
 <!--<p>
   <b>Equipment model affected:</b>
