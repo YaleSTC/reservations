@@ -34,54 +34,54 @@
           </li>
         <% end %>
         
-        <% unless current_user.is_admin_in_adminmode? || current_user.is_checkout_person? %>
-        <!-- Reservations Dropdown -->
+        <% unless current_user.is_admin_in_adminmode? || current_user.is_checkout_person? || !current_user %>
+          <!-- Reservations Dropdown -->
         
-        <li class="dropdown">
-          <%= link_to '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' do %>
-            <% if current_user && current_user.can_checkout? %>
-              <%= "Reservations" %>
-            <% else %>
-              <%= sanitize("My Reservations &nbsp;<span class=\"badge\">#{reservations_count}</span> <b class=\"caret\"></b>") %>
+          <li class="dropdown">
+            <%= link_to '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' do %>
+              <% if current_user && current_user.can_checkout? %>
+                <%= "Reservations" %>
+              <% else %>
+                <%= sanitize("My Reservations &nbsp;<span class=\"badge\">#{reservations_count}</span> <b class=\"caret\"></b>") %>
+              <% end %>
             <% end %>
-          <% end %>
           
-          <ul class="dropdown-menu">
-            <% @current_reservations.each do |res| %>
+            <ul class="dropdown-menu">
+              <% @current_reservations.each do |res| %>
+                <li>
+                  <%= link_to "#{EquipmentModel.include_deleted.find(res.equipment_model_id).name}:
+                               #{res.start_date.to_date.to_s(:long)} &ndash;
+                               #{res.due_date.to_date.to_s(:long)}".html_safe, res %>
+                </li>
+              <% end %>
+              <li class="divider"></li>
+              <li><%= link_to "See More...", reservations_path %></li>
+            </ul>
+          
+          </li>
+        
+          <!-- Equipment Dropdown -->
+          <li class="dropdown">
+            <%= link_to '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' do %>
+              <% if current_user && !(current_user.is_admin_in_adminmode? || current_user.is_checkout_person?) %>
+                <%= sanitize("My Equipment &nbsp;<span class=\"badge\">#{equipment_count}</span> <b class=\"caret\"></b>") %>
+              <% end %>
+            <% end %>
+            <% equipment_count %>
+            <ul class="dropdown-menu">
+              <% @current_equipment.each do |res| %>
               <li>
-                <%= link_to "#{EquipmentModel.include_deleted.find(res.equipment_model_id).name}:
-                             #{res.start_date.to_date.to_s(:long)} &ndash;
-                             #{res.due_date.to_date.to_s(:long)}".html_safe, res %>
+                <%= link_to "#{res.equipment_model.name} (#{res.equipment_object.name})", res.equipment_model %>
               </li>
-            <% end %>
-            <li class="divider"></li>
-            <li><%= link_to "See More...", reservations_path %></li>
-          </ul>
-          
-        </li>
-        
-        <!-- Equipment Dropdown -->
-        <li class="dropdown">
-          <%= link_to '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' do %>
-            <% if current_user && !(current_user.is_admin_in_adminmode? || current_user.is_checkout_person?) %>
-              <%= sanitize("My Equipment &nbsp;<span class=\"badge\">#{equipment_count}</span> <b class=\"caret\"></b>") %>
-            <% end %>
-          <% end %>
-          <% equipment_count %>
-          <ul class="dropdown-menu">
-            <% @current_equipment.each do |res| %>
-            <li>
-              <%= link_to "#{res.equipment_model.name} (#{res.equipment_object.name})", res.equipment_model %>
-            </li>
-            <% end %>
+              <% end %>
 
-            <li class="divider"></li>
-            <li><%= link_to "See More...", reservations_path %></li>
-          </ul>
-        </li>
+              <li class="divider"></li>
+              <li><%= link_to "See More...", reservations_path %></li>
+            </ul>
+          </li> 
+        <% end %>
         
         <!-- Admin Dropdown -->
-        <% end %>
         <% if current_user && current_user.is_admin_in_adminmode? %>
           <li class="divider-vertical"></li>
             <li class="dropdown">
