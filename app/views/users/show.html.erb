@@ -11,7 +11,7 @@
     <% if current_user.can_checkout? %>
       <%= link_to 'Manage Reservations', manage_reservations_for_user_path(@user.id), :class => 'btn btn-success' %>
     <% end %>
-    <%= link_to 'Current Status', '#', :class => 'btn btn-success' %>
+    <%= link_to 'Current Status', reservations_receipt_for_user_path(@user.id), :class => 'btn btn-success' %>
   </div>
 </div>
 

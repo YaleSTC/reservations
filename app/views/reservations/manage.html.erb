@@ -6,23 +6,9 @@
   <br />
 </div>
 
-<% if !@user_overdue_reservations_set.empty? %>
-  <h3 class='span12'>
-    <%= @user.name %> has the following overdue equipment:
-  </h3>
-  <br />
-  <%= render :partial => "user_reservations_list", :collection => @user_overdue_reservations_set %>
-  <div class='span12'>
-    <br />
-    <br />
-  </div>
-<% end %>
-
 <% if !@check_in_set.empty? %>
   <%= form_tag( checkin_path, :method => "put" ) do %>
-    <h3 class='span12'>
-      <%= @user.name %> has the following equipment to check in:
-    </h3>
+    <h2 class='span12'>Check in:</h2>
     <br />
     <%= render :partial => "check_in_form", :collection => @check_in_set %>
     <div class="span12">
@@ -36,7 +22,7 @@
 <% end %>
 
 <% if !@check_out_set.empty? %>
-  <h3 class='span12'><%= @user.name %> has reserved the following equipment for today:</h3>
+  <h2 class='span12'>Check out:</h2>
   <br />
   <%= form_tag( checkout_path, :method => "put" ) do %>
     <% @check_out_set.each do |reservation| %>

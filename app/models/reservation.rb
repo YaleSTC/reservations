@@ -60,7 +60,7 @@ class Reservation < ActiveRecord::Base
   end
 
   def self.due_for_checkin(user)
-    Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
+    Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", user.id).order('due_date ASC') # put most-due ones first
   end
 
   def self.due_for_checkout(user)

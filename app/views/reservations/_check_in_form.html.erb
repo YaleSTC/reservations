@@ -1,35 +1,39 @@
-<div class="well-nomargin span4">
-  <strong><%= check_in_form.equipment_model.name %></strong>
-  <ul>
-      <%= check_box_tag "reservations[#{check_in_form.id}][checkin?]" %>
-      <%= check_in_form.equipment_object.name %>
-  </ul>
-
-  <p>
-		<%= label_tag :notes %> <br />
-		<%= text_area_tag "reservations[#{check_in_form.id}][notes]", check_in_form.notes %>
-  </p>
-
-  <p>
-    <strong>Check-in procedures:</strong>
+<% if check_in_form.due_date.to_date < Date.today %>
+  <div class="well-nomargin span4 overdue-reservation"> <%# also change color %>
+<% else %>
+  <div class="well-nomargin span4">
+<% end %>
+    <strong><%= check_in_form.equipment_model.name %></strong>
     <ul>
-      <% if check_in_form.equipment_model.checkin_procedures.nil? %>
-        <em>no check in procedures</em>
-      <% else %>
-        <% check_in_form.equipment_model.checkin_procedures.each do |checkin_procedure| %>
-          <li style="list-style: none">
-            <%= check_box_tag "reservations[#{check_in_form.id}][checkin_procedures][#{checkin_procedure.id}]" %> <%= checkin_procedure.step %>
-          </li>
-        <% end %>
-      <% end %>
+        <%= check_box_tag "reservations[#{check_in_form.id}][checkin?]" %>
+        <%= check_in_form.equipment_object.name %>
     </ul>
-  </p>
 
-  <% if check_in_form.due_date.to_date < Date.today %>
     <p>
-      This equipment is <strong class="error">overdue.</strong><br />
-      At a fee of <%= number_to_currency(check_in_form.late_fee) %> / day, the renter owes <strong><%= number_to_currency(check_in_form.late_fee * (Date.today - check_in_form.due_date.to_date).to_i)  %></strong> total.
+		  <%= label_tag :notes %> <br />
+		  <%= text_area_tag "reservations[#{check_in_form.id}][notes]", check_in_form.notes %>
     </p>
-  <% end %>
-  <br />
-</div>
+
+    <p>
+      <strong>Check-in procedures:</strong>
+      <ul>
+        <% if check_in_form.equipment_model.checkin_procedures.nil? %>
+          <em>no check in procedures</em>
+        <% else %>
+          <% check_in_form.equipment_model.checkin_procedures.each do |checkin_procedure| %>
+            <li style="list-style: none">
+              <%= check_box_tag "reservations[#{check_in_form.id}][checkin_procedures][#{checkin_procedure.id}]" %> <%= checkin_procedure.step %>
+            </li>
+          <% end %>
+        <% end %>
+      </ul>
+    </p>
+
+    <% if check_in_form.due_date.to_date < Date.today %>
+      <p>
+        This equipment is <strong class="error">overdue.</strong><br />
+        At a fee of <%= number_to_currency(check_in_form.late_fee) %> / day, the renter owes <strong><%= number_to_currency(check_in_form.late_fee * (Date.today - check_in_form.due_date.to_date).to_i)  %></strong> total.
+      </p>
+    <% end %>
+    <br />
+  </div>

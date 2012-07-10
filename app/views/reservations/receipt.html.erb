@@ -1,2 +1,46 @@
-<% title "Receipt of Current Activity for #{@user.name}" %>
+<%= stylesheet_link_tag('application', :media => :screen) %>
+<%= stylesheet_link_tag('print', :media => :print) %>
 
+<% if !@check_in_set.empty? %>
+  <% title "Check in receipt for #{@user.name}" %>
+  <h2>The following equipment has been successfully checked in:</h2>
+  <div>
+    <% @check_in_set.each do |reservation| %>
+      <% @reservation = reservation %>
+      <div class="well-nomargin span4">
+        <h3>Reservation #<%= @reservation.id %></h3>
+        <%= render :partial => 'reservation_details', :locals => { :reservation => reservation } %>
+      </div>
+    <% end %>
+  </div>
+<% elsif !@check_out_set.empty? %>
+  <% title "Check out receipt for #{@user.name}" %>
+  <h2>The following equipment has been successfully checked out:</h2>
+  <div>
+    <% @check_out_set.each do |reservation| %>
+      <div class="well-nomargin span4">
+        <%= render :partial => 'reservation_details', :locals => { :reservation => reservation } %>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <% title "Summary of Current Activity for #{@user.name}" %>
+  <% if !@user_overdue_reservations_set.empty? %>
+    <h3>Overdue</h3>
+    <%= render :partial => "user_reservations_list", :collection => @user_overdue_reservations_set %>
+  <% end %>
+  <% if !@user_checked_out_today_reservations_set.empty? %>
+    <h3>Checked out today</h3>
+    <%= render :partial => "user_reservations_list", :collection => @user_checked_out_today_reservations_set %>
+  <% end %>
+  <% if !@user_checked_out_previous_reservations_set.empty? %>
+    <h3>Checked out prior to today</h3>
+    <%= render :partial => "user_reservations_list", :collection => @user_checked_out_previous_reservations_set %>
+  <% end %>
+  <% if !@user_reserved_reservations_set.empty? %>
+    <h3>Future reservations</h3>
+    <%= render :partial => "user_reservations_list", :collection => @user_reserved_reservations_set %>
+  <% end %>
+<% end %>
+
+<div id="left_stuff" class="span12"><%= button_to_function("Print this page".titleize, "javascript:print()", class: 'btn') %></div>
