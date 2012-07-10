@@ -33,7 +33,12 @@
               </ul>
           </li>
         <% end %>
-        <li <%= navigation_active reservations_path %>><%= link_to (current_user && current_user.can_checkout? ? "Reservations" : "My Reservations"), reservations_path %></li>
+        <li <%= navigation_active reservations_path %>><%= link_to (current_user && current_user.can_checkout? ? "Reservations" 
+        : sanitize("My Reservations &nbsp;<span class=\"badge\">#{reservations_count}</span>")), reservations_path %></li>
+        <li>
+          <%= link_to_if current_user && !(current_user.is_admin_in_adminmode? || current_user.is_checkout_person?), 
+          sanitize("My Equipment &nbsp;<span class=\"badge\">#{reservations_count}</span>"), '#' %>
+        </li>
         <% if current_user && current_user.is_admin_in_adminmode? %>
           <li class="divider-vertical"></li>
             <li class="dropdown">
