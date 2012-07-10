@@ -1,3 +1,3 @@
-
+<% title ("Overall Report for " + @start_date.strftime("%b %d, %Y") + " to " + @end_date.strftime("%b %d, %Y")) %>
 <%= render :partial => 'reports/report_dates' %>
 <%= render :partial => "data_tables" , :object => @data_tables%>

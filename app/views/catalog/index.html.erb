@@ -1,12 +1,6 @@
 <% title "Catalog" %>
-<div>
-  <%= form_tag catalog_search_path do %>
-    <%= label_tag :query, 'Search the catalog' %>
-    <div class="input-append">
-      <%= search_field_tag 'query' %>
-    </div>
-  <% end %>
-</div>
+
+<%= render 'search' %>
 <div id='catalog'>
   <%= render :partial => 'models_available' %>
 </div>

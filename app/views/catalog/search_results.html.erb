@@ -1,16 +1,6 @@
 <% title sanitize("Search results for \"#{params[:query]}\"") %>
 
-<div>
-  <%= form_tag catalog_search_path do %>
-    <%= label_tag :query, 'Search the catalog' %>
-    <div class="input-append">
-      <%# Must be on one line for button to be appended properly. If you need to edit it, %>
-      <%# feel free to add line breaks while you're working on it, but make sure to return it %>
-      <%# to one line when you're done. %>
-      <%= search_field_tag 'query', params[:query] %>
-    </div>
-  <% end %>
-</div>
+<%= render 'search' %>
 
 <% if !@category_results.empty? %>
   <h2>Category results</h2>

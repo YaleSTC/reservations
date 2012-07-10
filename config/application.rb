@@ -55,7 +55,5 @@ module Reservations
     # Change the path that assets are served from
     # config.assets.prefix = "/assets"
     
-    # Activate observers that should always be running.
-    config.active_record.observers = :app_config_observer
   end
 end

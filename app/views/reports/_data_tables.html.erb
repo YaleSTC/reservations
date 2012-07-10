@@ -5,7 +5,7 @@
         <%= content_tag :li, :class => active_tab(key) do %>
           <%= link_to "##{key.to_s}", :class => 'tab-text', :"data-toggle" => 'tab' do %>
             <%= key.to_s.titleize %>
-            <%= content_tag :span, value.size, :class => 'badge tab-badge' %>
+            <%= content_tag :span, value[:rows].size, :class => 'badge tab-badge' %>
           <% end %>
         <% end %>
       <% end %>
@@ -16,7 +16,7 @@
         <p>
           <%= content_tag :div, {:class => "tab-pane #{active_tab(key)}", :id => key}, false do %>
             <% unless value.empty? %>
-              <%= render :partial => "res_stat_set" , :object => value%>
+              <%= render :partial => "res_stat_set" , :object => value, :locals => {:key => key} %>
             <% end %>
           <% end %>
         </p>

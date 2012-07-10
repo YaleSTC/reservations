@@ -1,6 +1,6 @@
 class AppConfigsController < ApplicationController
   before_filter :require_admin
-    
+  
   def edit
     @app_config = AppConfig.first || AppConfig.new
   end

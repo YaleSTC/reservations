@@ -1,4 +1,4 @@
-<% title ("Reports for " + @start_date.to_s + " to " + @end_date.to_s) %>
-
+<% title ("Equipment Model Report for " + @start_date.strftime("%b %d, %Y") + " to " + @end_date.strftime("%b %d, %Y")) %>
+<% subtitle @equipment_model.name.singularize %>
+<%= render :partial => 'reports/report_dates' %>
 <%= render :partial => "data_tables" , :object => @data_tables%>
-
