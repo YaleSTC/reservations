@@ -7,8 +7,10 @@
     <th>First Name</th>
     <th>Nickname</th>
     <th>Last Name</th>
-    <th class="no_sort"> </th>
-    <th class="no_sort"> </th>
+    <% if current_user.is_admin_in_adminmode? %>
+      <th class="no_sort"> </th>
+      <th class="no_sort"> </th>
+    <% end %>
   </tr>
   </thead>
   <tbody>
@@ -24,8 +26,10 @@
     <td><%= link_to user.first_name, user %></td>
     <td><%= link_to user.nickname, user %></td>
     <td><%= link_to user.last_name, user %></td>
-    <td><%= link_to "Edit", edit_user_path(user), :class => "btn" %></td>
-    <td><%= eval @toggle %></td>
+    <% if current_user.is_admin_in_adminmode? %>
+      <td><%= link_to "Edit", edit_user_path(user), :class => "btn" %></td>
+      <td><%= eval @toggle %></td>
+    <% end %>
     </tr>
   <% end %>
   </tbody>

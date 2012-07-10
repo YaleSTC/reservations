@@ -8,11 +8,17 @@
       <%= "<span class=\"user_label label-success\">Admin</span>".html_safe if @user.is_admin? %>
       <%= "<span class=\"user_label\">Checkout Person</span>".html_safe if @user.is_checkout_person? %>
     <% end %>
-    <% if current_user.can_checkout? %>
-      <%= link_to 'Manage Reservations', manage_reservations_for_user_path(@user.id), :class => 'btn btn-success' %>
-    <% end %>
-    <%= link_to 'Current Activity', current_reservations_for_user_path(@user.id), :class => 'btn btn-success' %>
   </div>
+</div>
+
+<div class="row">
+  <div class="span9">
+    <% if current_user.can_checkout? %>
+      <%= link_to 'Manage Reservations', manage_reservations_for_user_path(@user.id), :class => 'btn btn-inverse' %>
+      <%= link_to 'Current Activity', current_reservations_for_user_path(@user.id), :class => 'btn btn-inverse' %>
+    <% end %>
+  </div>
+  <hr />
 </div>
 
 <div class="row">
@@ -57,7 +63,14 @@
   </div>
 </div>
 <div class="row">
-  <h2 class="span9">History</h2>
+  <div class="span9">
+    <h2>
+      History
+      <% if !current_user.can_checkout? %>
+        <%= link_to 'Current Activity', current_reservations_for_user_path(@user.id), :id => 'current_activity', :class => 'btn btn-inverse' %>
+      <% end %>
+    </h2>
+  </div>
 </div>
 <hr />
 
