@@ -21,16 +21,6 @@ class UsersController < ApplicationController
     end
   end
 
-
-  #from what I can see this code does nothing... uncomment if I am wrong
-  #def new_button
-    #@user = User.new
-    #respond_to do |format|
-      #format.html{redirect_to root_path}
-      #format.js{render :action => "fancybox_new_user"}
-    #end
-  #end
-
   def show
     @user = User.include_deleted.find(params[:id])
     require_user(@user)
