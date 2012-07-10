@@ -1,15 +1,8 @@
 class AppConfigsController < ApplicationController
   before_filter :require_admin
-  # before_filter :bind_pry
-  # 
-  # def bind_pry
-  #   binding.pry
-  # end
-  
-  
   
   def edit
-    @app_config = AppConfig.first || AppConfig.new
+    @app_config = AppConfig.first 
   end
 
   def update
@@ -18,9 +11,8 @@ class AppConfigsController < ApplicationController
       flash[:notice] = "Application settings updated successfully."
       redirect_to catalog_path
     else
-      flash[:error] = "Error saving application settings."
-      redirect_to :action => 'edit'
-    end
+      render :action => "edit"
+      end
   end
 
 end
