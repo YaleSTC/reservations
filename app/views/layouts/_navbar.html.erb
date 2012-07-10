@@ -35,10 +35,17 @@
         <% end %>
         
         <% unless current_user.is_admin_in_adminmode? || current_user.is_checkout_person? %>
+        <!-- Reservations Dropdown -->
+        
         <li class="dropdown">
-          <%= link_to (current_user && current_user.can_checkout? ? "Reservations" 
-          : sanitize("My Reservations &nbsp;<span class=\"badge\">#{reservations_count}</span>")), 
-          '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' %>
+          <%= link_to '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' do %>
+            <% if current_user && current_user.can_checkout? %>
+              <%= "Reservations" %>
+            <% else %>
+              <%= sanitize("My Reservations &nbsp;<span class=\"badge\">#{reservations_count}</span> <b class=\"caret\"></b>") %>
+            <% end %>
+          <% end %>
+          
           <ul class="dropdown-menu">
             <% @current_reservations.each do |res| %>
               <li>
@@ -53,10 +60,14 @@
           
         </li>
         
+        <!-- Equipment Dropdown -->
         <li class="dropdown">
-          <%= link_to_if current_user && !(current_user.is_admin_in_adminmode? || current_user.is_checkout_person?), 
-          sanitize("My Equipment &nbsp;<span class=\"badge\">#{equipment_count}</span>"), '#', 
-          class: 'dropdown-toggle', :"data-toggle" => 'dropdown' %>
+          <%= link_to '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' do %>
+            <% if current_user && !(current_user.is_admin_in_adminmode? || current_user.is_checkout_person?) %>
+              <%= sanitize("My Equipment &nbsp;<span class=\"badge\">#{equipment_count}</span> <b class=\"caret\"></b>") %>
+            <% end %>
+          <% end %>
+          <% equipment_count %>
           <ul class="dropdown-menu">
             <% @current_equipment.each do |res| %>
             <li>
@@ -69,6 +80,7 @@
           </ul>
         </li>
         
+        <!-- Admin Dropdown -->
         <% end %>
         <% if current_user && current_user.is_admin_in_adminmode? %>
           <li class="divider-vertical"></li>
