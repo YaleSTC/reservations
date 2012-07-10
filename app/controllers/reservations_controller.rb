@@ -244,15 +244,29 @@ class ReservationsController < ApplicationController
     @reservations_set = [Reservation.upcoming].delete_if{|a| a.empty?}
   end
   
-  def check_out # initializer
+  def manage # initializer
     @user = User.include_deleted.find(params[:user_id])
-    @user_current_checkouts = Reservation.due_for_checkout(@user)
-  end
-
-  def check_in # initializer
-    @user =  User.include_deleted.find(params[:user_id])
+    @check_out_set = Reservation.due_for_checkout(@user)
     @check_in_set = Reservation.due_for_checkin(@user)
+    @user_overdue_reservations_set = [Reservation.overdue_user_reservations(@user)].delete_if{|a| a.empty?}
+    @user_checked_out_today_reservations_set = [Reservation.checked_out_today_user_reservations(@user)].delete_if{|a| a.empty?}
+    @user_checked_out_previous_reservations_set = [Reservation.checked_out_previous_user_reservations(@user)].delete_if{|a| a.empty?}
+    @user_reserved_reservations_set = [Reservation.reserved_user_reservations(@user)].delete_if{|a| a.empty?}
   end
+  
+  def receipt
+    @user = User.include_deleted.find(params[:user_id])
+  end
+  
+#  def check_out # initializer
+#    @user = User.include_deleted.find(params[:user_id])
+#    @user_current_checkouts = Reservation.due_for_checkout(@user)
+#  end
+
+#  def check_in # initializer
+#    @user =  User.include_deleted.find(params[:user_id])
+#    @check_in_set = Reservation.due_for_checkin(@user)
+#  end
 
   #two paths to create receipt emails for checking in and checking out items.
   def checkout_email

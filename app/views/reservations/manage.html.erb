@@ -1,0 +1,64 @@
+<% title "Manage Reservations for #{@user.name}" %>
+
+<%= link_to 'User Profile', @user, :class => 'btn btn-success' %>
+<div class='span12'>
+  <br />
+  <br />
+</div>
+
+<% if !@user_overdue_reservations_set.empty? %>
+  <h3 class='span12'>
+    <%= @user.name %> has the following overdue equipment:
+  </h3>
+  <br />
+  <%= render :partial => "user_reservations_list", :collection => @user_overdue_reservations_set %>
+  <div class='span12'>
+    <br />
+    <br />
+  </div>
+<% end %>
+
+<% if !@check_in_set.empty? %>
+  <%= form_tag( checkin_path, :method => "put" ) do %>
+    <h3 class='span12'>
+      <%= @user.name %> has the following equipment to check in:
+    </h3>
+    <br />
+    <%= render :partial => "check_in_form", :collection => @check_in_set %>
+    <div class="span12">
+      <%= submit_tag "Check in equipment", :class => 'btn' %>
+    </div>
+  <% end %>
+  <div class='span12'>
+    <br />
+    <br />
+  </div>
+<% end %>
+
+<% if !@check_out_set.empty? %>
+  <h3 class='span12'><%= @user.name %> has reserved the following equipment for today:</h3>
+  <br />
+  <%= form_tag( checkout_path, :method => "put" ) do %>
+    <% @check_out_set.each do |reservation| %>
+      <% @reservation = reservation %>
+      <%= render :partial => 'reservations/check_out_form' %>
+    <% end %>
+    <div class="span12">
+      <%= submit_tag "Check out equipment", :class => 'btn' %>
+    </div>
+  <% end %>
+  <div class='span12'>
+    <br />
+    <br />
+  </div>
+<% end %>
+
+<% if @check_out_set.empty? and @check_in_set.empty? %>
+  <h3>
+    <%= @user.name %> has no current or future reservations scheduled.
+  </h3>
+  <div class='span12'>
+    <br />
+    <br />
+  </div>
+<% end %>

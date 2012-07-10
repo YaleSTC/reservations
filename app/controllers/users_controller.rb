@@ -103,7 +103,7 @@ class UsersController < ApplicationController
     else
       @user = User.include_deleted.find(params[:searched_id])
     require_user(@user)
-    redirect_to show_all_reservations_for_user_path({:user_id => @user.id})
+    redirect_to manage_reservations_for_user_path({:user_id => @user.id})
     end
   end
 
