@@ -38,15 +38,16 @@
           <!-- Reservations Dropdown -->
         
           <li class="dropdown">
-            <%= link_to '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' do %>
+            <%= link_to '#', id: 'my_reservations', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' do %>
               <% if current_user && current_user.can_checkout? %>
                 <%= "Reservations" %>
               <% else %>
                 <%= sanitize("My Reservations &nbsp;<span class=\"badge\">#{reservations_count}</span> <b class=\"caret\"></b>") %>
               <% end %>
             <% end %>
-          
+            
             <ul class="dropdown-menu">
+              <li class="nav-header"><h3>My Current Reservations</h3></li>
               <% @current_reservations.each do |res| %>
                 <li>
                   <%= link_to "#{EquipmentModel.include_deleted.find(res.equipment_model_id).name}:
@@ -69,6 +70,7 @@
             <% end %>
             <% equipment_count %>
             <ul class="dropdown-menu">
+              <li class="nav-header"><h3>My Current Equipment</h3></li>
               <% @current_equipment.each do |res| %>
               <li>
                 <%= link_to "#{res.equipment_model.name} (#{res.equipment_object.name})", res.equipment_model %>
