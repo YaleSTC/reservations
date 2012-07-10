@@ -61,7 +61,11 @@ class ReservationsController < ApplicationController
           unless AppConfig.first.reservation_confirmation_email_active?
             UserMailer.reservation_confirmation(complete_reservation).deliver
           end
-          format.html {redirect_to catalog_path, :flash => {:notice => "Successfully created reservation. " } }
+          if current_user.can_checkout?
+            redirect_to manage_reservations_for_user_path(params[:reservation][:reserver_id]) and return
+          else
+            redirect_to catalog_path, :flash => {:notice => "Successfully created reservation. " } and return
+          end
         rescue
           format.html {redirect_to catalog_path, :flash => {:error => "Oops, something went wrong with making your reservation."} }
           raise ActiveRecord::Rollback
@@ -174,9 +178,6 @@ class ReservationsController < ApplicationController
         reservation.save # save!
       end
 
-      # flash 'save successful' messages
-      flash[:notice] = error_msgs.empty? ? "Successfully checked out equipment!" : error_msgs #Allows admins to see all errors, but still checkout successfully
-
       # save array to session
       session[:manage_reservation] = {}
       session[:manage_reservation][:check_out_set] = reservations_to_be_checked_out
@@ -277,15 +278,22 @@ class ReservationsController < ApplicationController
     else # if we have NOT checked anything in or out
       @check_in_set = []
       @check_out_set = []
-      @user_overdue_reservations_set = [Reservation.overdue_user_reservations(@user)].delete_if{|a| a.empty?}
-      @user_checked_out_today_reservations_set = [Reservation.checked_out_today_user_reservations(@user)].delete_if{|a| a.empty?}
-      @user_checked_out_previous_reservations_set = [Reservation.checked_out_previous_user_reservations(@user)].delete_if{|a| a.empty?}
-      @user_reserved_reservations_set = [Reservation.reserved_user_reservations(@user)].delete_if{|a| a.empty?}
     end
 
     # clear session variable so that checkout person doesn't have to clear cookies between reservations
     session[:manage_reservation] = NIL
     
+  end
+  
+  def current
+    @user = User.include_deleted.find(params[:user_id])
+    
+    @user_overdue_reservations_set = [Reservation.overdue_user_reservations(@user)].delete_if{|a| a.empty?}
+    @user_checked_out_today_reservations_set = [Reservation.checked_out_today_user_reservations(@user)].delete_if{|a| a.empty?}
+    @user_checked_out_previous_reservations_set = [Reservation.checked_out_previous_user_reservations(@user)].delete_if{|a| a.empty?}
+    @user_reserved_reservations_set = [Reservation.reserved_user_reservations(@user)].delete_if{|a| a.empty?}
+    
+    render 'current_activity'
   end
   
 #  def check_out # initializer

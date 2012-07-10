@@ -21,19 +21,9 @@ class UsersController < ApplicationController
     end
   end
 
-
-  #from what I can see this code does nothing... uncomment if I am wrong
-  #def new_button
-    #@user = User.new
-    #respond_to do |format|
-      #format.html{redirect_to root_path}
-      #format.js{render :action => "fancybox_new_user"}
-    #end
-  #end
-
   def show
     @user = User.include_deleted.find(params[:id])
-    require_user(@user)
+    require_user_or_checkout_person(@user)
     @user_reservations = @user.reservations
     @all_equipment = Reservation.active_user_reservations(@user)
     @show_equipment = { current_equipment: @user.reservations.select{|r| (r.status == "checked out") || (r.status == "overdue")}, 
@@ -96,14 +86,14 @@ class UsersController < ApplicationController
   def find
     if params[:fake_searched_id].blank?
       flash[:alert] = "Search field cannot be blank"
-      redirect_to :back
+      redirect_to :back and return
     elsif params[:searched_id].blank?
       flash[:alert] = "Please select a valid user"
-      redirect_to :back
+      redirect_to :back and return
     else
       @user = User.include_deleted.find(params[:searched_id])
-    require_user(@user)
-    redirect_to manage_reservations_for_user_path({:user_id => @user.id})
+      require_user_or_checkout_person(@user)
+      redirect_to manage_reservations_for_user_path(@user.id) and return
     end
   end
 

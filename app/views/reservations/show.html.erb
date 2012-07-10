@@ -4,18 +4,15 @@
 <% if current_user.can_checkout? || current_user == @reservation.reserver %>
   <% title "Reservation ##{@reservation.id}" + (@reservation.status == "reserved" ? "" : " (#{@reservation.status})") %>
   <p>
-    <%= link_to 'Show All', show_all_reservations_for_user_path(@reservation.reserver), :class => 'btn' %>
+    <%= link_to 'User Profile', @reservation.reserver, :class => 'btn btn-success' %>
     <% if current_user.can_checkout? %>
-      <% if @reservation.status == "reserved" %>
-        <%= link_to "Check out", check_out_reservations_for_user_path(@reservation.reserver.id), :class => 'btn-success btn' %>
-      <% elsif @reservation.status == ("checked out" or "overdue") %>
-        <%= link_to "Check in", check_in_reservations_for_user_path(@reservation.reserver.id), :class => 'btn-success btn' %>
-      <% end %>
+      <%= link_to "Manage Reservations for #{@reservation.reserver.name}", manage_reservations_for_user_path(@reservation.reserver), :class => 'btn btn-success' %>
     <% end %>
+    <%= link_to "Current Activity", current_reservations_for_user_path(@reservation.reserver), :class => 'btn btn-success' %>
   </p>
   <p>
     <strong>Reserved by:</strong>
-    <%= link_to @reservation.reserver.name, @reservation.reserver %>
+    <%= @reservation.reserver.name %>
   </p>
   <%= render :partial => 'reservation_details' %>
   <%# shows renew button if due_date is today, tomorrow, or the day after %>
@@ -35,7 +32,7 @@
   <br /> <br />
 
 
-  <p><div class="form-actions">
+  <div class="form-actions">
   <%= button_to_function("Print this page", "javascript:print()", :class => 'btn') %>
   <% if @reservation.status == ("checked out" or "overdue") %> 
     <%= link_to "Email checkout receipt", {:controller => :reservations, :action => "checkout_email", :id => @reservation}, :method => "get", :class => 'btn' %>
