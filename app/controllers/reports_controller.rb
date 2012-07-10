@@ -2,7 +2,7 @@ class ReportsController < ApplicationController
   before_filter :require_admin
   ResRelation = Struct.new(:name, :relation, :params) # relations to build data columns
   StatRow = Struct.new(:name, :data, :link_path) # output structure
-  ResSetInfo = Struct.new(:name, :id_type, :ids, :link_path) #info for a reservation set
+  ResSetInfo = Struct.new(:name, :id_type, :ids, :link_path) #info for a reservation set (rows of data)
   
   def index
     @res_stat_sets = []
@@ -47,7 +47,6 @@ class ReportsController < ApplicationController
     # commented out for speed
     # res_sets = {:total => all_models, :users => reserver_info, :categories => category_info, :equipment_models => eq_model_info}
     res_sets = {:total => all_models, :categories => category_info, :equipment_models => eq_model_info}
-    @table_col_names = res_rels.collect{|r| r[:name]} # + [:"User Counts"]
     @data_tables = {}
     res_sets.each do |name,info_struct|
       @data_tables[name] = collect_stat_set(info_struct,res_rels)
@@ -74,16 +73,18 @@ class ReportsController < ApplicationController
 
   #sub report for a particular model
   def for_model
+    @equipment_model = EquipmentModel.find(params[:id])
     @start_date = start_date
     @end_date = end_date
-    @data_tables = models_subreport([params[:id]],@start_date,@end_date)
+    @data_tables = models_subreport([params[:id]],@start_date,@end_date, [@equipment_model])
   end
   
   #should probably merge with for_model
   def for_model_set
+    @equipment_models = EquipmentModel.find(params[:ids])
     @start_date = start_date
     @end_date = end_date
-    @data_tables = models_subreport(params[:ids],@start_date,@end_date)
+    @data_tables = models_subreport(params[:ids],@start_date,@end_date, @equipment_models)
   end
   
   private
@@ -100,7 +101,7 @@ class ReportsController < ApplicationController
   def default_relations(res_set,rel_hash = nil,options = nil)
     # reservation relations for each of the scopes
     rel_hash ||= {:"Total" => nil, :"Reserved" => :reserved, :"Checked Out" => :checked_out, :"Overdue" => :overdue,
-                  :"Returned" => :returned, :"Missed" => :missed, :"Upcoming" => :upcoming}
+                  :"Returned On Time" => :returned_on_time, :"Returned Overdue" => :returned_overdue, :"Missed" => :missed}
     
     def_options = {:stat_type => :count}
     def_options.merge!(options) if options
@@ -113,13 +114,11 @@ class ReportsController < ApplicationController
     return res_rels
   end
   
-  def models_subreport(ids,start_date,end_date)
+  def models_subreport(ids,start_date,end_date,eq_models)
     res_set = Reservation.starts_on_days(start_date,end_date).includes(:equipment_model,:equipment_object).where(:equipment_model_id => ids)
     res_rels = default_relations(res_set)
     res_rels << ResRelation.new("Average Duration", res_set, {:id_type => :equipment_model_id, :stat_type => :duration})
-    @table_col_names = res_rels.collect{|r| r[:name]}
     
-    eq_models = EquipmentModel.find(ids)
     eq_info = eq_models.collect do |em|
       em_link = ids.size > 1 ? for_model_report_path(:id => em.id) : nil
       ResSetInfo.new(em.name,:equipment_model_id, [em.id], em_link)
@@ -135,12 +134,16 @@ class ReportsController < ApplicationController
     obj_info = eq_objects.collect {|obj| ResSetInfo.new(obj.name,:equipment_object_id, [obj.id])}
     obj_set = collect_stat_set(obj_info,res_rels)
     
+    # info_rels = 
+    
     model_tables = {:equipment_models => @stat_set,:equipment_objects => obj_set, :users => user_set}
     return model_tables
   end
 
   def collect_stat_set(info_struct,res_rels)
-    stat_set = []
+    stat_set = {}
+    stat_set[:rows] = []
+    stat_set[:col_names] = res_rels.collect{|r| r[:name]}
     info_struct.each do |info|
       stat_row = StatRow.new(info.name,[],info.link_path)
       res_rels.each do |rel_struct|
@@ -159,9 +162,11 @@ class ReportsController < ApplicationController
         when :duration
           durations = res_set.collect{|res| res.due_date.to_date - res.start_date.to_date}
           stat_row.data << (durations.inject{|sum,k| sum + k}.to_f / durations.count).round(2) #avg planned duration
+        when :info
+          
         end
       end
-      stat_set << stat_row
+      stat_set[:rows] << stat_row
     end
     return stat_set
   end

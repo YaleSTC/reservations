@@ -1,5 +1,4 @@
 <div id="report_dates">
-  <% title ("Report for " + @start_date.strftime("%b %d, %Y") + " to " + @end_date.strftime("%b %d, %Y")) %>
   <%= form_tag update_report_path, :remote => true do %>
     <%= label_tag :start_date, 'Start of report' %>
     <%= datepicker_input "report", "start_date", :class => 'autosubmitme span2',
