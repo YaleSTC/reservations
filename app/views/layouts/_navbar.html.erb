@@ -50,9 +50,9 @@
               <li class="nav-header"><h3>My Current Reservations</h3></li>
               <% @current_reservations.each do |res| %>
                 <li>
-                  <%= link_to "#{EquipmentModel.include_deleted.find(res.equipment_model_id).name}:
-                               #{res.start_date.to_date.to_s(:long)} &ndash;
-                               #{res.due_date.to_date.to_s(:long)}".html_safe, res %>
+                  <%= link_to "#{EquipmentModel.include_deleted.find(res.equipment_model_id).name}
+                               (#{res.start_date.to_date.to_s(:long)} &ndash;
+                               #{res.due_date.to_date.to_s(:long)})".html_safe, res %>
                 </li>
               <% end %>
               <li class="divider"></li>
