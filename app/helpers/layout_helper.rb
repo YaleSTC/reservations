@@ -42,7 +42,7 @@ module LayoutHelper
   end
   
   def equipment_count
-    @count = @user.reservations.select{|r| (r.status == "checked out") || (r.status == "overdue")}.size
+    @count = current_user.reservations.select{|r| (r.status == "checked out") || (r.status == "overdue")}.size
   end
   
   def navigation_active controller_path
