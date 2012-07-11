@@ -1,16 +1,13 @@
 <%# for kaminari pagination, defines variables %>
 <% prepare_pagination %>
 
-<!-- Commented out quicksearch for now until we replace it with a better search functionality - mnquintana -->
-<%# render :partial => 'quicksearch' %>
-
-   <% if (a = BlackOut.date_is_blacked_out(cart.start_date)) && (b = BlackOut.date_is_blacked_out(cart.due_date)) %>
-      <% flash[:error] = a.notice + b.notice %>
-   <% elsif (a = BlackOut.date_is_blacked_out(cart.start_date)) %>
-      <% flash[:error] = a.notice %>
-   <% elsif (a = BlackOut.date_is_blacked_out(cart.due_date)) %>
-      <% flash[:error] = a.notice %>
-   <% end %>
+<% if (a = BlackOut.date_is_blacked_out(cart.start_date)) && (b = BlackOut.date_is_blacked_out(cart.due_date)) %>
+  <% flash[:error] = a.notice + b.notice %>
+<% elsif (a = BlackOut.date_is_blacked_out(cart.start_date)) %>
+  <% flash[:error] = a.notice %>
+<% elsif (a = BlackOut.date_is_blacked_out(cart.due_date)) %>
+  <% flash[:error] = a.notice %>
+<% end %>
 
 <% if @equipment_models_by_category.empty? && current_user.is_admin_in_adminmode? %>
   <p>No equipment found. Try creating some
