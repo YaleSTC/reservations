@@ -13,12 +13,23 @@
   <br />
 <% end %>
 
-<% if !@equipment_results.empty? %>
-  <% if !@category_results.empty? %>
+<% if !@equipment_object_results.empty? %>
+  <h2>Equipment items results</h2>
+  <% @equipment_object_results.each do |equipment_object| %>
+    <h3>
+      <!--print category name-->
+      <%= link_to "#{equipment_object.name} (#{equipment_object.serial})", equipment_object_path(equipment_object) %>
+    </h3>
+  <% end %>
+  <br />
+<% end %>
+
+<% if !@equipment_model_results.empty? %>
+  <% if !@category_results.empty? or !@equipment_object_results.empty? %>
     <h2>Equipment model results</h2>
   <% end %>
   <ul class="thumbnails">
-    <% @equipment_results.each do |equipment_model| %>
+    <% @equipment_model_results.each do |equipment_model| %>
       <li class="span3">      
         <%= render :partial => 'equipment_model_div', :locals => { :equipment_model => equipment_model } %>
       </li>

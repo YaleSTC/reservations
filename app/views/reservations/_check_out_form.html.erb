@@ -1,5 +1,5 @@
 <div id="<%= @reservation.id %>" class="well-nomargin span4">
-
+  <h3><%= link_to "Reservation ##{@reservation.id}", @reservation %></h3>
 	<h4><%= @reservation.equipment_model.name %></h4>
 
 	<%= select_tag "reservations[#{@reservation.id}][equipment_object_id]", @reservation.equipment_model.available_object_select_options, :prompt => 'Please select..', :class => 'dropdown' %>

@@ -3,6 +3,7 @@
 <% else %>
   <div class="well-nomargin span4">
 <% end %>
+  <h3><%= link_to "Reservation ##{check_in_form.id}", check_in_form %></h3>
     <strong><%= check_in_form.equipment_model.name %></strong>
     <ul>
         <%= check_box_tag "reservations[#{check_in_form.id}][checkin?]" %>

@@ -9,8 +9,10 @@
   <%= @reservation.start_date.to_date.to_s(:long) %>
 </p>
 <div id="due_date_box">
-  <strong>Due Date:</strong>
-  <%= @reservation.due_date.to_date.to_s(:long) %>
+  <p>
+    <strong>Due Date:</strong>
+    <%= @reservation.due_date.to_date.to_s(:long) %>
+  </p>
 </div>
 
 <p>

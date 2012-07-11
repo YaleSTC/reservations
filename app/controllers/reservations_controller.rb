@@ -293,7 +293,7 @@ class ReservationsController < ApplicationController
     @user_checked_out_previous_reservations_set = [Reservation.checked_out_previous_user_reservations(@user)].delete_if{|a| a.empty?}
     @user_reserved_reservations_set = [Reservation.reserved_user_reservations(@user)].delete_if{|a| a.empty?}
     
-    render 'current_activity'
+    render 'current_reservations'
   end
   
 #  def check_out # initializer

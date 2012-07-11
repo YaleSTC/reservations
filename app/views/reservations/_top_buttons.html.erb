@@ -1,0 +1,14 @@
+<% @url = request.fullpath %>
+<p>
+  <%= link_to 'User Profile', reserver, :class => 'btn btn-inverse' %>
+  <% if current_user.can_checkout? and (@url == manage_reservations_for_user_path(reserver)) %>
+    <%= link_to "Manage", manage_reservations_for_user_path(reserver), :class => 'btn btn-inverse disabled' %>
+  <% elsif current_user.can_checkout? %>
+    <%= link_to "Manage", manage_reservations_for_user_path(reserver), :class => 'btn btn-inverse' %>
+  <% end %>
+  <% if @url == current_reservations_for_user_path(reserver) %>
+    <%= link_to "Current Reservations", current_reservations_for_user_path(reserver), :class => 'btn btn-inverse disabled' %>
+  <% else %>
+    <%= link_to "Current Reservations", current_reservations_for_user_path(reserver), :class => 'btn btn-inverse' %>
+  <% end %>
+</p>

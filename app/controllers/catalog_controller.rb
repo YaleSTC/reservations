@@ -41,8 +41,9 @@ class CatalogController < ApplicationController
   end
 
   def search
-    @equipment_results = EquipmentModel.catalog_search(params[:query])
+    @equipment_model_results = EquipmentModel.catalog_search(params[:query])
     @category_results = Category.catalog_search(params[:query])
+    @equipment_object_results = EquipmentObject.catalog_search(params[:query])
     render 'search_results' and return
   end
   
