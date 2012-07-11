@@ -3,7 +3,6 @@ class RequirementsController < ApplicationController
   # GET /requirements.xml
   def index
     @requirements = Requirement.all
-    @met_requirements = MetRequirement.all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -15,8 +14,7 @@ class RequirementsController < ApplicationController
   # GET /requirements/1.xml
   def show
     @requirement = Requirement.find(params[:id])
-    @met_requirements = MetRequirement.all
-    @reqSteps = RequirementStep.order("position")
+#    @reqSteps = RequirementStep.order("position")
 
     respond_to do |format|
       format.html # show.html.erb
@@ -44,8 +42,7 @@ class RequirementsController < ApplicationController
   # POST /requirements.xml
   def create
     @requirement = Requirement.new(params[:requirement])
-    binding.pry
-    respond_to do |format|
+     respond_to do |format|
       if @requirement.save
         format.html { redirect_to(@requirement, :notice => 'Requirement was successfully created.') }
         format.xml  { render :xml => @requirement, :status => :created, :location => @requirement }

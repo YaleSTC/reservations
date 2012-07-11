@@ -1,3 +1,5 @@
+<% title "Model requirements" %>
+
 <p id="notice"><%= notice %></p>
 
 In order for a user to check out this model of equipment, they must have completed proper training, and been added to the list of users who have met requirements, located here. If you have questions about the requirements, contact <%=@requirement.contact_info%>.
@@ -9,16 +11,20 @@ In order for a user to check out this model of equipment, they must have complet
 
 <p>
   <b>Contact info:</b>
+  <%= @requirement.contact_name %> 
+    </br>
   <%= @requirement.contact_info %>
 </p>
 
-<ul id="reqSteps" data-update-url="<%= sort_requirement_steps_url%>">
-  <% @reqSteps.each do |reqStep| %>
-    <%= content_tag_for :li, reqStep do %>
-      <%= link_to h(reqStep[:step]), reqStep %>
-    <%end%>
-  <% end %>
+<!--
+<ul id="reqSteps" data-update-url="<%# sort_requirement_steps_url%>">
+  <%# @reqSteps.each do |reqStep| %>
+    <%# content_tag_for :li, reqStep do %>
+      <%# link_to h(reqStep[:step]), reqStep %>
+    <%#end%>
+  <%# end %>
 </ul>
+-->
 
 <%= link_to 'Edit', edit_requirement_path(@requirement) %> |
 <%= link_to 'Back', requirements_path %>

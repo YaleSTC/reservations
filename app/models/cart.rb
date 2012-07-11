@@ -326,6 +326,7 @@ class Cart
     return flag
   end
 
+ 
   # User Validation
 
  # Check that reserver has no overdue reservations
