@@ -10,7 +10,9 @@
         <span class="icon-bar"></span>
       </a>
       <div class="nav-collapse">
+
       <ul class="nav">
+
         <li <%= navigation_active catalog_path %><%= navigation_active root_path %>><%= link_to "Catalog", catalog_path %></li>
       
       <% if current_user && current_user.can_checkout? %>
@@ -116,8 +118,13 @@
               <li><%= link_to @app_configs.contact_link_text, @app_configs.contact_link_location %></li>
             </ul>
           </li>
-
+          <li class="divider-vertical"></li>
       </ul>
+
+      <!-- SEARCH BOX -->
+      <%= form_tag catalog_search_path, class: 'navbar-search pull-left' do %>
+          <%= search_field_tag 'query', (params[:query] unless params[:query].blank?), class: 'search-query span2', placeholder: 'Search the catalog' %>
+      <% end %>
       <!-- Current User Dropdown -->
       <ul class="nav pull-right" id="logged_in">
       <% if current_user.nil? %>
