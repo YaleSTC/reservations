@@ -37,8 +37,8 @@
         <% unless current_user.is_admin_in_adminmode? || current_user.is_checkout_person? || !current_user %>
           <!-- Reservations Dropdown -->
         
-          <li class="dropdown">
-            <%= link_to '#', id: 'my_reservations', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' do %>
+          <li id="my_reservations" class="dropdown">
+            <%= link_to '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' do %>
               <% if current_user && current_user.can_checkout? %>
                 <%= "Reservations" %>
               <% else %>
@@ -52,7 +52,8 @@
                 <li>
                   <%= link_to "#{EquipmentModel.include_deleted.find(res.equipment_model_id).name}
                                (#{res.start_date.to_date.to_s(:long)} &ndash;
-                               #{res.due_date.to_date.to_s(:long)})".html_safe, res %>
+                               #{res.due_date.to_date.to_s(:long)})".html_safe, res, rel: 'popover', 
+                               title: res.equipment_model.name, :"data-content" => res.equipment_model.description.truncate(100) %>
                 </li>
               <% end %>
               <li class="divider"></li>

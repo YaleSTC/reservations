@@ -106,6 +106,7 @@ $(document).ready(function() {
   });
 
 	$('.associated_em_box img').popover({ placement: 'bottom' });
+	$("#my_reservations .dropdown-menu a").popover({ placement: 'bottom' });
 
 	// fix sub nav on scroll
 	var $win = $(window)
