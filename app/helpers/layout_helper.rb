@@ -52,4 +52,16 @@ module LayoutHelper
       @active = 'class=active'
     end
   end
+
+  def view_as_selected
+    if current_user && current_user.adminmode?
+      'Admin'
+    elsif current_user && current_user.checkoutpersonmode?
+      'Checkout Person'
+    elsif current_user && current_user.normalusermode?
+      'Normal User'
+    elsif current_user && current_user.bannedmode?
+      'Banned User'
+    end
+  end
 end
