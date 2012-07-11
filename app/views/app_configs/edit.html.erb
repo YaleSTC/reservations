@@ -46,7 +46,11 @@
     <%= f.input :reservation_confirmation_email_active, label: 'Enable reservation confirmation?', 
                 hint: 'When enabled, users will get an email confirmation containing the details of their reservation.' %>
   </fieldset>
-
+  <fieldset>
+    <legend>Terms of Service</legend>
+    <%= f.input :terms_of_service, input_html: { class: 'span6' } %>
+    <%= f.input :reset_tos_for_users, input_html: {type: "checkbox", value: '1'} , label: "Force all users to accept TOS again?" %>
+  </fieldset>
   <div class="form-actions">
     <%= f.button :submit %>
   </div>
