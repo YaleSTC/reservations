@@ -46,13 +46,20 @@
             
             <ul class="dropdown-menu">
               <li class="nav-header"><h3>My Current Reservations</h3></li>
-              <% @current_reservations.each do |res| %>
-                <li>
-                  <%= link_to "#{EquipmentModel.include_deleted.find(res.equipment_model_id).name}
-                               (#{res.start_date.to_date.to_s(:long)} &ndash;
-                               #{res.due_date.to_date.to_s(:long)})".html_safe, res, rel: 'popover', 
-                               title: res.equipment_model.name, :"data-content" => res.equipment_model.description.truncate(100) %>
-                </li>
+              
+              <% unless @current_reservations.blank? %>
+              
+                <% @current_reservations.each do |res| %>
+                  <li>
+                    <%= link_to "#{EquipmentModel.include_deleted.find(res.equipment_model_id).name}
+                                 (#{res.start_date.to_date.to_s(:long)} &ndash;
+                                 #{res.due_date.to_date.to_s(:long)})".html_safe, res, rel: 'popover', 
+                                 title: res.equipment_model.name, :"data-content" => res.equipment_model.description.truncate(100) %>
+                  </li>
+                <% end %>
+                
+              <% else %>
+                <li>(none)</li>
               <% end %>
               <li class="divider"></li>
               <li><%= link_to "See More...", reservations_path %></li>
@@ -70,12 +77,15 @@
             <% equipment_count %>
             <ul class="dropdown-menu">
               <li class="nav-header"><h3>My Current Equipment</h3></li>
-              <% @current_equipment.each do |res| %>
-              <li>
-                <%= link_to "#{res.equipment_model.name} (#{res.equipment_object.name})", res.equipment_model %>
-              </li>
+              <% unless @current_equipment.blank? %>
+                <% @current_equipment.each do |res| %>
+                <li>
+                  <%= link_to "#{res.equipment_model.name} (#{res.equipment_object.name})", res.equipment_model %>
+                </li>
+                <% end %>
+              <% else %>
+                <li>(none)</li>
               <% end %>
-
               <li class="divider"></li>
               <li><%= link_to "See More...", reservations_path %></li>
             </ul>
