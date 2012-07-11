@@ -5,14 +5,14 @@
     <div class="well">
       <div class="row">
 
-        <div class="span8">          
+        <div class="span7">          
           Powered by <a href="https://github.com/YaleSTC/reservations">Reservations</a>, an open source equipment reservation app.<br />
           &copy; 2012 Yale Student Technology Collaborative
         </div>
 
         <div class="span3">
           <% if current_user && current_user.is_admin? %>
-          <h4>View As:</h4>
+          <span class="inline"><h5>View As:</h5></span>
           <div class="btn-group dropup">
             <a class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#">
               <%= view_as_selected %>
