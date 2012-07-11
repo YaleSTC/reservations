@@ -12,7 +12,7 @@ class Reservation < ActiveRecord::Base
             :presence => true
 
   validate :not_empty?, :not_in_past?, :start_date_before_due_date?,
-           :no_overdue_reservations?, :duration_allowed?, #:available?,
+           :no_overdue_reservations?, :duration_allowed?, :available?,
            :quantity_eq_model_allowed?, :quantity_cat_allowed?
 
 
@@ -50,33 +50,48 @@ class Reservation < ActiveRecord::Base
   ## For individual reservations only
   # Checks that the reservation has an equipment model
   def not_empty?
-    return false if equipment_model.nil?
+    if equipment_model.nil?
+      errors.add(:base, "Reservations must have an associated equipment model")
+      return false
+    end
     return true
   end
 
   # Checks that reservation is not in the past
   def not_in_past?
-    return false if (start_date < Date.today) || (due_date < Date.today)
+    if (start_date < Date.today) || (due_date < Date.today)
+      errors.add(:base, "Reservation can't be in past")
+      return false
+    end
     return true
   end
 
   # Checks that reservation start date is before end dates
   def start_date_before_due_date?
-    return false if due_date < start_date
+    if due_date < start_date
+      errors.add(:base, "Reservation start date must be before due date")
+      return false
+    end
     return true
   end
 
   # Checks that the reservation is not longer than the max checkout length
   def duration_allowed?
-    duration = due_date - start_date + 1
+    duration = due_date.to_date - start_date.to_date + 1
     cat_duration = equipment_model.category.max_checkout_length
-    return false if duration > cat_duration
+    if duration > cat_duration
+      errors.add(:base, "duration problem with " + equipment_model.name)
+      return false
+    end
     return true
   end
 
   # Checks if the user has any overdue reservations
   def no_overdue_reservations?
-    return false if reserver.reservations.overdue_reservations?(reserver)
+    if reserver.reservations.overdue_reservations?(reserver)
+      errors.add(:base, "availablity problem with " + equipment_model.name)
+      return false
+    end
     return true
   end
 
@@ -85,7 +100,10 @@ class Reservation < ActiveRecord::Base
   def available?(reservations = [])
     reservations << self if reservations.empty?
     eq_objects_needed = count(reservations)
-    return false if equipment_model.available?(start_date..due_date) < eq_objects_needed
+    if equipment_model.available?(start_date, due_date) < eq_objects_needed
+      errors.add(:base, "availablity problem with " + equipment_model.name)
+      return false
+    end
     return true
   end
 
@@ -97,7 +115,10 @@ class Reservation < ActiveRecord::Base
     reservations << self if reservations.empty?
     reservations.concat(reserver.reservations)
     num_reservations = count(reservations)
-    return false if num_reservations > max
+    if num_reservations > max
+      errors.add(:base, "quantity equipment model problem with " + equipment_model.name)
+      return false
+    end
     return true
   end
 
@@ -111,7 +132,10 @@ class Reservation < ActiveRecord::Base
     reservations.concat(reserver.reservations)
     cat_count = 0
     reservations.each { |res| cat_count += 1 if res.equipment_model.category == self.equipment_model.category }
-    return false if cat_count > max
+    if cat_count > max
+      errors.add(:base, "quantity category problem with " + equipment_model.category.name)
+      return false
+    end
     return true
   end
 
@@ -128,12 +152,11 @@ class Reservation < ActiveRecord::Base
       errors << "Reservations must have start dates before due dates" if !res.start_date_before_due_date?
       errors << "Reservations must have an associated equipment model" if !res.not_empty?
       errors << "duration problem with " + res.equipment_model.name if !res.duration_allowed?
-#      errors << "availablity problem with " + res.equipment_model.name if !res.available?(reservations)
+      errors << "availablity problem with " + res.equipment_model.name if !res.available?(reservations)
       errors << "quantity equipment model problem with " + res.equipment_model.name if !res.quantity_eq_model_allowed?(reservations)
       errors << "quantity category problem with " + res.equipment_model.category.name if !res.quantity_cat_allowed?(reservations)
     end
-    #TODO: delete duplicate error messages
-    errors
+    errors.uniq
   end
 
   ## Validation helpers ##
@@ -262,8 +285,7 @@ class Reservation < ActiveRecord::Base
     renewal_length = self.equipment_model.maximum_renewal_length
     while (renewal_length > 0) and (available_period == NIL)
       # the available? method cannot accept dates with time zones, and due_date has a time zone
-      possible_dates_range = (self.due_date + 1.day).to_date..(self.due_date+(renewal_length.days)).to_date
-      if (self.equipment_model.available?(possible_dates_range) > 0)
+      if (self.equipment_model.available?(self.due_date + 1.day, self.due_date + (renewal_length.days)) > 0)
         # if it's available for the period, set available_period and escape loop
         available_period = renewal_length
       else

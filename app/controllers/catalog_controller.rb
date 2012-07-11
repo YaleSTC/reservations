@@ -18,7 +18,7 @@ class CatalogController < ApplicationController
   def add_to_cart
     @equipment_model = EquipmentModel.find(params[:id])
     cart.add_item(@equipment_model)
-    binding.pry
+    errors = Reservation.validate_set(cart.reserver, cart.items)
     respond_to do |format|
       format.html{redirect_to root_path}
       format.js{render :action => "update_cart"}

@@ -16,18 +16,11 @@ describe 'cart' do
   end
 
   it 'add_item works' do
-    cart.items.size.should == 1
+    cart.add_item(eq)
+    cart.items.size.should == 2
   end
 
   it 'remove_item works' do
-    cart.remove_item(eq)
-    cart.items.size.should == 0
-  end
-
-  it 'remove_item removes only one item' do
-    cart.add_item(eq)
-    cart.add_item(eq)
-    cart.items.size.should == 2
     cart.remove_item(eq)
     cart.items.size.should == 1
   end
@@ -81,18 +74,16 @@ describe 'cart' do
     res2.count(cart.items).should == 0
   end
 
-  # says it fails, but I'm pretty sure that's a problem with FactoryGirl's
-  # associations and not with available? because it works in pry
   it 'available? works when called on reservations in @items' do
     res.available?.should == false
     obj = FactoryGirl.create(:equipment_object)
     mod_obj = obj.equipment_model
     cart.add_item(mod_obj)
     res_obj = cart.items.last
-#    res_obj.available?.should == true #why doesn't this work???
-#    cart.add_item(mod_obj)
-#    res_obj.available?.should == true #can only see 1 without cart.items
-#    res_obj.available?(cart.items).should == false
+    res_obj.available?.should == true #why doesn't this work???
+    cart.add_item(mod_obj)
+    res_obj.available?.should == true #can only see 1 without cart.items
+    res_obj.available?(cart.items).should == false
   end
 
   it 'quantity_eq_model_allowed?" works when called on reservations in @items' do
@@ -118,13 +109,55 @@ describe 'cart' do
     res_cat_max.quantity_cat_allowed?(cart.items).should == false
   end
 
+  it 'changing reserver_id changes the reserver for the cart items' do
+    user = FactoryGirl.create(:user)
+    cart.set_reserver_id(user.id)
+    res = cart.items.first
+    res.reserver_id.should == user.id
+    res.reserver.should == user
+    cart.set_reserver_id(admin.id)
+    res.reserver.should == admin
+  end
+
+  it 'changing dates changes the reservation dates' do
+    cart.set_start_date(Date.tomorrow)
+    cart.set_due_date(Date.tomorrow + 1)
+    cart.start_date.should == Date.tomorrow
+    cart.due_date.should == Date.tomorrow + 1
+    res = cart.items.first
+    res.start_date.to_date.should == Date.tomorrow
+    res.due_date.to_date.should == Date.tomorrow + 1
+  end
+
   #need to write test for failing
   it 'valid? works when called reservations in @items' do
+    cart.items.clear
+    cart.set_start_date(Date.today)
+    cart.set_due_date(Date.tomorrow)
+    obj = FactoryGirl.create(:equipment_object)
+    eq_valid = obj.equipment_model
+    cart.add_item(eq_valid)
+    res = cart.items.first
     res.valid?.should == true
+    r = Reservation.new(reserver: admin, start_date: Date.tomorrow, due_date: Date.yesterday)
+    r.equipment_model = eq
+    r.start_date_before_due_date?.should == false
+    r.not_in_past?.should == false
+    r.valid?.should == false
   end
 
   #need to write test for forced failures for each error message
   it 'validate_set works when called on reservations in @items' do
+    cart.items.clear
     Reservation.validate_set(admin, cart.items).should == []
+    cart.set_start_date(Date.today)
+    cart.set_due_date(Date.tomorrow)
+    obj = FactoryGirl.create(:equipment_object)
+    eq_valid = obj.equipment_model
+    cart.add_item(eq_valid)
+    Reservation.validate_set(admin, cart.items).should == []
+    cart.set_start_date(Date.yesterday)
+    cart.start_date.should == Date.yesterday
+    Reservation.validate_set(admin, cart.items).should == ["Reservations cannot be made in the past"]
   end
 end

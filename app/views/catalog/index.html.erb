@@ -19,39 +19,39 @@
     <h2 class="catalog">
       <!--print category name-->
       <%= link_to category.name, category_equipment_models_path(category) %>
-    </h2> 
+    </h2>
     <% unless equipment_models.nil? %>
       <ul class="thumbnails">
       <% equipment_models.each do |equipment_model| %>
-        <li class="span3">      
+        <li class="span3">
           <div class="thumbnail">
-            
+
             <% unless !equipment_model.photo.exists? %>
               <% #show equipment model image %>
-              
+
               <%= image_tag equipment_model.photo.url(:thumbnail) %>
 
-             <% else %>              
+             <% else %>
               <%= image_tag "no-image.gif" %>
              <% end %>
               <h3 class="equipment_title"><%= link_to equipment_model.name, equipment_model, :class => 'equipment_title_link', :rel => 'tooltip', :title => equipment_model.name %></h3>
              <div class="caption_cat">
 
                 <hr class ="special-hr"/>
-                <p>(<%= equipment_model.available?(cart.start_date..cart.due_date) || "0" %> available from <br /><%= cart.start_date.strftime("%b %d, %Y") %> to <%= cart.due_date.strftime("%b %d, %Y") %>)</p>
+                <p>(<%= equipment_model.available?(cart.start_date, cart.due_date) || "0"%> available from <br /><%= cart.start_date.strftime("%b %d, %Y") %> to <%= cart.due_date.strftime("%b %d, %Y") %>)</p>
                   <p class="equipment_descr">
                     <%= equipment_model.description + " " %><%= link_to "More Info", equipment_model, :class => 'more_info' %>
                   </p>
                 </div>
-                <% if equipment_model.available?(cart.start_date..cart.due_date) > 0 %>
+                <% if equipment_model.available?(cart.start_date, cart.due_date) > 0 %>
                 <!--print add to cart link-->
-                <div class="add_to_cart_box">  
+                <div class="add_to_cart_box">
                   <%= link_to "Add to Cart", {:url => add_to_cart_path(equipment_model)},
                               :href => add_to_cart_path(equipment_model), :remote => true, :class => "btn", :id => "add_to_cart" %>
                   <% # (Using both the ":url" and ":href" symbols seems redundant. Remove one?) %>
                   </div>
                 <% else %>
-                  
+
                   <div class="add_to_cart_box">
                   <%= button_tag "Add to Cart", :class => "btn disabled", :id => 'add_to_cart' %>
                   </div>

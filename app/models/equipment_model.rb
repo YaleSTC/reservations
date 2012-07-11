@@ -40,11 +40,11 @@ class EquipmentModel < ActiveRecord::Base
 
   ## Validations ##
 
-  validates :name, 
+  validates :name,
             :description,
             :category,     :presence => true
   validates :name,         :uniqueness => true
-  validates :late_fee,     :replacement_fee, 
+  validates :late_fee,     :replacement_fee,
                            :numericality => { :greater_than_or_equal_to => 0 }
   validates :max_per_user, :numericality => { :allow_nil => true, :integer_only => true, :greater_than_or_equal_to => 1 }
   validates :max_renewal_length,       :numericality => { :allow_nil => false, :integer_only => true, :greater_than_or_equal_to => 0 }
@@ -52,16 +52,16 @@ class EquipmentModel < ActiveRecord::Base
             :renewal_days_before_due,  :numericality => { :allow_nil => true, :integer_only => true, :greater_than_or_equal_to => 0 }
 
   nilify_blanks :only => [:deleted_at]
-  
+
   include ApplicationHelper
-  
-  attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, 
-                  :max_per_user, :document_attributes, :accessory_ids, :deleted_at, 
-                  :checkout_procedures_attributes, :checkin_procedures_attributes, :photo, 
+
+  attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee,
+                  :max_per_user, :document_attributes, :accessory_ids, :deleted_at,
+                  :checkout_procedures_attributes, :checkin_procedures_attributes, :photo,
                   :documentation, :max_renewal_times, :max_renewal_length, :renewal_days_before_due
 
   #Code necessary for Paperclip and image/pdf uploading
-  has_attached_file :photo, #generates profile picture 
+  has_attached_file :photo, #generates profile picture
       :styles => { :large => "500x500>", :medium => "250x250>", :small => "150x150>", :thumbnail => "260x180#"},
       :url  => "/equipment_models/:attachment/:id/:style/:basename.:extension",
       :path => ":rails_root/public/equipment_models/:attachment/:id/:style/:basename.:extension",
@@ -71,24 +71,24 @@ class EquipmentModel < ActiveRecord::Base
                     :content_type => 'application/pdf',
                     :url => "/equipment_models/:attachment/:id/:style/:basename.:extension",
                     :path => ":rails_root/public/equipment_models/:attachment/:id/:style/:basename.:extension"
-      
-  validates_attachment_content_type :photo, 
-                                      :content_type => ["image/jpg", "image/png", "image/jpeg"], 
+
+  validates_attachment_content_type :photo,
+                                      :content_type => ["image/jpg", "image/png", "image/jpeg"],
                                       :message => "must be jpeg, jpg, or png."
-    validates_attachment_size         :photo, 
+    validates_attachment_size         :photo,
                                       :less_than => 500.kilobytes,
                                       :message => "must be less than 500 kb"
-  
+
   validates_attachment :documentation, :content_type => { :content_type => "application/pdf" }
-  
+
   Paperclip.interpolates :normalized_photo_name do |attachment, style|
     attachment.instance.normalized_photo_name
   end
-  
+
   def normalized_photo_name
-    "#{self.id}-#{self.photo_file_name.gsub( /[^a-zA-Z0-9_\.]/, '_')}" 
+    "#{self.id}-#{self.photo_file_name.gsub( /[^a-zA-Z0-9_\.]/, '_')}"
   end
-  #end of Paperclip code. 
+  #end of Paperclip code.
 
 
   ## Functions ##
@@ -98,15 +98,15 @@ class EquipmentModel < ActiveRecord::Base
   def maximum_per_user
     max_per_user || category.maximum_per_user
   end
-  
+
   def maximum_renewal_length
     max_renewal_length || category.maximum_renewal_length
   end
-  
+
   def maximum_renewal_times
     max_renewal_times || category.maximum_renewal_times
   end
-  
+
   def maximum_renewal_days_before_due
     renewal_days_before_due || category.maximum_renewal_days_before_due
   end
@@ -139,24 +139,22 @@ class EquipmentModel < ActiveRecord::Base
     self.documents.images
   end
 
-  def available?(date_range)
+  def available?(start_date, due_date)
     overall_count = self.equipment_objects.size
-    date_range.each do |date|
+    start_date.to_date.upto(due_date.to_date) do |date|
       available_on_date = available_count(date)
       overall_count = available_on_date if available_on_date < overall_count
-#      no idea why this would return a boolean sometimes? that breaks other things
-#      return false if overall_count == 0
     end
     overall_count
   end
-  
+
   def available_count(date)
     # get the total number of objects of this kind
     # then subtract the total quantity currently checked out, reserved, or overdue
     # TODO: the system does not account for early checkouts.
 
     reserved_count = Reservation.where("checked_in IS NULL and checked_out IS NULL and equipment_model_id = ? and start_date <= ? and due_date >= ?", self.id, date.to_time.utc, date.to_time.utc).size
-    overdue_count = Reservation.where("checked_in IS NULL and checked_out IS NOT NULL and equipment_model_id = ? and due_date <= ?", self.id, Date.today.to_time.utc).size
+    overdue_count = Reservation.where("checked_in IS NULL and checked_out IS NOT NULL and equipment_model_id = ? and due_date <= ?", self.id, Date.today).size
 
     self.equipment_objects.count - reserved_count - overdue_count
   end
@@ -164,18 +162,18 @@ class EquipmentModel < ActiveRecord::Base
   def available_object_select_options
     self.equipment_objects.select{|e| e.available?}.sort_by(&:name).collect{|item| "<option value=#{item.id}>#{item.name}</option>"}.join.html_safe
   end
-  
+
   def fake_category_id
     self
   end
 
 #  def max_renewal_times # number of times you're allowed to renew an item
 #  end
-  
+
 #  def max_renewal_length # in days
 #    max_renewal_length = 0 if max_renewal_length == NIL # MUST SET AN INTEGER VALUE
 #  end
-  
+
 #  def renewal_days_before_due # in days
 #  end
 
