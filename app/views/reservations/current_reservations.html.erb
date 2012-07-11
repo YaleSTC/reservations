@@ -1,4 +1,4 @@
-<% title "Summary of Current Activity for #{@user.name}" %>
+<% title "Summary of Current Reservations for #{@user.name}" %>
 <%= render :partial => 'top_buttons', :locals => {:reserver => @user} %>
 
 <% if !@user_overdue_reservations_set.empty? %>
