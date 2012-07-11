@@ -34,8 +34,8 @@
           </li>
         <% end %>
         
-        <% unless current_user.is_admin_in_adminmode? || current_user.is_admin_in_checkoutpersonmode? ||
-          current_user.is_checkout_person? || !current_user %>
+        <% unless !current_user || current_user.is_admin_in_adminmode? || current_user.is_admin_in_checkoutpersonmode? ||
+          current_user.is_checkout_person? %>
           <!-- Reservations Dropdown -->
         
           <li id="my_reservations" class="dropdown">
