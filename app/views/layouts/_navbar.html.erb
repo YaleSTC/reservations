@@ -68,7 +68,7 @@
           </li>
         
           <!-- Equipment Dropdown -->
-          <li class="dropdown">
+          <li id="my_equipment" class="dropdown">
             <%= link_to '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' do %>
               <% if current_user && !(current_user.is_admin_in_adminmode? || current_user.is_checkout_person?) %>
                 <%= sanitize("My Equipment &nbsp;<span class=\"badge\">#{equipment_count}</span> <b class=\"caret\"></b>") %>
@@ -80,7 +80,8 @@
               <% unless @current_equipment.blank? %>
                 <% @current_equipment.each do |res| %>
                 <li>
-                  <%= link_to "#{res.equipment_model.name} (#{res.equipment_object.name})", res.equipment_model %>
+                  <%= link_to "#{res.equipment_model.name} (#{res.equipment_object.name})", res.equipment_model,
+                  rel: 'popover', title: res.equipment_model.name, :"data-content" => res.equipment_model.description.truncate(100) %>
                 </li>
                 <% end %>
               <% else %>
