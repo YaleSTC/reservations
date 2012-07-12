@@ -25,7 +25,11 @@
       <% @toggle = "link_to \"Deactivate\", deactivate_path(:equipment_objects,equipment_object), :class => \"btn btn-danger\"" %>
     <% end %>
       <td><%= link_to equipment_object.equipment_model.name, equipment_object.equipment_model %></td>
-      <td><%= link_to equipment_object.name, equipment_object %></td>
+       <% if current_user.is_admin_in_adminmode? %>
+         <td><%= link_to equipment_object.name, equipment_object %></td>
+       <% else %>
+         <td> <%=equipment_object.name%> </td>
+       <% end %>
       <td><%= equipment_object.serial %></td>
       <td><%= equipment_object.status %></td>
       <% if current_user.is_admin_in_adminmode? %>
