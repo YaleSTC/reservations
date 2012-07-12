@@ -183,76 +183,77 @@ class Reservation < ActiveRecord::Base
     Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ? and due_date < ?", user.id, Time.now.midnight.utc,).order('start_date ASC').count >= 1 #FIXME: does this need the order?
   end
 
-  def check_out_permissions(reservations, procedures_count)
-    error_messages = ""
-    if reservations.nil?
-      error_messages += "No reservations selected!"
-    else
-      current_patron_id = reservations.first.reserver.id
-      user_current_reservations = Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", current_patron_id)
-      user_current_categories = []
-      user_current_models = []
-      user_current_reservations.each do |r|
-        user_current_categories << r.equipment_model.category.id
-        user_current_models << r.equipment_model_id
-      end
+#TODO: DELETE THIS
+#  def check_out_permissions(reservations, procedures_count)
+#    error_messages = ""
+#    if reservations.nil?
+#      error_messages += "No reservations selected!"
+#    else
+#      current_patron_id = reservations.first.reserver.id
+#      user_current_reservations = Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", current_patron_id)
+#      user_current_categories = []
+#      user_current_models = []
+#      user_current_reservations.each do |r|        user_current_categories << r.equipment_model.category.id
+#        user_current_models << r.equipment_model_id
+#      end
 
-      #Check if all check out procedures have been met
-      Hash[reservations.zip(procedures_count)].each do |reservation, procedure_count|
-        if Reservation.check_out_procedures_exist?(reservation)
-          if reservation.equipment_model.checkout_procedures.count != procedure_count #For now, this check can only be passed if ALL procedures are checked off
-            error_messages += "Checkout Procedures for #{reservation.equipment_model.name} not Completed."
-          end
-        end
-      end
+#      #Check if all check out procedures have been met
+#      Hash[reservations.zip(procedures_count)].each do |reservation, procedure_count|
+#        if Reservation.check_out_procedures_exist?(reservation)
+#          if reservation.equipment_model.checkout_procedures.count != procedure_count #For now, this check can only be passed if ALL procedures are checked off
+#            error_messages += "Checkout Procedures for #{reservation.equipment_model.name} not Completed."
+#          end
+#        end
+#      end
 
-      reservations.each do |reservation|
+#      reservations.each do |reservation|
 
-        #Check if category limit has been reached
-        if !reservation.equipment_model.category.max_per_user.nil? && user_current_categories.count(reservation.equipment_model.category.id) >= (reservation.equipment_model.category.max_per_user)
-          error_messages += "Category limit for #{reservation.equipment_model.category.name} has been reached."
-        end
+#        #Check if category limit has been reached
+#        if !reservation.equipment_model.category.max_per_user.nil? && user_current_categories.count(reservation.equipment_model.category.id) >= (reservation.equipment_model.category.max_per_user)
+#          error_messages += "Category limit for #{reservation.equipment_model.category.name} has been reached."
+#        end
 
-        #Check if equipment model limit has been reached
-        if !EquipmentModel.find(reservation.equipment_model_id).max_per_user.nil?
-          if user_current_models.count(reservation.equipment_model_id) >= reservation.equipment_model.max_per_user
-            error_messages += "Equipment Model limit for #{reservation.equipment_model.name} has been reached."
-          end
-        end
+#        #Check if equipment model limit has been reached
+#        if !EquipmentModel.find(reservation.equipment_model_id).max_per_user.nil?
+#          if user_current_models.count(reservation.equipment_model_id) >= reservation.equipment_model.max_per_user
+#            error_messages += "Equipment Model limit for #{reservation.equipment_model.name} has been reached."
+#          end
+#        end
 
 
-      end
-    end
-    error_messages
-  end
+#      end
+#    end
+#    error_messages
+#  end
 
-  def check_in_permissions(reservations, procedures_count)
-    error_messages = ""
-    Hash[reservations.zip(procedures_count)].each do |reservation, procedure_count|
-      if Reservation.check_in_procedures_exist?(reservation)
-        if reservation.equipment_model.checkin_procedures.count != procedure_count #For now, this check can only be passed if ALL procedures are checked off
-          error_messages += "Checkin Procedures for #{reservation.equipment_model.name} not completed."
-        end
-      end
-    end
-    error_messages
-  end
+#  def check_in_permissions(reservations, procedures_count)
+#    error_messages = ""
+#    Hash[reservations.zip(procedures_count)].each do |reservation, procedure_count|
+#      if Reservation.check_in_procedures_exist?(reservation)
+#        if reservation.equipment_model.checkin_procedures.count != procedure_count #For now, this check can only be passed if ALL procedures are checked off
+#          error_messages += "Checkin Procedures for #{reservation.equipment_model.name} not completed."
+#        end
+#      end
+#    end
+#    error_messages
+#  end
 
   def self.active_user_reservations(user)
     Reservation.where("checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
   end
 
-  def self.check_out_procedures_exist?(reservation)
-    !reservation.equipment_model.checkout_procedures.nil?
-  end
+  #TODO: probably can delete this
+#  def self.check_out_procedures_exist?(reservation)
+#    !reservation.equipment_model.checkout_procedures.nil?
+#  end
 
-  def self.check_in_procedures_exist?(reservation)
-    !reservation.equipment_model.checkin_procedures.nil?
-  end
+#  def self.check_in_procedures_exist?(reservation)
+#    !reservation.equipment_model.checkin_procedures.nil?
+#  end
 
-  def self.empty_reservation?(reservation)
-    reservation.equipment_object.nil?
-  end
+#  def self.empty_reservation?(reservation)
+#    reservation.equipment_object.nil?
+#  end
 
   def late_fee
     self.equipment_model.late_fee.to_f

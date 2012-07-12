@@ -131,7 +131,6 @@ class Cart
     return renewable_reservations
   end
 
-
 #  ## VALIDATIONS ##
 #  ##TODO: move all these to Reservation##
 
