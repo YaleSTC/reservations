@@ -5,33 +5,33 @@ class User < ActiveRecord::Base
   nilify_blanks :only => [:deleted_at] 
 
   attr_accessible :login, :first_name, :last_name, :nickname, :phone, :email,
-                  :affiliation, :is_banned, :is_checkout_person, :is_admin,
-                  :adminmode, :checkoutpersonmode, :normalusermode, :bannedmode, :deleted_at
+  :affiliation, :is_banned, :is_checkout_person, :is_admin,
+  :adminmode, :checkoutpersonmode, :normalusermode, :bannedmode, :deleted_at
   attr_accessor(:full_query)
 
   validates :login,       :presence => true,
-                          :uniqueness => true
+  :uniqueness => true
   validates :first_name, 
-            :last_name, 
-            :affiliation, :presence => true
+  :last_name, 
+  :affiliation, :presence => true
   validates :phone,       :presence    => true,
-                          :format      => { :with => /\A\S[0-9\+\/\(\)\s\-]*\z/i },
-                          :length      => { :minimum => 10 }
+  :format      => { :with => /\A\S[0-9\+\/\(\)\s\-]*\z/i },
+  :length      => { :minimum => 10 }
   validates :email,       :presence    => true,
-                          :format      => { :with => /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i }
+  :format      => { :with => /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i }
   validates :nickname,    :format      => { :with => /^[^0-9`!@#\$%\^&*+_=]+$/ },
-                          :allow_blank => true
+  :allow_blank => true
 
-   default_scope where(:deleted_at => nil)
-   
-    def self.include_deleted
-      self.unscoped
-    end
+  default_scope where(:deleted_at => nil)
+
+  def self.include_deleted
+    self.unscoped
+  end
 
   def name
-     [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name].join(" ")
+    [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name].join(" ")
   end
-  
+
   def can_checkout?
     self.is_checkout_person? || self.is_admin_in_adminmode? || self.is_admin_in_checkoutpersonmode?
   end
@@ -47,7 +47,7 @@ class User < ActiveRecord::Base
   def is_admin_in_bannedmode?
     is_admin? && bannedmode?
   end
-  
+
   def equipment_objects
     self.reservations.collect{ |r| r.equipment_objects }.flatten
   end
@@ -65,36 +65,36 @@ class User < ActiveRecord::Base
     arr = model_ids.compact.inject(Hash.new(0)) {|h,x| h[x]+=1;h}.sort
     #Change into a hash of model_id => quantities
     Hash[*arr.flatten]
-    
+
     #There might be a better way of doing this, but I realized that I wanted a hash instead of an array of hashes
   end
-  
+
   def self.search_ldap(login)
     ldap = Net::LDAP.new(:host => "directory.yale.edu", :port => 389)
     filter = Net::LDAP::Filter.eq("uid", login)
     attrs = ["givenname", "sn", "eduPersonNickname", "telephoneNumber", "uid",
-             "mail", "collegename", "curriculumshortname", "college", "class"]
-    result = ldap.search(:base => "ou=People,o=yale.edu", :filter => filter, :attributes => attrs)
-    unless result.empty?
-    return { :first_name  => result[0][:givenname][0],
-             :last_name   => result[0][:sn][0],
-             :nickname    => result[0][:eduPersonNickname][0],
-             # :phone     => result[0][:telephoneNumber][0],
-             # Above line removed because the phone number in the Yale phonebook is always wrong
-             :login       => result[0][:uid][0],
-             :email       => result[0][:mail][0],
-             :affiliation => [result[0][:curriculumshortname],
-                              result[0][:college],
-                              result[0][:class]].select{ |s| s.length > 0 }.join(" ") }
+      "mail", "collegename", "curriculumshortname", "college", "class"]
+      result = ldap.search(:base => "ou=People,o=yale.edu", :filter => filter, :attributes => attrs)
+      unless result.empty?
+        return { :first_name  => result[0][:givenname][0],
+          :last_name   => result[0][:sn][0],
+          :nickname    => result[0][:eduPersonNickname][0],
+          # :phone     => result[0][:telephoneNumber][0],
+          # Above line removed because the phone number in the Yale phonebook is always wrong
+          :login       => result[0][:uid][0],
+          :email       => result[0][:mail][0],
+          :affiliation => [result[0][:curriculumshortname],
+          result[0][:college],
+          result[0][:class]].select{ |s| s.length > 0 }.join(" ") }
+        end
+      end
+
+      def self.select_options
+        self.find(:all, :order => 'last_name ASC').collect{ |item| ["#{item.last_name}, #{item.first_name}", item.id] }
+      end
+
+      def render_name
+        [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name, login].join(" ")
+      end
+
     end
-  end
-
-  def self.select_options
-    self.find(:all, :order => 'last_name ASC').collect{ |item| ["#{item.last_name}, #{item.first_name}", item.id] }
-  end
-  
-  def render_name
-     [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name, login].join(" ")
-  end
-
-end
