@@ -2,18 +2,17 @@
 
 <p id="notice"><%= notice %></p>
 
-In order for a user to check out this model of equipment, they must have completed proper training, and been added to the list of users who have met requirements, located here. If you have questions about the requirements, contact <%=@requirement.contact_info%>.
-
+In order for a user to check out this model of equipment, they must have completed proper training. Once a user has completed necessary training, you may add the equipment they are qualified to use from their User Edit page.
+</br>
 <p>
   <b>Equipment Model:</b>
   <%= EquipmentModel.find(@requirement.equipment_model_id).name %>
-</p>
-
-<p>
+</br>
+  <b>Contact name:</b>
+  <%= @requirement.contact_info %>
+  </br>
   <b>Contact info:</b>
   <%= @requirement.contact_name %> 
-    </br>
-  <%= @requirement.contact_info %>
 </p>
 
 <!--

@@ -7,6 +7,11 @@ class Requirement < ActiveRecord::Base
    attr_accessible :user_id, :equipment_model_id, :contact_info, :contact_name, :requirement_ids, :user_ids, :equipment_model_ids
    #serialize :requirement_steps
 
+  validates :equipment_model_id, 
+            :contact_info, 
+            :contact_name, :presence => true
+
+
    #has_many :requirement_steps, :dependent => :destroy
    #accepts_nested_attributes_for :requirement_steps, :reject_if => :all_blank, :allow_destroy => true
    
