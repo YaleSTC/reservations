@@ -24,7 +24,7 @@ class ReservationsController < ApplicationController
     @reservation = Reservation.find(params[:id])
   end
 
-  def show_all #Action called in _reservations_list partial view, allows checkout person to view all current reservations for one user
+  def show_all # Action called in _reservations_list partial view, allows checkout person to view all current reservations for one user
     @user = User.include_deleted.find(params[:user_id])
     @user_overdue_reservations_set = [Reservation.overdue_user_reservations(@user)].delete_if{|a| a.empty?}
     @user_checked_out_today_reservations_set = [Reservation.checked_out_today_user_reservations(@user)].delete_if{|a| a.empty?}
@@ -37,14 +37,14 @@ class ReservationsController < ApplicationController
       flash[:error] = "You need to add items to your cart before making a reservation."
       redirect_to catalog_path
     else
-      #this is used to initialize each reservation later
+      # this is used to initialize each reservation later
       @reservation = Reservation.new(start_date: cart.start_date, due_date: cart.due_date, reserver_id: cart.reserver_id)
     end
   end
 
   def create
     complete_reservation = []
-    #using http://stackoverflow.com/questions/7233859/ruby-on-rails-updating-multiple-models-from-the-one-controller as inspiration
+    # using http://stackoverflow.com/questions/7233859/ruby-on-rails-updating-multiple-models-from-the-one-controller as inspiration
     respond_to do |format|
       Reservation.transaction do
         begin
@@ -61,7 +61,11 @@ class ReservationsController < ApplicationController
           unless AppConfig.first.reservation_confirmation_email_active?
             UserMailer.reservation_confirmation(complete_reservation).deliver
           end
-          format.html {redirect_to catalog_path, :flash => {:notice => "Successfully created reservation. " } }
+          if current_user.can_checkout?
+            redirect_to manage_reservations_for_user_path(params[:reservation][:reserver_id]) and return
+          else
+            redirect_to catalog_path, :flash => {:notice => "Successfully created reservation. " } and return
+          end
         rescue
           format.html {redirect_to catalog_path, :flash => {:error => "Oops, something went wrong with making your reservation."} }
           raise ActiveRecord::Rollback
@@ -174,11 +178,12 @@ class ReservationsController < ApplicationController
         reservation.save # save!
       end
 
-      # flash 'save successful' messages
-      flash[:notice] = error_msgs.empty? ? "Successfully checked out equipment!" : error_msgs #Allows admins to see all errors, but still checkout successfully
+      # save array to session
+      session[:manage_reservation] = {}
+      session[:manage_reservation][:check_out_set] = reservations_to_be_checked_out
 
       # now exit
-      redirect_to show_all_reservations_for_user_path and return
+      redirect_to reservations_receipt_for_user_path and return
   end
   
   def checkin
@@ -227,9 +232,12 @@ class ReservationsController < ApplicationController
       reservation.save
     end
     
-    # exit
-    flash[:notice] = "Successfully checked in equipment!"
-    redirect_to show_all_reservations_for_user_path and return
+    # save array to session
+    session[:manage_reservation] = {}
+    session[:manage_reservation][:check_in_set] = reservations_to_be_checked_in
+
+    # now exit
+    redirect_to reservations_receipt_for_user_path and return
   end
 
   def destroy
@@ -244,15 +252,59 @@ class ReservationsController < ApplicationController
     @reservations_set = [Reservation.upcoming].delete_if{|a| a.empty?}
   end
   
-  def check_out # initializer
+  def manage # initializer
     @user = User.include_deleted.find(params[:user_id])
-    @user_current_checkouts = Reservation.due_for_checkout(@user)
-  end
-
-  def check_in # initializer
-    @user =  User.include_deleted.find(params[:user_id])
+    @check_out_set = Reservation.due_for_checkout(@user)
     @check_in_set = Reservation.due_for_checkin(@user)
   end
+  
+  def receipt
+    @user = User.include_deleted.find(params[:user_id])
+    
+    if !session[:manage_reservation].nil? # if we've checked something in or out
+      # set check-in set from session
+      if session[:manage_reservation][:check_in_set] != NIL
+        @check_in_set = session[:manage_reservation][:check_in_set]
+      else
+        @check_in_set = []
+      end
+      
+      # set check-out set from session
+      if session[:manage_reservation][:check_out_set] != NIL
+        @check_out_set = session[:manage_reservation][:check_out_set]
+      else
+        @check_out_set = []
+      end
+    else # if we have NOT checked anything in or out
+      @check_in_set = []
+      @check_out_set = []
+    end
+
+    # clear session variable so that checkout person doesn't have to clear cookies between reservations
+    session[:manage_reservation] = NIL
+    
+  end
+  
+  def current
+    @user = User.include_deleted.find(params[:user_id])
+    
+    @user_overdue_reservations_set = [Reservation.overdue_user_reservations(@user)].delete_if{|a| a.empty?}
+    @user_checked_out_today_reservations_set = [Reservation.checked_out_today_user_reservations(@user)].delete_if{|a| a.empty?}
+    @user_checked_out_previous_reservations_set = [Reservation.checked_out_previous_user_reservations(@user)].delete_if{|a| a.empty?}
+    @user_reserved_reservations_set = [Reservation.reserved_user_reservations(@user)].delete_if{|a| a.empty?}
+    
+    render 'current_reservations'
+  end
+  
+#  def check_out # initializer
+#    @user = User.include_deleted.find(params[:user_id])
+#    @user_current_checkouts = Reservation.due_for_checkout(@user)
+#  end
+
+#  def check_in # initializer
+#    @user =  User.include_deleted.find(params[:user_id])
+#    @check_in_set = Reservation.due_for_checkin(@user)
+#  end
 
   #two paths to create receipt emails for checking in and checking out items.
   def checkout_email

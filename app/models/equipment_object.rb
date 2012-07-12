@@ -29,4 +29,13 @@ class EquipmentObject < ActiveRecord::Base
   def available?
     status == "available"
   end
+  
+  def self.catalog_search(query)
+    if query.blank? # if the string is blank, return all
+      find(:all)
+    else # in all other cases, search using the query text
+      find(:all, :conditions => ['name LIKE :query OR serial LIKE :query', {:query => "%#{query}%"}])
+    end
+  end
+
 end

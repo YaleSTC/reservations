@@ -12,19 +12,21 @@
       <%= link_to "Show Returned Reservations", reservations_path(:show_returned => true), :class => "btn" %>
   		<%= link_to "Show Missed Reservations", reservations_path(:show_missed => true), :class => "btn" %> 
   </div>
-  <div class="btn-group">
-  		<%= link_to "Today's Hold List", reservations_path(:upcoming => true), :class => "btn" %>
-  </div>
+      <% if current_user.can_checkout? %>
+        <div class="btn-group">
+      		<%= link_to "Today's Hold List", reservations_path(:upcoming => true), :class => "btn" %>
+        </div>
+      <% end %>
     <% end %>	
 </div>
 
-<% if params[:upcoming] %>
+<% if params[:upcoming] and current_user.can_checkout? %>
   <% unless @hold_list.empty? %>
 	  <%= render :partial => "hold_list", :collection => @hold_list %>
 	<% else %>
 	  <h3>There is no equipment to hold for today.</h3>
 	<% end %>
 <% else %>
-	<%= render :partial => "reservations_list", :collection => @reservations_set %>
+  <%= render :partial => "reservations_list", :collection => @reservations_set %>
 <% end %>
 

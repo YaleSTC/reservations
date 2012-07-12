@@ -31,7 +31,7 @@ Reservations::Application.routes.draw do
     resources :reservations
   end
 
-  match '/users/new_button' => 'users#new_button', :as => :new_button
+#  match '/users/new_button' => 'users#new_button', :as => :new_button
   match '/reservations/renew/:id' => 'reservations#renew', :as => :renew
   match '/catalog/search' => 'catalog#search', :as => :catalog_search
 
@@ -47,10 +47,10 @@ Reservations::Application.routes.draw do
     get :autocomplete_user_last_name, :on => :collection
   end
 
+  match '/reservations/manage/:user_id' => 'reservations#manage', :as => :manage_reservations_for_user
+  match '/reservations/receipt/:user_id' => 'reservations#receipt', :as => :reservations_receipt_for_user
+  match '/reservations/current/:user_id' => 'reservations#current', :as => :current_reservations_for_user
   # reservations views
-  match '/reservations/show_all/for_user/:user_id' => 'reservations#show_all', :as => :show_all_reservations_for_user
-  match '/reservations/check_out/for_user/:user_id' => 'reservations#check_out', :as => :check_out_reservations_for_user  
-  match '/reservations/check_in/for_user/:user_id' => 'reservations#check_in', :as => :check_in_reservations_for_user
   
   # reservation checkout / check-in actions
   match '/reservations/checkout/:user_id' => 'reservations#checkout', :as => :checkout

@@ -14,9 +14,15 @@
       <tr>
         <td><%= link_to reservation.id, reservation %></td>
         <% if (reservation.reserver)%>
-          <td><%= link_to reservation.reserver.name, show_all_reservations_for_user_path(reservation.reserver.id) %></td>
+          <td>
+            <%= link_to reservation.reserver.name, reservation.reserver %>
+            <% if current_user.can_checkout? %>
+              (<%= link_to 'manage', manage_reservations_for_user_path(reservation.reserver.id) %>)
+            <% end %>
+            (<%= link_to 'current', current_reservations_for_user_path(reservation.reserver.id) %>)
+          </td>
         <% else %>
-          <td>User no longer exists</td>
+        <td>User no longer exists</td>
         <% end %>
         <td><%= reservation.equipment_model.name %></td>
         <td><%= reservation.start_date.to_date.to_s(:long) %></td>

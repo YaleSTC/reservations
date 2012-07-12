@@ -1,0 +1,49 @@
+<% title "Manage Reservations for #{@user.name}" %>
+
+<%= render :partial => 'top_buttons', :locals => {:reserver => @user} %>
+<div class='span12'>
+  <br />
+</div>
+
+<% if !@check_in_set.empty? %>
+  <%= form_tag( checkin_path, :method => "put" ) do %>
+    <h2 class='span12'>Check in:</h2>
+    <br />
+    <%= render :partial => "check_in_form", :collection => @check_in_set %>
+    <div class="span12">
+      <%= submit_tag "Check in equipment", :class => 'btn' %>
+    </div>
+  <% end %>
+  <div class='span12'>
+    <br />
+    <br />
+  </div>
+<% end %>
+
+<% if !@check_out_set.empty? %>
+  <h2 class='span12'>Check out:</h2>
+  <br />
+  <%= form_tag( checkout_path, :method => "put" ) do %>
+    <% @check_out_set.each do |reservation| %>
+      <% @reservation = reservation %>
+      <%= render :partial => 'reservations/check_out_form' %>
+    <% end %>
+    <div class="span12">
+      <%= submit_tag "Check out equipment", :class => 'btn' %>
+    </div>
+  <% end %>
+  <div class='span12'>
+    <br />
+    <br />
+  </div>
+<% end %>
+
+<% if @check_out_set.empty? and @check_in_set.empty? %>
+  <h3>
+    <%= @user.name %> has no current or future reservations scheduled.
+  </h3>
+  <div class='span12'>
+    <br />
+    <br />
+  </div>
+<% end %>

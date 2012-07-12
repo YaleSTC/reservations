@@ -1,0 +1,13 @@
+.dropdown-menu {
+//	max-height: 440px;
+//	overflow-y: auto;
+	
+	.nav-header {
+		text-transform: lowercase;
+		font-variant: small-caps;
+	}
+}
+
+.navbar-search .search-query {
+	@include placeholder-extended;
+}

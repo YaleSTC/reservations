@@ -1,6 +1,4 @@
 <div id="sidebar-right" class="span3">
-
-
   <div id="sidebarbottom">
 
     <% if current_user && current_user.can_checkout? %>
@@ -8,14 +6,7 @@
     <% end %>
 
     <%= render :partial => 'reservations/cart_sidebar' %>
-    <br style="clear: both" />
-    <%= render :partial => 'reservations/reservations_sidebar' if current_user %>
-    <% unless current_user.nil? or current_user.reservations.empty? %>
-      <div id="equipment">
-        <h3>My current equipment:</h3>
-        <%= render :partial => 'users/current_equipment', :object => current_user %>
-      </div>
-    <% end %>
+
     <%= yield(:right_sidebar) %>
   </div>
 </div>

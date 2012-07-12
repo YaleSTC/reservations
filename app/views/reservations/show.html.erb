@@ -3,45 +3,15 @@
 
 <% if current_user.can_checkout? || current_user == @reservation.reserver %>
   <% title "Reservation ##{@reservation.id}" + (@reservation.status == "reserved" ? "" : " (#{@reservation.status})") %>
-
+  <%= render :partial => 'top_buttons', :locals => {:reserver => @reservation.reserver} %>
   <p>
     <strong>Reserved by:</strong>
-    <%= link_to @reservation.reserver.name, show_all_reservations_for_user_path(@reservation.reserver) %>
+    <%= @reservation.reserver.name %>
   </p>
-  <p>
-    <strong>Start Date:</strong>
-    <%= @reservation.start_date.to_date.to_s(:long) %>
-  </p>
-  <div id="due_date_box">
-    <strong>Due Date:</strong>
-    <%= @reservation.due_date.to_date.to_s(:long) %>
-  </div>
-  <p>
-    <strong>Equipment:</strong>
-  	<%= @reservation.equipment_model.name %>
-  	<%= @reservation.equipment_object.nil? ? "(unassigned)" : "(#{@reservation.equipment_object.name})" %>
-  </p>
- 
-	<p>
-		<strong>Notes:</strong>
-		<%= simple_format(@reservation.notes) %>
-	</p>
-
-  <% if @reservation.checked_out %>
-  <p>
-    Checked out <%= @reservation.checked_out.to_s(:long) %>
-    by <%= @reservation.checkout_handler.nil? ? "unknown" : @reservation.checkout_handler.name %>
-  </p>
-  <% end %>
-  <% if @reservation.checked_in %>
-    <p>
-      Checked in <%= @reservation.checked_in.to_s(:long) %>
-      by <%= @reservation.checkin_handler.nil? ? "unknown" : @reservation.checkin_handler.name %>
-    </p>
-  <% end %>
+  <%= render :partial => 'reservation_details' %>
   <%# shows renew button if due_date is today, tomorrow, or the day after %>
-  <% if @reservation.checked_out == NIL %>
-    <%# you can't renew if you haven't checked it out %>
+  <% if @reservation.checked_out.nil? or !@reservation.checked_in.nil? %>
+    <%# you can't renew if you haven't checked it out, or if you've already checked it in %>
   <% elsif @reservation.is_eligible_for_renew? and (@reservation.max_renewal_length_available != 0) and (@reservation.checked_out != NIL) %>
     <div id="renew_box">
       At this time, you are eligible to renew the <%= @reservation.equipment_model.name.singularize %>
@@ -49,27 +19,25 @@
     </div>
   <% else %>
     <p>
-      This item is not currently eligible for renewal. Please remember to return your <%= @reservation.equipment_model.name.singularize %> to our office on <strong><%= @reservation.due_date.to_date.to_s(:long) %></strong>.
+      This item is not currently eligible for renewal. Please remember to return the <%= @reservation.equipment_model.name.singularize %> to our office on <strong><%= @reservation.due_date.to_date.to_s(:long) %></strong>.
     </p>
   <% end %>
 
-  <p>
-  <div id="left_stuff">	<%=button_to_function("Print this page", "javascript:print()")%></div>
-	<% if @reservation.status == "checked out"%> 
-    <div id="right_stuff"><%=button_to "Email checkout receipt", {:controller => :reservations, :action => "checkout_email", :id => @reservation}, :method => "get" %></div>
+  <br /> <br />
+
+
+  <div class="form-actions">
+  <%= button_to_function("Print this page", "javascript:print()", :class => 'btn') %>
+  <% if @reservation.status == ("checked out" or "overdue") %> 
+    <%= link_to "Email checkout receipt", {:controller => :reservations, :action => "checkout_email", :id => @reservation}, :method => "get", :class => 'btn' %>
 	<% elsif @reservation.status == "returned" %> 
-    <div id="right_stuff"><%=button_to "Email return receipt", {:controller => :reservations, :action => "checkin_email", :id => @reservation}, :method => "get" %></div>
+    <%= link_to "Email return receipt", {:controller => :reservations, :action => "checkin_email", :id => @reservation}, :method => "get", :class => 'btn' %>
   <% end %>
-  </p> <br /> <br />
-
-
-  <p><div class="form-actions">
   <% if current_user.can_checkout? %>
-    <%= link_to "Edit reservation", edit_reservation_path(@reservation) %> |
+    <%= link_to "Edit", edit_reservation_path(@reservation), :class => 'btn' %>
   <% end %>
   <% if @reservation.status == "reserved" or current_user.is_admin_in_adminmode? %>
-    <%= link_to "Cancel reservation", @reservation, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete %>
+    <%= link_to "Cancel Reservation", @reservation, :confirm => 'This will permanently delete the reservation. Are you sure?', :method => :delete, :class => 'btn' %>
   <% end %>
   </div>
 <% end %>
-

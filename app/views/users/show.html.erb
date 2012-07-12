@@ -12,6 +12,16 @@
 </div>
 
 <div class="row">
+  <div class="span9">
+    <% if current_user.can_checkout? %>
+      <%= link_to 'Manage Reservations', manage_reservations_for_user_path(@user.id), :class => 'btn btn-inverse' %>
+      <%= link_to 'Current Reservations', current_reservations_for_user_path(@user.id), :class => 'btn btn-inverse' %>
+    <% end %>
+  </div>
+  <hr />
+</div>
+
+<div class="row">
   
   
   <dl id="user_info" class="dl-horizontal span4">
@@ -53,7 +63,14 @@
   </div>
 </div>
 <div class="row">
-  <h2 class="span9">History</h2>
+  <div class="span9">
+    <h2>
+      History
+      <% if !current_user.can_checkout? %>
+        <%= link_to 'Current Reservations', current_reservations_for_user_path(@user.id), :id => 'current_activity', :class => 'btn btn-inverse' %>
+      <% end %>
+    </h2>
+  </div>
 </div>
 <hr />
 
