@@ -1,4 +1,7 @@
 class RequirementsController < ApplicationController
+
+  before_filter :require_admin
+
   # GET /requirements
   # GET /requirements.xml
   def index

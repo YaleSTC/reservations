@@ -1,4 +1,7 @@
 class BlackOutsController < ApplicationController
+
+  before_filter :require_admin  
+
   # GET /black_outs
   # GET /black_outs.json
   def index
