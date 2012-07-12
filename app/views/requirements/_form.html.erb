@@ -1,12 +1,10 @@
 <%= simple_form_for(@requirement) do |f| %>
   <%= f.error_notification %>
 
-  <div class="form-inputs">
    <%= f.input :equipment_model_id, :as => :select, :collection => EquipmentModel.select_options %>
    <%= f.input :contact_name %>
    <%= f.input :contact_info %>
    <%= f.input :notes %>
-  </div>
 
 
 <!--Requirements that need to be met before a user can check out this item (drag to re-order): <br>
@@ -21,7 +19,5 @@
   </fieldset>
 -->
 
-  <div class="form-actions">
-    <%= f.button :submit %>
-  </div>
+    <%= f.button :wrapped, cancel: requirements_path %>
 <% end %>
