@@ -118,9 +118,9 @@ class ReportsController < ApplicationController
   def models_subreport(ids,start_date,end_date,eq_models)
     res_set = Reservation.includes(:equipment_model,:equipment_object).starts_on_days(start_date,end_date).where(:equipment_model_id => ids)
     res_rels = default_relations(res_set)
-    res_rels << ResRelation.new("Average Duration", res_set, {:id_type => :equipment_model_id, :stat_type => :duration,
+    res_rels << ResRelation.new("Avg Planned Duration", res_set, {:id_type => :equipment_model_id, :stat_type => :duration,
                                 :secondary_id => {:date_type1 => :start_date, :date_type2 => :due_date}})
-    res_rels << ResRelation.new("Avg Checkout Duration", res_set, {:id_type => :equipment_model_id, :stat_type => :duration,
+    res_rels << ResRelation.new("Avg Duration Checked Out", res_set, {:id_type => :equipment_model_id, :stat_type => :duration,
                                 :secondary_id => {:date_type1 => :checked_out, :date_type2 => :checked_in, :catch2 => Date.today}})
 
     eq_info = eq_models.collect do |em|
@@ -165,12 +165,13 @@ class ReportsController < ApplicationController
         res_set = info.ids ? rel.select{|res| info.ids.include?(res.send(info.id_type))} : rel.all
         case params[:stat_type]
         when :count
-          if params[:secondary_id]
+          if params[:secondary_id] #count how many unique 
             stat_row.data << res_set.collect{|res| res.send(params[:secondary_id])}.uniq.count
           else
             stat_row.data << res_set.count
           end
-        when :duration
+        when :duration # get an average duration for the set of reservations, catch1 && catch2 are used if date1 and date2 are NULL
+          # put the dates in chronological order, e.g. :date_type1 => :start_date, :date_type2 => :due_date
           date_type1 = params[:secondary_id][:date_type1]
           date_type2 = params[:secondary_id][:date_type2]
           durations = res_set.collect do |res|
@@ -178,11 +179,8 @@ class ReportsController < ApplicationController
             date1 ||=  params[:secondary_id][:catch1] if params[:secondary_id][:catch1]
             date2 = res.send(date_type2)
             date2 ||=  params[:secondary_id][:catch2] if params[:secondary_id][:catch2]
-            if date1 && date2
-              date2.to_date - date1.to_date
-            else
-              nil
-            end
+            
+            date1 && date2 ? date2.to_date - date1.to_date : nil
           end
           durations.compact!
           if durations.count > 0
@@ -217,6 +215,7 @@ class ReportsController < ApplicationController
     return col_hash
   end
   
+  # for the creation of 
   def collect_res_info(res_set, det_structs = nil, fields = {}) # collect information on the set of reservations
     det_columns = det_structs ? assoc_details(det_structs,res_set) : {}
     fields.each do |f,option|
