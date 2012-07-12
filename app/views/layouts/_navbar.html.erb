@@ -28,15 +28,13 @@
               
                 <li><%= link_to "Equipment Objects", equipment_objects_path %></li>
                 <% if current_user && current_user.is_admin_in_adminmode? %>
-                <li><%= link_to "Blackout Dates", black_outs_path %></li>
-                <li><%= link_to "Equipment Qualification Requirements", requirements_path %></li>
+                <li><%= link_to "Checkout Qualifications", requirements_path %></li>
                 <% end %>
               </ul>
           </li>
         <% end %>
-        
-        <% unless !current_user || current_user.is_admin_in_adminmode? || current_user.is_admin_in_checkoutpersonmode? ||
-          current_user.is_checkout_person? %>
+        <%# test if current_user first because if there is no current user (i.e., no login), do not show %>
+        <% if current_user %>
           <!-- Reservations Dropdown -->
         
           <li id="my_reservations" class="dropdown">
@@ -47,34 +45,36 @@
                 <%= sanitize("My Reservations &nbsp;<span class=\"badge\">#{reservations_count}</span> <b class=\"caret\"></b>") %>
               <% end %>
             <% end %>
-            
-            <ul class="dropdown-menu">
-              <li class="nav-header"><h3>My Current Reservations</h3></li>
-              
-              <% unless @current_reservations.blank? %>
-              
-                <% @current_reservations.each do |res| %>
-                  <li>
-                    <%= link_to "#{EquipmentModel.include_deleted.find(res.equipment_model_id).name}
-                                 (#{res.start_date.to_date.to_s(:long)} &ndash;
-                                 #{res.due_date.to_date.to_s(:long)})".html_safe, res, rel: 'popover', 
-                                 title: res.equipment_model.name, :"data-content" => res.equipment_model.description.truncate(100) %>
-                  </li>
-                <% end %>
+            <% if current_user and !current_user.can_checkout? %>
+              <ul class="dropdown-menu">
+                <li class="nav-header"><h3>My Current Reservations</h3></li>
                 
-              <% else %>
-                <li>(none)</li>
-              <% end %>
-              <li class="divider"></li>
-              <li><%= link_to "See More...", reservations_path %></li>
-            </ul>
+                <% unless @current_reservations.blank? %>
+                
+                  <% @current_reservations.each do |res| %>
+                    <li>
+                      <%= link_to "#{EquipmentModel.include_deleted.find(res.equipment_model_id).name}
+                                   (#{res.start_date.to_date.to_s(:long)} &ndash;
+                                   #{res.due_date.to_date.to_s(:long)})".html_safe, res, rel: 'popover', 
+                                   title: res.equipment_model.name, :"data-content" => res.equipment_model.description.truncate(100) %>
+                    </li>
+                  <% end %>
+                  
+                <% else %>
+                  <li>(none)</li>
+                <% end %>
+                <li class="divider"></li>
+                <li><%= link_to "See More...", reservations_path %></li>
+              </ul>
+            <% end %>
           
           </li>
         
           <!-- Equipment Dropdown -->
+          <% if current_user and !current_user.can_checkout? %>
           <li id="my_equipment" class="dropdown">
             <%= link_to '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' do %>
-              <% if current_user && !(current_user.is_admin_in_adminmode? || current_user.is_checkout_person?) %>
+              <% if current_user && !current_user.can_checkout? %>
                 <%= sanitize("My Equipment &nbsp;<span class=\"badge\">#{equipment_count}</span> <b class=\"caret\"></b>") %>
               <% end %>
             <% end %>
@@ -95,6 +95,7 @@
               <li><%= link_to "See More...", reservations_path %></li>
             </ul>
           </li> 
+          <% end %>
         <% end %>
         
         <!-- Admin Dropdown -->
@@ -104,6 +105,7 @@
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
+                  <li><%= link_to "Blackout Dates", black_outs_path %></li>
                   <li><%= link_to "Reports", reports_path %></li>
                   <li><%= link_to "Settings", edit_app_configs_path %></li>
                 </ul>
