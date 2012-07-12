@@ -55,7 +55,14 @@ $(document).ready(function() {
 		      { "bSortable": false, "aTargets": [ "no_sort" ] }
 		    ]
 	});
-
+	
+	$('.report_table').dataTable({
+	  "sDom": "<'row'<'span3'l>fr>t<'row'<'span3'i><p>>",
+	  "sPaginationType": "bootstrap",
+		"iDisplayLength" : 25,
+		"aLengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
+		"aoColumnDefs": [{ "bSortable": false, "aTargets": [ "no_sort" ] }]
+	});
 // For fading out flash notices
 	$(".alert .close").click( function() {
 	     $(this).parent().addClass("fade");

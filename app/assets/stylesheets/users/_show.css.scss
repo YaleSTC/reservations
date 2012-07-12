@@ -130,6 +130,16 @@ a .tab-badge {
 	float: right;
 }
 
+div#qualif_box {
+	padding-bottom: $baseLineHeight;
+}
+
+ul#qualifications {
+	list-style-type: none;
+	margin-left: 2em;
+	text-indent: -.8em;
+}
+
 //View All Button placement
 .btn#view_all_users, .btn#current_activity {
 	float: right;
