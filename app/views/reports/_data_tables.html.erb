@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="tabbable tabs-left span9">
+  <div class="tabbable tabs-left">
     <ul class="nav nav-tabs">
       <% data_tables.each do |key, value| %>
         <%= content_tag :li, :class => active_tab(key) do %>
@@ -10,16 +10,15 @@
         <% end %>
       <% end %>
     </ul>
-    
     <div class="tab-content">
       <% data_tables.each do |key, value| %>
-        <p>
-          <%= content_tag :div, {:class => "tab-pane #{active_tab(key)}", :id => key}, false do %>
-            <% unless value.empty? %>
-              <%= render :partial => "res_stat_set" , :object => value, :locals => {:key => key} %>
+      <p>
+        <%= content_tag :div, {:class => "tab-pane #{active_tab(key)}", :id => key}, false do %>
+          <% unless value.empty? %>
+            <%= render :partial => "res_stat_set" , :object => value, :locals => {:key => key} %>
             <% end %>
-          <% end %>
-        </p>
+        <% end %>
+      </p>
       <% end %>
     </div>
   </div>

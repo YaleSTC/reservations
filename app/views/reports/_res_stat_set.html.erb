@@ -1,9 +1,9 @@
 <!-- <table id="table_woo" class="datatable table table-striped table-bordered"> -->
 <%= link_to "Export to csv", request.parameters.merge({:format => :csv, :key => key})%>
-<table class="history_table table table-striped table-bordered">
+<table class="report_table table table-striped table-bordered">
   <thead>
     <tr>
-      <th><%= key.to_s.titleize %></th>
+      <th><%= key.to_s.titleize.singularize %></th>
       <% res_stat_set[:col_names].each do |name| %>
       <th><%= name %></th>
       <% end %>

@@ -16,7 +16,13 @@ class ReservationsController < ApplicationController
         @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved].delete_if{|a| a.empty?}
       end
     else
-      @reservations_set = [current_user.reservations.overdue, current_user.reservations.checked_out, current_user.reservations.reserved ].delete_if{|a| a.empty?}
+      if params[:show_missed]
+        @reservations_set = [current_user.reservations.overdue, current_user.reservations.checked_out, current_user.reservations.reserved, current_user.reservations.missed].delete_if{|a| a.empty?}
+      elsif params[:show_returned]
+        @reservations_set = [current_user.reservations.overdue, current_user.reservations.checked_out, current_user.reservations.reserved, current_user.reservations.returned].delete_if{|a| a.empty?}
+      else
+        @reservations_set = [current_user.reservations.overdue, current_user.reservations.checked_out, current_user.reservations.reserved ].delete_if{|a| a.empty?}
+      end
     end
   end
 

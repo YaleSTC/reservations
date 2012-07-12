@@ -22,3 +22,16 @@
 }
 
 .caption_cat { padding: 0px 9px 0px 9px; }
+
+a.not-qualified-icon {
+	position: absolute;
+	bottom: 13px;
+	left: 110px;
+	font-size: $baseFontSize * 2.6;
+
+	color: $btnWarningBackgroundHighlight;
+	&:hover, &:active {
+		text-decoration: none;
+		color: $btnWarningBackground;
+	}
+}

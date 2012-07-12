@@ -1,29 +1,41 @@
 <% title "Summary of Current Reservations for #{@user.name}" %>
-<%= render :partial => 'top_buttons', :locals => {:reserver => @user} %>
+<div id = "top_buttons">
+  <%= render :partial => 'top_buttons', :locals => {:reserver => @user} %>
+</div>
 
-<% if !@user_overdue_reservations_set.empty? %>
+<% unless @user_overdue_reservations_set.empty? %>
   <h3>Overdue</h3>
   <%= render :partial => "user_reservations_list", :collection => @user_overdue_reservations_set %>
 <% end %>
 
-<% if !@user_checked_out_today_reservations_set.empty? %>
+<% unless @user_checked_out_today_reservations_set.empty? %>
   <h3>Checked out today</h3>
   <%= render :partial => "user_reservations_list", :collection => @user_checked_out_today_reservations_set %>
 <% end %>
 
-<% if !@user_checked_out_previous_reservations_set.empty? %>
+<% unless @user_checked_out_previous_reservations_set.empty? %>
   <h3>Checked out prior to today</h3>
   <%= render :partial => "user_reservations_list", :collection => @user_checked_out_previous_reservations_set %>
 <% end %>
 
-<% if !@user_reserved_reservations_set.empty? %>
+<% unless @user_reserved_reservations_set.empty? %>
   <h3>Future reservations</h3>
   <%= render :partial => "user_reservations_list", :collection => @user_reserved_reservations_set %>
 <% end %>
 
+<% if @user_overdue_reservations_set.empty? and @user_checked_out_today_reservations_set.empty? and @user_checked_out_previous_reservations_set.empty? and @user_reserved_reservations_set.empty? %>
+  <% if current_user.can_checkout? %>
+    <h3>There are no current or upcoming reservations associated with this user.</h3>
+  <% else %>
+    <h3>There are no current or upcoming reservations associated with your account.</h3>
+  <% end %>
+<% end %>
+
+<div id = "form_actions">
 <%= button_to_function("Print this page", "javascript:print()", :class => 'btn') %>
 <%# if (@reservation.status == "checked out") or (@reservation.status == "overdue") %> 
   <%#= link_to "Email checkout receipt", {:controller => :reservations, :action => "checkout_email", :id => @reservation}, :method => "get", :class => 'btn' %>
 <%# elsif @reservation.status == "returned" %> 
   <%#= link_to "Email return receipt", {:controller => :reservations, :action => "checkin_email", :id => @reservation}, :method => "get", :class => 'btn' %>
 <%# end %>
+</div>

@@ -11,7 +11,5 @@
     <%= f.input :notice, hint: 'This message will be displayed to users if they attempt to make a reservation on a blackout date' %>
     <%= f.input :black_out_type, label: 'Blackout Type', collection: [['Blackout',"hard"],['Notice Only',"soft"]]   %>
   </div>
-  <div class="form-actions">
-    <%= f.button :submit %>
-  </div>
+    <%= f.button :wrapped, cancel: black_outs_path %>
 <% end %>
