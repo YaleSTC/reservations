@@ -12,33 +12,23 @@ class ApplicationController < ActionController::Base
   before_filter :cart
   before_filter :set_view_mode
   before_filter :current_user
-  
-  
   #before_filter :bind_pry_before_everything
 
   helper_method :current_user
   helper_method :cart
+  
+  #-------- before_filter methods --------
 
-  def bind_pry_before_everything
-    binding.pry
+  def app_setup
+      redirect_to new_admin_user_path
   end
   
   def load_configs
     @app_configs = AppConfig.first
   end
 
-  def current_user
-    @current_user ||= User.include_deleted.find_by_login(session[:cas_user]) if session[:cas_user]
-  end
-
-  #-------- before_filter methods --------
-  
-  def app_setup
-      redirect_to new_admin_user_path
-  end
-  
   def first_time_user
-    if current_user.nil?
+    if current_user.nil? && params[:action] != "terms_of_service"
       flash[:notice] = "Hey there! Since this is your first time making a reservation, we'll
         need you to supply us with some basic contact information."
       redirect_to new_user_path
@@ -88,27 +78,36 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def current_user
+    @current_user ||= User.include_deleted.find_by_login(session[:cas_user]) if session[:cas_user]
+  end
+  
+
+  def bind_pry_before_everything
+    binding.pry
+  end
+
   #-------- end before_filter methods --------
 
-  def update_cart
-   #set dates
-    flash.clear
-    session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
-    session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
-    session[:cart].set_reserver_id(params[:reserver_id])
-    if !cart.valid_dates? #Validations are currently broken, so this always evaluates to false
-      flash[:error] = cart.errors.values.flatten.join("<br/>").html_safe
-      cart.errors.clear
-      if flash[:error].blank?
-        flash[:notice] = "Cart updated"
+    def update_cart
+     #set dates
+      flash.clear
+      session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
+      session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
+      session[:cart].set_reserver_id(params[:reserver_id])
+      if !cart.valid_dates? #Validations are currently broken, so this always evaluates to false
+        flash[:error] = cart.errors.values.flatten.join("<br/>").html_safe
+        cart.errors.clear
+        if flash[:error].blank?
+          flash[:notice] = "Cart updated"
+        end
       end
-    end
 
-    # reload appropriate divs / exit
-    respond_to do |format|
-      format.js{render :template => "reservations/cart_dates_reload"}
-        # guys i really don't like how this is rendering a template for js, but :action doesn't work at all
-      format.html{render :partial => "reservations/cart_dates"}
+      # reload appropriate divs / exit
+      respond_to do |format|
+        format.js{render :template => "reservations/cart_dates_reload"}
+          # guys i really don't like how this is rendering a template for js, but :action doesn't work at all
+        format.html{render :partial => "reservations/cart_dates"}
     end
   end
 
@@ -150,6 +149,11 @@ class ApplicationController < ActionController::Base
   def restricted_redirect_to(new_path=root_path)
     flash[:error] = "Sorry, that action or page is restricted."
     redirect_to new_path
+  end
+
+  def terms_of_service
+    @tos = @app_configs.terms_of_service
+    render 'terms_of_service/index'
   end
 
   def deactivate

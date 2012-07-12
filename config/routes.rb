@@ -47,17 +47,17 @@ Reservations::Application.routes.draw do
     get :autocomplete_user_last_name, :on => :collection
   end
 
+  # reservations views
   match '/reservations/manage/:user_id' => 'reservations#manage', :as => :manage_reservations_for_user
   match '/reservations/receipt/:user_id' => 'reservations#receipt', :as => :reservations_receipt_for_user
   match '/reservations/current/:user_id' => 'reservations#current', :as => :current_reservations_for_user
-  # reservations views
+  
   
   # reservation checkout / check-in actions
   match '/reservations/checkout/:user_id' => 'reservations#checkout', :as => :checkout
   match '/reservations/check-in/:user_id' => 'reservations#checkin', :as => :checkin
   
   match '/catalog/update_view' => 'catalog#update_user_per_cat_page', :as => :update_user_per_cat_page
-  
   match '/catalog' => 'catalog#index', :as => :catalog
   match '/catalog/add_to_cart/:id' => 'catalog#add_to_cart', :as => :add_to_cart
   match '/catalog/remove_from_cart/:id' => 'catalog#remove_from_cart', :as => :remove_from_cart
@@ -74,6 +74,8 @@ Reservations::Application.routes.draw do
   match '/:controller/:id/activate' => ':controller#activate', :as => 'activate'
 
   match '/logout' => 'application#logout', :as => :logout
+
+  match '/terms_of_service' => 'application#terms_of_service', :as => :tos
 
   #match '/users/find' => 'users#find', :as => :find_user
   match '/app_configs/edit' => 'app_configs#edit', :as => :edit_app_configs

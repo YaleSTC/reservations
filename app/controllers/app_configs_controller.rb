@@ -8,11 +8,11 @@ class AppConfigsController < ApplicationController
   def update
     @app_config = AppConfig.first
     
-    if params[:app_config][:reset_tos_for_users] == '1'
-      User.update_all(['terms_of_service_accepted = ?', false])
-    end
-    
     if @app_config.update_attributes(params[:app_config])
+      if params[:app_config][:reset_tos_for_users] == '1'
+        User.update_all(['terms_of_service_accepted = ?', false])
+      end
+      
       flash[:notice] = "Application settings updated successfully."
       redirect_to catalog_path
     else

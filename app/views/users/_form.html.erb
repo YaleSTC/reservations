@@ -17,6 +17,7 @@
       <%#= f.input :from_cart, :as => :hidden, :value  => true %>
     <% else %>
       <%= hidden_field_tag(:from_cart, false) %>
+      <%= f.input :accept_terms_of_service, input_html: {type: "checkbox", value: '1'}, label: "I accept the #{link_to("Terms of Service", tos_path)}" %>
       <%#= f.input :from_cart, :as => :hidden, :value => false %>
     <% end %>
     
