@@ -58,6 +58,7 @@ class Reservation < ActiveRecord::Base
   end
 
   # Checks that reservation is not in the past
+  #TODO: see if this prevents working with overdue reservations
   def not_in_past?
     if (start_date < Date.today) || (due_date < Date.today)
       errors.add(:base, "Reservation can't be in past")
@@ -75,13 +76,14 @@ class Reservation < ActiveRecord::Base
     return true
   end
 
-  # Checks that the reservation is not longer than the max checkout length
-  def duration_allowed?
-    duration = due_date.to_date - start_date.to_date + 1
-    cat_duration = equipment_model.category.max_checkout_length
-    if duration > cat_duration
-      errors.add(:base, "duration problem with " + equipment_model.name)
-      return false
+  # Checks that the reservation is not renewable
+  def not_renewable?
+    current_reservations = reserver.reservations
+    current_reservations.each do |res|
+      if res.equipment_model == self.equipment_model && res.due_date.to_date == self.start_date && res.is_eligible_for_renew?
+        errors.add(:base, res.equipment_model.name + " should be renewed instead of re-checked out")
+        return false
+      end
     end
     return true
   end
@@ -90,6 +92,17 @@ class Reservation < ActiveRecord::Base
   def no_overdue_reservations?
     if reserver.reservations.overdue_reservations?(reserver)
       errors.add(:base, "availablity problem with " + equipment_model.name)
+      return false
+    end
+    return true
+  end
+
+  # Checks that the reservation is not longer than the max checkout length
+  def duration_allowed?
+    duration = due_date.to_date - start_date.to_date + 1
+    cat_duration = equipment_model.category.max_checkout_length
+    if duration > cat_duration
+      errors.add(:base, "duration problem with " + equipment_model.name)
       return false
     end
     return true
@@ -143,14 +156,15 @@ class Reservation < ActiveRecord::Base
   # Checks all validations for all saved reservations and the reservations in
   # the array of reservations passed in (intended for use with cart.items)
   # Returns an array of error messages or [] if reservations are all valid
-  def self.validate_set(reserver, reservations = [])
-    reservations.concat(reserver.reservations)
+  def self.validate_set(user, reservations = [])
+    reservations.concat(user.reservations)
     errors = []
     reservations.each do |res|
       errors << "User has overdue reservations that prevent new ones from being created" if !res.no_overdue_reservations?
       errors << "Reservations cannot be made in the past" if !res.not_in_past?
       errors << "Reservations must have start dates before due dates" if !res.start_date_before_due_date?
       errors << "Reservations must have an associated equipment model" if !res.not_empty?
+      errors << res.equipment_model.name + " should be renewed instead of re-checked out" if !res.not_renewable?
       errors << "duration problem with " + res.equipment_model.name if !res.duration_allowed?
       errors << "availablity problem with " + res.equipment_model.name if !res.available?(reservations)
       errors << "quantity equipment model problem with " + res.equipment_model.name if !res.quantity_eq_model_allowed?(reservations)
@@ -159,7 +173,8 @@ class Reservation < ActiveRecord::Base
     errors.uniq
   end
 
-  ## Validation helpers ##
+
+  ## Validation helpers, etc ##
 
   # Returns the number of reservations in the array of reservations it is passed
   # that have the same equipment model as the reservation count is called on
@@ -181,6 +196,10 @@ class Reservation < ActiveRecord::Base
 
   def self.overdue_reservations?(user)
     Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ? and due_date < ?", user.id, Time.now.midnight.utc,).order('start_date ASC').count >= 1 #FIXME: does this need the order?
+  end
+
+  def self.active_user_reservations(user)
+    Reservation.where("checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
   end
 
 #TODO: DELETE THIS
@@ -226,6 +245,7 @@ class Reservation < ActiveRecord::Base
 #    error_messages
 #  end
 
+#TODO: This too
 #  def check_in_permissions(reservations, procedures_count)
 #    error_messages = ""
 #    Hash[reservations.zip(procedures_count)].each do |reservation, procedure_count|
@@ -237,10 +257,6 @@ class Reservation < ActiveRecord::Base
 #    end
 #    error_messages
 #  end
-
-  def self.active_user_reservations(user)
-    Reservation.where("checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
-  end
 
   #TODO: probably can delete this
 #  def self.check_out_procedures_exist?(reservation)
@@ -325,5 +341,4 @@ class Reservation < ActiveRecord::Base
       ((self.due_date.to_date - Date.today).to_i < self.equipment_model.maximum_renewal_days_before_due) and (self.times_renewed < self.equipment_model.maximum_renewal_times)
     end
   end
-
 end

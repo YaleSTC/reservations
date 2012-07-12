@@ -50,6 +50,16 @@ describe 'cart' do
     res.start_date_before_due_date?.should == true
   end
 
+  #can't test without a reservations factory
+  it 'not_renewable? works when called on reservations in @items' do
+    res.not_renewable?.should == true
+  end
+
+  # only tests true. need to test with user with overdue reservations
+  it 'no_overdue_reservations? works when called on reservations in @items' do
+    res.no_overdue_reservations? == true
+  end
+
   it 'duration_allowed? works when called on reservations in @items' do
     res.duration_allowed?.should == true
     allowed_duration = eq.category.max_checkout_length
@@ -57,11 +67,6 @@ describe 'cart' do
     cart.add_item(eq)
     res1 = cart.items.last
     res1.duration_allowed?.should == false
-  end
-
-  # only tests true. need to test with user with overdue reservations
-  it 'no_overdue_reservations? works when called on reservations in @items' do
-    res.no_overdue_reservations? == true
   end
 
   it 'count works when called on reservations in @items' do
@@ -97,7 +102,7 @@ describe 'cart' do
     res_max.quantity_eq_model_allowed?(cart.items).should == false
   end
 
-  it 'quantity_cat_allowed?" works when called on reservations in @items' do
+  it 'quantity_cat_allowed? works when called on reservations in @items' do
     cat_max = FactoryGirl.create(:category, max_per_user: 1)
     eq_cat_max = FactoryGirl.create(:equipment_model, category: cat_max)
     cart.add_item(eq_cat_max)
@@ -129,7 +134,7 @@ describe 'cart' do
     res.due_date.to_date.should == Date.tomorrow + 1
   end
 
-  #need to write test for failing
+  #TODO: could write more tests for failure... probs not necessary
   it 'valid? works when called reservations in @items' do
     cart.items.clear
     cart.set_start_date(Date.today)
@@ -146,7 +151,7 @@ describe 'cart' do
     r.valid?.should == false
   end
 
-  #need to write test for forced failures for each error message
+  #TODO: write tests for all the errors (?)
   it 'validate_set works when called on reservations in @items' do
     cart.items.clear
     Reservation.validate_set(admin, cart.items).should == []

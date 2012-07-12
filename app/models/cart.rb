@@ -65,7 +65,6 @@ class Cart
 
   ## Date methods
 
-  #TODO: update all reservations in items to new start date?
   def set_start_date(date)
     @start_date = date
     fix_due_date
@@ -75,7 +74,6 @@ class Cart
     end
   end
 
-  #TODO: update all reservations in items to new due date?
   def set_due_date(date)
     @due_date = date
     fix_due_date
@@ -111,25 +109,24 @@ class Cart
     reserver = User.find(@reserver_id)
   end
 
-  #Create an array of all the reservations that should be renewed instead of having a new reservation
-  #TODO: edit this to allow for reservations in @items (equipment_model_id works?)
-  def renewable_reservations
-    user_reservations = reserver.reservations
-    renewable_reservations = []
-    @items.each do |item|
-      matching_reservations = user_reservations.each do |res|
-        # the end date should be the same as the start date
-        # the reservation should be renewable
-        # also the user should only renew as many reservations as they have in their cart
-        if (res.due_date.to_date == @start_date &&
-           res.equipment_model_id == item.equipment_model_id &&
-           res.is_eligible_for_renew?)
-          renewable_reservations << res
-        end
-      end
-    end
-    return renewable_reservations
-  end
+#  #Create an array of all the reservations that should be renewed instead of having a new reservation
+#  def renewable_reservations
+#    user_reservations = reserver.reservations
+#    renewable_reservations = []
+#    @items.each do |item|
+#      matching_reservations = user_reservations.each do |res|
+#        # the end date should be the same as the start date
+#        # the reservation should be renewable
+#        # also the user should only renew as many reservations as they have in their cart
+#        if (res.due_date.to_date == @start_date &&
+#           res.equipment_model_id == item.equipment_model_id &&
+#           res.is_eligible_for_renew?)
+#          renewable_reservations << res
+#        end
+#      end
+#    end
+#    return renewable_reservations
+#  end
 
 #  ## VALIDATIONS ##
 #  ##TODO: move all these to Reservation##
@@ -187,22 +184,22 @@ class Cart
 #    available
 #  end
 
-  ## Item validations
-  # Check if the user should renew their existing reservation rather than creating a new one
-  def no_renewable_models?
-    none_to_renew = true
-    reservations_to_renew = renewable_reservations
+#  ## Item validations
+#  # Check if the user should renew their existing reservation rather than creating a new one
+#  def no_renewable_models?
+#    none_to_renew = true
+#    reservations_to_renew = renewable_reservations
 
-    eq_model_names = reservations_to_renew.collect {|r| EquipmentModel.find(r.equipment_model_id).name}.uniq
+#    eq_model_names = reservations_to_renew.collect {|r| EquipmentModel.find(r.equipment_model_id).name}.uniq
 
-    unless reservations_to_renew.empty?
-      eq_model_names.each do |eq_model_name|
-        errors.add(:items, reserver.name + " should renew " + eq_model_name)
-        none_to_renew = false
-      end
-    end
-    return none_to_renew
-  end
+#    unless reservations_to_renew.empty?
+#      eq_model_names.each do |eq_model_name|
+#        errors.add(:items, reserver.name + " should renew " + eq_model_name)
+#        none_to_renew = false
+#      end
+#    end
+#    return none_to_renew
+#  end
 
 #  #Check that the reserver does not exceeds the maximum number of any equipment models
 #  #TODO: item.equipment_model won't work
