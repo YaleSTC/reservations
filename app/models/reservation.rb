@@ -57,6 +57,21 @@ class Reservation < ActiveRecord::Base
       "returned"
     end
   end
+  
+  #should reconcile the two status functions
+  def status_for_report
+    if checked_out.nil?
+      if checked_in.nil?
+        due_date >= Date.today ? "reserved" : "missed"
+      else
+        "?"
+      end
+    elsif checked_in.nil?
+      due_date < Date.today ? "overdue" : "checked out"
+    else
+      due_date < checked_in.to_date ? "returned overdue" : "returned on time"
+    end
+  end
 
   def not_empty
     errors.add_to_base("A reservation must contain at least one item.") if self.equipment_model.nil?

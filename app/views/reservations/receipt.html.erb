@@ -36,7 +36,8 @@
     <% end %>
   </div></div>
 <% else %>
-  <h3>No equipment has been checked in or out just now. Please see the user's <%= link_to "Current Activity", current_reservations_for_user_path(@user) %> page.</h3>
+  <% title "No equipment has been checked in or out just now" %>
+  <h3>Please see the user's <%= link_to "Current Activity", current_reservations_for_user_path(@user) %> page.</h3>
   <br />
 <% end %>
 
