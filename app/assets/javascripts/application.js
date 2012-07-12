@@ -94,6 +94,7 @@ $(document).ready(function() {
 	});
 
 	$(".btn#modal").tooltip();
+	$(".not-qualified-icon").tooltip();
 	
 	// Equipment Model - show - progress bar
 	

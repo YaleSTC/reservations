@@ -22,3 +22,12 @@
 }
 
 .caption_cat { padding: 0px 9px 0px 9px; }
+
+a.not-qualified-icon {
+	color: $btnWarningBackgroundHighlight;
+	&:hover {
+		text-decoration: none;
+		color: $btnWarningBackground;
+	}
+}
+
