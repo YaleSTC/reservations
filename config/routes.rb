@@ -1,14 +1,4 @@
 Reservations::Application.routes.draw do
-
-
-
-  match '/black_outs/flash_message' => 'black_outs#flash_message', :as => :flash_message
-
-  resources :black_outs do
-    member do
-      get :flash_message
-    end
-  end
    
   root :to => 'catalog#index'
 
@@ -47,6 +37,14 @@ Reservations::Application.routes.draw do
       get :upcoming
     end
     get :autocomplete_user_last_name, :on => :collection
+  end
+  
+  match '/black_outs/flash_message' => 'black_outs#flash_message', :as => :flash_message
+
+  resources :black_outs do
+    member do
+      get :flash_message
+    end
   end
 
   match '/reservations/manage/:user_id' => 'reservations#manage', :as => :manage_reservations_for_user
@@ -89,7 +87,8 @@ Reservations::Application.routes.draw do
   match '/new_app_configs' => 'application_setup#new_app_configs', :as => :new_app_configs
   match '/create_app_configs' => 'application_setup#create_app_configs', :as => :create_app_configs
   
-
+  match 'contact_us' => 'contact#new', :as => 'contact_us', :via => :get
+  match 'contact_us' => 'contact#create', :as => 'contact_us', :via => :post
   
   match ':controller(/:action(/:id(.:format)))' 
 

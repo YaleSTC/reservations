@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120710135541) do
+ActiveRecord::Schema.define(:version => 20120712202128) do
 
   create_table "accessories_equipment_models", :force => true do |t|
     t.integer  "accessory_id"
@@ -27,7 +27,6 @@ ActiveRecord::Schema.define(:version => 20120710135541) do
     t.string  "site_title"
     t.string  "admin_email"
     t.string  "department_name"
-    t.string  "contact_link_text"
     t.string  "contact_link_location"
     t.string  "home_link_text"
     t.string  "home_link_location"
