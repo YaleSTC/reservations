@@ -22,12 +22,17 @@
   <p>No equipment found.</p>
 <% else %>
   <div id='models_available'>
-    <%# for kaminari pagination %>
-    <%= paginate @paginated_equipment_models_by_category, :params => {:controller => 'catalog', :action => 'index' } %>
-    <%= form_tag update_user_per_cat_page_path, :class => "form-inline", :remote => true do %>
-      <%= label_tag "Items per page:" %>
-      <%= select_tag :user_cat_items_per_page, options_for_select(@user_per_page_opts, session[:user_per_cat_page]), :class => 'span1 autosubmitme' %>
-    <% end %>
+    <div class="row">
+      <div id="pagination_line" class="span9">
+        <%# for kaminari pagination %>
+        <%= paginate @paginated_equipment_models_by_category, :params => {:controller => 'catalog', :action => 'index' } %>
+        <%= form_tag update_user_per_cat_page_path, id: 'items_per_form', :class => "form-inline pull-right", :remote => true do %>
+          <%= label_tag "Items per page:" %>
+          <%= select_tag :user_cat_items_per_page, options_for_select(@user_per_page_opts, session[:user_per_cat_page]), :class => 'span1 autosubmitme' %>
+        <% end %>
+      </div>
+    </div>
+
     <% @equipment_models_by_category.each do |category, equipment_models| %>
       <h2 class="catalog">
         <!--print category name-->
