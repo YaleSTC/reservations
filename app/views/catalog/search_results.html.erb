@@ -1,7 +1,5 @@
 <% title sanitize("Search results for \"#{params[:query]}\"") %>
 
-<%= render :partial => 'search' %>
-
 <% if !@category_results.empty? %>
   <h2 class="span9">Category results</h2>
   <% @category_results.each do |category| %>
@@ -17,7 +15,7 @@
 <% end %>
 
 <% if !@equipment_model_results.empty? %>
-  <% if !@category_results.empty? or !@equipment_object_results.empty? %>
+  <% if !@category_results.empty? %>
     <h2 class="span9">Equipment model results</h2>
   <% end %>
   <ul class="thumbnails">
