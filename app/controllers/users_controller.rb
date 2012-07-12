@@ -69,10 +69,17 @@ class UsersController < ApplicationController
     require_user(@user)
     params[:user].delete(:login) unless current_user.is_admin_in_adminmode? #no changing login unless you're an admin
     if @user.update_attributes(params[:user])
-      flash[:notice] = "Successfully updated user."
-      redirect_to @user
+      respond_to do |format|
+        flash[:notice] = "Successfully updated user."
+        format.js {render :action => 'create_success'}
+      end
     else
-      render :action => 'edit'
+#      if current_user.is_admin_in_adminmode?
+#      redirect_to :back and return
+      
+      respond_to do |format|
+        format.js {render :action => 'edit_reload'}
+      end
     end
   end
 

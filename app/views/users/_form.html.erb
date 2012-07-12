@@ -27,5 +27,9 @@
       <%= f.input :is_admin %>
       <%= f.input :deleted_at, label: "Disabled", :as => :deleted %>    
   <% end %>
-  <%= f.button :wrapped, :cancel => root_path %>
+  <% if @user %>
+    <%= f.button :wrapped, :cancel => @user %>
+  <% else %>
+    <%= f.button :wrapped, :cancel => root_path %>
+  <% end %>
 <% end %>

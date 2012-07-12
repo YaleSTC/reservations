@@ -1,6 +1,8 @@
 <% title "Edit User" %>
 
-<%= render :partial => 'form' %>
+<div id="edit_form">
+  <%= render :partial => 'form' %>
+</div>
 
 <% if current_user.is_admin_in_adminmode? %>
   <p>
