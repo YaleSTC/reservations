@@ -1,5 +1,11 @@
 <% title "Category: "+@category.name %>
 
+<div class="btn-group">
+  <%= link_to "Add new #{@category.name.singularize} model".titleize, new_category_equipment_model_path(@category), class: 'btn' %>
+  <%= link_to "View all #{@category.name.singularize} models".titleize, category_equipment_models_path(@category), class: 'btn' %>
+</div>
+<hr />
+
 <p>
   <strong>Max Per User:</strong>
   <%= @category.maximum_per_user %>
@@ -47,13 +53,8 @@
   </p>
 <% end %>
 
-<p>
-  <%= link_to "Add new "+@category.name.singularize+" model", new_category_equipment_model_path(@category) %> | 
-  <%= link_to "View all "+@category.name.singularize+" models", category_equipment_models_path(@category) %>
-</p>
-
-<p>
-  <%= link_to "Edit Category", edit_category_path(@category) %> |
-  <%= link_to "Destroy Category", @category, :confirm => 'Are you sure? This could have unintended consequences', :method => :delete %> |
-  <%= link_to "View All Categories", categories_path %>
-</p>
+<div class="form-actions">
+  <%= link_to "Edit Category", edit_category_path(@category), class: 'btn' %>
+  <%= link_to "Destroy Category", @category, class: 'btn btn-danger', :confirm => 'Are you sure? This could have unintended consequences', :method => :delete %>
+  <%= link_to "View All Categories", categories_path, class: 'btn' %>
+</div>
