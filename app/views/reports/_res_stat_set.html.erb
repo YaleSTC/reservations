@@ -3,7 +3,7 @@
 <table class="history_table table table-striped table-bordered">
   <thead>
     <tr>
-      <th><%= key.to_s.titleize %></th>
+      <th><%= key.to_s.titleize.singularize %></th>
       <% res_stat_set[:col_names].each do |name| %>
       <th><%= name %></th>
       <% end %>
