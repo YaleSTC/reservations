@@ -1,30 +1,32 @@
 <%= stylesheet_link_tag('application', :media => :screen) %>
 <%= stylesheet_link_tag('print', :media => :print) %>
 
-<p>
+<div id = "top_buttons"><p>
   <%= link_to 'User Profile', @user, :class => 'btn btn-inverse' %>
   <% if current_user.can_checkout? %>
     <%= link_to 'Manage', manage_reservations_for_user_path(@user), :class => 'btn btn-inverse' %>
   <% end %>
   <%= link_to 'Current Activity', current_reservations_for_user_path(@user), :class => 'btn btn-inverse' %>
-</p>
+</div></p>
 
 <% if !@check_in_set.empty? %>
   <% title "Check in receipt for #{@user.name}" %>
   <h2>The following equipment has been successfully checked in:</h2>
   <div>
+	<div class = "receipt_box">
     <% @check_in_set.each do |reservation| %>
       <% @reservation = reservation %>
-      <div class="well-nomargin span4">
+      <div id="well-nomargin span4">
         <h3><%= link_to "Reservation ##{@reservation.id}", @reservation %></h3>
         <%= render :partial => 'reservation_details', :locals => { :reservation => @reservation } %>
       </div>
     <% end %>
-  </div>
+  </div></div>
 <% elsif !@check_out_set.empty? %>
   <% title "Check out receipt for #{@user.name}" %>
   <h2>The following equipment has been successfully checked out:</h2>
   <div>
+		<div id = "receipt_box">
     <% @check_out_set.each do |reservation| %>
       <% @reservation = reservation %>
       <div class="well-nomargin span4">
@@ -32,14 +34,14 @@
         <%= render :partial => 'reservation_details', :locals => { :reservation => @reservation } %>
       </div>
     <% end %>
-  </div>
+  </div></div>
 <% else %>
   <% title "No equipment has been checked in or out just now" %>
   <h3>Please see the user's <%= link_to "Current Activity", current_reservations_for_user_path(@user) %> page.</h3>
   <br />
 <% end %>
 
-<div class="span9">
+<div id = "form_actions"><div class="span9">
   <%= button_to_function("Print this page", "javascript:print()", :class => 'btn') %>
   <%# email buttons disabled because their actions are currently defined only for single reservations %>
   <%# if !@check_out_set.empty? %> 
@@ -47,4 +49,4 @@
 	<%# elsif !@check_in_set.empty? %> 
     <%#= link_to "Email return receipt", {:controller => :reservations, :action => "checkin_email", :id => @reservation}, :method => "get", :class => 'btn' %>
   <%# end %>
-</div>
+</div></div>
