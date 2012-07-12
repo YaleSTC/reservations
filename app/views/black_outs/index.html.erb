@@ -7,8 +7,6 @@
   date falls within the Blackout period.
 </p>
 <hr />
-<%= link_to "Flash Message", {:url => flash_message_path},
-                              :href => flash_message_path, :remote => true, :class => "btn", :id => "add_to_cart" %>
 
 <% unless @black_outs.empty? %>
   <table class="datatable table table-stripped table-bordered">
