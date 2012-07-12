@@ -1,0 +1,15 @@
+<h1> Contact Us </h1>
+
+<%= simple_form_for @message, :url => url_for( :action => "new", :controller => "contact"), :html => { :class => "form-horizontal" } do |f| %>
+
+<%= f.error_notification %>
+
+<%= f.input :name %>
+<%= f.input :email %>
+<%= f.input :subject %>
+<%= f.input :body %>
+
+<%= f.button :submit %>
+
+
+<% end %>
