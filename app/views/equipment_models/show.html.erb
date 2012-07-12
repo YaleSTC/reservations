@@ -1,6 +1,8 @@
 <% title @equipment_model.name %>
 <% subtitle @equipment_model.category.name.singularize %>
 
+   <% reqs = Requirement.where(:equipment_model_id => @equipment_model.id) %>
+
 <!-- EQUIPMENT MODEL INFO BOX -->
 <div class="row em_info">
   <div class="span3">
@@ -39,10 +41,19 @@
       </div>
 
 
-      <div class="span2">
-          <%= link_to "Add to Cart", {:url => add_to_cart_path(@equipment_model)}, 
+      <div class="span2">     <!--TODO: Make these messages more elegant. Right now they work, but aren''t pretty -->
+            <% if !reqs.empty? && @equipment_model.model_restricted?(cart.reserver_id) %>
+                     Sorry. You can't check that out, because you haven't received proper training
+            <% elsif (a = BlackOut.date_is_blacked_out(cart.start_date)) && a.black_out_type_is_hard %>
+                 Cannot checkout start_date black out.
+            <% elsif (a = BlackOut.date_is_blacked_out(cart.due_date)) && a.black_out_type_is_hard %>
+                   Cannot do end date is bad
+            <% else %>
+            
+                   <%= link_to "Add to Cart", {:url => add_to_cart_path(@equipment_model)}, 
         															:href => add_to_cart_path(@equipment_model), 
         															:remote => true, :class => 'btn btn-primary btn-large' %>
+          <% end %>
       </div>
     </div>
   
@@ -151,6 +162,19 @@
   </section>
 <% end %>
 
+
+<!-- Requirements -->
+    <% unless reqs.empty? %>
+      <section id="items">
+        <h2>Requirements</h2><hr/>
+          <p>
+             This object requires special permission before it can be reserved. Users who wish to reserve this item must receive approval from <%= reqs.first.contact_name %> first. 
+           <% if current_user.is_admin_in_adminmode? %> For more specific information, see the <%= link_to "Model Requirements Page", requirements_path %>
+           <% end %> 
+          </p>
+      </section>
+    <% end %>
+
 <!-- ITEMS -->
 <% if current_user.is_admin_in_adminmode? %>
   <section id="items">
@@ -166,6 +190,7 @@
       <% end %>
     </p>
   </section>
+
     
  <!-- PROCEDURES -->
 <section id="procedures">

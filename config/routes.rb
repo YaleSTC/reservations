@@ -12,6 +12,8 @@ Reservations::Application.routes.draw do
    
   root :to => 'catalog#index'
 
+  resources :requirements
+
   resources :documents, :equipment_objects
   
   resources :equipment_models do

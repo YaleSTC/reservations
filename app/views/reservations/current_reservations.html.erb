@@ -20,3 +20,10 @@
   <h3>Future reservations</h3>
   <%= render :partial => "user_reservations_list", :collection => @user_reserved_reservations_set %>
 <% end %>
+
+<%= button_to_function("Print this page", "javascript:print()", :class => 'btn') %>
+<%# if (@reservation.status == "checked out") or (@reservation.status == "overdue") %> 
+  <%#= link_to "Email checkout receipt", {:controller => :reservations, :action => "checkout_email", :id => @reservation}, :method => "get", :class => 'btn' %>
+<%# elsif @reservation.status == "returned" %> 
+  <%#= link_to "Email return receipt", {:controller => :reservations, :action => "checkin_email", :id => @reservation}, :method => "get", :class => 'btn' %>
+<%# end %>

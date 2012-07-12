@@ -1,0 +1,29 @@
+<% title "Equipment Model requirements".titleize %>
+
+<p id="notice"><%= notice %></p>
+
+In order for a user to check out this model of equipment, they must have completed proper training. Once a user has completed necessary training, you may add the equipment they are qualified to use from their User Edit page.
+</br>
+<p>
+  <b>Equipment Model:</b>
+  <%= EquipmentModel.find(@requirement.equipment_model_id).name %>
+</br>
+  <b>Contact name:</b>
+  <%= @requirement.contact_info %>
+  </br>
+  <b>Contact info:</b>
+  <%= @requirement.contact_name %> 
+</p>
+
+<!--
+<ul id="reqSteps" data-update-url="<%# sort_requirement_steps_url%>">
+  <%# @reqSteps.each do |reqStep| %>
+    <%# content_tag_for :li, reqStep do %>
+      <%# link_to h(reqStep[:step]), reqStep %>
+    <%#end%>
+  <%# end %>
+</ul>
+-->
+
+<%= link_to 'Edit', edit_requirement_path(@requirement) %> |
+<%= link_to 'Back', requirements_path %>

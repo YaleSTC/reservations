@@ -36,13 +36,14 @@
   </tbody>
 </table>
 <hr />
-<p>
+
+<div class="form-actions">
   <% if current_user.is_admin_in_adminmode? %>
-    <%= link_to "New Category", new_category_path, :class => "btn btn-primary" %> |
+    <%= link_to "New Category", new_category_path, :class => "btn btn-primary" %>
   <% end %>
   <% if params[:show_deleted] %>
     <%= link_to "Hide Old Categories from List", categories_path, :class => "btn" %>
   <% else %>
     <%= link_to "Show Old Categories in List", categories_path(:show_deleted => true), :class => "btn" %>
   <% end %>
-</p>
+</div>

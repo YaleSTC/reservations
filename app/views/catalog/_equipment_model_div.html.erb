@@ -19,7 +19,10 @@
         <%= equipment_model.description + " " %><%= link_to "More Info", equipment_model, :class => 'more_info' %>
       </p>
     </div>
-    <% if equipment_model.available?(cart.start_date..cart.due_date) > 0 %>
+    <% if equipment_model.model_restricted?(cart.reserver_id) %>
+      <strong>This model requires proper training before it can be reserved. Please contact <%=Requirement.where(:equipment_model_id => equipment_model.id).first.contact_name %> at <%=Requirement.where(:equipment_model_id => equipment_model.id).first.contact_info %> about becoming certified.</strong>
+
+    <% elsif equipment_model.available?(cart.start_date..cart.due_date) > 0 %>
       <!--print add to cart link-->
       <div class="add_to_cart_box">  
         <%= link_to "Add to Cart", {:url => add_to_cart_path(equipment_model)},

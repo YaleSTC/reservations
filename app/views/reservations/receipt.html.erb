@@ -34,11 +34,12 @@
     <% end %>
   </div>
 <% else %>
-  <h3>No equipment has been checked in or out just now. Please see the user's <%= link_to "Current Activity", current_reservations_for_user_path(@user) %> page.</h3>
+  <% title "No equipment has been checked in or out just now" %>
+  <h3>Please see the user's <%= link_to "Current Activity", current_reservations_for_user_path(@user) %> page.</h3>
   <br />
 <% end %>
 
-<div class="span12">
+<div class="span9">
   <%= button_to_function("Print this page", "javascript:print()", :class => 'btn') %>
   <%# email buttons disabled because their actions are currently defined only for single reservations %>
   <%# if !@check_out_set.empty? %> 

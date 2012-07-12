@@ -62,6 +62,23 @@
   <% end %>
   </div>
 </div>
+
+<!-- TODO: Make this prettier -->
+
+<div class="row">
+  <h2 class="span9">Additional equipment certification:</h2>
+</div>
+<hr />
+<div class="row">
+    <div class="tabbable tabs-left span9">
+  <ul class="nav nav-tabs">
+  <% @user.requirements.each do |req| %>
+    <li><%= EquipmentModel.find(req.equipment_model_id).name %></li>
+  <% end %>
+  </ul>
+  </div>
+</div
+
 <div class="row">
   <div class="span9">
     <h2>

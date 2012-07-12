@@ -126,8 +126,8 @@ class ReportsController < ApplicationController
     end
     em_stats = collect_stat_set(eq_info,res_rels)
 
-    user_ids = res_set.collect{|r| r.reserver_id}.uniq
-    users = User.find(user_ids)
+    reserver_ids = res_set.collect{|r| r.reserver_id}.uniq
+    users = User.find(reserver_ids)
     user_info = users.collect {|user| ResSetInfo.new(user.name,:reserver_id, [user.id], user_path(:id => user.id))}
     user_stats = collect_stat_set(user_info,res_rels)
 

@@ -2,7 +2,11 @@
 <% prepare_pagination %>
 
 <% if (a = BlackOut.date_is_blacked_out(cart.start_date)) && (b = BlackOut.date_is_blacked_out(cart.due_date)) %>
-  <% flash[:error] = a.notice + b.notice %>
+  <% if a == b %>
+    <% flash[:error] = a.notice %>
+  <% else %>
+    <% flash[:error] = a.notice + " " + b.notice %>
+  <% end %>
 <% elsif (a = BlackOut.date_is_blacked_out(cart.start_date)) %>
   <% flash[:error] = a.notice %>
 <% elsif (a = BlackOut.date_is_blacked_out(cart.due_date)) %>
