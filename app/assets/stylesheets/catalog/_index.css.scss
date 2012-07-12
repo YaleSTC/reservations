@@ -25,7 +25,7 @@
 
 a.not-qualified-icon {
 	color: $btnWarningBackgroundHighlight;
-	&:hover {
+	&:hover, &:active {
 		text-decoration: none;
 		color: $btnWarningBackground;
 	}
