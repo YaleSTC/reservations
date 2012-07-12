@@ -5,15 +5,11 @@
     <%# f.association :equipment_model, :collection => EquipmentModel.all.map{|em| [em.name,em.id]}.unshift(["All models",0]), :include_blank => false  %>
 
     <%= f.input :equipment_model_id, :value => 0, :as => :hidden %>
- 
-    <%= label_tag :start_date, 'Start of Blackout' %>
-      <%= datepicker_input "black_out", "start_date", :value => @black_out[:start_date].strftime('%m/%d/%Y') %>
 
-    <%= label_tag :end_date, 'End of Blackout' %>
-      <%= datepicker_input "black_out", "end_date", :value => @black_out[:end_date].strftime('%m/%d/%Y'), :minDate => @black_out[:start_date].strftime('%m/%d/%Y') %>
-
-    <%= f.input :notice, required: true, hint: 'This message will be displayed to users if they attempt to make a reservation on a blackout date' %>
-    <%= f.input :black_out_type, label: 'Blackout Type', required: true, collection: [['Blackout',"hard"],['Notice Only',"soft"]]   %>
+     <%= render :partial => 'shared/date_picker', :locals => {:object => @black_out} %>
+   
+    <%= f.input :notice, hint: 'This message will be displayed to users if they attempt to make a reservation on a blackout date' %>
+    <%= f.input :black_out_type, label: 'Blackout Type', collection: [['Blackout',"hard"],['Notice Only',"soft"]]   %>
   </div>
     <%= f.button :wrapped, cancel: black_outs_path %>
 <% end %>

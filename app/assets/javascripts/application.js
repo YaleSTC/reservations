@@ -94,6 +94,8 @@ $(document).ready(function() {
 	});
 
 	$(".btn#modal").tooltip();
+	$(".not-qualified-icon").tooltip();
+	$(".not-qualified-icon-em").tooltip();
 	
 	// Equipment Model - show - progress bar
 	
@@ -153,16 +155,33 @@ $(document).ready(function() {
     $('#userModal div.modal-body').load(new_user, {from_cart : true }); // new_user defined in variables.js.erb
   });
 
+  $('.date_start').datepicker({
+    onClose: function(dateText, inst) { 
+      var start_date = $('.date_start').datepicker("getDate");
+      var end_date = $('.date_end').datepicker("getDate");
+      if (start_date > end_date){
+        $('.date_end').datepicker("setDate", start_date)
+      }
+      $('.date_end').datepicker( "option" , "minDate" , start_date); 
+    }
+  });
+
 });
 // to disable selection of dates in the past with datepicker
 $.datepicker.setDefaults({
    minDate: new Date()
 });
 
+
+
 // general submit on change class
 $(document).on('change', '.autosubmitme', function() {
   $(this).parents('form:first').submit();
 });
+
+//$(document).on('change', '.autosubmitme2', function() {
+//  $.ajax("update_dates");
+//});
 
 $(document).on('railsAutocomplete.select', '#fake_reserver_id', function(event, data){
     $("#reserver_id").val(data.item.id); // updating reserver_id here to make sure that it is done before it submits
