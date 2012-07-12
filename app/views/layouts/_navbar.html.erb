@@ -44,9 +44,8 @@
             <% end %>
             <% if current_user and !current_user.can_checkout? %>
               <ul class="dropdown-menu">
-                
+                <li class="nav-header"><h3>My Current Reservations</h3></li>
                 <% unless @current_reservations.blank? %>
-                  <li class="nav-header"><h3>My Current Reservations</h3></li>
                   <% @current_reservations.each do |res| %>
                     <li>
                       <%= link_to "#{EquipmentModel.include_deleted.find(res.equipment_model_id).name}
@@ -75,8 +74,8 @@
             <% end %>
             <% equipment_count %>
             <ul class="dropdown-menu">
+              <li class="nav-header"><h3>My Current Equipment</h3></li>
               <% unless @current_equipment.blank? %>
-                <li class="nav-header"><h3>My Current Equipment</h3></li>
                 <% @current_equipment.each do |res| %>
                 <li>
                   <%= link_to "#{res.equipment_model.name} (#{res.equipment_object.name})", res.equipment_model,
