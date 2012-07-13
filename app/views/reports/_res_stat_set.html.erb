@@ -1,5 +1,4 @@
 <!-- <table id="table_woo" class="datatable table table-striped table-bordered"> -->
-<%= link_to "Export to csv", request.parameters.merge({:format => :csv, :key => key})%>
 <table class="report_table table table-striped table-bordered">
   <thead>
     <tr>
@@ -13,3 +12,4 @@
     <%= render :partial => "report_row", :collection => res_stat_set[:rows] %>
   </tbody>
 </table>
+<%= link_to "Export to CSV", request.parameters.merge({:format => :csv, :key => key}), class: 'btn' %>
