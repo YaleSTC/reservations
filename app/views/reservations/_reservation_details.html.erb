@@ -1,6 +1,6 @@
 <p>
   <strong>Equipment:</strong>
-	<%= @reservation.equipment_model.name %>
+	<%= link_to @reservation.equipment_model.name, @reservation.equipment_model %>
 	<%= @reservation.equipment_object.nil? ? "(unassigned)" : "(#{@reservation.equipment_object.name})" %>
 </p>
 

@@ -41,18 +41,56 @@
       </div>
 
 
-      <div class="span2">     <!--TODO: Make these messages more elegant. Right now they work, but aren''t pretty -->
+      <div class="span2"> <%# Not super DRY right now, will refactor in the future %>
             <% if !reqs.empty? && @equipment_model.model_restricted?(cart.reserver_id) %>
-                     Sorry. You can't check that out, because you haven't received proper training
+              <%= link_to "#qualifications_modal", class: 'not-qualified-icon-em', rel: "tooltip", title: "Not Qualified (click for more info)", :"data-toggle" => 'modal' do %>
+                <i class="icon-warning-sign"></i>
+            <% end %>
+
+            <%= button_tag "Add to Cart", remote: true, class: 'btn btn-primary btn-large disabled' %>
+            <div id="qualifications_modal" class="modal hide fade">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h3>Qualification Required</h3>
+              </div>
+              <div class="modal-body">
+                <p>This model requires proper training before it can be reserved. Please contact <%=Requirement.where(:equipment_model_id => @equipment_model.id).first.contact_name %> at <%=Requirement.where(:equipment_model_id => @equipment_model.id).first.contact_info %> about becoming certified.</p>
+              </div>
+            </div>
+
+                     
             <% elsif (a = BlackOut.date_is_blacked_out(cart.start_date)) && a.black_out_type_is_hard %>
-                 Cannot checkout start_date black out.
+              <%= link_to "#qualifications_modal", class: 'not-qualified-icon-em', rel: "tooltip", title: "Not Available (click for more info)", :"data-toggle" => 'modal' do %>
+                <i class="icon-warning-sign"></i>
+            <% end %>
+
+            <%= button_tag "Add to Cart", remote: true, class: 'btn btn-primary btn-large disabled' %>
+            <div id="qualifications_modal" class="modal hide fade">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h3>Not Available</h3>
+              </div>
+              <div class="modal-body">
+                <p>
+                  This model is not available on the dates you requested. This is because the start date of your reservation, <%= cart.start_date %>, falls on a day for which the administrator has disabled reservations. 
+                </p>
+              </div>
             <% elsif (a = BlackOut.date_is_blacked_out(cart.due_date)) && a.black_out_type_is_hard %>
-                   Cannot do end date is bad
+              <div id="qualifications_modal" class="modal hide fade">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">×</button>
+                  <h3>Not Available</h3>
+                </div>
+                <div class="modal-body">
+                  <p>
+                    This model is not available on the dates you requested. This is because the end date of your reservation, <%= cart.due_date %>, falls on a day for which the administrator has disabled reservations. 
+                  </p>
+                </div>
             <% else %>
             
                    <%= link_to "Add to Cart", {:url => add_to_cart_path(@equipment_model)}, 
-        															:href => add_to_cart_path(@equipment_model), 
-        															:remote => true, :class => 'btn btn-primary btn-large' %>
+                                      :href => add_to_cart_path(@equipment_model), 
+                                      :remote => true, :class => 'btn btn-primary btn-large' %>
           <% end %>
       </div>
     </div>

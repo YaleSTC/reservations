@@ -2,4 +2,6 @@
 
 <%= render :partial => 'form' %>
 
-<p><%= link_to "Back to List", users_path %></p>
+<% if current_user %>
+  <p><%= link_to "Back to List", users_path %></p>
+<% end %>

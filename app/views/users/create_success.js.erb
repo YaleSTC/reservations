@@ -2,7 +2,9 @@
     <% session[:cart].set_reserver_id(@user.id) %>
     $('#userModal').modal('hide');
     $(window.location.reload());
-<% elsif (current_user.is_admin_in_adminmode? || current_user.is_admin_in_checkoutpersonmode? || current_user.is_checkout_person?) %>
+<% elsif params[:action] == "update" %>
+  $(window.location.replace("<%= user_path(@user) %>"));
+<% elsif current_user.can_checkout? %>
   $(window.location.replace("<%= user_path(@user) %>"));
 <% else %>
     $(window.location.replace("<%= root_path %>"));

@@ -28,11 +28,21 @@ a.not-qualified-icon {
 	bottom: 13px;
 	left: 110px;
 	font-size: $baseFontSize * 2.6;
-
 	color: $btnWarningBackgroundHighlight;
+
 	&:hover, &:active {
 		text-decoration: none;
 		color: $btnWarningBackground;
 	}
 }
 
+.pagination {
+	float: left;
+}
+
+#items_per_form {
+	position: relative;
+	top: 18px;
+}
+
+// Will need to be changed for responsive

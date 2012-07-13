@@ -48,3 +48,16 @@
 section {
 	padding-top: 86px;
 }
+
+a.not-qualified-icon-em {
+	position: absolute;
+	top: 6px;
+	right: 120px;
+	font-size: $baseFontSize * 3.6;
+
+	color: $btnWarningBackgroundHighlight;
+	&:hover, &:active {
+		text-decoration: none;
+		color: $btnWarningBackground;
+	}
+}
