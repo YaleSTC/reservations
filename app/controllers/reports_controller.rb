@@ -63,7 +63,7 @@ class ReportsController < ApplicationController
     end
   end
   
-  def update_report
+  def update_dates
     @start_date = (Date.strptime(params[:report][:start_date],'%m/%d/%Y'))
     @end_date = (Date.strptime(params[:report][:end_date],'%m/%d/%Y'))
     session[:report_start_date] = @start_date
@@ -75,6 +75,10 @@ class ReportsController < ApplicationController
       format.html{render :partial => "reports/report_dates"} # delete this line? replace with redirect_to root_path ? otherwise it's not doing any harm
     end
     # @end_date = (Date.strptime(params[:report][:end_date],'%m/%d/%Y'))
+  end
+
+  def generate
+    redirect_to request.referrer
   end
 
   #sub report for a particular model

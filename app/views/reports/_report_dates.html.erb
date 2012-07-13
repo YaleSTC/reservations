@@ -1,10 +1,10 @@
 <div id="report_dates">
-  <%= form_tag update_report_path, :remote => true do %>
-    <%= label_tag :start_date, 'Start of report' %>
-    <%= datepicker_input "report", "start_date", :class => 'autosubmitme span2',
-    :value => @start_date.strftime('%m/%d/%Y'), :minDate => nil %>
-    <%= label_tag :start_date, 'End of report' %>
-    <%= datepicker_input "report", "end_date", :class => 'autosubmitme span2',
-    :value => @end_date.strftime('%m/%d/%Y'), :minDate => @start_date.strftime('%m/%d/%Y') %>
-  <% end %>
+<%= form_tag update_dates_path, :remote => true do%>
+<%= label_tag :start_date, 'Start of report' %>
+<%= datepicker_input "report", "start_date", :class => 'autosubmitme span2',
+:value => @start_date.strftime('%m/%d/%Y'), :minDate => nil %>
+<%= label_tag :start_date, 'End of report' %>
+<%= datepicker_input "report", "end_date", :class => 'autosubmitme span2',
+:value => @end_date.strftime('%m/%d/%Y'), :minDate => @start_date.strftime('%m/%d/%Y') %>
+<% end %>
 </div>

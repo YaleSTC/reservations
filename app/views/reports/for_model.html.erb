@@ -1,5 +1,15 @@
 <% title ("Equipment Model Report for " + @start_date.strftime("%b %d, %Y") + " to " + @end_date.strftime("%b %d, %Y")) %>
-<%= render :partial => 'reports/report_dates' %>
+<ul class="breadcrumb">
+    <li>
+    <%= link_to "Reports", reports_path %>
+    <span class="divider">/</span>
+    </li>
+    <li class="active">
+    	<%= @equipment_model.name.singularize %>
+    </li>
+</ul>
+
+<%= render :partial => 'reports/report_generator'%>
 <h2 class = "equipment_model">
   <%= "Equipment Model " + @equipment_model.name.singularize %>
 </h2>
