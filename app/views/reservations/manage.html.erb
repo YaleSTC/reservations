@@ -34,6 +34,7 @@
 <% end %>
 
 <% unless @check_out_set.empty? %>
+<hr>
   <div class="row">
     <div class="span9">
       <p><h2>Check-Out</h2></p>
@@ -41,19 +42,19 @@
   </div>
 
   <%= form_tag( checkout_path, :method => "put" ) do %>
-
-  <div class="row">
-    <% if !@user.terms_of_service_accepted %>
-        <div class="well-nomargin span8">
+  <% if !@user.terms_of_service_accepted %>
+    <div class="row">
+      <div class="span9">
+        <div class="well">
           <p>This user hasn't accepted the <%= link_to("Terms of Service", tos_path, target: '_blank') %></p>
           <%= label_tag :terms_of_service_accepted, "I certify that I haven given a copy of the terms of service, and the user has accepted." %> 
           <%= check_box_tag :terms_of_service_accepted %>
         </div>
-    <% end %>
-    <% @check_out_set.each do |reservation| %>
-      <% @reservation = reservation %>
-      <%= render :partial => 'reservations/check_out_form' %>
-    <% end %>
+      </div>
+    </div>
+
+  <% end %>
+  <div class="row">
     <div class="span9">
       <% @check_out_set.each do |reservation| %>
         <% @reservation = reservation %>

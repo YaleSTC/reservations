@@ -67,7 +67,8 @@ Reservations::Application.routes.draw do
   match '/reports/index' => 'reports#index', :as => :reports
   match '/reports/:id/for_model' => 'reports#for_model', :as => :for_model_report
   match '/reports/for_model_set' => 'reports#for_model_set', :as => :for_model_set_reports
-  match '/reports/update' => 'reports#update_report', :as => :update_report
+  match '/reports/update' => 'reports#update_dates', :as => :update_dates
+  match '/reports/generate' => 'reports#generate', :as => :generate_report
   
   match '/:controller/:id/deactivate' => ':controller#deactivate', :as => 'deactivate'
   match '/:controller/:id/activate' => ':controller#activate', :as => 'activate'

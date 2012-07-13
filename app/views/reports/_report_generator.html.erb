@@ -1,0 +1,6 @@
+<div id = "report_generator">
+  <%= render :partial => 'reports/report_dates'%>
+  <%= form_tag generate_report_path do %>
+   	<%= submit_tag "Generate"%>
+  <% end %>
+</div>
