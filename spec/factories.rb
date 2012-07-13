@@ -4,7 +4,7 @@ FactoryGirl.define do
   def time_rand(from = 0.0, to = Time.now)
     Time.at(from + rand * (to.to_f - from.to_f))
   end
-  random_time = time_rand Time.local(2010, 1, 1)
+  random_time = time_rand(Time.local(2010, 1, 1))
   random_due_date = time_rand(random_time, Time.now.next_week)
 
 
@@ -56,35 +56,65 @@ FactoryGirl.define do
   factory :reservation do
     start_date Date.today
     due_date Date.tomorrow
-    checked_out [nil, random_time.to_datetime].sample
-    checked_in [nil,
-      random_due_date.to_datetime,
-      #time_rand(random_due_date, random_due_date.next_month).to_datetime
-      ].sample
-    notes Faker::HipsterIpsum.paragraph(4)
-    notes_unsent [true, false].sample
-    equipment_object
-#    association :checkout_handler, factory: :user
-#    association :checkin_handler, factory: :user
-#    association :reserver, :factory => :user
+    association :reserver, :factory => :user
+    equipment_model
+    after_build { |res| res.equipment_model_id = res.equipment_model.id }
+    after_build do |res|
+      obj = FactoryGirl.create(:equipment_object, :equipment_model => res.equipment_model)
+      res.equipment_object = obj
+    end
 
-    factory :checked_in_reservation do
-      checked_in [random_due_date.to_datetime,
-        #time_rand(random_due_date, random_due_date.next_month).to_datetime
-        ].sample
-      checked_out [random_time.to_datetime].sample
+    factory :finalized_reservation do
     end
 
     factory :checked_out_reservation do
-      checked_in nil
-      checked_out [random_time.to_datetime].sample
+      checked_out random_time.to_datetime
+     #association :checkout_handler, factory => :user
     end
 
-    factory :pending_reservation do
-      checkout_handler_id = nil
-      checkin_handler_id = nil
-      checked_out nil
-      checked_in nil
+    factory :checked_in_reservation do
+      checked_out random_time.to_datetime
+      #checked_in
+    end
+
+    factory :random_reservation do
+      checked_out [nil, random_time.to_datetime].sample
+      checked_in [nil, random_due_date.to_datetime].sample
+      notes Faker::HipsterIpsum.paragraph(4)
+      notes_unsent [true, false].sample
     end
   end
+
+#      checked_out [nil, random_time.to_datetime].sample
+#      checked_in [nil,
+#        random_due_date.to_datetime,
+#        #time_rand(random_due_date, random_due_date.next_month).to_datetime
+#        ].sample
+#      notes Faker::HipsterIpsum.paragraph(4)
+#      notes_unsent [true, false].sample
+#      equipment_object
+##      association :checkout_handler, factory: :user
+##      association :checkin_handler, factory: :user
+#      association :reserver, :factory => :user
+#    end
+
+#    factory :checked_in_reservation do
+#      checked_in [random_due_date.to_datetime,
+#        #time_rand(random_due_date, random_due_date.next_month).to_datetime
+#        ].sample
+#      checked_out [random_time.to_datetime].sample
+#    end
+
+#    factory :checked_out_reservation do
+#      checked_in nil
+#      checked_out [random_time.to_datetime].sample
+#    end
+
+#    factory :pending_reservation do
+#      checkout_handler_id = nil
+#      checkin_handler_id = nil
+#      checked_out nil
+#      checked_in nil
+#    end
+#  end
 end

@@ -1,6 +1,6 @@
 class Reservation < ActiveRecord::Base
   # has_many :equipment_models_reservations
-  belongs_to :equipment_model
+  has_one :equipment_model, :through => :equipment_object
   belongs_to :equipment_object
   belongs_to :reserver, :class_name => 'User'
   belongs_to :checkout_handler, :class_name => 'User'
@@ -182,7 +182,7 @@ class Reservation < ActiveRecord::Base
   # Assumes that all reservations have same start and end date as self
   def count(reservations)
     count = 0
-    reservations.each { |res| count += 1 if res.equipment_model_id == self.equipment_model_id }
+    reservations.each { |res| count += 1 if res.equipment_model == self.equipment_model }
     count
   end
 

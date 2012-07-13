@@ -18,6 +18,7 @@ describe 'cart' do
   it 'add_item works' do
     cart.add_item(eq)
     cart.items.size.should == 2
+    cart.items.first.equipment_model_id.should == cart.items.first.equipment_model.id
   end
 
   it 'remove_item works' do
@@ -85,7 +86,7 @@ describe 'cart' do
     mod_obj = obj.equipment_model
     cart.add_item(mod_obj)
     res_obj = cart.items.last
-    res_obj.available?.should == true #why doesn't this work???
+    res_obj.available?.should == true
     cart.add_item(mod_obj)
     res_obj.available?.should == true #can only see 1 without cart.items
     res_obj.available?(cart.items).should == false
