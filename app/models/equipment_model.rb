@@ -1,16 +1,14 @@
 class EquipmentModel < ActiveRecord::Base
   ## Associations ##
 
+  has_and_belongs_to_many :requirements
   belongs_to :category
   has_many :equipment_objects
   has_many :documents
   # has_and_belongs_to_many :reservations
   # has_many :equipment_models_reservations
   has_many :reservations
-  has_and_belongs_to_many :associated_equipment_models,
-                          :class_name => "EquipmentModel",
-                          :association_foreign_key => "associated_equipment_model_id",
-                          :join_table => "equipment_models_associated_equipment_models"
+
   has_many :checkin_procedures, :dependent => :destroy
   accepts_nested_attributes_for :checkin_procedures, :reject_if => :all_blank, :allow_destroy => true
   has_many :checkout_procedures, :dependent => :destroy
@@ -151,16 +149,18 @@ class EquipmentModel < ActiveRecord::Base
     self.documents.images
   end
 
-  def available?(date_range) #This does not actually return true or false.
+  def available?(date_range) #This does not actually return true or false
+       qualification_met = true
        if (a = BlackOut.date_is_blacked_out(date_range.first)) && a.black_out_type_is_hard
          #add Error about the black out date?
          return 0
        end
-       if (a = BlackOut.date_is_blacked_out(date_range.first)) && a.black_out_type_is_hard
+       if (a = BlackOut.date_is_blacked_out(date_range.last)) && a.black_out_type_is_hard
          #add Error about the black out date?
          return 0
        end
     overall_count = self.equipment_objects.size
+
     date_range.each do |date|
       available_on_date = available_count(date)
       overall_count = available_on_date if available_on_date < overall_count
@@ -168,6 +168,20 @@ class EquipmentModel < ActiveRecord::Base
     overall_count
   end
   
+  def model_restricted?(reserver_id) #Returns 0 if the reserver is ineligible to checkout the model.
+    qualification_met = false
+    unless (Requirement.where(:equipment_model_id => self.id)).empty?
+      qualification_met = true        
+        User.find(reserver_id).requirements.each do |req|
+          if req.equipment_model_id == self.id
+             qualification_met = false
+          end
+        end
+     end
+     return qualification_met
+  end
+
+
   def available_count(date)
     # get the total number of objects of this kind
     # then subtract the total quantity currently checked out, reserved, or overdue
@@ -185,6 +199,10 @@ class EquipmentModel < ActiveRecord::Base
 
   def fake_category_id
     self
+  end
+
+  def blehbleh
+     self
   end
 
 #  def max_renewal_times # number of times you're allowed to renew an item

@@ -1,5 +1,6 @@
 <% title @user.first_name + " " + (!@user.nickname.blank? ? "(#{@user.nickname}) " : "") + @user.last_name %>
 <% subtitle @user.login %>
+
 <div class="row">
   <div id="bool_labels" class="span9">
     <% if current_user.is_admin_in_adminmode? %>
@@ -11,15 +12,18 @@
   </div>
 </div>
 
-<div class="row">
-  <div class="span9">
-    <% if current_user.can_checkout? %>
-      <%= link_to 'Manage Reservations', manage_reservations_for_user_path(@user.id), :class => 'btn btn-inverse' %>
-      <%= link_to 'Current Reservations', current_reservations_for_user_path(@user.id), :class => 'btn btn-inverse' %>
-    <% end %>
+<% if current_user.can_checkout? %>
+  <div class="row">
+    <div class="span9">
+      <div class="btn-group">
+          <%= link_to 'Manage Reservations', manage_reservations_for_user_path(@user.id), :class => 'btn btn-inverse' %>
+          <%= link_to 'Current Reservations', current_reservations_for_user_path(@user.id), :class => 'btn btn-inverse' %>
+      </div>
+    </div>
   </div>
-  <hr />
-</div>
+  <hr>
+<% end %>
+
 
 <div class="row">
   
@@ -62,6 +66,28 @@
   <% end %>
   </div>
 </div>
+
+<!-- TODO: Make this prettier -->
+<% unless @user.requirements.empty? %>
+
+  <div class="row">
+    <div class="span9">
+      <h2>Equipment Qualifications</h2>
+    </div>
+  </div>
+  <hr />
+  <div class="row">
+    <div id="qualif_box" class="span9">
+      <ul id="qualifications">
+        <% @user.requirements.each do |req| %>
+          <li><i class="icon-ok"></i><%= link_to EquipmentModel.find(req.equipment_model_id).name, EquipmentModel.find(req.equipment_model_id) %></li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+
+<% end %>
+
 <div class="row">
   <div class="span9">
     <h2>

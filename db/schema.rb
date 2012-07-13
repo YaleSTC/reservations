@@ -131,6 +131,16 @@ ActiveRecord::Schema.define(:version => 20120711225430) do
     t.datetime "updated_at",          :null => false
   end
 
+  create_table "requirements", :force => true do |t|
+    t.integer  "equipment_model_id"
+    t.string   "contact_name"
+    t.string   "contact_info"
+    t.datetime "deleted_at"
+    t.text     "notes"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+  end
+
   create_table "reservations", :force => true do |t|
     t.integer  "reserver_id"
     t.integer  "checkout_handler_id"
@@ -177,6 +187,11 @@ ActiveRecord::Schema.define(:version => 20120711225430) do
     t.boolean  "bannedmode",                :default => false
     t.string   "deleted_at"
     t.boolean  "terms_of_service_accepted"
+  end
+
+  create_table "users_requirements", :id => false, :force => true do |t|
+    t.integer "user_id"
+    t.integer "requirement_id"
   end
 
 end

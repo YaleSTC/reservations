@@ -1,11 +1,11 @@
-<% title (@equipment_model.nil? ? "Equipment Objects" : @equipment_model.name.pluralize) %>
+<% title (@equipment_model.nil? ? "Equipment Items" : @equipment_model.name.pluralize) %>
 
 <!-- old code: <table id="equipment_model_table"> -->
 <table id="table_woo" class="datatable table table-striped table-bordered">
   <thead>
   <tr>
     <th>Equipment Model</th>
-    <th>Name</th>
+    <th>Item Name</th>
     <th>Serial (optional)</th>
     <th>Status</th>
 <%# these blank TH's necessary for the sort function %>
@@ -25,7 +25,11 @@
       <% @toggle = "link_to \"Deactivate\", deactivate_path(:equipment_objects,equipment_object), :class => \"btn btn-danger\"" %>
     <% end %>
       <td><%= link_to equipment_object.equipment_model.name, equipment_object.equipment_model %></td>
-      <td><%= link_to equipment_object.name, equipment_object %></td>
+       <% if current_user.is_admin_in_adminmode? %>
+         <td><%= link_to equipment_object.name, equipment_object %></td>
+       <% else %>
+         <td> <%=equipment_object.name%> </td>
+       <% end %>
       <td><%= equipment_object.serial %></td>
       <td><%= equipment_object.status %></td>
       <% if current_user.is_admin_in_adminmode? %>
@@ -37,25 +41,22 @@
   </tbody>
 </table>
 <hr />
-<% if @equipment_model %>
-  <p>
-    <%= add_equipment_object_link("Add new "+@equipment_model.name.singularize) %>
-  </p>
-<% end %>
 
-<p>
-  <% if current_user.is_admin_in_adminmode? %>
+<% if current_user.is_admin_in_adminmode? %>
+
+  <div class="form-actions">
     <% if @equipment_model %>
-     | <%= link_to ("New "+@equipment_model.name.singularize), new_equipment_model_equipment_object_path(@equipment_model) %>
-     | <%= link_to "View All Equipment Objects", equipment_objects_path %> |
+     <%= link_to ("New "+@equipment_model.name.singularize), new_equipment_model_equipment_object_path(@equipment_model) %>
+     <%= link_to "View All Equipment Objects", equipment_objects_path %>
     <% else %>
       <%= link_to "New Equipment Object", new_equipment_object_path, :class => "btn btn-primary" %>
     <% end %>
 
     <% if params[:show_deleted] %>
-   | <%= link_to "Hide Deactivated Objects", equipment_objects_path, :class => "btn" %>
-  <% else %>
-   | <%= link_to "Show Deactivated Objects", equipment_objects_path(:show_deleted => true), :class => "btn" %>
-  <% end %>
-  </p>
+      <%= link_to "Hide Deactivated Objects", equipment_objects_path, :class => "btn" %>
+    <% else %>
+      <%= link_to "Show Deactivated Objects", equipment_objects_path(:show_deleted => true), :class => "btn" %>
+    <% end %>
+  </div>
+
 <% end %>

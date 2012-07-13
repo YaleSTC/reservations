@@ -9,5 +9,5 @@
 }
 
 .navbar-search .search-query {
-	font-style: italic;
+	@include placeholder-extended;
 }

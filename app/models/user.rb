@@ -3,12 +3,16 @@ require 'net/ldap'
 class User < ActiveRecord::Base
   has_many :reservations, :foreign_key => 'reserver_id'
   nilify_blanks :only => [:deleted_at] 
+  has_and_belongs_to_many :requirements,
+                          :class_name => "Requirement",
+                          :association_foreign_key => "requirement_id",
+                          :join_table => "users_requirements"
 
   attr_accessible :login, :first_name, :last_name, :nickname, :phone, :email,
                   :affiliation, :is_banned, :is_checkout_person, :is_admin,
                   :adminmode, :checkoutpersonmode, :normalusermode, :bannedmode, 
-                  :deleted_at, :terms_of_service_accepted
-
+                  :deleted_at, :terms_of_service_accepted, :requirement_ids, :user_ids
+                                    
   attr_accessor(:full_query)
 
   validates :login,       :presence => true,

@@ -12,6 +12,8 @@ Reservations::Application.routes.draw do
    
   root :to => 'catalog#index'
 
+  resources :requirements
+
   resources :documents, :equipment_objects
   
   resources :equipment_models do
@@ -31,7 +33,6 @@ Reservations::Application.routes.draw do
     resources :reservations
   end
 
-#  match '/users/new_button' => 'users#new_button', :as => :new_button
   match '/reservations/renew/:id' => 'reservations#renew', :as => :renew
   match '/catalog/search' => 'catalog#search', :as => :catalog_search
 

@@ -3,7 +3,9 @@
 
 <% if current_user.can_checkout? || current_user == @reservation.reserver %>
   <% title "Reservation ##{@reservation.id}" + (@reservation.status == "reserved" ? "" : " (#{@reservation.status})") %>
+	<div id = "top_buttons">
   <%= render :partial => 'top_buttons', :locals => {:reserver => @reservation.reserver} %>
+	</div>
   <p>
     <strong>Reserved by:</strong>
     <%= @reservation.reserver.name %>
@@ -26,18 +28,18 @@
   <br /> <br />
 
 
-  <div class="form-actions">
+  <div id = "form_actions"><div class="form-actions">
   <%= button_to_function("Print this page", "javascript:print()", :class => 'btn') %>
-  <% if @reservation.status == ("checked out" or "overdue") %> 
-    <%= link_to "Email checkout receipt", {:controller => :reservations, :action => "checkout_email", :id => @reservation}, :method => "get", :class => 'btn' %>
-	<% elsif @reservation.status == "returned" %> 
-    <%= link_to "Email return receipt", {:controller => :reservations, :action => "checkin_email", :id => @reservation}, :method => "get", :class => 'btn' %>
-  <% end %>
+  <%# if (@reservation.status == "checked out") or (@reservation.status == "overdue") %> 
+    <%#= link_to "Email checkout receipt", {:controller => :reservations, :action => "checkout_email", :id => @reservation}, :method => "get", :class => 'btn' %>
+	<%# elsif @reservation.status == "returned" %> 
+    <%#= link_to "Email return receipt", {:controller => :reservations, :action => "checkin_email", :id => @reservation}, :method => "get", :class => 'btn' %>
+  <%# end %>
   <% if current_user.can_checkout? %>
     <%= link_to "Edit", edit_reservation_path(@reservation), :class => 'btn' %>
   <% end %>
   <% if @reservation.status == "reserved" or current_user.is_admin_in_adminmode? %>
     <%= link_to "Cancel Reservation", @reservation, :confirm => 'This will permanently delete the reservation. Are you sure?', :method => :delete, :class => 'btn' %>
   <% end %>
-  </div>
+  </div></div>
 <% end %>

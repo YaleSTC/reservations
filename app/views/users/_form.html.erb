@@ -27,6 +27,7 @@
 
     
   <% if current_user && current_user.is_admin_in_adminmode? %>
+      <%= f.association :requirements, :collection => Requirement.all.map{|req| [EquipmentModel.find(req.equipment_model_id).name,req.id]}%>
       <%= f.input :is_banned %>
       <%= f.input :is_checkout_person %>
       <%= f.input :is_admin %>
