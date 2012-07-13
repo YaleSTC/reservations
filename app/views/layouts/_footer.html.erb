@@ -4,8 +4,11 @@
     
     <div class="well">
       <div class="row">
-
-        <div class="span5">          
+        <% unless current_user.is_admin? %>
+          <div class="span8">
+        <% else %>
+          <div class="span5">    
+        <% end %>      
           Powered by <a href="https://github.com/YaleSTC/reservations">Reservations</a>, an open source equipment reservation app.<br />
           &copy; 2012 Yale Student Technology Collaborative
           <hr>
