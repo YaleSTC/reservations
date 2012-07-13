@@ -1,0 +1,24 @@
+<%#
+
+This is the Javascript necessary for the _date_picker partial, loaded via application.js
+
+  $('.date_start').datepicker({
+    onClose: function(dateText, inst) { 
+      var start_date = $('.date_start').datepicker("getDate");
+      var end_date = $('.date_end').datepicker("getDate");
+      if (start_date > end_date){
+        $('.date_end').datepicker("setDate", start_date)
+      }
+      $('.date_end').datepicker( "option" , "minDate" , start_date); 
+    }
+  });
+
+%>
+
+<div id ="black_out_dates">
+<%= label_tag :start_date, 'Start of Blackout' %>
+      <%= datepicker_input object.class.name.underscore, "start_date", :class => 'date_start span2', :value => object[:start_date].strftime('%m/%d/%Y') %>
+
+    <%= label_tag :end_date, 'End of Blackout' %>
+      <%= datepicker_input object.class.name.underscore, "end_date", :class => 'date_end span2', :value => object[:end_date].strftime('%m/%d/%Y') %>
+</div>

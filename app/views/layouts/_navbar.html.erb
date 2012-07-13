@@ -57,7 +57,7 @@
                   <li class="divider"></li>
                   <li><%= link_to "See More...", reservations_path %></li>
                 <% else %>
-                  <li><%= link_to '(none)', '#' %></li>
+                  <li><div class="none-text">(none)</div></li>
                 <% end %>
               </ul>
             <% end %>
@@ -85,7 +85,7 @@
                 <li><%= link_to "See More...", reservations_path %></li>
                 <% end %>
               <% else %>
-                <li><%= link_to '(none)', '#' %></li>
+                <li><div class="none-text">(none)</div></li>
               <% end %>
             </ul>
           </li> 

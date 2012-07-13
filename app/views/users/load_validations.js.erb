@@ -1,1 +1,8 @@
-$('#new_user').replaceWith('<%= escape_javascript(render :partial => "form") %>');
+// loads the simple form validations by reloading the page
+<% if params[:action] == "create" %>
+  $('#new_user').replaceWith('<%= escape_javascript(render :partial => "form") %>');
+<% elsif params[:action] == "update" %>
+  $('#edit_form').replaceWith('<%= escape_javascript(render :partial => "form") %>');
+<% else %>
+  $(window.location.reload()); // to have a backup behavior
+<% end %>

@@ -20,13 +20,27 @@
       </p>
     </div>
     <% if equipment_model.model_restricted?(cart.reserver_id) %>
-      <strong>This model requires proper training before it can be reserved. Please contact <%=Requirement.where(:equipment_model_id => equipment_model.id).first.contact_name %> at <%=Requirement.where(:equipment_model_id => equipment_model.id).first.contact_info %> about becoming certified.</strong>
+      <div class="add_to_cart_box">
+        <%= button_tag "Add to Cart", :class => "btn disabled", :id => 'add_to_cart' %>
+        <%= link_to "#qualifications_modal", class: 'not-qualified-icon', rel: "tooltip", title: "Not Qualified (click for more info)", :"data-toggle" => 'modal' do %>
+          <i class="icon-warning-sign"></i>
+      <% end %>
+      </div>
+
+      <div id="qualifications_modal" class="modal hide fade">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">×</button>
+          <h3>Qualification Required</h3>
+        </div>
+        <div class="modal-body">
+          <p>This model requires proper training before it can be reserved. Please contact <%=Requirement.where(:equipment_model_id => equipment_model.id).first.contact_name %> at <%=Requirement.where(:equipment_model_id => equipment_model.id).first.contact_info %> about becoming certified.</p>
+        </div>
+      </div>
 
     <% elsif equipment_model.available?(cart.start_date..cart.due_date) > 0 %>
       <!--print add to cart link-->
       <div class="add_to_cart_box">  
-        <%= link_to "Add to Cart", {:url => add_to_cart_path(equipment_model)},
-                    :href => add_to_cart_path(equipment_model), :remote => true, :class => "btn", :id => "add_to_cart" %>
+        <%= link_to "Add to Cart", add_to_cart_path(equipment_model), :remote => true, :class => "btn", :id => "add_to_cart" %>
         <% # (Using both the ":url" and ":href" symbols seems redundant. Remove one?) %>
       </div>
     <% else %>
