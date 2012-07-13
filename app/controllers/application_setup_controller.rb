@@ -21,7 +21,7 @@ class ApplicationSetupController < ApplicationController
 
   def create_admin_user
     @user = User.new(params[:user])
-    @user.login = session[:cas_user] unless current_user and (current_user.is_admin_in_adminmode? or current_user.is_admin_in_checkoutpersonmode? or current_user.is_checkout_person?)
+    @user.login = session[:cas_user] unless current_user and current_user.can_checkout?
     @user.is_admin = true
     if @user.save
       flash[:notice] = "Successfully created Admin."
@@ -40,8 +40,7 @@ class ApplicationSetupController < ApplicationController
        AppConfig.create!({ :site_title => "Reservations",
                            :admin_email => "admin@admin.admin",
                            :department_name => "School of Art Digital Technology Office",
-                           :contact_link_text => "Contact Us", 
-                           :contact_link_location => "mailto:contact.us@change.com", 
+                           :contact_link_location => "admin@admin.admin", 
                            :home_link_text => "Home", 
                            :home_link_location => "http://clc.yale.edu", 
                            :default_per_cat_page => 20,
