@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120711225430) do
+ActiveRecord::Schema.define(:version => 20120712202128) do
 
   create_table "accessories_equipment_models", :force => true do |t|
     t.integer  "accessory_id"
@@ -40,7 +40,7 @@ ActiveRecord::Schema.define(:version => 20120711225430) do
 
   create_table "black_outs", :force => true do |t|
     t.integer  "equipment_model_id"
-    t.date     "bo_start_date"
+    t.date     "start_date"
     t.date     "end_date"
     t.text     "notice"
     t.integer  "created_by"

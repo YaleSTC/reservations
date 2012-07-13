@@ -16,13 +16,13 @@
 
     <p>
       <p><h4>Notes</h4></p>
-		  <%= text_area_tag "reservations[#{check_in_form.id}][notes]", check_in_form.notes %>
+		  <%= text_area_tag "reservations[#{check_in_form.id}][notes]", check_in_form.notes, class: 'span3', rows: 6 %>
     </p>
 
     <p>
       <p><h4>Check-In Procedures</h4></p>
       <ul>
-        <% if check_in_form.equipment_model.checkin_procedures.nil? %>
+        <% if check_in_form.equipment_model.checkin_procedures.empty? %>
           <em>(none)</em>
         <% else %>
           <% check_in_form.equipment_model.checkin_procedures.each do |checkin_procedure| %>
