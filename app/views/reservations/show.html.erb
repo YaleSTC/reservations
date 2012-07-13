@@ -1,11 +1,9 @@
-<%= stylesheet_link_tag('application', :media => :screen) %>
-<%= stylesheet_link_tag('print', :media => :print) %>
-
 <% if current_user.can_checkout? || current_user == @reservation.reserver %>
   <% title "Reservation ##{@reservation.id}" + (@reservation.status == "reserved" ? "" : " (#{@reservation.status})") %>
 	<div id = "top_buttons">
   <%= render :partial => 'top_buttons', :locals => {:reserver => @reservation.reserver} %>
 	</div>
+  <hr>
   <p>
     <strong>Reserved by:</strong>
     <%= @reservation.reserver.name %>

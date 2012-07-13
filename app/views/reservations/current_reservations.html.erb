@@ -2,7 +2,7 @@
 <div id = "top_buttons">
   <%= render :partial => 'top_buttons', :locals => {:reserver => @user} %>
 </div>
-
+<hr>
 <% unless @user_overdue_reservations_set.empty? %>
   <h3>Overdue</h3>
   <%= render :partial => "user_reservations_list", :collection => @user_overdue_reservations_set %>
