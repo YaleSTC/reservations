@@ -110,6 +110,11 @@ class ReservationsController < ApplicationController
     error_msgs = ""
     reservations_to_be_checked_out = []
     
+    if !User.find(params[:user_id]).terms_of_service_accepted && !params[:terms_of_service_accepted]
+      flash[:error] = "You must confirm that the user accepts the Terms of Service"
+      redirect_to :back and return
+    end
+
     # throw all the reservations that are being checked out into an array
     params[:reservations].each do |reservation_id, reservation_hash|
         if reservation_hash[:equipment_object_id] != ('' or nil) then #update attributes for all equipment that is checked off

@@ -11,9 +11,10 @@ class User < ActiveRecord::Base
   attr_accessible :login, :first_name, :last_name, :nickname, :phone, :email,
                   :affiliation, :is_banned, :is_checkout_person, :is_admin,
                   :adminmode, :checkoutpersonmode, :normalusermode, :bannedmode, 
-                  :deleted_at, :terms_of_service_accepted, :requirement_ids, :user_ids
-                                    
-  attr_accessor(:full_query)
+                  :deleted_at, :requirement_ids, :user_ids, :terms_of_service_accepted,
+                  :created_by_admin
+
+  attr_accessor(:full_query, :created_by_admin)
 
   validates :login,       :presence => true,
                           :uniqueness => true
@@ -28,7 +29,9 @@ class User < ActiveRecord::Base
   validates :nickname,    :format      => { :with => /^[^0-9`!@#\$%\^&*+_=]+$/ },
                           :allow_blank => true
   validates :terms_of_service_accepted,
-                          :acceptance => {:accept => '1', :message => "You must accept the terms of service."}
+                          :acceptance => {:accept => true, :message => "You must accept the terms of service."},
+                          on: :create,
+                          :if => Proc.new { |u| !u.created_by_admin == "true" }
                           
                           
                           
