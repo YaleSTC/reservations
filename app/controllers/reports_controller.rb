@@ -1,9 +1,14 @@
 class ReportsController < ApplicationController
   before_filter :require_admin
-  ResRelation = Struct.new(:name, :relation, :params) # relations to build data columns
-  StatRow = Struct.new(:name, :data, :link_path) # output structure
-  ResSetInfo = Struct.new(:name, :id_type, :ids, :link_path) #info for a reservation set (rows of data)
-  DetailInfo = Struct.new(:name, :table, :params) # stores the info for building columns
+  ResRelation = Struct.new(:name, :relation, :params) # relations to build data columns ()
+  StatRow = Struct.new(:name, :data, :link_path) # output structure (name = string, data = array, link_path = link for first element in row)
+  ResSetInfo = Struct.new(:name, :id_type, :ids, :link_path) #info for a reservation set (building rows of data).  Pass in the ids and what type of ids the row of reservation is collected by
+  DetailInfo = Struct.new(:name, :table, :params) # stores the info for building columns (for the details on the reservations)
+
+  # The idea I had behind reports was to be able to have relatively flexible report building capabilities without a lot of queries
+  # collect_stat_set builds a table in rows where each row is a set of reservations and the relation filters the data again by column
+  # - it's useful for subgrouping the reservations, and params lets you alter what kind of data you're looking for
+  # assoc_details and collect_res_details take the set of reservations, and for each reservation collect details from associated tables, and the reservation table
 
   def index
     @res_stat_sets = []
@@ -32,14 +37,14 @@ class ReportsController < ApplicationController
         cat_em_ids[em.category.id] = [em.id]
       end
     end
+    categories = Category.find(cat_em_ids.keys)
+    category_info = categories.collect {|cat| ResSetInfo.new(cat.name,:equipment_model_id, cat_em_ids[cat.id],
+    for_model_set_reports_path({:ids => cat_em_ids[cat.id]})) }
+
     # commented out for speed
     # reserver_ids = full_set.collect {|res| res.reserver_id}.uniq 
     # reservers = User.find(reserver_ids)
     # reserver_info = reservers.collect {|user| ResSetInfo.new(user.name,:reserver_id, [user.id],user_path(:id => user.id))}
-
-    categories = Category.find(cat_em_ids.keys)
-    category_info = categories.collect {|cat| ResSetInfo.new(cat.name,:equipment_model_id, cat_em_ids[cat.id],
-    for_model_set_reports_path({:ids => cat_em_ids[cat.id]})) }
 
     # take all the sets of reservations and get stats on them
     # sets of reservations are passed in by name then models associated
@@ -99,6 +104,7 @@ class ReportsController < ApplicationController
     return date
   end
 
+  # forms a set of relations with the default settings, or a set of relations with the same options
   def default_relations(res_set,rel_hash = nil,options = nil)
     # reservation relations for each of the scopes
     rel_hash ||= {:"Total" => nil, :"Reserved" => :reserved, :"Checked Out" => :checked_out, :"Overdue" => :overdue,
@@ -115,6 +121,7 @@ class ReportsController < ApplicationController
     return res_rels
   end
 
+  # build the canned report for a model/set of models
   def models_subreport(ids,start_date,end_date,eq_models)
     res_set = Reservation.includes(:equipment_model,:equipment_object).starts_on_days(start_date,end_date).where(:equipment_model_id => ids)
     res_rels = default_relations(res_set)
@@ -123,17 +130,20 @@ class ReportsController < ApplicationController
     res_rels << ResRelation.new("Avg Duration Checked Out", res_set, {:id_type => :equipment_model_id, :stat_type => :duration,
                                 :secondary_id => {:date_type1 => :checked_out, :date_type2 => :checked_in, :catch2 => Date.today}})
 
-    eq_info = eq_models.collect do |em|
+
+    em_info = eq_models.collect do |em|
       em_link = ids.size > 1 ? for_model_report_path(:id => em.id) : nil
       ResSetInfo.new(em.name,:equipment_model_id, [em.id], em_link)
     end
-    em_stats = collect_stat_set(eq_info,res_rels)
+    em_stats = collect_stat_set(em_info,res_rels)
 
+    # collect data for users table
     reserver_ids = res_set.collect{|r| r.reserver_id}.uniq
     users = User.find(reserver_ids)
     user_info = users.collect {|user| ResSetInfo.new(user.name,:reserver_id, [user.id], user_path(:id => user.id))}
     user_stats = collect_stat_set(user_info,res_rels)
 
+    # collect data by equipment object
     eq_objects = EquipmentObject.find(:all, :conditions => {:equipment_model_id => ids})
     obj_info = eq_objects.collect {|obj| ResSetInfo.new(obj.name,:equipment_object_id, [obj.id])}
     obj_stats = collect_stat_set(obj_info,res_rels)
@@ -172,6 +182,7 @@ class ReportsController < ApplicationController
           end
         when :duration # get an average duration for the set of reservations, catch1 && catch2 are used if date1 and date2 are NULL
           # put the dates in chronological order, e.g. :date_type1 => :start_date, :date_type2 => :due_date
+          # secondary_id becomes a hash to hold the 2 types, and 2 escape types
           date_type1 = params[:secondary_id][:date_type1]
           date_type2 = params[:secondary_id][:date_type2]
           durations = res_set.collect do |res|
@@ -200,6 +211,7 @@ class ReportsController < ApplicationController
   # pulls details from associated tables and assigns them per reservation
   # hard to do as a join because you need to also run object functions on them.  Still probably should be rewritten
   def assoc_details(tables,res_set)
+    # pass in the table structures, which contain the name, table and parameters
     col_hash = {}
     tables.each do |table_struct| #collects the info once per id
       table = table_struct.table
@@ -215,10 +227,10 @@ class ReportsController < ApplicationController
     return col_hash
   end
   
-  # for the creation of 
+  # for the collection of data for each of the reservations in the reservation set
   def collect_res_info(res_set, det_structs = nil, fields = {}) # collect information on the set of reservations
-    det_columns = det_structs ? assoc_details(det_structs,res_set) : {}
-    fields.each do |f,option|
+    det_columns = det_structs ? assoc_details(det_structs,res_set) : {} # collect data present on other tables
+    fields.each do |f,option| #collect data for fields in the reservation table
       det_columns[f] = res_set.collect do |res|
         if option && option[:call] 
           res.send(f) ? res.send(f).send(option[:call]) : "N/A"
@@ -227,6 +239,7 @@ class ReportsController < ApplicationController
         end
       end
     end
+    # format the data into a reservation stat set
     res_stats = {}
     res_stats[:col_names] = det_columns.keys.collect{|key| key.to_s.titleize}
     res_stats[:rows] = res_set.collect {|res| StatRow.new(res.id,[])}

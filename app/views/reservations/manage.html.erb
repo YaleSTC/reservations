@@ -1,47 +1,81 @@
 <% title "Manage Reservations for #{@user.name}" %>
 
-<%= render :partial => 'top_buttons', :locals => {:reserver => @user} %>
-<div class='span12'>
-  <br />
-</div>
 
-<% if !@check_in_set.empty? %>
-  <%= form_tag( checkin_path, :method => "put" ) do %>
-    <h2 class='span9'>Check in:</h2>
-    <br />
-    <%= render :partial => "check_in_form", :collection => @check_in_set %>
-    <div class="span9">
-      <%= submit_tag "Check in equipment", :class => 'btn' %>
-    </div>
-  <% end %>
-  <div class='span9'>
-    <br /
-    <br />
+<div class="row">
+  <div class="span9">
+    <%= render :partial => 'top_buttons', :locals => {:reserver => @user} %>
   </div>
+</div>
+<hr>
+<% unless @check_in_set.empty? %>
+  <%= form_tag( checkin_path, :method => "put" ) do %>
+  
+    <div class="row">
+      <div class="span9">
+        <p><h2>Check-In</h2></p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="span9">
+        <%= render :partial => "check_in_form", :collection => @check_in_set %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="span9">
+        <div class="form-actions">
+          <%= submit_tag "Check-In Equipment", :class => 'btn btn-primary' %>
+        </div>
+      </div>
+    </div>
+
+  <% end %>
 <% end %>
 
-<% if !@check_out_set.empty? %>
-  <h2 class="span9">Check out:</h2>
-  <br />
-  <%= form_tag( checkout_path, :method => "put" ) do %>
-    <% @check_out_set.each do |reservation| %>
-      <% @reservation = reservation %>
-      <%= render :partial => 'reservations/check_out_form' %>
-    <% end %>
+<% unless @check_out_set.empty? %>
+<hr>
+  <div class="row">
     <div class="span9">
-      <%= submit_tag "Check out equipment", :class => 'btn' %>
+      <p><h2>Check-Out</h2></p>
     </div>
-  <% end %>
-  <div class='span9'>
-    <br />
-    <br />
   </div>
+
+  <%= form_tag( checkout_path, :method => "put" ) do %>
+  <% if !@user.terms_of_service_accepted %>
+    <div class="row">
+      <div class="span9">
+        <div class="well">
+          <p>This user hasn't accepted the <%= link_to("Terms of Service", tos_path, target: '_blank') %></p>
+          <%= label_tag :terms_of_service_accepted, "I certify that I haven given a copy of the terms of service, and the user has accepted." %> 
+          <%= check_box_tag :terms_of_service_accepted %>
+        </div>
+      </div>
+    </div>
+
+  <% end %>
+  <div class="row">
+    <div class="span9">
+      <% @check_out_set.each do |reservation| %>
+        <% @reservation = reservation %>
+        <%= render :partial => 'reservations/check_out_form' %>
+      <% end %>
+    </div>
+  </div>
+
+    <div class="row">
+        <div class="span9">
+          <div class="form-actions"><%= submit_tag "Check-Out Equipment", :class => 'btn btn-primary' %></div>
+        </div>
+    </div>
+
+  <% end %>
 <% end %>
 
 <% if @check_out_set.empty? and @check_in_set.empty? %>
-  <h3 class="span9"><%= @user.name %> has no scheduled reservations for today.</h3>
-  <div class='span9'>
-    <br />
-    <br />
-  </div>
+<div class="span9">
+  <h3><%= @user.name %> has no scheduled reservations for today.</h3>
+
+</div>
+
 <% end %>

@@ -45,6 +45,9 @@ class EquipmentModelsController < ApplicationController
   
   def update
     @equipment_model = EquipmentModel.include_deleted.find(params[:id])
+    if params[:equipment_model][:max_renewal_length].blank?
+      params[:equipment_model][:max_renewal_length] = 0 # nil causes renew reservation procedure to enter infinite loop
+    end
     if @equipment_model.update_attributes(params[:equipment_model])
       flash[:notice] = "Successfully updated equipment model."
       redirect_to @equipment_model

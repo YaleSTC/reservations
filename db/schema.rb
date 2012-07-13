@@ -35,6 +35,7 @@ ActiveRecord::Schema.define(:version => 20120712202128) do
     t.text    "overdue_checkout_email_body"
     t.text    "overdue_checkin_email_body"
     t.boolean "overdue_checkin_email_active",          :default => true
+    t.text    "terms_of_service"
   end
 
   create_table "black_outs", :force => true do |t|
@@ -174,16 +175,17 @@ ActiveRecord::Schema.define(:version => 20120712202128) do
     t.string   "phone"
     t.string   "email"
     t.string   "affiliation"
-    t.boolean  "is_banned",          :default => false
-    t.boolean  "is_admin",           :default => false
-    t.boolean  "is_checkout_person", :default => false
-    t.datetime "created_at",                            :null => false
-    t.datetime "updated_at",                            :null => false
-    t.boolean  "adminmode",          :default => true
-    t.boolean  "checkoutpersonmode", :default => false
-    t.boolean  "normalusermode",     :default => false
-    t.boolean  "bannedmode",         :default => false
+    t.boolean  "is_banned",                 :default => false
+    t.boolean  "is_admin",                  :default => false
+    t.boolean  "is_checkout_person",        :default => false
+    t.datetime "created_at",                                   :null => false
+    t.datetime "updated_at",                                   :null => false
+    t.boolean  "adminmode",                 :default => true
+    t.boolean  "checkoutpersonmode",        :default => false
+    t.boolean  "normalusermode",            :default => false
+    t.boolean  "bannedmode",                :default => false
     t.string   "deleted_at"
+    t.boolean  "terms_of_service_accepted"
   end
 
   create_table "users_requirements", :id => false, :force => true do |t|

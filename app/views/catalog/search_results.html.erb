@@ -1,22 +1,35 @@
-<% title sanitize("Search results for \"#{params[:query]}\"") %>
+<% title %-Search results for "#{params[:query]}"- %>
 
-<% if !@category_results.empty? %>
-  <h2 class="span9">Category results</h2>
-  <% @category_results.each do |category| %>
-    <div class="span3">
-      <div class="well-nomargin">
-        <h3 class="catalog">
-          <!--print category name-->
-          <%= link_to category.name, category_equipment_models_path(category) %>
-        </h3> 
-      </div>
+<% unless @category_results.empty? %>
+  <div class="row">
+    <div class="span9">
+      <h2>Category Results</h2>
     </div>
-  <% end %>
+  </div>
+  <div class="row">
+    <% @category_results.each do |category| %>
+      <div class="span3">
+        <div class="well">
+          <h3 class="catalog">
+            <!--print category name-->
+            <%= link_to category.name, category_equipment_models_path(category) %>
+          </h3> 
+        </div>
+      </div>
+    <% end %>
+
+  </div>
+
 <% end %>
 
-<% if !@equipment_model_results.empty? %>
-  <% if !@category_results.empty? %>
-    <h2 class="span9">Equipment model results</h2>
+<% unless @equipment_model_results.empty? %>
+  <% unless @category_results.empty? %>
+
+  <div class="row">
+    <div class="span9">
+      <h2>Equipment Model Results</h2>
+    </div>
+  </div>
   <% end %>
   <ul class="thumbnails">
     <% @equipment_model_results.each do |equipment_model| %>
@@ -27,27 +40,39 @@
   </ul>
 <% end %>
 
-<% if !@equipment_object_results.empty? %>
-  <h2 class="span9">Equipment items results</h2>
-  <% @equipment_object_results.each do |equipment_object| %>
-    <div class="well-nomargin span4">
-      <p>
-        <strong>Model:</strong>
-        <%= link_to equipment_object.equipment_model.name, equipment_model_path(equipment_object.equipment_model) %>
-      </p>
-      <p>
-        <strong>Item:</strong>
-        <%= equipment_object.name %> (<%= equipment_object.serial %>)
-      </p>
-      <p>
-        <strong>Status:</strong> 
-        <% if equipment_object.available? %>
-          (available)
-        <% else %>
-          (not available)
-        <% end %>
-      </p>
+<% unless @equipment_object_results.empty? %>
+  <div class="row">
+    <div class="span9">
+      <h2>Equipment Item Results</h2>
     </div>
-  <% end %>
+  </div>
+
+  <div class="row">
+    <% @equipment_object_results.each do |equipment_object| %>
+
+    <div class="span4">
+      <div class="well">
+        <p>
+          <strong>Model:</strong>
+          <%= link_to equipment_object.equipment_model.name, equipment_model_path(equipment_object.equipment_model) %>
+        </p>
+        <p>
+          <strong>Item:</strong>
+          <%= equipment_object.name %> (<%= equipment_object.serial %>)
+        </p>
+        <p>
+          <strong>Status:</strong> 
+          <% if equipment_object.available? %>
+            <span class="label label-success eo-table">Available</span>
+          <% else %>
+            <span class="label label-danger eo-table">Not Available</span>
+          <% end %>
+        </p>
+      </div>
+    </div>
+
+    <% end %>
+  </div>
+
 <% end %>
 

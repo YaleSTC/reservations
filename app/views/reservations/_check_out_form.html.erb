@@ -1,24 +1,24 @@
 <div id="<%= @reservation.id %>" class="well-nomargin span4">
-  <h3><%= link_to "Reservation ##{@reservation.id}", @reservation %></h3>
+  <header>
+    <h3><%= link_to "Reservation ##{@reservation.id}", @reservation %></h3>
+  </header>
+  <hr>
 	<h4><%= @reservation.equipment_model.name %></h4>
 
 	<%= select_tag "reservations[#{@reservation.id}][equipment_object_id]", @reservation.equipment_model.available_object_select_options, :prompt => 'Please select..', :class => 'dropdown' %>
 	
 	<p>
-		<%= label_tag :notes %> <br />
+    <p><h4>Notes</h4></p>
 		<%= text_area_tag "reservations[#{@reservation.id}][notes]", @reservation.notes %>
 	</p>
 	
-	<p>
-  	  This equipment is <strong>due back on <%= @reservation.due_date.to_date.to_s(:long) %>.</strong><br />
-  	  An overdue return will incur a combined late fee of <%= number_to_currency(@reservation.late_fee) %> / day.
-	</p>
+
 
 	<p>
-  	<strong>Checkout procedures:</strong>
+  	<h4>Check-Out Procedures</h4>
   	<ul>
-    	<% if @reservation.equipment_model.checkout_procedures.nil? %>
-          <em>There are no checkout procedures.</em>
+    	<% if @reservation.equipment_model.checkout_procedures.empty? %>
+          <li><em>(none)</em></li>
     	<% else %>
         <ol>
           <% @reservation.equipment_model.checkout_procedures.each do |checkout_procedure| %>
@@ -31,4 +31,13 @@
     	<% end %>
   	</ul>
 	</p>
+
+  <hr>
+  <footer>
+    <p>
+        This equipment is <strong>due back on <%= @reservation.due_date.to_date.to_s(:long) %>.</strong><br />
+        An overdue return will incur a combined late fee of <strong><%= number_to_currency(@reservation.late_fee) %> / day.</strong>
+    </p>
+  </footer>
+
 </div>

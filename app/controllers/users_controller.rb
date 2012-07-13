@@ -45,7 +45,7 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(params[:user])
-    @user.login = session[:cas_user] unless current_user and current_user.can_checkout?)
+    @user.login = session[:cas_user] unless current_user and current_user.can_checkout?
     @user.is_admin = true if User.count == 0
     if @user.save
       respond_to do |format|

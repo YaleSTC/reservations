@@ -14,12 +14,12 @@
 <% end %>
 
 <% if @equipment_models_by_category.empty? && current_user.is_admin_in_adminmode? %>
-  <p>No equipment found. Try creating some
-    <%= link_to "Equipment Models", new_equipment_model_path %>
-    first!
+  <p><h3>No equipment found. Try creating some
+      <%= link_to "Equipment Models", new_equipment_model_path %>
+      first!</h3>
   </p>
 <% elsif @equipment_models_by_category.empty? %>
-  <p>No equipment found.</p>
+  <p><h3>No equipment found.</h3></p>
 <% else %>
   <div id='models_available'>
     <div class="row">

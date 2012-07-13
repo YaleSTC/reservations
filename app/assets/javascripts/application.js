@@ -172,8 +172,6 @@ $.datepicker.setDefaults({
    minDate: new Date()
 });
 
-
-
 // general submit on change class
 $(document).on('change', '.autosubmitme', function() {
   $(this).parents('form:first').submit();
