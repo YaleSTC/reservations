@@ -16,10 +16,15 @@
       <%= hidden_field_tag(:from_cart, true) %>
       <%#= f.input :from_cart, :as => :hidden, :value  => true %>
     <% else %>
+      <%# Don't show TOS when adding new user in modal box %>
+      <%= f.input :terms_of_service_accepted, 
+                  input_html: {type: "checkbox", value: '1'}, 
+                  label: "I accept the #{link_to("Terms of Service", tos_path, target: '_blank')}" %>
       <%= hidden_field_tag(:from_cart, false) %>
-      <%= f.input :accept_terms_of_service, input_html: {type: "checkbox", value: '1'}, label: "I accept the #{link_to("Terms of Service", tos_path)}" %>
       <%#= f.input :from_cart, :as => :hidden, :value => false %>
     <% end %>
+      
+
     
   <% if current_user && current_user.is_admin_in_adminmode? %>
       <%= f.input :is_banned %>
@@ -27,5 +32,5 @@
       <%= f.input :is_admin %>
       <%= f.input :deleted_at, label: "Disabled", :as => :deleted %>    
   <% end %>
-  <%= f.button :wrapped, :cancel => root_path %>
+  <%= f.button :wrapped, cancel: root_path %>
 <% end %>

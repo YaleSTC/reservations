@@ -6,7 +6,9 @@ class User < ActiveRecord::Base
 
   attr_accessible :login, :first_name, :last_name, :nickname, :phone, :email,
                   :affiliation, :is_banned, :is_checkout_person, :is_admin,
-                  :adminmode, :checkoutpersonmode, :normalusermode, :bannedmode, :deleted_at
+                  :adminmode, :checkoutpersonmode, :normalusermode, :bannedmode, 
+                  :deleted_at, :terms_of_service_accepted
+
   attr_accessor(:full_query)
 
   validates :login,       :presence => true,
@@ -21,6 +23,11 @@ class User < ActiveRecord::Base
                           :format      => { :with => /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i }
   validates :nickname,    :format      => { :with => /^[^0-9`!@#\$%\^&*+_=]+$/ },
                           :allow_blank => true
+  validates :terms_of_service_accepted,
+                          :acceptance => {:accept => '1', :message => "You must accept the terms of service."}
+                          
+                          
+                          
 
    default_scope where(:deleted_at => nil)
    
