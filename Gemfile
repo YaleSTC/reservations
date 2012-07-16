@@ -25,6 +25,7 @@ gem "cocoon"
 gem "ffaker"
 gem "rails3-jquery-autocomplete"
 gem "kaminari"
+gem 'select2-rails'
 
 group :development, :test do
   gem "factory_girl_rails"
