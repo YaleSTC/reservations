@@ -18,7 +18,7 @@ class BlackOut < ActiveRecord::Base
     return nil
   end
   
-  def black_out_type_is_hard
+  def black_out_type_is_hard #A hard blackout means that items cannot be checked out on the date specified. A soft blackout will display a warning notice, but still allow the user to create a reservation for equipment.
      if self.black_out_type == "hard"
        true
      else

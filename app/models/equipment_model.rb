@@ -149,21 +149,15 @@ class EquipmentModel < ActiveRecord::Base
     self.documents.images
   end
 
-  def available?(date_range) #This does not actually return true or false
-       qualification_met = true
-       if (a = BlackOut.date_is_blacked_out(date_range.first)) && a.black_out_type_is_hard
-         #add Error about the black out date?
-         return 0
-       end
-       if (a = BlackOut.date_is_blacked_out(date_range.last)) && a.black_out_type_is_hard
-         #add Error about the black out date?
-         return 0
-       end
+  def available?(date_range) #This does not actually return true or false, but rather the number available.
+    qualification_met = true
+      if ((a = BlackOut.date_is_blacked_out(date_range.first)) && a.black_out_type_is_hard) || ((a = BlackOut.date_is_blacked_out(date_range.last)) && a.black_out_type_is_hard) #If start or end of range is blacked out, and that is a hard blackout.
+        return 0
+      end
     overall_count = self.equipment_objects.size
-
     date_range.each do |date|
-      available_on_date = available_count(date)
-      overall_count = available_on_date if available_on_date < overall_count
+       available_on_date = available_count(date)
+       overall_count = available_on_date if available_on_date < overall_count
     end 
     overall_count
   end

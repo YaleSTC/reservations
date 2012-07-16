@@ -1,6 +1,7 @@
 <% title "Blackout of " + (@black_out.equipment_model_id == 0 ? "All Equipment Objects" : EquipmentModel.include_deleted.find(@black_out.equipment_model_id).name) %>
 
-<!--<p>
+<%# Setting black-outs on a per-model basis has been disabled %>
+<!--<p> 
   <b>Equipment model affected:</b>
   <%# (@black_out.equipment_model_id == 0) ? "All Equipment Models" : EquipmentModel.include_deleted.find(@black_out.equipment_model_id).name %>
 </p> -->
