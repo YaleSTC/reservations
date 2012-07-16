@@ -64,7 +64,10 @@ FactoryGirl.define do
     end
 
     factory :dummy_reservation do
-      equipment_object nil
+      after_build do |res|
+        res.equipment_object = nil
+        res.equipment_object_id = nil
+      end
     end
 
     factory :finalized_reservation do

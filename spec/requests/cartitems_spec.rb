@@ -51,14 +51,17 @@ describe 'cart' do
     res.start_date_before_due_date?.should == true
   end
 
-  #can't test without a reservations factory
+  #fix this test
   it 'not_renewable? works when called on reservations in @items' do
     res.not_renewable?.should == true
+    renew = FactoryGirl.create(:checked_out_reservation, reserver: admin)
+    res.not_renewable?.should == false
   end
 
-  # only tests true. need to test with user with overdue reservations
   it 'no_overdue_reservations? works when called on reservations in @items' do
-    res.no_overdue_reservations? == true
+    res.no_overdue_reservations?.should == true
+    overdue = FactoryGirl.create(:overdue_reservation, reserver: admin)
+    res.no_overdue_reservations?.should == false
   end
 
   it 'duration_allowed? works when called on reservations in @items' do
