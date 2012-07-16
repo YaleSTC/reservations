@@ -1,0 +1,22 @@
+$(document).ready(function() {
+  $(document).on('change', '.autosubmitme', function() {
+    $('.autosubmitme').each(function() {
+        $(this).datepicker({
+           beforeShowDay: function(date) {
+                    var check_me = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                    
+                    var array_of_dates = <%= (BlackOut.all.collect{|bo| [bo.start_date.strftime("%Y,%m,%d"), bo.end_date.strftime("%Y,%m,%d")]}).html_safe %>;            
+                      for (i=0; i < array_of_dates.length; i++){
+                        var first_date = new Date (array_of_dates[i][0])
+                        var last_date = new Date (array_of_dates[i][1])
+                          if (first_date < check_me && check_me < last_date) {
+                            return [false,'']
+                          }
+                      }
+                    return [false,'']
+                 }
+        });
+      $(this).datepicker("refresh");
+    });
+  });
+});

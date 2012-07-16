@@ -2,11 +2,10 @@
   <%= f.error_notification %>
 
   <div class="form-inputs">
-    <%# f.association :equipment_model, :collection => EquipmentModel.all.map{|em| [em.name,em.id]}.unshift(["All models",0]), :include_blank => false  %>
+ 
+    <%= f.input :equipment_model_id, :value => 0, :as => :hidden %> <%# the ability to set per-model restrictions on black out dates is actually built into Reservations, however it has been disabled as of 3.0.0 since there are easier ways to take care of it. %>
 
-    <%= f.input :equipment_model_id, :value => 0, :as => :hidden %>
-
-     <%= render :partial => 'shared/date_picker', :locals => {:object => @black_out} %>
+     <%= render :partial => 'shared/date_picker', :locals => {:object => @black_out} %> <%# render the date picker %>
    
     <%= f.input :notice, hint: 'This message will be displayed to users if they attempt to make a reservation on a blackout date' %>
     <%= f.input :black_out_type, label: 'Blackout Type', collection: [['Blackout',"hard"],['Notice Only',"soft"]]   %>
