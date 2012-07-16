@@ -58,7 +58,7 @@ class Reservation < ActiveRecord::Base
   end
 
   # Checks that reservation is not in the past
-  #TODO: see if this prevents working with overdue reservations
+  #TODO: this prevents working with non-new reservations -- fix pls
   def not_in_past?
     if (start_date < Date.today) || (due_date < Date.today)
       errors.add(:base, "Reservation can't be in past")

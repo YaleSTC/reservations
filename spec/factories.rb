@@ -1,11 +1,11 @@
 FactoryGirl.define do
 
   r = Random.new
-  def time_rand(from = 0.0, to = Time.now)
-    Time.at(from + rand * (to.to_f - from.to_f))
-  end
-  random_time = time_rand(Time.local(2010, 1, 1))
-  random_due_date = time_rand(random_time, Time.now.next_week)
+#  def time_rand(from = 0.0, to = Time.now)
+#    Time.at(from + rand * (to.to_f - from.to_f))
+#  end
+#  random_time = time_rand(Time.local(2010, 1, 1))
+#  random_due_date = time_rand(random_time, Time.now.next_week)
 
 
   factory :user do
@@ -68,53 +68,17 @@ FactoryGirl.define do
     end
 
     factory :checked_out_reservation do
-      checked_out random_time.to_datetime
+      checked_out Date.today
      #association :checkout_handler, factory => :user
     end
 
     factory :checked_in_reservation do
-      checked_out random_time.to_datetime
-      #checked_in
-    end
-
-    factory :random_reservation do
-      checked_out [nil, random_time.to_datetime].sample
-      checked_in [nil, random_due_date.to_datetime].sample
-      notes Faker::HipsterIpsum.paragraph(4)
-      notes_unsent [true, false].sample
+      start_date Date.yesterday
+      due_date Date.today
+      checked_out Date.yesterday
+      checked_in Date.today
+      #association :checkout_handler, factory => :user
+      #association :checkin_handler, factory => :user
     end
   end
-
-#      checked_out [nil, random_time.to_datetime].sample
-#      checked_in [nil,
-#        random_due_date.to_datetime,
-#        #time_rand(random_due_date, random_due_date.next_month).to_datetime
-#        ].sample
-#      notes Faker::HipsterIpsum.paragraph(4)
-#      notes_unsent [true, false].sample
-#      equipment_object
-##      association :checkout_handler, factory: :user
-##      association :checkin_handler, factory: :user
-#      association :reserver, :factory => :user
-#    end
-
-#    factory :checked_in_reservation do
-#      checked_in [random_due_date.to_datetime,
-#        #time_rand(random_due_date, random_due_date.next_month).to_datetime
-#        ].sample
-#      checked_out [random_time.to_datetime].sample
-#    end
-
-#    factory :checked_out_reservation do
-#      checked_in nil
-#      checked_out [random_time.to_datetime].sample
-#    end
-
-#    factory :pending_reservation do
-#      checkout_handler_id = nil
-#      checkin_handler_id = nil
-#      checked_out nil
-#      checked_in nil
-#    end
-#  end
 end

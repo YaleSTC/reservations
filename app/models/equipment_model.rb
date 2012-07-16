@@ -153,7 +153,7 @@ class EquipmentModel < ActiveRecord::Base
     # then subtract the total quantity currently checked out, reserved, or overdue
     # TODO: the system does not account for early checkouts.
 
-    reserved_count = Reservation.where("checked_in IS NULL and checked_out IS NULL and equipment_model_id = ? and start_date <= ? and due_date >= ?", self.id, date.to_time.utc, date.to_time.utc).size
+    reserved_count = Reservation.where("checked_in IS NULL and equipment_model_id = ? and start_date <= ? and due_date >= ?", self.id, date.to_time.utc, date.to_time.utc).size
     overdue_count = Reservation.where("checked_in IS NULL and checked_out IS NOT NULL and equipment_model_id = ? and due_date <= ?", self.id, Date.today).size
 
     self.equipment_objects.count - reserved_count - overdue_count
