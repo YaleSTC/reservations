@@ -13,6 +13,7 @@
 //= require dataTables/jquery.dataTables.bootstrap
 //= require bootstrap
 //= require variables.js
+//= require select2
 //= require_self
 
   function truncate() {
@@ -174,6 +175,12 @@ $(document).ready(function() {
       $('.date_end').datepicker( "option" , "minDate" , start_date); 
     }
   });
+
+  // Select2 - fancy select lists
+  $('select#equipment_model_category_id').select2();
+  $('select#equipment_model_associated_equipment_model_ids').select2();
+  $('select#equipment_object_equipment_model_id').select2();
+  $('select#requirement_equipment_model_id').select2();
 
 });
 // to disable selection of dates in the past with datepicker
