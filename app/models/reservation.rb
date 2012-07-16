@@ -11,8 +11,9 @@ class Reservation < ActiveRecord::Base
             :due_date,
             :presence => true
 
-  validate :not_empty?, :not_in_past?, :start_date_before_due_date?,
-           :no_overdue_reservations?, :duration_allowed?, :available?,
+  validate :no_overdue_reservations?, #:not_in_past?,
+           :start_date_before_due_date?, :not_empty?,
+           :matched_object_and_model?, :duration_allowed?, :available?,
            :quantity_eq_model_allowed?, :quantity_cat_allowed?
 
 
@@ -48,10 +49,19 @@ class Reservation < ActiveRecord::Base
   ## Validations ##
 
   ## For individual reservations only
-  # Checks that the reservation has an equipment model
-  def not_empty?
-    if equipment_model.nil?
-      errors.add(:base, "Reservations must have an associated equipment model")
+  # Checks if the user has any overdue reservations
+  def no_overdue_reservations?
+    if reserver.reservations.overdue_reservations?(reserver)
+      errors.add(:base, "availablity problem with " + equipment_model.name)
+      return false
+    end
+    return true
+  end
+
+  # Checks that reservation start date is before end dates
+  def start_date_before_due_date?
+    if due_date < start_date
+      errors.add(:base, "Reservation start date must be before due date")
       return false
     end
     return true
@@ -67,11 +77,22 @@ class Reservation < ActiveRecord::Base
     return true
   end
 
-  # Checks that reservation start date is before end dates
-  def start_date_before_due_date?
-    if due_date < start_date
-      errors.add(:base, "Reservation start date must be before due date")
+  # Checks that the reservation has an equipment model
+  def not_empty?
+    if equipment_model.nil?
+      errors.add(:base, "Reservations must have an associated equipment model")
       return false
+    end
+    return true
+  end
+
+  # Checks that the equipment_object is of type equipment_model
+  def matched_object_and_model?
+    unless equipment_model.nil? || equipment_object.nil?
+      if equipment_object.equipment_model != equipment_model
+        errors.add(:base, equipment_object.name + " is not of type " + equipment_model.name)
+        return false
+      end
     end
     return true
   end
@@ -84,15 +105,6 @@ class Reservation < ActiveRecord::Base
         errors.add(:base, res.equipment_model.name + " should be renewed instead of re-checked out")
         return false
       end
-    end
-    return true
-  end
-
-  # Checks if the user has any overdue reservations
-  def no_overdue_reservations?
-    if reserver.reservations.overdue_reservations?(reserver)
-      errors.add(:base, "availablity problem with " + equipment_model.name)
-      return false
     end
     return true
   end
@@ -164,6 +176,7 @@ class Reservation < ActiveRecord::Base
       errors << "Reservations cannot be made in the past" if !res.not_in_past?
       errors << "Reservations must have start dates before due dates" if !res.start_date_before_due_date?
       errors << "Reservations must have an associated equipment model" if !res.not_empty?
+      errors << res.equipment_object.name + " should be of type " + res.equipment_model.name if !res.matched_object_and_model?
       errors << res.equipment_model.name + " should be renewed instead of re-checked out" if !res.not_renewable?
       errors << "duration problem with " + res.equipment_model.name if !res.duration_allowed?
       errors << "availablity problem with " + res.equipment_model.name if !res.available?(reservations)
