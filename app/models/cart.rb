@@ -42,7 +42,7 @@ class Cart
 
   def add_item(equipment_model)
     current_item = Reservation.new(:start_date => @start_date,
-      :due_date => @due_date, :reserver => self.reserver, :equipment_model_id => equipment_model.id)
+      :due_date => @due_date, :reserver => self.reserver)
     current_item.equipment_model = equipment_model
     @items << current_item
   end
@@ -104,7 +104,6 @@ class Cart
     end
   end
 
-  #TODO: store reserver in reservation?
   def reserver
     reserver = User.find(@reserver_id)
   end

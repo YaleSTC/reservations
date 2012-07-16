@@ -1,6 +1,6 @@
 class Reservation < ActiveRecord::Base
   # has_many :equipment_models_reservations
-  has_one :equipment_model, :through => :equipment_object
+  belongs_to :equipment_model
   belongs_to :equipment_object
   belongs_to :reserver, :class_name => 'User'
   belongs_to :checkout_handler, :class_name => 'User'
