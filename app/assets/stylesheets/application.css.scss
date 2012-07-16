@@ -28,6 +28,10 @@ div.form-actions .view_all {
 
 // Styles for Select2 to make it visually integrate better with bootstrap
 
+.select2-results .select2-highlighted {
+  background: $dropdownLinkBackgroundHover;
+}
+
 .select2-drop {
   border: 1px solid $inputBorder;
   border-top: 0;
