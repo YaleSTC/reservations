@@ -31,7 +31,7 @@
       <%= f.input_field :max_renewal_times, :type => 'number' %><%= content_tag :span, "times", :class => "add-on" %>
     <% end %>
   
-    <%= f.input :max_renewal_length, label: 'Maximum time allotted for each renewal period', hint: 'Default is zero days. Actual renewal period will depend on availability.', :wrapper => :append do %>
+    <%= f.input :max_renewal_length, label: 'Maximum time allotted for each renewal period', hint: 'Leave blank to default to category value. Actual renewal period will depend on availability.', :wrapper => :append do %>
       <%= f.input_field :max_renewal_length, :type => 'number' %><%= content_tag :span, "days", :class => "add-on" %>
     <% end %>
   

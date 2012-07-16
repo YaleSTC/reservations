@@ -110,7 +110,7 @@ class EquipmentModel < ActiveRecord::Base
   end
   
   def maximum_renewal_length
-    max_renewal_length || category.maximum_renewal_length || 0
+    max_renewal_length || category.maximum_renewal_length
   end
   
   def maximum_renewal_times
