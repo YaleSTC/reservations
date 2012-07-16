@@ -1,6 +1,10 @@
 @import "autocomplete";
 @import "bootstrap_and_overrides";
 @import "jquery-ui-1.8.16.custom";
+@import "select2";
+
+// Our Custom Mixins
+
 @import "mixins";
 
 // Application Variables
@@ -20,6 +24,66 @@ div.form-actions .view_all {
 }
 .popover {
 	z-index: 1050;
+}
+
+// Styles for Select2 to make it visually integrate better with bootstrap
+
+.select2-results .select2-highlighted {
+  background: $dropdownLinkBackgroundHover;
+}
+
+.select2-drop {
+  border: 1px solid $inputBorder;
+  border-top: 0;
+}
+
+.select2-container div {
+  border-left: 1px solid $inputBorder;
+}
+
+.select2-search input {
+  background-color: $inputBackground;
+  border: 1px solid $inputBorder;
+  @include border-radius($inputBorderRadius);
+}
+
+// Multi-Select
+.select2-container-multi .select2-choices, .select2-container-multi.select2-container-active .select2-choices {
+  padding-right: 5px;
+  @include border-radius($inputBorderRadius);
+  @include box-shadow(inset 0 1px 1px rgba(0,0,0,.075));
+  @include transition(#{border linear .2s, box-shadow linear .2s});
+}
+
+.select2-container-multi.select2-container-active .select2-choices {
+  border-color: rgba(82,168,236,.8);
+  outline: 0;
+  outline: thin dotted \9; /* IE6-9 */
+  @include box-shadow(#{inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6)});
+}
+
+.select2-container-multi .select2-choices {
+  background-color: $inputBackground;
+  border: 1px solid $inputBorder;
+}
+
+// Single Select
+.select2-container .select2-choice {
+  background-color: $inputBackground;
+  border: 1px solid $inputBorder;
+}
+
+.select2-dropdown-open .select2-choice {
+  @include border-radius($inputBorderRadius);
+  @include box-shadow(inset 0 1px 1px rgba(0,0,0,.075));
+  @include transition(#{border linear .2s, box-shadow linear .2s});
+}
+
+.select2-container-active .select2-choice:focus {
+  border-color: rgba(82,168,236,.8);
+  outline: 0;
+  outline: thin dotted \9; /* IE6-9 */
+  @include box-shadow(#{inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6)});
 }
 
 // Partial Imports
