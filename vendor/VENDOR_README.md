@@ -1,0 +1,1 @@
+Use the vendor folder for assets that we don't maintain ourselves and haven't directly modified – ie. jQuery plugins, extra stylesheets that sort of thing.
