@@ -1,0 +1,62 @@
+<div class="btn-toolbar">
+  <div class="btn-group">
+    <% if current_user.can_checkout? %>
+      <% unless params[:reserved] or params[:checked_out] or params[:overdue] or params[:missed] or params[:returned] %>
+        <%= link_to "Today (#{Reservation.upcoming.size})", reservations_path, :class => "btn disabled" %>
+      <% else %>
+        <%= link_to "Today (#{Reservation.upcoming.size})", reservations_path, :class => "btn" %>
+      <% end %>
+      <% if params[:reserved] %>
+        <%= link_to "Reserved (#{Reservation.reserved.size})", reservations_path(:reserved => true), :class => "btn disabled" %>
+      <% else %>
+        <%= link_to "Reserved (#{Reservation.reserved.size})", reservations_path(:reserved => true), :class => "btn" %>
+      <% end %>
+      <% if params[:checked_out] %>
+        <%= link_to "Checked out (#{Reservation.checked_out.size})", reservations_path(:checked_out => true), :class => "btn disabled" %>
+      <% else %>
+        <%= link_to "Checked out (#{Reservation.checked_out.size})", reservations_path(:checked_out => true), :class => "btn" %>
+      <% end %>
+    	<% if params[:overdue] %>
+        <%= link_to "Overdue (#{Reservation.overdue.size})", reservations_path(:overdue => true), :class => "btn disabled" %>
+      <% else %>
+        <%= link_to "Overdue (#{Reservation.overdue.size})", reservations_path(:overdue => true), :class => "btn" %>
+      <% end %>
+      <% if params[:missed] %>
+    		<%= link_to "Missed (#{Reservation.missed.size})", reservations_path(:missed => true), :class => "btn disabled" %>
+    	<% else %>
+    	  <%= link_to "Missed (#{Reservation.missed.size})", reservations_path(:missed => true), :class => "btn" %>
+    	<% end %>
+    	<% if params[:returned] %>
+    	  <%= link_to "Returned (#{Reservation.returned.size})", reservations_path(:returned => true), :class => "btn disabled" %>
+      <% else %>
+    	  <%= link_to "Returned (#{Reservation.returned.size})", reservations_path(:returned => true), :class => "btn" %>
+      <% end %>
+    <% else %>
+      <% unless params[:checked_out] or params[:overdue] or params[:missed] or params[:returned] %>
+        <%= link_to "Reserved (#{current_user.reservations.reserved.size})", reservations_path, :class => "btn disabled" %>
+      <% else %>
+        <%= link_to "Reserved (#{current_user.reservations.reserved.size})", reservations_path, :class => "btn" %>
+      <% end %>
+      <% if params[:checked_out] %>
+        <%= link_to "Checked out (#{current_user.reservations.checked_out.size})", reservations_path(:checked_out => true), :class => "btn disabled" %>
+      <% else %>
+        <%= link_to "Checked out (#{current_user.reservations.checked_out.size})", reservations_path(:checked_out => true), :class => "btn" %>
+      <% end %>
+      <% if params[:overdue] %>
+        <%= link_to "Overdue (#{current_user.reservations.overdue.size})", reservations_path(:overdue => true), :class => "btn disabled" %>
+      <% else %>
+        <%= link_to "Overdue (#{current_user.reservations.overdue.size})", reservations_path(:overdue => true), :class => "btn" %>
+      <% end %>
+      <% if params[:missed] %>
+	      <%= link_to "Missed (#{current_user.reservations.missed.size})", reservations_path(:missed => true), :class => "btn disabled" %>
+      <% else %>
+        <%= link_to "Missed (#{current_user.reservations.missed.size})", reservations_path(:missed => true), :class => "btn" %>
+      <% end %>
+      <% if params[:returned] %>
+        <%= link_to "Returned (#{current_user.reservations.returned.size})", reservations_path(:returned => true), :class => "btn disabled" %>
+      <% else %>
+        <%= link_to "Returned (#{current_user.reservations.returned.size})", reservations_path(:returned => true), :class => "btn" %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

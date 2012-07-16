@@ -6,22 +6,30 @@ class ReservationsController < ApplicationController
 
   def index
     if current_user.can_checkout?
-      if params[:show_missed]
-        @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved, Reservation.missed].delete_if{|a| a.empty?}
-      elsif params[:show_returned]
-        @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved, Reservation.returned].delete_if{|a| a.empty?} #remove empty arrays from set
-      elsif params[:upcoming]
-        @hold_list = [Reservation.upcoming].delete_if{|a| a.empty?}
+      if params[:reserved]
+        @reservations_set = [Reservation.reserved].delete_if{|a| a.empty?} # remove empty arrays from set
+      elsif params[:checked_out]
+        @reservations_set = [Reservation.checked_out].delete_if{|a| a.empty?}
+      elsif params[:overdue]
+        @reservations_set = [Reservation.overdue].delete_if{|a| a.empty?}
+      elsif params[:missed]
+        @reservations_set = [Reservation.missed].delete_if{|a| a.empty?}
+      elsif params[:returned]
+        @reservations_set = [Reservation.returned].delete_if{|a| a.empty?}
       else
-        @reservations_set = [Reservation.overdue, Reservation.checked_out, Reservation.reserved].delete_if{|a| a.empty?}
+        @reservations_set = [Reservation.upcoming].delete_if{|a| a.empty?}
       end
-    else
-      if params[:show_missed]
-        @reservations_set = [current_user.reservations.overdue, current_user.reservations.checked_out, current_user.reservations.reserved, current_user.reservations.missed].delete_if{|a| a.empty?}
-      elsif params[:show_returned]
-        @reservations_set = [current_user.reservations.overdue, current_user.reservations.checked_out, current_user.reservations.reserved, current_user.reservations.returned].delete_if{|a| a.empty?}
+    else # for normal and banned users
+      if params[:checked_out]
+        @reservations_set = [current_user.reservations.checked_out].delete_if{|a| a.empty?} # remove empty arrays from set
+      elsif params[:overdue]
+        @reservations_set = [current_user.reservations.overdue].delete_if{|a| a.empty?}
+      elsif params[:missed]
+        @reservations_set = [current_user.reservations.missed].delete_if{|a| a.empty?}
+      elsif params[:returned]
+        @reservations_set = [current_user.reservations.returned].delete_if{|a| a.empty?}
       else
-        @reservations_set = [current_user.reservations.overdue, current_user.reservations.checked_out, current_user.reservations.reserved ].delete_if{|a| a.empty?}
+        @reservations_set = [current_user.reservations.reserved].delete_if{|a| a.empty?} 
       end
     end
   end

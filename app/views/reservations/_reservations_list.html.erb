@@ -3,7 +3,9 @@
   <thead>
   <tr>
     <th>#</th>
-    <th>User</th>
+    <% if current_user.can_checkout? %>
+      <th>User</th>
+    <% end %>
     <th>Equipment</th>
     <th>Item</th>
     <th>Start Date</th>
@@ -14,16 +16,18 @@
   <% for reservation in reservations_list %>
     <tr>
       <td><%= link_to reservation.id, reservation %></td>
-      <% if (reservation.reserver)%>
-        <td>
-          <%= link_to reservation.reserver.name, reservation.reserver %>
-          <% if current_user.can_checkout? %>
-            (<%= link_to 'manage', manage_reservations_for_user_path(reservation.reserver.id) %>)
-          <% end %>
-          (<%= link_to 'current', current_reservations_for_user_path(reservation.reserver.id) %>)
-      </td>
-      <% else %>
-        <td>User no longer exists</td>
+      <% if current_user.can_checkout? %>
+        <% if (reservation.reserver) %>
+          <td>
+            <%= link_to reservation.reserver.name, reservation.reserver %>
+            <% if current_user.can_checkout? %>
+              (<%= link_to 'manage', manage_reservations_for_user_path(reservation.reserver.id) %>)
+            <% end %>
+            (<%= link_to 'current', current_reservations_for_user_path(reservation.reserver.id) %>)
+        </td>
+        <% else %>
+          <td>User no longer exists</td>
+        <% end %>
       <% end %>
       <td><%= reservation.equipment_model.name %></td>
       <td>
