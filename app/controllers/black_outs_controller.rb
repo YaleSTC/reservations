@@ -28,8 +28,8 @@ class BlackOutsController < ApplicationController
   # GET /black_outs/new.json
   def new
     @black_out = BlackOut.new
-    @black_out[:start_date] = Date.today
-    @black_out[:end_date] = Date.today
+    @black_out[:start_date] = Date.today #Necessary for datepicker functionality
+    @black_out[:end_date] = Date.today #Necessary for datepicker functionality
 
     respond_to do |format|
       format.html # new.html.erb
@@ -47,8 +47,8 @@ class BlackOutsController < ApplicationController
   def create
     params[:black_out][:start_date] = Date.strptime(params[:black_out][:start_date],'%m/%d/%Y')
     params[:black_out][:end_date] = Date.strptime(params[:black_out][:end_date],'%m/%d/%Y')
-    params[:black_out][:created_by] = current_user[:id]
-    params[:black_out][:equipment_model_id] = 0
+    params[:black_out][:created_by] = current_user[:id] #Last-edited-by is automatically set
+    params[:black_out][:equipment_model_id] = 0 #If per-equipment_model blackouts are implemented, delete this line.
 
     # make sure dates are valid
     if params[:black_out][:end_date] < params[:black_out][:start_date]
@@ -56,7 +56,6 @@ class BlackOutsController < ApplicationController
       redirect_to :back and return
     end
     
-
     @black_out = BlackOut.new(params[:black_out])
 
     respond_to do |format|
@@ -77,9 +76,8 @@ class BlackOutsController < ApplicationController
 
     params[:black_out][:start_date] = Date.strptime(params[:black_out][:start_date],'%m/%d/%Y')
     params[:black_out][:end_date] = Date.strptime(params[:black_out][:end_date],'%m/%d/%Y')
-    params[:black_out][:created_by] = current_user[:id]
-    params[:black_out][:equipment_model_id] = 0
-
+    params[:black_out][:created_by] = current_user[:id] #Last-edited-by is automatically set
+    params[:black_out][:equipment_model_id] = 0 #If per-equipment_model blackouts are implemented, delete this line.
     
     # make sure dates are valid
     if params[:black_out][:end_date] < params[:black_out][:start_date]
