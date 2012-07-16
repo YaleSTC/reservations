@@ -1,2 +1,4 @@
 <% title 'Terms of Service' %>
-<%= markdown(@tos) %>
+<% unless @tos.nil? %>
+  <%= markdown(@tos) %>
+<% end %>

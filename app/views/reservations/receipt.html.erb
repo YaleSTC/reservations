@@ -11,12 +11,12 @@
 
 <% if !@check_in_set.empty? %>
   <% title "Check in receipt for #{@user.name}" %>
-  <h2>The following equipment has been successfully checked in:</h2>
+  <h3>The following equipment has been checked in on <%= Date.today.to_s(:long) %> by <%= current_user.name %>:</h3>
   <div>
 	<div class = "receipt_box">
     <% @check_in_set.each do |reservation| %>
       <% @reservation = reservation %>
-      <div id="well-nomargin span4">
+      <div id="well span4">
         <h3><%= link_to "Reservation ##{@reservation.id}", @reservation %></h3>
         <%= render :partial => 'reservation_details', :locals => { :reservation => @reservation } %>
       </div>
@@ -24,12 +24,12 @@
   </div></div>
 <% elsif !@check_out_set.empty? %>
   <% title "Check out receipt for #{@user.name}" %>
-  <h2>The following equipment has been successfully checked out:</h2>
+  <h3>The following equipment has been checked out on <%= Date.today.to_s(:long) %> by <%= current_user.name %>:</h3>
   <div>
 		<div id = "receipt_box">
     <% @check_out_set.each do |reservation| %>
       <% @reservation = reservation %>
-      <div class="well-nomargin span4">
+      <div class="well span4">
         <h3><%= link_to "Reservation ##{@reservation.id}", @reservation %></h3>
         <%= render :partial => 'reservation_details', :locals => { :reservation => @reservation } %>
       </div>

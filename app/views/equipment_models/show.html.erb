@@ -143,7 +143,9 @@
 <!-- DESCRIPTION -->
 <section id="description">
   <h2>Description</h2><hr />
-    <%= markdown(@equipment_model.description) %>
+    <% unless @equipment_model.description.nil? %>
+      <%= markdown(@equipment_model.description) %>
+    <% end %>
 </section>
 
 <!-- DETAILS -->

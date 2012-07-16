@@ -8,7 +8,40 @@
     <strong>Reserved by:</strong>
     <%= @reservation.reserver.name %>
   </p>
-  <%= render :partial => 'reservation_details' %>
+  <p>
+    <strong>Equipment:</strong>
+	  <%= link_to @reservation.equipment_model.name, @reservation.equipment_model %>
+	  <%= @reservation.equipment_object.nil? ? "(unassigned)" : "(#{@reservation.equipment_object.name})" %>
+  </p>
+
+  <p>
+    <strong>Start Date:</strong>
+    <%= @reservation.start_date.to_date.to_s(:long) %>
+  </p>
+  <div id="due_date_box">
+    <p>
+      <strong>Due Date:</strong>
+      <%= @reservation.due_date.to_date.to_s(:long) %>
+    </p>
+  </div>
+
+  <% unless @reservation.notes.nil? %>
+    <strong>Notes:</strong>
+    <%= markdown(@reservation.notes) %>
+  <% end %>
+
+  <% if @reservation.checked_out %>
+  <p>
+    Checked out <%= @reservation.checked_out.to_s(:long) %>
+    by <%= @reservation.checkout_handler.nil? ? "unknown" : @reservation.checkout_handler.name %>
+  </p>
+  <% end %>
+  <% if @reservation.checked_in %>
+    <p>
+      Checked in <%= @reservation.checked_in.to_s(:long) %>
+      by <%= @reservation.checkin_handler.nil? ? "unknown" : @reservation.checkin_handler.name %>
+    </p>
+  <% end %>
   <%# shows renew button if due_date is today, tomorrow, or the day after %>
   <% if @reservation.checked_out.nil? or !@reservation.checked_in.nil? %>
     <%# you can't renew if you haven't checked it out, or if you've already checked it in %>

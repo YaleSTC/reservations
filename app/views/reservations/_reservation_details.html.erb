@@ -4,29 +4,16 @@
 	<%= @reservation.equipment_object.nil? ? "(unassigned)" : "(#{@reservation.equipment_object.name})" %>
 </p>
 
-<p>
-  <strong>Start Date:</strong>
-  <%= @reservation.start_date.to_date.to_s(:long) %>
-</p>
+<% unless @reservation.checked_in %>
 <div id="due_date_box">
   <p>
     <strong>Due Date:</strong>
     <%= @reservation.due_date.to_date.to_s(:long) %>
   </p>
 </div>
-
-<strong>Notes:</strong>
-<%= markdown(@reservation.notes) %>
-
-<% if @reservation.checked_out %>
-<p>
-  Checked out <%= @reservation.checked_out.to_s(:long) %>
-  by <%= @reservation.checkout_handler.nil? ? "unknown" : @reservation.checkout_handler.name %>
-</p>
 <% end %>
-<% if @reservation.checked_in %>
-  <p>
-    Checked in <%= @reservation.checked_in.to_s(:long) %>
-    by <%= @reservation.checkin_handler.nil? ? "unknown" : @reservation.checkin_handler.name %>
-  </p>
+
+<% unless @reservation.notes.nil? %>
+  <strong>Notes:</strong>
+  <%= markdown(@reservation.notes) %>
 <% end %>
