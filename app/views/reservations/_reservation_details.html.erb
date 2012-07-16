@@ -15,10 +15,8 @@
   </p>
 </div>
 
-<p>
-	<strong>Notes:</strong>
-	<%= simple_format(@reservation.notes) %>
-</p>
+<strong>Notes:</strong>
+<%= markdown(@reservation.notes) %>
 
 <% if @reservation.checked_out %>
 <p>

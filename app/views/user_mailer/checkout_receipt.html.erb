@@ -3,13 +3,12 @@ Hi <%= @reservation.reserver.name %>,
 
 <p>This is a receipt for your equipment checkout. </p>
 
-<p>Equipment picked up: <%= @reservation.equipment_model.name%> (<%= @reservation.equipment_object.name %>) <br />
-Checkout date: <%= @reservation.checked_out.strftime(" %B %e, %Y at %l:%M%P") %> <br />
-Due date: <%= @reservation.due_date.strftime("%B %e, %Y") %> <br />
+<p>Equipment picked up: <%= @reservation.equipment_model.name%> (<%= @reservation.equipment_object.name %>)</p>
+<p>Checkout date: <%= @reservation.checked_out.strftime(" %B %e, %Y at %l:%M%P") %></p>
+<p>Due date: <%= @reservation.due_date.strftime("%B %e, %Y") %></p>
 <% unless @reservation.notes.nil? %> 
-Notes: <%= simple_format(@reservation.notes) %> <br />
+  Notes: <%= markdown(@reservation.notes) %>
 <% end %>
-</p>
 
 <p>As a reminder, overdue equipment will incur a late fee of <%= number_to_currency(@reservation.equipment_model.late_fee) %> per day. </p>
 

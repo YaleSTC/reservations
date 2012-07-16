@@ -175,6 +175,7 @@ GEM
     rb-readline (0.4.2)
     rdoc (3.12)
       json (~> 1.4)
+    redcarpet (2.1.1)
     rspec (2.10.0)
       rspec-core (~> 2.10.0)
       rspec-expectations (~> 2.10.0)
@@ -265,6 +266,7 @@ DEPENDENCIES
   rake
   rb-readline
   rdoc
+  redcarpet
   rspec-rails
   rubycas-client (= 2.2.1)
   rubycas-client-rails

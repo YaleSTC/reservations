@@ -141,9 +141,7 @@
 <!-- DESCRIPTION -->
 <section id="description">
   <h2>Description</h2><hr />
-  <p>
-    <%= sanitize(@equipment_model.formatted_description) %>
-  </p>
+    <%= markdown(@equipment_model.description) %>
 </section>
 
 <!-- DETAILS -->

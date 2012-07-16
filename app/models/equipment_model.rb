@@ -56,11 +56,11 @@ class EquipmentModel < ActiveRecord::Base
                   :checkout_procedures_attributes, :checkin_procedures_attributes, :photo, 
                   :documentation, :max_renewal_times, :max_renewal_length, :renewal_days_before_due, :associated_equipment_model_ids
 
-   default_scope where(:deleted_at => nil)
-   
-    def self.include_deleted
-      self.unscoped
-    end
+  default_scope where(:deleted_at => nil)
+ 
+  def self.include_deleted
+    self.unscoped
+  end
 
   def self.catalog_search(query)
     if query.blank? # if the string is blank, return all
@@ -131,19 +131,19 @@ class EquipmentModel < ActiveRecord::Base
     end
   end
 
-  def formatted_description
-    lines = self.description.split(/^/)
+#  def formatted_description
+#    lines = self.description.split(/^/)
 
-    nice_content = "<p>"
-    lines.each do |line|
-      if line.include? "<table>" or line.include? "<td>"
-        nice_content += line
-      else
-        nice_content += line + "<br />"
-      end
-    end
-    nice_content += "</p>"
-  end
+#    nice_content = "<p>"
+#    lines.each do |line|
+#      if line.include? "<table>" or line.include? "<td>"
+#        nice_content += line
+#      else
+#        nice_content += line + "<br />"
+#      end
+#    end
+#    nice_content += "</p>"
+#  end
 
   def photos
     self.documents.images
