@@ -26,6 +26,15 @@ div.form-actions .view_all {
 	z-index: 1050;
 }
 
+// Styles for Select2 to make it visually integrate better with bootstrap
+.select2-container-multi .select2-choices, .select2-container-multi.select2-container-active .select2-choices {
+  @include border-radius(4px);
+}
+
+.select2-container-multi .select2-choices {
+  border: 1px solid #CCC;
+}
+
 // Partial Imports
 
 @import "layouts/*";
