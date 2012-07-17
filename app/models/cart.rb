@@ -307,7 +307,7 @@ class Cart
     !is_too_long
   end
 
-  #Need to include check incase there are no items currently in basket.
+  #Need to include check in case there are no items currently in cart.
 
   # Check that the item is not blacked out on the dates it is being reserved for
   def item_not_blacked_out?

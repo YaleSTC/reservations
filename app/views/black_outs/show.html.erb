@@ -32,21 +32,15 @@
 </p>
 
 <% unless @black_out.set_id.nil? %>
+  <%= link_to 'Edit just this blackout', edit_black_out_path(@black_out), :class => 'btn' %>
+  <%= link_to 'View all blackout dates', black_outs_path, :class => 'btn' %>
   <hr />
   <p>
     <h3>All Blackouts in this set</h3>
   </p>
   <%= render :partial => 'table', :locals => {:black_outs => @black_out_set} %>
-<% end %>
-  
-<% unless @black_out.set_id.nil? %>
-  <%= link_to 'Edit just this blackout', edit_black_out_path(@black_out), :class => 'btn' %>
 <% else %>
   <%= link_to 'Edit', edit_black_out_path(@black_out), :class => 'btn' %> 
-<% end %>
-<%= link_to 'View all blackout dates', black_outs_path, :class => 'btn' %>
-<% unless @black_out.set_id.nil? %>
-  <%= link_to "Delete all blackouts in this set", destroy_recurring_black_out_path, :confirm => 'Are you sure?', :class => 'btn btn-danger' %>
-<% else %>
+  <%= link_to 'View all blackout dates', black_outs_path, :class => 'btn' %>
   <%= link_to 'Destroy', @black_out, confirm: 'Are you sure?', method: :delete, class: 'btn btn-danger' %>
 <% end %>
