@@ -80,7 +80,7 @@ else
 
   #EquipmentModel generation
   entered_num = ask_for_records("EquipmentModel")
-
+  STDOUT.puts 'This is going to take awhile...'
   if entered_num.integer? && entered_num > 0
     equipment_model = entered_num.times.map do
       EquipmentModel.create! do |em|
