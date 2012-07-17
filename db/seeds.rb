@@ -95,6 +95,7 @@ else
         em.max_renewal_length = r.rand(0..40)
         em.renewal_days_before_due = r.rand(0..9001)
         em.photo = File.open(Dir.glob(File.join(Rails.root, 'db', 'seed_images', '*')).sample)
+        em.associated_equipment_models = EquipmentModel.all.sample(6)
       end
     end
     STDOUT.puts "#{entered_num} records successfully created!"
