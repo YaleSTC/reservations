@@ -6,17 +6,22 @@
     <%= hidden_field_tag "recurring", true %>
     
   <%#= f.collection_check_boxes :options, [[0, 'Sun'], [1, 'Mon'], [2, 'Tues'], [3, 'Wed'], [4, 'Thurs'], [5, 'Fri'], [6, 'Sat']], :first, :last %>
-    
-    <% days_of_the_week_short.each_with_index do |day, i| %>
-      <%= check_box_tag "days[]", i, false, {:id => "days_#{i}"} %>
-      <%= day %>
-    <% end %>
+    <h3>Which days of the week?</h3>
+    <p>
+      <% days_of_the_week_short.each_with_index do |day, i| %>
+        <%= check_box_tag "days[]", i, false, {:id => "days_#{i}"} %>
+        <%= day %>
+      <% end %>
+    </p>
     
  
-    <%= f.input :equipment_model_id, :value => 0, :as => :hidden %> <%# the ability to set per-model restrictions on black out dates is actually built into Reservations, however it has been disabled as of 3.0.0 since there are easier ways to take care of it. %>
+    <%= f.input :equipment_model_id, :value => 0, :as => :hidden %> <%# the ability to set per-model restrictions on black out dates is actually built into Reservations, however it has been disabled as of 3.0.0. %>
+     
 
-     <%= render :partial => 'shared/date_picker', :locals => {:object => @black_out} %> <%# render the date picker %>
-   
+    <h3>Black out from when to when?</h3>
+    <p>
+      <%= render :partial => 'shared/date_picker', :locals => {:object => @black_out} %> <%# render the date picker %>
+    </p>   
     <%= f.input :notice, hint: 'This message will be displayed to users if they attempt to make a reservation on a blackout date' %>
     <%= f.input :black_out_type, label: 'Blackout Type', collection: [['Blackout',"hard"],['Notice Only',"soft"]]   %>
   </div>

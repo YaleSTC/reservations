@@ -102,7 +102,7 @@ class BlackOutsController < ApplicationController
       # exit
       respond_to do |format|
         if @black_out.save
-          format.html { redirect_to black_outs_path, notice: 'Black out was successfully created.' }
+          format.html { redirect_to black_outs_path, notice: 'Black outs were successfully created.' }
 #          format.json { render json: @black_out, status: :created, location: @black_out }
         else
           format.html { render action: "new" }
@@ -151,6 +151,18 @@ class BlackOutsController < ApplicationController
       format.html { redirect_to black_outs_url }
       format.json { head :no_content }
     end
+  end
+  
+  def destroy_recurring
+    @black_out = BlackOut.find(params[:id])
+    black_out_set = BlackOut.where("set_id = ?", @black_out.set_id)
+    black_out_set.each do |black_out|
+      black_out.destroy(:force)
+    end
+    
+    # exit
+    flash[:notice] = "Black outs successfully destroyed."
+    redirect_to black_outs_path and return
   end
 
 end

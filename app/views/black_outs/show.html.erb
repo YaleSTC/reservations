@@ -1,5 +1,11 @@
 <% title "Blackout of " + (@black_out.equipment_model_id == 0 ? "All Equipment Objects" : EquipmentModel.include_deleted.find(@black_out.equipment_model_id).name) %>
 
+<% unless @black_out.set_id.nil? %>
+  <p>
+    <%= link_to "Delete all black outs of this type", destroy_recurring_black_out_path, :confirm => 'Are you sure?', :class => 'btn btn-danger' %>
+  </p>
+<% end %>
+
 <%# Setting black-outs on a per-model basis has been disabled %>
 <!--<p> 
   <b>Equipment model affected:</b>
