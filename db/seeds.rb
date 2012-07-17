@@ -159,7 +159,7 @@ else
   
   if entered_num.integer? && entered_num > 0
     reservation = entered_num.times.map do
-      random_time = time_rand Time.local(2010, 1, 1)
+      random_time = time_rand Time.local(2012, 1, 1)
       random_due_date = time_rand(random_time, Time.now.next_week)
 
       Reservation.create! do |res|       
@@ -168,8 +168,8 @@ else
         res.checkin_handler_id = user.flatten.select{|usr| usr.is_checkout_person}.sample.id
         res.start_date = random_time.to_datetime
         res.due_date = [random_due_date.to_datetime, (random_time + category.flatten.sample.max_checkout_length.days).to_datetime].sample
-        res.checked_out = [nil, random_time.to_datetime].sample
         res.checked_in = [nil, random_due_date.to_datetime, time_rand(random_due_date, random_due_date.next_month).to_datetime].sample
+        res.checked_out = res.checked_in.nil? ? [nil, random_time.to_datetime].sample : random_time.to_datetime
         res.equipment_object_id = equipment_object.flatten.sample.id
         res.equipment_model_id = res.equipment_object.equipment_model_id
         res.notes = Faker::HipsterIpsum.paragraph(4)
