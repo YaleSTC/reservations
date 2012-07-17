@@ -3,7 +3,6 @@
 # All the numbers are pretty arbitrary, and can be changed to suit your needs, and how many records you want.
 # As it stands, you'll need to follow the format and create a new seed generation block for each
 # model you want to seed in the database, every time you create a model that isn't already here.
-# Right now, it only generates Users, Categories, EquipmentModels, and EquipmentObjects.
 # Order matters!! The script will fail if certain records (Catgeories, EquipmentModels) aren't
 # generated first and in the order listed.
 
@@ -14,7 +13,7 @@ require 'ffaker'
 
 #Method for prompting the user for the number of records per model they want to seed into the database.
 def ask_for_records( model )
-  STDOUT.puts "How many #{model} records would you like to generate? (please enter a number)"
+  STDOUT.puts "\nHow many #{model} records would you like to generate? (please enter a number)"
   STDIN.gets.chomp.to_i
 end
 
@@ -49,9 +48,9 @@ else
       end
     end
     user[0].is_checkout_person = true
-    STDOUT.puts "#{entered_num} records successfully created!"
+    STDOUT.puts "\n#{entered_num} records successfully created!"
   else
-    STDOUT.puts "Please enter a whole number greater than 0."
+    STDOUT.puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
   end
 
@@ -71,16 +70,16 @@ else
         c.renewal_days_before_due = r.rand(0..9001)
       end
     end
-    STDOUT.puts "#{entered_num} records successfully created!"
+    STDOUT.puts "\n#{entered_num} records successfully created!"
   else
-    STDOUT.puts "Please enter a whole number greater than 0."
+    STDOUT.puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
   end
 
 
   #EquipmentModel generation
   entered_num = ask_for_records("EquipmentModel")
-  STDOUT.puts 'This is going to take awhile...'
+  STDOUT.puts "\nThis is going to take awhile...\n"
   if entered_num.integer? && entered_num > 0
     equipment_model = entered_num.times.map do
       EquipmentModel.create! do |em|
@@ -98,9 +97,9 @@ else
         em.associated_equipment_models = EquipmentModel.all.sample(6)
       end
     end
-    STDOUT.puts "#{entered_num} records successfully created!"
+    STDOUT.puts "\n#{entered_num} records successfully created!"
   else
-    STDOUT.puts "Please enter a whole number greater than 0."
+    STDOUT.puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
   end
 
@@ -117,9 +116,9 @@ else
         eo.equipment_model_id = equipment_model.flatten.sample.id
       end
     end
-    STDOUT.puts "#{entered_num} records successfully created!"
+    STDOUT.puts "\n#{entered_num} records successfully created!"
   else
-    STDOUT.puts "Please enter a whole number greater than 0."
+    STDOUT.puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
   end
 
@@ -133,9 +132,9 @@ else
         chi.equipment_model_id = equipment_model.flatten.sample.id
       end
     end
-    STDOUT.puts "#{entered_num} records successfully created!"
+    STDOUT.puts "\n#{entered_num} records successfully created!"
   else
-    STDOUT.puts "Please enter a whole number greater than 0."
+    STDOUT.puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
   end
   
@@ -149,9 +148,9 @@ else
         cho.equipment_model_id = equipment_model.flatten.sample.id
       end
     end
-    STDOUT.puts "#{entered_num} records successfully created!"
+    STDOUT.puts "\n#{entered_num} records successfully created!"
   else
-    STDOUT.puts "Please enter a whole number greater than 0."
+    STDOUT.puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
   end
   
@@ -177,9 +176,9 @@ else
         res.notes_unsent = [true, false].sample
       end
     end
-    STDOUT.puts "#{entered_num} records successfully created!"
+    STDOUT.puts "\n#{entered_num} records successfully created!"
   else
-    STDOUT.puts "Please enter a whole number greater than 0."
+    STDOUT.puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
   end
   
