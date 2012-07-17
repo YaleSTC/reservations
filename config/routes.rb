@@ -39,7 +39,7 @@ Reservations::Application.routes.draw do
   end
   
   match '/black_outs/flash_message' => 'black_outs#flash_message', :as => :flash_message
-  match '/black_outs/new_recurring' => 'black_outs#new', :as => :recurring_black_out
+  match '/black_outs/new_recurring' => 'black_outs#new', :as => :new_recurring_black_out
 
   resources :black_outs do
     member do

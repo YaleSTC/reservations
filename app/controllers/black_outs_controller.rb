@@ -2,8 +2,6 @@ class BlackOutsController < ApplicationController
 
   before_filter :require_admin  
 
-  # GET /black_outs
-  # GET /black_outs.json
   def index
     @black_outs = BlackOut.all
 
@@ -13,8 +11,6 @@ class BlackOutsController < ApplicationController
     end
   end
 
-  # GET /black_outs/1
-  # GET /black_outs/1.json
   def show
     @black_out = BlackOut.find(params[:id])
 
@@ -24,15 +20,13 @@ class BlackOutsController < ApplicationController
     end
   end
 
-  # GET /black_outs/new
-  # GET /black_outs/new.json
   def new
     @black_out = BlackOut.new
-    @black_out[:start_date] = Date.today #Necessary for datepicker functionality
-    @black_out[:end_date] = Date.today #Necessary for datepicker functionality
+    @black_out[:start_date] = Date.today # Necessary for datepicker functionality
+    @black_out[:end_date] = Date.today # Necessary for datepicker functionality
 
     respond_to do |format|
-      if request.path == recurring_black_out_path
+      if request.path == new_recurring_black_out_path
         format.html{render "new_recurring"}
       else
         format.html # new.html.erb
@@ -41,13 +35,10 @@ class BlackOutsController < ApplicationController
     end
   end
 
-  # GET /black_outs/1/edit
   def edit
     @black_out = BlackOut.find(params[:id])
   end
 
-  # POST /black_outs
-  # POST /black_outs.json
   def create
     # correct for date formatting
     params[:black_out][:start_date] = Date.strptime(params[:black_out][:start_date],'%m/%d/%Y')
@@ -121,22 +112,25 @@ class BlackOutsController < ApplicationController
     end
   end
 
-  # PUT /black_outs/1
-  # PUT /black_outs/1.json
   def update
     @black_out = BlackOut.find(params[:id])
 
+    # correct for date formatting
     params[:black_out][:start_date] = Date.strptime(params[:black_out][:start_date],'%m/%d/%Y')
     params[:black_out][:end_date] = Date.strptime(params[:black_out][:end_date],'%m/%d/%Y')
-    params[:black_out][:created_by] = current_user[:id] #Last-edited-by is automatically set
-    params[:black_out][:equipment_model_id] = 0 #If per-equipment_model blackouts are implemented, delete this line.
+    
+    # set other params
+    params[:black_out][:created_by] = current_user[:id] # Last-edited-by is automatically set
+    params[:black_out][:equipment_model_id] = 0 # If per-equipment_model blackouts are implemented, delete this line.
+    
+    # individual edited reservations no longer belong to the set (so won't be mass-deleted in delete_recurring)
+    @black_out.set_id = NIL
     
     # make sure dates are valid
     if params[:black_out][:end_date] < params[:black_out][:start_date]
       flash[:error] = 'Due date must be after the start date.'
       redirect_to :back and return
     end
-
 
     respond_to do |format|
       if @black_out.update_attributes(params[:black_out])
@@ -149,8 +143,6 @@ class BlackOutsController < ApplicationController
     end
   end
 
-  # DELETE /black_outs/1
-  # DELETE /black_outs/1.json
   def destroy
     @black_out = BlackOut.find(params[:id])
     @black_out.destroy(:force)
