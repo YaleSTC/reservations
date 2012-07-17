@@ -13,7 +13,9 @@ class BlackOutsController < ApplicationController
 
   def show
     @black_out = BlackOut.find(params[:id])
-
+    unless @black_out.set_id.nil?
+      @black_out_set = BlackOut.where("set_id = ?", @black_out.set_id)
+    end
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @black_out }
@@ -58,7 +60,7 @@ class BlackOutsController < ApplicationController
     if params[:recurring] == "true"
       # make sure there are actually days selected
       if params[:days].empty? # TODO do we need to first check NIL?, to avoid errors if none selected?
-        flash[:error] = 'Must select at least one day of the week for the recurring black outs.'
+        flash[:error] = 'Must select at least one day of the week for the recurring blackouts.'
         redirect_to :back and return
       end
       
@@ -67,13 +69,13 @@ class BlackOutsController < ApplicationController
     end
 
     if array.empty?
-      params[:black_out][:set_id] = NIL # the black outs not belonging to a set
+      params[:black_out][:set_id] = NIL # the blackouts not belonging to a set
       @black_out = BlackOut.new(params[:black_out])
       
       # save and exit
       respond_to do |format|
         if @black_out.save
-          format.html { redirect_to @black_out, notice: 'Black out was successfully created.' }
+          format.html { redirect_to @black_out, notice: 'Blackout was successfully created.' }
           format.json { render json: @black_out, status: :created, location: @black_out }
         else
           format.html { render action: "new" }
@@ -102,7 +104,7 @@ class BlackOutsController < ApplicationController
       # exit
       respond_to do |format|
         if @black_out.save
-          format.html { redirect_to black_outs_path, notice: 'Black outs were successfully created.' }
+          format.html { redirect_to black_outs_path, notice: 'Blackouts were successfully created.' }
 #          format.json { render json: @black_out, status: :created, location: @black_out }
         else
           format.html { render action: "new" }
@@ -134,7 +136,7 @@ class BlackOutsController < ApplicationController
 
     respond_to do |format|
       if @black_out.update_attributes(params[:black_out])
-        format.html { redirect_to @black_out, notice: 'Black out was successfully updated.' }
+        format.html { redirect_to @black_out, notice: 'Blackout was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }
@@ -161,7 +163,7 @@ class BlackOutsController < ApplicationController
     end
     
     # exit
-    flash[:notice] = "Black outs successfully destroyed."
+    flash[:notice] = "Blackouts were successfully destroyed."
     redirect_to black_outs_path and return
   end
 

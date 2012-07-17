@@ -1,14 +1,9 @@
-<%= simple_form_for(@black_out) do |f| %>
-  <%= f.error_notification %>
+  <%= f.input :black_out_type, label: 'Blackout Type', collection: [['Blackout',"hard"],['Notice Only',"soft"]] %>
+  
+  <%= f.input :equipment_model_id, :value => 0, :as => :hidden %> <%# the ability to set per-model restrictions on blackout dates is actually built into Reservations, however it has been disabled as of 3.0.0 since there are easier ways to take care of it. %>
 
-  <div class="form-inputs">
+  <%= render :partial => 'shared/date_picker', :locals => {:object => @black_out} %> <%# render the date picker %>
  
-    <%= f.input :equipment_model_id, :value => 0, :as => :hidden %> <%# the ability to set per-model restrictions on black out dates is actually built into Reservations, however it has been disabled as of 3.0.0 since there are easier ways to take care of it. %>
-
-     <%= render :partial => 'shared/date_picker', :locals => {:object => @black_out} %> <%# render the date picker %>
-   
-    <%= f.input :notice, hint: 'This message will be displayed to users if they attempt to make a reservation on a blackout date' %>
-    <%= f.input :black_out_type, label: 'Blackout Type', collection: [['Blackout',"hard"],['Notice Only',"soft"]]   %>
-  </div>
-    <%= f.button :wrapped, cancel: black_outs_path %>
-<% end %>
+  <%= f.input :notice, hint: 'This message will be displayed to users if they attempt to make a reservation on a blackout date' %>
+</div>
+  <%= f.button :wrapped, cancel: black_outs_path %>

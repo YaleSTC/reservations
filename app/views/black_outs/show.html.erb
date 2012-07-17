@@ -1,11 +1,5 @@
 <% title "Blackout of " + (@black_out.equipment_model_id == 0 ? "All Equipment Objects" : EquipmentModel.include_deleted.find(@black_out.equipment_model_id).name) %>
 
-<% unless @black_out.set_id.nil? %>
-  <p>
-    <%= link_to "Delete all black outs of this type", destroy_recurring_black_out_path, :confirm => 'Are you sure?', :class => 'btn btn-danger' %>
-  </p>
-<% end %>
-
 <%# Setting black-outs on a per-model basis has been disabled %>
 <!--<p> 
   <b>Equipment model affected:</b>
@@ -34,9 +28,25 @@
 
 <p>
   <b>Type:</b>
-  <%= @black_out[:black_out_type] == "hard" ? "Hard Black Out" : "Notice Only" %>
+  <%= @black_out[:black_out_type] == "hard" ? "Hard Blackout" : "Notice Only" %>
 </p>
 
-
-<%= link_to 'Edit', edit_black_out_path(@black_out) %> |
-<%= link_to 'View all blackout dates', black_outs_path %>
+<% unless @black_out.set_id.nil? %>
+  <hr />
+  <p>
+    <h3>All Blackouts in this set</h3>
+  </p>
+  <%= render :partial => 'table', :locals => {:black_outs => @black_out_set} %>
+<% end %>
+  
+<% unless @black_out.set_id.nil? %>
+  <%= link_to 'Edit just this blackout', edit_black_out_path(@black_out), :class => 'btn' %>
+<% else %>
+  <%= link_to 'Edit', edit_black_out_path(@black_out), :class => 'btn' %> 
+<% end %>
+<%= link_to 'View all blackout dates', black_outs_path, :class => 'btn' %>
+<% unless @black_out.set_id.nil? %>
+  <%= link_to "Delete all blackouts in this set", destroy_recurring_black_out_path, :confirm => 'Are you sure?', :class => 'btn btn-danger' %>
+<% else %>
+  <%= link_to 'Destroy', @black_out, confirm: 'Are you sure?', method: :delete, class: 'btn btn-danger' %>
+<% end %>
