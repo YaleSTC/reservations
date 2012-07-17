@@ -1,4 +1,4 @@
-# This script is used by the gem seed-fu to populate the database with preload data. 
+# This script is used to populate the database with preload data. 
 # It does not clear the database - mainly because that would mean deleting your admin login.
 # All the numbers are pretty arbitrary, and can be changed to suit your needs, and how many records you want.
 # As it stands, you'll need to follow the format and create a new seed generation block for each
@@ -90,12 +90,11 @@ else
         em.replacement_fee = r.rand(50.00..1000.00).round(2).to_d
         em.max_per_user = r.rand(1..40)
         em.active = true
-        #em.checkout_procedures = Faker::HipsterIpsum.sentences(4)
-        #em.checkin_procedures = Faker::HipsterIpsum.sentences(4)
         em.category_id = category.flatten[r.rand(0...category.length)].id
         em.max_renewal_times = r.rand(0..40)
         em.max_renewal_length = r.rand(0..40)
         em.renewal_days_before_due = r.rand(0..9001)
+        em.photo = File.open(Dir.glob(File.join(Rails.root, 'db', 'seed_images', '*')).sample)
       end
     end
     STDOUT.puts "#{entered_num} records successfully created!"
