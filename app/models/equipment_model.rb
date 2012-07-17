@@ -47,6 +47,14 @@ class EquipmentModel < ActiveRecord::Base
             :max_renewal_times,
             :renewal_days_before_due,  :numericality => { :allow_nil => true, :integer_only => true, :greater_than_or_equal_to => 0 }
 
+  validate :not_associated_with_self
+
+  def not_associated_with_self
+    unless self.associated_equipment_models.where(:id => self.id).blank?
+      errors.add(:associated_equipment_models, "You cannot associate a model with itself. Please deselect " + self.name)
+    end
+  end
+
   nilify_blanks :only => [:deleted_at]
   
   include ApplicationHelper
