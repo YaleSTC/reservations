@@ -41,10 +41,11 @@ class Cart
   ## Item methods
 
   def add_item(equipment_model)
-    current_item = Reservation.new(:start_date => @start_date,
+    current_item = CartReservation.new(:start_date => @start_date,
       :due_date => @due_date, :reserver => self.reserver)
     current_item.equipment_model = equipment_model
-    @items << current_item
+    current_item.save
+    @items << current_item.id
   end
 
   def remove_item(equipment_model)
