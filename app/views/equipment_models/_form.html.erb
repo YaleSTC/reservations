@@ -1,4 +1,5 @@
-<%= simple_form_for @equipment_model, :html => { :multipart => true, :class => "form-horizontal" } do |f| %>
+<%= simple_form_for @equipment_model, html: { multipart: true, class: 
+  "form-horizontal" } do |f| %>
 
 <%# Paperclip currently does not support simple form and validations and will fail silently. %>
 <%# This code is necessary until they introduce a bug fix (Github issue #266) %>
@@ -8,64 +9,87 @@
 	  <% end %>
 </ul>
   <%#= f.error_notification %>
-  <%= f.association :category, hint: "#{link_to "Add New Category", new_category_path, :class => "btn"}", placeholder: 'Select a Category' %> 
+  <%= f.association :category, hint: "#{link_to "Add New Category", new_category_path, class: "btn"}", 
+  placeholder: 'Select a Category' %> 
   <input class="hidden" id="category" name="MODELNAME[category]" type="hidden">
-  <%= f.association :associated_equipment_models, input_html: {class: 'input-xlarge'}, placeholder: 'Start typing an equipment model name', :collection => EquipmentModel.find(:all, :conditions => ["id != ?", params[:id]])
- %>
+  
+  <%= f.association :associated_equipment_models, input_html: {class: 'input-xlarge'}, 
+  placeholder: 'Start typing an equipment model name', collection: 
+  EquipmentModel.find(:all, conditions: ["id != ?", params[:id]]) %>
+  
   <%= f.input :name %>
+  
   <%= f.input :description, as: :text %>
-  <%= f.input :late_fee, :wrapper => :prepend do %>
-    <%= content_tag :span, "$", :class => "add-on" %><%= f.input_field :late_fee, :type => 'number', :step => 'any'  %>
+  
+  <%= f.input :late_fee, wrapper: :prepend do %>
+    <%= content_tag :span, "$", class: "add-on" %><%= f.input_field :late_fee,
+    class: 'input-small', value: number_with_precision(f.object.replacement_fee, 
+    precision: 2), type: 'number', step: 'any' %>
   <% end %>
   
-  <%= f.input :replacement_fee, :wrapper => :prepend do %>
-    <%= content_tag :span, "$", :class => "add-on" %><%= f.input_field :replacement_fee, :type => 'number', :step => 'any' %>
+  <%= f.input :replacement_fee, wrapper: :prepend do %>
+    <%= content_tag :span, "$", class: "add-on" %><%= f.input_field :replacement_fee, 
+    class: 'input-small', value: number_with_precision(f.object.replacement_fee, 
+    precision: 2), type: 'number', step: 'any' %>
   <% end %>
   
-  <%= f.input :max_per_user, label: "Maximum per user", hint: "Leave blank to default to category value." %>
-  <%= f.input :deleted_at, label: "Inactive", as: :deleted, hint: 'Make this equipment model unavailable for checkout.' %>
+  <%= f.input :max_per_user, label: "Maximum per user", hint: 
+  "Leave blank to default to category value.", input_html: {class: 'input-small'} %>
+  
+  <%= f.input :deleted_at, label: "Inactive", as: :deleted, hint: 
+  'Make this equipment model unavailable for checkout.' %>
   
   <fieldset>
     <legend>Renewal Options</legend>
-    <%= f.input :max_renewal_times, label: 'Maximum number of times this item may be renewed', hint: 'Leave blank to default to category value.', :wrapper => :append do %>
-      <%= f.input_field :max_renewal_times, :type => 'number' %><%= content_tag :span, "times", :class => "add-on" %>
+    <%= f.input :max_renewal_times, label: 'Maximum number of times this item may be renewed', 
+    hint: 'Leave blank to default to category value.', wrapper: :append do %>
+      <%= f.input_field :max_renewal_times, class: 'input-small', type: 'number' %><%= 
+      content_tag :span, "times", class: "add-on" %>
     <% end %>
   
-    <%= f.input :max_renewal_length, label: 'Maximum time allotted for each renewal period', hint: 'Leave blank to default to category value. Actual renewal period will depend on availability.', :wrapper => :append do %>
-      <%= f.input_field :max_renewal_length, :type => 'number' %><%= content_tag :span, "days", :class => "add-on" %>
+    <%= f.input :max_renewal_length, label: 'Maximum time allotted for each renewal period', 
+    hint: 'Leave blank to default to category value. Actual renewal period will depend on availability.', 
+    wrapper: :append do %>
+      <%= f.input_field :max_renewal_length, class: 'input-small', type: 'number' %><%= 
+      content_tag :span, "days", class: "add-on" %>
     <% end %>
   
-    <%= f.input :renewal_days_before_due, label: 'How many days before the due date should the Renew button become available?', hint: 'Leave blank to default to category value.', :wrapper => :append do %>
-      <%= f.input_field :renewal_days_before_due, :type => 'number' %><%= content_tag :span, "days", :class => "add-on" %>
+    <%= f.input :renewal_days_before_due, label: 
+    'How many days before the due date should the Renew button become available?', 
+    hint: 'Leave blank to default to category value.', wrapper: :append do %>
+      <%= f.input_field :renewal_days_before_due, class: 'input-small', type: 'number' %><%= 
+      content_tag :span, "days", class: "add-on" %>
     <% end %>
   </fieldset>
   
   <fieldset>
     <p><legend>Checkout Procedures</legend></p>
     <%= f.simple_fields_for :checkout_procedures do |procedure| %>
-      <%= render 'checkout_procedure_fields', :f => procedure %>
+      <%= render 'checkout_procedure_fields', f: procedure %>
     <% end %>
     <div class="links">
-      <p><%= link_to_add_association 'Add Step', f, :checkout_procedures, :class => "btn" %></p>
+      <p><%= link_to_add_association 'Add Step', f, :checkout_procedures, 
+      class: "btn" %></p>
     </div>
   </fieldset>
   
   <fieldset>  
     <p><legend>Checkin Procedures</legend></p>
-    <%= f.simple_fields_for :checkin_procedures, :wrapper => :append do |procedure| %>
-      <%= render 'checkin_procedure_fields', :f => procedure %>
+    <%= f.simple_fields_for :checkin_procedures, wrapper: :append do |procedure| %>
+      <%= render 'checkin_procedure_fields', f: procedure %>
     <% end %>
     <div class="links">
-      <p><%= link_to_add_association 'Add Step', f, :checkin_procedures, :class => "btn" %></p>
+      <p><%= link_to_add_association 'Add Step', f, :checkin_procedures, 
+      class: "btn" %></p>
     </div>
   </fieldset>
   
   <fieldset>
     <legend>Media</legend>
-    <%= f.input :photo, :as => :file, :label => "Upload Photo" %>
-    <%= f.input :documentation, :as => :file, :label => "Upload Documentation" %>
+    <%= f.input :photo, as: :file, label: "Upload Photo" %>
+    <%= f.input :documentation, as: :file, label: "Upload Documentation" %>
   </fieldset>
 	
   <%#= f.error :base %>
-<%= f.button :wrapped, :cancel => equipment_models_path %> 
+<%= f.button :wrapped, cancel: equipment_models_path %> 
 <% end %>
