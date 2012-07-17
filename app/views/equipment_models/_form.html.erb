@@ -7,11 +7,11 @@
 	  <li><%= msg %></li>
 	  <% end %>
 </ul>
-	
   <%#= f.error_notification %>
   <%= f.association :category, hint: "#{link_to "Add New Category", new_category_path, :class => "btn"}", placeholder: 'Select a Category' %> 
   <input class="hidden" id="category" name="MODELNAME[category]" type="hidden">
-  <%= f.association :associated_equipment_models, input_html: {class: 'input-xlarge'}, placeholder: 'Start typing an equipment model name' %>
+  <%= f.association :associated_equipment_models, input_html: {class: 'input-xlarge'}, placeholder: 'Start typing an equipment model name', :collection => EquipmentModel.find(:all, :conditions => ["id != ?", params[:id]])
+ %>
   <%= f.input :name %>
   <%= f.input :description, as: :text %>
   <%= f.input :late_fee, :wrapper => :prepend do %>
