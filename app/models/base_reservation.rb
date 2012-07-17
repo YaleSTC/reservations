@@ -1,4 +1,3 @@
-class Reservation < ActiveRecord::Base
   belongs_to :equipment_model
   belongs_to :reserver, :class_name => 'User'
 

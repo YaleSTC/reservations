@@ -11,10 +11,19 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120629190015) do
+ActiveRecord::Schema.define(:version => 20120717205310) do
 
   create_table "accessories_equipment_models", :force => true do |t|
     t.integer  "accessory_id"
+    t.integer  "equipment_model_id"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+  end
+
+  create_table "cart_reservations", :force => true do |t|
+    t.integer  "reserver_id"
+    t.datetime "start_date"
+    t.datetime "due_date"
     t.integer  "equipment_model_id"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false

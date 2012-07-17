@@ -3,8 +3,7 @@ class Reservation < BaseReservation
   belongs_to :checkout_handler, :class_name => 'User'
   belongs_to :checkin_handler, :class_name => 'User'
 
-  validate :no_overdue_reservations?, #:not_in_past?,
-           :start_date_before_due_date?, :not_empty?,
+  validate :no_overdue_reservations?, :start_date_before_due_date?, :not_empty?,
            :matched_object_and_model?, :duration_allowed?, :available?,
            :quantity_eq_model_allowed?, :quantity_cat_allowed?
 
