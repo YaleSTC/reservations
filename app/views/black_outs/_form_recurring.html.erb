@@ -1,0 +1,12 @@
+<div id="form_recurring">
+  <%= simple_form_for @black_out, :remote => true do |f| %>
+    <%= f.error_notification %>
+
+    <div class="form-inputs">
+      <%= hidden_field_tag "recurring", true %>
+      <%= f.input :days, :collection => days_of_the_week_short_with_index, :value_method => :first, :label_method => :last, :as => :check_boxes, :item_wrapper_class => 'inline' %>
+    
+      <%= render :partial => 'form', :locals => {:f => f} %>
+
+  <% end %>
+</div>

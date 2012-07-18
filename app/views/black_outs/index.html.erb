@@ -4,50 +4,22 @@
   If a user tries to create a reservation for any of the equipment models listed
   below with a start date or end date within 
   the "Blackout" period, then they will be presented with a notice (set by
-  the admin) stating the exceptional circumstances for that date (eg. 'Please 
+  the admin) stating the exceptional circumstances for that date (e.g. 'Please 
   note that our offices will only be open from 2:36 AM to 2:37 AM on this date 
   in observance of Arbitrary Day.'). The admin can also set that no reservation 
   can be created if its start or end 
   date falls within the Blackout period.
 </p>
+<p>
+  <%= link_to 'New Blackout'.titleize, new_black_out_path, class: 'btn btn-primary' %>
+  <%= link_to 'New Recurring Blackout'.titleize, new_recurring_black_out_path, :class => 'btn btn-primary' %>
+</p>
 <hr />
 
 <% unless @black_outs.empty? %>
-  <table class="datatable-wide table table-stripped table-bordered">
-    <thead>
-      <tr>
-        <!-- <th>Equipment model</th> --> <%# Setting black-outs on a per-model basis has been disabled %>
-        <th>Start Date</th>
-        <th>End Date</th>
-        <th>Notice</th>
-        <th>Last Edited By</th> <%#This field cannot be manually updated. %>
-        <th>Type</th>
-        <th class="no_sort"></th> <%# show %>
-        <th class="no_sort"></th> <%# edit %>
-        <th class="no_sort"></th> <%# destroy %>
-      </tr>
-    </thead>
-    <tbody>
-      <% @black_outs.each do |black_out| %>
-        <tr>
-          <!-- <td><%# (black_out.equipment_model_id == 0) ? "All Equipment Models" : EquipmentModel.include_deleted.find(black_out.equipment_model_id).name %></td> -->
-          <td><%= black_out[:start_date].strftime('%m/%d/%Y') %></td>
-          <td><%= black_out[:end_date].strftime('%m/%d/%Y') %></td>
-          <td><%= black_out.notice %></td>
-          <td><%= User.include_deleted.find((black_out[:created_by])).name %></td>
-          <td><%= black_out[:black_out_type] == "hard" ? "Hard Blackout" : "Notice Only" %></td>
-          <td><%= link_to 'Show', black_out, class: 'btn btn-inverse' %></td>
-          <td><%= link_to 'Edit', edit_black_out_path(black_out), class: 'btn' %></td>
-          <td><%= link_to 'Destroy', black_out, confirm: 'Are you sure?', method: :delete, class: 'btn btn-danger' %></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+  <%= render :partial => 'table', :locals => {:black_outs => @black_outs} %>
   <br />
 <% else %>
   <h3>No black-out dates found.</h3>
 <% end %>
 
-<div class="form-actions"> <!-- Create a new Black Out div -->
-  <%= link_to 'New Blackout'.titleize, new_black_out_path, class: 'btn btn-primary' %>
-</div> <!--End create a new Black Out div -->
