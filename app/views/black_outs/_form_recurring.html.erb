@@ -4,7 +4,7 @@
 
     <div class="form-inputs">
       <%= hidden_field_tag "recurring", true %>
-    <%= f.collection_check_boxes :days, days_of_the_week_short_with_index, :first, :last, options = { :collection_wrapper_tag => 'div', :collection_wrapper_class => 'row' } %>
+      <%= f.input :days, :collection => days_of_the_week_short_with_index, :value_method => :first, :label_method => :last, :as => :check_boxes, :item_wrapper_class => 'inline' %>
     
       <%= render :partial => 'form', :locals => {:f => f} %>
 
