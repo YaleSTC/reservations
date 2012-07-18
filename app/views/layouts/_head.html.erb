@@ -18,6 +18,6 @@
   <% if @app_configs.favicon.present? %>
     <%= favicon_link_tag @app_configs.favicon %>
   <% else %>
-    <link rel="shortcut icon" href="/favicon.ico">
+    <%= favicon_link_tag %>
   <% end %>
 </head>
