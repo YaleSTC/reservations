@@ -75,7 +75,8 @@
   # Checks that the reservation is not longer than the max checkout length
   def duration_allowed?
     duration = due_date.to_date - start_date.to_date + 1
-    cat_duration = equipment_model.category.max_checkout_length
+    cat_duration = equipment_model.category.maximum_checkout_length
+    return true if cat_duration == "unrestricted"
     if duration > cat_duration
       errors.add(:base, "duration problem with " + equipment_model.name)
       return false
