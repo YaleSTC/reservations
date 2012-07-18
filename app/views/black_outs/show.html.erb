@@ -31,7 +31,7 @@
   <%= @black_out[:black_out_type] == "hard" ? "Hard Blackout" : "Notice Only" %>
 </p>
 
-<% unless @black_out.set_id.nil? %>
+<% unless @black_out.set_id.nil? or (@black_out_set.size == 1) %>
   <%= link_to 'Edit just this blackout', edit_black_out_path(@black_out), :class => 'btn' %>
   <%= link_to 'View all blackout dates', black_outs_path, :class => 'btn' %>
   <hr />

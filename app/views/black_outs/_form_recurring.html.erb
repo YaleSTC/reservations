@@ -1,18 +1,12 @@
-<%= simple_form_for @black_out do |f| %>
-  <%= f.error_notification %>
+<div id="form_recurring">
+  <%= simple_form_for @black_out, :remote => true do |f| %>
+    <%= f.error_notification %>
 
-  <div class="form-inputs">
-  
-    <%= hidden_field_tag "recurring", true %>
+    <div class="form-inputs">
+      <%= hidden_field_tag "recurring", true %>
+    <%= f.collection_check_boxes :days, days_of_the_week_short_with_index, :first, :last, options = { :collection_wrapper_tag => 'div', :collection_wrapper_class => 'row' } %>
     
-  <%#= f.collection_check_boxes :options, [[0, 'Sun'], [1, 'Mon'], [2, 'Tues'], [3, 'Wed'], [4, 'Thurs'], [5, 'Fri'], [6, 'Sat']], :first, :last %>
+      <%= render :partial => 'form', :locals => {:f => f} %>
 
-    <p>
-      <% days_of_the_week_short.each_with_index do |day, i| %>
-        <%= check_box_tag "days[]", i, false, {:id => "days_#{i}"} %>
-        <%= day %>
-      <% end %>
-    </p>
-    <%= render :partial => 'form', :locals => {:f => f} %>
-
-<% end %>
+  <% end %>
+</div>

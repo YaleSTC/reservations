@@ -1,5 +1,5 @@
 <% title 'New Blackout' %>
-
+<div id="form_recurring">
 <%= simple_form_for(@black_out) do |f| %>
   <%= f.error_notification %>
 
@@ -7,3 +7,5 @@
     <%= render :partial => 'form', :locals => {:f => f} %>
     
 <% end %>
+</div>
+

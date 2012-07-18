@@ -1,9 +1,8 @@
-# This script is used by the gem seed-fu to populate the database with preload data. 
+# This script is used to populate the database with preload data. 
 # It does not clear the database - mainly because that would mean deleting your admin login.
 # All the numbers are pretty arbitrary, and can be changed to suit your needs, and how many records you want.
 # As it stands, you'll need to follow the format and create a new seed generation block for each
 # model you want to seed in the database, every time you create a model that isn't already here.
-# Right now, it only generates Users, Categories, EquipmentModels, and EquipmentObjects.
 # Order matters!! The script will fail if certain records (Catgeories, EquipmentModels) aren't
 # generated first and in the order listed.
 
@@ -14,7 +13,7 @@ require 'ffaker'
 
 #Method for prompting the user for the number of records per model they want to seed into the database.
 def ask_for_records( model )
-  STDOUT.puts "How many #{model} records would you like to generate? (please enter a number)"
+  STDOUT.puts "\nHow many #{model} records would you like to generate? (please enter a number)"
   STDIN.gets.chomp.to_i
 end
 
@@ -49,9 +48,9 @@ else
       end
     end
     user[0].is_checkout_person = true
-    STDOUT.puts "#{entered_num} records successfully created!"
+    STDOUT.puts "\n#{entered_num} records successfully created!"
   else
-    STDOUT.puts "Please enter a whole number greater than 0."
+    STDOUT.puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
   end
 
@@ -71,16 +70,16 @@ else
         c.renewal_days_before_due = r.rand(0..9001)
       end
     end
-    STDOUT.puts "#{entered_num} records successfully created!"
+    STDOUT.puts "\n#{entered_num} records successfully created!"
   else
-    STDOUT.puts "Please enter a whole number greater than 0."
+    STDOUT.puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
   end
 
 
   #EquipmentModel generation
   entered_num = ask_for_records("EquipmentModel")
-
+  STDOUT.puts "\nThis is going to take awhile...\n"
   if entered_num.integer? && entered_num > 0
     equipment_model = entered_num.times.map do
       EquipmentModel.create! do |em|
@@ -90,17 +89,17 @@ else
         em.replacement_fee = r.rand(50.00..1000.00).round(2).to_d
         em.max_per_user = r.rand(1..40)
         em.active = true
-        #em.checkout_procedures = Faker::HipsterIpsum.sentences(4)
-        #em.checkin_procedures = Faker::HipsterIpsum.sentences(4)
         em.category_id = category.flatten[r.rand(0...category.length)].id
         em.max_renewal_times = r.rand(0..40)
         em.max_renewal_length = r.rand(0..40)
         em.renewal_days_before_due = r.rand(0..9001)
+        em.photo = File.open(Dir.glob(File.join(Rails.root, 'db', 'seed_images', '*')).sample)
+        em.associated_equipment_models = EquipmentModel.all.sample(6)
       end
     end
-    STDOUT.puts "#{entered_num} records successfully created!"
+    STDOUT.puts "\n#{entered_num} records successfully created!"
   else
-    STDOUT.puts "Please enter a whole number greater than 0."
+    STDOUT.puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
   end
 
@@ -117,9 +116,9 @@ else
         eo.equipment_model_id = equipment_model.flatten.sample.id
       end
     end
-    STDOUT.puts "#{entered_num} records successfully created!"
+    STDOUT.puts "\n#{entered_num} records successfully created!"
   else
-    STDOUT.puts "Please enter a whole number greater than 0."
+    STDOUT.puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
   end
 
@@ -133,9 +132,9 @@ else
         chi.equipment_model_id = equipment_model.flatten.sample.id
       end
     end
-    STDOUT.puts "#{entered_num} records successfully created!"
+    STDOUT.puts "\n#{entered_num} records successfully created!"
   else
-    STDOUT.puts "Please enter a whole number greater than 0."
+    STDOUT.puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
   end
   
@@ -149,9 +148,9 @@ else
         cho.equipment_model_id = equipment_model.flatten.sample.id
       end
     end
-    STDOUT.puts "#{entered_num} records successfully created!"
+    STDOUT.puts "\n#{entered_num} records successfully created!"
   else
-    STDOUT.puts "Please enter a whole number greater than 0."
+    STDOUT.puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
   end
   
@@ -160,7 +159,7 @@ else
   
   if entered_num.integer? && entered_num > 0
     reservation = entered_num.times.map do
-      random_time = time_rand Time.local(2010, 1, 1)
+      random_time = time_rand Time.local(2012, 1, 1)
       random_due_date = time_rand(random_time, Time.now.next_week)
 
       Reservation.create! do |res|       
@@ -169,17 +168,17 @@ else
         res.checkin_handler_id = user.flatten.select{|usr| usr.is_checkout_person}.sample.id
         res.start_date = random_time.to_datetime
         res.due_date = [random_due_date.to_datetime, (random_time + category.flatten.sample.max_checkout_length.days).to_datetime].sample
-        res.checked_out = [nil, random_time.to_datetime].sample
         res.checked_in = [nil, random_due_date.to_datetime, time_rand(random_due_date, random_due_date.next_month).to_datetime].sample
-        res.equipment_model_id = equipment_object.flatten.sample.equipment_model_id
+        res.checked_out = res.checked_in.nil? ? [nil, random_time.to_datetime].sample : random_time.to_datetime
         res.equipment_object_id = equipment_object.flatten.sample.id
+        res.equipment_model_id = res.equipment_object.equipment_model_id
         res.notes = Faker::HipsterIpsum.paragraph(4)
         res.notes_unsent = [true, false].sample
       end
     end
-    STDOUT.puts "#{entered_num} records successfully created!"
+    STDOUT.puts "\n#{entered_num} records successfully created!"
   else
-    STDOUT.puts "Please enter a whole number greater than 0."
+    STDOUT.puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
   end
   
