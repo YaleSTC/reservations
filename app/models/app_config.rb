@@ -15,8 +15,8 @@ class AppConfig < ActiveRecord::Base
 					:reservation_confirmation_email_active,
 					:default_per_cat_page,
 					:terms_of_service, :favicon
-  has_attached_file :favicon, content_type: 'image/ico'
-  validates_attachment_content_type :favicon, content_type: 'image/ico',
+  has_attached_file :favicon
+  validates_attachment_content_type :favicon, content_type: 'image/vnd.microsoft.icon',
                                     message: "Must be .ico"
 
   validates :site_title, 	:presence => true,

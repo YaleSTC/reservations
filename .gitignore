@@ -11,3 +11,4 @@ config/database.yml~
 *.orig
 public/system/equipment_models/
 public/equipment_models/
+public/system
