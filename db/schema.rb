@@ -11,24 +11,28 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120717204910) do
+ActiveRecord::Schema.define(:version => 20120718004311) do
 
   create_table "app_configs", :force => true do |t|
-    t.boolean "upcoming_checkin_email_active",         :default => true
-    t.boolean "overdue_checkout_email_active",         :default => true
-    t.boolean "reservation_confirmation_email_active", :default => true
-    t.string  "site_title"
-    t.string  "admin_email"
-    t.string  "department_name"
-    t.string  "contact_link_location"
-    t.string  "home_link_text"
-    t.string  "home_link_location"
-    t.integer "default_per_cat_page"
-    t.text    "upcoming_checkin_email_body"
-    t.text    "overdue_checkout_email_body"
-    t.text    "overdue_checkin_email_body"
-    t.boolean "overdue_checkin_email_active",          :default => true
-    t.text    "terms_of_service"
+    t.boolean  "upcoming_checkin_email_active",         :default => true
+    t.boolean  "overdue_checkout_email_active",         :default => true
+    t.boolean  "reservation_confirmation_email_active", :default => true
+    t.string   "site_title"
+    t.string   "admin_email"
+    t.string   "department_name"
+    t.string   "contact_link_location"
+    t.string   "home_link_text"
+    t.string   "home_link_location"
+    t.integer  "default_per_cat_page"
+    t.text     "upcoming_checkin_email_body"
+    t.text     "overdue_checkout_email_body"
+    t.text     "overdue_checkin_email_body"
+    t.boolean  "overdue_checkin_email_active",          :default => true
+    t.text     "terms_of_service"
+    t.string   "favicon_file_name"
+    t.string   "favicon_content_type"
+    t.integer  "favicon_file_size"
+    t.datetime "favicon_updated_at"
   end
 
   create_table "black_outs", :force => true do |t|

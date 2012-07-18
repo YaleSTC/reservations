@@ -14,8 +14,11 @@ class AppConfig < ActiveRecord::Base
 					:overdue_checkin_email_active,
 					:reservation_confirmation_email_active,
 					:default_per_cat_page,
-					:terms_of_service
-  
+					:terms_of_service, :favicon
+  has_attached_file :favicon, content_type: 'image/ico'
+  validates_attachment_content_type :favicon, content_type: 'image/ico',
+                                    message: "Must be .ico"
+
   validates :site_title, 	:presence => true,
 							:length => {:maximum => 20 }
   validates :admin_email,

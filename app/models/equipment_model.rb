@@ -28,11 +28,6 @@ class EquipmentModel < ActiveRecord::Base
   has_many :checkout_procedures, :dependent => :destroy
   accepts_nested_attributes_for :checkout_procedures, :reject_if => :all_blank, :allow_destroy => true
 
-  #This old style of associating with accessories we've removed from the program.
-  #If you're reading this line, it's probably safe to remove these lines by now.
-  ##associates with itself for accessories/recommended related models
-  ##has_many :accessories_equipment_models, :foreign_key => :equipment_model_id
-  ##has_many :accessories, :through => :accessories_equipment_models
 
   ## Validations ##
 
@@ -91,11 +86,11 @@ class EquipmentModel < ActiveRecord::Base
                     :path => ":rails_root/public/equipment_models/:attachment/:id/:style/:basename.:extension"
       
   validates_attachment_content_type :photo, 
-                                      :content_type => ["image/jpg", "image/png", "image/jpeg"], 
-                                      :message => "must be jpeg, jpg, or png."
+                                    :content_type => ["image/jpg", "image/png", "image/jpeg"], 
+                                    :message => "must be jpeg, jpg, or png."
   validates_attachment_size         :photo, 
-                                      :less_than => 1.megabytes,
-                                      :message => "must be less than 1 MB in size"
+                                    :less_than => 1.megabytes,
+                                    :message => "must be less than 1 MB in size"
   
   validates_attachment :documentation, :content_type => { :content_type => "application/pdf" }
   
