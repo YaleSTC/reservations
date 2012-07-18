@@ -21,14 +21,17 @@
     'Default number of items to display per page in the Catalog.' %>
     <%= f.input :favicon, as: :file, label: 'Custom Favicon', hint: 
     "Displayed in the tab and address bar of most browsers. Must be <em>*.ico</em> #{current_favicon_and_options}" %>
-    <div class='control-group'>
-      <div class="controls">
-        <%= label_tag 'restore_favicon' do %>
-          <%= check_box_tag 'restore_favicon', nil, false %>
-          <%= 'Restore default favicon?' %>
-        <% end %>
+    
+    <% if @app_config.favicon.present? %>
+      <div class='control-group'>
+        <div class="controls">
+          <%= label_tag 'restore_favicon' do %>
+            <%= check_box_tag 'restore_favicon', nil, false %>
+            <%= 'Restore default favicon?' %>
+          <% end %>
+        </div>
       </div>
-    </div>
+    <% end %>
   </fieldset>
   <fieldset>
     <legend>Emails</legend><br />
