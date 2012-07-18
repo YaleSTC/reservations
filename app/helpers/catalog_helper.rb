@@ -9,5 +9,13 @@ module CatalogHelper
     @equipment_models_by_category = @paginated_equipment_models_by_category.to_a.group_by(&:category)
     @user_per_page_opts = [10, 20, 25, 30, 50].sort
     @user_per_page_opts = @user_per_page_opts.unshift(@default_user_per).sort if !@default_user_per.blank? && !@user_per_page_opts.include?(@default_user_per)
+    
+    # is pagination required?
+    if EquipmentModel.all.size > @user_per_page_opts.first
+      @pagination_required = true # enable pagination iff it makes sense
+    else
+      @pagination_required = false # disable pagination iff it would be pointless
+    end
   end
 end
+
