@@ -1,5 +1,4 @@
-  belongs_to :equipment_model
-  belongs_to :reserver, :class_name => 'User'
+class BaseReservation < ActiveRecord::Base
 
   validates :reserver,
             :start_date,

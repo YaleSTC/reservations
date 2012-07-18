@@ -50,8 +50,12 @@ class Cart
 
   def remove_item(equipment_model)
     to_be_deleted = nil
-    @items.each { |item| to_be_deleted = item if item.equipment_model == equipment_model }
+    @items.each do |item|
+      cartres = CartReservation.find(item)
+      to_be_deleted = cartres.id if cartres.equipment_model == equipment_model
+    end
     @items.delete(to_be_deleted)
+    CartReservation.destroy(to_be_deleted)
   end
 
   #TODO: delete me!

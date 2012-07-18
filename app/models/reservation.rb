@@ -1,4 +1,6 @@
 class Reservation < BaseReservation
+  belongs_to :equipment_model
+  belongs_to :reserver, :class_name => 'User'
   belongs_to :equipment_object
   belongs_to :checkout_handler, :class_name => 'User'
   belongs_to :checkin_handler, :class_name => 'User'
