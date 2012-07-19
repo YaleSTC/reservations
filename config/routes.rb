@@ -71,10 +71,9 @@ Reservations::Application.routes.draw do
 
   match '/terms_of_service' => 'application#terms_of_service', :as => :tos
 
-  #match '/users/find' => 'users#find', :as => :find_user
-  match '/app_configs/edit' => 'app_configs#edit', :as => :edit_app_configs
-  match '/app_configs/update' => 'app_configs#update', :as => :update_app_configs   
-  resources :app_configs, :only => [:edit, :update]
+  # yes, both of these are needed to override rails defaults of /controller/:id/edit
+  match '/app_configs/' => 'app_configs#edit', :as => :edit_app_configs
+  resources :app_configs, :only => [:update]
   
   match '/new_admin_user' => 'application_setup#new_admin_user', :as => :new_admin_user
   match '/create_admin_user' => 'application_setup#create_admin_user', :as => :create_admin_user
