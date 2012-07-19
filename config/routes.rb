@@ -23,7 +23,6 @@ Reservations::Application.routes.draw do
     resources :reservations
   end
 
-  match '/reservations/renew/:id' => 'reservations#renew', :as => :renew
   match '/catalog/search' => 'catalog#search', :as => :catalog_search
 
   resources :reservations do
@@ -34,6 +33,7 @@ Reservations::Application.routes.draw do
       get :checkout_email
       get :checkin_email
       get :upcoming
+      put :renew
     end
     get :autocomplete_user_last_name, :on => :collection
   end
