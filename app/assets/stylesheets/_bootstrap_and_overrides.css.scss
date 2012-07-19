@@ -1,12 +1,13 @@
-// Set the correct sprite paths
-//$iconSpritePath: image-path('glyphicons-halflings.png');
-//$iconWhiteSpritePath: image-path('glyphicons-halflings-white.png');
-
 //Variables go here
+// $bold-font: OpenSansBold;
+$sansFontFamily: OpenSans, "Helvetica Neue", Helvetica, Arial, sans-serif;
+// $headingsFontFamily: $bold-font;
 
 @import "bootstrap";
 
-body { padding-top: 50px; }
+body { 
+  padding-top: 50px;
+}
 
 @import "bootstrap-responsive";
 @import "font-awesome";

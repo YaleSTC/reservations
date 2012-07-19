@@ -4,4 +4,5 @@ module AppConfigHelper
       '<br><br><strong>Current Favicon: </strong>' + "#{image_tag @app_configs.favicon}"
     end
   end
+
 end
