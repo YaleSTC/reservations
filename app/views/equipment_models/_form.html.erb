@@ -1,14 +1,7 @@
 <%= simple_form_for @equipment_model, html: { multipart: true, class: 
   "form-horizontal" } do |f| %>
 
-<%# Paperclip currently does not support simple form and validations and will fail silently. %>
-<%# This code is necessary until they introduce a bug fix (Github issue #266) %>
-<ul>
-	  <% @equipment_model.errors.full_messages.each do |msg| %>
-	  <li><%= msg %></li>
-	  <% end %>
-</ul>
-  <%#= f.error_notification %>
+  <%= f.error_notification %>
   <%= f.association :category, hint: "#{link_to "Add New Category", new_category_path, class: "btn"}", 
   placeholder: 'Select a Category' %> 
   <input class="hidden" id="category" name="MODELNAME[category]" type="hidden">
@@ -86,10 +79,22 @@
   
   <fieldset>
     <legend>Media</legend>
-    <%= f.input :photo, as: :file, label: "Upload Photo" %>
-    <%= f.input :documentation, as: :file, label: "Upload Documentation" %>
+    <%# Paperclip inline error fix %>
+    <%= f.input :photo, label: "Upload Photo", wrapper_html: {class: 
+    paperclip_field_error(f, :photo_content_type, :photo_file_size)} do %>
+      <%= f.input_field :photo, as: :file %>
+      <%= f.error :photo_content_type %>
+      <%= f.error :photo_file_size %>
+    <% end %>
+
+    <%# Paperclip inline error fix %>
+    <%= f.input :documentation, label: "Upload Documentation", wrapper_html: {class: 
+      paperclip_field_error(f, :documentation_content_type, :documentation_file_size)} do %>
+      <%= f.input_field :documentation, as: :file %>
+      <%= f.error :documentation_content_type %>
+      <%= f.error :documentation_file_size %>
+    <% end %>
   </fieldset>
 	
-  <%#= f.error :base %>
-<%= f.button :wrapped, cancel: equipment_models_path %> 
+  <%= f.button :wrapped, cancel: equipment_models_path %> 
 <% end %>
