@@ -317,16 +317,6 @@ class ReservationsController < ApplicationController
     
     render 'current_reservations'
   end
-  
-#  def check_out # initializer
-#    @user = User.include_deleted.find(params[:user_id])
-#    @user_current_checkouts = Reservation.due_for_checkout(@user)
-#  end
-
-#  def check_in # initializer
-#    @user =  User.include_deleted.find(params[:user_id])
-#    @check_in_set = Reservation.due_for_checkin(@user)
-#  end
 
   #two paths to create receipt emails for checking in and checking out items.
   def checkout_email

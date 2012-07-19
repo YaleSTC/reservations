@@ -16,23 +16,16 @@ Reservations::Application.routes.draw do
     
   resources :users do
     collection do
-      get :check_out
-      get :check_in
       get :find
     end
-    resources :reservations
   end
 
   match '/catalog/search' => 'catalog#search', :as => :catalog_search
 
   resources :reservations do
     member do
-      get :check_out
-      get :check_in
-      get :show_all
       get :checkout_email
       get :checkin_email
-      get :upcoming
       put :renew
     end
     get :autocomplete_user_last_name, :on => :collection
