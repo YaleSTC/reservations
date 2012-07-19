@@ -92,7 +92,7 @@
             
                    <%= link_to "Add to Cart", {:url => add_to_cart_path(@equipment_model)}, 
                                       :href => add_to_cart_path(@equipment_model), 
-                                      :remote => true, :class => 'btn btn-primary btn-large' %>
+                                      :method => :put, :remote => true, :class => 'btn btn-primary btn-large' %>
           <% end %>
       </div>
     </div>
