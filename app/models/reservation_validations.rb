@@ -12,7 +12,6 @@ module ReservationValidations
   ## For individual reservations only
   # Checks if the user has any overdue reservations
   def no_overdue_reservations?
-    binding.pry
     if reserver.reservations.overdue_reservations?(reserver)
       errors.add(:base, "availablity problem with " + equipment_model.name)
       return false
@@ -86,7 +85,6 @@ module ReservationValidations
   ## For single or multiple reservations
   # Checks that the equipment model is available from start date to due date
   def available?(reservations = [])
-    binding.pry
     reservations << self if reservations.empty?
     eq_objects_needed = count(reservations)
     if equipment_model.available?(start_date, due_date) < eq_objects_needed

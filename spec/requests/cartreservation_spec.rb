@@ -18,7 +18,7 @@ describe 'cart' do
   it 'add_item works' do
     cart.add_item(eq)
     cart.items.size.should == 2
-    cart.items.first.equipment_model_id.should == cart.items.first.equipment_model.id
+    Reservation.find(cart.items.first).equipment_model.should == eq
   end
 
   it 'remove_item works' do
