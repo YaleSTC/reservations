@@ -21,6 +21,7 @@ Reservations::Application.routes.draw do
   end
 
   match '/catalog/search' => 'catalog#search', :as => :catalog_search
+#  match '/markdown' => 'shared/markdown_cheat_sheet', :as => :markdown_cheat_sheet
 
   resources :reservations do
     member do
@@ -56,7 +57,7 @@ Reservations::Application.routes.draw do
   match '/cart/empty' => 'application#empty_cart', :via => :delete, :as => :empty_cart
   
   # not called anywhere
-#  match '/cart/update' => 'application#update_cart', :as => :update_cart
+  match '/cart/update' => 'application#update_cart', :as => :update_cart
   
   match '/reports/index' => 'reports#index', :as => :reports
   match '/reports/:id/for_model' => 'reports#for_model', :as => :for_model_report
