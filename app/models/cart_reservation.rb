@@ -1,6 +1,10 @@
-class CartReservation < Reservation
-  belongs_to :equipment_model
-  belongs_to :reserver, :class_name => 'User'
+class CartReservation < ActiveRecord::Base
+  include ReservationValidations
+
+  validates :reserver,
+            :start_date,
+            :due_date,
+            :presence => true
 
   validate :not_in_past?, :not_empty?
 end

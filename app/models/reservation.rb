@@ -1,9 +1,14 @@
-class Reservation < BaseReservation
-  belongs_to :equipment_model
-  belongs_to :reserver, :class_name => 'User'
+class Reservation < ActiveRecord::Base
+  include ReservationValidations
+
   belongs_to :equipment_object
   belongs_to :checkout_handler, :class_name => 'User'
   belongs_to :checkin_handler, :class_name => 'User'
+
+  validates :reserver,
+            :start_date,
+            :due_date,
+            :presence => true
 
   validate :no_overdue_reservations?, :start_date_before_due_date?, :not_empty?,
            :matched_object_and_model?, :duration_allowed?, :available?,
@@ -34,6 +39,32 @@ class Reservation < BaseReservation
     else
       "returned"
     end
+  end
+
+  ## Set validation
+  # Checks all validations for all saved reservations and the reservations in
+  # the array of reservations passed in (intended for use with cart.items)
+  # Returns an array of error messages or [] if reservations are all valid
+  def self.validate_set(user, reservations = [])
+    reservations.concat(user.reservations)
+    errors = []
+    reservations.each do |res|
+      errors << "User has overdue reservations that prevent new ones from being created" if !res.no_overdue_reservations?
+      errors << "Reservations cannot be made in the past" if !res.not_in_past?
+      errors << "Reservations must have start dates before due dates" if !res.start_date_before_due_date?
+      errors << "Reservations must have an associated equipment model" if !res.not_empty?
+      errors << res.equipment_object.name + " should be of type " + res.equipment_model.name if !res.matched_object_and_model?
+      errors << res.equipment_model.name + " should be renewed instead of re-checked out" if !res.not_renewable?
+      errors << "duration problem with " + res.equipment_model.name if !res.duration_allowed?
+      errors << "availablity problem with " + res.equipment_model.name if !res.available?(reservations)
+      errors << "quantity equipment model problem with " + res.equipment_model.name if !res.quantity_eq_model_allowed?(reservations)
+      errors << "quantity category problem with " + res.equipment_model.category.name if !res.quantity_cat_allowed?(reservations)
+    end
+    errors.uniq
+  end
+
+  def self.overdue_reservations?(user)
+    Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ? and due_date < ?", user.id, Time.now.midnight.utc,).order('start_date ASC').count >= 1 #FIXME: does this need the order?
   end
 
   def self.due_for_checkin(user)
@@ -81,5 +112,32 @@ class Reservation < BaseReservation
     # need this case to account for when renewal_length == 0 and it escapes the while loop
     # before available_period is set
     return available_period = renewal_length
+  end
+
+  def is_eligible_for_renew?
+    # determines if a reservation is eligible for renewal, based on how many days before the due
+    # date it is and the max number of times one is allowed to renew
+    #
+    # we need to test if any of the variables are set to NIL, because in that case comparision
+    # is undefined; that's also why we can't set variables to these values before the if statements
+    if self.times_renewed == NIL
+      self.times_renewed = 0
+    end
+    if self.equipment_model.maximum_renewal_times == "unrestricted"
+      if self.equipment_model.maximum_renewal_days_before_due == "unrestricted"
+        # if they're both NIL
+        true
+      else
+        # due_date has a time zone, eradicate with to_date; use to_i to change to integer;
+        # are we within the date range for which the button should appear?
+        ((self.due_date.to_date - Date.today).to_i < self.equipment_model.maximum_renewal_days_before_due)
+      end
+    elsif (self.equipment_model.maximum_renewal_days_before_due == "unrestricted")
+      # implicitly, max_renewal_times != NIL, so we can check it
+      self.times_renewed < self.equipment_model.maximum_renewal_times
+    else
+      # if neither is NIL, check both
+      ((self.due_date.to_date - Date.today).to_i < self.equipment_model.maximum_renewal_days_before_due) and (self.times_renewed < self.equipment_model.maximum_renewal_times)
+    end
   end
 end

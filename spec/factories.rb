@@ -1,12 +1,6 @@
 FactoryGirl.define do
 
   r = Random.new
-#  def time_rand(from = 0.0, to = Time.now)
-#    Time.at(from + rand * (to.to_f - from.to_f))
-#  end
-#  random_time = time_rand(Time.local(2010, 1, 1))
-#  random_due_date = time_rand(random_time, Time.now.next_week)
-
 
   factory :user do
     sequence(:login) {|n| "netid#{n}" }
