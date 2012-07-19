@@ -12,7 +12,7 @@
   <hr />
   <div class="row">
     <div class="span3">
-    <%= link_to "Empty cart".titleize, empty_cart_path, :class => "btn", :id => 'empty_cart_btn' %>
+    <%= link_to "Empty cart".titleize, empty_cart_path, :method => :delete, :class => "btn", :id => 'empty_cart_btn' %>
     <%# print Make reservation button %>
     <%= link_to sanitize("#{content_tag :i, nil, class: "icon-shopping-cart"} #{"Make reservation".titleize}"), new_reservation_path, :class => "btn btn-success" %>
     </div>

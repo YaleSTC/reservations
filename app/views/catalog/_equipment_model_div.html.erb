@@ -40,7 +40,7 @@
     <% elsif equipment_model.available?(cart.start_date..cart.due_date) > 0 %>
       <!--print add to cart link-->
       <div class="add_to_cart_box">  
-        <%= link_to "Add to Cart", add_to_cart_path(equipment_model), :remote => true, :class => "btn", :id => "add_to_cart" %>
+        <%= link_to "Add to Cart", add_to_cart_path(equipment_model), :method => :put, :remote => true, :class => "btn", :id => "add_to_cart" %>
         <% # (Using both the ":url" and ":href" symbols seems redundant. Remove one?) %>
       </div>
     <% else %>
