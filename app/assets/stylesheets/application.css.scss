@@ -1,3 +1,6 @@
+// Import our webfont
+@import "open-sans/stylesheet";
+
 @import "autocomplete";
 @import "bootstrap_and_overrides";
 @import "jquery-ui-1.8.16.custom";
@@ -14,7 +17,7 @@ $user_label-size: 1.5;
 
 // Global Application Styles
 
-label { font-weight: bold; }
+label { font-weight: 600; }
 .alert { 
 	margin-bottom: 0px;
 	margin-top: 18px; 

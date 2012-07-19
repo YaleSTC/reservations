@@ -55,5 +55,7 @@ module Reservations
     # Change the path that assets are served from
     # config.assets.prefix = "/assets"
     
+    # Add app/assets/fonts to the asset pipeline known paths
+    config.assets.paths << Rails.root.join("app", "assets", "fonts")
   end
 end
