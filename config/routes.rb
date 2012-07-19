@@ -70,8 +70,8 @@ Reservations::Application.routes.draw do
   match '/reports/update' => 'reports#update_dates', :as => :update_dates
   match '/reports/generate' => 'reports#generate', :as => :generate_report
   
-  match '/:controller/:id/deactivate' => ':controller#deactivate', :as => 'deactivate'
-  match '/:controller/:id/activate' => ':controller#activate', :as => 'activate'
+  match '/:controller/:id/deactivate' => ':controller#deactivate', :via => :put, :as => 'deactivate'
+  match '/:controller/:id/activate' => ':controller#activate', :via => :put, :as => 'activate'
 
   match '/logout' => 'application#logout', :as => :logout
 

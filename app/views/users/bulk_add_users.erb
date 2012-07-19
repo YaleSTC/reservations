@@ -8,10 +8,10 @@
   <% for user in @users %>
     <% if user.deleted_at %> 
       <tr class="deactivated">
-      <% @toggle = "link_to \"Activate\", activate_path(:users,user.id)" %>
+      <% @toggle = "link_to \"Activate\", activate_path(:users,user.id), :method => :put" %>
     <% else %>
       <tr class= "activated">
-      <% @toggle = "link_to \"De-Activate\", deactivate_path(:users,user)" %>
+      <% @toggle = "link_to \"De-Activate\", deactivate_path(:users,user), :method => :put" %>
     <% end %>
     <td><%= user.login %></td>
     <td><%= link_to user.name, user %></td>

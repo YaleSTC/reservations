@@ -18,10 +18,10 @@
   <% for equipment_object in @equipment_objects %>
     <% if equipment_object.deleted_at %>
       <tr class="deactivated">
-      <% @toggle = "link_to \"Activate\", activate_path(:equipment_objects,equipment_object), :class => \"btn btn-success\"" %>
+      <% @toggle = "link_to \"Activate\", activate_path(:equipment_objects,equipment_object), :class => \"btn btn-success\", :method => :put" %>
     <% else %>
       <tr class= "activated">
-      <% @toggle = "link_to \"Deactivate\", deactivate_path(:equipment_objects,equipment_object), :class => \"btn btn-danger\"" %>
+      <% @toggle = "link_to \"Deactivate\", deactivate_path(:equipment_objects,equipment_object), :class => \"btn btn-danger\", :method => :put" %>
     <% end %>
       <td><%= link_to equipment_object.equipment_model.name, equipment_object.equipment_model %></td>
        <% if current_user.is_admin_in_adminmode? %>
