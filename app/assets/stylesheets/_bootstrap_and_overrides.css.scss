@@ -3,9 +3,10 @@
 //$iconWhiteSpritePath: image-path('glyphicons-halflings-white.png');
 
 //Variables go here
-@import "open-sans/stylesheet";
-
-$sansFontFamily: OpenSansRegular;
+$bold-font: OpenSansBold;
+$sansFontFamily: OpenSansRegular, "Helvetica Neue", Helvetica, Arial, sans-serif;
+$headingsFontFamily: $bold-font;
+$headingsFontWeight: normal;
 
 @import "bootstrap";
 
