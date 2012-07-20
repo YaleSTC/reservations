@@ -52,13 +52,13 @@ FactoryGirl.define do
     due_date { Date.tomorrow }
     association :reserver, :factory => :user
     equipment_model
-    after_build do |res|
+    after(:build) do |res|
       obj = FactoryGirl.create(:equipment_object, :equipment_model => res.equipment_model)
       res.equipment_object = obj
     end
 
     factory :dummy_reservation do
-      after_build do |res|
+      after(:build) do |res|
         res.equipment_object = nil
         res.equipment_object_id = nil
       end
