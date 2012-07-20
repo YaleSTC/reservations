@@ -146,3 +146,11 @@ div#sidebar-right {
 		margin-bottom: 0;
 	}
 }
+
+td a {
+// to make table cells with links clickable throughout
+// only works when ALL the text in the cell is ONE link
+// as in no other links or text may be present
+// because it then gives each element its own line
+  display: block;
+}

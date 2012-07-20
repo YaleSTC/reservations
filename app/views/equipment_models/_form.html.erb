@@ -12,7 +12,7 @@
   
   <%= f.input :name %>
   
-  <%= f.input :description, as: :text %>
+  <%= f.input :description, as: :text, hint: "#{render :partial => 'shared/markdown_button'}" %>
   
   <%= f.input :late_fee, wrapper: :prepend do %>
     <%= content_tag :span, "$", class: "add-on" %><%= f.input_field :late_fee,

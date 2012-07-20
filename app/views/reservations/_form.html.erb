@@ -20,6 +20,6 @@
         <%= datepicker_input "reservation", "due_date", :value => @reservation.due_date.strftime('%m/%d/%Y') %>
       </div>
     </div>
-    <%= f.input :notes, :as => :text %>
-    <%= f.button :wrapped, :cancel => reservations_path %>
+    <%= f.input :notes, :as => :text, :hint => "#{render :partial => 'shared/markdown_button'}" %>
+    <%= f.button :wrapped, :cancel => reservations_path %> 
 <% end %>

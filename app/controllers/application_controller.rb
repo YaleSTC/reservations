@@ -182,4 +182,12 @@ class ApplicationController < ActionController::Base
     end
     redirect_to request.referer  # Or use redirect_to(back)
   end
+  
+  def markdown_help
+    respond_to do |format|
+      format.html{render :partial => 'shared/markdown_help'}
+      format.js{render :template => 'shared/markdown_help_js'}
+    end
+  end
+
 end

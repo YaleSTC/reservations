@@ -17,6 +17,7 @@
     <p>
       <p><h4>Notes</h4></p>
 		  <%= text_area_tag "reservations[#{check_in_form.id}][notes]", check_in_form.notes, class: 'span3', rows: 6 %>
+		  <%= render :partial => 'shared/markdown_button' %>
     </p>
 
     <p>

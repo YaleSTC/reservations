@@ -21,7 +21,7 @@ Reservations::Application.routes.draw do
   end
 
   match '/catalog/search' => 'catalog#search', :as => :catalog_search
-#  match '/markdown' => 'shared/markdown_cheat_sheet', :as => :markdown_cheat_sheet
+  match '/markdown_help' => 'application#markdown_help', :as => :markdown_help
 
   resources :reservations do
     member do
@@ -56,7 +56,6 @@ Reservations::Application.routes.draw do
   match '/add_to_cart/:id' => 'catalog#add_to_cart', :via => :put, :as => :add_to_cart
   match '/remove_from_cart/:id' => 'catalog#remove_from_cart', :via => :put, :as => :remove_from_cart
   match '/cart/empty' => 'application#empty_cart', :via => :delete, :as => :empty_cart
-
   match '/cart/update' => 'application#update_cart', :as => :update_cart
   
   match '/reports/index' => 'reports#index', :as => :reports
