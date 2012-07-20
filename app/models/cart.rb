@@ -40,6 +40,7 @@ class Cart
 
   ## Item methods
 
+  # Adds CartReservation to database; saves ID into items array
   def add_item(equipment_model)
     current_item = CartReservation.new(:start_date => @start_date,
       :due_date => @due_date, :reserver => self.reserver)
@@ -48,6 +49,7 @@ class Cart
     @items << current_item.id
   end
 
+  # Removes CartReservation from database and ID from items array
   def remove_item(equipment_model)
     to_be_deleted = nil
     @items.each { |item| to_be_deleted = item if CartReservation.find(item).equipment_model == equipment_model }
@@ -55,6 +57,7 @@ class Cart
     @items.delete(to_be_deleted)
   end
 
+  # Returns the CartReservations that correspond to the IDs in the items array
   def cart_reservations
     cart_reservations = []
     @items.each { |item| cart_reservations << CartReservation.find(item) }
