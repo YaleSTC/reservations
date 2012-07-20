@@ -4,6 +4,8 @@
     <th>#</th>
     <% if current_user.can_checkout? %>
       <th>User</th>
+      <th>Manage</th>
+      <th>Current</th>
     <% end %>
     <th>Equipment</th>
     <th>Item</th>
@@ -19,11 +21,13 @@
         <% if (reservation.reserver) %>
           <td>
             <%= link_to reservation.reserver.name, reservation.reserver %>
-            <% if current_user.can_checkout? %>
-              (<%= link_to 'manage', manage_reservations_for_user_path(reservation.reserver.id) %>)
-            <% end %>
-            (<%= link_to 'current', current_reservations_for_user_path(reservation.reserver.id) %>)
-        </td>
+          </td>
+          <td>
+            <%= link_to 'manage', manage_reservations_for_user_path(reservation.reserver.id) %>
+          </td>
+          <td>
+            <%= link_to 'current', current_reservations_for_user_path(reservation.reserver.id) %>
+          </td>
         <% else %>
           <td>User no longer exists</td>
         <% end %>
