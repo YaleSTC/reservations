@@ -53,7 +53,7 @@ class Reservation < ActiveRecord::Base
       errors << "Reservations cannot be made in the past" if !res.not_in_past?
       errors << "Reservations must have start dates before due dates" if !res.start_date_before_due_date?
       errors << "Reservations must have an associated equipment model" if !res.not_empty?
-      errors << res.equipment_object.name + " should be of type " + res.equipment_model.name if !res.matched_object_and_model?
+      errors << res.equipment_object.name + " should be of type " + res.equipment_model.name if !res.matched_object_and_model? if res.class == Reservation
       errors << res.equipment_model.name + " should be renewed instead of re-checked out" if !res.not_renewable?
       errors << "duration problem with " + res.equipment_model.name if !res.duration_allowed?
       errors << "availablity problem with " + res.equipment_model.name if !res.available?(reservations)

@@ -130,8 +130,8 @@ describe 'cart' do
     cartres.count(cart.cart_reservations).should == 2
     eq2 = FactoryGirl.create(:equipment_model)
     cart.add_item(eq2)
-    cartres2 = CartReservation.find(cart.cart_reservations)
-    cartres2.count(cart.items).should == 1
+    cartres2 = CartReservation.find(cart.items.last)
+    cartres2.count(cart.cart_reservations).should == 1
   end
 
   it 'available? works when called on reservations in @items' do
@@ -139,86 +139,97 @@ describe 'cart' do
     cart.add_item(eq)
     cartres = CartReservation.find(cart.items.first)
     cartres.available?.should == false
-    obj = FactoryGirl.create(:equipment_object, equipment_model: eq)
-    binding.pry
-    cartres.available?.should == true
-    cart.add_item(eq)
-    cartres.available?.should == true can only see 1 without cart.items
-    cart.available?(cart.items).should == false
+    obj = FactoryGirl.create(:equipment_object)
+    mod_obj = obj.equipment_model
+    cart.add_item(mod_obj)
+    avail_cartres = CartReservation.find(cart.items.last)
+    avail_cartres.available?.should == true
+    cart.add_item(mod_obj)
+    avail_cartres.available?.should == true #can only see 1 without cart.items
+    avail_cartres.available?(cart.cart_reservations).should == false
   end
 
-#  it 'quantity_eq_model_allowed?" works when called on reservations in @items' do
-#    eq_max = FactoryGirl.create(:equipment_model, max_per_user: 1)
-#    cart.add_item(eq_max)
-#    res_max = cart.items.last
-#    res_max.quantity_eq_model_allowed?.should == true
-#    res_max.quantity_eq_model_allowed?(cart.items).should == true
-#    cart.add_item(eq_max)
-#    res_max.quantity_eq_model_allowed?.should == true #without cart.items it can only see 1
-#    res_max.quantity_eq_model_allowed?(cart.items).should == false
-#  end
+  it 'quantity_eq_model_allowed?" works when called on reservations in @items' do
+    cart.items.clear
+    eq_max = FactoryGirl.create(:equipment_model, max_per_user: 1)
+    cart.add_item(eq_max)
+    res_max = cart.cart_reservations.last
+    res_max.quantity_eq_model_allowed?.should == true
+    res_max.quantity_eq_model_allowed?(cart.cart_reservations).should == true
+    cart.add_item(eq_max)
+    res_max.quantity_eq_model_allowed?.should == true #without cart.items it can only see 1
+    res_max.quantity_eq_model_allowed?(cart.cart_reservations).should == false
+  end
 
-#  it 'quantity_cat_allowed? works when called on reservations in @items' do
-#    cat_max = FactoryGirl.create(:category, max_per_user: 1)
-#    eq_cat_max = FactoryGirl.create(:equipment_model, category: cat_max)
-#    cart.add_item(eq_cat_max)
-#    res_cat_max = cart.items.last
-#    res_cat_max.quantity_cat_allowed?.should == true
-#    res_cat_max.quantity_cat_allowed?(cart.items).should == true
-#    cart.add_item(eq_cat_max)
-#    res_cat_max.quantity_cat_allowed?.should == true #doesn't know about cart.items
-#    res_cat_max.quantity_cat_allowed?(cart.items).should == false
-#  end
+  it 'quantity_cat_allowed? works when called on reservations in @items' do
+    cart.items.clear
+    cat_max = FactoryGirl.create(:category, max_per_user: 1)
+    eq_cat_max = FactoryGirl.create(:equipment_model, category: cat_max)
+    cart.add_item(eq_cat_max)
+    res_cat_max = cart.cart_reservations.last
+    res_cat_max.quantity_cat_allowed?.should == true
+    res_cat_max.quantity_cat_allowed?(cart.cart_reservations).should == true
+    cart.add_item(eq_cat_max)
+    res_cat_max.quantity_cat_allowed?.should == true #doesn't know about cart.items
+    res_cat_max.quantity_cat_allowed?(cart.cart_reservations).should == false
+  end
 
-#  it 'changing reserver_id changes the reserver for the cart items' do
-#    user = FactoryGirl.create(:user)
-#    cart.set_reserver_id(user.id)
-#    res = cart.items.first
-#    res.reserver_id.should == user.id
-#    res.reserver.should == user
-#    cart.set_reserver_id(admin.id)
-#    res.reserver.should == admin
-#  end
+  it 'changing reserver_id changes the reserver for the cart items' do
+    cart.items.clear
+    cart.add_item(eq)
+    cartres = cart.cart_reservations.first
+    cartres.reserver.should == admin
+    user = FactoryGirl.create(:user)
+    cart.set_reserver_id(user.id)
+    cartres = cart.cart_reservations.first
+    cartres.reserver_id.should == user.id
+    cartres.reserver.should == user
+    cart.set_reserver_id(admin.id)
+    cartres = cart.cart_reservations.first
+    cartres.reserver.should == admin
+  end
 
-#  it 'changing dates changes the reservation dates' do
-#    cart.set_start_date(Date.tomorrow)
-#    cart.set_due_date(Date.tomorrow + 1)
-#    cart.start_date.should == Date.tomorrow
-#    cart.due_date.should == Date.tomorrow + 1
-#    res = cart.items.first
-#    res.start_date.to_date.should == Date.tomorrow
-#    res.due_date.to_date.should == Date.tomorrow + 1
-#  end
+  it 'changing dates changes the reservation dates' do
+    cart = Cart.new
+    cart.set_reserver_id(admin.id)
+    cart.add_item(eq)
+    cartres = cart.cart_reservations.first
+    cartres.start_date.to_date.should == Date.today
+    cartres.due_date.to_date.should == Date.today
+    cart.set_start_date(Date.tomorrow)
+    cart.start_date.should == Date.tomorrow
+    cart.due_date.should == Date.tomorrow + 1
+    cartres = cart.cart_reservations.first
+    cartres.start_date.to_date.should == Date.tomorrow
+    cartres.due_date.to_date.should == Date.tomorrow + 1
+  end
 
-#  #TODO: could write more tests for failure... probs not necessary
-#  it 'valid? works when called reservations in @items' do
-#    cart.items.clear
-#    cart.set_start_date(Date.today)
-#    cart.set_due_date(Date.tomorrow)
-#    obj = FactoryGirl.create(:equipment_object)
-#    eq_valid = obj.equipment_model
-#    cart.add_item(eq_valid)
-#    res = cart.items.first
-#    res.valid?.should == true
-#    r = Reservation.new(reserver: admin, start_date: Date.tomorrow, due_date: Date.yesterday)
-#    r.equipment_model = eq
-#    r.start_date_before_due_date?.should == false
-#    r.not_in_past?.should == false
-#    r.valid?.should == false
-#  end
+  it 'valid? works when called reservations in @items' do
+    cart.items.clear
+    cart.set_start_date(Date.today)
+    cart.set_due_date(Date.tomorrow)
+    cart.add_item(eq)
+    cartres = cart.cart_reservations.first
+    cartres.valid?.should == true
+    cartres.equipment_model = nil
+    cartres.valid?.should == false
+    cartres.equipment_model = eq
+    cartres.start_date = Date.yesterday
+    cartres.valid?.should == false
+  end
 
 #  #TODO: write tests for all the errors (?)
 #  it 'validate_set works when called on reservations in @items' do
 #    cart.items.clear
-#    Reservation.validate_set(admin, cart.items).should == []
+#    Reservation.validate_set(admin, cart.cart_reservations).should == []
 #    cart.set_start_date(Date.today)
 #    cart.set_due_date(Date.tomorrow)
 #    obj = FactoryGirl.create(:equipment_object)
 #    eq_valid = obj.equipment_model
 #    cart.add_item(eq_valid)
-#    Reservation.validate_set(admin, cart.items).should == []
+#    Reservation.validate_set(admin, cart.cart_reservations).should == []
 #    cart.set_start_date(Date.yesterday)
 #    cart.start_date.should == Date.yesterday
-#    Reservation.validate_set(admin, cart.items).should == ["Reservations cannot be made in the past"]
+#    Reservation.validate_set(admin, cart.cart_reservations).should == ["Reservations cannot be made in the past"]
 #  end
 end
