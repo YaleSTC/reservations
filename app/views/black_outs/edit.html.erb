@@ -1,6 +1,10 @@
 <% title 'Edit Blackout' %>
 
-<%= render 'form' %>
+<%= simple_form_for(@black_out) do |f| %>
+  <%= f.error_notification %>
 
-<%= link_to 'Show', @black_out %> |
-<%= link_to 'Back', black_outs_path %>
+  <div class="form-inputs">
+    <%= render :partial => 'form', :locals => {:f => f} %>
+    
+<% end %>
+

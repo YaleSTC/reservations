@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(:version => 20120718004311) do
     t.text     "black_out_type"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
+    t.integer  "set_id"
   end
 
   create_table "categories", :force => true do |t|

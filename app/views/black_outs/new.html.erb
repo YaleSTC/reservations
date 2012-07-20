@@ -1,4 +1,11 @@
 <% title 'New Blackout' %>
+<div id="form_recurring">
+<%= simple_form_for(@black_out) do |f| %>
+  <%= f.error_notification %>
 
-<%= render 'form' %>
+  <div class="form-inputs">
+    <%= render :partial => 'form', :locals => {:f => f} %>
+    
+<% end %>
+</div>
 
