@@ -21,14 +21,6 @@ class EquipmentModel < ActiveRecord::Base
     :association_foreign_key => "associated_equipment_model_id",
     :join_table => "equipment_models_associated_equipment_models"
 
-  #Checkin/out procedures are stored as an independent object each.
-  #These nested models are displayed in the equipment_model/_form.html.erb by the cocoon gem
-  has_many :checkin_procedures, :dependent => :destroy
-  accepts_nested_attributes_for :checkin_procedures, :reject_if => :all_blank, :allow_destroy => true
-  has_many :checkout_procedures, :dependent => :destroy
-  accepts_nested_attributes_for :checkout_procedures, :reject_if => :all_blank, :allow_destroy => true
-
-
   ## Validations ##
 
   validates :name, 
@@ -78,12 +70,16 @@ class EquipmentModel < ActiveRecord::Base
       :styles => { :large => "500x500>", :medium => "250x250>", :small => "150x150>", :thumbnail => "260x180#"},
       :url  => "/equipment_models/:attachment/:id/:style/:basename.:extension",
       :path => ":rails_root/public/equipment_models/:attachment/:id/:style/:basename.:extension",
-      :default_url => "/fat_cat.jpeg"
+      :default_url => "/fat_cat.jpeg",
+      :preserve_files => true
+
 
   has_attached_file :documentation, #generates document
                     :content_type => 'application/pdf',
                     :url => "/equipment_models/:attachment/:id/:style/:basename.:extension",
-                    :path => ":rails_root/public/equipment_models/:attachment/:id/:style/:basename.:extension"
+                    :path => ":rails_root/public/equipment_models/:attachment/:id/:style/:basename.:extension",
+                    :preserve_files => true
+
       
   validates_attachment_content_type :photo, 
                                     :content_type => ["image/jpg", "image/png", "image/jpeg"], 
