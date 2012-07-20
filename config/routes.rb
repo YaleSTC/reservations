@@ -57,8 +57,7 @@ Reservations::Application.routes.draw do
   match '/add_to_cart/:id' => 'catalog#add_to_cart', :via => :put, :as => :add_to_cart
   match '/remove_from_cart/:id' => 'catalog#remove_from_cart', :via => :put, :as => :remove_from_cart
   match '/cart/empty' => 'application#empty_cart', :via => :delete, :as => :empty_cart
-  
-  # not called anywhere
+
   match '/cart/update' => 'application#update_cart', :as => :update_cart
   
   match '/reports/index' => 'reports#index', :as => :reports
