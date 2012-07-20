@@ -1,6 +1,20 @@
 <% if current_user.can_checkout? || current_user == @reservation.reserver %>
-  <% title "Reservation ##{@reservation.id}" + (@reservation.status == "reserved" ? "" : " (#{@reservation.status})") %>
-	<div id = "top_buttons">
+  <% title "Reservation ##{@reservation.id}" %>
+  <% subtitle "#{@reservation.equipment_model.name}" %>
+	
+  <div class="row">
+    <div id="bool_labels" class="span9">
+      <% if current_user.is_admin_in_adminmode? %>
+        <%= "<span class=\"user_label label-success\">Returned</span>".html_safe if @reservation.checked_in? %>
+        <%= "<span class=\"user_label label-important\">Overdue</span>".html_safe if @reservation.status_for_report == 'overdue' %>
+        <%= "<span class=\"user_label label-warning\">Returned Overdue</span>".html_safe if @reservation.status_for_report == 'returned overdue' %>
+        <%= "<span class=\"user_label label-info\">Checked Out</span>".html_safe if @reservation.checked_out? %>
+        <%= "<span class=\"user_label\">Missed</span>".html_safe if @reservation.status_for_report == 'missed' %>
+      <% end %>
+    </div>
+  </div>
+
+  <div id = "top_buttons">
   <%= render :partial => 'top_buttons', :locals => {:reserver => @reservation.reserver} %>
 	</div>
   <hr>
@@ -59,7 +73,7 @@
   <br /> <br />
 
 
-  <div id = "form_actions"><div class="form-actions">
+<div class="form-actions">
   <%= button_to_function("Print this page", "javascript:print()", :class => 'btn') %>
   <%# if (@reservation.status == "checked out") or (@reservation.status == "overdue") %> 
     <%#= link_to "Email checkout receipt", {:controller => :reservations, :action => "checkout_email", :id => @reservation}, :method => "get", :class => 'btn' %>
@@ -72,5 +86,5 @@
   <% if @reservation.status == "reserved" or current_user.is_admin_in_adminmode? %>
     <%= link_to "Cancel Reservation", @reservation, :confirm => 'This will permanently delete the reservation. Are you sure?', :method => :delete, :class => 'btn' %>
   <% end %>
-  </div></div>
+  </div>
 <% end %>
