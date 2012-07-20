@@ -34,11 +34,11 @@ Reservations::Application.routes.draw do
   
   match '/black_outs/flash_message' => 'black_outs#flash_message', :as => :flash_message
   match '/black_outs/new_recurring' => 'black_outs#new_recurring', :as => :new_recurring_black_out
-  match '/black_outs/destroy_recurring/:id' => 'black_outs#destroy_recurring', :as => :destroy_recurring_black_out
 
   resources :black_outs do
     member do
       get :flash_message
+      delete :destroy_recurring
     end
   end
 
