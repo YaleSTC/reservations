@@ -50,10 +50,7 @@ class Cart
 
   def remove_item(equipment_model)
     to_be_deleted = nil
-    @items.each do |item|
-      cartres = CartReservation.find(item)
-      to_be_deleted = cartres.id if cartres.equipment_model == equipment_model
-    end
+    @items.each { |item| to_be_deleted = item if CartReservation.find(item).equipment_model == equipment_model }
     @items.delete(to_be_deleted)
     CartReservation.destroy(to_be_deleted)
   end
@@ -74,8 +71,10 @@ class Cart
     @start_date = date
     fix_due_date
     items.each do |item|
-      item.start_date = start_date
-      item.due_date = due_date
+      cartres = CartReservation.find(item)
+      cartres.start_date = start_date
+      cartres.due_date = due_date
+      cartres.save
     end
   end
 
@@ -83,8 +82,10 @@ class Cart
     @due_date = date
     fix_due_date
     items.each do |item|
-      item.start_date = start_date
-      item.due_date = due_date
+      cartres = CartReservation.find(item)
+      cartres.start_date = start_date
+      cartres.due_date = due_date
+      cartres.save
     end
   end
 
@@ -104,8 +105,10 @@ class Cart
   def set_reserver_id(user_id)
     @reserver_id = user_id
     @items.each do |item|
-      item.reserver_id = user_id
-      item.reserver = reserver
+      cartres = CartReservation.find(item)
+      cartres.reserver_id = user_id
+      cartres.reserver = reserver
+      cartres.save
     end
   end
 

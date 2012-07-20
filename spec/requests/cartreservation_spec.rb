@@ -1,13 +1,16 @@
 require 'spec_helper'
 
 describe 'cart' do
+  CartReservation.delete_all
+  User.delete_all
+  EquipmentObject.delete_all
+  EquipmentModel.delete_all
 
   admin = FactoryGirl.create(:admin)
   cart = Cart.new
   cart.set_reserver_id(admin.id)
   eq = FactoryGirl.create(:equipment_model)
   cart.add_item(eq)
-  res = CartReservation.find(cart.items.first)
 
   it 'initializes' do
     cart.start_date
@@ -18,12 +21,16 @@ describe 'cart' do
   it 'add_item works' do
     cart.add_item(eq)
     cart.items.size.should == 2
-    Reservation.find(cart.items.first).equipment_model.should == eq
+    CartReservation.all.size.should == 2
+    CartReservation.find(cart.items.first).equipment_model.should == eq
+    cart.items.first.should_not == cart.items.last
+    CartReservation.find(cart.items.last).equipment_model.should == eq
   end
 
   it 'remove_item works' do
     cart.remove_item(eq)
     cart.items.size.should == 1
+    CartReservation.all.size.should == 1
   end
 
   it 'not_empty? works when called on reservations in @items' do
