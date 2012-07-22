@@ -125,6 +125,6 @@ Suggestions and Issues
 ======================
 
 If you have any suggestions, or would like to report an issue, please either:
-* Create an issue for (this repository)[https://github.com/YaleSTC/reservations/] on Github 
+* Create an issue for [this repository](https://github.com/YaleSTC/reservations/) on Github 
 * or, if you don't have a GitHub account, use our [issue submission form](https://docs.google.com/a/yale.edu/spreadsheet/viewform?formkey=dE8zTFprNVB4RTAwdURhWEVTTlpDQVE6MQ#gid=0)
 
