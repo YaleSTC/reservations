@@ -17,7 +17,7 @@
   <div class="row">
     <%# left column  %>
     <div class="span3">
-      <div class="well">
+      <div class="well well-inverse">
           <%# equipment section  %>
             <h3><%= link_to @reservation.equipment_model.name, @reservation.equipment_model %></h3>
             <hr>
@@ -45,12 +45,17 @@
 
             <div class="tab-content">
               <div id="date_range" class="tab-pane active">
-                I'M GOING TO BE A PROGRESS BAR !!!!1111
+
+                <div class="progress">
+                  <div class="bar" style="width: 60%;">3 days</div>
+                </div>
+
               </div>
               <div id="calendar" class="tab-pane">
                 I'M GOING TO BE A CALENDAR !!!!!1111oneone
               </div>
             </div>
+            <hr>
           </div>
 
         </div>
@@ -63,8 +68,12 @@
             <header>
               <h4>Reserved</h4>
             </header>
-            <i class="icon-user"></i>
-            <p>by <%= @reservation.reserver.name %></p>
+            <hr>
+            <%= link_to @reservation.reserver do %>
+              <i class="icon-user"></i>
+            <% end %>
+            <p><h4>by <%= link_to @reservation.reserver.name, @reservation.reserver %></h4></p>
+            <hr>
             <footer>
               <%= @reservation.created_at.strftime("%b %d, %Y at %I:%M%p") %>
             </footer>
@@ -78,8 +87,14 @@
               <header>
                 <h4>Checked Out</h4>
               </header>
-              <i class="icon-user"></i>
-              <p>by <%= @reservation.checkin_handler.nil? ? "unknown" : @reservation.checkout_handler.name %></p>
+              <hr>
+              <div class="icon-user-box">
+                <%= link_to @reservation.checkout_handler do %>
+                  <i class="icon-user"></i>
+                <% end %>
+              </div>
+              <p><h4>by <%= link_to @reservation.checkout_handler.nil? ? "unknown" : @reservation.checkout_handler.name, @reservation.checkout_handler.nil? ? nil : @reservation.checkout_handler %></h4></p>
+              <hr>
               <footer>
                 <%= @reservation.checked_out.strftime("%b %d, %Y at %I:%M%p") %>
               </footer>
@@ -94,8 +109,12 @@
               <header>
                 <h4>Checked In</h4>
               </header>
-              <i class="icon-user"></i>
-              <p>by <%= @reservation.checkin_handler.nil? ? "unknown" : @reservation.checkin_handler.name %></p>
+              <hr>
+              <%= link_to @reservation.checkin_handler do %>
+                <i class="icon-user"></i>
+              <% end %>
+              <p><h4>by <%= link_to @reservation.checkin_handler.nil? ? "unknown" : @reservation.checkin_handler.name, @reservation.checkin_handler.nil? ? nil : @reservation.checkin_handler %></h4></p>
+              <hr>
               <footer>
                 <%= @reservation.checked_in.strftime("%b %d, %Y at %I:%M%p") %>
               </footer>
@@ -106,15 +125,15 @@
     </div>
   </div>
 
+
+  <hr>
   <div class="row">
     <div class="span9">
+      <h2>Notes</h2>
       <%= markdown(@reservation.notes) unless @reservation.notes.nil? %>
     </div>
   </div>
 
-  <div id = "top_buttons">
-  <%= render :partial => 'top_buttons', :locals => {:reserver => @reservation.reserver} %>
-	</div>
   <hr>
 
   <p>

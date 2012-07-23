@@ -2,7 +2,29 @@ div#right_column {
   position: relative;
 }
 
-div#people_row {
-  position: absolute;
-  bottom: 0;
+// div#people_row {
+//   position: relative;
+//   // top: 0;
+//   bottom: -100;
+// }
+// .well-inverse {
+//   background: #000;
+
+//   a {
+//     color: #fff;
+//   }
+// }
+
+#people_row {
+    text-align: center;
+
+    .icon_user_box {
+      border: solid thin #000;
+
+    }
+
+    .icon-user {
+      font-size: $baseFontSize * 7;
+      line-height: $baseLineHeight * 4;
+    }
 }
