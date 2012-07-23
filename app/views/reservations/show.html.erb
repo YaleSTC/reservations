@@ -29,6 +29,23 @@
 
             <%# buttons  %>
       </div>
+
+      <%# shows renew button if due_date is today, tomorrow, or the day after %>
+
+      <% if @reservation.is_eligible_for_renew? &&
+      (@reservation.max_renewal_length_available != 0) && (!@reservation.checked_out.nil?) %>
+        <div id="renew_box">
+          At this time, you are eligible to renew the <%= @reservation.equipment_model.name.singularize %>
+          reservation for <strong><%= pluralize(@reservation.max_renewal_length_available, 'day') %></strong>.
+          <%= link_to "Renew Now", renew_path, remote: true, class: 'btn btn-primary' %>
+        </div>
+      <% elsif @reservation.checked_out.nil? or !@reservation.checked_in.nil? %>
+        <%# you can't renew if you haven't checked it out, or if you've already checked it in %>
+      <% else %>
+        <p>
+          This item is not currently eligible for renewal. Please remember to return the <%= @reservation.equipment_model.name.singularize %> to our office on <strong><%= @reservation.due_date.to_date.to_s(:long) %></strong>.
+        </p>
+      <% end %>
     </div>
 
     <%# right column  %>
@@ -146,23 +163,6 @@
       <%= @reservation.due_date.to_date.to_s(:long) %>
     </p>
   </div>
-
-  <%# shows renew button if due_date is today, tomorrow, or the day after %>
-  <% if @reservation.checked_out.nil? or !@reservation.checked_in.nil? %>
-    <%# you can't renew if you haven't checked it out, or if you've already checked it in %>
-  <% elsif @reservation.is_eligible_for_renew? and (@reservation.max_renewal_length_available != 0) and (@reservation.checked_out != NIL) %>
-    <div id="renew_box">
-      At this time, you are eligible to renew the <%= @reservation.equipment_model.name.singularize %>
-      reservation for <strong><%= pluralize(@reservation.max_renewal_length_available, 'day') %></strong>. <%= link_to "Renew Now", renew_reservation_path, :method => :put, :remote => true %>
-    </div>
-  <% else %>
-    <p>
-      This item is not currently eligible for renewal. Please remember to return the <%= @reservation.equipment_model.name.singularize %> to our office on <strong><%= @reservation.due_date.to_date.to_s(:long) %></strong>.
-    </p>
-  <% end %>
-
-  <br /> <br />
-
 
 <div class="form-actions">
   <%= button_to_function("Print this page", "javascript:print()", :class => 'btn') %>
