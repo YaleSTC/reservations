@@ -64,7 +64,9 @@
 <fieldset>
   <legend>Terms of Service</legend>
   <%= f.input :terms_of_service, input_html: { class: 'span6' } %>
-  <%= f.input :reset_tos_for_users, input_html: {type: "checkbox", value: '1'} , label: "Force all users to accept TOS again?", :hint => "i.e., if patrons need to be aware that the terms of service have changed." %>
+  <% unless params[:controller] == "application_setup" %>
+    <%= f.input :reset_tos_for_users, input_html: {type: "checkbox", value: '1'} , label: "Force all users to accept TOS again?", :hint => "i.e., if patrons need to be aware that the terms of service have changed." %>
+  <% end %>
 </fieldset>
 <div class="form-actions">
   <%= f.button :submit, 'Update Settings' %>
