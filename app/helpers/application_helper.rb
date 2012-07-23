@@ -7,7 +7,6 @@ module ApplicationHelper
   end
 
   def paperclip_field_error(local_form_variable, *fields)
-    # binding.pry
     # Field must be symbol
     fields.each do |field|
       unless local_form_variable.error(field).blank?

@@ -86,6 +86,18 @@
       <%= f.error :photo_content_type %>
       <%= f.error :photo_file_size %>
     <% end %>
+    <% unless @equipment_model.photo_file_name.nil? %>
+      <div class='control-group'>
+        <div class="controls">
+
+          <%= image_tag @equipment_model.photo.url(:thumbnail) %>
+          <%= label_tag 'clear_photo' do %>
+            <%= check_box_tag 'clear_photo', nil, false %>
+            <%= 'Delete current photo?' %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
 
     <%# Paperclip inline error fix %>
     <%= f.input :documentation, label: "Upload Documentation", wrapper_html: {class: 
@@ -93,6 +105,22 @@
       <%= f.input_field :documentation, as: :file %>
       <%= f.error :documentation_content_type %>
       <%= f.error :documentation_file_size %>
+    <% end %>
+    <% unless @equipment_model.documentation_file_name.nil? %>
+      <div class='control-group'>
+        <div class="controls">
+
+          <p>
+            <h4>
+              <%= (link_to @equipment_model.documentation_file_name, @equipment_model.documentation.url, target: "_blank") if @equipment_model.documentation.exists? %>
+            </h4>
+          </p>
+          <%= label_tag 'clear_documentation' do %>
+            <%= check_box_tag 'clear_documentation', nil, false %>
+            <%= 'Delete current documentation?' %>
+          <% end %>
+        </div>
+      </div>
     <% end %>
   </fieldset>
 	

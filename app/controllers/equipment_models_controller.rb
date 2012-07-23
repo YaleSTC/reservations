@@ -45,10 +45,15 @@ class EquipmentModelsController < ApplicationController
   
   def update
     @equipment_model = EquipmentModel.include_deleted.find(params[:id])
-    # commented this out because inherits from category if we call @equipment_model.maximum_renewal_length
-#    if params[:equipment_model][:max_renewal_length].blank?
-#      params[:equipment_model][:max_renewal_length] = 0 # nil causes renew reservation procedure to enter infinite loop
-#    end
+
+    unless params[:clear_documentation].nil? # if we want to delete the current docs
+      @equipment_model.documentation_file_name = NIL
+    end
+    
+    unless params[:clear_photo].nil? # if we want to delete the current photo
+      @equipment_model.photo_file_name = NIL
+    end
+    
     if @equipment_model.update_attributes(params[:equipment_model])
       flash[:notice] = "Successfully updated equipment model."
       redirect_to @equipment_model
