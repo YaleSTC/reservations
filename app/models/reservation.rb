@@ -98,7 +98,7 @@ class Reservation < ActiveRecord::Base
   # available_period is what is returned by the function
   # initialize to NIL because once it's set we escape the while loop below
     available_period = NIL
-    renewal_length = self.equipment_model.maximum_renewal_length
+    renewal_length = self.equipment_model.maximum_renewal_length || 0
     while (renewal_length > 0) and (available_period == NIL)
       # the available? method cannot accept dates with time zones, and due_date has a time zone
       if (self.equipment_model.available?(self.due_date + 1.day, self.due_date + (renewal_length.days)) > 0)

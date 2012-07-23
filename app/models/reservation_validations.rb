@@ -60,9 +60,8 @@ module ReservationValidations
 
   # Checks that the reservation is not renewable
   def not_renewable?
-    current_reservations = reserver.reservations
-    current_reservations.each do |res|
-      if res.equipment_model == self.equipment_model && res.due_date.to_date == self.start_date && res.is_eligible_for_renew?
+    reserver.reservations.each do |res|
+      if res.equipment_model == self.equipment_model && res.due_date.to_date == self.start_date.to_date && res.is_eligible_for_renew?
         errors.add(:base, res.equipment_model.name + " should be renewed instead of re-checked out")
         return false
       end

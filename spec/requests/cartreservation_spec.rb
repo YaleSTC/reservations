@@ -5,6 +5,7 @@ describe 'cart' do
   User.delete_all
   EquipmentObject.delete_all
   EquipmentModel.delete_all
+  Reservation.delete_all
 
   admin = FactoryGirl.create(:admin)
   cart = Cart.new
@@ -92,16 +93,23 @@ describe 'cart' do
   end
 
   #fix this test
-#  it 'not_renewable? works when called on reservations in @items' do
-#    cart.items.clear
-#    cart.add_item(eq)
-#    cartres = CartReservation.find(cart.items.first)
-#    cartres.not_renewable?.should == true
-#    renew = FactoryGirl.create(:checked_out_reservation, reserver: admin)
-#    cartres.not_renewable?.should == false
-#  end
+  it 'not_renewable? works when called on reservations in @items' do
+    cart = Cart.new
+    res = FactoryGirl.build(:checked_out_reservation)
+    res.save
+    u = User.find(res.reserver_id)
+    eqres = res.equipment_model
+    cart.set_reserver_id(u.id)
+    cart.add_item(eqres)
+    cartres = CartReservation.find(cart.items.first)
+    cartres.not_renewable?.should == true
+    cart.set_start_date(Date.tomorrow)
+    cart.cart_reservations.first.not_renewable?.should == false
+  end
 
   it 'no_overdue_reservations? works when called on reservations in @items' do
+    cart = Cart.new
+    cart.set_reserver_id(admin.id)
     cart.items.clear
     cart.add_item(eq)
     cartres = CartReservation.find(cart.items.first)
@@ -218,18 +226,20 @@ describe 'cart' do
     cartres.valid?.should == false
   end
 
-#  #TODO: write tests for all the errors (?)
-#  it 'validate_set works when called on reservations in @items' do
-#    cart.items.clear
-#    Reservation.validate_set(admin, cart.cart_reservations).should == []
-#    cart.set_start_date(Date.today)
-#    cart.set_due_date(Date.tomorrow)
-#    obj = FactoryGirl.create(:equipment_object)
-#    eq_valid = obj.equipment_model
-#    cart.add_item(eq_valid)
-#    Reservation.validate_set(admin, cart.cart_reservations).should == []
-#    cart.set_start_date(Date.yesterday)
-#    cart.start_date.should == Date.yesterday
-#    Reservation.validate_set(admin, cart.cart_reservations).should == ["Reservations cannot be made in the past"]
-#  end
+  #TODO: write tests for all the errors (?)
+  it 'validate_set works when called on reservations in @items' do
+    Reservation.delete_all
+    CartReservation.delete_all
+    cart = Cart.new
+    cart.set_reserver_id(admin.id)
+    Reservation.validate_set(admin, cart.cart_reservations).should == []
+    obj = FactoryGirl.create(:equipment_object)
+    eq_valid = obj.equipment_model
+    cart.add_item(eq_valid)
+    Reservation.validate_set(admin, cart.cart_reservations).should == []
+    res = FactoryGirl.create(:reservation)
+    user = User.find(res.reserver_id)
+    cart.set_reserver_id(user.id)
+    Reservation.validate_set(admin, cart.cart_reservations).should == ["User has overdue reservations that prevent new ones from being created"]
+  end
 end

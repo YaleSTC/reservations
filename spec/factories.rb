@@ -57,7 +57,7 @@ FactoryGirl.define do
       res.equipment_object = obj
     end
 
-    factory :dummy_reservation do
+    factory :cart_reservation do
       after(:build) do |res|
         res.equipment_object = nil
         res.equipment_object_id = nil
