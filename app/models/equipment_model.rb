@@ -67,7 +67,16 @@ class EquipmentModel < ActiveRecord::Base
 
   #Code necessary for Paperclip and image/pdf uploading
   has_attached_file :photo, #generates profile picture 
-      :styles => { :large => "500x500>", :medium => "250x250>", :small => "150x150>", :thumbnail => "260x180#"},
+      :styles => {          
+                            :large => { :geometry => "500x500", :format => "png" },
+                            :medium => { :geometry => "250x250", :format => "png" },
+                            :small => { :geometry => "150x150", :format => "png" }, 
+                            :thumbnail => { :geometry => "260x180", :format => "png" } },
+      :convert_options => { 
+                            :large => '-background none -gravity center -extent 500x500',
+                            :medium => '-background none -gravity center -extent 250x250',
+                            :small => '-background none -gravity center -extent 150x150',
+                            :thumbnail => '-background none -gravity center -extent 260x180' },
       :url  => "/equipment_models/:attachment/:id/:style/:basename.:extension",
       :path => ":rails_root/public/equipment_models/:attachment/:id/:style/:basename.:extension",
       :default_url => "/fat_cat.jpeg",
