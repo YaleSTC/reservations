@@ -1,7 +1,7 @@
 <% if current_user.can_checkout? || current_user == @reservation.reserver %>
   <% title "Reservation ##{@reservation.id}" %>
   <% subtitle "#{@reservation.equipment_model.name}" %>
-	
+
   <div class="row">
     <div id="bool_labels" class="span9">
       <% if current_user.is_admin_in_adminmode? %>
@@ -13,7 +13,7 @@
       <% end %>
     </div>
   </div>
-
+  <hr>
   <div class="row">
     <%# left column  %>
     <div class="span3">
@@ -25,31 +25,82 @@
               <%= image_tag @reservation.equipment_model.photo.url(:large) %>
             <% end %>
             <hr>
-            <h3><%= link_to @reservation.equipment_object.name, equipment_model_path(@reservation.equipment_model, anchor: 'items') %></h3>
-        
+            <h3><%= link_to @reservation.equipment_object.nil? ? "(unassigned)" : @reservation.equipment_object.name, equipment_model_path(@reservation.equipment_model, anchor: 'items') %></h3>
+
             <%# buttons  %>
       </div>
     </div>
 
     <%# right column  %>
-    <div class="span6">
+    <div id="right_column" class="span6">
       <div class="row">
         <div class="span6">
           <%# DATE RANGE AND CALENDAR TABS AND CONTENT GO HERE  %>
+
+          <div class="tabbable">
+            <ul class="nav nav-tabs">
+              <li class="active"><a href="#date_range" data-toggle="tab">Date Range</a></li>
+              <li><a href="#calendar" data-toggle="tab">Calendar</a></li>
+            </ul>
+
+            <div class="tab-content">
+              <div id="date_range" class="tab-pane active">
+                I'M GOING TO BE A PROGRESS BAR !!!!1111
+              </div>
+              <div id="calendar" class="tab-pane">
+                I'M GOING TO BE A CALENDAR !!!!!1111oneone
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
-      <div class="row">
+      <div id= "people_row" class="row">
         <div class="span2">
           <%# RESERVED BY %>
+          <div class="well">
+            <header>
+              <h4>Reserved</h4>
+            </header>
+            <i class="icon-user"></i>
+            <p>by <%= @reservation.reserver.name %></p>
+            <footer>
+              <%= @reservation.created_at.strftime("%b %d, %Y at %I:%M%p") %>
+            </footer>
+          </div>
         </div>
 
         <div class="span2">
           <%# CHECKED OUT BY %>
+          <% if @reservation.checked_out %>
+            <div class="well">
+              <header>
+                <h4>Checked Out</h4>
+              </header>
+              <i class="icon-user"></i>
+              <p>by <%= @reservation.checkin_handler.nil? ? "unknown" : @reservation.checkout_handler.name %></p>
+              <footer>
+                <%= @reservation.checked_out.strftime("%b %d, %Y at %I:%M%p") %>
+              </footer>
+            </div>
+          <% end %>
         </div>
 
         <div class="span2">
           <%# CHECKED IN BY %>
+          <% if @reservation.checked_in %>
+            <div class="well">
+              <header>
+                <h4>Checked In</h4>
+              </header>
+              <i class="icon-user"></i>
+              <p>by <%= @reservation.checkin_handler.nil? ? "unknown" : @reservation.checkin_handler.name %></p>
+              <footer>
+                <%= @reservation.checked_in.strftime("%b %d, %Y at %I:%M%p") %>
+              </footer>
+            </div>
+          <% end %>
         </div>
       </div>
     </div>
@@ -57,7 +108,7 @@
 
   <div class="row">
     <div class="span9">
-      <%= @reservation.notes %>
+      <%= markdown(@reservation.notes) unless @reservation.notes.nil? %>
     </div>
   </div>
 
@@ -65,15 +116,6 @@
   <%= render :partial => 'top_buttons', :locals => {:reserver => @reservation.reserver} %>
 	</div>
   <hr>
-  <p>
-    <strong>Reserved by:</strong>
-    <%= @reservation.reserver.name %>
-  </p>
-  <p>
-    <strong>Equipment:</strong>
-	  <%= link_to @reservation.equipment_model.name, @reservation.equipment_model %>
-	  <%= @reservation.equipment_object.nil? ? "(unassigned)" : "(#{@reservation.equipment_object.name})" %>
-  </p>
 
   <p>
     <strong>Start Date:</strong>
@@ -86,23 +128,6 @@
     </p>
   </div>
 
-  <% unless @reservation.notes.nil? %>
-    <strong>Notes:</strong>
-    <%= markdown(@reservation.notes) %>
-  <% end %>
-
-  <% if @reservation.checked_out %>
-  <p>
-    Checked out <%= @reservation.checked_out.to_s(:long) %>
-    by <%= @reservation.checkout_handler.nil? ? "unknown" : @reservation.checkout_handler.name %>
-  </p>
-  <% end %>
-  <% if @reservation.checked_in %>
-    <p>
-      Checked in <%= @reservation.checked_in.to_s(:long) %>
-      by <%= @reservation.checkin_handler.nil? ? "unknown" : @reservation.checkin_handler.name %>
-    </p>
-  <% end %>
   <%# shows renew button if due_date is today, tomorrow, or the day after %>
   <% if @reservation.checked_out.nil? or !@reservation.checked_in.nil? %>
     <%# you can't renew if you haven't checked it out, or if you've already checked it in %>
@@ -122,16 +147,16 @@
 
 <div class="form-actions">
   <%= button_to_function("Print this page", "javascript:print()", :class => 'btn') %>
-  <%# if (@reservation.status == "checked out") or (@reservation.status == "overdue") %> 
+  <%# if (@reservation.status == "checked out") or (@reservation.status == "overdue") %>
     <%#= link_to "Email checkout receipt", {:controller => :reservations, :action => "checkout_email", :id => @reservation}, :method => "get", :class => 'btn' %>
-	<%# elsif @reservation.status == "returned" %> 
+	<%# elsif @reservation.status == "returned" %>
     <%#= link_to "Email return receipt", {:controller => :reservations, :action => "checkin_email", :id => @reservation}, :method => "get", :class => 'btn' %>
   <%# end %>
   <% if current_user.can_checkout? %>
     <%= link_to "Edit", edit_reservation_path(@reservation), :class => 'btn' %>
   <% end %>
   <% if @reservation.status == "reserved" or current_user.is_admin_in_adminmode? %>
-    <%= link_to "Cancel Reservation", @reservation, :confirm => 'This will permanently delete the reservation. Are you sure?', :method => :delete, :class => 'btn' %>
+    <%= link_to "Cancel Reservation", @reservation, :confirm => 'This will permanently delete the reservation. Are you sure?', :method => :delete, :class => 'btn btn-danger' %>
   <% end %>
   </div>
 <% end %>
