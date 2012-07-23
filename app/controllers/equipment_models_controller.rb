@@ -47,10 +47,16 @@ class EquipmentModelsController < ApplicationController
     @equipment_model = EquipmentModel.include_deleted.find(params[:id])
 
     unless params[:clear_documentation].nil? # if we want to delete the current docs
+      # recursively remove files from filesystem
+      file_location = Rails.root.to_s + "/public/equipment_models/documentations/" + @equipment_model.id.to_s + "/"
+      FileUtils.rm_r file_location
       @equipment_model.documentation_file_name = NIL
     end
     
     unless params[:clear_photo].nil? # if we want to delete the current photo
+      # recursively remove files from filesystem
+      file_location = Rails.root.to_s + "/public/equipment_models/photos/" + @equipment_model.id.to_s + "/"
+      FileUtils.rm_r file_location
       @equipment_model.photo_file_name = NIL
     end
     
