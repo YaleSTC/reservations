@@ -31,7 +31,7 @@ ul.bar-dividers {
   margin: 0; padding: 0;
   position: relative;
   height: 18px; // must match the height of the progress bar
-  // width: 100%;
+  width: 100%;
 
   li {
     border-right: 1px solid rgba(172, 172, 172, .5);
@@ -39,7 +39,8 @@ ul.bar-dividers {
     // width: 33%;
     height: 18px;
     float: left;
-    background: transparent;
+    margin: 0;
+    padding: 0;
 
   }
   li:first-child {
@@ -53,7 +54,7 @@ ul.bar-dividers {
 }
 
 #date_range .progress {
-  width: 100%;
+  // width: 100%;
   .bar {
     span {
       position: relative;
@@ -62,4 +63,8 @@ ul.bar-dividers {
       font-weight: bold;
     }
   }
+}
+
+#res_right_column .tab-content {
+  overflow: visible;
 }
