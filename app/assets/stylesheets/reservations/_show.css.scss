@@ -32,23 +32,23 @@ ul.bar-dividers {
   position: relative;
   height: 18px; // must match the height of the progress bar
   // width: 100%;
-  z-index: 100000000;
 
-  li{
-    // list-style-type: none;
+  li {
     border-right: 1px solid rgba(172, 172, 172, .5);
-    border-left: 1px solid rgba(221, 221, 221, 1);
-    width: 33%;
+    border-left: 1px solid rgba(221, 221, 221, .9);
+    // width: 33%;
     height: 18px;
     float: left;
     background: transparent;
 
   }
-  li:first-child{
+  li:first-child {
       border-left: none;
   }
-  li:last-child{
+  li:last-child {
       border-right: none;
+      border-left: 1px solid rgba(221, 221, 221, .9);
+
   }
 }
 
@@ -59,6 +59,7 @@ ul.bar-dividers {
       position: relative;
       bottom: $baseLineHeight;
       z-index: 4;
+      font-weight: bold;
     }
   }
 }
