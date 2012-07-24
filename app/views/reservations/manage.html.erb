@@ -1,6 +1,5 @@
 <% title "Manage Reservations for #{@user.name}" %>
 
-
 <div class="row">
   <div class="span9">
     <%= render :partial => 'top_buttons', :locals => {:reserver => @user} %>
@@ -25,7 +24,7 @@
     <div class="row">
       <div class="span9">
         <div class="form-actions">
-          <%= submit_tag "Check-In Equipment", :class => 'btn btn-primary' %>
+          <%= submit_tag "Check-In Equipment", :class => 'btn btn-primary', :id => 'checkin_button' %>
         </div>
       </div>
     </div>
@@ -65,7 +64,7 @@
 
     <div class="row">
         <div class="span9">
-          <div class="form-actions"><%= submit_tag "Check-Out Equipment", :class => 'btn btn-primary' %></div>
+          <div class="form-actions"><%= submit_tag "Check-Out Equipment", :class => 'btn btn-primary', :id => 'checkout_button' %></div>
         </div>
     </div>
 

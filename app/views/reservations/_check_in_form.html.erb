@@ -1,7 +1,7 @@
 <% if check_in_form.due_date.to_date < Date.today %>
-  <div class="well-nomargin span4 warning"> <%# also change color %>
+  <div class="well-nomargin span4 warning checkin"> <%# also change color %>
 <% else %>
-  <div class="well-nomargin span4">
+  <div class="well-nomargin span4 checkin">
 <% end %>
   <header>
     <h3><%= link_to "Reservation ##{check_in_form.id}", check_in_form %></h3>
