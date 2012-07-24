@@ -28,3 +28,9 @@ div#right_column {
       line-height: $baseLineHeight * 4;
     }
 }
+
+.bar-divider {
+  width: 300px;
+  border-right: 1px solid black;
+  z-index: 9001;
+}
