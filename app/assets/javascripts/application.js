@@ -37,7 +37,68 @@
     });
   };
 
+  function validate_checkin(){
+    flag = false;
+    $.each( $(".checkin"), function(i, l){
+      var steps = $(this).find(':checkbox').length;
+      var steps_completed = $(this).find("input:checked").length;
+        if (steps_completed != steps && steps_completed != 0) {
+          flag = true;
+        } 
+        else {
+          //do nothing
+        }
+    });
+    return flag;
+  };
+
+  function validate_helper(){
+    flag = false;
+    $.each( $(".checkout"), function(i, l){
+      var steps = $(this).find(':checkbox').length;
+      var steps_completed = $(this).find("input:checked").length;
+      var selected = $(this).find(".dropselect").val();
+      if (selected != ""){
+        if (steps_completed != steps) {
+          flag = true;
+        } 
+        else {
+          //do nothing
+        }
+      } else{}
+    });
+    return flag;
+  };
+
+  function confirm_checkinout(flag){
+    if (flag){
+      if( confirm("You have selected to check in or check out a model, but have not selected all of its procedures. Are you sure you want to continue?")){
+        (this).submit();
+        return false;
+      } else { 
+        //they clicked no.
+        return false;
+      }
+    }
+    else {
+      (this).submit();
+    }
+  };
+
 $(document).ready(function() {
+
+  $('#checkout_button').click(function() {
+    var flag = validate_helper();
+    confirm_checkinout(flag);
+    return false;
+  });
+
+$('#checkin_button').click(function() {
+  var flag = validate_checkin();
+  confirm_checkinout(flag); 
+  return false;
+});
+
 // For DataTables and Bootstrap
   $('.datatable').dataTable({
     "sDom": "<'row'<'span4'l><'span5'f>r>t<'row'<'span3'i><'span6'p>>",

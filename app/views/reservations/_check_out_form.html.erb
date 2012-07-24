@@ -1,19 +1,17 @@
-<div id="<%= @reservation.id %>" class="well-nomargin span4">
+<div id="<%= @reservation.id %>" class="well-nomargin span4 checkout">
   <header>
     <h3><%= link_to "Reservation ##{@reservation.id}", @reservation %></h3>
   </header>
   <hr>
 	<h4><%= @reservation.equipment_model.name %></h4>
 
-	<%= select_tag "reservations[#{@reservation.id}][equipment_object_id]", @reservation.equipment_model.available_object_select_options, :prompt => 'Please select..', :class => 'dropdown' %>
+	<%= select_tag "reservations[#{@reservation.id}][equipment_object_id]", @reservation.equipment_model.available_object_select_options, :prompt => 'Please select..', :class => 'dropdown dropselect' %>
 	
 	<p>
     <p><h4>Notes</h4></p>
 		<%= text_area_tag "reservations[#{@reservation.id}][notes]", @reservation.notes %>
 	</p>
 	
-
-
 	<p>
   	<h4>Check-Out Procedures</h4>
   	<ul>
