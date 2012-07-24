@@ -60,24 +60,25 @@
 
             <div class="tab-content">
               <div id="date_range" class="tab-pane active">
-                <div class="row">
+                <div id="dates_headings" class="row">
                   <div class="span3">
-                    <h4>Start Date</h4>
+                    <p><h4>Start Date</h4></p>
                   </div>
                   <div class="span3">
-                    <h4 class="pull-right">Due Date</h4>
+                    <p><h4 class="pull-right">Due Date</h4></p>
                   </div>
                 </div>
                 <div class="row">
                   <div class="span6">
                     <div class="progress">
                       <%# TODO: extract to a helper method? %>
-
-                      <ul class="bar-dividers">
-                        <% reservation_length.times do %>
-                          <%= content_tag :li, nil, style: "width: #{100 / reservation_length}%" %>
-                        <% end %>
-                      </ul>
+                      <% unless reservation_length > 100 %>
+                        <ul class="bar-dividers">
+                          <% reservation_length.times do %>
+                            <%= content_tag :li, nil, style: "width: #{100.0 / reservation_length.to_f}%" %>
+                          <% end %>
+                        </ul>
+                      <% end %>
 
                       <%# TODO: dynamically generate bar width, borrow from equipment_model show page %>
                       <div class="bar" style="width: 60%;">
@@ -91,10 +92,10 @@
 
                 <div class="row">
                   <div class="span3">
-                    <h4><%= @reservation.start_date.to_date.strftime("%a, %b %d, %Y") %></h4>
+                    <p><h4><%= @reservation.start_date.to_date.strftime("%a, %b %d, %Y") %></h4></p>
                   </div>
                   <div class="span3">
-                    <h4 class="pull-right"><%= @reservation.due_date.to_date.strftime("%a, %b %d, %Y") %></h4>
+                    <p><h4 class="pull-right"><%= @reservation.due_date.to_date.strftime("%a, %b %d, %Y") %></h4></p>
                   </div>
                 </div>
 
