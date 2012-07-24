@@ -1,0 +1,28 @@
+<% title "Imported Users" %>
+
+<%# render table of users added to the database %>
+<%= render :partial => 'table', :locals => {:users => @users_added_set} %>
+
+
+<h2>Users not successfully imported</h2>
+
+<table id="table_users" class="datatable table table-striped table-bordered">
+  <thead>
+  <tr>
+    <th>NetID</th>
+    <th>Phone</th>
+    <th>Nickname</th>
+    <th>Why</th>
+  </tr>
+  </thead>
+  <tbody>
+    <% @users_not_added_set.each do |user,data| %>
+      <tr>
+        <td><%= user %></td>
+        <td><%= data[0] %></td>
+        <td><%= data[1] %></td>
+        <td><%= data[2] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -110,5 +110,23 @@ class User < ActiveRecord::Base
   def render_name
      [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name, login].join(" ")
   end
+  
+  def self.csv_import(loc)
+    # initialize
+    users_hash = {}
+    require 'csv'
+    
+    # import data by row
+    CSV.foreach(loc) do |row|
+      unless row[2].nil?
+        users_hash[row[0]] = [row[1], row[2]]
+      else
+        users_hash[row[0]] = [row[1], '']
+      end
+    end
+    
+    # return users hash
+    users_hash
+  end
 
 end

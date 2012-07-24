@@ -100,5 +100,58 @@ class UsersController < ApplicationController
       redirect_to manage_reservations_for_user_path(@user.id) and return
     end
   end
+  
+  def import
+    #initialize
+    file = params[:csv_upload]
+    # the rails CSV class only handles filepaths and not file objects
+    loc = file.tempfile.path
+    @users_added_set = []
+    @users_not_added_set = {}
+    flash[:errors] = ''
+    
+    users_hash = User.csv_import(loc)
+    users_hash.each do |user,data|
+      # ensure netID is not already a user in the database
+      unless User.where("login = ?", user).empty?
+        data << 'Already in database.' # add error message
+        @users_not_added_set[user] = data
+        next
+      end
+    
+      user_temp = User.search_ldap(user)
+      if user_temp.nil?
+        data << 'LDAP error.'
+        @users_not_added_set[user] = data
+        next
+      end
+      @user = User.new(user_temp)
+      @user.phone = data[0]
+      
+      # don't overwrite nickname unless we have a nickname
+      # in case LDAP has a nickname we don't
+      unless data[1].blank?
+        @user.nickname = data[1]
+      end
+      
+      # make sure NIL nicknames get saved as blank
+      # because this is how the database likes it
+      if @user.nickname.nil?
+        @user.nickname = ''
+      end
+      
+      if @user.save
+        @users_added_set << @user
+      else
+        data << 'Error saving. Is phone number valid?'
+        @users_not_added_set[user] = data
+      end
+    end
+    render 'import_success'
+  end
+  
+  def import_page
+    render 'import'
+  end
 
 end

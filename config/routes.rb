@@ -14,6 +14,8 @@ Reservations::Application.routes.draw do
     resources :equipment_models
   end
     
+  match '/users/import' => 'users#import_page', :via => :get, :as => :csv_import_page
+  match '/users/import' => 'users#import', :via => :post, :as => :csv_import
   resources :users do
     collection do
       get :find
