@@ -1,6 +1,6 @@
-div#right_column {
-  position: relative;
-}
+// div#right_column {
+//   position: relative;
+// }
 
 // div#people_row {
 //   position: relative;
@@ -16,21 +16,39 @@ div#right_column {
 // }
 
 #people_row {
-    text-align: center;
+  text-align: center;
 
-    .icon_user_box {
-      border: solid thin #000;
-
-    }
-
-    .icon-user {
-      font-size: $baseFontSize * 7;
-      line-height: $baseLineHeight * 4;
-    }
+  .icon-user {
+    font-size: $baseFontSize * 7;
+    line-height: $baseLineHeight * 4;
+  }
 }
 
-.bar-divider {
-  width: 300px;
-  border-right: 1px solid black;
-  z-index: 9001;
+ul.bar-dividers {
+  display: inline;
+  overflow: hidden;
+  list-style: none;
+  margin: 0; padding: 0;
+  position: relative;
+  height: 18px; // must match the height of the progress bar
+  // width: 100%;
+
+  li{
+    // list-style-type: none;
+    border-right: 1px solid #acacac;
+    border-left: 1px solid #333333;
+    width: 33%;
+    height: 18px;
+    float: left;
+  }
+  li:first-child{
+      border-left: none;
+  }
+  li:last-child{
+      border-right: none;
+  }
+}
+
+#date_range .progress {
+  width: 100%;
 }

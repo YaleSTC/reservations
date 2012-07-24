@@ -4,16 +4,14 @@
 
   <div class="row">
     <div id="bool_labels" class="span9">
-      <% if current_user.is_admin_in_adminmode? %>
-        <%= "<span class=\"user_label label-success\">Returned</span>".html_safe if @reservation.checked_in? %>
-        <%= "<span class=\"user_label label-important\">Overdue</span>".html_safe if @reservation.status_for_report == 'overdue' %>
-        <%= "<span class=\"user_label label-warning\">Returned Overdue</span>".html_safe if @reservation.status_for_report == 'returned overdue' %>
-        <%= "<span class=\"user_label label-info\">Checked Out</span>".html_safe if @reservation.checked_out? %>
-        <%= "<span class=\"user_label\">Missed</span>".html_safe if @reservation.status_for_report == 'missed' %>
-      <% end %>
+      <%= "<span class=\"user_label label-success\">Returned</span>".html_safe if @reservation.checked_in? %>
+      <%= "<span class=\"user_label label-important\">Overdue</span>".html_safe if @reservation.status_for_report == 'overdue' %>
+      <%= "<span class=\"user_label label-warning\">Returned Overdue</span>".html_safe if @reservation.status_for_report == 'returned overdue' %>
+      <%= "<span class=\"user_label label-info\">Checked Out</span>".html_safe if @reservation.checked_out? %>
+      <%= "<span class=\"user_label\">Missed</span>".html_safe if @reservation.status_for_report == 'missed' %>
+      <hr>
     </div>
   </div>
-  <hr>
   <div class="row">
     <%# left column  %>
     <div class="span3">
@@ -73,10 +71,12 @@
                 <div class="row">
                   <div class="span6">
                     <div class="progress">
-                      <div class="bar-divider"></div>
+
+                      <ul class="bar-dividers"><li></li><li></li><li></li></ul>
+
                       <div class="bar" style="width: 60%;">
 
-                        3 days</div>
+                        <%= distance_of_time_in_words(@reservation.start_date, @reservation.due_date) %></div>
                     </div>
                   </div>
                 </div>
@@ -173,7 +173,7 @@
     <div class="span9">
       <% unless @reservation.notes.nil? %>
         <h2>Notes</h2>
-        <%= markdown(@reservation.notes) %>
+        <p><%= markdown(@reservation.notes) %></p>
       <% end %>
     </div>
   </div>
