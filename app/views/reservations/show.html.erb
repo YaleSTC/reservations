@@ -75,8 +75,10 @@
                       <ul class="bar-dividers"><li></li><li></li><li></li></ul>
 
                       <div class="bar" style="width: 60%;">
+                        <span><%= distance_of_time_in_words(@reservation.start_date, @reservation.due_date) %></span>
+                      </div>
 
-                        <%= distance_of_time_in_words(@reservation.start_date, @reservation.due_date) %></div>
+
                     </div>
                   </div>
                 </div>
