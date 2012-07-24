@@ -52,7 +52,7 @@
     return flag;
   };
 
-  function validate_helper(){
+  function validate_checkout(){
     flag = false;
     $.each( $(".checkout"), function(i, l){
       var steps = $(this).find(':checkbox').length;
@@ -62,17 +62,21 @@
         if (steps_completed != steps) {
           flag = true;
         } 
-        else {
-          //do nothing
+        else { // do nothing
         }
-      } else{}
+      } else {
+          if (steps_completed > 0) {
+            flag = true;
+          }
+          else {}
+        }
     });
     return flag;
   };
 
   function confirm_checkinout(flag){
     if (flag){
-      if( confirm("You have selected to check in or check out a model, but have not selected all of its procedures. Are you sure you want to continue?")){
+      if( confirm("One or more check in or check out procedures have not been completed. Are you sure you want to continue?")){
         (this).submit();
         return false;
       } else { 
@@ -88,16 +92,16 @@
 $(document).ready(function() {
 
   $('#checkout_button').click(function() {
-    var flag = validate_helper();
+    var flag = validate_checkout();
     confirm_checkinout(flag);
     return false;
   });
 
-$('#checkin_button').click(function() {
-  var flag = validate_checkin();
-  confirm_checkinout(flag); 
-  return false;
-});
+  $('#checkin_button').click(function() {
+    var flag = validate_checkin();
+    confirm_checkinout(flag); 
+    return false;
+  });
 
 // For DataTables and Bootstrap
   $('.datatable').dataTable({
