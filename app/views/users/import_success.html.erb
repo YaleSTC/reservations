@@ -4,30 +4,34 @@
   <%# render table of users added to the database %>
   <h2>Users successfully imported</h2>
   <%= render :partial => 'table', :locals => {:users => @users_added_set} %>
-  <hr />
+  <% unless @users_not_added_set.empty? %>
+    <hr />
+  <% end %>
 <% end %>
 
-<h2>Users not successfully imported</h2>
+<% unless @users_not_added_set.empty? %>
+  <h2>Users not successfully imported</h2>
 
-<table id="table_users" class="datatable-wide table table-striped table-bordered">
-  <thead>
-  <tr>
-    <th>Login</th>
-    <th>Name</th>
-    <th>Phone</th>
-    <th>Email</th>
-    <th>Reason</th>
-  </tr>
-  </thead>
-  <tbody>
-    <% @users_not_added_set.each do |user,data| %>
-      <tr>
-        <td><%= user %></td>
-        <td><%= data[0] + ' ' + data[1] %></td>
-        <td><%= data[3] %></td>
-        <td><%= data[4] %></td>
-        <td><%= data[6] %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+  <table id="table_users" class="datatable-wide table table-striped table-bordered">
+    <thead>
+    <tr>
+      <th>Login</th>
+      <th>Name</th>
+      <th>Phone</th>
+      <th>Email</th>
+      <th>Reason</th>
+    </tr>
+    </thead>
+    <tbody>
+      <% @users_not_added_set.each do |user,data| %>
+        <tr>
+          <td><%= user %></td>
+          <td><%= data[0] + ' ' + data[1] %></td>
+          <td><%= data[3] %></td>
+          <td><%= data[4] %></td>
+          <td><%= data[6] %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
