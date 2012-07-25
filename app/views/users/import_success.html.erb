@@ -10,8 +10,9 @@
   <thead>
   <tr>
     <th>NetID</th>
+    <th>Name</th>
     <th>Phone</th>
-    <th>Nickname</th>
+    <th>Email</th>
     <th>Why</th>
   </tr>
   </thead>
@@ -19,9 +20,10 @@
     <% @users_not_added_set.each do |user,data| %>
       <tr>
         <td><%= user %></td>
-        <td><%= data[0] %></td>
-        <td><%= data[1] %></td>
-        <td><%= data[2] %></td>
+        <td><%= data[0] + ' ' + data[1] %></td>
+        <td><%= data[3] %></td>
+        <td><%= data[4] %></td>
+        <td><%= data[6] %></td>
       </tr>
     <% end %>
   </tbody>

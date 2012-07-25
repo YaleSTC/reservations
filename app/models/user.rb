@@ -111,22 +111,45 @@ class User < ActiveRecord::Base
      [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name, login].join(" ")
   end
   
-  def self.csv_import(loc)
+  def self.csv_import(location)
     # initialize
     users_hash = {}
     require 'csv'
     
     # import data by row
-    CSV.foreach(loc) do |row|
-      unless row[2].nil?
-        users_hash[row[0]] = [row[1], row[2]]
-      else
-        users_hash[row[0]] = [row[1], '']
+    CSV.foreach(location) do |row|
+    
+      # make sure CSV has the proper number of columns
+      if row.size < 7
+        return
       end
+      
+      # make sure nil entries are blank
+      blankified_row = []
+      row.each do |e|
+        if e.nil?
+          e = ''
+        end
+        blankified_row << e
+      end
+      row = blankified_row
+      
+      # order of variables: login, first_name, last_name, nickname, phone, email, affiliation
+      users_hash[row[0]] = [row[1], row[2], row[3], row[4], row[5], row[6]]
     end
     
     # return users hash
     users_hash
+  end
+
+  def self.csv_data_formatting(user,data)
+    return { :login       => user,
+             :first_name  => data[0],
+             :last_name   => data[1],
+             :nickname    => data[2],
+             :phone       => data[3],
+             :email       => data[4],
+             :affiliation => data[5] }
   end
 
 end
