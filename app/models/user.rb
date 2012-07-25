@@ -14,7 +14,7 @@ class User < ActiveRecord::Base
                   :deleted_at, :requirement_ids, :user_ids, :terms_of_service_accepted,
                   :created_by_admin
 
-  attr_accessor   :full_query, :created_by_admin, :user_type
+  attr_accessor   :full_query, :created_by_admin, :user_type, :csv_import
 
   validates :login,       :presence => true,
                           :uniqueness => true
@@ -23,7 +23,7 @@ class User < ActiveRecord::Base
             :affiliation, :presence => true
   validates :phone,       :presence    => true,
                           :format      => { :with => /\A\S[0-9\+\/\(\)\s\-]*\z/i },
-                          :length      => { :minimum => 10 }
+                          :length      => { :minimum => 10 }, :unless => :skip_phone_validation?
   validates :email,       :presence    => true,
                           :format      => { :with => /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i }
   validates :nickname,    :format      => { :with => /^[^0-9`!@#\$%\^&*+_=]+$/ },
@@ -162,6 +162,10 @@ class User < ActiveRecord::Base
              :phone       => data[3],
              :email       => data[4],
              :affiliation => data[5] }
+  end
+
+  def skip_phone_validation?
+    csv_import
   end
 
 end

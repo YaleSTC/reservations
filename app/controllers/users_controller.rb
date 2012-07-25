@@ -125,6 +125,7 @@ class UsersController < ApplicationController
       
       # assign user type
       @user.assign_user_type(@user_type)
+      @user.csv_import = true
       
       # check validations
       if @user.valid?
@@ -156,6 +157,7 @@ class UsersController < ApplicationController
 
         # assign user type
         @user.assign_user_type(@user_type)
+        @user.csv_import = true
 
         if @user.valid?
           @user.save
