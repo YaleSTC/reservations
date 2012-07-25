@@ -49,7 +49,6 @@ class Reservation < ActiveRecord::Base
     all_res_array = res_array + user.reservations
     errors = []
     all_res_array.each do |res|
-      binding.pry
       errors << "User has overdue reservations that prevent new ones from being created" if !res.no_overdue_reservations?
       errors << "Reservations cannot be made in the past" if !res.not_in_past?
       errors << "Reservations must have start dates before due dates" if !res.start_date_before_due_date?
