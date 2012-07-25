@@ -29,7 +29,7 @@
     &:hover {
       text-decoration: none;
       color: $textColor;
-      @include transition(color 0s ease);
+      @include transition(none);
 
     }
   }
