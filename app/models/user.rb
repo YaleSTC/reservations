@@ -14,7 +14,7 @@ class User < ActiveRecord::Base
                   :deleted_at, :requirement_ids, :user_ids, :terms_of_service_accepted,
                   :created_by_admin
 
-  attr_accessor(:full_query, :created_by_admin)
+  attr_accessor   :full_query, :created_by_admin
 
   validates :login,       :presence => true,
                           :uniqueness => true

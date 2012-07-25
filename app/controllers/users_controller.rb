@@ -156,26 +156,7 @@ class UsersController < ApplicationController
           next
         else
           # process errors!
-          errors = ''
-          
-          # first iterate over each field that didn't pass validations
-          @user.errors.messages.each do |field|
-            error_temp = ''
-            
-            # now iterate over each error message
-            field[1].each do |message|
-              # append error messages
-              if error_temp.blank?
-                error_temp += field.first.to_s.capitalize + ' ' + message
-              else
-                error_temp += ' and ' + message
-              end
-            end
-            
-            error_temp += '. ' unless error_temp.blank? # append a period for readability
-            errors += error_temp # append to full error string
-          end
-          data << errors
+          data << process_all_error_messages_to_string(@user)
           @users_not_added_set[user] = data
         end
       end

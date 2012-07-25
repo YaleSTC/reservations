@@ -1,19 +1,22 @@
-<% title "Imported Users" %>
+<% title "Import Summary" %>
 
-<%# render table of users added to the database %>
-<%= render :partial => 'table', :locals => {:users => @users_added_set} %>
-
+<% unless @users_added_set.empty? %>
+  <%# render table of users added to the database %>
+  <h2>Users successfully imported</h2>
+  <%= render :partial => 'table', :locals => {:users => @users_added_set} %>
+  <hr />
+<% end %>
 
 <h2>Users not successfully imported</h2>
 
-<table id="table_users" class="datatable table table-striped table-bordered">
+<table id="table_users" class="datatable-wide table table-striped table-bordered">
   <thead>
   <tr>
-    <th>NetID</th>
+    <th>Login</th>
     <th>Name</th>
     <th>Phone</th>
     <th>Email</th>
-    <th>Why</th>
+    <th>Reason</th>
   </tr>
   </thead>
   <tbody>
