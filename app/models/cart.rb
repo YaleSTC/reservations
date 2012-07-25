@@ -64,6 +64,13 @@ class Cart
     cart_reservations
   end
 
+  # Returns a hash of the equipment models in the cart with their quantities
+  def models_with_quantities
+    mods = Hash.new
+    cart_reservations.each { |res| mods[res.equipment_model.id] = res.count(cart_reservations) }
+    mods
+  end
+
   #TODO: delete me!
 #  def total_items
 #    @items.sum{ |item| item.quantity }
@@ -76,6 +83,7 @@ class Cart
 
   ## Date methods
 
+  # Sets start date and updates all CartReservations to match
   def set_start_date(date)
     @start_date = date
     fix_due_date
@@ -87,6 +95,7 @@ class Cart
     end
   end
 
+  # Sets due date and updates all CartReservations to match
   def set_due_date(date)
     @due_date = date
     fix_due_date
@@ -98,6 +107,7 @@ class Cart
     end
   end
 
+  # If the dates were illogical, sets due date to day after start date
   def fix_due_date
     if @start_date >= @due_date
       #TODO: allow admin to set default reservation length and respect that length here
@@ -105,12 +115,14 @@ class Cart
     end
   end
 
+  # Returns the cart's duration
   def duration #in days
     @due_date - @start_date + 1
   end
 
   ## Reserver methods
 
+  # Sets reserver id and updates the CartReservations to match
   def set_reserver_id(user_id)
     @reserver_id = user_id
     @items.each do |item|
@@ -121,6 +133,7 @@ class Cart
     end
   end
 
+  # Returns the reserver
   def reserver
     reserver = User.find(@reserver_id)
   end
