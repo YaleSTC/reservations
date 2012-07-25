@@ -30,6 +30,7 @@ module ReservationValidations
 
   # Checks that reservation is not in the past
   #TODO: this prevents working with non-new reservations -- fix pls
+  #(currently the validates_set method just only calls this on CartReservations)
   def not_in_past?
     if (start_date < Date.today) || (due_date < Date.today)
       errors.add(:base, "Reservation can't be in past")
