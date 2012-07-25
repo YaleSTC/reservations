@@ -21,6 +21,17 @@
   .icon-user {
     font-size: $baseFontSize * 7;
     line-height: $baseLineHeight * 4;
+    color: lighten($textColor, 50%);
+    @include transition(color .3s ease);
+
+
+
+    &:hover {
+      text-decoration: none;
+      color: $textColor;
+      @include transition(color 0s ease);
+
+    }
   }
 }
 
@@ -50,6 +61,11 @@ ul.bar-dividers {
 #date_range .progress {
   // width: 100%;
   .bar {
+    &:active {
+      #days_left {
+        display: inline;
+      }
+    }
     span {
       position: relative;
       bottom: $baseLineHeight;
@@ -65,8 +81,4 @@ ul.bar-dividers {
 
 #dates_headings {
   text-transform: uppercase;
-}
-
-#days_left {
-  display: none;
 }

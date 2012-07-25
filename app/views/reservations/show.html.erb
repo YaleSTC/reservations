@@ -29,7 +29,7 @@
       </div>
 
       <%# shows renew button if due_date is today, tomorrow, or the day after %>
-
+      <% binding.pry %>
       <% if @reservation.is_eligible_for_renew? &&
       (@reservation.max_renewal_length_available != 0) && (!@reservation.checked_out.nil?) %>
         <div id="renew_box">
@@ -84,7 +84,6 @@
 
                       <%= content_tag :div, class: 'bar', style: "width: " << bar_progress do %>
                         <%= content_tag :span, reservation_length_in_words, style: bar_span_positioning_fix %>
-                        <span id="days_left"><%= distance_of_time_in_words(Time.now, @reservation.due_date) %></span>
                       <% end %>
 
                     </div>
