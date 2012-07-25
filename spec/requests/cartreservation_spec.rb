@@ -240,6 +240,6 @@ describe 'cart' do
     res = FactoryGirl.create(:overdue_reservation)
     user = User.find(res.reserver_id)
     cart.set_reserver_id(user.id)
-    Reservation.validate_set(admin, cart.cart_reservations).should == ["User has overdue reservations that prevent new ones from being created"]
+    Reservation.validate_set(user, cart.cart_reservations).should == ["User has overdue reservations that prevent new ones from being created"]
   end
 end

@@ -2,7 +2,7 @@ require 'net/ldap'
 
 class User < ActiveRecord::Base
   has_many :reservations, :foreign_key => 'reserver_id'
-  nilify_blanks :only => [:deleted_at] 
+  nilify_blanks :only => [:deleted_at]
 
   attr_accessible :login, :first_name, :last_name, :nickname, :phone, :email,
                   :affiliation, :is_banned, :is_checkout_person, :is_admin,
@@ -11,8 +11,8 @@ class User < ActiveRecord::Base
 
   validates :login,       :presence => true,
                           :uniqueness => true
-  validates :first_name, 
-            :last_name, 
+  validates :first_name,
+            :last_name,
             :affiliation, :presence => true
   validates :phone,       :presence    => true,
                           :format      => { :with => /\A\S[0-9\+\/\(\)\s\-]*\z/i },
@@ -25,7 +25,7 @@ class User < ActiveRecord::Base
   def name
      [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name].join(" ")
   end
-  
+
   def can_checkout?
     self.is_checkout_person? || self.is_admin_in_adminmode? || self.is_admin_in_checkoutpersonmode?
   end
@@ -41,7 +41,7 @@ class User < ActiveRecord::Base
   def is_admin_in_bannedmode?
     is_admin? && bannedmode?
   end
-  
+
   def equipment_objects
     self.reservations.collect{ |r| r.equipment_objects }.flatten
   end
@@ -52,17 +52,17 @@ class User < ActiveRecord::Base
     model_ids = self.reservations.collect do |r|
       if (!r.checked_out.nil? && r.checked_in.nil?) # i.e. if checked out but not checked in yet
         r.equipment_model_id
-      end        
+      end
     end
 
     #Remove nils, then count the number of unique model ids, and store the counts in a sub hash, and finally sort by model_id
     arr = model_ids.compact.inject(Hash.new(0)) {|h,x| h[x]+=1;h}.sort
     #Change into a hash of model_id => quantities
     Hash[*arr.flatten]
-    
+
     #There might be a better way of doing this, but I realized that I wanted a hash instead of an array of hashes
   end
-  
+
   def self.search_ldap(login)
     ldap = Net::LDAP.new(:host => "directory.yale.edu", :port => 389)
     filter = Net::LDAP::Filter.eq("uid", login)
@@ -86,9 +86,15 @@ class User < ActiveRecord::Base
   def self.select_options
     self.find(:all, :order => 'last_name ASC').collect{ |item| ["#{item.last_name}, #{item.first_name}", item.id] }
   end
-  
+
   def render_name
      [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name, login].join(" ")
+  end
+
+  def reservations
+    reservations = []
+    Reservation.all.each { |res| reservations << res if res.reserver = self }
+    reservations
   end
 
 end

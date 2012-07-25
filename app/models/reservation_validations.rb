@@ -12,8 +12,8 @@ module ReservationValidations
   ## For individual reservations only
   # Checks if the user has any overdue reservations
   def no_overdue_reservations?
-    if reserver.reservations.overdue_reservations?(reserver)
-      errors.add(:base, "availablity problem with " + equipment_model.name)
+    if Reservation.overdue_reservations?(reserver)
+      errors.add(:base, "User has overdue reservations")
       return false
     end
     return true
@@ -98,9 +98,10 @@ module ReservationValidations
   def quantity_eq_model_allowed?(reservations = [])
     max = equipment_model.max_per_user
     return true if max == "unrestricted"
-    reservations << self if reservations.empty?
-    reservations.concat(reserver.reservations)
-    num_reservations = count(reservations)
+    all_res = reservations.dup
+    all_res << self if all_res.empty?
+    all_res.concat(reserver.reservations)
+    num_reservations = count(all_res)
     if num_reservations > max
       errors.add(:base, "quantity equipment model problem with " + equipment_model.name)
       return false
@@ -114,8 +115,9 @@ module ReservationValidations
   def quantity_cat_allowed?(reservations = [])
     max = equipment_model.category.max_per_user
     return true if max == "unrestricted"
-    reservations << self if reservations.empty?
-    reservations.concat(reserver.reservations)
+    all_res = reservations.dup
+    all_res << self if all_res.empty?
+    all_res.concat(reserver.reservations)
     cat_count = 0
     reservations.each { |res| cat_count += 1 if res.equipment_model.category == self.equipment_model.category }
     if cat_count > max

@@ -49,14 +49,15 @@ class Reservation < ActiveRecord::Base
     all_res_array = res_array + user.reservations
     errors = []
     all_res_array.each do |res|
+      binding.pry
       errors << "User has overdue reservations that prevent new ones from being created" if !res.no_overdue_reservations?
-      errors << "Reservations cannot be made in the past" if !res.not_in_past?
+      errors << "Reservations cannot be made in the past" if !res.not_in_past? unless res.class == Reservation
       errors << "Reservations must have start dates before due dates" if !res.start_date_before_due_date?
       errors << "Reservations must have an associated equipment model" if !res.not_empty?
       errors << res.equipment_object.name + " should be of type " + res.equipment_model.name if !res.matched_object_and_model? if res.class == Reservation
       errors << res.equipment_model.name + " should be renewed instead of re-checked out" if !res.not_renewable?
       errors << "duration problem with " + res.equipment_model.name if !res.duration_allowed?
-      errors << "availablity problem with " + res.equipment_model.name if !res.available?(res_array)
+      errors << "availablity problem with " + res.equipment_model.name if !res.available?(all_res_array)
       errors << "quantity equipment model problem with " + res.equipment_model.name if !res.quantity_eq_model_allowed?(res_array)
       errors << "quantity category problem with " + res.equipment_model.category.name if !res.quantity_cat_allowed?(res_array)
     end
