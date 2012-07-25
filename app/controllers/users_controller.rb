@@ -137,7 +137,7 @@ class UsersController < ApplicationController
         # check LDAP
         @user_temp = User.search_ldap(user)
         if @user_temp.nil?
-          data << 'CSV import failed. User not found in LDAP rescue attempt.'
+          data << 'Missing data. Unable to find user in online directory (LDAP).'
           @users_not_added_set[user] = data
           next
         end
@@ -174,7 +174,7 @@ class UsersController < ApplicationController
   end
   
   def import_page
-    @select_options = [['Normal Users','normal'],['Checkout Persons','checkout'],['Admins','admin'],['Banned Users','banned']]
+    @select_options = [['Patrons','normal'],['Checkout Persons','checkout'],['Administrators','admin'],['Banned Users','banned']]
     render 'import'
   end
 
