@@ -1,12 +1,24 @@
 <% title "Import Users" %>
 
-<h3>CSV import format:</h3>
-<p><h4>Login, First Name, Last Name, Nickname, Phone, Email, Affiliation</h4></p>
+<h3>CSV Import Format</h3>
+<h5>Order of columns (to export from spreadsheet)</h5>
+<%= markdown("
+    Login, First Name, Last Name, Nickname, Phone, Email, Affiliation") %>
+<h5>Example</h5>
+<%= markdown("
+    jd76,John,Doe,Jon,8295555555,john.doe@example.com,Library Services
+    sj2,Susan,Jane,,7395555555,susan.jane@email.net,IT Department") %>
+
+<hr />
 
 <%= form_tag csv_import_path, :multipart => true do %>
+
+  <label>Type of user to import:</label>
   <%= select_tag :user_type, options_for_select(@select_options) %>
+
   <p>
+    <label>CSV file with users to import:</label>
     <%= file_field_tag 'csv_upload' %>
   </p>
-  <%= submit_tag 'Upload' %>
+  <%= submit_tag 'Import Users!', :class => 'btn' %>
 <% end %>

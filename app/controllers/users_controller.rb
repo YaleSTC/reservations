@@ -105,12 +105,12 @@ class UsersController < ApplicationController
     #initialize
     @user_type = params[:user_type]
     file = params[:csv_upload]
-    # the rails CSV class only handles filepaths and not file objects
-    location = file.tempfile.path
     @users_added_set = []
     @users_not_added_set = {}
     flash[:errors] = ''
     
+    # the rails CSV class only handles filepaths and not file objects
+    location = file.tempfile.path
     users_hash = User.csv_import(location)
     
     # make sure import didn't totally fail
@@ -124,15 +124,7 @@ class UsersController < ApplicationController
       @user = User.new(@user_temp)
       
       # assign user type
-      if @user_type == 'admin'
-        @user.is_admin = 1
-      elsif @user_type == 'checkout'
-        @user.is_checkout_person = 1
-      elsif @user_type == 'normal'
-        # add something if we change how type is stored in the database
-      elsif @user_type == 'banned'
-        @user.is_banned = 1
-      end
+      @user.assign_user_type(@user_type)
       
       # check validations
       if @user.valid?
@@ -163,15 +155,7 @@ class UsersController < ApplicationController
         @user.affiliation = data[5] unless data[5].blank?
 
         # assign user type
-        if @user_type == 'admin'
-          @user.is_admin = 1
-        elsif @user_type == 'checkout'
-          @user.is_checkout_person = 1
-        elsif @user_type == 'normal'
-          # add something if we change how type is stored in the database
-        elsif @user_type == 'banned'
-          @user.is_banned = 1
-        end
+        @user.assign_user_type(@user_type)
 
         if @user.valid?
           @user.save

@@ -111,6 +111,18 @@ class User < ActiveRecord::Base
      [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name, login].join(" ")
   end
   
+  def assign_user_type(user_type)
+    if user_type == 'admin'
+      self.is_admin = 1
+    elsif user_type == 'checkout'
+      self.is_checkout_person = 1
+    elsif user_type == 'normal'
+      # add something if we change how type is stored in the database
+    elsif user_type == 'banned'
+      self.is_banned = 1
+    end
+  end
+  
   def self.csv_import(location)
     # initialize
     users_hash = {}
