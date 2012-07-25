@@ -1,8 +1,8 @@
 <%= simple_form_for @reservation, :html => { :class => "form-horizontal" } do |f| %>
   <%= f.error_notification %>
   <% if current_user and current_user.is_admin_in_adminmode? %>
-    <%= f.input :fake_reserver_id, :as => :autocomplete, :url => autocomplete_user_last_name_reservations_path, 
-                :id_element => '#reservation_reserver_id', label: "Reserver", placeholder: "Start typing a name or login" %>
+    <%= f.input :fake_reserver_id, :as => :autocomplete, :url => autocomplete_user_last_name_reservations_path,
+                :id_element => '#reservation_reserver_id', label: "Reserver", placeholder: "Start typing a name or login", input_html: {value: @reservation.reserver.name} %>
     <%= f.input :reserver_id, as: :hidden %>
   <%else %>
     <%= current_user.name %>
@@ -21,5 +21,5 @@
       </div>
     </div>
     <%= f.input :notes, :as => :text %>
-    <%= f.button :wrapped, :cancel => reservations_path %> 
+    <%= f.button :wrapped, :cancel => reservations_path %>
 <% end %>
