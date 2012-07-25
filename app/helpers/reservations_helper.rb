@@ -17,7 +17,10 @@ module ReservationsHelper
   end
 
   def bar_span_positioning_fix
-    'bottom: 0' if reservation_length_in_words == 'same day'
+    style = ''
+    style << 'bottom: 0;' if reservation_length_in_words == 'same day'
+    style << 'display: none;' if @width == 0
+
   end
 
   private
