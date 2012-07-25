@@ -4,11 +4,11 @@
 
   <div class="row">
     <div id="bool_labels" class="span9">
-      <%= "<span class=\"user_label label-success\">Returned</span>".html_safe if @reservation.checked_in? %>
-      <%= "<span class=\"user_label label-important\">Overdue</span>".html_safe if @reservation.status_for_report == 'overdue' %>
-      <%= "<span class=\"user_label label-warning\">Returned Overdue</span>".html_safe if @reservation.status_for_report == 'returned overdue' %>
-      <%= "<span class=\"user_label label-info\">Checked Out</span>".html_safe if @reservation.checked_out? %>
-      <%= "<span class=\"user_label\">Missed</span>".html_safe if @reservation.status_for_report == 'missed' %>
+      <%= "<span class=\"user_label label-success\">Returned</span>".html_safe if @reservation.status == 'returned on time' %>
+      <%= "<span class=\"user_label label-important\">Overdue</span>".html_safe if @reservation.status == 'overdue' %>
+      <%= "<span class=\"user_label label-warning\">Returned Overdue</span>".html_safe if @reservation.status == 'returned overdue' %>
+      <%= "<span class=\"user_label label-info\">Checked Out</span>".html_safe if @reservation.status == 'checked out' %>
+      <%= "<span class=\"user_label\">Missed</span>".html_safe if @reservation.status == 'missed' %>
       <hr>
     </div>
   </div>
@@ -29,7 +29,6 @@
       </div>
 
       <%# shows renew button if due_date is today, tomorrow, or the day after %>
-      <% binding.pry %>
       <% if @reservation.is_eligible_for_renew? &&
       (@reservation.max_renewal_length_available != 0) && (!@reservation.checked_out.nil?) %>
         <div id="renew_box">

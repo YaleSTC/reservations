@@ -6,20 +6,20 @@ class Reservation < ActiveRecord::Base
   belongs_to :checkout_handler, :class_name => 'User'
   belongs_to :checkin_handler, :class_name => 'User'
 
-  validates :reserver, 
-            :start_date, 
-            :due_date, 
+  validates :reserver,
+            :start_date,
+            :due_date,
             :presence => true
-  
+
   validate :not_empty
   validate :start_date_before_due_date
   #Currently this prevents checking in overdue items. We can work on a better fix.
   #validate :not_in_past
-  
+
 
   scope :recent, order('start_date, due_date, reserver_id')
   scope :user_sort, order('reserver_id')
-  
+
   scope :reserved, lambda { where("checked_out IS NULL and checked_in IS NULL and due_date >= ?", Time.now.midnight.utc).recent}
   scope :checked_out, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date >=  ?", Time.now.midnight.utc).recent }
   scope :checked_out_today, lambda { where("checked_out >= ? and checked_in IS NULL", Time.now.midnight.utc).recent }
@@ -28,18 +28,18 @@ class Reservation < ActiveRecord::Base
   scope :returned, where("checked_in IS NOT NULL and checked_out IS NOT NULL")
   scope :returned_on_time, where("checked_in IS NOT NULL and checked_out IS NOT NULL and due_date >= checked_in").recent
   scope :returned_overdue, where("checked_in IS NOT NULL and checked_out IS NOT NULL and due_date < checked_in").recent
-  
+
   scope :missed, lambda {where("checked_out IS NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc).recent}
   scope :upcoming, lambda {where("checked_out IS NULL and checked_in IS NULL and start_date = ? and due_date > ?", Time.now.midnight.utc, Time.now.midnight.utc).user_sort }
-  
+
   scope :reserver_is_in, lambda {|user_id_arr| where(:reserver_id => user_id_arr)}
   scope :starts_on_days, lambda {|start_date, end_date|  where(:start_date => start_date..end_date)}
   scope :active, where("checked_in IS NULL") #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
   scope :notes_unsent, :conditions => {:notes_unsent => true}
-  
-  attr_accessible :reserver, :reserver_id, :checkout_handler, :checkout_handler_id, 
-                  :checkin_handler, :checkin_handler_id, :start_date, :due_date, 
-                  :checked_out,:checked_in, :equipment_object, :equipment_model_id, 
+
+  attr_accessible :reserver, :reserver_id, :checkout_handler, :checkout_handler_id,
+                  :checkin_handler, :checkin_handler_id, :start_date, :due_date,
+                  :checked_out,:checked_in, :equipment_object, :equipment_model_id,
                   :equipment_object_id, :notes, :notes_unsent, :times_renewed
 
   def reserver
@@ -47,17 +47,33 @@ class Reservation < ActiveRecord::Base
   end
 
   def status
-    if checked_out.nil? && due_date >= Date.today
-      "reserved"
-    elsif checked_out.nil? && due_date < Date.today
-      "missed"
+    # Old status method code
+    # =========================
+    # if checked_out.nil? && due_date >= Date.today
+    #   "reserved"
+    # elsif checked_out.nil? && due_date < Date.today
+    #   "missed"
+    # elsif checked_in.nil?
+    #   due_date < Date.today ? "overdue" : "checked out"
+    # else
+    #   "returned"
+    # end
+
+    # from status_for_report
+    # ==========================
+    if checked_out.nil?
+      if checked_in.nil?
+        due_date >= Date.today ? "reserved" : "missed"
+      else
+        "?"
+      end
     elsif checked_in.nil?
       due_date < Date.today ? "overdue" : "checked out"
     else
-      "returned"
+      due_date < checked_in.to_date ? "returned overdue" : "returned on time"
     end
   end
-  
+
   #should reconcile the two status functions
   def status_for_report
     if checked_out.nil?
@@ -142,7 +158,7 @@ class Reservation < ActiveRecord::Base
     end
     error_messages
   end
-  
+
   def checkout_object_uniqueness(reservations)
     object_ids_taken = []
     reservations.each do |r|
@@ -165,19 +181,19 @@ class Reservation < ActiveRecord::Base
     end
     final
   end
-  
+
   def self.checked_out_today_user_reservations(user)
     Reservation.where("checked_out >= ? and checked_in IS NULL and reserver_id = ?", Time.now.midnight.utc, user.id)
   end
-  
+
   def self.checked_out_previous_user_reservations(user)
     Reservation.where("checked_out < ? and checked_in IS NULL and reserver_id = ? and due_date >= ?", Time.now.midnight.utc, user.id, Time.now.midnight.utc)
   end
-  
+
   def self.reserved_user_reservations(user)
     Reservation.where("checked_out IS NULL and checked_in IS NULL and due_date >= ? and reserver_id = ?", Time.now.midnight.utc, user.id)
   end
-  
+
   def self.overdue_user_reservations(user)
     Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and due_date < ? and reserver_id = ?", Time.now.midnight.utc, user.id )
   end
@@ -206,7 +222,7 @@ class Reservation < ActiveRecord::Base
   def late_fee
     self.equipment_model.late_fee.to_f
   end
-  
+
   def fake_reserver_id # this is necessary for autocomplete! delete me not!
   end
 
@@ -241,13 +257,13 @@ class Reservation < ActiveRecord::Base
     # before available_period is set
     return available_period = renewal_length
   end
-  
+
   def is_eligible_for_renew?
     # determines if a reservation is eligible for renewal, based on how many days before the due
     # date it is and the max number of times one is allowed to renew
-    # 
+    #
     # we need to test if any of the variables are set to NIL, because in that case comparision
-    # is undefined; that's also why we can't set variables to these function values before 
+    # is undefined; that's also why we can't set variables to these function values before
     # the if statements
     if self.times_renewed == NIL
       self.times_renewed = 0
