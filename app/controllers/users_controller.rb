@@ -103,6 +103,7 @@ class UsersController < ApplicationController
   
   def import
     #initialize
+    @user_type = params[:user_type]
     file = params[:csv_upload]
     # the rails CSV class only handles filepaths and not file objects
     location = file.tempfile.path
@@ -121,6 +122,17 @@ class UsersController < ApplicationController
     users_hash.each do |user,data|      
       @user_temp = User.csv_data_formatting(user,data)
       @user = User.new(@user_temp)
+      
+      # assign user type
+      if @user_type == 'admin'
+        @user.is_admin = 1
+      elsif @user_type == 'checkout'
+        @user.is_checkout_person = 1
+      elsif @user_type == 'normal'
+        # add something if we change how type is stored in the database
+      elsif @user_type == 'banned'
+        @user.is_banned = 1
+      end
       
       # check validations
       if @user.valid?
@@ -150,6 +162,17 @@ class UsersController < ApplicationController
         @user.email = data[4] unless data[4].blank?
         @user.affiliation = data[5] unless data[5].blank?
 
+        # assign user type
+        if @user_type == 'admin'
+          @user.is_admin = 1
+        elsif @user_type == 'checkout'
+          @user.is_checkout_person = 1
+        elsif @user_type == 'normal'
+          # add something if we change how type is stored in the database
+        elsif @user_type == 'banned'
+          @user.is_banned = 1
+        end
+
         if @user.valid?
           @user.save
           @users_added_set << @user
@@ -165,6 +188,7 @@ class UsersController < ApplicationController
   end
   
   def import_page
+    @select_options = [['Normal Users','normal'],['Checkout Persons','checkout'],['Admins','admin'],['Banned Users','banned']]
     render 'import'
   end
 

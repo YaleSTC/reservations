@@ -4,6 +4,7 @@
 <p><h4>Login, First Name, Last Name, Nickname, Phone, Email, Affiliation</h4></p>
 
 <%= form_tag csv_import_path, :multipart => true do %>
+  <%= select_tag :user_type, options_for_select(@select_options) %>
   <p>
     <%= file_field_tag 'csv_upload' %>
   </p>
