@@ -83,7 +83,7 @@
                       <%# TODO: dynamically generate bar width, borrow from equipment_model show page %>
 
                       <%= content_tag :div, class: 'bar', style: "width: " << bar_progress do %>
-                        <span><%= reservation_length_in_words %></span>
+                        <%= content_tag :span, reservation_length_in_words, style: bar_span_positioning_fix %>
                         <span id="days_left"><%= distance_of_time_in_words(Time.now, @reservation.due_date) %></span>
                       <% end %>
 <!--                       <div class="bar" style="width: 60%;">

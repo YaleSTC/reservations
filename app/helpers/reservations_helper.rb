@@ -16,6 +16,10 @@ module ReservationsHelper
     end
   end
 
+  def bar_span_positioning_fix
+    'bottom: 0' if reservation_length_in_words == 'same day'
+  end
+
   private
 
     def define_width
