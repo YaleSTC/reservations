@@ -72,7 +72,7 @@
                   <div class="span6">
                     <div class="progress">
                       <%# TODO: extract to a helper method? %>
-                      <% unless reservation_length > 100 %>
+                      <% unless reservation_length > 31 %>
                         <ul class="bar-dividers">
                           <% reservation_length.times do %>
                             <%= content_tag :li, nil, style: "width: #{100.0 / reservation_length.to_f}%" %>
@@ -81,9 +81,15 @@
                       <% end %>
 
                       <%# TODO: dynamically generate bar width, borrow from equipment_model show page %>
-                      <div class="bar" style="width: 60%;">
+
+                      <%= content_tag :div, class: 'bar', style: "width: " << bar_progress do %>
+                        <span><%= reservation_length_in_words %></span>
+                        <span id="days_left"><%= distance_of_time_in_words(Time.now, @reservation.due_date) %></span>
+                      <% end %>
+<!--                       <div class="bar" style="width: 60%;">
                         <span><%= distance_of_time_in_words(@reservation.start_date, @reservation.due_date) %></span>
-                      </div>
+                        <span id="days_left"><%= distance_of_time_in_words(Time.now, @reservation.due_date) %></span>
+                      </div> -->
 
 
                     </div>
