@@ -45,10 +45,11 @@ class Reservation < ActiveRecord::Base
   # Checks all validations for all saved reservations and the reservations in
   # the array of reservations passed in (intended for use with cart.items)
   # Returns an array of error messages or [] if reservations are all valid
-  def self.validate_set(user, reservations = [])
-    reservations.concat(user.reservations)
+  def self.validate_set(user, res_array = [])
+    all_res_array = res_array + user.reservations
     errors = []
-    reservations.each do |res|
+    all_res_array.each do |res|
+      binding.pry
       errors << "User has overdue reservations that prevent new ones from being created" if !res.no_overdue_reservations?
       errors << "Reservations cannot be made in the past" if !res.not_in_past?
       errors << "Reservations must have start dates before due dates" if !res.start_date_before_due_date?
@@ -56,9 +57,9 @@ class Reservation < ActiveRecord::Base
       errors << res.equipment_object.name + " should be of type " + res.equipment_model.name if !res.matched_object_and_model? if res.class == Reservation
       errors << res.equipment_model.name + " should be renewed instead of re-checked out" if !res.not_renewable?
       errors << "duration problem with " + res.equipment_model.name if !res.duration_allowed?
-      errors << "availablity problem with " + res.equipment_model.name if !res.available?(reservations)
-      errors << "quantity equipment model problem with " + res.equipment_model.name if !res.quantity_eq_model_allowed?(reservations)
-      errors << "quantity category problem with " + res.equipment_model.category.name if !res.quantity_cat_allowed?(reservations)
+      errors << "availablity problem with " + res.equipment_model.name if !res.available?(res_array)
+      errors << "quantity equipment model problem with " + res.equipment_model.name if !res.quantity_eq_model_allowed?(res_array)
+      errors << "quantity category problem with " + res.equipment_model.category.name if !res.quantity_cat_allowed?(res_array)
     end
     errors.uniq
   end
