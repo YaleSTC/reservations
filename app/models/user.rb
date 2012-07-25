@@ -91,7 +91,7 @@ class User < ActiveRecord::Base
      [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name, login].join(" ")
   end
 
-  def reservations
+  def reservations_array
     reservations = []
     Reservation.all.each { |res| reservations << res if res.reserver = self }
     reservations

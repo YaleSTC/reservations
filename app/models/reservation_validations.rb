@@ -60,7 +60,7 @@ module ReservationValidations
 
   # Checks that the reservation is not renewable
   def not_renewable?
-    reserver.reservations.each do |res|
+    reserver.reservations_array.each do |res|
       if res.equipment_model == self.equipment_model && res.due_date.to_date == self.start_date.to_date && res.is_eligible_for_renew?
         errors.add(:base, res.equipment_model.name + " should be renewed instead of re-checked out")
         return false
@@ -100,7 +100,7 @@ module ReservationValidations
     return true if max == "unrestricted"
     all_res = reservations.dup
     all_res << self if all_res.empty?
-    all_res.concat(reserver.reservations)
+    all_res.concat(reserver.reservations_array)
     num_reservations = count(all_res)
     if num_reservations > max
       errors.add(:base, "quantity equipment model problem with " + equipment_model.name)
@@ -117,7 +117,7 @@ module ReservationValidations
     return true if max == "unrestricted"
     all_res = reservations.dup
     all_res << self if all_res.empty?
-    all_res.concat(reserver.reservations)
+    all_res.concat(reserver.reservations_array)
     cat_count = 0
     reservations.each { |res| cat_count += 1 if res.equipment_model.category == self.equipment_model.category }
     if cat_count > max

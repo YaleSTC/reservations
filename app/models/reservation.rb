@@ -46,10 +46,9 @@ class Reservation < ActiveRecord::Base
   # the array of reservations passed in (intended for use with cart.items)
   # Returns an array of error messages or [] if reservations are all valid
   def self.validate_set(user, res_array = [])
-    all_res_array = res_array + user.reservations
+    all_res_array = res_array + user.reservations_array
     errors = []
     all_res_array.each do |res|
-      binding.pry
       errors << "User has overdue reservations that prevent new ones from being created" if !res.no_overdue_reservations?
       errors << "Reservations cannot be made in the past" if !res.not_in_past? unless res.class == Reservation
       errors << "Reservations must have start dates before due dates" if !res.start_date_before_due_date?
