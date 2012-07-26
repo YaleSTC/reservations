@@ -27,7 +27,8 @@
             <%= image_tag @reservation.equipment_model.photo.url(:large) %>
           <% end %>
           <hr>
-          <h3><%= link_to @reservation.equipment_object.nil? ? "(unassigned)" : @reservation.equipment_object.name, equipment_model_path(@reservation.equipment_model, anchor: 'items') %></h3>
+          <h3><%= link_to @reservation.equipment_object.nil? ? "(unassigned)" :
+          @reservation.equipment_object.name, equipment_model_path(@reservation.equipment_model, anchor: 'items') %></h3>
       </div>
 
       <%# shows renew button if due_date is today, tomorrow, or the day after %>
@@ -37,14 +38,20 @@
           You are currently eligible to renew the <%= @reservation.equipment_model.name.singularize %>
           reservation for <strong><%= pluralize(@reservation.max_renewal_length_available, 'day') %></strong>.
           <hr>
+          <%= manage_reservations_btn %>
           <%= link_to "Renew Now", renew_path, remote: true, class: 'btn btn-primary' %>
         </div>
       <% elsif @reservation.checked_out.nil? or !@reservation.checked_in.nil? %>
         <%# you can't renew if you haven't checked it out, or if you've already checked it in %>
+        <%= manage_reservations_btn %>
       <% else %>
         <p>
-          This item is not currently eligible for renewal. Please remember to return the <%= @reservation.equipment_model.name.singularize %> to our office on <strong><%= @reservation.due_date.to_date.to_s(:long) %></strong>.
+          This item is not currently eligible for renewal. Please remember to
+          return the <%= @reservation.equipment_model.name.singularize %> to our
+          office on <strong><%= @reservation.due_date.to_date.to_s(:long) %></strong>.
         </p>
+        <hr>
+        <%= manage_reservations_btn %>
       <% end %>
     </div>
 

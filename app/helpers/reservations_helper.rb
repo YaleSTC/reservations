@@ -28,14 +28,20 @@ module ReservationsHelper
 
   end
 
+  def manage_reservations_btn
+    if current_user.can_checkout?
+      if @reservation.status == 'reserved'
+        link_to 'Check-Out', manage_reservations_for_user_path(@reservation.reserver.id), :class => 'btn btn-inverse'
+      elsif @reservation.status == 'checked out' || @reservation.status == 'overdue'
+        link_to 'Check-In', manage_reservations_for_user_path(@reservation.reserver.id), :class => 'btn btn-inverse'
+      end
+    end
+
+  end
+
   private
 
     def define_width_res
-      # numerator = number of days passed since start date less than or equal to the due date
-
-      # denominator
-      # @reservation_length
-
       passed_length = Time.now.to_date - @reservation.start_date.to_date
       total_length = @reservation.due_date.to_date - @reservation.start_date.to_date
       total_length = total_length == 0 ? 1 : total_length # necessary to prevent division by 0
