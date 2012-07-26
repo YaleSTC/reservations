@@ -18,7 +18,6 @@ module ReservationsHelper
 
   def bar_span_positioning_fix
     style = ''
-    binding.pry
 
     if reservation_length_in_words == 'same day' || reservation_length > 31
       style << 'bottom: 0;'
