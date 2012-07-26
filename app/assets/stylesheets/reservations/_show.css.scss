@@ -1,20 +1,3 @@
-// div#right_column {
-//   position: relative;
-// }
-
-// div#people_row {
-//   position: relative;
-//   // top: 0;
-//   bottom: -100;
-// }
-// .well-inverse {
-//   background: #000;
-
-//   a {
-//     color: #fff;
-//   }
-// }
-
 #people_row {
   text-align: center;
 
@@ -59,7 +42,6 @@ ul.bar-dividers {
 }
 
 #date_range .progress {
-  // width: 100%;
   .bar {
     &:active {
       #days_left {
