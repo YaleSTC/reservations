@@ -1,6 +1,8 @@
 <% if current_user.can_checkout? || current_user == @reservation.reserver %>
   <% title "Reservation ##{@reservation.id}" %>
-  <% subtitle "#{@reservation.equipment_model.name}" %>
+  <% subtitle @reservation.reserver.first_name + " " +
+  (!@reservation.reserver.nickname.blank? ? "(#{@reservation.reserver.nickname}) " : "") +
+  @reservation.reserver.last_name + " | " + @reservation.reserver.login %>
 
   <div class="row">
     <div id="bool_labels" class="span9">
@@ -9,23 +11,23 @@
       <%= "<span class=\"user_label label-warning\">Returned Overdue</span>".html_safe if @reservation.status == 'returned overdue' %>
       <%= "<span class=\"user_label label-info\">Checked Out</span>".html_safe if @reservation.status == 'checked out' %>
       <%= "<span class=\"user_label\">Missed</span>".html_safe if @reservation.status == 'missed' %>
-      <hr>
+      <% unless @reservation.status == 'reserved' %>
+        <hr>
+      <% end %>
     </div>
   </div>
   <div class="row">
     <%# left column  %>
     <div class="span3">
       <div class="well well-inverse">
-          <%# equipment section  %>
-            <h3><%= link_to @reservation.equipment_model.name, @reservation.equipment_model %></h3>
-            <hr>
-            <%= link_to @reservation.equipment_model do %>
-              <%= image_tag @reservation.equipment_model.photo.url(:large) %>
-            <% end %>
-            <hr>
-            <h3><%= link_to @reservation.equipment_object.nil? ? "(unassigned)" : @reservation.equipment_object.name, equipment_model_path(@reservation.equipment_model, anchor: 'items') %></h3>
-
-            <%# buttons  %>
+        <%# equipment section  %>
+          <h3><%= link_to @reservation.equipment_model.name, @reservation.equipment_model %></h3>
+          <hr>
+          <%= link_to @reservation.equipment_model do %>
+            <%= image_tag @reservation.equipment_model.photo.url(:large) %>
+          <% end %>
+          <hr>
+          <h3><%= link_to @reservation.equipment_object.nil? ? "(unassigned)" : @reservation.equipment_object.name, equipment_model_path(@reservation.equipment_model, anchor: 'items') %></h3>
       </div>
 
       <%# shows renew button if due_date is today, tomorrow, or the day after %>
@@ -130,40 +132,32 @@
           </div>
         </div>
 
-        <div class="span2">
+        <div class="span4">
           <%# CHECKED OUT BY %>
           <% if @reservation.checked_out %>
             <div class="well">
               <header>
-                <h4>Checked Out</h4>
+                <h4>
+                  Checked Out by <%= link_to @reservation.checkout_handler.nil? ?
+                  "unknown" : @reservation.checkout_handler.name, @reservation.checkout_handler.nil? ?
+                  nil : @reservation.checkout_handler %>
+                </h4>
               </header>
-              <hr>
-              <div class="icon-user-box">
-                <%= link_to @reservation.checkout_handler do %>
-                  <i class="icon-user"></i>
-                <% end %>
-              </div>
-              <p><h4>by <%= link_to @reservation.checkout_handler.nil? ? "unknown" : @reservation.checkout_handler.name, @reservation.checkout_handler.nil? ? nil : @reservation.checkout_handler %></h4></p>
               <hr>
               <footer>
                 <%= @reservation.checked_out.strftime("%b %d, %Y at %I:%M%p") %>
               </footer>
             </div>
           <% end %>
-        </div>
 
-        <div class="span2">
           <%# CHECKED IN BY %>
           <% if @reservation.checked_in %>
             <div class="well">
               <header>
-                <h4>Checked In</h4>
+                <h4>Checked In by <%= link_to @reservation.checkin_handler.nil? ?
+                "unknown" : @reservation.checkin_handler.name, @reservation.checkin_handler.nil? ?
+                nil : @reservation.checkin_handler %></h4>
               </header>
-              <hr>
-              <%= link_to @reservation.checkin_handler do %>
-                <i class="icon-user"></i>
-              <% end %>
-              <p><h4>by <%= link_to @reservation.checkin_handler.nil? ? "unknown" : @reservation.checkin_handler.name, @reservation.checkin_handler.nil? ? nil : @reservation.checkin_handler %></h4></p>
               <hr>
               <footer>
                 <%= @reservation.checked_in.strftime("%b %d, %Y at %I:%M%p") %>
@@ -171,6 +165,7 @@
             </div>
           <% end %>
         </div>
+
       </div>
     </div>
   </div>
