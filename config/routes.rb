@@ -44,13 +44,12 @@ Reservations::Application.routes.draw do
 
   # reservations views
   match '/reservations/manage/:user_id' => 'reservations#manage', :as => :manage_reservations_for_user
-  match '/reservations/receipt/:user_id' => 'reservations#receipt', :as => :reservations_receipt_for_user
   match '/reservations/current/:user_id' => 'reservations#current', :as => :current_reservations_for_user
   
   
   # reservation checkout / check-in actions
-  match '/reservations/checkout/:user_id' => 'reservations#checkout', :as => :checkout
-  match '/reservations/check-in/:user_id' => 'reservations#checkin', :as => :checkin
+  match '/reservations/checkout/:user_id' => 'reservations#checkout', :via => :put, :as => :checkout
+  match '/reservations/check-in/:user_id' => 'reservations#checkin', :via => :put, :as => :checkin
   
   match '/catalog/update_view' => 'catalog#update_user_per_cat_page', :as => :update_user_per_cat_page
   match '/catalog' => 'catalog#index', :as => :catalog

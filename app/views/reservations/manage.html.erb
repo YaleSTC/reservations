@@ -24,7 +24,7 @@
     <div class="row">
       <div class="span9">
         <div class="form-actions">
-          <%= submit_tag "Check-In Equipment", :class => 'btn btn-primary', :id => 'checkin_button' %>
+          <%= submit_tag "Check-In Equipment", :class => 'btn btn-primary', :id => 'checkin_button', :method => :put %>
         </div>
       </div>
     </div>
@@ -45,8 +45,8 @@
     <div class="row">
       <div class="span9">
         <div class="well">
-          <p>This user hasn't accepted the <%= link_to("Terms of Service", tos_path, target: '_blank') %></p>
-          <%= label_tag :terms_of_service_accepted, "I certify that I haven given a copy of the terms of service, and the user has accepted." %> 
+          <p>This user hasn't accepted the <%= link_to("Terms of Service", tos_path, target: '_blank') %>.</p>
+          <%= label_tag :terms_of_service_accepted, "I certify that I have given a copy of the terms of service, and the user has accepted." %> 
           <%= check_box_tag :terms_of_service_accepted %>
         </div>
       </div>
@@ -64,7 +64,7 @@
 
     <div class="row">
         <div class="span9">
-          <div class="form-actions"><%= submit_tag "Check-Out Equipment", :class => 'btn btn-primary', :id => 'checkout_button' %></div>
+          <div class="form-actions"><%= submit_tag "Check-Out Equipment", :class => 'btn btn-primary', :id => 'checkout_button', :method => :put %></div>
         </div>
     </div>
 

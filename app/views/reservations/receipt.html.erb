@@ -7,34 +7,34 @@
     <%= link_to 'Manage', manage_reservations_for_user_path(@user), :class => 'btn btn-inverse' %>
   <% end %>
   <%= link_to 'Current Activity', current_reservations_for_user_path(@user), :class => 'btn btn-inverse' %>
-</div></p>
+</p></div>
 
 <% if !@check_in_set.empty? %>
   <% title "Check in receipt for #{@user.name}" %>
   <h3>The following equipment has been checked in on <%= Date.today.to_s(:long) %> by <%= current_user.name %>:</h3>
-  <div>
-	<div class = "receipt_box">
+	<div id = "receipt_box">
     <% @check_in_set.each do |reservation| %>
       <% @reservation = reservation %>
-      <div id="well span4">
+      <div class="span4"><div class="well">
         <h3><%= link_to "Reservation ##{@reservation.id}", @reservation %></h3>
         <%= render :partial => 'reservation_details', :locals => { :reservation => @reservation } %>
-      </div>
+      </div></div>
     <% end %>
-  </div></div>
+  </div>
+  
 <% elsif !@check_out_set.empty? %>
   <% title "Check out receipt for #{@user.name}" %>
   <h3>The following equipment has been checked out on <%= Date.today.to_s(:long) %> by <%= current_user.name %>:</h3>
-  <div>
 		<div id = "receipt_box">
     <% @check_out_set.each do |reservation| %>
       <% @reservation = reservation %>
-      <div class="well span4">
+      <div class="span4"><div class="well">
         <h3><%= link_to "Reservation ##{@reservation.id}", @reservation %></h3>
         <%= render :partial => 'reservation_details', :locals => { :reservation => @reservation } %>
-      </div>
+      </div></div>
     <% end %>
-  </div></div>
+  </div>
+  
 <% else %>
   <% title "No equipment has been checked in or out just now" %>
   <h3>Please see the user's <%= link_to "current reservations", current_reservations_for_user_path(@user) %> page for more information.</h3>

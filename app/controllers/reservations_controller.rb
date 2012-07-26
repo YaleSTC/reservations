@@ -200,16 +200,14 @@ class ReservationsController < ApplicationController
         reservation.save # save!
       end
 
-      # save array to session
-      session[:manage_reservation] = {}
-      session[:manage_reservation][:check_out_set] = reservations_to_be_checked_out
-
-      # now exit
-      redirect_to reservations_receipt_for_user_path and return
+      # prep for receipt page and exit
+      @user = reserver
+      @check_in_set = []
+      @check_out_set = reservations_to_be_checked_out
+      render 'receipt' and return
   end
   
   def checkin
-
     reservations_to_be_checked_in = []
     
     params[:reservations].each do |reservation_id, reservation_hash|
@@ -254,12 +252,11 @@ class ReservationsController < ApplicationController
       reservation.save
     end
     
-    # save array to session
-    session[:manage_reservation] = {}
-    session[:manage_reservation][:check_in_set] = reservations_to_be_checked_in
-
-    # now exit
-    redirect_to reservations_receipt_for_user_path and return
+    # prep for receipt page and exit
+    @user = reservations_to_be_checked_in.first.reserver
+    @check_in_set = reservations_to_be_checked_in
+    @check_out_set = []
+    render 'receipt' and return
   end
 
   def destroy
@@ -278,33 +275,6 @@ class ReservationsController < ApplicationController
     @user = User.include_deleted.find(params[:user_id])
     @check_out_set = Reservation.due_for_checkout(@user)
     @check_in_set = Reservation.due_for_checkin(@user)
-  end
-  
-  def receipt
-    @user = User.include_deleted.find(params[:user_id])
-    
-    if !session[:manage_reservation].nil? # if we've checked something in or out
-      # set check-in set from session
-      if session[:manage_reservation][:check_in_set] != NIL
-        @check_in_set = session[:manage_reservation][:check_in_set]
-      else
-        @check_in_set = []
-      end
-      
-      # set check-out set from session
-      if session[:manage_reservation][:check_out_set] != NIL
-        @check_out_set = session[:manage_reservation][:check_out_set]
-      else
-        @check_out_set = []
-      end
-    else # if we have NOT checked anything in or out
-      @check_in_set = []
-      @check_out_set = []
-    end
-
-    # clear session variable so that checkout person doesn't have to clear cookies between reservations
-    session[:manage_reservation] = NIL
-    
   end
   
   def current
