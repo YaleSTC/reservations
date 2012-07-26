@@ -143,9 +143,9 @@ class User < ActiveRecord::Base
     users_hash
   end
 
-  def self.csv_data_formatting(user,data,user_type)
+  def self.csv_data_formatting(login,data,user_type)
     hash = {}
-    hash[:login] = user
+    hash[:login] = login
     hash[:first_name] = data[0]
     hash[:last_name] = data[1]
     hash[:nickname] = data[2]
@@ -172,8 +172,8 @@ class User < ActiveRecord::Base
     csv_import
   end
 
-  def self.import_ldap_fix(ldap_hash,user,data,user_type)
-    ldap_hash[:login] = user
+  def self.import_ldap_fix(ldap_hash,login,data,user_type)
+    ldap_hash[:login] = login
     ldap_hash[:first_name] = data[0] unless data[0].blank?
     ldap_hash[:last_name] = data[1] unless data[1].blank?
     if ldap_hash[:nickname].nil? or !data[2].blank?
