@@ -90,9 +90,9 @@ div.form-actions .view_all {
 }
 
 // Make links in table cells expand to fill cell
-td {
 
-  a {
+td > a, td > div.dropdown {
+  > a {
   // to make table cells with links clickable throughout
   // only works when ALL the text in the cell is ONE link
   // as in no other links or text may be present
@@ -101,7 +101,12 @@ td {
     padding: 0 0 30px;
     margin: 0 0 -30px;
   }
+
+  .dropdown-menu {
+    top: 50%; // needed to account for the huge padding of table cell links
+  }
 }
+
 
 // Partial Imports
 // ============================
