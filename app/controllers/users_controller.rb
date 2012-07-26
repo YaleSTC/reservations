@@ -107,8 +107,8 @@ class UsersController < ApplicationController
     file = params[:csv_upload]
     @users_added_set = []
     @users_updated_set = []
-    @users_not_updated_set = {}
     @users_not_added_set = {}
+    @users_not_updated_set = {}
     @users_conflict_set = {}
     flash[:errors] = ''
     
@@ -147,15 +147,15 @@ class UsersController < ApplicationController
           next
         else
           # attempt LDAP rescue
-          @user_temp = User.search_ldap(user)
-          if @user_temp.nil?
+          ldap_hash = User.search_ldap(user)
+          if ldap_hash.nil?
             data << 'Incomplete user information. Unable to find user in online directory (LDAP).'
             @users_not_updated_set[user] = data
             next
           end
           
           # redeclare what LDAP overwrote
-          @user_formatted = User.import_ldap_fix(@user_temp,user,data,@user_type)
+          @user_formatted = User.import_ldap_fix(ldap_hash,user,data,@user_type)
           @user.csv_import = true
           
           # re-attempt save
@@ -177,10 +177,10 @@ class UsersController < ApplicationController
           @users_added_set << @user
           next
         else # if validations fail
-          # check LDAP
+          # attempt LDAP rescue
           ldap_hash = User.search_ldap(user)
           if ldap_hash.nil?
-            data << 'Missing data. Unable to find user in online directory (LDAP).'
+            data << 'Incomplete user information. Unable to find user in online directory (LDAP).'
             @users_not_added_set[user] = data
             next
           end
@@ -198,6 +198,7 @@ class UsersController < ApplicationController
           else
             error_temp = process_all_error_messages_to_string(@user)
             if error_temp == 'Login has already been taken. '
+              data << 'User already exists.'
               @users_conflict_set[user] = data
             else
               data << error_temp

@@ -152,7 +152,8 @@ class User < ActiveRecord::Base
     hash[:phone] = data[3]
     hash[:email] = data[4]
     hash[:affiliation] = data[5]
-    hash[:csv_import] = true # attr_accessor defined above
+#    hash[:csv_import] = true # attr_accessor defined above
+    
     if user_type == 'admin'
       hash[:is_admin] = 1
     elsif user_type == 'checkout'
@@ -181,7 +182,7 @@ class User < ActiveRecord::Base
     ldap_hash[:phone] = data[3] # LDAP doesn't fetch phone number
     ldap_hash[:email] = data[4] unless data[4].blank?
     ldap_hash[:affiliation] = data[5] unless data[5].blank?
-    ldap_hash[:csv_import] = true # attr_accessor defined above
+#    ldap_hash[:csv_import] = true # attr_accessor defined above
     
     if user_type == 'admin'
       ldap_hash[:is_admin] = 1

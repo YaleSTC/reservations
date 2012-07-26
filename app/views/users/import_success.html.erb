@@ -11,7 +11,7 @@
 <% unless @users_conflict_set.empty? %>
   <h2>Users not successfully imported (already in database)</h2>
   <p>
-    <%= link_to 'Update!', {:action => 'import', :users_hash => @users_conflict_set, :overwrite => '1', :user_type => @user_type }, :method => :post, :class => 'btn btn-primary' %> Clicking this button will attempt to update these existing users with the data provided in your CSV file.
+    <%= link_to 'Update!', {:action => 'import', :users_hash => @users_conflict_set, :overwrite => '1', :user_type => @user_type }, :method => :post, :class => 'btn btn-primary' %> Clicking this button will update these existing users with the data provided in your CSV file.
   </p>
   <%= render :partial => 'table_of_errors', :locals => {:users => @users_conflict_set} %>
   <% unless @users_not_added_set.empty? and @users_added_set.empty? and @users_updated_set.empty? %>
