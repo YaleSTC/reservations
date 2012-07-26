@@ -2,11 +2,10 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
-  helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
   before_filter RubyCAS::Filter
-  before_filter :app_setup, :if => lambda {|u| User.all.count == 0 }  
+  before_filter :app_setup, :if => lambda {|u| User.all.count == 0 }
   before_filter :current_user
   before_filter :load_configs
   before_filter :first_time_user
@@ -16,13 +15,13 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_user
   helper_method :cart
-  
+
   #-------- before_filter methods --------
 
   def app_setup
       redirect_to new_admin_user_path
   end
-  
+
   def load_configs
     @app_configs = AppConfig.first
   end
@@ -81,7 +80,7 @@ class ApplicationController < ActionController::Base
   def current_user
     @current_user ||= User.include_deleted.find_by_login(session[:cas_user]) if session[:cas_user]
   end
-  
+
 
   def bind_pry_before_everything
     binding.pry

@@ -1,6 +1,6 @@
 class EquipmentModelsController < ApplicationController
-  layout 'application_with_sidebar', only: :show 
-  
+  layout 'application_with_sidebar', only: :show
+
   before_filter :require_admin
   skip_before_filter :require_admin, :only => [:index, :show]
 
@@ -17,17 +17,17 @@ class EquipmentModelsController < ApplicationController
       @equipment_models = EquipmentModel.find(:all, :include => :category, :order => 'categories.name ASC, equipment_models.name ASC')
     end
   end
-  
+
   def show
     @equipment_model = EquipmentModel.include_deleted.find(params[:id])
     @associated_equipment_models = @equipment_model.associated_equipment_models.sample(6)
   end
-  
+
   def new
     @category = Category.include_deleted.find(params[:category_id]) if params[:category_id]
     @equipment_model = EquipmentModel.new(:category => @category)
   end
-  
+
   def create
     @equipment_model = EquipmentModel.new(params[:equipment_model])
     if @equipment_model.save
@@ -38,11 +38,11 @@ class EquipmentModelsController < ApplicationController
       render :action => 'new'
     end
   end
-  
+
   def edit
     @equipment_model = EquipmentModel.include_deleted.find(params[:id])
   end
-  
+
   def update
     @equipment_model = EquipmentModel.include_deleted.find(params[:id])
 

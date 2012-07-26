@@ -3,8 +3,8 @@ module ReservationsHelper
    @reservation_length = (@reservation.due_date.to_date - @reservation.start_date.to_date).to_i
   end
 
-  def bar_progress
-    define_width
+  def bar_progress_res
+    define_width_res
     number_to_percentage(@width * 100 || 0, :precision => 0)
   end
 
@@ -18,14 +18,20 @@ module ReservationsHelper
 
   def bar_span_positioning_fix
     style = ''
-    style << 'bottom: 0;' if reservation_length_in_words == 'same day'
+    binding.pry
+
+    if reservation_length_in_words == 'same day' || reservation_length > 31
+      style << 'bottom: 0;'
+    end
+
     style << 'display: none;' if @width == 0
+    style
 
   end
 
   private
 
-    def define_width
+    def define_width_res
       # numerator = number of days passed since start date less than or equal to the due date
 
       # denominator
