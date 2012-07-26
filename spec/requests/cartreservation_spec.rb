@@ -22,12 +22,12 @@ describe 'cart and cart reservations' do
     cart.add_item(eq)
     cart.items.size.should == 1
     CartReservation.all.size.should == 1
-    CartReservation.find(cart.items.first).equipment_model.should == eq
+    cart.cart_reservations.first.equipment_model.should == eq
     cart.add_item(eq)
     cart.items.size.should == 2
     CartReservation.all.size.should == 2
     cart.items.first.should_not == cart.items.last
-    CartReservation.find(cart.items.last).equipment_model.should == eq
+    cart.cart_reservations.last.equipment_model.should == eq
   end
 
   it 'remove_item works' do
@@ -45,17 +45,17 @@ describe 'cart and cart reservations' do
     cart.items.clear
     cart.add_item(eq)
     cartreses = []
-    cartreses << CartReservation.find(cart.items.first)
+    cartreses << cart.cart_reservations.first
     cart.cart_reservations.should == cartreses
     cart.add_item(eq)
-    cartreses << CartReservation.find(cart.items.last)
+    cartreses << cart.cart_reservations.last
     cart.cart_reservations.should == cartreses
   end
 
   it 'not_empty? keeps cartres from saving without equipment model' do
     cart.items.clear
     cart.add_item(eq)
-    cartres = CartReservation.find(cart.items.first)
+    cartres = cart.cart_reservations.first
     cartres.equipment_model = nil
     cartres.not_empty?.should == false
     cartres.save.should == false
@@ -67,7 +67,7 @@ describe 'cart and cart reservations' do
   it 'not_in_past? works when called on reservations in @items' do
     cart.items.clear
     cart.add_item(eq)
-    cartres = CartReservation.find(cart.items.first)
+    cartres = cart.cart_reservations.first
     cartres.due_date = Date.yesterday
     cartres.not_in_past?.should == false
     cartres.save.should == false
@@ -85,7 +85,7 @@ describe 'cart and cart reservations' do
   it 'start_date_before_due_date? works when called on reservations in @items' do
     cart.items.clear
     cart.add_item(eq)
-    cartres = CartReservation.find(cart.items.first)
+    cartres = cart.cart_reservations.first
     cartres.due_date = Date.yesterday
     cartres.start_date_before_due_date?.should == false
     cartres.due_date = Date.today
@@ -101,7 +101,7 @@ describe 'cart and cart reservations' do
     eqres = res.equipment_model
     cart.set_reserver_id(u.id)
     cart.add_item(eqres)
-    cartres = CartReservation.find(cart.items.first)
+    cartres = cart.cart_reservations.first
     cartres.not_renewable?.should == true
     cart.set_start_date(Date.tomorrow)
     cart.cart_reservations.first.not_renewable?.should == false
@@ -112,7 +112,7 @@ describe 'cart and cart reservations' do
     cart.set_reserver_id(admin.id)
     cart.items.clear
     cart.add_item(eq)
-    cartres = CartReservation.find(cart.items.first)
+    cartres = cart.cart_reservations.first
     cartres.no_overdue_reservations?.should == true
     overdue = FactoryGirl.build(:overdue_reservation, reserver: admin)
     overdue.save(:validate => false)
@@ -122,12 +122,12 @@ describe 'cart and cart reservations' do
   it 'duration_allowed? works when called on reservations in @items' do
     cart.items.clear
     cart.add_item(eq)
-    cartres = CartReservation.find(cart.items.first)
+    cartres = cart.cart_reservations.first
     cartres.duration_allowed?.should == true
     allowed_duration = eq.category.max_checkout_length
     cart.set_due_date(Date.tomorrow + allowed_duration)
     cart.add_item(eq)
-    bad_cartres = CartReservation.find(cart.items.last)
+    bad_cartres = cart.cart_reservations.last
     bad_cartres.duration_allowed?.should == false
   end
 
@@ -135,23 +135,23 @@ describe 'cart and cart reservations' do
     cart.items.clear
     cart.add_item(eq)
     cart.add_item(eq)
-    cartres = CartReservation.find(cart.items.first)
+    cartres = cart.cart_reservations.first
     cartres.count(cart.cart_reservations).should == 2
     eq2 = FactoryGirl.create(:equipment_model)
     cart.add_item(eq2)
-    cartres2 = CartReservation.find(cart.items.last)
+    cartres2 = cart.cart_reservations.last
     cartres2.count(cart.cart_reservations).should == 1
   end
 
   it 'available? works when called on reservations in @items' do
     cart.items.clear
     cart.add_item(eq)
-    cartres = CartReservation.find(cart.items.first)
+    cartres = cart.cart_reservations.first
     cartres.available?.should == false
     obj = FactoryGirl.create(:equipment_object)
     mod_obj = obj.equipment_model
     cart.add_item(mod_obj)
-    avail_cartres = CartReservation.find(cart.items.last)
+    avail_cartres = cart.cart_reservations.last
     avail_cartres.available?.should == true
     cart.add_item(mod_obj)
     avail_cartres.available?.should == true #can only see 1 without cart.items

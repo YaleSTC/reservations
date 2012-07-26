@@ -53,7 +53,7 @@ module ReservationValidations
 
   # Checks that the equipment_object is of type equipment_model
   def matched_object_and_model?
-    unless equipment_model.nil? || equipment_object.nil?
+    unless self.class != Reservation || equipment_model.nil? || equipment_object.nil?
       if equipment_object.equipment_model != equipment_model
         errors.add(:base, equipment_object.name + " is not of type " + equipment_model.name)
         return false
@@ -63,6 +63,7 @@ module ReservationValidations
   end
 
   # Checks that the reservation is not renewable
+  #TODO: should it be res.due_date.to_date >= self.start_date.to_date?
   def not_renewable?
     reserver.reservations_array.each do |res|
       if res.equipment_model == self.equipment_model && res.due_date.to_date == self.start_date.to_date && res.is_eligible_for_renew?

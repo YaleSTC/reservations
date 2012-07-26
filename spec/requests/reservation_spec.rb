@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'reservations' do
+describe 'reservation' do
   CartReservation.delete_all
   User.delete_all
   EquipmentObject.delete_all
@@ -18,7 +18,7 @@ describe 'reservations' do
     res.save.should == true
   end
 
-  it 'pass/fail no_overdue_reservations? correctly' do
+  it 'passes/fails no_overdue_reservations? correctly' do
     res.no_overdue_reservations?.should == true
     overdue_res = FactoryGirl.build(:overdue_reservation, reserver: admin)
     overdue_res.save(:validate => false)
@@ -26,7 +26,7 @@ describe 'reservations' do
     #res.save.should == false
   end
 
-  it 'pass/fail start_date_before_due_date? correctly' do
+  it 'passes/fails start_date_before_due_date? correctly' do
     res.start_date_before_due_date?.should == true
     res.due_date = Date.yesterday
     res.start_date_before_due_date?.should == false
@@ -34,10 +34,9 @@ describe 'reservations' do
     #res.save.should == false
   end
 
-  it 'pass/fail not_in_past? correctly'do
+  it 'passes/fails not_in_past? correctly'do
     res.not_in_past?.should == true
     res.start_date = Date.yesterday
-    binding.pry
     res.not_in_past?.should == false
     overdue_res = FactoryGirl.build(:overdue_reservation)
     overdue_res.save(:validate => false)
@@ -46,4 +45,41 @@ describe 'reservations' do
     checked_out_res.not_in_past?.should == true #not_in_past ignores checked in/checked out reservations
     #res.save.should == false
   end
+
+  it 'passes/fails not_empty? correctly' do
+    res.not_empty?.should == true
+    res.equipment_model = nil
+    res.not_empty?.should == false
+    #res.save.should == false
+  end
+
+  it 'passes/fails matched_object_and_model? correctly' do
+    res.matched_object_and_model?.should == true #no assigned object
+    res.equipment_object = obj
+    res.matched_object_and_model?.should == true
+    res.equipment_model = FactoryGirl.create(:equipment_model)
+    res.matched_object_and_model?.should == false
+    #res.save.should == false
+  end
+
+  it 'passes/fails not_renewable? correctly' do
+    res.not_renewable?.should == true
+    renew = FactoryGirl.build(:checked_out_reservation)
+    renew.save
+    renew_user = User.find(renew.reserver_id)
+    renew_mod = renew.equipment_model
+    res2 = Reservation.new(reserver: renew_user, start_date: renew.due_date, due_date: renew.due_date.tomorrow)
+    res2.equipment_model = renew_mod
+    res2.not_renewable?.should == false
+#    res2.save.should? == false
+  end
+
+  it 'passes/fails duration_allowed? correctly' do
+    res.duration_allowed?.should == true
+    allowed_duration = eq.category.max_checkout_length
+    res.due_date = Date.tomorrow + allowed_duration
+    res.duration_allowed?.should == false
+#    res.save.should? == false
+  end
+
 end
