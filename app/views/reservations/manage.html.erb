@@ -8,8 +8,8 @@
 <hr>
 <% unless @check_in_set.empty? %>
   <%= form_tag( checkin_path, :method => "put" ) do %>
-  
-    <div class="row">
+
+    <div id="check_in_row" class="row">
       <div class="span9">
         <p><h2>Check-In</h2></p>
       </div>
@@ -34,7 +34,7 @@
 
 <% unless @check_out_set.empty? %>
 <hr>
-  <div class="row">
+  <div id="check_out_row" class="row">
     <div class="span9">
       <p><h2>Check-Out</h2></p>
     </div>
@@ -46,7 +46,7 @@
       <div class="span9">
         <div class="well">
           <p>This user hasn't accepted the <%= link_to("Terms of Service", tos_path, target: '_blank') %></p>
-          <%= label_tag :terms_of_service_accepted, "I certify that I haven given a copy of the terms of service, and the user has accepted." %> 
+          <%= label_tag :terms_of_service_accepted, "I certify that I haven given a copy of the terms of service, and the user has accepted." %>
           <%= check_box_tag :terms_of_service_accepted %>
         </div>
       </div>
