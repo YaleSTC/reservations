@@ -111,17 +111,6 @@ class User < ActiveRecord::Base
      [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name, login].join(" ")
   end
   
-  def assign_user_type(user_type)
-    if user_type == 'admin'
-      self.is_admin = 1
-    elsif user_type == 'checkout'
-      self.is_checkout_person = 1
-    elsif user_type == 'normal'
-      # add something if we change how type is stored in the database
-    elsif user_type == 'banned'
-      self.is_banned = 1
-    end
-  end
   
   def self.csv_import(location)
     # initialize
@@ -154,18 +143,58 @@ class User < ActiveRecord::Base
     users_hash
   end
 
-  def self.csv_data_formatting(user,data)
-    return { :login       => user,
-             :first_name  => data[0],
-             :last_name   => data[1],
-             :nickname    => data[2],
-             :phone       => data[3],
-             :email       => data[4],
-             :affiliation => data[5] }
+  def self.csv_data_formatting(user,data,user_type)
+    hash = {}
+    hash[:login] = user
+    hash[:first_name] = data[0]
+    hash[:last_name] = data[1]
+    hash[:nickname] = data[2]
+    hash[:phone] = data[3]
+    hash[:email] = data[4]
+    hash[:affiliation] = data[5]
+    hash[:csv_import] = true # attr_accessor defined above
+    if user_type == 'admin'
+      hash[:is_admin] = 1
+    elsif user_type == 'checkout'
+      hash[:is_checkout_person] = 1
+    #elsif user_type == 'normal'
+      # add something if we change how type is stored in the database
+    elsif user_type == 'banned'
+      hash[:is_banned] = 1
+    end
+
+    # return
+    hash
   end
 
   def skip_phone_validation?
     csv_import
   end
 
+  def self.import_ldap_fix(ldap_hash,user,data,user_type)
+    ldap_hash[:login] = user
+    ldap_hash[:first_name] = data[0] unless data[0].blank?
+    ldap_hash[:last_name] = data[1] unless data[1].blank?
+    if ldap_hash[:nickname].nil? or !data[2].blank?
+      ldap_hash[:nickname] = data[2] # never want NIL nickname -- better to have blank
+    end
+    ldap_hash[:phone] = data[3] # LDAP doesn't fetch phone number
+    ldap_hash[:email] = data[4] unless data[4].blank?
+    ldap_hash[:affiliation] = data[5] unless data[5].blank?
+    ldap_hash[:csv_import] = true # attr_accessor defined above
+    
+    if user_type == 'admin'
+      ldap_hash[:is_admin] = 1
+    elsif user_type == 'checkout'
+      ldap_hash[:is_checkout_person] = 1
+    #elsif user_type == 'normal'
+      # add something if we change how type is stored in the database
+    elsif user_type == 'banned'
+      ldap_hash[:is_banned] = 1
+    end
+
+    # return
+    ldap_hash
+  end
+  
 end

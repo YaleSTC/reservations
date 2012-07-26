@@ -1,37 +1,42 @@
 <% title "Import Summary" %>
 
-<% unless @users_added_set.empty? %>
-  <%# render table of users added to the database %>
-  <h2>Users successfully imported</h2>
-  <%= render :partial => 'table', :locals => {:users => @users_added_set} %>
-  <% unless @users_not_added_set.empty? %>
+<% unless @users_not_updated_set.empty? %>
+  <h2>Users not successfully updated</h2>
+  <%= render :partial => 'table_of_errors', :locals => {:users => @users_not_updated_set} %>
+  <% unless @users_not_added_set.empty? and @users_added_set.empty? and @users_updated_set.empty? %>
+    <hr />
+  <% end %>
+<% end %>
+
+<% unless @users_conflict_set.empty? %>
+  <h2>Users not successfully imported (already in database)</h2>
+  <p>
+    <%= link_to 'Update!', {:action => 'import', :users_hash => @users_conflict_set, :overwrite => '1', :user_type => @user_type }, :method => :post, :class => 'btn btn-primary' %> Clicking this button will attempt to update these existing users with the data provided in your CSV file.
+  </p>
+  <%= render :partial => 'table_of_errors', :locals => {:users => @users_conflict_set} %>
+  <% unless @users_not_added_set.empty? and @users_added_set.empty? and @users_updated_set.empty? %>
     <hr />
   <% end %>
 <% end %>
 
 <% unless @users_not_added_set.empty? %>
-  <h2>Users not successfully imported</h2>
+  <h2>Users not successfully added</h2>
+  <%= render :partial => 'table_of_errors', :locals => {:users => @users_not_added_set} %>
+  <% unless @users_added_set.empty? and @users_updated_set.empty? %>
+    <hr />
+  <% end %>
+<% end %>
 
-  <table id="user_import_errors_table" class="datatable-wide table table-striped table-bordered">
-    <thead>
-    <tr>
-      <th>Login</th>
-      <th>Name</th>
-      <th>Phone</th>
-      <th>Email</th>
-      <th>Reason</th>
-    </tr>
-    </thead>
-    <tbody>
-      <% @users_not_added_set.each do |user,data| %>
-        <tr>
-          <td><%= user %></td>
-          <td><%= data[0] + ' ' + data[1] %></td>
-          <td><%= data[3] %></td>
-          <td><%= data[4] %></td>
-          <td><%= data[6] %></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+<% unless @users_added_set.empty? %>
+  <%# render table of users added to the database %>
+  <h2>Users successfully added</h2>
+  <%= render :partial => 'table', :locals => {:users => @users_added_set} %>
+  <% unless @users_updated_set %>
+    <hr />
+  <% end %>
+<% end %>
+
+<% unless @users_updated_set.empty? %>
+  <h2>Users successfully updated</h2>
+  <%= render :partial => 'table', :locals => {:users => @users_updated_set} %>
 <% end %>

@@ -106,67 +106,104 @@ class UsersController < ApplicationController
     @user_type = params[:user_type]
     file = params[:csv_upload]
     @users_added_set = []
+    @users_updated_set = []
+    @users_not_updated_set = {}
     @users_not_added_set = {}
+    @users_conflict_set = {}
     flash[:errors] = ''
     
+    # update existing users?
+    if params[:overwrite] == '1'
+      @overwrite = true
+    else
+      @overwrite = false
+    end
+    
     # the rails CSV class only handles filepaths and not file objects
-    location = file.tempfile.path
-    users_hash = User.csv_import(location)
+    unless file.nil? # if the file has been uploaded
+      location = file.tempfile.path
+      users_hash = User.csv_import(location)
+    else # if we're updating conflict users from the import_success page
+      users_hash = params[:users_hash]
+    end
     
     # make sure import didn't totally fail
     if users_hash.nil?
-      flash[:error] = 'Unable to import CSV file. Please ensure it matches the import format below.'
+      flash[:error] = 'Unable to import CSV file. Please ensure it matches the import format, and try again.'
       redirect_to :back and return
     end
     
     users_hash.each do |user,data|      
-      @user_temp = User.csv_data_formatting(user,data)
-      @user = User.new(@user_temp)
+      @user_formatted = User.csv_data_formatting(user,data,@user_type)
       
-      # assign user type
-      @user.assign_user_type(@user_type)
-      @user.csv_import = true
-      
-      # check validations
-      if @user.valid?
-        # save
-        @user.save
-        @users_added_set << @user
-        next
-      else # if validations fail
-        # check LDAP
-        @user_temp = User.search_ldap(user)
-        if @user_temp.nil?
-          data << 'Missing data. Unable to find user in online directory (LDAP).'
-          @users_not_added_set[user] = data
-          next
-        end
-        
-        @user = User.new(@user_temp)
-        
-        # redeclare all the things that were overwritten by LDAP
-        @user.first_name = data[0] unless data[0].blank?
-        @user.last_name = data[1] unless data[1].blank?
-        if @user.nickname.nil? or !data[2].blank?
-          # preserve nicknames if defined; and ensure not NIL
-          @user.nickname = data[2]
-        end
-        @user.phone = data[3] # LDAP doesn't fetch phone numbers
-        @user.email = data[4] unless data[4].blank?
-        @user.affiliation = data[5] unless data[5].blank?
-
-        # assign user type
-        @user.assign_user_type(@user_type)
+      # check validations and save
+      # test size == 1 in case the admin tries any funny business (non-uniqueness) in the database
+      if @overwrite and (User.where("login = ?", user).size == 1)
+        @user = User.where("login = ?", user).first
         @user.csv_import = true
 
+        if @user.update_attributes(@user_formatted)
+          @users_updated_set << @user
+          next
+        else
+          # attempt LDAP rescue
+          @user_temp = User.search_ldap(user)
+          if @user_temp.nil?
+            data << 'Incomplete user information. Unable to find user in online directory (LDAP).'
+            @users_not_updated_set[user] = data
+            next
+          end
+          
+          # redeclare what LDAP overwrote
+          @user_formatted = User.import_ldap_fix(@user_temp,user,data,@user_type)
+          @user.csv_import = true
+          
+          # re-attempt save
+          if @user.update_attributes(@user_formatted)
+            @users_updated_set << @user
+            next
+          else
+            data << process_all_error_messages_to_string(@user)
+            @users_not_updated_set[user] = data
+            next
+          end
+        end
+      else
+        @user = User.new(@user_formatted)
+        @user.csv_import = true
+        
         if @user.valid?
           @user.save
           @users_added_set << @user
           next
-        else
-          # process errors!
-          data << process_all_error_messages_to_string(@user)
-          @users_not_added_set[user] = data
+        else # if validations fail
+          # check LDAP
+          ldap_hash = User.search_ldap(user)
+          if ldap_hash.nil?
+            data << 'Missing data. Unable to find user in online directory (LDAP).'
+            @users_not_added_set[user] = data
+            next
+          end
+          
+          # redeclare what LDAP overwrote
+          @user_formatted = User.import_ldap_fix(ldap_hash,user,data,@user_type)
+          
+          @user = User.new(@user_formatted)
+          @user.csv_import = true
+          
+          if @user.valid?
+            @user.save
+            @users_added_set << @user
+            next
+          else
+            error_temp = process_all_error_messages_to_string(@user)
+            if error_temp == 'Login has already been taken. '
+              @users_conflict_set[user] = data
+            else
+              data << error_temp
+              @users_not_added_set[user] = data
+            end
+          end
         end
       end
     end

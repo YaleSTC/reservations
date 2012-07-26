@@ -1,0 +1,22 @@
+<table class="datatable-wide table table-striped table-bordered user_import_errors_table">
+  <thead>
+  <tr>
+    <th>Login</th>
+    <th>Name</th>
+    <th>Phone</th>
+    <th>Email</th>
+    <th>Reason</th>
+  </tr>
+  </thead>
+  <tbody>
+    <% users.each do |user,data| %>
+      <tr>
+        <td><%= user %></td>
+        <td><%= data[0] + ' ' + data[1] %></td>
+        <td><%= data[3] %></td>
+        <td><%= data[4] %></td>
+        <td><%= data[6] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

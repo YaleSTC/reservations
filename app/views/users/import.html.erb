@@ -20,5 +20,9 @@
     <label>CSV file with users to import:</label>
     <%= file_field_tag 'csv_upload' %>
   </p>
+  <p>
+    <label>Overwrite existing users?</label>
+    <%= check_box_tag 'overwrite' %>
+  </p>
   <%= submit_tag 'Import Users!', :class => 'btn' %>
 <% end %>
