@@ -10,9 +10,9 @@ class Reservation < ActiveRecord::Base
             :due_date,
             :presence => true
 
-  validate :no_overdue_reservations?, :start_date_before_due_date?, :not_empty?,
-           :matched_object_and_model?, :duration_allowed?, :available?,
-           :quantity_eq_model_allowed?, :quantity_cat_allowed?
+#  validate :no_overdue_reservations?, :start_date_before_due_date?, :not_empty?,
+#           :matched_object_and_model?, :duration_allowed?, :available?,
+#           :quantity_eq_model_allowed?, :quantity_cat_allowed?
 
   scope :recent, order('start_date, due_date, reserver_id')
   scope :reserved, lambda { where("checked_out IS NULL and checked_in IS NULL and due_date >= ?", Time.now.midnight.utc).recent}
@@ -50,7 +50,7 @@ class Reservation < ActiveRecord::Base
     errors = []
     all_res_array.each do |res|
       errors << "User has overdue reservations that prevent new ones from being created" if !res.no_overdue_reservations?
-      errors << "Reservations cannot be made in the past" if !res.not_in_past? unless res.class == Reservation
+      errors << "Reservations cannot be made in the past" if !res.not_in_past?
       errors << "Reservations must have start dates before due dates" if !res.start_date_before_due_date?
       errors << "Reservations must have an associated equipment model" if !res.not_empty?
       errors << res.equipment_object.name + " should be of type " + res.equipment_model.name if !res.matched_object_and_model? if res.class == Reservation

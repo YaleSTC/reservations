@@ -11,6 +11,7 @@ module ReservationValidations
 
   ## For individual reservations only
   # Checks if the user has any overdue reservations
+  # Same for CartReservations and Reservations
   def no_overdue_reservations?
     if Reservation.overdue_reservations?(reserver)
       errors.add(:base, "User has overdue reservations")
@@ -20,6 +21,7 @@ module ReservationValidations
   end
 
   # Checks that reservation start date is before end dates
+  # Same for CartReservations and Reservations
   def start_date_before_due_date?
     if due_date < start_date
       errors.add(:base, "Reservation start date must be before due date")
@@ -29,10 +31,11 @@ module ReservationValidations
   end
 
   # Checks that reservation is not in the past
-  #TODO: this prevents working with non-new reservations -- fix pls
-  #(currently the validates_set method just only calls this on CartReservations)
+  # Does not run on checked out, checked in, overdue, or missed Reservations
   def not_in_past?
-    if (start_date < Date.today) || (due_date < Date.today)
+    if (self.class == CartReservation || (self.class == Reservation &&
+      self.status == 'reserved')) && ((start_date < Date.today) ||
+      (due_date < Date.today))
       errors.add(:base, "Reservation can't be in past")
       return false
     end
