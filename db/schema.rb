@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120718004311) do
+ActiveRecord::Schema.define(:version => 20120724184424) do
 
   create_table "app_configs", :force => true do |t|
     t.boolean  "upcoming_checkin_email_active",         :default => true
@@ -103,6 +103,11 @@ ActiveRecord::Schema.define(:version => 20120718004311) do
     t.integer "associated_equipment_model_id"
   end
 
+  create_table "equipment_models_requirements", :id => false, :force => true do |t|
+    t.integer "requirement_id",     :null => false
+    t.integer "equipment_model_id", :null => false
+  end
+
   create_table "equipment_models_reservations", :force => true do |t|
     t.integer  "equipment_model_id"
     t.integer  "reservation_id"
@@ -136,6 +141,7 @@ ActiveRecord::Schema.define(:version => 20120718004311) do
     t.text     "notes"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
+    t.string   "description"
   end
 
   create_table "reservations", :force => true do |t|

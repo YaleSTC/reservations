@@ -1,12 +1,12 @@
-<%= simple_form_for(@requirement) do |f| %>
+<%= simple_form_for(@requirement, html: {class: "form-horizontal"}) do |f| %>
   <%= f.error_notification %>
 
-   <%= f.input :equipment_model_id, :as => :select, :collection => EquipmentModel.select_options %>
+   <%= f.input :description %>
+   <%# TODO: Make this a fancy box %>
+   <%= f.association :equipment_models, input_html: {class: 'input-xlarge'} %>
    <%= f.input :contact_name %>
    <%= f.input :contact_info %>
    <%= f.input :notes %>
-
-
 
 <%# The ability to add multi-step requirement qualifications has been removed from the current version of Reservations, but if it is re-implemented in the future, the code below may be helpful: %>
 <%# Requirements that need to be met before a user can check out this item (drag to re-order): <br>
@@ -15,10 +15,10 @@
     <%# f.simple_fields_for :requirement_steps do |reqstep| %>
       <%# render 'requirement_step_fields', :f => reqstep %>
     <%# end %>
-    <div class="links">
-      <p><%# link_to_add_association 'Add Step', f, :requirement_steps, :class => "btn" %></p>
+    <%# <div class="links">
+      <p><%# link_to_add_association 'Add Step', f, :requirement_steps, :class => "btn" %> <%#</p>
     </div>
-  </fieldset>
+  </fieldset>%>
 
     <%= f.button :wrapped, cancel: requirements_path %>
 <% end %>

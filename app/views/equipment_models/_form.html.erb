@@ -4,12 +4,16 @@
   <%= f.error_notification %>
   <%= f.association :category, hint: "#{link_to "Add New Category", new_category_path, class: "btn"}", 
   placeholder: 'Select a Category' %> 
+
   <input class="hidden" id="category" name="MODELNAME[category]" type="hidden">
   
   <%= f.association :associated_equipment_models, input_html: {class: 'input-xlarge'}, 
   placeholder: 'Start typing an equipment model name', collection: 
   EquipmentModel.find(:all, conditions: ["id != ?", params[:id]]) %>
   
+  <%= f.association :requirements, input_html: {class: 'input-xlarge select2-input select2-focused', id:'requirement_equipment_model'}, 
+  placeholder: 'Start typing an equipment model name', collection: Requirement.all.map{|req| [req.description,req.id]} %>
+
   <%= f.input :name %>
   
   <%= f.input :description, as: :text %>
