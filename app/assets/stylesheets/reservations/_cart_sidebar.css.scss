@@ -1,13 +1,18 @@
 .is-sticky { @extend .span3; }
 
-#list_items_in_cart { 
+#list_items_in_cart {
   max-height: 150px;
   overflow-y: scroll;
   border: 1px solid $tableBorder;
 	@include border-radius(4px);
 	padding-bottom: 0px;
 	margin-bottom: 19px;
+
+  #cart_is_empty {
+    margin: 9px;
+    line-height: $baseLineHeight * 2;
   }
+}
 
 .cart_reserver { margin-bottom: 7px; }
 
