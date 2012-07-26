@@ -7,16 +7,16 @@
 @import "select2";
 
 // Our Custom Mixins
-
+// =========================
 @import "mixins";
 
 // Application Variables
-
+// ===========================
 $h3-line-height: 27px;
 $user_label-size: 1.5;
 
 // Global Application Styles
-
+// ==============================
 label { font-weight: 600; }
 .alert {
 	margin-bottom: 0px;
@@ -89,7 +89,26 @@ div.form-actions .view_all {
   @include box-shadow(#{inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6)});
 }
 
+// Make links in table cells expand to fill cell
+.datatable, .datatable-wide {
+
+  td {
+
+    a {
+    // to make table cells with links clickable throughout
+    // only works when ALL the text in the cell is ONE link
+    // as in no other links or text may be present
+    // because it then gives each element its own line
+      display: block;
+      padding: 0 0 30px;
+      margin: 0 0 -30px;
+    }
+  }
+
+}
+
 // Partial Imports
+// ============================
 
 @import "layouts/*";
 @import "reservations/*";

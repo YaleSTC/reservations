@@ -77,7 +77,7 @@
   .subnav-fixed .nav {
     width: 938px;
     margin: 0 auto;
-    padding: 0 1px;		
+    padding: 0 1px;
   }
   .subnav .nav > li:first-child > a,
   .subnav .nav > li:first-child > a:hover {
@@ -139,19 +139,10 @@ div#searchbox {
 	margin-bottom: 10px;
 }
 
-div#sidebar-right { 
-	margin-top: $baseLineHeight; 
-	
+div#sidebar-right {
+	margin-top: $baseLineHeight;
+
 	form {
 		margin-bottom: 0;
 	}
 }
-
-td a {
-// to make table cells with links clickable throughout
-// only works when ALL the text in the cell is ONE link
-// as in no other links or text may be present
-// because it then gives each element its own line
-  display: block;
-}
-
