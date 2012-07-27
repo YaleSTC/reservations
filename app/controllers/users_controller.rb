@@ -102,107 +102,29 @@ class UsersController < ApplicationController
   end
   
   def import
+    unless current_user.is_admin_in_adminmode?
+      flash[:error] = 'Permission denied.'
+      redirect_to root_path and return
+    end
+  
     # initialize
-    @user_type = params[:user_type]
     file = params[:csv_upload]
-    @users_added_set = []
-    @users_updated_set = []
-    @users_not_added_set = {}
-    @users_not_updated_set = {}
-    @users_conflict_set = {}
-    flash[:errors] = ''
-    
+
     # update existing users?
-    @overwrite = (params[:overwrite] == '1')
+    overwrite = (params[:overwrite] == '1')
     
     # the rails CSV class only handles filepaths and not file objects
-    if file # if the file has been uploaded
-      location = file.tempfile.path
-      users_hash = User.csv_import(location)
-    else # if we're updating conflict users from the import_success page
-      users_hash = params[:users_hash]
-    end
+    location = file.tempfile.path
+    imported_users = User.csv_import(location)
     
-    # make sure import didn't totally fail
-    if users_hash.nil?
+    # make sure import from CSV didn't totally fail
+    if imported_users.nil?
       flash[:error] = 'Unable to import CSV file. Please ensure it matches the import format, and try again.'
       redirect_to :back and return
     end
     
-    users_hash.each do |login,data|      
-      formatted_user_data = User.csv_data_formatting(login,data,@user_type)
-      
-      # check validations and save
-      # test size == 1 in case the admin tries any funny business (non-uniqueness) in the database
-      if @overwrite and (User.where("login = ?", login).size == 1)
-        user = User.where("login = ?", login).first
-        user.csv_import = true
-
-        if user.update_attributes(formatted_user_data)
-          @users_updated_set << user
-          next
-        else
-          # attempt LDAP rescue
-          ldap_hash = User.search_ldap(login)
-          if ldap_hash.nil?
-            data << 'Incomplete user information. Unable to find user in online directory (LDAP).'
-            @users_not_updated_set[login] = data
-            next
-          end
-          
-          # redeclare what LDAP overwrote
-          formatted_user_data = User.import_ldap_fix(ldap_hash,login,data,@user_type)
-          user.csv_import = true
-          
-          # re-attempt save
-          if user.update_attributes(formatted_user_data)
-            @users_updated_set << user
-            next
-          else
-            data << process_all_error_messages_to_string(user)
-            @users_not_updated_set[login] = data
-            next
-          end
-        end
-      else
-        user = User.new(formatted_user_data)
-        user.csv_import = true
-        
-        if user.valid?
-          user.save
-          @users_added_set << user
-          next
-        else # if validations fail
-          # attempt LDAP rescue
-          ldap_hash = User.search_ldap(login)
-          if ldap_hash.nil?
-            data << 'Incomplete user information. Unable to find user in online directory (LDAP).'
-            @users_not_added_set[login] = data
-            next
-          end
-          
-          # redeclare what LDAP overwrote
-          formatted_user_data = User.import_ldap_fix(ldap_hash,login,data,@user_type)
-          
-          user = User.new(formatted_user_data)
-          user.csv_import = true
-          
-          if user.valid?
-            user.save
-            @users_added_set << user
-            next
-          else
-            error_temp = process_all_error_messages_to_string(user)
-            data << error_temp
-            if error_temp.include?('Login has already been taken.')
-              @users_conflict_set[login] = data
-            else
-              @users_not_added_set[login] = data
-            end
-          end
-        end
-      end
-    end
+    # create the users and exit
+    @hash_of_statuses = User.import_users(imported_users,overwrite)
     render 'import_success'
   end
   

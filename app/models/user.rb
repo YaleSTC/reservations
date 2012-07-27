@@ -111,91 +111,113 @@ class User < ActiveRecord::Base
      [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name, login].join(" ")
   end
   
-  
   def self.csv_import(location)
     # initialize
-    users_hash = {}
+    imported_objects = []
+    string = File.read(location)
     require 'csv'
     
     # import data by row
-    CSV.foreach(location) do |row|
-    
-      # make sure CSV has the proper number of columns
-      if row.size < 7
-        return
-      end
+    CSV.parse(string, :headers => true) do |row|
+      object_hash = row.to_hash.symbolize_keys
       
-      # make sure nil entries are blank
-      blankified_row = []
-      row.each do |e|
-        if e.nil?
-          e = ''
+      # make all nil values blank
+      object_hash.keys.each do |key|
+        if object_hash[key].nil?
+          object_hash[key] = ''
         end
-        blankified_row << e
       end
-      row = blankified_row
-      
-      # order of variables: login, first_name, last_name, nickname, phone, email, affiliation
-      users_hash[row[0]] = [row[1], row[2], row[3], row[4], row[5], row[6]]
+      imported_objects << object_hash
     end
-    
-    # return users hash
-    users_hash
+    # return array of imported objects
+    imported_objects
   end
+  
+  def self.import_users(array_of_user_data,update_existing)
+    array_of_success = []
+    array_of_fail = []
 
-  def self.csv_data_formatting(login,data,user_type)
-    hash = {}
-    hash[:login] = login
-    hash[:first_name] = data[0]
-    hash[:last_name] = data[1]
-    hash[:nickname] = data[2]
-    hash[:phone] = data[3]
-    hash[:email] = data[4]
-    hash[:affiliation] = data[5]
-#    hash[:csv_import] = true # attr_accessor defined above
-    
-    if user_type == 'admin'
-      hash[:is_admin] = 1
-    elsif user_type == 'checkout'
-      hash[:is_checkout_person] = 1
-    #elsif user_type == 'normal'
-      # add something if we change how type is stored in the database
-    elsif user_type == 'banned'
-      hash[:is_banned] = 1
+    array_of_user_data.each do |user_data|
+      # test size == 1 in case the admin tries any funny business (non-uniqueness) in the database
+      if update_existing and (User.where("login = ?", user_data[:login]).size == 1)
+        user = User.where("login = ?", user_data[:login]).first
+        user.csv_import = true
+
+        if user.update_attributes(user_data)
+          array_of_success << user
+          next
+        else
+          # check LDAP for missing data
+          ldap_user_hash = User.search_ldap(user_data[:login])
+          if ldap_user_hash.nil?
+            temp_array = [user_data, 'Incomplete user information. Unable to find user in online directory (LDAP).']
+            array_of_fail << temp_array
+            next
+          end
+          
+          # fill-in missing key-values with LDAP data
+          user_data.keys.each do |key|
+            if user_data[key].blank? and !ldap_user_hash[key].blank?
+              user_data[key] = ldap_user_hash[key]
+            end
+          end
+          
+          # re-attempt save to database
+          if user.update_attributes(user_data)
+            array_of_success << user
+            next
+          else
+            temp_errors_string = user.errors.full_messages.to_sentence
+            temp_array = [user_data, temp_errors_string]
+            array_of_fail << temp_array
+            next
+          end
+        end
+      else
+        user = User.new(user_data)
+        user.csv_import = true
+        
+        if user.valid?
+          user.save
+          array_of_success << user
+          next
+        else
+          # check LDAP for missing data
+          ldap_user_hash = User.search_ldap(user_data[:login])
+          if ldap_user_hash.nil?
+            temp_array = [user_data, 'Incomplete user information. Unable to find user in online directory (LDAP).']
+            array_of_fail << temp_array
+            next
+          end
+          
+          # fill-in missing key-values with LDAP data
+          user_data.keys.each do |key|
+            if user_data[key].blank? and !ldap_user_hash[key].blank?
+              user_data[key] = ldap_user_hash[key]
+            end
+          end
+          
+          # re-attempt save to database
+          user = User.new(user_data)
+          user.csv_import = true
+          if user.valid?
+            user.save
+            array_of_success << user
+            next
+          else
+            temp_errors_string = user.errors.full_messages.to_sentence
+            temp_array = [user_data, temp_errors_string]
+            array_of_fail << temp_array
+            next
+          end
+        end
+      end
     end
-
-    # return
-    hash
+    hash_of_statuses = {:success => array_of_success, :fail => array_of_fail}
   end
 
   def skip_phone_validation?
     csv_import
   end
 
-  def self.import_ldap_fix(ldap_hash,login,data,user_type)
-    ldap_hash[:login] = login
-    ldap_hash[:first_name] = data[0] unless data[0].blank?
-    ldap_hash[:last_name] = data[1] unless data[1].blank?
-    if ldap_hash[:nickname].nil? or !data[2].blank?
-      ldap_hash[:nickname] = data[2] # never want NIL nickname -- better to have blank
-    end
-    ldap_hash[:phone] = data[3] # LDAP doesn't fetch phone number
-    ldap_hash[:email] = data[4] unless data[4].blank?
-    ldap_hash[:affiliation] = data[5] unless data[5].blank?
-#    ldap_hash[:csv_import] = true # attr_accessor defined above
-    
-    if user_type == 'admin'
-      ldap_hash[:is_admin] = 1
-    elsif user_type == 'checkout'
-      ldap_hash[:is_checkout_person] = 1
-    #elsif user_type == 'normal'
-      # add something if we change how type is stored in the database
-    elsif user_type == 'banned'
-      ldap_hash[:is_banned] = 1
-    end
-
-    # return
-    ldap_hash
-  end
-  
 end

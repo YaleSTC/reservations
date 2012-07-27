@@ -1,42 +1,16 @@
 <% title "Import Summary" %>
 
-<% unless @users_not_updated_set.empty? %>
-  <h2>Users not successfully updated</h2>
-  <%= render :partial => 'table_of_errors', :locals => {:users => @users_not_updated_set} %>
-  <% unless @users_not_added_set.empty? and @users_added_set.empty? and @users_updated_set.empty? %>
+<% unless @hash_of_statuses[:fail].empty? %>
+  <h2>Users not successfully imported</h2>
+  <table class="datatable-wide table table-striped table-bordered" id="user_import_errors_table">
+    <%= render :partial => 'import_table', :locals => {:users => @hash_of_statuses[:fail]} %>
+  </table>
+  <% unless @hash_of_statuses[:success].empty? %>
     <hr />
   <% end %>
 <% end %>
 
-<% unless @users_conflict_set.empty? %>
-  <h2>Users not successfully imported (already in database)</h2>
-  <p>
-    <%= link_to 'Update!', {:action => 'import', :users_hash => @users_conflict_set, :overwrite => '1', :user_type => @user_type }, :method => :post, :class => 'btn btn-primary' %> Clicking this button will update these existing users with the data provided in your CSV file.
-  </p>
-  <%= render :partial => 'table_of_errors', :locals => {:users => @users_conflict_set} %>
-  <% unless @users_not_added_set.empty? and @users_added_set.empty? and @users_updated_set.empty? %>
-    <hr />
-  <% end %>
-<% end %>
-
-<% unless @users_not_added_set.empty? %>
-  <h2>Users not successfully added</h2>
-  <%= render :partial => 'table_of_errors', :locals => {:users => @users_not_added_set} %>
-  <% unless @users_added_set.empty? and @users_updated_set.empty? %>
-    <hr />
-  <% end %>
-<% end %>
-
-<% unless @users_added_set.empty? %>
-  <%# render table of users added to the database %>
-  <h2>Users successfully added</h2>
-  <%= render :partial => 'table', :locals => {:users => @users_added_set} %>
-  <% unless @users_updated_set %>
-    <hr />
-  <% end %>
-<% end %>
-
-<% unless @users_updated_set.empty? %>
-  <h2>Users successfully updated</h2>
-  <%= render :partial => 'table', :locals => {:users => @users_updated_set} %>
+<% unless @hash_of_statuses[:success].empty? %>
+  <h2>Users successfully imported</h2>
+    <%= render :partial => 'table', :locals => {:users => @hash_of_statuses[:success]} %>
 <% end %>
