@@ -109,13 +109,14 @@ class UsersController < ApplicationController
   
     # initialize
     file = params[:csv_upload]
+    user_type = params[:user_type]
 
     # update existing users?
     overwrite = (params[:overwrite] == '1')
     
     # the rails CSV class only handles filepaths and not file objects
     location = file.tempfile.path
-    imported_users = User.csv_import(location)
+    imported_users = csv_import(location)
     
     # make sure import from CSV didn't totally fail
     if imported_users.nil?
@@ -124,7 +125,7 @@ class UsersController < ApplicationController
     end
     
     # create the users and exit
-    @hash_of_statuses = User.import_users(imported_users,overwrite)
+    @hash_of_statuses = User.import_users(imported_users,overwrite,user_type)
     render 'import_success'
   end
   

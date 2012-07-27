@@ -14,8 +14,8 @@
 
 <%= form_tag csv_import_path, :multipart => true do %>
 
-<%# <label>Type of user to import:</label> %>
-  <%#= select_tag :user_type, options_for_select(@select_options) %>
+  <label>Type of user to import:</label>
+  <%= select_tag :user_type, options_for_select(@select_options) %>
 
   <p>
     <label>CSV file with users to import:</label>

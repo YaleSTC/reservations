@@ -111,29 +111,31 @@ class User < ActiveRecord::Base
      [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name, login].join(" ")
   end
   
-  def self.csv_import(location)
-    # initialize
-    imported_objects = []
-    string = File.read(location)
-    require 'csv'
-    
-    # import data by row
-    CSV.parse(string, :headers => true) do |row|
-      object_hash = row.to_hash.symbolize_keys
-      
-      # make all nil values blank
-      object_hash.keys.each do |key|
-        if object_hash[key].nil?
-          object_hash[key] = ''
-        end
-      end
-      imported_objects << object_hash
+  def assign_type(user_type)
+    # we have to reset all the non-current categories to NIL
+    # argh why is the database so stupid like this
+    # with three columns where one would suffice
+
+    if user_type == 'admin'
+      self.is_admin = '1'
+      self.is_checkout_person = nil
+      self.is_banned = nil
+    elsif user_type == 'checkout'
+      self.is_admin = nil
+      self.is_checkout_person = '1'
+      self.is_banned = nil
+    elsif user_type == 'normal'
+      self.is_admin = nil
+      self.is_checkout_person = nil
+      self.is_banned = nil
+    elsif user_type == 'banned'
+      self.is_admin = nil
+      self.is_checkout_person = nil
+      self.is_banned = '1'
     end
-    # return array of imported objects
-    imported_objects
   end
   
-  def self.import_users(array_of_user_data,update_existing)
+  def self.import_users(array_of_user_data,update_existing,user_type)
     array_of_success = []
     array_of_fail = []
 
@@ -144,10 +146,14 @@ class User < ActiveRecord::Base
         user.csv_import = true
 
         if user.update_attributes(user_data)
+          user.assign_type(user_type)
+          user.save
+          # exit
           array_of_success << user
           next
         else
           # check LDAP for missing data
+
           ldap_user_hash = User.search_ldap(user_data[:login])
           if ldap_user_hash.nil?
             temp_array = [user_data, 'Incomplete user information. Unable to find user in online directory (LDAP).']
@@ -161,9 +167,15 @@ class User < ActiveRecord::Base
               user_data[key] = ldap_user_hash[key]
             end
           end
-          
+
+          # reassign user type, which has been forgotten
+          user.assign_type(user_type)
+
           # re-attempt save to database
           if user.update_attributes(user_data)
+            user.assign_type(user_type)
+            user.save
+            # exit
             array_of_success << user
             next
           else
@@ -176,6 +188,7 @@ class User < ActiveRecord::Base
       else
         user = User.new(user_data)
         user.csv_import = true
+        user.assign_type(user_type)
         
         if user.valid?
           user.save
@@ -200,6 +213,8 @@ class User < ActiveRecord::Base
           # re-attempt save to database
           user = User.new(user_data)
           user.csv_import = true
+          user.assign_type(user_type)
+          
           if user.valid?
             user.save
             array_of_success << user
