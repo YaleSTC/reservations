@@ -8,11 +8,14 @@ class Reservation < ActiveRecord::Base
   validates :reserver,
             :start_date,
             :due_date,
+            :equipment_model,
             :presence => true
 
-#  validate :no_overdue_reservations?, :start_date_before_due_date?, :not_empty?,
-#           :matched_object_and_model?, :duration_allowed?, :available?,
-#           :quantity_eq_model_allowed?, :quantity_cat_allowed?
+  with_options :if => :not_empty? do |r|
+    r.validate :no_overdue_reservations?, :no_overdue_reservations?, :start_date_before_due_date?,
+           :not_in_past?, :matched_object_and_model?, :not_renewable?, :duration_allowed?, :available?,
+           :quantity_eq_model_allowed?, :quantity_cat_allowed?
+  end
 
   scope :recent, order('start_date, due_date, reserver_id')
   scope :reserved, lambda { where("checked_out IS NULL and checked_in IS NULL and due_date >= ?", Time.now.midnight.utc).recent}

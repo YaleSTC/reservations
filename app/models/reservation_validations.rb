@@ -90,13 +90,12 @@ module ReservationValidations
   # Checks that the equipment model is available from start date to due date
   # Not called on overdue, missed, checked out, or checked in Reservations
   def available?(reservations = [])
+    return true if self.class == Reservation && self.status != 'reserved'
     all_res = reservations.dup
-    all_res << self
-    all_res.concat(reserver.reservations_array)
+    all_res << self if self.class != Reservation
     all_res.uniq!
     eq_objects_needed = count(all_res)
-    reserver.reservations_array.each { |res| eq_objects_needed -= 1 if all_res.include?(res) && res.status != 'reserved' && res.equipment_model = self.equipment_model}
-    if (self.class == CartReservation || (self.class == Reservation && self.status == 'reserved')) && equipment_model.available?(start_date, due_date) < eq_objects_needed
+    if equipment_model.available?(start_date, due_date) < eq_objects_needed || equipment_model.available?(start_date, due_date) < 0
       errors.add(:base, "availablity problem with " + equipment_model.name)
       return false
     end

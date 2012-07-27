@@ -102,8 +102,8 @@ describe 'cart and cart reservations' do
     cart.add_item(eqres)
     cartres = cart.cart_reservations.first
     cartres.not_renewable?.should == true
-    cart.set_start_date(Date.tomorrow)
-    cart.cart_reservations.first.not_renewable?.should == false
+    cartres.start_date = Date.tomorrow
+    cartres.not_renewable?.should == false
   end
 
   it 'no_overdue_reservations? works when called on reservations in @items' do
