@@ -88,10 +88,15 @@ module ReservationValidations
 
   ## For single or multiple reservations
   # Checks that the equipment model is available from start date to due date
+  # Not called on overdue, missed, checked out, or checked in Reservations
   def available?(reservations = [])
-    reservations << self if reservations.empty?
-    eq_objects_needed = count(reservations)
-    if equipment_model.available?(start_date, due_date) < eq_objects_needed
+    all_res = reservations.dup
+    all_res << self
+    all_res.concat(reserver.reservations_array)
+    all_res.uniq!
+    eq_objects_needed = count(all_res)
+    reserver.reservations_array.each { |res| eq_objects_needed -= 1 if all_res.include?(res) && res.status != 'reserved' && res.equipment_model = self.equipment_model}
+    if (self.class == CartReservation || (self.class == Reservation && self.status == 'reserved')) && equipment_model.available?(start_date, due_date) < eq_objects_needed
       errors.add(:base, "availablity problem with " + equipment_model.name)
       return false
     end
@@ -101,11 +106,12 @@ module ReservationValidations
   # Checks that the number of equipment models that a user has reservered and in
   # the array of reservations is less than the equipment model maximum
   def quantity_eq_model_allowed?(reservations = [])
-    max = equipment_model.max_per_user
+    max = equipment_model.maximum_per_user
     return true if max == "unrestricted"
     all_res = reservations.dup
-    all_res << self if all_res.empty?
+    all_res << self
     all_res.concat(reserver.reservations_array)
+    all_res.uniq!
     num_reservations = count(all_res)
     if num_reservations > max
       errors.add(:base, "quantity equipment model problem with " + equipment_model.name)
@@ -118,13 +124,14 @@ module ReservationValidations
   # array of reservations does not exceed the maximum in the category of the
   # reservation it is called on
   def quantity_cat_allowed?(reservations = [])
-    max = equipment_model.category.max_per_user
+    max = equipment_model.category.maximum_per_user
     return true if max == "unrestricted"
     all_res = reservations.dup
-    all_res << self if all_res.empty?
+    all_res << self
     all_res.concat(reserver.reservations_array)
+    all_res.uniq!
     cat_count = 0
-    reservations.each { |res| cat_count += 1 if res.equipment_model.category == self.equipment_model.category }
+    all_res.each { |res| cat_count += 1 if res.equipment_model.category == self.equipment_model.category }
     if cat_count > max
       errors.add(:base, "quantity category problem with " + equipment_model.category.name)
       return false

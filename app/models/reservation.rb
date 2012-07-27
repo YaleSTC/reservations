@@ -56,7 +56,7 @@ class Reservation < ActiveRecord::Base
       errors << res.equipment_object.name + " should be of type " + res.equipment_model.name if !res.matched_object_and_model?
       errors << res.equipment_model.name + " should be renewed instead of re-checked out" if !res.not_renewable?
       errors << "duration problem with " + res.equipment_model.name if !res.duration_allowed?
-      errors << "availablity problem with " + res.equipment_model.name if !res.available?(all_res_array)
+      errors << "availablity problem with " + res.equipment_model.name if !res.available?(res_array)
       errors << "quantity equipment model problem with " + res.equipment_model.name if !res.quantity_eq_model_allowed?(res_array)
       errors << "quantity category problem with " + res.equipment_model.category.name if !res.quantity_cat_allowed?(res_array)
     end

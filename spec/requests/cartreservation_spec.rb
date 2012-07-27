@@ -92,7 +92,6 @@ describe 'cart and cart reservations' do
     cartres.start_date_before_due_date?.should == true
   end
 
-  #fix this test
   it 'not_renewable? works when called on reservations in @items' do
     cart = Cart.new
     res = FactoryGirl.build(:checked_out_reservation)
@@ -124,7 +123,7 @@ describe 'cart and cart reservations' do
     cart.add_item(eq)
     cartres = cart.cart_reservations.first
     cartres.duration_allowed?.should == true
-    allowed_duration = eq.category.max_checkout_length
+    allowed_duration = eq.category.maximum_checkout_length
     cart.set_due_date(Date.tomorrow + allowed_duration)
     cart.add_item(eq)
     bad_cartres = cart.cart_reservations.last
@@ -242,6 +241,6 @@ describe 'cart and cart reservations' do
     res.save(:validate => false)
     user = User.find(res.reserver_id)
     cart.set_reserver_id(user.id)
-#    Reservation.validate_set(user, cart.cart_reservations).should == ["User has overdue reservations that prevent new ones from being created"]
+    Reservation.validate_set(user, cart.cart_reservations).should == ["User has overdue reservations that prevent new ones from being created"]
   end
 end

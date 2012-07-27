@@ -38,6 +38,12 @@ FactoryGirl.define do
     max_renewal_length { r.rand(0..40) }
     renewal_days_before_due { r.rand(0..9001) }
     category
+
+    factory :equipment_model_with_object do
+      after(:create) do |mod|
+        FactoryGirl.create(:equipment_object, :equipment_model => mod)
+      end
+    end
   end
 
   factory :equipment_object do
@@ -55,13 +61,6 @@ FactoryGirl.define do
     after(:build) do |res|
       obj = FactoryGirl.create(:equipment_object, :equipment_model => res.equipment_model)
       res.equipment_object = obj
-    end
-
-    factory :cart_reservation do
-      after(:build) do |res|
-        res.equipment_object = nil
-        res.equipment_object_id = nil
-      end
     end
 
     factory :finalized_reservation do
