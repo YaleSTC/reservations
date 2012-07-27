@@ -112,7 +112,7 @@ class User < ActiveRecord::Base
   end
   
   def assign_type(user_type)
-    # we have to reset all the non-current categories to NIL
+    # we have to reset all the non-current user_types to NIL
     # argh why is the database so stupid like this
     # with three columns where one would suffice
 
@@ -136,8 +136,8 @@ class User < ActiveRecord::Base
   end
   
   def self.import_users(array_of_user_data,update_existing,user_type)
-    array_of_success = []
-    array_of_fail = []
+    array_of_success = [] # will contain user-objects
+    array_of_fail = [] # will contain user_data hashes and error messages
 
     array_of_user_data.each do |user_data|
       # test size == 1 in case the admin tries any funny business (non-uniqueness) in the database
@@ -146,6 +146,7 @@ class User < ActiveRecord::Base
         user.csv_import = true
 
         if user.update_attributes(user_data)
+          # assign type (isn't saved with update attributes, without adding to the user_data hash)
           user.assign_type(user_type)
           user.save
           # exit
@@ -153,7 +154,6 @@ class User < ActiveRecord::Base
           next
         else
           # check LDAP for missing data
-
           ldap_user_hash = User.search_ldap(user_data[:login])
           if ldap_user_hash.nil?
             temp_array = [user_data, 'Incomplete user information. Unable to find user in online directory (LDAP).']
@@ -168,11 +168,9 @@ class User < ActiveRecord::Base
             end
           end
 
-          # reassign user type, which has been forgotten
-          user.assign_type(user_type)
-
           # re-attempt save to database
           if user.update_attributes(user_data)
+            # assign type (isn't saved with update attributes, without adding to the user_data hash)
             user.assign_type(user_type)
             user.save
             # exit
