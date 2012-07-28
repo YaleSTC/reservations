@@ -1,11 +1,41 @@
 //Variables go here
-// $bold-font: OpenSansBold;
 $sansFontFamily: OpenSans, "Helvetica Neue", Helvetica, Arial, sans-serif;
-// $headingsFontFamily: $bold-font;
+
+// $bodyBackground // @white  Page background color
+// $textColor  // @grayDark Default text color for entire body, headings, and more
+// $linkColor  // #08c  Default link text color
+// $linkColorHover // darken(@linkColor, 15%)
+
+// $headingsColor
+// $tableBackground
+// $tableBackgroundAccent
+// $tableBackgroundHover
+
+// COLORS
+$base-color: #331E0A; // dark brown
+$right-1-color: #00667F; // light blue
+$right-2-color: #0A2B33; // dark blue
+$left-1-color: #7F440D; // orangey brown
+$left-2-color: #7F5126; // lighter, less saturated orangey brown
+
+
+$navbarBackground: desaturate($base-color, 10%); // @grayDarker
+$navbarBackgroundHighlight: lighten($navbarBackground, 8%);  // @grayDark
+$navbarText: lighten(desaturate($left-2-color, 40%), 27%);
+$navbarLinkColor: lighten(desaturate($left-2-color, 40%), 27%);  // @grayLight
+$navbarLinkColorHover: lighten(desaturate($left-2-color, 40%), 60%);
+// $navbarLinkColorActive  // @navbarLinkColorHover
+// $navbarLinkBackgroundHover  // transparent
+// $navbarLinkBackgroundActive // @navbarBackground
+$navbarSearchBackground: desaturate(lighten($navbarBackground, 25%), 30%); // lighten(@navbarBackground, 25%)
+// $navbarSearchBackgroundFocus  // @white
+// $navbarSearchBorder // darken(@navbarSearchBackground, 30%)
+$navbarSearchPlaceholderColor: lighten(desaturate($left-2-color, 40%), 30%);
+// $navbarBrandColor
 
 @import "bootstrap";
 
-body { 
+body {
   padding-top: 50px;
 }
 
@@ -14,7 +44,7 @@ body {
 @import "dataTables/jquery.dataTables.bootstrap";
 
 
-.well-nomargin { 
+.well-nomargin {
   @extend .well;
   margin-right: 20px;
   margin-left: 0px;
@@ -30,10 +60,10 @@ body {
 //    cursor: pointer;
 //    *cursor: hand;
 //}
-// 
+//
 //table.table thead .sorting { background: .icon-home no-repeat center right; }
 //table.table thead .sorting_asc { background: url('images/sort_asc.png') no-repeat center right; }
 //table.table thead .sorting_desc { background: url('images/sort_desc.png') no-repeat center right; }
-// 
+//
 //table.table thead .sorting_asc_disabled { background: url('images/sort_asc_disabled.png') no-repeat center right; }
 //table.table thead .sorting_desc_disabled { background: url('images/sort_desc_disabled.png') no-repeat center right; }
