@@ -11,9 +11,9 @@
       <div class="span3">
         <div class="well">
           <h3 class="catalog">
-            <!--print category name-->
+            <%# print category name %>
             <%= link_to category.name, category_equipment_models_path(category) %>
-          </h3> 
+          </h3>
         </div>
       </div>
     <% end %>
@@ -33,7 +33,7 @@
   <% end %>
   <ul class="thumbnails">
     <% @equipment_model_results.each do |equipment_model| %>
-      <li class="span3">      
+      <li class="span3">
         <%= render :partial => 'equipment_model_div', :locals => { :equipment_model => equipment_model } %>
       </li>
     <% end %>
@@ -61,7 +61,7 @@
           <%= equipment_object.name %> (<%= equipment_object.serial %>)
         </p>
         <p>
-          <strong>Status:</strong> 
+          <strong>Status:</strong>
           <% if equipment_object.available? %>
             <span class="label label-success eo-table">Available</span>
           <% else %>
@@ -75,4 +75,3 @@
   </div>
 
 <% end %>
-
