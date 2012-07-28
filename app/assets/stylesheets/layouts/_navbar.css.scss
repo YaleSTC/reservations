@@ -26,3 +26,7 @@
 .navbar .brand {
   font-weight: 300;
 }
+
+.navbar-inner {
+  @include box-shadow((0 3px 22px rgba(0, 0, 0, 0.4)));
+}

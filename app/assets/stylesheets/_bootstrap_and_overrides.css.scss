@@ -1,9 +1,17 @@
 //Variables go here
+
+// COLORS
+$base-color: #331E0A; // dark brown
+$right-1-color: lighten(#00667F, 9%); // light blue
+$right-2-color: #0A2B33; // dark blue
+$left-1-color: #7F440D; // orangey brown
+$left-2-color: #7F5126; // lighter, less saturated orangey brown
+
 $sansFontFamily: OpenSans, "Helvetica Neue", Helvetica, Arial, sans-serif;
 
-// $bodyBackground // @white  Page background color
-// $textColor  // @grayDark Default text color for entire body, headings, and more
-// $linkColor  // #08c  Default link text color
+$bodyBackground: desaturate(lighten($left-2-color, 65%), 20%); // @white  Page background color
+$textColor: desaturate(darken($base-color, 1%), 5%);  // @grayDark Default text color for entire body, headings, and more
+$linkColor: $right-1-color;  // #08c  Default link text color
 // $linkColorHover // darken(@linkColor, 15%)
 
 // $headingsColor
@@ -11,12 +19,7 @@ $sansFontFamily: OpenSans, "Helvetica Neue", Helvetica, Arial, sans-serif;
 // $tableBackgroundAccent
 // $tableBackgroundHover
 
-// COLORS
-$base-color: #331E0A; // dark brown
-$right-1-color: #00667F; // light blue
-$right-2-color: #0A2B33; // dark blue
-$left-1-color: #7F440D; // orangey brown
-$left-2-color: #7F5126; // lighter, less saturated orangey brown
+
 
 
 $navbarBackground: desaturate($base-color, 10%); // @grayDarker
