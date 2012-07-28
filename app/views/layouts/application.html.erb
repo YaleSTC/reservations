@@ -1,27 +1,22 @@
 <!DOCTYPE html>
 <html>
-
-  <!-- ================== HTML HEAD ================== -->
+  <%# ================== HTML HEAD ================== %>
   <%= render 'layouts/head' %>
-  <!-- ================ END HTML HEAD ================ -->
 
   <body data-spy="scroll" data-target=".subnav" data-offset="100">
 
     <%= render 'layouts/navbar' %>
-    
+
     <div class="container">
       <%= render 'layouts/flash' %>
       <div class="row">
-
-      	<!-- ================ MAIN PAGE CONTENT ================ -->
+      	<%# ================ MAIN PAGE CONTENT ================ %>
       	<%= render 'layouts/content' %>
-        <!-- ================ END MAIN PAGE CONTENT ================ -->
-        
+
       </div>
-      <!-- ================ FOOTER ================ -->
+      <%# ================ FOOTER ================ %>
       <%= render 'layouts/footer' %>
-      <!-- ================ END FOOTER ================ -->
-    </div>    
-    
-  </body> 
+    </div>
+
+  </body>
 </html>
