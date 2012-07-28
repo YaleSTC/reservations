@@ -25,22 +25,28 @@ You'll need the following to run Reservations:
 ###Installing 
 First, checkout a copy of Reservations using git:
 
-```cd /your/code/directory
+```
+cd /your/code/directory
 git clone https://github.com/YaleSTC/reservations.git
-cd reservations```
+cd reservations
+```
 
 Rerservations uses [Bundler](http://gembundler.com/) to manage dependencies, so if you don't have it, get it, then install dependencies
 
-```gem install bundler
-bundle install```
+```
+gem install bundler
+bundle install
+```
 
 
 You'll need to edit config/database.yml to point to your database, including the correct user and password. See the [Rails guide](http://guides.rubyonrails.org/getting_started.html#configuring-a-database) for common database examples.
 
 Then, create the database and run migrations to build the structure:
 
-```rake db:create
-rake db:migrate```
+```
+rake db:create
+rake db:migrate
+```
 
 Finally, start the app locally:
 
@@ -75,7 +81,7 @@ Reservations organizes your equipment on three levels, Categories, Equipment Mod
 
 Categories provide organization to your catalog, making it easy for people to find what they need. Examples might be "Video Cameras", "Digital SLRs", or "Laptops".
 
-Equipment Models represnet a general model of equipment, such as a Nikon D90. Equipment Models contain a name and general description, as well as a photo for the catalog. You can also upload documents related to an Equipment Model (such as for a user's guide PDF), and set limits on the lenght of time and number a person can checkout.
+Equipment Models represent a general model of equipment, such as a Nikon D90. Equipment Models contain a name and general description, as well as a photo for the catalog. You can also upload documents related to an Equipment Model (such as for a user's guide PDF), and set limits on the lenght of time and number a person can checkout.
 
 Equipment Items represent real, physical copies of an Equipment Model. These are used to determine how many are available for checkout on the catalog, and Reservations tracks them by identifiers you specify so you know who checked out a specific item. You can also store item-level information on Equipment Items such as serial numbers.
 
@@ -86,7 +92,7 @@ Once you've added your first Category, create your first Equipment Model by clic
 Managing Users
 --------------
 
-Currently, Reservations only supports CAS, but we are working on adding built-in authentication so anyone can use it.
+Currently, Reservations only supports [CAS](http://www.jasig.org/cas/), but we are working on adding built-in authentication so anyone can use it.
 
 When a new user logs in for the first time, an account will automatically be created for them (if using CAS), or they will have to register (when built-in authentication is enabled). As an admin, you can also manually create users.
 
