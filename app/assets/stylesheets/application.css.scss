@@ -104,6 +104,29 @@ td > a, td > div.dropdown {
 
   .dropdown-menu {
     top: 50%; // needed to account for the huge padding of table cell links
+
+    &::before {
+    content: '';
+    display: inline-block;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid #CCC;
+    border-bottom-color: rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: -7px;
+    left: 9px;
+    }
+
+    &::after {
+    content: '';
+    display: inline-block;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid white;
+    position: absolute;
+    top: -6px;
+    left: 10px;
+    }
   }
 }
 
