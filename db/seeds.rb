@@ -1,4 +1,4 @@
-# This script is used to populate the database with preload data. 
+# This script is used to populate the database with preload data.
 # It does not clear the database - mainly because that would mean deleting your admin login.
 # All the numbers are pretty arbitrary, and can be changed to suit your needs, and how many records you want.
 # As it stands, you'll need to follow the format and create a new seed generation block for each
@@ -93,7 +93,7 @@ else
     equipment_model = entered_num.times.map do
       EquipmentModel.create! do |em|
         em.name = Faker::Product.product + " " + r.rand(1..9001).to_s
-        em.description = Faker::HipsterIpsum.paragraph(4)
+        em.description = Faker::HipsterIpsum.paragraph(16)
         em.late_fee = r.rand(50.00..1000.00).round(2).to_d
         em.replacement_fee = r.rand(50.00..1000.00).round(2).to_d
         em.max_per_user = r.rand(1..40)
@@ -146,7 +146,7 @@ else
     STDOUT.puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
   end
-  
+
   #CheckoutProcedure generation
   entered_num = ask_for_records("CheckoutProcedure")
 
@@ -162,16 +162,16 @@ else
     STDOUT.puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
   end
-  
+
   #Reservation generation
   entered_num = ask_for_records("Reservation")
-  
+
   if entered_num.integer? && entered_num > 0
     reservation = entered_num.times.map do
-      random_time = time_rand Time.local(2012, 1, 1)
+      random_time = time_rand(Time.now - 2.months)
       random_due_date = time_rand(random_time, Time.now.next_week)
 
-      Reservation.create! do |res|       
+      Reservation.create! do |res|
         res.reserver_id = user.flatten.sample.id
         res.checkout_handler_id = user.flatten.select{|usr| usr.is_checkout_person}.sample.id
         res.checkin_handler_id = user.flatten.select{|usr| usr.is_checkout_person}.sample.id
@@ -181,7 +181,7 @@ else
         res.checked_out = res.checked_in.nil? ? [nil, random_time.to_datetime].sample : random_time.to_datetime
         res.equipment_object_id = equipment_object.flatten.sample.id
         res.equipment_model_id = res.equipment_object.equipment_model_id
-        res.notes = Faker::HipsterIpsum.paragraph(4)
+        res.notes = Faker::HipsterIpsum.paragraph(8)
         res.notes_unsent = [true, false].sample
       end
     end
@@ -190,5 +190,5 @@ else
     STDOUT.puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
   end
-  
+
 end
