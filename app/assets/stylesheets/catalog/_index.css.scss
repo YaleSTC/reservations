@@ -2,9 +2,15 @@
   height: 420px;
   position: relative;
   line-height: $baseLineHeight;
+  @include box-shadow(#{inset 0px 0px 30px rgba(0,0,0,.1), 0 0 0 rgba(0,0,0,0)});
+  @include transition(all .15s ease-out);
+
+  &:hover {
+    @include box-shadow(#{inset 0 0 0 rgba(0,0,0,0), 0px 0px 14px rgba(0,0,0,.3)});
+  }
 }
 
-#add_to_cart { 
+#add_to_cart {
   position: absolute;
   bottom: 13px;
 }
@@ -16,7 +22,7 @@
 	height: 2 * $h3-line-height;
 }
 
-.special-hr { 
+.special-hr {
 	margin-top: 4px;
 	margin-bottom: 10px;
 }
