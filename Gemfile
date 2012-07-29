@@ -20,6 +20,7 @@ gem "mail"
 gem "simple_form"
 gem 'jquery_datepicker'
 gem "jquery-rails"
+gem 'jquery-ui-rails'
 gem 'jquery-datatables-rails'
 gem "cocoon"
 gem "ffaker"
