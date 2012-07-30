@@ -2,8 +2,8 @@
 
 // COLORS
 $base-color: #331E0A; // dark brown
-$right-1-color: lighten(#00667F, 9%); // light blue
-$right-2-color: #0A2B33; // dark blue
+$right-1-color: desaturate(lighten(#094B76, 14%), 10%); // light blue
+$right-2-color: #0C1E2A; // dark blue
 $left-1-color: #7F440D; // orangey brown
 $left-2-color: #7F5126; // lighter, less saturated orangey brown
 
@@ -11,7 +11,7 @@ $sansFontFamily: OpenSans, "Helvetica Neue", Helvetica, Arial, sans-serif;
 
 $bodyBackground: desaturate(lighten($left-2-color, 65%), 20%); // @white  Page background color
 $textColor: desaturate(darken($base-color, 1%), 5%);  // @grayDark Default text color for entire body, headings, and more
-$linkColor: $right-1-color;  // #08c  Default link text color
+$linkColor: lighten($right-2-color, 35%);  // #08c  Default link text color
 // $linkColorHover // darken(@linkColor, 15%)
 
 // $headingsColor
@@ -24,13 +24,13 @@ $linkColor: $right-1-color;  // #08c  Default link text color
 
 $navbarBackground: desaturate($base-color, 10%); // @grayDarker
 $navbarBackgroundHighlight: lighten($navbarBackground, 8%);  // @grayDark
-$navbarText: lighten(desaturate($left-2-color, 40%), 27%);
-$navbarLinkColor: lighten(desaturate($left-2-color, 40%), 27%);  // @grayLight
+$navbarText: lighten(desaturate($left-2-color, 40%), 40%);
+$navbarLinkColor: lighten(desaturate($left-2-color, 40%), 40%);  // @grayLight
 $navbarLinkColorHover: lighten(desaturate($left-2-color, 40%), 60%);
 // $navbarLinkColorActive  // @navbarLinkColorHover
-// $navbarLinkBackgroundHover  // transparent
+// $navbarLinkBackgroundHover: @include gradient-vertical;  // transparent
 // $navbarLinkBackgroundActive // @navbarBackground
-$navbarSearchBackground: desaturate(lighten($navbarBackground, 25%), 30%); // lighten(@navbarBackground, 25%)
+$navbarSearchBackground: desaturate(lighten($navbarBackground, 30%), 30%); // lighten(@navbarBackground, 25%)
 // $navbarSearchBackgroundFocus  // @white
 // $navbarSearchBorder // darken(@navbarSearchBackground, 30%)
 $navbarSearchPlaceholderColor: lighten(desaturate($left-2-color, 40%), 30%);
