@@ -27,8 +27,24 @@
 
 .navbar .brand {
   font-weight: 300;
+  @include transition(all .2s ease-out);
+
+  &:hover{
+    text-shadow: 0 0 10px lighten($right-1-color, 20%), 0 0 20px lighten($right-1-color, 20%), 0 0 30px lighten($right-1-color, 20%), 0 0 40px lighten($right-1-color, 20%), 0 0 70px lighten($right-1-color, 20%), 0 0 80px lighten($right-1-color, 20%), 0 0 100px lighten($right-1-color, 20%), 0 0 150px lighten($right-1-color, 20%);
+    color: lighten($right-1-color, 60%);
+  }
 }
 
 .navbar-inner {
   @include box-shadow(#{0 2px 20px rgba(0, 0, 0, 0.4), inset 0 0 14px rgba(0,0,0,.5)});
+}
+
+.navbar .nav > li
+> a {
+  background-color: rgba(0,0,0,0);
+  @include transition(all .2s ease-in-out);
+
+  &:hover {
+    @include gradient-radial-extended(lighten(rgba($right-1-color, 1), 20%), rgba(0,0,0,0), center, 100%);
+  }
 }
