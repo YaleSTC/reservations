@@ -1,6 +1,7 @@
 class CatalogController < ApplicationController
+  helper :black_outs
   layout 'application_with_sidebar'
-  
+
   def index
     @reserver_id = session[:cart].reserver_id
     #push accessories to bottom by removing and reinserting
@@ -32,7 +33,7 @@ class CatalogController < ApplicationController
     flash[:notice] = "Invalid equipment_model"
     redirect_to root_path
   end
-  
+
   def update_user_per_cat_page
     session[:user_per_cat_page] = params[:user_cat_items_per_page] if !params[:user_cat_items_per_page].blank?
     respond_to do |format|
@@ -51,5 +52,5 @@ class CatalogController < ApplicationController
       render 'search_results' and return
     end
   end
-  
+
 end

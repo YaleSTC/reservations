@@ -52,14 +52,14 @@ class EquipmentModelsController < ApplicationController
       FileUtils.rm_r file_location
       @equipment_model.documentation_file_name = NIL
     end
-    
+
     unless params[:clear_photo].nil? # if we want to delete the current photo
       # recursively remove files from filesystem
       file_location = Rails.root.to_s + "/public/equipment_models/photos/" + @equipment_model.id.to_s + "/"
       FileUtils.rm_r file_location
       @equipment_model.photo_file_name = NIL
     end
-    
+
     if @equipment_model.update_attributes(params[:equipment_model])
       flash[:notice] = "Successfully updated equipment model."
       redirect_to @equipment_model

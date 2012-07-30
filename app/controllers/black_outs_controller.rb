@@ -1,6 +1,6 @@
 class BlackOutsController < ApplicationController
 
-  before_filter :require_admin  
+  before_filter :require_admin
 
   def index
     @black_outs = BlackOut.all
@@ -75,7 +75,7 @@ class BlackOutsController < ApplicationController
     if array.empty?
       params[:black_out][:set_id] = NIL # the blackouts not belonging to a set
       @black_out = BlackOut.new(params[:black_out])
-      
+
       # save and exit
       respond_to do |format|
         if @black_out.save
@@ -86,7 +86,7 @@ class BlackOutsController < ApplicationController
           format.js { render :action => 'load_custom_errors', notice: 'Unable to save blackout date.' and return}
         end
       end
-      
+
     else
       # generate a unique id for this blackout date set
       if BlackOut.last.nil?
@@ -94,13 +94,13 @@ class BlackOutsController < ApplicationController
       else
         params[:black_out][:set_id] = BlackOut.last.id + 1
       end
-      
+
       # save each blackout date
       array.each do |date|
         # set start and end dates for recurring (only single dates)
         params[:black_out][:start_date] = date
         params[:black_out][:end_date] = date
-        
+
         # save
         @black_out = BlackOut.new(params[:black_out])
         @black_out.save
@@ -120,17 +120,17 @@ class BlackOutsController < ApplicationController
     # correct for date formatting
     params[:black_out][:start_date] = Date.strptime(params[:black_out][:start_date],'%m/%d/%Y')
     params[:black_out][:end_date] = Date.strptime(params[:black_out][:end_date],'%m/%d/%Y')
-    
+
     # make sure dates are valid
     if params[:black_out][:end_date] < params[:black_out][:start_date]
       flash[:error] = 'Due date must be after the start date.'
       redirect_to :back and return
     end
-    
+
     # set other params
     params[:black_out][:created_by] = current_user[:id] # Last-edited-by is automatically set
     params[:black_out][:equipment_model_id] = 0 # If per-equipment_model blackouts are implemented, delete this line.
-    
+
     # do not leave a recurring set with one element
     unless @black_out.set_id.nil?
       @black_out_set = BlackOut.where("set_id = ?", @black_out.set_id)
@@ -174,14 +174,14 @@ class BlackOutsController < ApplicationController
       format.json { head :no_content }
     end
   end
-  
+
   def destroy_recurring
     @black_out = BlackOut.find(params[:id])
     black_out_set = BlackOut.where("set_id = ?", @black_out.set_id)
     black_out_set.each do |black_out|
       black_out.destroy(:force)
     end
-    
+
     # exit
     flash[:notice] = "All blackouts in the set were successfully destroyed."
     redirect_to black_outs_path and return
