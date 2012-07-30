@@ -111,7 +111,6 @@ class EquipmentModel < ActiveRecord::Base
 
   ## Functions ##
 
-
   #inherits from category if not defined
   def maximum_per_user
     max_per_user || category.maximum_per_user
@@ -138,20 +137,6 @@ class EquipmentModel < ActiveRecord::Base
       documents.build(attributes)
     end
   end
-
-#  def formatted_description
-#    lines = self.description.split(/^/)
-
-#    nice_content = "<p>"
-#    lines.each do |line|
-#      if line.include? "<table>" or line.include? "<td>"
-#        nice_content += line
-#      else
-#        nice_content += line + "<br />"
-#      end
-#    end
-#    nice_content += "</p>"
-#  end
 
   def photos
     self.documents.images
@@ -182,7 +167,6 @@ class EquipmentModel < ActiveRecord::Base
      end
      return qualification_met
   end
-
 
   def available_count(date)
     # get the total number of objects of this kind
