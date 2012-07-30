@@ -184,10 +184,10 @@ class ApplicationController < ActionController::Base
     redirect_to request.referer  # Or use redirect_to(back)
   end
   
-  def csv_import(location)
+  def csv_import(filepath)
     # initialize
     imported_objects = []
-    string = File.read(location)
+    string = File.read(filepath)
     require 'csv'
     
     # import data by row

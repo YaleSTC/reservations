@@ -135,7 +135,25 @@ class User < ActiveRecord::Base
     end
   end
   
-  def self.import_users(array_of_user_data,update_existing,user_type)
+  def self.import_with_ldap(user_data_hash)
+    # check LDAP for missing data
+    ldap_user_hash = User.search_ldap(user_data_hash[:login])
+    
+    # if nothing found via LDAP
+    if ldap_user_hash.nil?
+      return
+    end
+    
+    # fill-in missing key-values with LDAP data
+    user_data_hash.keys.each do |key|
+      if user_data_hash[key].blank? and !ldap_user_hash[key].blank?
+        user_data_hash[key] = ldap_user_hash[key]
+      end
+    end
+    user_data_hash
+  end
+  
+  def self.import_users(array_of_user_data,update_existing = false,user_type = 'normal') # give safe defaults if none selected
     array_of_success = [] # will contain user-objects
     array_of_fail = [] # will contain user_data hashes and error messages
 
@@ -153,21 +171,15 @@ class User < ActiveRecord::Base
           array_of_success << user
           next
         else
-          # check LDAP for missing data
-          ldap_user_hash = User.search_ldap(user_data[:login])
-          if ldap_user_hash.nil?
-            temp_array = [user_data, 'Incomplete user information. Unable to find user in online directory (LDAP).']
-            array_of_fail << temp_array
+          ldap_hash = User.import_with_ldap(user_data)
+          
+          if ldap_hash # if LDAP lookup succeeded
+            user_data = ldap_hash
+          else # if LDAP lookup failed
+            array_of_fail << [user_data, 'Incomplete user information. Unable to find user in online directory (LDAP).']
             next
           end
           
-          # fill-in missing key-values with LDAP data
-          user_data.keys.each do |key|
-            if user_data[key].blank? and !ldap_user_hash[key].blank?
-              user_data[key] = ldap_user_hash[key]
-            end
-          end
-
           # re-attempt save to database
           if user.update_attributes(user_data)
             # assign type (isn't saved with update attributes, without adding to the user_data hash)
@@ -177,9 +189,7 @@ class User < ActiveRecord::Base
             array_of_success << user
             next
           else
-            temp_errors_string = user.errors.full_messages.to_sentence
-            temp_array = [user_data, temp_errors_string]
-            array_of_fail << temp_array
+            array_of_fail << [user_data, user.errors.full_messages.to_sentence]
             next
           end
         end
@@ -193,19 +203,13 @@ class User < ActiveRecord::Base
           array_of_success << user
           next
         else
-          # check LDAP for missing data
-          ldap_user_hash = User.search_ldap(user_data[:login])
-          if ldap_user_hash.nil?
-            temp_array = [user_data, 'Incomplete user information. Unable to find user in online directory (LDAP).']
-            array_of_fail << temp_array
-            next
-          end
+          ldap_hash = User.import_with_ldap(user_data)
           
-          # fill-in missing key-values with LDAP data
-          user_data.keys.each do |key|
-            if user_data[key].blank? and !ldap_user_hash[key].blank?
-              user_data[key] = ldap_user_hash[key]
-            end
+          if ldap_hash # if LDAP lookup succeeded
+            user_data = ldap_hash
+          else # if LDAP lookup failed
+            array_of_fail << [user_data, 'Incomplete user information. Unable to find user in online directory (LDAP).']
+            next
           end
           
           # re-attempt save to database
@@ -218,9 +222,7 @@ class User < ActiveRecord::Base
             array_of_success << user
             next
           else
-            temp_errors_string = user.errors.full_messages.to_sentence
-            temp_array = [user_data, temp_errors_string]
-            array_of_fail << temp_array
+            array_of_fail << [user_data, user.errors.full_messages.to_sentence]
             next
           end
         end
