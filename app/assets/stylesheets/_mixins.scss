@@ -25,9 +25,9 @@
   background-color: $outerColor;
   background-image: -webkit-gradient(radial, $x-position $y-position, 0, $x-position $y-position, 460, from($innerColor), to($outerColor));
   background-image: -webkit-radial-gradient($x-position $y-position, circle farthest-side, $innerColor, $outerColor);
-  background-image: -moz-radial-gradient($x-position $y-position, circle closest-corner, $innerColor, $outerColor);
-  background-image: -ms-radial-gradient($x-position $y-position, circle closest-corner, $innerColor, $outerColor);
-  background-image: -o-radial-gradient($x-position $y-position, circle closes-corner, $innerColor, $outerColor);
+  background-image: -moz-radial-gradient($x-position $y-position, circle farthest-side, $innerColor, $outerColor);
+  background-image: -ms-radial-gradient($x-position $y-position, circle farthest-side, $innerColor, $outerColor);
+  background-image: -o-radial-gradient($x-position $y-position, circle farthest-side, $innerColor, $outerColor);
   background-repeat: no-repeat;
 }
 
