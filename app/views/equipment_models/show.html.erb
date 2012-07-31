@@ -1,6 +1,7 @@
 <% title @equipment_model.name %>
 <% subtitle @equipment_model.category.name.singularize %>
 
+
 <!-- EQUIPMENT MODEL INFO BOX -->
 <div class="row em_info">
   <div class="span3">
@@ -25,18 +26,19 @@
   <% end %>
   </div>
   <div class="span6">
-    <div class="row">  
+    <div class="row">
       <div class="span4">
         <h3 class="availability">
-          <%= @equipment_model.available?(cart.start_date..cart.due_date) || "0"%> available of <%= @equipment_model.equipment_objects.size %>
+          <%= @equipment_model.available?(cart.start_date, cart.due_date) || "0"%> available of <%= @equipment_model.equipment_objects.size %>
         </h3>
-        <p>    
+        <p>
           <%= content_tag :div, class: "progress #{progress_color}" do %>
             <%= content_tag :div, nil, class: 'bar', style: "width: 0%;", :"data-percentage" => bar_progress.chop %>
           <% end %>
         </p>
         <h3 class="availability">from <%= cart.start_date.strftime("%b %d, %Y") %> – <%= cart.due_date.strftime("%b %d, %Y") %></h3>
       </div>
+
 
       <div class="span2"> <%# TODO: Not super DRY right now, will refactor in the future %>
             <% if @equipment_model.model_restricted?(cart.reserver_id) %>
@@ -56,7 +58,6 @@
               </div>
             </div>
 
-                     
             <% elsif (a = BlackOut.date_is_blacked_out(cart.start_date)) && a.black_out_type_is_hard %>
               <%= link_to "#qualifications_modal", class: 'not-qualified-icon-em', rel: "tooltip", title: "Not Available (click for more info)", :"data-toggle" => 'modal' do %>
                 <i class="icon-warning-sign"></i>
@@ -70,7 +71,7 @@
               </div>
               <div class="modal-body">
                 <p>
-                  This model is not available on the dates you requested. This is because the start date of your reservation, <%= cart.start_date %>, falls on a day for which the administrator has disabled reservations. 
+                  This model is not available on the dates you requested. This is because the start date of your reservation, <%= cart.start_date %>, falls on a day for which the administrator has disabled reservations.
                 </p>
               </div>
             </div>
@@ -82,20 +83,20 @@
                 </div>
                 <div class="modal-body">
                   <p>
-                    This model is not available on the dates you requested. This is because the end date of your reservation, <%= cart.due_date %>, falls on a day for which the administrator has disabled reservations. 
+                    This model is not available on the dates you requested. This is because the end date of your reservation, <%= cart.due_date %>, falls on a day for which the administrator has disabled reservations.
                   </p>
                 </div>
               </div>
             <% else %>
-            
-                   <%= link_to "Add to Cart", {:url => add_to_cart_path(@equipment_model)}, 
-                                      :href => add_to_cart_path(@equipment_model), 
+
+                   <%= link_to "Add to Cart", {:url => add_to_cart_path(@equipment_model)},
+                                      :href => add_to_cart_path(@equipment_model),
                                       :method => :put, :remote => true, :class => 'btn btn-primary btn-large' %>
           <% end %>
       </div>
     </div>
-  
-    <div class="associated_em_box">    
+
+    <div class="associated_em_box">
       <div class="row">
           <div class="span6">
             <% unless @associated_equipment_models.empty? %>
@@ -226,7 +227,6 @@
     </p>
   </section>
 
-    
  <!-- PROCEDURES -->
 <section id="procedures">
   <h2>Procedures</h2><hr />
@@ -264,11 +264,9 @@
         </ol>
       <% end %>
     <% end %>
-  <% end %>  
+  <% end %>
   </section>
 <% end %>
-
-
 
 <div class="form-actions">
   <% if current_user.is_admin_in_adminmode? %>

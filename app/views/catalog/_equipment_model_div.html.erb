@@ -14,18 +14,18 @@
    <div class="caption_cat">
 
       <hr class ="special-hr"/>
-      <p>(<%= equipment_model.available?(cart.start_date..cart.due_date) || "0" %> available from <br /><%= cart.start_date.strftime("%b %d, %Y") %> to <%= cart.due_date.strftime("%b %d, %Y") %>)</p>
+      <p>(<%= equipment_model.available?(cart.start_date, cart.due_date) || "0" %> available from <br /><%= cart.start_date.strftime("%b %d, %Y") %> to <%= cart.due_date.strftime("%b %d, %Y") %>)</p>
       <p class="equipment_descr">
         <%= equipment_model.description + " " %><%= link_to "More Info", equipment_model, :class => 'more_info' %>
       </p>
     </div>
-      <% if equipment_model.model_restricted?(cart.reserver_id) %>
-        <div class="add_to_cart_box">
-          <%= button_tag "Add to Cart", :class => "btn disabled", :id => 'add_to_cart' %>
-          <%= link_to "#qualifications_modal", class: 'not-qualified-icon', rel: "tooltip", title: "Not Qualified (click for more info)", :"data-toggle" => 'modal' do %>
-            <i class="icon-warning-sign"></i>
-          <% end %>
-        </div>
+    <% if equipment_model.model_restricted?(cart.reserver_id) %>
+      <div class="add_to_cart_box">
+        <%= button_tag "Add to Cart", :class => "btn disabled", :id => 'add_to_cart' %>
+        <%= link_to "#qualifications_modal", class: 'not-qualified-icon', rel: "tooltip", title: "Not Qualified (click for more info)", :"data-toggle" => 'modal' do %>
+          <i class="icon-warning-sign"></i>
+      <% end %>
+      </div>
 
         <div id="qualifications_modal" class="modal hide fade">
           <div class="modal-header">
@@ -38,7 +38,8 @@
           </div>
         </div>
         
-    <% elsif equipment_model.available?(cart.start_date..cart.due_date) > 0 %>
+
+    <% elsif equipment_model.available?(cart.start_date, cart.due_date) > 0 %>
       <!--print add to cart link-->
       <div class="add_to_cart_box">
         <%= link_to "Add to Cart", add_to_cart_path(equipment_model), :method => :put, :remote => true, :class => "btn", :id => "add_to_cart" %>

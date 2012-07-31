@@ -1,25 +1,25 @@
 class Reservation < ActiveRecord::Base
-  # has_many :equipment_models_reservations
-  belongs_to :equipment_model
+  include ReservationValidations
+
   belongs_to :equipment_object
-  belongs_to :reserver, :class_name => 'User'
   belongs_to :checkout_handler, :class_name => 'User'
   belongs_to :checkin_handler, :class_name => 'User'
 
   validates :reserver,
             :start_date,
             :due_date,
+            :equipment_model,
             :presence => true
 
-  validate :not_empty
-  validate :start_date_before_due_date
-  #Currently this prevents checking in overdue items. We can work on a better fix.
-  #validate :not_in_past
-
+  # If there is no equipment model, it doesn't run the reservations that would break it
+  with_options :if => :not_empty? do |r|
+    r.validate :no_overdue_reservations?, :no_overdue_reservations?, :start_date_before_due_date?,
+           :not_in_past?, :matched_object_and_model?, :not_renewable?, :duration_allowed?, :available?,
+           :quantity_eq_model_allowed?, :quantity_cat_allowed?
+  end
 
   scope :recent, order('start_date, due_date, reserver_id')
   scope :user_sort, order('reserver_id')
-
   scope :reserved, lambda { where("checked_out IS NULL and checked_in IS NULL and due_date >= ?", Time.now.midnight.utc).recent}
   scope :checked_out, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date >=  ?", Time.now.midnight.utc).recent }
   scope :checked_out_today, lambda { where("checked_out >= ? and checked_in IS NULL", Time.now.midnight.utc).recent }
@@ -28,18 +28,17 @@ class Reservation < ActiveRecord::Base
   scope :returned, where("checked_in IS NOT NULL and checked_out IS NOT NULL")
   scope :returned_on_time, where("checked_in IS NOT NULL and checked_out IS NOT NULL and due_date >= checked_in").recent
   scope :returned_overdue, where("checked_in IS NOT NULL and checked_out IS NOT NULL and due_date < checked_in").recent
-
   scope :missed, lambda {where("checked_out IS NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc).recent}
   scope :upcoming, lambda {where("checked_out IS NULL and checked_in IS NULL and start_date = ? and due_date > ?", Time.now.midnight.utc, Time.now.midnight.utc).user_sort }
-
   scope :reserver_is_in, lambda {|user_id_arr| where(:reserver_id => user_id_arr)}
   scope :starts_on_days, lambda {|start_date, end_date|  where(:start_date => start_date..end_date)}
   scope :active, where("checked_in IS NULL") #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
   scope :notes_unsent, :conditions => {:notes_unsent => true}
 
-  attr_accessible :reserver, :reserver_id, :checkout_handler, :checkout_handler_id,
-                  :checkin_handler, :checkin_handler_id, :start_date, :due_date,
-                  :checked_out,:checked_in, :equipment_object, :equipment_model_id,
+  #TODO: Why the duplication in checkout_handler and checkout_handler_id (etc)?
+  attr_accessible :checkout_handler, :checkout_handler_id,
+                  :checkin_handler, :checkin_handler_id,
+                  :checked_out, :checked_in, :equipment_object,
                   :equipment_object_id, :notes, :notes_unsent, :times_renewed
 
   def reserver
@@ -74,6 +73,28 @@ class Reservation < ActiveRecord::Base
     end
   end
 
+  ## Set validation
+  # Checks all validations for all saved reservations and the reservations in
+  # the array of reservations passed in (use with cart.cart_reservations)
+  # Returns an array of error messages or [] if reservations are all valid
+  def self.validate_set(user, res_array = [])
+    all_res_array = res_array + user.reservations_array
+    errors = []
+    all_res_array.each do |res|
+      errors << user.name + " has overdue reservations that prevent new ones from being created" unless res.no_overdue_reservations?
+      errors << "Reservations cannot be made in the past" unless res.not_in_past?
+      errors << "Reservations start dates must be before due dates" unless res.start_date_before_due_date?
+      errors << "Reservations must have an associated equipment model" unless res.not_empty?
+      errors << res.equipment_object.name + " should be of type " + res.equipment_model.name unless res.matched_object_and_model?
+      errors << res.equipment_model.name + " should be renewed instead of re-checked out" unless res.not_renewable?
+      errors << "Duration problem with " + res.equipment_model.name unless res.duration_allowed?
+      errors << "Availablity problem with " + res.equipment_model.name unless res.available?(res_array)
+      errors << "Quantity equipment model problem with " + res.equipment_model.name unless res.quantity_eq_model_allowed?(res_array)
+      errors << "Quantity category problem with " + res.equipment_model.category.name unless res.quantity_cat_allowed?(res_array)
+	end
+	errors.uniq
+  end
+
   #should reconcile the two status functions
   def status_for_report
     if checked_out.nil?
@@ -89,10 +110,6 @@ class Reservation < ActiveRecord::Base
     end
   end
 
-  def not_empty
-    errors.add_to_base("A reservation must contain at least one item.") if self.equipment_model.nil?
-  end
-
   def self.due_for_checkin(user)
     Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", user.id).order('due_date ASC') # put most-due ones first
   end
@@ -103,60 +120,6 @@ class Reservation < ActiveRecord::Base
 
   def self.overdue_reservations?(user)
     Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ? and due_date < ?", user.id, Time.now.midnight.utc,).order('start_date ASC').count >= 1 #FIXME: does this need the order?
-  end
-
-  def check_out_permissions(reservations, procedures_count)
-    error_messages = ""
-    if reservations.nil?
-      error_messages += "No reservations selected!"
-    else
-      current_patron_id = reservations.first.reserver.id
-      user_current_reservations = Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", current_patron_id)
-      user_current_categories = []
-      user_current_models = []
-      user_current_reservations.each do |r|
-        user_current_categories << r.equipment_model.category.id
-        user_current_models << r.equipment_model_id
-      end
-
-      #Check if all check out procedures have been met
-      Hash[reservations.zip(procedures_count)].each do |reservation, procedure_count|
-        if Reservation.check_out_procedures_exist?(reservation)
-          if reservation.equipment_model.checkout_procedures.count != procedure_count #For now, this check can only be passed if ALL procedures are checked off
-            error_messages += "Checkout Procedures for #{reservation.equipment_model.name} not Completed."
-          end
-        end
-      end
-
-      reservations.each do |reservation|
-
-        #Check if category limit has been reached
-        if !reservation.equipment_model.category.max_per_user.nil? && user_current_categories.count(reservation.equipment_model.category.id) >= (reservation.equipment_model.category.max_per_user)
-          error_messages += "Category limit for #{reservation.equipment_model.category.name} has been reached."
-        end
-
-        #Check if equipment model limit has been reached
-        if !EquipmentModel.include_deleted.find(reservation.equipment_model_id).max_per_user.nil?
-          if user_current_models.count(reservation.equipment_model_id) >= reservation.equipment_model.max_per_user
-            error_messages += "Equipment Model limit for #{reservation.equipment_model.name} has been reached."
-          end
-        end
-
-      end
-    end
-    error_messages
-  end
-
-  def check_in_permissions(reservations, procedures_count)
-    error_messages = ""
-    Hash[reservations.zip(procedures_count)].each do |reservation, procedure_count|
-      if Reservation.check_in_procedures_exist?(reservation)
-        if reservation.equipment_model.checkin_procedures.count != procedure_count #For now, this check can only be passed if ALL procedures are checked off
-          error_messages += "Checkin Procedures for #{reservation.equipment_model.name} not completed."
-        end
-      end
-    end
-    error_messages
   end
 
   def checkout_object_uniqueness(reservations)
@@ -170,6 +133,7 @@ class Reservation < ActiveRecord::Base
     end
     return true # return true if unique
   end
+
 
   def self.active_user_reservations(user)
     prelim = Reservation.where("checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
@@ -210,15 +174,6 @@ class Reservation < ActiveRecord::Base
     reservation.equipment_object.nil?
   end
 
-  #These two methods (not_in_past and start_date_before_due_date) don't seem to be working
-  def not_in_past
-    errors.add_to_base("A reservation cannot be made in the past!") if self.due_date < Time.now.midnight
-  end
-
-  def start_date_before_due_date
-    errors.add_to_base("A reservation's due date must come after its start date.") if self.due_date < self.start_date
-  end
-
   def late_fee
     self.equipment_model.late_fee.to_f
   end
@@ -244,8 +199,9 @@ class Reservation < ActiveRecord::Base
     renewal_length = self.equipment_model.maximum_renewal_length || 0 # the 'or 0' is to ensure renewal_length never == NIL; effectively
     while (renewal_length > 0) and (available_period == NIL)
       # the available? method cannot accept dates with time zones, and due_date has a time zone
-      possible_dates_range = (self.due_date + 1.day).to_date..(self.due_date+(renewal_length.days)).to_date
-      if (self.equipment_model.available?(possible_dates_range) > 0)
+      possible_start = (self.due_date + 1.day).to_date
+      possible_due = (self.due_date+(renewal_length.days)).to_date
+      if (self.equipment_model.available?(possible_start, possible_due) > 0)
         # if it's available for the period, set available_period and escape loop
         available_period = renewal_length
       else
@@ -285,6 +241,4 @@ class Reservation < ActiveRecord::Base
       ((self.due_date.to_date - Date.today).to_i < self.equipment_model.maximum_renewal_days_before_due) and (self.times_renewed < self.equipment_model.maximum_renewal_times)
     end
   end
-
 end
-

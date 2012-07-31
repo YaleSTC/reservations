@@ -1,10 +1,10 @@
-require 'spec_helper'
+#require 'spec_helper'
 
-describe 'home' do
+#describe 'home page' do
 
-  it 'should have the word FHQWHGADS (this shows you what an error looks like lol)' do
-    admin = FactoryGirl.create(:admin)
-    visit "/"
-    page.should have_content('fhqwhgads')
-  end
-end
+#  it 'welcomes the user' do
+#    admin = FactoryGirl.create(:admin)
+#    visit "/"
+#    page.should have_content('Catalog')
+#  end
+#end

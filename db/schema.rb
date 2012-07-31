@@ -47,6 +47,15 @@ ActiveRecord::Schema.define(:version => 20120724184424) do
     t.integer  "set_id"
   end
 
+  create_table "cart_reservations", :force => true do |t|
+    t.integer  "reserver_id"
+    t.datetime "start_date"
+    t.datetime "due_date"
+    t.integer  "equipment_model_id"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+  end
+
   create_table "categories", :force => true do |t|
     t.string   "name"
     t.integer  "max_per_user"

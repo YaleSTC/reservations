@@ -23,11 +23,11 @@ class EquipmentModel < ActiveRecord::Base
 
   ## Validations ##
 
-  validates :name, 
+  validates :name,
             :description,
             :category,     :presence => true
   validates :name,         :uniqueness => true
-  validates :late_fee,     :replacement_fee, 
+  validates :late_fee,     :replacement_fee,
                            :numericality => { :greater_than_or_equal_to => 0 }
   validates :max_per_user, :numericality => { :allow_nil => true, :integer_only => true, :greater_than_or_equal_to => 1 }
   validates :max_renewal_length,
@@ -45,11 +45,11 @@ class EquipmentModel < ActiveRecord::Base
   nilify_blanks :only => [:deleted_at]
   
   include ApplicationHelper
-  
-  attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, 
-                  :max_per_user, :document_attributes, :accessory_ids, :deleted_at, 
-                  :checkout_procedures_attributes, :checkin_procedures_attributes, :photo, 
-                  :documentation, :max_renewal_times, :max_renewal_length, :renewal_days_before_due, :associated_equipment_model_ids, 
+
+  attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee,
+                  :max_per_user, :document_attributes, :accessory_ids, :deleted_at,
+                  :checkout_procedures_attributes, :checkin_procedures_attributes, :photo,
+                  :documentation, :max_renewal_times, :max_renewal_length, :renewal_days_before_due, :associated_equipment_model_ids,
                   :requirement_ids, :requirements
 
   default_scope where(:deleted_at => nil)
@@ -67,13 +67,13 @@ class EquipmentModel < ActiveRecord::Base
   end
 
   #Code necessary for Paperclip and image/pdf uploading
-  has_attached_file :photo, #generates profile picture 
-      :styles => {          
+  has_attached_file :photo, #generates profile picture
+      :styles => {
                             :large => { :geometry => "500x500", :format => "png" },
                             :medium => { :geometry => "250x250", :format => "png" },
-                            :small => { :geometry => "150x150", :format => "png" }, 
+                            :small => { :geometry => "150x150", :format => "png" },
                             :thumbnail => { :geometry => "260x180", :format => "png" } },
-      :convert_options => { 
+      :convert_options => {
                             :large => '-background none -gravity center -extent 500x500',
                             :medium => '-background none -gravity center -extent 250x250',
                             :small => '-background none -gravity center -extent 150x150',
@@ -90,24 +90,23 @@ class EquipmentModel < ActiveRecord::Base
                     :path => ":rails_root/public/equipment_models/:attachment/:id/:style/:basename.:extension",
                     :preserve_files => true
 
-      
-  validates_attachment_content_type :photo, 
-                                    :content_type => ["image/jpg", "image/png", "image/jpeg"], 
+  validates_attachment_content_type :photo,
+                                    :content_type => ["image/jpg", "image/png", "image/jpeg"],
                                     :message => "must be jpeg, jpg, or png."
-  validates_attachment_size         :photo, 
+  validates_attachment_size         :photo,
                                     :less_than => 1.megabytes,
                                     :message => "must be less than 1 MB in size"
-  
+
   validates_attachment :documentation, :content_type => { :content_type => "application/pdf" }
-  
+
   Paperclip.interpolates :normalized_photo_name do |attachment, style|
     attachment.instance.normalized_photo_name
   end
-  
+
   def normalized_photo_name
     "#{self.id}-#{self.photo_file_name.gsub( /[^a-zA-Z0-9_\.]/, '_')}" 
   end
-  #end of Paperclip code. 
+  #end of Paperclip code.
 
 
   ## Functions ##
@@ -140,34 +139,30 @@ class EquipmentModel < ActiveRecord::Base
     end
   end
 
-#  def formatted_description
-#    lines = self.description.split(/^/)
-
-#    nice_content = "<p>"
-#    lines.each do |line|
-#      if line.include? "<table>" or line.include? "<td>"
-#        nice_content += line
-#      else
-#        nice_content += line + "<br />"
-#      end
-#    end
-#    nice_content += "</p>"
-#  end
-
   def photos
     self.documents.images
   end
 
-  def available?(date_range) #This does not actually return true or false, but rather the number available.
+#TODO: blackout vs validation
+#TODO: doesn't return true/false so it should be num_available(*)
+#  def available?(start_date, due_date)
+#    overall_count = self.equipment_objects.size
+#    start_date.to_date.upto(due_date.to_date) do |date|
+#      available_on_date = available_count(date)
+#      overall_count = available_on_date if available_on_date < overall_count
+#    end
+#    overall_count
+#  end
+  def available?(start_date, due_date) #This does not actually return true or false, but rather the number available.
     qualification_met = true
-      if ((a = BlackOut.date_is_blacked_out(date_range.first)) && a.black_out_type_is_hard) || ((a = BlackOut.date_is_blacked_out(date_range.last)) && a.black_out_type_is_hard) #If start or end of range is blacked out, and that is a hard blackout.
+      if ((a = BlackOut.date_is_blacked_out(start_date)) && a.black_out_type_is_hard) || ((a = BlackOut.date_is_blacked_out(due_date)) && a.black_out_type_is_hard) #If start or end of range is blacked out, and that is a hard blackout.
         return 0
       end
     overall_count = self.equipment_objects.size
-    date_range.each do |date|
+    start_date.to_date.upto(due_date.to_date) do |date|
        available_on_date = available_count(date)
        overall_count = available_on_date if available_on_date < overall_count
-    end 
+    end
     overall_count
   end
   
@@ -182,6 +177,7 @@ class EquipmentModel < ActiveRecord::Base
     return false
   end
 
+  # TODO: convert this to an SQL call?
   def has_requirement?(model)
     Requirement.all.each do |req|
       if req.equipment_models.include?(self)

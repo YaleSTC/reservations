@@ -57,19 +57,16 @@ class ReservationsController < ApplicationController
   end
 
   def create
-    complete_reservation = []
-    # using http://stackoverflow.com/questions/7233859/ruby-on-rails-updating-multiple-models-from-the-one-controller as inspiration
+    successful_reservations = []
+    #using http://stackoverflow.com/questions/7233859/ruby-on-rails-updating-multiple-models-from-the-one-controller as inspiration
     respond_to do |format|
       Reservation.transaction do
         begin
-          cart.items.each do |item|
-            emodel = item.equipment_model
-            item.quantity.times do |q|    # accounts for reserving multiple equipment objects of the same equipment model (mainly for admins)
-              @reservation = Reservation.new(params[:reservation])
-              @reservation.equipment_model =  emodel
-              @reservation.save
-              complete_reservation << @reservation
-            end
+          cart.cart_reservations.each do |cart_res|
+            @reservation = Reservation.new(params[:reservation])
+            @reservation.equipment_model =  cart_res.equipment_model
+            @reservation.save!
+            successful_reservations << @reservation
           end
           session[:cart] = Cart.new
           unless AppConfig.first.reservation_confirmation_email_active?
@@ -347,3 +344,4 @@ class ReservationsController < ApplicationController
   end
 
 end
+

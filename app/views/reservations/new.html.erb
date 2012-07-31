@@ -14,8 +14,8 @@
   </p>
   <p>
     <ul>
-      <% cart.items.each do |item| %>
-        <li><%= item.quantity %> x <%= link_to item.name, item.equipment_model %></li>
+      <% cart.models_with_quantities.each_pair do |model_id, quantity| %>
+        <li><%= quantity %> x <%= link_to EquipmentModel.find(model_id).name, EquipmentModel.find(model_id) %></li>
       <% end %>
       <li style="list-style: none"><small><%= link_to "Go back to the catalog", catalog_path %></small></li>
     </ul>

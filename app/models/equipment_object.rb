@@ -1,5 +1,6 @@
 class EquipmentObject < ActiveRecord::Base
   belongs_to :equipment_model
+  has_one :category, :through => :equipment_model
   has_many :reservations
 
   validates :name, 
