@@ -59,8 +59,9 @@ a.not-qualified-icon-em {
 	top: 6px;
 	right: 120px;
 	font-size: $baseFontSize * 3.6;
-
 	color: $btnWarningBackgroundHighlight;
+	@include warning-icon-drop-shadow;
+
 	&:hover, &:active {
 		text-decoration: none;
 		color: $btnWarningBackground;
