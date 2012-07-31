@@ -44,14 +44,11 @@ class ReservationsController < ApplicationController
     respond_to do |format|
       Reservation.transaction do
         begin
-          cart.items.each do |item|
-            emodel = item.equipment_model
-            item.quantity.times do |q|    # accounts for reserving multiple equipment objects of the same equipment model (mainly for admins)
-              @reservation = Reservation.new(params[:reservation])
-              @reservation.equipment_model =  emodel
-              @reservation.save
-              complete_reservation << @reservation
-            end
+          cart.cart_reservations.each do |cartres|
+            @reservation = Reservation.new(params[:reservation])
+            @reservation.equipment_model =  cartres.equipment_model
+            @reservation.save!
+            complete_reservation << @reservation
           end
           session[:cart] = Cart.new
           UserMailer.reservation_confirmation(complete_reservation).deliver
