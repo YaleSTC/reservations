@@ -30,7 +30,11 @@ div.form-actions .view_all {
 }
 
 .well {
-  background: darken(desaturate($bodyBackground, 10%), 3%);
+  background-color: darken(desaturate($bodyBackground, 10%), 3%);
+}
+
+.nav > li > a:hover {
+  background-color: darken(desaturate($bodyBackground, 10%), 7%);
 }
 
 // Styles for Select2 to make it visually integrate better with bootstrap
