@@ -2,7 +2,7 @@
 // This file is automatically included by javascript_include_tag :defaults
 //= require jquery
 //= require jquery_ujs
-//= require jquery-ui
+//= require jquery.ui.datepicker
 //= require jquery.sticky
 //= require jquery.dotdotdot-1.5.1
 //= require cocoon
@@ -11,7 +11,15 @@
 //= require dataTables_numhtml_sort.js
 //= require dataTables_numhtml_detect.js
 //= require dataTables/jquery.dataTables.bootstrap
-//= require bootstrap
+//= require bootstrap-transition
+//= require bootstrap-alert
+//= require bootstrap-button
+//= require bootstrap-dropdown
+//= require bootstrap-modal
+//= require bootstrap-scrollspy
+//= require bootstrap-tab
+//= require bootstrap-tooltip
+//= require bootstrap-popover
 //= require variables.js
 //= require select2
 //= require_self
@@ -22,7 +30,7 @@
       after: ".more_info",
       watch: 'window'
       });
-    
+
     $(".equipment_title").dotdotdot({
       height: 54, // must match .equipment_title height
       watch: 'window'
@@ -44,7 +52,7 @@
       var steps_completed = $(this).find("input:checked").length;
         if (steps_completed != steps && steps_completed != 0) {
           flag = true;
-        } 
+        }
         else {
           //do nothing
         }
@@ -61,7 +69,7 @@
       if (selected != ""){
         if (steps_completed != steps) {
           flag = true;
-        } 
+        }
         else { // do nothing
         }
       } else {
@@ -79,7 +87,7 @@
       if( confirm("One or more check in or check out procedures have not been completed. Are you sure you want to continue?")){
         (this).submit();
         return false;
-      } else { 
+      } else {
         //they clicked no.
         return false;
       }
@@ -99,7 +107,7 @@ $(document).ready(function() {
 
   $('#checkin_button').click(function() {
     var flag = validate_checkin();
-    confirm_checkinout(flag); 
+    confirm_checkinout(flag);
     return false;
   });
 
@@ -121,7 +129,7 @@ $(document).ready(function() {
           { "bSortable": false, "aTargets": [ "no_sort" ] }
         ]
   });
-  
+
   $('.history_table').dataTable({
     "sDom": "<'row'<l><f>r>t<'row'<'span3'i><p>>",
     "bLengthChange": false,
@@ -130,7 +138,7 @@ $(document).ready(function() {
           { "bSortable": false, "aTargets": [ "no_sort" ] }
         ]
   });
-  
+
   $('.report_table').dataTable({
     "sDom": "<'row'<'span3'l>fr>t<'row'<'span3'i><p>>",
     "sPaginationType": "bootstrap",
@@ -171,9 +179,9 @@ $(document).ready(function() {
   $(".btn#modal").tooltip();
   $(".not-qualified-icon").tooltip();
   $(".not-qualified-icon-em").tooltip();
-  
+
   // Equipment Model - show - progress bar
-  
+
   $('.progress .bar').each(function() {
       var me = $(this);
       var perc = me.attr("data-percentage");
@@ -231,13 +239,13 @@ $(document).ready(function() {
   });
 
   $('.date_start').datepicker({
-    onClose: function(dateText, inst) { 
+    onClose: function(dateText, inst) {
       var start_date = $('.date_start').datepicker("getDate");
       var end_date = $('.date_end').datepicker("getDate");
       if (start_date > end_date){
         $('.date_end').datepicker("setDate", start_date)
       }
-      $('.date_end').datepicker( "option" , "minDate" , start_date); 
+      $('.date_end').datepicker( "option" , "minDate" , start_date);
     }
   });
 
