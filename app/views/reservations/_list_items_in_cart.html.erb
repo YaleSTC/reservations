@@ -11,7 +11,7 @@
       <tr>
       <td rowspan="2"><%= link_to "Remove", {:url => remove_from_cart_path(EquipmentModel.find(model_id))},
                                 :href => remove_from_cart_path(EquipmentModel.find(model_id)),
-                                :remote => true, :class => 'btn btn-mini' %></td>
+                                :method => :put, :remote => true, :class => 'btn btn-mini' %></td>
                                 </tr>
     </tr>
     </tbody>

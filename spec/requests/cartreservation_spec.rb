@@ -203,7 +203,7 @@ describe 'cart and cart reservations' do
     cart.add_item(eq)
     cartres = cart.cart_reservations.first
     cartres.start_date.to_date.should == Date.today
-    cartres.due_date.to_date.should == Date.today
+    cartres.due_date.to_date.should == Date.tomorrow
     cart.set_start_date(Date.tomorrow)
     cart.start_date.should == Date.tomorrow
     cart.due_date.should == Date.tomorrow + 1
@@ -241,6 +241,6 @@ describe 'cart and cart reservations' do
     res.save(:validate => false)
     user = User.find(res.reserver_id)
     cart.set_reserver_id(user.id)
-    Reservation.validate_set(user, cart.cart_reservations).should == [cart.reserver.name + " has overdue reservations that prevent new ones from being created"]
+    Reservation.validate_set(user, cart.cart_reservations).should == [] << cart.reserver.name + " has overdue reservations that prevent new ones from being created"
   end
 end

@@ -62,7 +62,7 @@ class Cart
   # Returns a hash of the equipment models in the cart with their quantities
   def models_with_quantities
     models = Hash.new
-    cart_reservations.each { |res| models[res.equipment_model.id] = res.count(cart_reservations) }
+    cart_reservations.each { |res| models[res.equipment_model.id] = res.same_model_count(cart_reservations) }
     models
   end
 
@@ -71,7 +71,7 @@ class Cart
   end
 
   ## Date methods
-                                           
+
   # Sets start date and updates all CartReservations to match
   def set_start_date(date)
     @start_date = date
@@ -103,7 +103,7 @@ class Cart
       @due_date = @start_date + 1.day
     end
   end
-  
+
   #Create an array of all the reservations that should be renewed instead of having a new reservation
   def renewable_reservations
     user_reservations = reserver.reservations
@@ -114,7 +114,7 @@ class Cart
         # the end date should be the same as the start date
         # the reservation should be renewable
         # also the user should only renew as many reservations as they have in their cart
-        if (res.due_date.to_date == @start_date &&                
+        if (res.due_date.to_date == @start_date &&
            res.equipment_model_id == item.equipment_model_id &&
            cart_item_count > 0 &&
            res.is_eligible_for_renew?)
@@ -125,7 +125,7 @@ class Cart
     end
     return renewable_reservations
   end
-  
+
 
   # Returns the cart's duration
   def duration #in days

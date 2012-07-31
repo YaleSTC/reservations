@@ -81,7 +81,7 @@ class Reservation < ActiveRecord::Base
     all_res_array = res_array + user.reservations_array
     errors = []
     all_res_array.each do |res|
-      errors << reserver.name + " has overdue reservations that prevent new ones from being created" unless res.no_overdue_reservations?
+      errors << user.name + " has overdue reservations that prevent new ones from being created" unless res.no_overdue_reservations?
       errors << "Reservations cannot be made in the past" unless res.not_in_past?
       errors << "Reservations start dates must be before due dates" unless res.start_date_before_due_date?
       errors << "Reservations must have an associated equipment model" unless res.not_empty?
@@ -121,6 +121,19 @@ class Reservation < ActiveRecord::Base
   def self.overdue_reservations?(user)
     Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ? and due_date < ?", user.id, Time.now.midnight.utc,).order('start_date ASC').count >= 1 #FIXME: does this need the order?
   end
+
+  def checkout_object_uniqueness(reservations)
+    object_ids_taken = []
+    reservations.each do |r|
+      if !object_ids_taken.include?(r.equipment_object_id) # check to see if we've already taken that one
+        object_ids_taken << r.equipment_object_id
+      else
+        return false # return false if not unique
+      end
+    end
+    return true # return true if unique
+  end
+
 
   def self.active_user_reservations(user)
     prelim = Reservation.where("checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
@@ -186,8 +199,9 @@ class Reservation < ActiveRecord::Base
     renewal_length = self.equipment_model.maximum_renewal_length || 0 # the 'or 0' is to ensure renewal_length never == NIL; effectively
     while (renewal_length > 0) and (available_period == NIL)
       # the available? method cannot accept dates with time zones, and due_date has a time zone
-      possible_dates_range = (self.due_date + 1.day).to_date..(self.due_date+(renewal_length.days)).to_date
-      if (self.equipment_model.available?(possible_dates_range) > 0)
+      possible_start = (self.due_date + 1.day).to_date
+      possible_due = (self.due_date+(renewal_length.days)).to_date
+      if (self.equipment_model.available?(possible_start, possible_due) > 0)
         # if it's available for the period, set available_period and escape loop
         available_period = renewal_length
       else
@@ -199,11 +213,11 @@ class Reservation < ActiveRecord::Base
     # before available_period is set
     return available_period = renewal_length
   end
-  
+
   def is_eligible_for_renew?
     # determines if a reservation is eligible for renewal, based on how many days before the due
     # date it is and the max number of times one is allowed to renew
-    # 
+    #
     # we need to test if any of the variables are set to NIL, because in that case comparision
     # is undefined; that's also why we can't set variables to these function values before
     # the if statements

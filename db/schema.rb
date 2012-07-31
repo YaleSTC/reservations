@@ -11,9 +11,6 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema.define(:version => 20120717205310) do
-=======
 ActiveRecord::Schema.define(:version => 20120718004311) do
 
   create_table "app_configs", :force => true do |t|
@@ -37,7 +34,6 @@ ActiveRecord::Schema.define(:version => 20120718004311) do
     t.integer  "favicon_file_size"
     t.datetime "favicon_updated_at"
   end
->>>>>>> development
 
   create_table "black_outs", :force => true do |t|
     t.integer  "equipment_model_id"
