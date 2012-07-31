@@ -26,4 +26,14 @@ module ActivationHelper
     end
   end
 
+  def activateChildren(currentModel)
+    if (currentModel.class == Category) #Equipment Objects have EMs and Categories that may need to be reactivated
+      binding.pry
+      EquipmentModel.include_deleted.find(currentModel.equipment_model_id).revive #Reactivate the EM
+      Category.include_deleted.find(EquipmentModel.include_deleted.find(currentModel.equipment_model_id).category_id).revive #Reactivate the Category
+    elsif (currentModel.class == EquipmentModel) #EMs have Categories that may need to be reactivated
+      Category.include_deleted.find(currentModel.category_id).revive #Reactivate the category
+    end
+  end
+
 end
