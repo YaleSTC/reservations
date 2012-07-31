@@ -4,18 +4,20 @@
 <table class="datatable-wide table table-stripped table-bordered">
   <thead>
   <tr>
-      <th>Equipment Model</th>
-      <th>Contact Person</th>
-      <th>Contact Information</th>
-      <th class="no_sort"></th> <%# show %>
-      <th class="no_sort"></th> <%# edit %>
-      <th class="no_sort"></th> <%# destroy %>
+    <th>Description</th>
+    <th>Equipment Models</th>
+    <th>Contact Person</th>
+    <th>Contact Information</th>
+    <th class="no_sort"></th> <%# show %>
+    <th class="no_sort"></th> <%# edit %>
+    <th class="no_sort"></th> <%# destroy %>
   </tr>
   </thead>
   <tbody>
     <% @requirements.each do |requirement| %>  
       <tr>
-        <td><%= EquipmentModel.find(requirement.equipment_model_id).name %></td>
+        <td><%= requirement.description %></td>
+        <td><%  requirement.equipment_models.each do |model| %> <%= model.name %>, <br> <% end %></td>
         <td><%= requirement.contact_name %></td>
         <td><%= requirement.contact_info %></td>
         <td><%= link_to 'Show', requirement, class: 'btn' %></td>

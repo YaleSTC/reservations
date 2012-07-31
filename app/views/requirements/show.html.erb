@@ -1,10 +1,12 @@
-<% title "Requirements for #{EquipmentModel.find(@requirement.equipment_model_id).name}" %>
+<%= title "Requirement: #{@requirement.description}" %>
 
 <p>In order for a user to check out this model of equipment, they must have completed proper training. Once a user has completed necessary training, you may add the equipment they are qualified to use from their User Edit page.</p>
 <br>
 <p>
-  <strong>Equipment Model:</strong>
-  <%= EquipmentModel.find(@requirement.equipment_model_id).name %>
+  <strong>Equipment Models:</strong>
+  <% @requirement.equipment_models.each do |model| %>
+  <%= model.name %>, <br />
+  <% end %>
   <br>
   <strong>Contact Name:</strong>
   <%= @requirement.contact_info %>

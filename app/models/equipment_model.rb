@@ -49,7 +49,8 @@ class EquipmentModel < ActiveRecord::Base
   attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee, 
                   :max_per_user, :document_attributes, :accessory_ids, :deleted_at, 
                   :checkout_procedures_attributes, :checkin_procedures_attributes, :photo, 
-                  :documentation, :max_renewal_times, :max_renewal_length, :renewal_days_before_due, :associated_equipment_model_ids
+                  :documentation, :max_renewal_times, :max_renewal_length, :renewal_days_before_due, :associated_equipment_model_ids, 
+                  :requirement_ids, :requirements
 
   default_scope where(:deleted_at => nil)
  
@@ -170,19 +171,25 @@ class EquipmentModel < ActiveRecord::Base
     overall_count
   end
   
-  def model_restricted?(reserver_id) #Returns 0 if the reserver is ineligible to checkout the model.
-    qualification_met = false
-    unless (Requirement.where(:equipment_model_id => self.id)).empty?
-      qualification_met = true        
-        User.find(reserver_id).requirements.each do |req|
-          if req.equipment_model_id == self.id
-             qualification_met = false
-          end
-        end
-     end
-     return qualification_met
+  #TODO: Test to see if this works when a 
+  def model_restricted?(reserver_id) # Returns true if the reserver is ineligible to checkout the model.        
+    reserver = User.find(reserver_id)
+    self.requirements.each do |em_req|
+      unless reserver.requirements.include?(em_req)
+         return true
+      end
+    end
+    return false
   end
 
+  def has_requirement?(model)
+    Requirement.all.each do |req|
+      if req.equipment_models.include?(self)
+        return true
+      end
+    end
+    return false
+  end
 
   def available_count(date)
     # get the total number of objects of this kind
