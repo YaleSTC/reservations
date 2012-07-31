@@ -46,7 +46,7 @@ class Reservation < ActiveRecord::Base
 
   ## Set validation
   # Checks all validations for all saved reservations and the reservations in
-  # the array of reservations passed in (intended for use with cart.items)
+  # the array of reservations passed in (use with cart.cart_reservations)
   # Returns an array of error messages or [] if reservations are all valid
   def self.validate_set(user, res_array = [])
     all_res_array = res_array + user.reservations_array

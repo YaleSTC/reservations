@@ -33,8 +33,8 @@ class ReservationsController < ApplicationController
     if cart.items.empty?
       flash[:error] = "You need to add items to your cart before making a reservation."
       redirect_to catalog_path
-    elsif !cart.valid?
-      flash[:error] = "Please fix the following errors before finalizing your reservation:<br/>".html_safe + cart.errors.values.flatten.join("<br/>").html_safe
+    elsif Reservation.validate_set(cart.reserver, cart.cart_reservations) != []
+      flash[:error] = "Please fix the following errors before finalizing your reservation:<br/>".html_safe + Reservation.validate_set(cart.reserver, cart.cart_reservations).join("<br/>").html_safe
     end
   end
 

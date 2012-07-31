@@ -49,6 +49,7 @@ class CatalogController < ApplicationController
       #update dates
       session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_quicksearch],'%m/%d/%Y'))
       session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_quicksearch],'%m/%d/%Y'))
+      #TODO: display errors correctly
       if !cart.valid_dates?
         flash[:error] = cart.errors.values.flatten.join("<br/>").html_safe
         cart.errors.clear
