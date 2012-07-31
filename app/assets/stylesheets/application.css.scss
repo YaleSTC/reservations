@@ -29,6 +29,10 @@ div.form-actions .view_all {
 	z-index: 1050;
 }
 
+.well {
+  background: darken(desaturate($bodyBackground, 10%), 3%);
+}
+
 // Styles for Select2 to make it visually integrate better with bootstrap
 
 .select2-results .select2-highlighted {
