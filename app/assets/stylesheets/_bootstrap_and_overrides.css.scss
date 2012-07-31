@@ -12,16 +12,14 @@ $sansFontFamily: OpenSans, "Helvetica Neue", Helvetica, Arial, sans-serif;
 $bodyBackground: desaturate(lighten($left-2-color, 65%), 20%); // @white  Page background color
 $textColor: desaturate(darken($base-color, 1%), 5%);  // @grayDark Default text color for entire body, headings, and more
 $linkColor: lighten($right-2-color, 35%);  // #08c  Default link text color
-// $linkColorHover // darken(@linkColor, 15%)
 
-// $headingsColor
 // $tableBackground
 // $tableBackgroundAccent
 // $tableBackgroundHover
 
 
 
-
+$navbarheight: 43px;
 $navbarBackground: desaturate($base-color, 10%); // @grayDarker
 $navbarBackgroundHighlight: lighten($navbarBackground, 8%);  // @grayDark
 $navbarText: lighten(desaturate($left-2-color, 40%), 40%);
