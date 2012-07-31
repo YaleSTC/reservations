@@ -30,3 +30,7 @@
   background-image: -o-radial-gradient($x-position $y-position, circle, $innerColor, $outerColor);
   background-repeat: no-repeat;
 }
+
+@mixin img-outline {
+  outline: 1px solid desaturate(darken($bodyBackground, 10%), 30%);
+}
