@@ -222,7 +222,7 @@ class User < ActiveRecord::Base
             array_of_success << user
             next
           else
-            array_of_fail << [user_data, user.errors.full_messages.to_sentence]
+            array_of_fail << [user_data, user.errors.full_messages.to_sentence.capitalize + '.']
             next
           end
         end
