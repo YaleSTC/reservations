@@ -48,10 +48,11 @@
 
 .navbar .nav > li
 > a {
-  background-color: rgba(0,0,0,0);
-  @include transition(all .2s ease-in-out);
+  @include gradient-radial-extended(lighten(rgba($right-1-color, 1), 20%), rgba(0,0,0,0), center, 100%);
+  @include transition(all .17s ease-out);
+  background-position: 0 44px;
 
   &:hover {
-    @include gradient-radial-extended(lighten(rgba($right-1-color, 1), 20%), rgba(0,0,0,0), center, 100%);
+    background-position: 0 0;
   }
 }

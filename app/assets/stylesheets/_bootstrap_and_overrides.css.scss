@@ -19,7 +19,6 @@ $linkColor: lighten($right-2-color, 35%);  // #08c  Default link text color
 
 
 
-$navbarheight: 43px;
 $navbarBackground: desaturate($base-color, 10%); // @grayDarker
 $navbarBackgroundHighlight: lighten($navbarBackground, 8%);  // @grayDark
 $navbarText: lighten(desaturate($left-2-color, 40%), 40%);
@@ -29,8 +28,6 @@ $navbarLinkColorHover: lighten(desaturate($left-2-color, 40%), 60%);
 // $navbarLinkBackgroundHover: @include gradient-vertical;  // transparent
 // $navbarLinkBackgroundActive // @navbarBackground
 $navbarSearchBackground: desaturate(lighten($navbarBackground, 30%), 30%); // lighten(@navbarBackground, 25%)
-// $navbarSearchBackgroundFocus  // @white
-// $navbarSearchBorder // darken(@navbarSearchBackground, 30%)
 $navbarSearchPlaceholderColor: lighten(desaturate($left-2-color, 40%), 30%);
 // $navbarBrandColor
 
