@@ -1,62 +1,141 @@
-<% title @user.name + ((@user.is_banned || @user.is_admin_in_bannedmode?) ? " (banned)" : "") %>
+<% title @user.first_name + " " + (!@user.nickname.blank? ? "(#{@user.nickname}) " : "") + @user.last_name %>
+<% subtitle @user.login %>
 
-<div id="current_equipment">
-  <strong>User's current equipment:</strong><br />
-  <%= render :partial => 'current_equipment', :object => @user %>
+<div class="row">
+  <div id="bool_labels" class="span9">
+    <% if current_user.is_admin_in_adminmode? %>
+      <%= "<span class=\"user_label label-important\">Banned</span>".html_safe if @user.is_banned? %>
+      <%= "<span class=\"user_label label-warning\">Deactivated</span>".html_safe if @user.deleted_at %>
+      <%= "<span class=\"user_label label-success\">Admin</span>".html_safe if @user.is_admin? %>
+      <%= "<span class=\"user_label\">Checkout Person</span>".html_safe if @user.is_checkout_person? %>
+    <% end %>
+  </div>
 </div>
 
-<p>
-  <strong>Login:</strong>
-  <%= @user.login %>
-</p>
-<p>
-  <strong>First Name:</strong>
-  <%= @user.first_name %>
-</p>
-<p>
-  <strong>Last Name:</strong>
-  <%= @user.last_name %>
-</p>
-<p>
-  <strong>Nickname:</strong>
-  <%= @user.nickname %>
-</p>
-<p>
-  <strong>Phone:</strong>
-  <%= @user.phone %>
-</p>
-<p>
-  <strong>Email:</strong>
-  <%= @user.email %>
-</p>
-<p>
-  <strong>Affiliation:</strong>
-  <%= @user.affiliation %>
-</p>
-<% if current_user.is_admin_in_adminmode? %>
-  <p>
-    <strong>Is Admin:</strong>
-    <%= @user.is_admin %>
-  </p>
-  <p>
-    <strong>Is Checkout Person:</strong>
-    <%= @user.is_checkout_person %>
-  </p>
-  <p>
-    <strong>Is Banned:</strong>
-    <%= @user.is_banned %>
-  </p>
-  <p>
-    <strong>Is Activated:</strong>
-    <%= @user.deleted_at == nil %>
-  </p>
+<% if current_user.can_checkout? %>
+  <div class="row">
+    <div class="span9">
+      <div class="btn-group">
+          <%= link_to 'Manage Reservations', manage_reservations_for_user_path(@user.id), :class => 'btn btn-inverse' %>
+          <%= link_to 'Current Reservations', current_reservations_for_user_path(@user.id), :class => 'btn btn-inverse' %>
+      </div>
+    </div>
+  </div>
+  <hr>
 <% end %>
 
-<p><div class="form-actions">
-  <%= link_to "Edit Information", edit_user_path(@user) %>
-  <% if current_user.is_admin_in_adminmode? %>
-    | <%= link_to "Destroy User", @user, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete %>
-    | <%= link_to "View All Users", users_path %>
+
+<div class="row">
+  
+  
+  <dl id="user_info" class="dl-horizontal span4">
+    <div class="well">
+    <dt>Login</dt>
+    <dd><%= @user.login %></dd>
+    
+    <dt>First Name</dt>
+    <dd><%= @user.first_name %></dd>
+    
+    <dt>Last Name</dt>
+    <dd><%= @user.last_name %></dd>
+    
+    <dt>Nickname</dt>
+    <dd><%= !@user.nickname.blank? ? @user.nickname : "(none)" %></dd>
+    
+    <dt>Phone</dt>
+    <dd><%= @user.phone %></dd>
+    
+    <dt>Email</dt>
+    <dd><%= mail_to @user.email, @user.email %></dd>
+    
+    <dt>Affiliation</dt>
+    <dd><%= @user.affiliation %></dd>
+    </div>
+  </dl>
+  
+  <div id="user_stats" class="span5">
+    
+  <% @show_equipment.each do |key, value| %>
+    <%= content_tag :div, :id => "#{key}_count", :class => 'span2' do %>
+      <%= content_tag :h4, key.to_s.titleize %>
+      <%= content_tag :div, :class => "#{key}_num" do %>
+        <%= content_tag :i, nil, :class => stats_icons(key) %>
+        <%= value.size %>
+      <% end %>
+    <% end %>
   <% end %>
   </div>
-</p>
+</div>
+
+<!-- TODO: Make this prettier -->
+<% unless @user.requirements.empty? %>
+
+  <div class="row">
+    <div class="span9">
+      <h2>Equipment Qualifications</h2>
+    </div>
+  </div>
+  <hr />
+  <div class="row">
+    <div id="qualif_box" class="span9">
+      <ul id="qualifications">
+        <% @user.requirements.each do |req| %>
+          <li><i class="icon-ok"></i><%= link_to EquipmentModel.find(req.equipment_model_id).name, EquipmentModel.find(req.equipment_model_id) %></li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+
+<% end %>
+
+<div class="row">
+  <div class="span9">
+    <h2>
+      History
+      <% if !current_user.can_checkout? %>
+        <%= link_to 'Current Reservations', current_reservations_for_user_path(@user.id), :id => 'current_activity', :class => 'btn btn-inverse' %>
+      <% end %>
+    </h2>
+  </div>
+</div>
+<hr />
+
+
+<div class="row">
+  <div class="tabbable tabs-left span9">
+  
+    <ul class="nav nav-tabs">
+      <% @show_equipment.each do |key, value| %>
+        <%= content_tag :li, :class => active_tab(key) do %>
+          <%= link_to "##{key.to_s}", :class => 'tab-text', :"data-toggle" => 'tab' do %>
+            <%= key.to_s.titleize %>
+            <%= content_tag :span, value.size, :class => 'badge tab-badge' %>
+          <% end %>
+        <% end %>
+      <% end %>
+    </ul>
+    
+    <div class="tab-content">
+      <% @show_equipment.each do |key, value| %>
+        <p>
+          <%= content_tag :div, {:class => "tab-pane #{active_tab(key)}", :id => key}, false do %>
+            <% unless value.empty? %>
+              <%= render partial: 'history_table', locals: { :key => key, :value => value } %>
+            <% end %>
+          <% end %>
+        </p>
+      <% end %>
+      
+    </div>
+    
+  </div>
+</div>
+
+
+<div class="form-actions">
+  <%= link_to "Edit Information", edit_user_path(@user), :class => 'btn' %>
+  <% if current_user.is_admin_in_adminmode? %>
+    <%= link_to "Destroy User", @user, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete, :class => 'btn btn-danger' %>
+    <%= link_to "View All Users", users_path, :class => 'btn', :id => 'view_all_users' %>
+  <% end %>
+</div>

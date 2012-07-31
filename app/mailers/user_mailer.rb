@@ -1,5 +1,5 @@
 class UserMailer < ActionMailer::Base
-  default :from => "no-reply@reservations.app", :reply_to => Settings.admin_email
+ # default :from => "no-reply@reservations.app", :reply_to => @app_configs.admin_email
 
     def upcoming_checkout_notification(reservation)
       @reservation = reservation

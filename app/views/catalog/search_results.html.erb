@@ -1,0 +1,77 @@
+<% title %-Search results for "#{params[:query]}"- %>
+
+<% unless @category_results.empty? %>
+  <div class="row">
+    <div class="span9">
+      <h2>Category Results</h2>
+    </div>
+  </div>
+  <div class="row">
+    <% @category_results.each do |category| %>
+      <div class="span3">
+        <div class="well">
+          <h3 class="catalog">
+            <%# print category name %>
+            <%= link_to category.name, category_equipment_models_path(category) %>
+          </h3>
+        </div>
+      </div>
+    <% end %>
+
+  </div>
+
+<% end %>
+
+<% unless @equipment_model_results.empty? %>
+  <% unless @category_results.empty? %>
+
+  <div class="row">
+    <div class="span9">
+      <h2>Equipment Model Results</h2>
+    </div>
+  </div>
+  <% end %>
+  <ul class="thumbnails">
+    <% @equipment_model_results.each do |equipment_model| %>
+      <li class="span3">
+        <%= render :partial => 'equipment_model_div', :locals => { :equipment_model => equipment_model } %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
+<% unless @equipment_object_results.empty? %>
+  <div class="row">
+    <div class="span9">
+      <h2>Equipment Item Results</h2>
+    </div>
+  </div>
+
+  <div class="row">
+    <% @equipment_object_results.each do |equipment_object| %>
+
+    <div class="span4">
+      <div class="well">
+        <p>
+          <strong>Model:</strong>
+          <%= link_to equipment_object.equipment_model.name, equipment_model_path(equipment_object.equipment_model) %>
+        </p>
+        <p>
+          <strong>Item:</strong>
+          <%= equipment_object.name %> (<%= equipment_object.serial %>)
+        </p>
+        <p>
+          <strong>Status:</strong>
+          <% if equipment_object.available? %>
+            <span class="label label-success eo-table">Available</span>
+          <% else %>
+            <span class="label label-danger eo-table">Not Available</span>
+          <% end %>
+        </p>
+      </div>
+    </div>
+
+    <% end %>
+  </div>
+
+<% end %>

@@ -2,31 +2,33 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
-  helper :all # include all helpers, all the time
+  helper :layout
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
   before_filter RubyCAS::Filter
+  before_filter :app_setup, :if => lambda {|u| User.all.count == 0 }
+  before_filter :current_user
+  before_filter :load_configs
   before_filter :first_time_user
   before_filter :cart
   before_filter :set_view_mode
-  before_filter :current_user
   #before_filter :bind_pry_before_everything
 
   helper_method :current_user
   helper_method :cart
 
-
-  def bind_pry_before_everything
-    binding.pry
-  end
-
-  def current_user
-    @current_user ||= User.find_by_login(session[:cas_user]) if session[:cas_user]
-  end
-
   #-------- before_filter methods --------
+
+  def app_setup
+      redirect_to new_admin_user_path
+  end
+
+  def load_configs
+    @app_configs = AppConfig.first
+  end
+
   def first_time_user
-    if current_user.nil?
+    if current_user.nil? && params[:action] != "terms_of_service"
       flash[:notice] = "Hey there! Since this is your first time making a reservation, we'll
         need you to supply us with some basic contact information."
       redirect_to new_user_path
@@ -76,15 +78,36 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def current_user
+    @current_user ||= User.include_deleted.find_by_login(session[:cas_user]) if session[:cas_user]
+  end
+
+
+  def bind_pry_before_everything
+    binding.pry
+  end
+
   #-------- end before_filter methods --------
 
-  def update_cart
-    session[:cart].set_start_date(Date.strptime(params[:start_date_cart],'%m/%d/%Y'))
-    session[:cart].set_due_date(Date.strptime(params[:due_date_cart],'%m/%d/%Y'))
-    session[:cart].set_reserver_id(params[:reserver_id])
-    flash[:notice] = "Cart dates updated."
-    respond_to do |format|
-      format.html{render :partial => "reservations/cart_dates"}
+    def update_cart
+     #set dates
+      flash.clear
+      session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
+      session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
+      session[:cart].set_reserver_id(params[:reserver_id])
+      if !cart.valid_dates? #Validations are currently broken, so this always evaluates to false
+        flash[:error] = cart.errors.values.flatten.join("<br/>").html_safe
+        cart.errors.clear
+        if flash[:error].blank?
+          flash[:notice] = "Cart updated"
+        end
+      end
+
+      # reload appropriate divs / exit
+      respond_to do |format|
+        format.js{render :template => "reservations/cart_dates_reload"}
+          # guys i really don't like how this is rendering a template for js, but :action doesn't work at all
+        format.html{render :partial => "reservations/cart_dates"}
     end
   end
 
@@ -128,9 +151,14 @@ class ApplicationController < ActionController::Base
     redirect_to new_path
   end
 
+  def terms_of_service
+    @tos = @app_configs.terms_of_service
+    render 'terms_of_service/index'
+  end
+
   def deactivate
     if (current_user.is_admin)
-      @objects_class2 = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (User, EM, EO, Category)
+      @objects_class2 = params[:controller].singularize.titleize.delete(' ').constantize.include_deleted.find(params[:id]) #Finds the current model (User, EM, EO, Category)
       if (params[:controller] != "users") #Search for children is not necessary if we are altering users.
         deactivateChildren(@objects_class2)
       end
@@ -144,7 +172,7 @@ class ApplicationController < ActionController::Base
 
   def activate
     if (current_user.is_admin)
-      @model_to_activate = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (User, EM, EO, Category)
+      @model_to_activate = params[:controller].singularize.titleize.delete(' ').constantize.include_deleted.find(params[:id]) #Finds the current model (User, EM, EO, Category)
       if (params[:controller] != "users") #Search for parents is not necessary if we are altering users.
         activateParents(@model_to_activate)
       end
@@ -154,6 +182,13 @@ class ApplicationController < ActionController::Base
       flash[:notice] = "Only administrators can do that!"
     end
     redirect_to request.referer  # Or use redirect_to(back)
+  end
+  
+  def markdown_help
+    respond_to do |format|
+      format.html{render :partial => 'shared/markdown_help'}
+      format.js{render :template => 'shared/markdown_help_js'}
+    end
   end
 
 end

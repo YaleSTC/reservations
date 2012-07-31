@@ -1,6 +1,6 @@
 class Category < ActiveRecord::Base
-  has_many :equipment_models
-  
+  has_many :equipment_models  
+
   validates :name,                :presence => true, 
                                   :uniqueness => true 
   validates :max_per_user,        :numericality => { :only_integer => true }, 
@@ -18,6 +18,20 @@ class Category < ActiveRecord::Base
   attr_accessible :name, :max_per_user, :max_checkout_length, :deleted_at, :max_renewal_times, :max_renewal_length, :renewal_days_before_due
   
   nilify_blanks :only => [:deleted_at]  
+
+   default_scope where(:deleted_at => nil)
+   
+    def self.include_deleted
+      self.unscoped
+    end
+
+  def self.catalog_search(query)
+    if query.blank? # if the string is blank, return all
+      find(:all)
+    else # in all other cases, search using the query text
+      find(:all, :conditions => ['name LIKE :query', {:query => "%#{query}%"}])
+    end
+  end
 
   def maximum_per_user
     max_per_user || "unrestricted"

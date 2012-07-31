@@ -1,0 +1,66 @@
+#people_row {
+  text-align: center;
+
+  .icon-user {
+    font-size: $baseFontSize * 7;
+    line-height: $baseLineHeight * 4;
+    color: lighten($textColor, 50%);
+    @include transition(color .3s ease);
+
+
+
+    &:hover, &:active {
+      text-decoration: none;
+      color: $textColor;
+      @include transition(none);
+
+    }
+  }
+}
+
+ul.bar-dividers {
+  display: inline;
+  overflow: hidden;
+  list-style: none;
+  margin: 0; padding: 0;
+  position: relative;
+  height: 18px; // must match the height of the progress bar
+  width: 100%;
+
+  li {
+    height: 18px;
+    float: left;
+    margin: 0;
+    padding: 0;
+    @include box-shadow(inset 1px 0 rgba(221, 221, 221, .9));
+
+  }
+  li:first-child {
+      border-left: none;
+      @include box-shadow(inset 0 0 rgba(221, 221, 221, .9));
+  }
+}
+
+#date_range .progress {
+  .bar {
+    &:active {
+      #days_left {
+        display: inline;
+      }
+    }
+    span {
+      position: relative;
+      bottom: $baseLineHeight;
+      z-index: 4;
+      font-weight: bold;
+    }
+  }
+}
+
+#res_right_column .tab-content {
+  overflow: visible;
+}
+
+#dates_headings {
+  text-transform: uppercase;
+}

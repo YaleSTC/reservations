@@ -1,0 +1,7 @@
+<% title "Application Settings" %>
+
+<%= simple_form_for @app_config, :url => url_for( :action => "create_app_configs", :controller => "application_setup"), :html => { :class => "form-horizontal" } do |f| %>
+
+  <%= render :partial => 'app_configs/form', :locals => {:f => f} %>
+
+<% end %>

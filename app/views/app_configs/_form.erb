@@ -1,0 +1,73 @@
+<%= f.error_notification %>
+
+<fieldset>
+	<legend>General</legend>
+  <%= f.input :site_title, hint: "The Site Title is displayed in the title bar / tab in the browser, as well as in the navigation bar." %>
+  <%= f.input :admin_email %>
+  <%= f.input :department_name %>
+	<%= f.input :home_link_text %>
+	<%= f.input :home_link_location %>
+  <%= f.input :contact_link_location, label: 'Contact Email', hint: 
+  'Enter an email to which questions from the contact from will be sent' %>
+  <%= f.input :default_per_cat_page, label: 'Items per page', hint: 
+  'Default number of items to display per page in the Catalog.' %>
+  <%# Paperclip inline error fix %>
+  <%= f.input :favicon, label: 'Custom Favicon', hint: 
+  "Displayed in the tab and address bar of most browsers. Must be <em>*.ico</em> #{current_favicon_and_options}", wrapper_html: {class: paperclip_field_error(f, :favicon_content_type)} do %>
+    <%= f.input_field :favicon, as: :file %>
+    <%= f.error :favicon_content_type %>
+  <% end %>
+
+  <% if @app_config.favicon.present? %>
+    <div class='control-group'>
+      <div class="controls">
+        <%= label_tag 'restore_favicon' do %>
+          <%= check_box_tag 'restore_favicon', nil, false %>
+          <%= 'Restore default favicon?' %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</fieldset>
+<fieldset>
+  <legend>Emails</legend><br />
+  <p>
+    Configure notifications that will be sent to users.
+  </p>
+  <p>
+    Emails make use of variables; variables are placeholders that are automatically replaced with user- and reservation- specific information.<br />
+    You can use the following variables in each email:
+  </p>
+  <dl>
+    <dt>@user@</dt><dd>The full name of the particular user.</dd>
+    <dt>@equipment_list@</dt><dd>The list of equipment that user either has reserved, missed, overdue, or checked out.</dd>
+    <dt>@department_name@</dt><dd>The department name set above.</dd>
+    <dt>@return_date@</dt><dd>The due date for the particular reservation.</dd>
+    <dt>@late_fee@</dt><dd>The daily late fee for the equipment models in the particular reservation.</dd>
+  </dl>
+  <hr />
+  <%= f.input :upcoming_checkin_email_active, label: 'Enable upcoming check-in notification?', 
+              hint: 'When enabled, users will get an email reminding them of their upcoming reservation(s).' %>
+  <%= f.input :upcoming_checkin_email_body, input_html: { class: 'span6' } %>
+  <hr />
+  <%= f.input :overdue_checkout_email_active, label: 'Enable overdue checkout notification?', 
+              hint: 'When enabled, users who have missed their reservation checkout date will get an email, typically informing them that their reserved equipment may be available to other users.' %>
+  <%= f.input :overdue_checkout_email_body, input_html: { class: 'span6' } %>
+  <hr />
+  <%= f.input :overdue_checkin_email_active, label: 'Enable overdue equipment notification?', 
+              hint: 'When enabled, users who have overdue equipment will get an email, informing them about late fees and other consequences.' %>
+  <%= f.input :overdue_checkin_email_body, input_html: { class: 'span6' } %>
+  <hr />
+  <%= f.input :reservation_confirmation_email_active, label: 'Enable reservation confirmation?', 
+              hint: 'When enabled, users will get an email confirmation containing the details of their reservation.' %>
+</fieldset>
+<fieldset>
+  <legend>Terms of Service</legend>
+  <%= f.input :terms_of_service, input_html: { class: 'span6' } %>
+  <% unless params[:controller] == "application_setup" %>
+    <%= f.input :reset_tos_for_users, input_html: {type: "checkbox", value: '1'} , label: "Force all users to accept TOS again?", :hint => "i.e., if patrons need to be aware that the terms of service have changed." %>
+  <% end %>
+</fieldset>
+<div class="form-actions">
+  <%= f.button :submit, 'Update Settings' %>
+</div>

@@ -1,0 +1,146 @@
+//Giant Boolean Labels
+#bool_labels {
+	margin-bottom: 20px;
+}
+
+.user_label {
+	@extend .label;
+	@include border-radius(5px);
+	padding: $user_label-size*1px $user_label-size*4px $user_label-size*2px;
+	font-size: $baseFontSize * 1.5;
+	line-height: 14px;
+	margin-right: 10px;
+}
+
+//Giant Stats Numbers
+.current_equipment_num, .current_reservations_num, .overdue_equipment_num, .past_equipment_num, .missed_reservations_num, .past_overdue_equipment_num {
+	@include giant-number;
+}
+
+//Description List Display Fixes (including responsive)
+dl#user_info {
+	margin-top: 0px;
+
+	dt {
+		width: 90px;
+	}
+	dd {
+		position: relative;
+		right: 10px;
+		@include text-overflow;
+		a {
+			right: 0;
+		}
+	}
+	dd, dt {
+		line-height: $baseLineHeight * 1.5;
+		text-align: left;
+	}
+}
+
+@media (min-width: 1200px) {
+	dl#user_info {
+		margin-top: 0px;
+	
+		dt {
+			width: 90px;
+		}
+		dd {
+			position: relative;
+			right: 10px;
+			@include text-overflow;
+			a {
+				right: 0;
+			}
+		}
+		dd, dt {
+			line-height: $baseLineHeight * 1.5;
+			text-align: left;
+		}
+	}
+}
+
+@media (min-width: 768px) and (max-width: 979px) {
+	dl#user_info {
+		margin-top: 0px;
+	
+		dt {
+			width: 90px;
+		}
+		dd {
+			position: relative;
+			right: 10px;
+			@include text-overflow;
+			a {
+				right: 0;
+			}
+		}
+		dd, dt {
+			line-height: $baseLineHeight * 1.5;
+			text-align: left;
+		}
+	}
+}
+
+
+@media (min-width: 480px) {
+	dl#user_info {
+		margin-top: 0px;
+
+		dt {
+			width: 90px;
+		}
+		dd {
+			position: static;
+			right: 0;
+			@include text-overflow;
+			a {
+				right: 0;
+			}
+		}
+		dd, dt {
+			line-height: $baseLineHeight * 1.5;
+			text-align: left;
+		}
+	}
+}
+
+@media (max-width: 479px) {
+	dl#user_info {
+		margin-top: 0px;
+
+		dt {
+			width: 90px;
+		}
+		dd {
+			position: static;
+			right: 0;
+			@include text-overflow;
+		}
+		dd, dt {
+			line-height: $baseLineHeight * 1.5;
+			text-align: left;
+		}
+	}
+}
+
+//Tab Badges
+a.tab-text {width: 180px;}
+a .tab-badge {
+	float: right;
+}
+
+div#qualif_box {
+	padding-bottom: $baseLineHeight;
+}
+
+ul#qualifications {
+	list-style-type: none;
+	margin-left: 2em;
+	text-indent: -.8em;
+}
+
+//View All Button placement
+.btn#view_all_users, .btn#current_activity {
+	float: right;
+}

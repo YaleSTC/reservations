@@ -1,0 +1,48 @@
+<% if check_in_form.due_date.to_date < Date.today %>
+  <div class="well-nomargin span4 warning checkin"> <%# also change color %>
+<% else %>
+  <div class="well-nomargin span4 checkin">
+<% end %>
+  <header>
+    <h3><%= link_to "Reservation ##{check_in_form.id}", check_in_form %></h3>
+  </header>
+
+  <hr>
+    <p><h4><%= check_in_form.equipment_model.name %></h4></p>
+    <ul>
+        <%= check_box_tag "reservations[#{check_in_form.id}][checkin?]" %>
+        <%= check_in_form.equipment_object.name %>
+    </ul>
+
+    <p>
+      <p><h4>Notes</h4></p>
+		  <%= text_area_tag "reservations[#{check_in_form.id}][notes]", check_in_form.notes, class: 'span3', rows: 6 %>
+		  <%= render :partial => 'shared/markdown_button' %>
+    </p>
+
+    <p>
+      <p><h4>Check-In Procedures</h4></p>
+      <ul>
+        <% if check_in_form.equipment_model.checkin_procedures.empty? %>
+          <em>(none)</em>
+        <% else %>
+          <% check_in_form.equipment_model.checkin_procedures.each do |checkin_procedure| %>
+            <li style="list-style: none">
+              <%= check_box_tag "reservations[#{check_in_form.id}][checkin_procedures][#{checkin_procedure.id}]" %> <%= checkin_procedure.step %>
+            </li>
+          <% end %>
+        <% end %>
+      </ul>
+    </p>
+
+    <% if check_in_form.due_date.to_date < Date.today %>
+    <hr>
+    <footer>
+      <p>
+        This equipment is <strong class="error">overdue.</strong><br />
+        At a fee of <%= number_to_currency(check_in_form.late_fee) %> / day, the renter owes <strong><%= number_to_currency(check_in_form.late_fee * (Date.today - check_in_form.due_date.to_date).to_i)  %></strong> total.
+      </p>
+    </footer>
+
+    <% end %>
+  </div>

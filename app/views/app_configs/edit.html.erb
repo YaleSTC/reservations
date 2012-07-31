@@ -1,0 +1,7 @@
+<% title "Application Settings" %>
+
+<%= simple_form_for @app_config, :html => { multipart: true, :class => "form-horizontal" } do |f| %>
+
+  <%= render :partial => 'form', :locals => {:f => f} %>
+
+<% end %>

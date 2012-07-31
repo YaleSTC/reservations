@@ -1,51 +1,128 @@
-<%= simple_form_for @equipment_model, :html => { :multipart => true, :class => "form-horizontal" } do |f| %>
+<%= simple_form_for @equipment_model, html: { multipart: true, class: 
+  "form-horizontal" } do |f| %>
 
-<% # Paperclip currently does not support simple form and validations and will fail silently. %>
-<% # This code is necessary until they introduce a bug fix (Github issue #266) %>
-<ul>
-	  <% @equipment_model.errors.full_messages.each do |msg| %>
-	  <li><%= msg %></li>
-	  <% end %>
-</ul>
-	
-  <%#= f.error_notification %>
-  <%= f.association :category, :hint => "#{link_to "Add New Category", new_category_path, :class => "btn"}" %> 
+  <%= f.error_notification %>
+  <%= f.association :category, hint: "#{link_to "Add New Category", new_category_path, class: "btn"}", 
+  placeholder: 'Select a Category' %> 
   <input class="hidden" id="category" name="MODELNAME[category]" type="hidden">
-  <%= f.association :associated_equipment_models %>
-  <%= f.input :name %>
-  <%= f.input :description, as: :text %>
-  <%= f.input :late_fee %>
-  <%= f.input :replacement_fee %>
-  <%= f.input :max_per_user, label: "Maximum per user", hint: "Leave blank to default to category value" %>
-  <%= f.input :deleted_at, label: "Inactive", as: :deleted %>
   
-  <strong>Renewal Options</strong>
-  <%= f.input :max_renewal_times, label: 'Maximum number of times this item may be renewed', hint: 'leave blank to default to category value' %>
-  <%= f.input :max_renewal_length, label: 'Maximum time allotted for each renewal period', hint: 'actual renewal period will depend on availability' %>
-  <%= f.input :renewal_days_before_due, label: 'How many days before the due date should the Renew button become available?', hint: 'leave blank to default to category value' %>
-
-  <strong>Checkout Procedures</strong>
-  <%= f.simple_fields_for :checkout_procedures do |procedure| %>
-    <%= render 'checkout_procedure_fields', :f => procedure %>
+  <%= f.association :associated_equipment_models, input_html: {class: 'input-xlarge'}, 
+  placeholder: 'Start typing an equipment model name', collection: 
+  EquipmentModel.find(:all, conditions: ["id != ?", params[:id]]) %>
+  
+  <%= f.input :name %>
+  
+  <%= f.input :description, as: :text, hint: "#{render :partial => 'shared/markdown_button'}" %>
+  
+  <%= f.input :late_fee, wrapper: :prepend do %>
+    <%= content_tag :span, "$", class: "add-on" %><%= f.input_field :late_fee,
+    class: 'input-small', value: number_with_precision(f.object.replacement_fee, 
+    precision: 2), type: 'number', step: 'any' %>
   <% end %>
-  <div class="links">
-    <%= link_to_add_association 'Add Step', f, :checkout_procedures, :class => "btn" %>
-  </div>
-  <%= label_tag "Checkin Procedures" %>
-  <%= f.simple_fields_for :checkin_procedures, :html => { :class => "form-inline" } do |procedure| %>
-    <%= render 'checkin_procedure_fields', :f => procedure %>
+  
+  <%= f.input :replacement_fee, wrapper: :prepend do %>
+    <%= content_tag :span, "$", class: "add-on" %><%= f.input_field :replacement_fee, 
+    class: 'input-small', value: number_with_precision(f.object.replacement_fee, 
+    precision: 2), type: 'number', step: 'any' %>
   <% end %>
-  <div class="links">
-    <%= link_to_add_association 'Add Step', f, :checkin_procedures, :class => "btn" %>
-  </div>
-<p>
-  <%= f.input :photo, :as => :file, :label => "Upload Photo" %>
-</p>
+  
+  <%= f.input :max_per_user, label: "Maximum per user", hint: 
+  "Leave blank to default to category value.", input_html: {class: 'input-small'} %>
+  
+  <%= f.input :deleted_at, label: "Inactive", as: :deleted, hint: 
+  'Make this equipment model unavailable for checkout.' %>
+  
+  <fieldset>
+    <legend>Renewal Options</legend>
+    <%= f.input :max_renewal_times, label: 'Maximum number of times this item may be renewed', 
+    hint: 'Leave blank to default to category value.', wrapper: :append do %>
+      <%= f.input_field :max_renewal_times, class: 'input-small', type: 'number' %><%= 
+      content_tag :span, "times", class: "add-on" %>
+    <% end %>
+  
+    <%= f.input :max_renewal_length, label: 'Maximum time allotted for each renewal period', 
+    hint: 'Leave blank to default to category value. Actual renewal period will depend on availability.', 
+    wrapper: :append do %>
+      <%= f.input_field :max_renewal_length, class: 'input-small', type: 'number' %><%= 
+      content_tag :span, "days", class: "add-on" %>
+    <% end %>
+  
+    <%= f.input :renewal_days_before_due, label: 
+    'How many days before the due date should the Renew button become available?', 
+    hint: 'Leave blank to default to category value.', wrapper: :append do %>
+      <%= f.input_field :renewal_days_before_due, class: 'input-small', type: 'number' %><%= 
+      content_tag :span, "days", class: "add-on" %>
+    <% end %>
+  </fieldset>
+  
+  <fieldset>
+    <p><legend>Checkout Procedures</legend></p>
+    <%= f.simple_fields_for :checkout_procedures do |procedure| %>
+      <%= render 'checkout_procedure_fields', f: procedure %>
+    <% end %>
+    <div class="links">
+      <p><%= link_to_add_association 'Add Step', f, :checkout_procedures, 
+      class: "btn" %></p>
+    </div>
+  </fieldset>
+  
+  <fieldset>  
+    <p><legend>Checkin Procedures</legend></p>
+    <%= f.simple_fields_for :checkin_procedures, wrapper: :append do |procedure| %>
+      <%= render 'checkin_procedure_fields', f: procedure %>
+    <% end %>
+    <div class="links">
+      <p><%= link_to_add_association 'Add Step', f, :checkin_procedures, 
+      class: "btn" %></p>
+    </div>
+  </fieldset>
+  
+  <fieldset>
+    <legend>Media</legend>
+    <%# Paperclip inline error fix %>
+    <%= f.input :photo, label: "Upload Photo", wrapper_html: {class: 
+    paperclip_field_error(f, :photo_content_type, :photo_file_size)} do %>
+      <%= f.input_field :photo, as: :file %>
+      <%= f.error :photo_content_type %>
+      <%= f.error :photo_file_size %>
+    <% end %>
+    <% unless @equipment_model.photo_file_name.nil? %>
+      <div class='control-group'>
+        <div class="controls">
 
-<p>
-  <%= f.input :documentation, :as => :file, :label => "Upload Documentation" %>
-</p>
+          <%= image_tag @equipment_model.photo.url(:thumbnail) %>
+          <%= label_tag 'clear_photo' do %>
+            <%= check_box_tag 'clear_photo', nil, false %>
+            <%= 'Delete current photo?' %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <%# Paperclip inline error fix %>
+    <%= f.input :documentation, label: "Upload Documentation", wrapper_html: {class: 
+      paperclip_field_error(f, :documentation_content_type, :documentation_file_size)} do %>
+      <%= f.input_field :documentation, as: :file %>
+      <%= f.error :documentation_content_type %>
+      <%= f.error :documentation_file_size %>
+    <% end %>
+    <% unless @equipment_model.documentation_file_name.nil? %>
+      <div class='control-group'>
+        <div class="controls">
+
+          <p>
+            <h4>
+              <%= (link_to @equipment_model.documentation_file_name, @equipment_model.documentation.url, target: "_blank") if @equipment_model.documentation.exists? %>
+            </h4>
+          </p>
+          <%= label_tag 'clear_documentation' do %>
+            <%= check_box_tag 'clear_documentation', nil, false %>
+            <%= 'Delete current documentation?' %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </fieldset>
 	
-  <%#= f.error :base %>
-<%= f.button :wrapped, :cancel => equipment_models_path %> 
+  <%= f.button :wrapped, cancel: equipment_models_path %> 
 <% end %>

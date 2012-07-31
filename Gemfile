@@ -9,7 +9,6 @@ gem "mysql2"
 gem "rdoc"
 gem "rubycas-client-rails"
 gem "rubycas-client", "2.2.1"
-gem "rails-settings", :git => "git://github.com/100hz/rails-settings.git"
 gem "pry"
 gem "pry-rails"
 gem "pry-debugger"
@@ -26,6 +25,8 @@ gem "cocoon"
 gem "ffaker"
 gem "rails3-jquery-autocomplete"
 gem "kaminari"
+gem "redcarpet"
+gem 'select2-rails'
 
 group :development, :test do
   gem "factory_girl_rails"
@@ -43,4 +44,10 @@ group :assets do
   gem 'uglifier'
   gem 'bootstrap-sass', '~> 2.0.3'
   gem 'font-awesome-sass-rails'
+end
+
+group :development do
+  gem 'guard-livereload'
+  gem 'rb-readline'
+	gem 'thin'
 end

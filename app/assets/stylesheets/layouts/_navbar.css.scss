@@ -1,0 +1,28 @@
+.dropdown-menu {
+//	max-height: 440px;
+//	overflow-y: auto;
+	
+	.nav-header {
+		text-transform: lowercase;
+		font-variant: small-caps;
+	}
+}
+
+.navbar-search .search-query {
+	@include placeholder-extended;
+}
+
+.none-text {
+  // in the dropdown menus, when none to list -- this is for the "(none)" text
+  display: block;
+  padding: 3px 15px;
+  clear: both;
+  font-weight: normal;
+  line-height: 18px;
+  color: rgb(51, 51, 51);
+  white-space: nowrap;
+}
+
+.navbar .brand {
+  font-weight: 300;
+}

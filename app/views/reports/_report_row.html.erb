@@ -1,0 +1,10 @@
+<tr>
+  <% if report_row.link_path%>
+    <td><%= link_to report_row.name,  report_row.link_path %></td>
+  <% else %>
+    <td><%= report_row.name %></td>
+  <% end %>
+  <% report_row.data.each do |item| %>
+  <td><%= item %></td>
+  <% end %>
+</tr>

@@ -1,0 +1,4 @@
+$('#markdownModal div.modal-body').replaceWith("<%= escape_javascript(render :partial => 'shared/markdown_help') %>");
+// needs to be on one line or else css function goes wonky and doesn't work
+$('#markdownModal').modal().css({width: 'auto', 'margin-left': function () {return -($(this).width() / 2);}});
+

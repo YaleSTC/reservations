@@ -1,6 +1,6 @@
 <% title (@category.nil? ? "Equipment Models" : @category.name.pluralize) %>
 
-<table id="table_woo" class="datatable table table-striped table-bordered">
+<table id="table_woo" class="datatable-wide table table-striped table-bordered">
   <thead>
   <tr>
     <th>Name</th>
@@ -16,10 +16,10 @@
   <% for equipment_model in @equipment_models %>
     <% if equipment_model.deleted_at %>
       <tr class="deactivated">
-      <% @toggle = "link_to \"Activate\", activate_path(:equipment_models,equipment_model), :class => \"btn btn-success\"" %>
+      <% @toggle = "link_to \"Activate\", activate_path(:equipment_models,equipment_model), :class => \"btn btn-success\", :method => :put" %>
     <% else %>
       <tr class= "activated">
-      <% @toggle = "link_to \"Deactivate\", deactivate_path(:equipment_models,equipment_model), :class => \"btn btn-danger\"" %>
+      <% @toggle = "link_to \"Deactivate\", deactivate_path(:equipment_models,equipment_model), :class => \"btn btn-danger\", :method => :put" %>
     <% end %>
       <td><%= link_to equipment_model.name, equipment_model %></td>
       <%= ("<td>" + (link_to equipment_model.category.name.singularize, equipment_model.category) + "</td>").html_safe unless @category %>
@@ -31,19 +31,21 @@
   <% end %>
   </tbody>
 </table>
-<hr />
-<p>
-  <% if @category %>
-    <% if current_user.is_admin_in_adminmode? %>
-      <%= link_to ("New "+@category.name.singularize), new_category_equipment_model_path(@category) %> |
+
+<div class="form-actions">
+  <% if current_user.is_admin_in_adminmode? %>
+    <% if @category %>
+      <%= link_to ("New "+@category.name.singularize), new_category_equipment_model_path(@category), :class => 'btn btn-primary' %>
+      <%= link_to "View All Equipment Models", equipment_models_path, :class => 'btn' %>
+    <% else %>
+      <%= link_to "New Equipment Model", new_equipment_model_path, :class => "btn btn-primary" %>
     <% end %>
-    <%= link_to "View All Equipment Models", equipment_models_path %> |
-  <% elsif current_user.is_admin_in_adminmode? %>
-    <%= link_to "New Equipment Model", new_equipment_model_path, :class => "btn btn-primary" %> |
-  <% end %>
-  <% if params[:show_deleted] %>
-    <%= link_to "Hide Deactivated Equipment Models from List", equipment_models_path, :class => "btn" %>
   <% else %>
+     <%= link_to "Return to Catalog", catalog_path, :class => 'btn' %>
+  <% end %>
+  <% if params[:show_deleted] and current_user.is_admin_in_adminmode? %>
+    <%= link_to "Hide Deactivated Equipment Models from List", equipment_models_path, :class => "btn" %>
+  <% elsif current_user.is_admin_in_adminmode? %>
     <%= link_to "Show Deactivated Equipment Models in List", equipment_models_path(:show_deleted => true), :class => "btn" %>
   <% end %>
-</p>
+</div>

@@ -1,0 +1,76 @@
+<hr />
+<div class="row">
+  <div id="footer" class="span12">
+
+    <div class="well">
+      <div class="row">
+        <%# INFO SECTION %>
+        <% unless current_user && current_user.is_admin? %>
+          <div class="span8">
+        <% else %>
+          <div class="span5">
+        <% end %>
+          Powered by <a href="https://github.com/YaleSTC/reservations">Reservations</a>, an open source equipment reservation app.<br />
+          &copy; 2012 Yale Student Technology Collaborative
+
+          <hr>
+
+          <a href="https://docs.google.com/a/yale.edu/spreadsheet/viewform?formkey=dE8zTFprNVB4RTAwdURhWEVTTlpDQVE6MQ#gid=0">Provide feedback</a> (suggestions, issues, and bug reports)
+
+        </div>
+
+        <%# LINKS SECTION %>
+        <div class="span3">
+          <ul id="links_box" class="nav nav-list">
+            <li class="nav-header">Links</li>
+            <li><%= link_to @app_configs.home_link_text, @app_configs.home_link_location %></li>
+            <li><%= link_to "Contact Us", contact_us_path %></li>
+            <li><%= link_to "Terms of Service", tos_path %></li>
+          </ul>
+        </div>
+
+        <%# VIEW AS DROPDOWN %>
+        <div class="span3">
+          <% if current_user && current_user.is_admin? %>
+
+          <ul class="nav nav-list">
+            <li class="nav-header">View As:</li>
+            <div class="btn-group dropup">
+              <a class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#">
+                <%= view_as_selected %>
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                <% if current_user && current_user.adminmode? %>
+                  <li class="active">Admin</li>
+                <% else %>
+                  <li><%= link_to 'Admin', {:a_mode => 'ON'}%></li>
+                <% end %>
+                <% if current_user && current_user.checkoutpersonmode? %>
+                  <li class="active">Checkout Person</li>
+                <% else %>
+                  <li><%= link_to 'Checkout Person', {:c_mode => 'ON'}%></li>
+                <% end %>
+                <% if current_user && current_user.normalusermode? %>
+                  <li class="active">Normal User</li>
+                <% else %>
+                  <li><%= link_to 'Normal User', {:n_mode => 'ON'}%></li>
+                <% end %>
+                <% if current_user && current_user.bannedmode? %>
+                  <li class="active">Banned User</li>
+                <% else %>
+                  <li><%= link_to 'Banned User', {:b_mode => 'ON'}%></li>
+                <% end %>
+              </ul>
+            </div>
+          </ul>
+
+          <% end %>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  </div>
+</div>

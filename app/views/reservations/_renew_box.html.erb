@@ -1,3 +1,3 @@
 <div id="renew_box">
-  Your reservation has been renewed for <strong><%= @reservation.max_renewal_length_available.to_s %> days</strong>. Please note the new due date of <strong><%= @reservation.due_date.to_date %></strong>. Thank you.
+  Your reservation has been renewed for <strong><%= @reservation.max_renewal_length_available.to_s %> days</strong>. Please note the new due date of <strong><%= @reservation.due_date.to_date.to_s(:long) %></strong>. Thank you.
 </div>

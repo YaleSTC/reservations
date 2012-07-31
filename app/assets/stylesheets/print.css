@@ -1,28 +1,32 @@
 #header {
 	display: none;
 }
-	
-#yaleHeader {
-	display: none;
+
+#navigation_bar {
+  display: none;
 }
 
-#sidebar-left {
-	display: none;
-}
 
 #sidebar-right {
 	display: none;
 }
 
-
-a { 
-	text-decoration:none; 
-	color: White; 
-	background-color: White; 
-	font-size: 0%; 
+#footer {
+	display: none;
 }
 
-a:hover { 
-	color: White; 
-	font-size: 0%; 
+#top_buttons {
+	display: none;
+}
+
+#form_actions {
+	display: none;
+}
+
+#renew_box {
+	display: none;
+}
+
+#receipt_box {
+	width: 300px ;
 }

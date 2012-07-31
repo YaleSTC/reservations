@@ -1,0 +1,11 @@
+<div id="content" class="span9">
+  <% if show_title? %>
+	  <div class="page-header">
+      <h1>
+        <%= yield(:title) %>
+        <small><%= yield(:subtitle) if content_for?(:subtitle) %></small>
+      </h1>
+    </div>
+  <% end %>
+	<%= content_for?(:body) ? yield(:body) : yield %>
+</div>

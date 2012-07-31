@@ -1,0 +1,15 @@
+<% title ("Overall Report for " + @start_date.strftime("%b %d, %Y") + " to " + @end_date.strftime("%b %d, %Y")) %>
+
+<div class="row">
+  <div class="span3">
+    <p class="lead">
+      Select a date range to generate reports.
+    </p>
+  </div>
+  <div class="span9">
+    <%= render :partial => 'reports/report_generator'%>
+
+  </div>
+</div>
+
+<%= render :partial => "data_tables" , :object => @data_tables %>

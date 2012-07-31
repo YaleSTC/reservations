@@ -1,9 +1,10 @@
 Reservations::Application.routes.draw do
-
+   
   root :to => 'catalog#index'
 
-  resources :documents
-  resources :equipment_objects
+  resources :requirements
+
+  resources :documents, :equipment_objects
   
   resources :equipment_models do
     resources :equipment_objects
@@ -12,55 +13,78 @@ Reservations::Application.routes.draw do
   resources :categories do
     resources :equipment_models
   end
-  
+    
   resources :users do
     collection do
-      get :check_out
-      get :check_in
+      get :find
     end
-    resources :reservations
   end
 
-  match '/users/new_button' => 'users#new_button', :as => :new_button
-
-  match '/reservations/renew/:id' => 'reservations#renew', :as => :renew
+  match '/catalog/search' => 'catalog#search', :as => :catalog_search
+  match '/markdown_help' => 'application#markdown_help', :as => :markdown_help
 
   resources :reservations do
     member do
-      get :check_out
-      get :check_in
-      get :check_out_single
-      get :check_in_single
-      get :show_all
       get :checkout_email
       get :checkin_email
-      get :upcoming
+      put :renew
     end
     get :autocomplete_user_last_name, :on => :collection
   end
-
   
-  match '/reservations/show_all/for_user/:user_id' => 'reservations#show_all', :as => :show_all_reservations_for_user
-  match '/reservations/check_out/for_user/:user_id' => 'reservations#check_out', :as => :check_out_reservations_for_user
-  match '/reservations/check_in/for_user/:user_id' => 'reservations#check_in', :as => :check_in_reservations_for_user
+  match '/black_outs/flash_message' => 'black_outs#flash_message', :as => :flash_message
+  match '/black_outs/new_recurring' => 'black_outs#new_recurring', :as => :new_recurring_black_out
+
+  resources :black_outs do
+    member do
+      get :flash_message
+      delete :destroy_recurring
+    end
+  end
+
+  # reservations views
+  match '/reservations/manage/:user_id' => 'reservations#manage', :as => :manage_reservations_for_user
+  match '/reservations/current/:user_id' => 'reservations#current', :as => :current_reservations_for_user
+  
+  
+  # reservation checkout / check-in actions
+  match '/reservations/checkout/:user_id' => 'reservations#checkout', :via => :put, :as => :checkout
+  match '/reservations/check-in/:user_id' => 'reservations#checkin', :via => :put, :as => :checkin
   
   match '/catalog/update_view' => 'catalog#update_user_per_cat_page', :as => :update_user_per_cat_page
-  
   match '/catalog' => 'catalog#index', :as => :catalog
-  match '/catalog/add_to_cart/:id' => 'catalog#add_to_cart', :as => :add_to_cart
-  match '/catalog/remove_from_cart/:id' => 'catalog#remove_from_cart', :as => :remove_from_cart
-  
-  match '/cart/empty' => 'application#empty_cart', :as => :empty_cart
+  match '/add_to_cart/:id' => 'catalog#add_to_cart', :via => :put, :as => :add_to_cart
+  match '/remove_from_cart/:id' => 'catalog#remove_from_cart', :via => :put, :as => :remove_from_cart
+  match '/cart/empty' => 'application#empty_cart', :via => :delete, :as => :empty_cart
   match '/cart/update' => 'application#update_cart', :as => :update_cart
   
-  match '/:controller/:id/deactivate' => ':controller#deactivate', :as => 'deactivate'
-  match '/:controller/:id/activate' => ':controller#activate', :as => 'activate'
+  match '/reports/index' => 'reports#index', :as => :reports
+  match '/reports/:id/for_model' => 'reports#for_model', :as => :for_model_report
+  match '/reports/for_model_set' => 'reports#for_model_set', :as => :for_model_set_reports
+  match '/reports/update' => 'reports#update_dates', :as => :update_dates
+  match '/reports/generate' => 'reports#generate', :as => :generate_report
+  
+  match '/:controller/:id/deactivate' => ':controller#deactivate', :via => :put, :as => 'deactivate'
+  match '/:controller/:id/activate' => ':controller#activate', :via => :put, :as => 'activate'
 
   match '/logout' => 'application#logout', :as => :logout
+
+  match '/terms_of_service' => 'application#terms_of_service', :as => :tos
+
+  # yes, both of these are needed to override rails defaults of /controller/:id/edit
+  match '/app_configs/' => 'app_configs#edit', :as => :edit_app_configs
+  resources :app_configs, :only => [:update]
   
-  match '/app_config/edit' => 'app_config#edit', :as => :edit_app_config
-  match '/app_config/update' => 'app_config#update', :as => :update_app_config  
+  match '/new_admin_user' => 'application_setup#new_admin_user', :as => :new_admin_user
+  match '/create_admin_user' => 'application_setup#create_admin_user', :as => :create_admin_user
+  resources :application_setup, :only => [:new_admin_user, :create_admin_user]
   
-  match ':controller(/:action(/:id(.:format)))'
+  match '/new_app_configs' => 'application_setup#new_app_configs', :as => :new_app_configs
+  match '/create_app_configs' => 'application_setup#create_app_configs', :as => :create_app_configs
+  
+  match 'contact' => 'contact#new', :as => 'contact_us', :via => :get
+  match 'contact' => 'contact#create', :as => 'contact_us', :via => :post
+  
+  match ':controller(/:action(/:id(.:format)))' 
 
 end

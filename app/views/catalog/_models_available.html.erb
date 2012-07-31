@@ -1,0 +1,44 @@
+<%# for kaminari pagination, defines variables %>
+<% prepare_pagination %>
+<% blackout_errors %>
+
+<% if @equipment_models_by_category.empty? && current_user.is_admin_in_adminmode? %>
+  <p><h3>No equipment found. Try creating some
+      <%= link_to "Equipment Models", new_equipment_model_path %>
+      first!</h3>
+  </p>
+<% elsif @equipment_models_by_category.empty? %>
+  <p><h3>No equipment found.</h3></p>
+<% else %>
+  <div id='models_available'>
+    <% if @pagination_required %>
+      <div class="row">
+        <div id="pagination_line" class="span9">
+          <%# for kaminari pagination %>
+          <%= paginate @paginated_equipment_models_by_category, :params => {:controller => 'catalog', :action => 'index' } %>
+          <%= form_tag update_user_per_cat_page_path, id: 'items_per_form', :class => "form-inline pull-right", :remote => true do %>
+            <%= label_tag "Items per page:" %>
+            <%= select_tag :user_cat_items_per_page, options_for_select(@user_per_page_opts, session[:user_per_cat_page]), :class => 'span1 autosubmitme' %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <% @equipment_models_by_category.each do |category, equipment_models| %>
+      <h2 class="catalog">
+        <%# print category name %>
+        <%= link_to category.name, category_equipment_models_path(category) %>
+      </h2>
+      <% unless equipment_models.nil? %>
+        <ul class="thumbnails">
+        <% equipment_models.each do |equipment_model| %>
+          <li class="span3">
+            <%= render :partial => 'equipment_model_div', :locals => { :equipment_model => equipment_model } %>
+          </li>
+        <% end %>
+        </ul>
+      <% end %>
+    <% end %>
+    <%= paginate @paginated_equipment_models_by_category %>
+  </div>
+<% end %>

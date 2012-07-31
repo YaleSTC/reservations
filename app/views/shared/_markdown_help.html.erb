@@ -1,0 +1,52 @@
+<div class="modal-body" id="markdown_help_modal" style="'padding': 19px;">
+  <div class="row">
+    <div class="span3">
+      <%= markdown("
+#### Format Text
+###### Headers
+    # This is an <h1> tag
+    ## This is an <h2> tag
+    ###### This is an <h6> tag
+###### Text styles
+    *This text will be italic*
+    _This will also be italic_
+    **This text will be bold**
+    __This will also be bold__
+
+    *You **can** combine them*
+      ") %>
+    </div>
+    <div class="span2">
+      <%= markdown("
+#### Lists
+###### Unordered
+    * Item 1
+    * Item 2
+      * Item 2a
+      * Item 2b
+###### Ordered
+    1. Item 1
+    2. Item 2
+    3. Item 3
+       * Item 3a
+       * Item 3b
+      ") %>
+    </div>
+    <div class="span3">
+      <%= markdown("
+#### Miscellaneous
+###### Links
+    http://wikipedia.org/ - automatic!
+    [Wikipedia](http://wikipedia.org)
+###### Blockquotes
+    As Kanye West said:
+    > I am God's vessel. But my 
+    > greatest pain in life is that 
+    > I will never be able to see 
+    > myself perform live.
+    
+    > MY CAPS LOCK KEY IS LOUD!!!!!!
+      ") %>
+    </div>
+  </div>
+</div>

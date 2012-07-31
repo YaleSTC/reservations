@@ -19,12 +19,19 @@ class Reservation < ActiveRecord::Base
   end
 
   scope :recent, order('start_date, due_date, reserver_id')
+  scope :user_sort, order('reserver_id')
   scope :reserved, lambda { where("checked_out IS NULL and checked_in IS NULL and due_date >= ?", Time.now.midnight.utc).recent}
   scope :checked_out, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date >=  ?", Time.now.midnight.utc).recent }
+  scope :checked_out_today, lambda { where("checked_out >= ? and checked_in IS NULL", Time.now.midnight.utc).recent }
+  scope :checked_out_previous, lambda { where("checked_out < ? and checked_in IS NULL and due_date <= ?", Time.now.midnight.utc, Date.tomorrow.midnight.utc).recent }
   scope :overdue, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc ).recent }
   scope :returned, where("checked_in IS NOT NULL and checked_out IS NOT NULL")
+  scope :returned_on_time, where("checked_in IS NOT NULL and checked_out IS NOT NULL and due_date >= checked_in").recent
+  scope :returned_overdue, where("checked_in IS NOT NULL and checked_out IS NOT NULL and due_date < checked_in").recent
   scope :missed, lambda {where("checked_out IS NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc).recent}
-  scope :upcoming, lambda {where("checked_out IS NULL and checked_in IS NULL and start_date = ? and due_date > ?", Time.now.midnight.utc, Time.now.midnight.utc).recent }
+  scope :upcoming, lambda {where("checked_out IS NULL and checked_in IS NULL and start_date = ? and due_date > ?", Time.now.midnight.utc, Time.now.midnight.utc).user_sort }
+  scope :reserver_is_in, lambda {|user_id_arr| where(:reserver_id => user_id_arr)}
+  scope :starts_on_days, lambda {|start_date, end_date|  where(:start_date => start_date..end_date)}
   scope :active, where("checked_in IS NULL") #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
   scope :notes_unsent, :conditions => {:notes_unsent => true}
 
@@ -34,15 +41,35 @@ class Reservation < ActiveRecord::Base
                   :checked_out, :checked_in, :equipment_object,
                   :equipment_object_id, :notes, :notes_unsent, :times_renewed
 
+  def reserver
+    User.include_deleted.find(self.reserver_id)
+  end
+
   def status
-    if checked_out.nil? && due_date >= Date.today
-      "reserved"
-    elsif checked_out.nil? && due_date < Date.today
-      "missed"
+    # Old status method code
+    # =========================
+    # if checked_out.nil? && due_date >= Date.today
+    #   "reserved"
+    # elsif checked_out.nil? && due_date < Date.today
+    #   "missed"
+    # elsif checked_in.nil?
+    #   due_date < Date.today ? "overdue" : "checked out"
+    # else
+    #   "returned"
+    # end
+
+    # from status_for_report
+    # ==========================
+    if checked_out.nil?
+      if checked_in.nil?
+        due_date >= Date.today ? "reserved" : "missed"
+      else
+        "?"
+      end
     elsif checked_in.nil?
       due_date < Date.today ? "overdue" : "checked out"
     else
-      "returned"
+      due_date < checked_in.to_date ? "returned overdue" : "returned on time"
     end
   end
 
@@ -64,31 +91,84 @@ class Reservation < ActiveRecord::Base
       errors << "Availablity problem with " + res.equipment_model.name unless res.available?(res_array)
       errors << "Quantity equipment model problem with " + res.equipment_model.name unless res.quantity_eq_model_allowed?(res_array)
       errors << "Quantity category problem with " + res.equipment_model.category.name unless res.quantity_cat_allowed?(res_array)
-    end
-    errors.uniq
+	end
+	errors.uniq
   end
 
-  def self.overdue_reservations?(user)
-    Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ? and due_date < ?", user.id, Time.now.midnight.utc,).order('start_date ASC').count >= 1 #FIXME: does this need the order?
+  #should reconcile the two status functions
+  def status_for_report
+    if checked_out.nil?
+      if checked_in.nil?
+        due_date >= Date.today ? "reserved" : "missed"
+      else
+        "?"
+      end
+    elsif checked_in.nil?
+      due_date < Date.today ? "overdue" : "checked out"
+    else
+      due_date < checked_in.to_date ? "returned overdue" : "returned on time"
+    end
   end
 
   def self.due_for_checkin(user)
-    Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
+    Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", user.id).order('due_date ASC') # put most-due ones first
   end
 
   def self.due_for_checkout(user)
     Reservation.where("checked_out IS NULL and checked_in IS NULL and start_date <= ? and due_date >= ? and reserver_id =?", Time.now.midnight.utc, Time.now.midnight.utc, user.id).order('start_date ASC')
   end
 
+  def self.overdue_reservations?(user)
+    Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ? and due_date < ?", user.id, Time.now.midnight.utc,).order('start_date ASC').count >= 1 #FIXME: does this need the order?
+  end
+
   def self.active_user_reservations(user)
-    Reservation.where("checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
+    prelim = Reservation.where("checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
+    final = [] # initialize
+    prelim.collect do |r|
+      if r.status != "missed" # missed reservations are not actually active
+        final << r
+      end
+    end
+    final
+  end
+
+  def self.checked_out_today_user_reservations(user)
+    Reservation.where("checked_out >= ? and checked_in IS NULL and reserver_id = ?", Time.now.midnight.utc, user.id)
+  end
+
+  def self.checked_out_previous_user_reservations(user)
+    Reservation.where("checked_out < ? and checked_in IS NULL and reserver_id = ? and due_date >= ?", Time.now.midnight.utc, user.id, Time.now.midnight.utc)
+  end
+
+  def self.reserved_user_reservations(user)
+    Reservation.where("checked_out IS NULL and checked_in IS NULL and due_date >= ? and reserver_id = ?", Time.now.midnight.utc, user.id)
+  end
+
+  def self.overdue_user_reservations(user)
+    Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and due_date < ? and reserver_id = ?", Time.now.midnight.utc, user.id )
+  end
+
+  def self.check_out_procedures_exist?(reservation)
+    !reservation.equipment_model.checkout_procedures.nil?
+  end
+
+  def self.check_in_procedures_exist?(reservation)
+    !reservation.equipment_model.checkin_procedures.nil?
+  end
+
+  def self.empty_reservation?(reservation)
+    reservation.equipment_object.nil?
   end
 
   def late_fee
     self.equipment_model.late_fee.to_f
   end
 
-  def equipment_list
+  def fake_reserver_id # this is necessary for autocomplete! delete me not!
+  end
+
+  def equipment_list  # delete?
     raw_text = ""
     #Reservation.where("reserver_id = ?", @user.id).each do |reservation|
     #if reservation.equipment_model
@@ -103,10 +183,11 @@ class Reservation < ActiveRecord::Base
   # available_period is what is returned by the function
   # initialize to NIL because once it's set we escape the while loop below
     available_period = NIL
-    renewal_length = self.equipment_model.maximum_renewal_length || 0
+    renewal_length = self.equipment_model.maximum_renewal_length || 0 # the 'or 0' is to ensure renewal_length never == NIL; effectively
     while (renewal_length > 0) and (available_period == NIL)
       # the available? method cannot accept dates with time zones, and due_date has a time zone
-      if (self.equipment_model.available?(self.due_date + 1.day, self.due_date + (renewal_length.days)) > 0)
+      possible_dates_range = (self.due_date + 1.day).to_date..(self.due_date+(renewal_length.days)).to_date
+      if (self.equipment_model.available?(possible_dates_range) > 0)
         # if it's available for the period, set available_period and escape loop
         available_period = renewal_length
       else
@@ -118,13 +199,14 @@ class Reservation < ActiveRecord::Base
     # before available_period is set
     return available_period = renewal_length
   end
-
+  
   def is_eligible_for_renew?
     # determines if a reservation is eligible for renewal, based on how many days before the due
     # date it is and the max number of times one is allowed to renew
-    #
+    # 
     # we need to test if any of the variables are set to NIL, because in that case comparision
-    # is undefined; that's also why we can't set variables to these values before the if statements
+    # is undefined; that's also why we can't set variables to these function values before
+    # the if statements
     if self.times_renewed == NIL
       self.times_renewed = 0
     end

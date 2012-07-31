@@ -1,6 +1,6 @@
 <% title "Categories" %>
 
-<table id="table_woo" class="datatable table table-striped table-bordered">
+<table id="table_woo" class="datatable-wide table table-striped table-bordered">
   <thead>
   <tr>
     <th>Name</th>
@@ -18,10 +18,10 @@
   <% for category in @categories %>
     <% if category.deleted_at %>
       <tr class="deactivated">
-      <% @toggle = "link_to \"Activate\", activate_path(:categories,category), :class => \"btn btn-success\"" %>
+      <% @toggle = "link_to \"Activate\", activate_path(:categories,category), :class => \"btn btn-success\", :method => :put" %>
     <% else %>
       <tr class= "activated">
-      <% @toggle = "link_to \"Deactivate\", deactivate_path(:categories,category), :class => \"btn btn-danger\"" %>
+      <% @toggle = "link_to \"Deactivate\", deactivate_path(:categories,category), :class => \"btn btn-danger\", :method => :put" %>
     <% end %>
       <td><%= link_to category.name, category %></td>
       <td><%= category.maximum_per_user %></td>
@@ -36,13 +36,14 @@
   </tbody>
 </table>
 <hr />
-<p>
+
+<div class="form-actions">
   <% if current_user.is_admin_in_adminmode? %>
-    <%= link_to "New Category", new_category_path, :class => "btn btn-primary" %> |
+    <%= link_to "New Category", new_category_path, :class => "btn btn-primary" %>
   <% end %>
   <% if params[:show_deleted] %>
     <%= link_to "Hide Old Categories from List", categories_path, :class => "btn" %>
   <% else %>
     <%= link_to "Show Old Categories in List", categories_path(:show_deleted => true), :class => "btn" %>
   <% end %>
-</p>
+</div>

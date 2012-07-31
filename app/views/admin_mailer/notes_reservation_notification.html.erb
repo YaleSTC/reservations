@@ -7,7 +7,7 @@ Please review them for potential damage.<br /> <br />
 		Equipment: <%= notes_reservation.equipment_model.name%> (<%= notes_reservation.equipment_object.name %>)<br />
 		Reserver: <%= notes_reservation.reserver.name %> <br />
 		Due Date: <%= notes_reservation.due_date.strftime(" %B %e, %Y")  %><br />
-		Notes: <%= notes_reservation.notes %><br />
+		Notes: <%= notes_reservation.notes %><br /> <%# TODO: add markdown? %>
 		--------- <br />
 	<% end %>
 <br />

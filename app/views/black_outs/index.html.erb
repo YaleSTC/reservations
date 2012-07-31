@@ -1,0 +1,25 @@
+<% title "Blackout Dates" %>
+
+<p class="lead">
+  If a user tries to create a reservation for any of the equipment models listed
+  below with a start date or end date within 
+  the "Blackout" period, then they will be presented with a notice (set by
+  the admin) stating the exceptional circumstances for that date (e.g. 'Please 
+  note that our offices will only be open from 2:36 AM to 2:37 AM on this date 
+  in observance of Arbitrary Day.'). The admin can also set that no reservation 
+  can be created if its start or end 
+  date falls within the Blackout period.
+</p>
+<p>
+  <%= link_to 'New Blackout'.titleize, new_black_out_path, class: 'btn btn-primary' %>
+  <%= link_to 'New Recurring Blackout'.titleize, new_recurring_black_out_path, :class => 'btn btn-primary' %>
+</p>
+<hr />
+
+<% unless @black_outs.empty? %>
+  <%= render :partial => 'table', :locals => {:black_outs => @black_outs} %>
+  <br />
+<% else %>
+  <h3>No black-out dates found.</h3>
+<% end %>
+

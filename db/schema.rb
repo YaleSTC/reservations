@@ -11,13 +11,44 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(:version => 20120717205310) do
+=======
+ActiveRecord::Schema.define(:version => 20120718004311) do
 
-  create_table "accessories_equipment_models", :force => true do |t|
-    t.integer  "accessory_id"
+  create_table "app_configs", :force => true do |t|
+    t.boolean  "upcoming_checkin_email_active",         :default => true
+    t.boolean  "overdue_checkout_email_active",         :default => true
+    t.boolean  "reservation_confirmation_email_active", :default => true
+    t.string   "site_title"
+    t.string   "admin_email"
+    t.string   "department_name"
+    t.string   "contact_link_location"
+    t.string   "home_link_text"
+    t.string   "home_link_location"
+    t.integer  "default_per_cat_page"
+    t.text     "upcoming_checkin_email_body"
+    t.text     "overdue_checkout_email_body"
+    t.text     "overdue_checkin_email_body"
+    t.boolean  "overdue_checkin_email_active",          :default => true
+    t.text     "terms_of_service"
+    t.string   "favicon_file_name"
+    t.string   "favicon_content_type"
+    t.integer  "favicon_file_size"
+    t.datetime "favicon_updated_at"
+  end
+>>>>>>> development
+
+  create_table "black_outs", :force => true do |t|
     t.integer  "equipment_model_id"
+    t.date     "start_date"
+    t.date     "end_date"
+    t.text     "notice"
+    t.integer  "created_by"
+    t.text     "black_out_type"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
+    t.integer  "set_id"
   end
 
   create_table "cart_reservations", :force => true do |t|
@@ -110,6 +141,16 @@ ActiveRecord::Schema.define(:version => 20120717205310) do
     t.datetime "updated_at",          :null => false
   end
 
+  create_table "requirements", :force => true do |t|
+    t.integer  "equipment_model_id"
+    t.string   "contact_name"
+    t.string   "contact_info"
+    t.datetime "deleted_at"
+    t.text     "notes"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+  end
+
   create_table "reservations", :force => true do |t|
     t.integer  "reserver_id"
     t.integer  "checkout_handler_id"
@@ -137,17 +178,6 @@ ActiveRecord::Schema.define(:version => 20120717205310) do
   add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
   add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
 
-  create_table "settings", :force => true do |t|
-    t.string   "var",                      :null => false
-    t.text     "value"
-    t.integer  "thing_id"
-    t.string   "thing_type", :limit => 30
-    t.datetime "created_at",               :null => false
-    t.datetime "updated_at",               :null => false
-  end
-
-  add_index "settings", ["thing_type", "thing_id", "var"], :name => "index_settings_on_thing_type_and_thing_id_and_var", :unique => true
-
   create_table "users", :force => true do |t|
     t.string   "login"
     t.string   "first_name"
@@ -156,16 +186,22 @@ ActiveRecord::Schema.define(:version => 20120717205310) do
     t.string   "phone"
     t.string   "email"
     t.string   "affiliation"
-    t.boolean  "is_banned",          :default => false
-    t.boolean  "is_admin",           :default => false
-    t.boolean  "is_checkout_person", :default => false
-    t.datetime "created_at",                            :null => false
-    t.datetime "updated_at",                            :null => false
-    t.boolean  "adminmode",          :default => true
-    t.boolean  "checkoutpersonmode", :default => false
-    t.boolean  "normalusermode",     :default => false
-    t.boolean  "bannedmode",         :default => false
+    t.boolean  "is_banned",                 :default => false
+    t.boolean  "is_admin",                  :default => false
+    t.boolean  "is_checkout_person",        :default => false
+    t.datetime "created_at",                                   :null => false
+    t.datetime "updated_at",                                   :null => false
+    t.boolean  "adminmode",                 :default => true
+    t.boolean  "checkoutpersonmode",        :default => false
+    t.boolean  "normalusermode",            :default => false
+    t.boolean  "bannedmode",                :default => false
     t.string   "deleted_at"
+    t.boolean  "terms_of_service_accepted"
+  end
+
+  create_table "users_requirements", :id => false, :force => true do |t|
+    t.integer "user_id"
+    t.integer "requirement_id"
   end
 
 end

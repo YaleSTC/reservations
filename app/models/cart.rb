@@ -13,7 +13,7 @@ class Cart
     @errors = ActiveModel::Errors.new(self)
     @items = []
     @start_date = Date.today
-    @due_date = Date.today
+    @due_date = Date.tomorrow
     @reserver_id = nil
   end
 
@@ -71,7 +71,7 @@ class Cart
   end
 
   ## Date methods
-
+                                           
   # Sets start date and updates all CartReservations to match
   def set_start_date(date)
     @start_date = date
@@ -103,6 +103,29 @@ class Cart
       @due_date = @start_date + 1.day
     end
   end
+  
+  #Create an array of all the reservations that should be renewed instead of having a new reservation
+  def renewable_reservations
+    user_reservations = reserver.reservations
+    renewable_reservations = []
+    @items.each do |item|
+      cart_item_count = item.quantity #renew up to this many of the item
+      matching_reservations = user_reservations.each do |res|
+        # the end date should be the same as the start date
+        # the reservation should be renewable
+        # also the user should only renew as many reservations as they have in their cart
+        if (res.due_date.to_date == @start_date &&                
+           res.equipment_model_id == item.equipment_model_id &&
+           cart_item_count > 0 &&
+           res.is_eligible_for_renew?)
+          renewable_reservations << res
+          cart_item_count-= 1
+        end
+      end
+    end
+    return renewable_reservations
+  end
+  
 
   # Returns the cart's duration
   def duration #in days

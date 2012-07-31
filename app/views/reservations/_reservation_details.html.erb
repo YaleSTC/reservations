@@ -1,0 +1,19 @@
+<p>
+  <strong>Equipment:</strong>
+	<%= link_to @reservation.equipment_model.name, @reservation.equipment_model %>
+	<%= @reservation.equipment_object.nil? ? "(unassigned)" : "(#{@reservation.equipment_object.name})" %>
+</p>
+
+<% unless @reservation.checked_in %>
+<div id="due_date_box">
+  <p>
+    <strong>Due Date:</strong>
+    <%= @reservation.due_date.to_date.to_s(:long) %>
+  </p>
+</div>
+<% end %>
+
+<% unless @reservation.notes.nil? %>
+  <strong>Notes:</strong>
+  <%= markdown(@reservation.notes) %>
+<% end %>

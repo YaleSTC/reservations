@@ -1,0 +1,31 @@
+<% title "Requirements for #{EquipmentModel.find(@requirement.equipment_model_id).name}" %>
+
+<p>In order for a user to check out this model of equipment, they must have completed proper training. Once a user has completed necessary training, you may add the equipment they are qualified to use from their User Edit page.</p>
+<br>
+<p>
+  <strong>Equipment Model:</strong>
+  <%= EquipmentModel.find(@requirement.equipment_model_id).name %>
+  <br>
+  <strong>Contact Name:</strong>
+  <%= @requirement.contact_info %>
+  <br>
+  <strong>Contact Info:</strong>
+  <%= @requirement.contact_name %> <br>
+  <strong>Notes:</strong>
+  <%= @requirement.notes %> 
+
+</p>
+
+<!--
+<ul id="reqSteps" data-update-url="<%# sort_requirement_steps_url%>">
+  <%# @reqSteps.each do |reqStep| %>
+    <%# content_tag_for :li, reqStep do %>
+      <%# link_to h(reqStep[:step]), reqStep %>
+    <%#end%>
+  <%# end %>
+</ul>
+-->
+<div class="form-actions">
+  <%= link_to 'Edit', edit_requirement_path(@requirement), class: 'btn' %>
+  <%= link_to 'Back', requirements_path, class: 'btn' %>
+</div>

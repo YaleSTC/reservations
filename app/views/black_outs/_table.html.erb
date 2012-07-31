@@ -1,0 +1,58 @@
+<table class="datatable-wide table table-stripped table-bordered">
+  <thead>
+    <tr>
+      <!-- <th>Equipment model</th> --> <%# Setting black-outs on a per-model basis has been disabled %>
+      <% if request.path == black_outs_path %>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Recurring?</th>
+      <% elsif params[:action] == "show" %>
+        <th>Date</th>
+      <% end %>
+      <th>Notice</th>
+      <th>Last Edited By</th> <%#This field cannot be manually updated. %>
+      <th>Type</th>
+      <% unless params[:action] == "show" %>
+        <th class="no_sort"></th> <%# show %>
+      <% end %>
+      <th class="no_sort"></th> <%# edit %>
+      <th class="no_sort">
+        <% if params[:action] == "show" %>
+          <%= link_to "Delete all", destroy_recurring_black_out_path, :confirm => 'Are you sure?', :method => :delete, :class => 'btn btn-danger' %>
+        <% end %>
+      </th> <%# destroy %>
+    </tr>
+  </thead>
+  <tbody>
+    <% black_outs.each do |black_out| %>
+      <tr>
+        <!-- <td><%# (black_out.equipment_model_id == 0) ? "All Equipment Models" : EquipmentModel.include_deleted.find(black_out.equipment_model_id).name %></td> -->
+        <td>
+          <% if params[:action] == "show" %>
+            <%= link_to black_out[:start_date].strftime('%m/%d/%Y'), black_out %>
+          <% else %>
+            <%= black_out[:start_date].strftime('%m/%d/%Y') %>
+          <% end %>
+        </td>
+        <% if request.path == black_outs_path %>
+          <td><%= black_out[:end_date].strftime('%m/%d/%Y') %></td>
+          <td>
+            <% if black_out.set_id.nil? %>
+              No
+            <% else %>
+              Yes
+            <% end %>
+          </td>
+        <% end %>
+        <td><%= black_out.notice %></td>
+        <td><%= User.include_deleted.find((black_out[:created_by])).name %></td>
+        <td><%= black_out[:black_out_type] == "hard" ? "Hard Blackout" : "Notice Only" %></td>
+        <% unless params[:action] == "show" %>
+          <td><%= link_to 'Show', black_out, class: 'btn btn-inverse' %></td>
+        <% end %>
+        <td><%= link_to 'Edit', edit_black_out_path(black_out), class: 'btn' %></td>
+        <td><%= link_to 'Delete', black_out, confirm: 'Are you sure?', method: :delete, class: 'btn btn-danger' %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
