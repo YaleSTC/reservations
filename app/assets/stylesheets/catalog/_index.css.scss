@@ -40,6 +40,7 @@ a.not-qualified-icon {
 	left: 110px;
 	font-size: $baseFontSize * 2.6;
 	color: $btnWarningBackgroundHighlight;
+  text-shadow: 0 1px 1px lighten(black, 50%);
 
 	&:hover, &:active {
 		text-decoration: none;
