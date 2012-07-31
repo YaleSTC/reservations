@@ -1,8 +1,10 @@
+#TODO: change set_reserver_id, set_start_date, and set_due_date to use update_all
+
 class Cart
   include ActiveModel::Validations
   extend ActiveModel::Naming
 
-  validates :start_date, :due_date, :presence => true
+  validates :reserver_id, :start_date, :due_date, :presence => true
 
   attr_accessor :items, :start_date, :due_date, :reserver_id
   attr_reader   :errors
@@ -54,19 +56,16 @@ class Cart
 
   # Returns the CartReservations that correspond to the IDs in the items array
   def cart_reservations
-    cart_reservations = []
-    @items.each { |item| cart_reservations << CartReservation.find(item) }
-    cart_reservations
+    cart_reservations = CartReservation.find(@items)
   end
 
   # Returns a hash of the equipment models in the cart with their quantities
   def models_with_quantities
-    mods = Hash.new
-    cart_reservations.each { |res| mods[res.equipment_model.id] = res.count(cart_reservations) }
-    mods
+    models = Hash.new
+    cart_reservations.each { |res| models[res.equipment_model.id] = res.count(cart_reservations) }
+    models
   end
 
-  #TODO: is this necessary?
   def empty?
     @items.empty?
   end
@@ -78,10 +77,10 @@ class Cart
     @start_date = date
     fix_due_date
     items.each do |item|
-      cartres = CartReservation.find(item)
-      cartres.start_date = start_date
-      cartres.due_date = due_date
-      cartres.save
+      cart_res = CartReservation.find(item)
+      cart_res.start_date = start_date
+      cart_res.due_date = due_date
+      cart_res.save
     end
   end
 
@@ -90,10 +89,10 @@ class Cart
     @due_date = date
     fix_due_date
     items.each do |item|
-      cartres = CartReservation.find(item)
-      cartres.start_date = start_date
-      cartres.due_date = due_date
-      cartres.save
+      cart_res = CartReservation.find(item)
+      cart_res.start_date = start_date
+      cart_res.due_date = due_date
+      cart_res.save
     end
   end
 
@@ -107,19 +106,20 @@ class Cart
 
   # Returns the cart's duration
   def duration #in days
-    @due_date - @start_date + 1
+    @due_date.to_date - @start_date.to_date + 1
   end
 
   ## Reserver methods
 
+  #TODO: should only have to set reserver OR reserver_id
   # Sets reserver id and updates the CartReservations to match
   def set_reserver_id(user_id)
     @reserver_id = user_id
     @items.each do |item|
-      cartres = CartReservation.find(item)
-      cartres.reserver_id = user_id
-      cartres.reserver = reserver
-      cartres.save
+      cart_res = CartReservation.find(item)
+      cart_res.reserver_id = user_id
+      #cart_res.reserver = reserver
+      cart_res.save
     end
   end
 

@@ -11,6 +11,7 @@ class Reservation < ActiveRecord::Base
             :equipment_model,
             :presence => true
 
+  # If there is no equipment model, it doesn't run the reservations that would break it
   with_options :if => :not_empty? do |r|
     r.validate :no_overdue_reservations?, :no_overdue_reservations?, :start_date_before_due_date?,
            :not_in_past?, :matched_object_and_model?, :not_renewable?, :duration_allowed?, :available?,
@@ -27,6 +28,7 @@ class Reservation < ActiveRecord::Base
   scope :active, where("checked_in IS NULL") #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
   scope :notes_unsent, :conditions => {:notes_unsent => true}
 
+  #TODO: Why the duplication in checkout_handler and checkout_handler_id (etc)?
   attr_accessible :checkout_handler, :checkout_handler_id,
                   :checkin_handler, :checkin_handler_id,
                   :checked_out, :checked_in, :equipment_object,
@@ -52,16 +54,16 @@ class Reservation < ActiveRecord::Base
     all_res_array = res_array + user.reservations_array
     errors = []
     all_res_array.each do |res|
-      errors << "User has overdue reservations that prevent new ones from being created" if !res.no_overdue_reservations?
-      errors << "Reservations cannot be made in the past" if !res.not_in_past?
-      errors << "Reservations must have start dates before due dates" if !res.start_date_before_due_date?
-      errors << "Reservations must have an associated equipment model" if !res.not_empty?
-      errors << res.equipment_object.name + " should be of type " + res.equipment_model.name if !res.matched_object_and_model?
-      errors << res.equipment_model.name + " should be renewed instead of re-checked out" if !res.not_renewable?
-      errors << "duration problem with " + res.equipment_model.name if !res.duration_allowed?
-      errors << "availablity problem with " + res.equipment_model.name if !res.available?(res_array)
-      errors << "quantity equipment model problem with " + res.equipment_model.name if !res.quantity_eq_model_allowed?(res_array)
-      errors << "quantity category problem with " + res.equipment_model.category.name if !res.quantity_cat_allowed?(res_array)
+      errors << reserver.name + " has overdue reservations that prevent new ones from being created" unless res.no_overdue_reservations?
+      errors << "Reservations cannot be made in the past" unless res.not_in_past?
+      errors << "Reservations start dates must be before due dates" unless res.start_date_before_due_date?
+      errors << "Reservations must have an associated equipment model" unless res.not_empty?
+      errors << res.equipment_object.name + " should be of type " + res.equipment_model.name unless res.matched_object_and_model?
+      errors << res.equipment_model.name + " should be renewed instead of re-checked out" unless res.not_renewable?
+      errors << "Duration problem with " + res.equipment_model.name unless res.duration_allowed?
+      errors << "Availablity problem with " + res.equipment_model.name unless res.available?(res_array)
+      errors << "Quantity equipment model problem with " + res.equipment_model.name unless res.quantity_eq_model_allowed?(res_array)
+      errors << "Quantity category problem with " + res.equipment_model.category.name unless res.quantity_cat_allowed?(res_array)
     end
     errors.uniq
   end

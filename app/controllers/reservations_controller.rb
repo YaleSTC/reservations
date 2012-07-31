@@ -39,16 +39,16 @@ class ReservationsController < ApplicationController
   end
 
   def create
-    complete_reservation = []
+    successful_reservations = []
     #using http://stackoverflow.com/questions/7233859/ruby-on-rails-updating-multiple-models-from-the-one-controller as inspiration
     respond_to do |format|
       Reservation.transaction do
         begin
-          cart.cart_reservations.each do |cartres|
+          cart.cart_reservations.each do |cart_res|
             @reservation = Reservation.new(params[:reservation])
-            @reservation.equipment_model =  cartres.equipment_model
+            @reservation.equipment_model =  cart_res.equipment_model
             @reservation.save!
-            complete_reservation << @reservation
+            successful_reservations << @reservation
           end
           session[:cart] = Cart.new
           UserMailer.reservation_confirmation(complete_reservation).deliver

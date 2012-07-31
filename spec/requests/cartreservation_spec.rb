@@ -130,16 +130,16 @@ describe 'cart and cart reservations' do
     bad_cartres.duration_allowed?.should == false
   end
 
-  it 'count works when called on reservations in @items' do
+  it 'same_model_count works when called on reservations in @items' do
     cart.items.clear
     cart.add_item(eq)
     cart.add_item(eq)
     cartres = cart.cart_reservations.first
-    cartres.count(cart.cart_reservations).should == 2
+    cartres.same_model_count(cart.cart_reservations).should == 2
     eq2 = FactoryGirl.create(:equipment_model)
     cart.add_item(eq2)
     cartres2 = cart.cart_reservations.last
-    cartres2.count(cart.cart_reservations).should == 1
+    cartres2.same_model_count(cart.cart_reservations).should == 1
   end
 
   it 'available? works when called on reservations in @items' do
@@ -241,6 +241,6 @@ describe 'cart and cart reservations' do
     res.save(:validate => false)
     user = User.find(res.reserver_id)
     cart.set_reserver_id(user.id)
-    Reservation.validate_set(user, cart.cart_reservations).should == ["User has overdue reservations that prevent new ones from being created"]
+    Reservation.validate_set(user, cart.cart_reservations).should == [cart.reserver.name + " has overdue reservations that prevent new ones from being created"]
   end
 end
