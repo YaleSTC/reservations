@@ -12,3 +12,4 @@ config/database.yml~
 public/system/equipment_models/
 public/equipment_models/
 public/system
+public/assets
