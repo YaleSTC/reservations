@@ -5,6 +5,7 @@
 @import "bootstrap_and_overrides";
 @import "jquery-ui-1.8.16.custom";
 @import "select2";
+@import "select2_customizations";
 
 // Our Custom Mixins
 // =========================
@@ -37,65 +38,69 @@ div.form-actions .view_all {
   background-color: darken(desaturate($bodyBackground, 10%), 7%);
 }
 
-// Styles for Select2 to make it visually integrate better with bootstrap
-
-.select2-results .select2-highlighted {
-  background: $dropdownLinkBackgroundHover;
+ol {
+  counter-reset: li; /* Initiate a counter */
+  list-style: none; /* Remove default numbering */
+  *list-style: decimal; /* Keep using default numbering for IE6/7 */
+  padding: 0;
+  margin-bottom: 4em;
+  text-shadow: 0 1px 0 rgba(255,255,255,.5);
 }
 
-.select2-drop {
-  border: 1px solid $inputBorder;
-  border-top: 0;
+ol ol {
+  margin: 0 0 0 2em; /* Add some left margin for inner lists */
 }
 
-.select2-container div {
-  border-left: 1px solid $inputBorder;
+$rectangle-list-li-background: darken($bodyBackground, 10%);
+
+.rectangle-list li{
+  position: relative;
+  display: block;
+  padding: .4em .4em .4em .8em;
+  *padding: .4em;
+  margin: .6em 0 .5em .7em;
+  background: $rectangle-list-li-background;
+  @include border-radius(3px);
+  @include transition(background .3s ease-out);
 }
 
-.select2-search input {
-  background-color: $inputBackground;
-  border: 1px solid $inputBorder;
-  @include border-radius($inputBorderRadius);
+.rectangle-list li:hover{
+  background: lighten($rectangle-list-li-background, 7%);
 }
 
-// Multi-Select
-.select2-container-multi .select2-choices, .select2-container-multi.select2-container-active .select2-choices {
-  padding-right: 5px;
-  @include border-radius($inputBorderRadius);
-  @include box-shadow(inset 0 1px 1px rgba(0,0,0,.075));
-  @include transition(#{border linear .2s, box-shadow linear .2s});
+.rectangle-list li:before{
+  content: counter(li);
+  counter-increment: li;
+  position: absolute;
+  left: -2.5em;
+  top: 50%;
+  margin-top: -1em;
+  background: lighten($linkColor, 18%);
+  height: 2em;
+  width: 2em;
+  line-height: 2em;
+  text-align: center;
+  font-weight: bold;
+  @include border-radius(3px);
+  color: black;
 }
 
-.select2-container-multi.select2-container-active .select2-choices {
-  border-color: rgba(82,168,236,.8);
-  outline: 0;
-  outline: thin dotted \9; /* IE6-9 */
-  @include box-shadow(#{inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6)});
+.rectangle-list li:after{
+  position: absolute;
+  content: '';
+  border: .5em solid transparent;
+  left: -1em;
+  top: 50%;
+  margin-top: -.5em;
+  @include transition(all .3s ease-out);
 }
 
-.select2-container-multi .select2-choices {
-  background-color: $inputBackground;
-  border: 1px solid $inputBorder;
+.rectangle-list li:hover:after{
+  left: -.5em;
+  border-left-color: lighten($linkColor, 18%);
 }
 
-// Single Select
-.select2-container .select2-choice {
-  background-color: $inputBackground;
-  border: 1px solid $inputBorder;
-}
 
-.select2-dropdown-open .select2-choice {
-  @include border-radius($inputBorderRadius);
-  @include box-shadow(inset 0 1px 1px rgba(0,0,0,.075));
-  @include transition(#{border linear .2s, box-shadow linear .2s});
-}
-
-.select2-container-active .select2-choice:focus {
-  border-color: rgba(82,168,236,.8);
-  outline: 0;
-  outline: thin dotted \9; /* IE6-9 */
-  @include box-shadow(#{inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6)});
-}
 
 // Make links in table cells expand to fill cell
 
