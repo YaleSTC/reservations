@@ -88,25 +88,22 @@ class ApplicationController < ActionController::Base
 
   #-------- end before_filter methods --------
 
-    def update_cart
-     #set dates
-      flash.clear
-      session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
-      session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
-      session[:cart].set_reserver_id(params[:reserver_id])
-      if !cart.valid_dates? #Validations are currently broken, so this always evaluates to false
-        flash[:error] = cart.errors.values.flatten.join("<br/>").html_safe
-        cart.errors.clear
-        if flash[:error].blank?
-          flash[:notice] = "Cart updated"
-        end
-      end
+  def update_cart
+    # set dates
+    flash.clear
+    session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
+    session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
+    session[:cart].set_reserver_id(params[:reserver_id])
+    
+    # validate
+    errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
+    flash[:error] = errors.to_sentence
 
-      # reload appropriate divs / exit
-      respond_to do |format|
-        format.js{render :template => "reservations/cart_dates_reload"}
-          # guys i really don't like how this is rendering a template for js, but :action doesn't work at all
-        format.html{render :partial => "reservations/cart_dates"}
+    # reload appropriate divs / exit
+    respond_to do |format|
+      format.js{render :template => "reservations/cart_dates_reload"}
+        # guys i really don't like how this is rendering a template for js, but :action doesn't work at all
+      format.html{render :partial => "reservations/cart_dates"}
     end
   end
 
