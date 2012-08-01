@@ -16,13 +16,13 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_user
   helper_method :cart
-
+  
   #-------- before_filter methods --------
 
   def app_setup
       redirect_to new_admin_user_path
   end
-
+  
   def load_configs
     @app_configs = AppConfig.first
   end
@@ -81,7 +81,6 @@ class ApplicationController < ActionController::Base
   def current_user
     @current_user ||= User.include_deleted.find_by_login(session[:cas_user]) if session[:cas_user]
   end
-
 
   def bind_pry_before_everything
     binding.pry
@@ -189,6 +188,27 @@ class ApplicationController < ActionController::Base
       format.html{render :partial => 'shared/markdown_help'}
       format.js{render :template => 'shared/markdown_help_js'}
     end
-  end
+  end  
 
+  def csv_import(filepath)
+    # initialize
+    imported_objects = []
+    string = File.read(filepath)
+    require 'csv'
+    
+    # import data by row
+    CSV.parse(string, :headers => true) do |row|
+      object_hash = row.to_hash.symbolize_keys
+      
+      # make all nil values blank
+      object_hash.keys.each do |key|
+        if object_hash[key].nil?
+          object_hash[key] = ''
+        end
+      end
+      imported_objects << object_hash
+    end
+    # return array of imported objects
+    imported_objects
+  end
 end
