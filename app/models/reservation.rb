@@ -13,9 +13,9 @@ class Reservation < ActiveRecord::Base
 
   # If there is no equipment model, it doesn't run the reservations that would break it
   with_options :if => :not_empty? do |r|
-    r.validate :no_overdue_reservations?, :no_overdue_reservations?, :start_date_before_due_date?,
-           :not_in_past?, :matched_object_and_model?, :not_renewable?, :duration_allowed?, :available?,
-           :quantity_eq_model_allowed?, :quantity_cat_allowed?
+    r.validate :no_overdue_reservations?, :start_date_before_due_date?, :matched_object_and_model?,
+              :not_renewable?, :duration_allowed?, :available?, :quantity_eq_model_allowed?, :quantity_cat_allowed?
+    r.validate :not_renewable?, :not_in_past?, :on => :create
   end
 
   scope :recent, order('start_date, due_date, reserver_id')
@@ -86,7 +86,7 @@ class Reservation < ActiveRecord::Base
       errors << "Reservations start dates must be before due dates" unless res.start_date_before_due_date?
       errors << "Reservations must have an associated equipment model" unless res.not_empty?
       errors << res.equipment_object.name + " should be of type " + res.equipment_model.name unless res.matched_object_and_model?
-      errors << res.equipment_model.name + " should be renewed instead of re-checked out" unless res.not_renewable?
+      errors << res.equipment_model.name + " should be renewed instead of re-checked out" unless res.not_renewable? if self.class == CartReservation
       errors << "Duration problem with " + res.equipment_model.name unless res.duration_allowed?
       errors << "Availablity problem with " + res.equipment_model.name unless res.available?(res_array)
       errors << "Quantity equipment model problem with " + res.equipment_model.name unless res.quantity_eq_model_allowed?(res_array)
@@ -201,7 +201,7 @@ class Reservation < ActiveRecord::Base
       # the available? method cannot accept dates with time zones, and due_date has a time zone
       possible_start = (self.due_date + 1.day).to_date
       possible_due = (self.due_date+(renewal_length.days)).to_date
-      if (self.equipment_model.available?(possible_start, possible_due) > 0)
+      if (self.equipment_model.num_available(possible_start, possible_due) > 0)
         # if it's available for the period, set available_period and escape loop
         available_period = renewal_length
       else

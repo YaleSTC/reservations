@@ -27,7 +27,7 @@ module EquipmentModelsHelper
 
   def define_width
     if @equipment_model.equipment_objects.size > 0
-      @width = (@equipment_model.available?(cart.start_date, cart.due_date).to_f) / @equipment_model.equipment_objects.size.to_f
+      @width = (@equipment_model.num_available(cart.start_date, cart.due_date).to_f) / @equipment_model.equipment_objects.size.to_f
     else
       @width = 0
     end

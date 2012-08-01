@@ -145,7 +145,7 @@ class EquipmentModel < ActiveRecord::Base
 
 #TODO: blackout vs validation
 #TODO: doesn't return true/false so it should be num_available(*)
-#  def available?(start_date, due_date)
+#  def num_available(start_date, due_date)
 #    overall_count = self.equipment_objects.size
 #    start_date.to_date.upto(due_date.to_date) do |date|
 #      available_on_date = available_count(date)
@@ -153,7 +153,7 @@ class EquipmentModel < ActiveRecord::Base
 #    end
 #    overall_count
 #  end
-  def available?(start_date, due_date) #This does not actually return true or false, but rather the number available.
+  def num_available(start_date, due_date) #This does not actually return true or false, but rather the number available.
     qualification_met = true
       if ((a = BlackOut.date_is_blacked_out(start_date)) && a.black_out_type_is_hard) || ((a = BlackOut.date_is_blacked_out(due_date)) && a.black_out_type_is_hard) #If start or end of range is blacked out, and that is a hard blackout.
         return 0

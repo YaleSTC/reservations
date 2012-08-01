@@ -63,9 +63,9 @@ module ReservationValidations
   end
 
   # Checks that the reservation is not renewable
-  #TODO: should it be res.due_date.to_date >= self.start_date.to_date?
   #TODO: allow admin override
   def not_renewable?
+    return true unless self.class == CartReservation || self.status == "reserved"
     reserver.reservations_array.each do |res|
       if res.equipment_model == self.equipment_model && res.due_date.to_date == self.start_date.to_date && res.is_eligible_for_renew?
         errors.add(:base, res.equipment_model.name + " should be renewed instead of re-checked out")
@@ -100,7 +100,7 @@ module ReservationValidations
     all_res << self if self.class != Reservation
     all_res.uniq!
     eq_objects_needed = same_model_count(all_res)
-    if equipment_model.available?(start_date, due_date) < eq_objects_needed
+    if equipment_model.num_available(start_date, due_date) < eq_objects_needed
       errors.add(:base, "availablity problem with " + equipment_model.name)
       return false
     end

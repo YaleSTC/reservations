@@ -29,7 +29,7 @@
     <div class="row">
       <div class="span4">
         <h3 class="availability">
-          <%= @equipment_model.available?(cart.start_date, cart.due_date) || "0"%> available of <%= @equipment_model.equipment_objects.size %>
+          <%= @equipment_model.num_available(cart.start_date, cart.due_date) || "0"%> available of <%= @equipment_model.equipment_objects.size %>
         </h3>
         <p>
           <%= content_tag :div, class: "progress #{progress_color}" do %>
