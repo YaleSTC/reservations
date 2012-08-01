@@ -45,7 +45,6 @@ class EquipmentModel < ActiveRecord::Base
   nilify_blanks :only => [:deleted_at]
   
   include ApplicationHelper
-
   attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee,
                   :max_per_user, :document_attributes, :accessory_ids, :deleted_at,
                   :checkout_procedures_attributes, :checkin_procedures_attributes, :photo,
@@ -96,17 +95,17 @@ class EquipmentModel < ActiveRecord::Base
   validates_attachment_size         :photo,
                                     :less_than => 1.megabytes,
                                     :message => "must be less than 1 MB in size"
-
+  
   validates_attachment :documentation, :content_type => { :content_type => "application/pdf" }
-
+  
   Paperclip.interpolates :normalized_photo_name do |attachment, style|
     attachment.instance.normalized_photo_name
   end
-
+  
   def normalized_photo_name
     "#{self.id}-#{self.photo_file_name.gsub( /[^a-zA-Z0-9_\.]/, '_')}" 
   end
-  #end of Paperclip code.
+  # end of Paperclip code.
 
 
   ## Functions ##
