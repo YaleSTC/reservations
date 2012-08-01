@@ -121,6 +121,21 @@ class UsersController < ApplicationController
       redirect_to :back and return
     end
     
+    # make sure we have login data (otherwise all will always fail)
+    unless imported_users.first.keys.include?(:login)
+      flash[:error] = "Unable to import CSV file. None of the users will be able to log in without specifying 'login' data."
+      redirect_to :back and return
+    end
+    
+    # make sure the import went with proper headings / column handling
+    keys_array = current_user.attributes.symbolize_keys.keys
+    imported_users.first.keys.each do |key|
+      unless keys_array.include?(key)
+        flash[:error] = 'Unable to import CSV file. Please ensure the first line of the file includes proper header information (login,first_name,...) as indicated below, with no extraneous columns.'
+        redirect_to :back and return
+      end
+    end
+        
     # create the users and exit
     @hash_of_statuses = User.import_users(imported_users,overwrite,user_type)
     render 'import_success'
