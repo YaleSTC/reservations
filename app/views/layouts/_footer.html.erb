@@ -52,9 +52,9 @@
                   <li><%= link_to 'Checkout Person', {:c_mode => 'ON'}%></li>
                 <% end %>
                 <% if current_user && current_user.normalusermode? %>
-                  <li class="active">Normal User</li>
+                  <li class="active">Patron</li>
                 <% else %>
-                  <li><%= link_to 'Normal User', {:n_mode => 'ON'}%></li>
+                  <li><%= link_to 'Patron', {:n_mode => 'ON'}%></li>
                 <% end %>
                 <% if current_user && current_user.bannedmode? %>
                   <li class="active">Banned User</li>

@@ -65,7 +65,7 @@ class ApplicationController < ActionController::Base
 	    current_user.update_attribute(:checkoutpersonmode, 0)
 	    current_user.update_attribute(:normalusermode, 1)
 	    current_user.update_attribute(:bannedmode, 0)
-      flash[:notice] = "Viewing as Normal User"
+      flash[:notice] = "Viewing as Patron"
       redirect_to :action => "index" and return
     end
     if (params[:b_mode] && current_user.is_admin)
