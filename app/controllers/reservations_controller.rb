@@ -53,10 +53,13 @@ class ReservationsController < ApplicationController
     else
       # error handling
       @errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
-      if current_user.is_admin_in_adminmode?
-        flash[:error] = 'Are you sure you want to continue? Please review the errors below.'
-      else
-        flash[:error] = 'Please review the errors below.'
+      
+      unless @errors.empty?
+        if current_user.is_admin_in_adminmode?
+          flash[:error] = 'Are you sure you want to continue? Please review the errors below.'
+        else
+          flash[:error] = 'Please review the errors below.'
+        end
       end
       
       # this is used to initialize each reservation later
