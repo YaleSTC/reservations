@@ -43,6 +43,7 @@
 }
 
 .navbar-inner {
+  height: 40px; // fix to account for the font-awesome glyph in the logo
   @include box-shadow(#{0 2px 20px rgba(0, 0, 0, 0.4), inset 0 0 14px rgba(0,0,0,.5)});
 }
 
