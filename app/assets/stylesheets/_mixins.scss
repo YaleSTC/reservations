@@ -6,18 +6,22 @@
 
 @mixin placeholder-extended ($color: $placeholderText, $font-style: italic){
   &:-moz-placeholder {
+    position: relative;
+    top: 2px;
     color: $color;
     font-style: $font-style;
   }
   &:-ms-input-placeholder {
+    position: relative;
+    top: 2px;
     color: $color;
     font-style: $font-style;
-
   }
   &::-webkit-input-placeholder {
+    position: relative;
+    top: 2px;
     color: $color;
     font-style: $font-style;
-
   }
 }
 
