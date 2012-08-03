@@ -61,7 +61,7 @@
 @media (min-width: 980px) {
   .subnav-fixed {
     position: fixed;
-    top: 42px;
+    top: 39px;
     left: 0;
     right: 0;
     z-index: 1020; /* 10 less than .navbar-fixed to prevent any overlap */
