@@ -13,9 +13,9 @@
   <%= f.input :due_date, :as => :hidden, :value => cart.due_date %>
   </p>
   <p>
-    <ul>
+    <ul class="rounded-list">
       <% cart.models_with_quantities.each_pair do |model_id, quantity| %>
-        <li><%= quantity %> x <%= link_to EquipmentModel.find(model_id).name, EquipmentModel.find(model_id) %></li>
+        <li data-value="<%= item.quantity %>"><%= link_to EquipmentModel.find(model_id).name, EquipmentModel.find(model_id) %></li>
       <% end %>
       <li style="list-style: none"><small><%= link_to "Go back to the catalog", catalog_path %></small></li>
     </ul>

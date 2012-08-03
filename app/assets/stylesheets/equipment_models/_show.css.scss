@@ -12,6 +12,11 @@
 .associated_em_box {
 	position: absolute;
 	bottom: 0;
+
+	img {
+		background: white;
+		@include img-outline;
+	}
 }
 
 .document {
@@ -25,6 +30,9 @@
 }
 .image_box {
 	height: 260px;
+	overflow: hidden;
+	background: white;
+	@include img-outline;
 }
 
 .giant-numbers {
@@ -54,8 +62,9 @@ a.not-qualified-icon-em {
 	top: 6px;
 	right: 120px;
 	font-size: $baseFontSize * 3.6;
-
 	color: $btnWarningBackgroundHighlight;
+	@include warning-icon-drop-shadow;
+
 	&:hover, &:active {
 		text-decoration: none;
 		color: $btnWarningBackground;

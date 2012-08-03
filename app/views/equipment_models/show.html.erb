@@ -20,7 +20,7 @@
       </div>
     </div>
   </div>
-    
+
   <% else %>
       <%= image_tag "no-image-260.gif" %>
   <% end %>
@@ -115,9 +115,9 @@
           <% end %>
         </div>
     </div>
-    
+
   </div>
-  
+
 </div>
 
 <hr />
@@ -172,12 +172,12 @@
     <%= content_tag :div, :class => 'span3' do %>
       <%= number_to_currency(@equipment_model.replacement_fee) %>
     <% end %>
-    <%= content_tag :div, :class => 'span2' do %>      
+    <%= content_tag :div, :class => 'span2' do %>
       <%= @equipment_model.maximum_per_user if current_user.is_admin_in_adminmode? %>
     <% end %>
   <% end %>
 </section>
-  
+
 <!-- DOCUMENTATION -->
 <% if @equipment_model.documentation.exists? %>
 <section id="documentation">
@@ -239,7 +239,7 @@
       <p><h4>Check-In</h4></p>
     <% end %>
   <% end %>
-  
+
   <!-- Content Row -->
   <%= content_tag :div, :class => 'row' do %>
     <%= content_tag :div, :class => 'span4' do %>
@@ -257,7 +257,7 @@
       <% if @equipment_model.checkin_procedures.empty? %>
         (none)
       <% else %>
-        <ol>
+        <ol class="rectangle-list">
           <% @equipment_model.checkin_procedures.each do |checkin_procedure| %>
             <li><%= checkin_procedure.step %></li>
           <% end %>
