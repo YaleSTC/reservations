@@ -30,6 +30,39 @@ def time_rand from = 0.0, to = Time.now
   Time.at(from + rand * (to.to_f - from.to_f))
 end
 
+def terms_of_service_text
+  %q{
+## 1. Contract Formation
+This product is meant for educational purposes only. Any resemblance to real persons, living or dead is purely coincidental. Void where prohibited. Some assembly required. List each check separately by bank number. Batteries not included.
+
+## 2. Changes to the Agreement and Notices
+Contents may settle during shipment. Use only as directed. No other warranty expressed or implied. Do not use while operating a motor vehicle or heavy equipment. Postage will be paid by addressee. Subject to CARB approval.
+This is not an offer to sell securities. Apply only to affected area. May be too intense for some viewers. Do not stamp. Not rated by the Motion Picture Association of America. Call for nutritional information. Use other side for additional listings.
+
+## 3. Grant of License
+Printed on recycled paper. For recreational use only. Do not disturb. All models over 18 years of age. Prize not redeemable for cash value. If condition persists, consult your physician. No user-serviceable parts inside. Freshest if eaten before date on carton.
+To be used as a supplementary restraint system only. Always fasten your safety belt. Subject to change without notice. Times approximate. Simulated picture. Do not staple or paper clip. Price slightly higher east of Alaska. No postage necessary if mailed in the United States.
+Do not X-ray. Breaking seal constitutes acceptance of agreement. For off-road use only. As seen on TV. One size fits all. Many suitcases look alike. Contains a substantial amount of non-tobacco ingredients. Colors may, in time, fade.
+We have sent the forms which seem right for you. Magnetic media, non-returnable if seal is broken. Formatted to fit your screen. Slippery when wet. For office use only. Not affiliated with the American Red Cross. Drop in any mailbox. Edited for television.
+
+## 4. Third Party Applications and Third Party Applications Content
+Keep cool, process promptly. Post office will not deliver without postage. List was current at time of printing. Return to sender, no forwarding order on file, unable to forward. Prolong exposure to vapors has caused cancer in laboratory animals.
+Not responsible for direct, indirect, incidental or consequential damages resulting from any defect, error or failure to perform. Keep away from children. At participating locations only. Not the Beatles. Penalty for private use. See label for sequence.
+Substantial penalty for early withdrawal. Do not write below this line. Falling rock. Lost ticket pays maximum rate. Phenylketonurics: contains phenylalnine. Your canceled check is your receipt. Add toner. Place stamp here.
+
+## 5. Restrictions of Use
+Use only as directed; intentional misuse by deliberately concentrating and inhaling contents can be harmful or fatal. Avoid contact with skin. Road construction ahead. Open other end. Dealer participation may affect final price.
+May not be present in all tap water. Sanitized for your protection. Be sure each item is properly endorsed. Sign here without admitting guilt. Slightly higher west of the Mississippi. Park at your own risk. Employees and their families and friends are not eligible. Beware of dog.
+Contestants have been briefed on some questions before the show. Limited time offer, call now to ensure prompt delivery. You must be present to win. No passes accepted for this engagement. No purchase necessary. Processed at location stamped in code at top of
+carton.
+
+## 6. NO WARRANTY
+Shading within a garment may occur. Keep away from fire or flames. See Uniform Code of Military Justice. Replace with same type. Approved for veterans. Booths for two or more. Indicates a low-fat item. Check here if tax deductible. Some equipment shown is optional.
+Price does not include taxes. No Canadian coins. Tax, tag, and title not included in advertised price. Not recommended for children. Prerecorded for this time zone. Reproduction by mechanical or electronic means, including photocopying, is strictly prohibited.
+No solicitors. No alcohol, dogs or horses. No anchovies unless otherwise specified. Avoid spraying into eyes. An 18% gratuity will be added for parties of 8 or more. Do not write under this line.
+  }
+end
+# binding.pry
 
 #Random object that is used throughout for generating fake data that FFaker can't
 r = Random.new
@@ -163,6 +196,11 @@ else
     entered_num = STDIN.gets.chomp.to_i
   end
 
+  # Terms of Service generation
+  ac = AppConfig.first
+  ac.terms_of_service = terms_of_service_text
+  ac.save!
+
   #Reservation generation
   entered_num = ask_for_records("Reservation")
 
@@ -191,4 +229,26 @@ else
     entered_num = STDIN.gets.chomp.to_i
   end
 
+  # Blackout Date generation
+  entered_num = ask_for_records("Blackout Dates")
+
+  if entered_num.integer? && entered_num > 0
+    blackout = entered_num.times.map do
+      random_time = time_rand(Time.now + 1.year)
+      random_end_date = time_rand(random_time, random_time.next_week)
+
+      BlackOut.create! do |blk|
+        blk.start_date = random_time
+        blk.end_date = random_end_date
+        blk.notice = Faker::HipsterIpsum.paragraph(2)
+        blk.created_by = User.first.id
+        blk.black_out_type = ['soft', 'hard'].sample
+        blk.equipment_model_id = 0
+      end
+    end
+    STDOUT.puts "\n#{entered_num} records successfully created!"
+  else
+    STDOUT.puts "\nPlease enter a whole number greater than 0."
+    entered_num = STDIN.gets.chomp.to_i
+  end
 end
