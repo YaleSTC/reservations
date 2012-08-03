@@ -94,13 +94,6 @@ class ApplicationController < ActionController::Base
       session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
       session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
       session[:cart].set_reserver_id(params[:reserver_id])
-      if !cart.valid_dates? #Validations are currently broken, so this always evaluates to false
-        flash[:error] = cart.errors.values.flatten.join("<br/>").html_safe
-        cart.errors.clear
-        if flash[:error].blank?
-          flash[:notice] = "Cart updated"
-        end
-      end
 
       # reload appropriate divs / exit
       respond_to do |format|
