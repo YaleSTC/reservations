@@ -228,4 +228,27 @@ else
     STDOUT.puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
   end
+
+  # Blackout Date generation
+  entered_num = ask_for_records("Blackout Dates")
+
+  if entered_num.integer? && entered_num > 0
+    blackout = entered_num.times.map do
+      random_time = time_rand(Time.now + 1.year)
+      random_end_date = time_rand(random_time, random_time.next_week)
+
+      BlackOut.create! do |blk|
+        blk.start_date = random_time
+        blk.end_date = random_end_date
+        blk.notice = Faker::HipsterIpsum.paragraph(2)
+        blk.created_by = User.first.id
+        blk.black_out_type = ['soft', 'hard'].sample
+        blk.equipment_model_id = 0
+      end
+    end
+    STDOUT.puts "\n#{entered_num} records successfully created!"
+  else
+    STDOUT.puts "\nPlease enter a whole number greater than 0."
+    entered_num = STDIN.gets.chomp.to_i
+  end
 end
