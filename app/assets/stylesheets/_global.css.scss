@@ -1,97 +1,158 @@
+// Well stuff
+// =============================================================================
 .well-nomargin {
   @extend .well;
   margin-right: 20px;
   margin-left: 0px;
 }
 
+.well { background-color: darken(desaturate($bodyBackground, 10%), 3%); }
+
+// Make labels semi-bold
+// =============================================================================
 label { font-weight: 600; }
 
+// Change alert margins to account for body padding
+// =============================================================================
 .alert {
-  margin-bottom: 0px;
+  margin-bottom: 0;
   margin-top: 18px;
 }
 
-div.form-actions .view_all {
-  float: right;
-}
+// Make all view-all buttons float to the right
+// =============================================================================
+.form-actions .view_all { float: right; }
 
-.popover {
-  z-index: 1050;
-}
+// Fix for popovers to display over dropdowns
+// =============================================================================
+.popover { z-index: 1050; }
 
-.well {
-  background-color: darken(desaturate($bodyBackground, 10%), 3%);
-}
-
+// Make background color for hovering on nav links relative to body background
+// =============================================================================
 .nav > li > a:hover {
   background-color: darken(desaturate($bodyBackground, 10%), 7%);
 }
 
-ol {
-  counter-reset: li; /* Initiate a counter */
-  list-style: none; /* Remove default numbering */
-  *list-style: decimal; /* Keep using default numbering for IE6/7 */
+// List styles
+// =============================================================================
+
+// Ordered list
+// ------------
+$rectangle-list-li-background: darken($bodyBackground, 10%);
+
+ol.rectangle-list {
+  counter-reset: li; // Initiate a counter
+  list-style: none; // Remove default numbering
+  *list-style: decimal; // Keep using default numbering for IE6/7
   padding: 0;
   margin-bottom: 4em;
   text-shadow: 0 1px 0 rgba(255,255,255,.5);
+
+  ol {
+    margin: 0 0 0 2em; // Add some left margin for inner lists
+  }
+
+  li {
+    position: relative;
+    display: block;
+    padding: .4em .4em .4em .8em;
+    *padding: .4em;
+    margin: .6em 0 .5em .7em;
+    background: $rectangle-list-li-background;
+    @include border-radius(3px);
+    @include transition(background .3s ease-out);
+
+    &:hover {
+      background: lighten($rectangle-list-li-background, 7%);
+
+      &:after {
+        left: -.5em;
+        border-left-color: lighten($linkColor, 18%);
+      }
+    }
+
+    &:before {
+      content: counter(li);
+      counter-increment: li;
+      position: absolute;
+      left: -2.5em;
+      top: 50%;
+      margin-top: -1em;
+      background: lighten($linkColor, 18%);
+      height: 2em;
+      width: 2em;
+      line-height: 2em;
+      text-align: center;
+      font-weight: bold;
+      @include border-radius(3px);
+      color: black;
+    }
+
+    &:after {
+      position: absolute;
+      content: '';
+      border: .5em solid transparent;
+      left: -1em;
+      top: 50%;
+      margin-top: -.5em;
+      @include transition(all .3s ease-out);
+    }
+  }
 }
 
-ol ol {
-  margin: 0 0 0 2em; /* Add some left margin for inner lists */
+// Unordered list
+// --------------
+ul.rounded-list {
+  list-style: none; // Remove default numbering
+  padding: 0;
+  margin-bottom: 4em;
+  margin-left: 1em;
+  text-shadow: 0 1px 0 rgba(255,255,255,.5);
+
+  ul {
+    margin: 0 0 0 2em; // Add some left margin for inner lists
+  }
+
+  li {
+    position: relative;
+    display: block;
+    padding: .4em .4em .4em 2em;
+    *padding: .4em;
+    margin: .5em 0;
+    background: $rectangle-list-li-background;
+    @include border-radius(.3em);
+    @include transition(all .3s ease-out);
+
+    &:hover {
+      background: lighten($rectangle-list-li-background, 7%);
+
+      &:before {
+        transform: rotate(360deg);
+      }
+    }
+
+    &:before {
+      content: attr(data-value);
+      position: absolute;
+      left: -1.3em;
+      top: 50%;
+      margin-top: -1.3em;
+      background: lighten($linkColor, 18%);
+      height: 2em;
+      width: 2em;
+      line-height: 2em;
+      border: .3em solid #fff;
+      text-align: center;
+      font-weight: bold;
+      @include border-radius(2em);
+      @include transition(all .3s ease-out);
+    }
+  }
 }
-
-$rectangle-list-li-background: darken($bodyBackground, 10%);
-
-.rectangle-list li{
-  position: relative;
-  display: block;
-  padding: .4em .4em .4em .8em;
-  *padding: .4em;
-  margin: .6em 0 .5em .7em;
-  background: $rectangle-list-li-background;
-  @include border-radius(3px);
-  @include transition(background .3s ease-out);
-}
-
-.rectangle-list li:hover{
-  background: lighten($rectangle-list-li-background, 7%);
-}
-
-.rectangle-list li:before{
-  content: counter(li);
-  counter-increment: li;
-  position: absolute;
-  left: -2.5em;
-  top: 50%;
-  margin-top: -1em;
-  background: lighten($linkColor, 18%);
-  height: 2em;
-  width: 2em;
-  line-height: 2em;
-  text-align: center;
-  font-weight: bold;
-  @include border-radius(3px);
-  color: black;
-}
-
-.rectangle-list li:after{
-  position: absolute;
-  content: '';
-  border: .5em solid transparent;
-  left: -1em;
-  top: 50%;
-  margin-top: -.5em;
-  @include transition(all .3s ease-out);
-}
-
-.rectangle-list li:hover:after{
-  left: -.5em;
-  border-left-color: lighten($linkColor, 18%);
-}
-
 
 
 // Make links in table cells expand to fill cell
+// =============================================================================
 
 td > a, td > div.dropdown {
   > a {
