@@ -13,9 +13,9 @@ class Reservation < ActiveRecord::Base
 
   # If there is no equipment model, it doesn't run the reservations that would break it
   with_options :if => :not_empty? do |r|
-    r.validate :no_overdue_reservations?, :start_date_before_due_date?, :matched_object_and_model?,
-              :not_renewable?, :duration_allowed?, :available?, :quantity_eq_model_allowed?, :quantity_cat_allowed?
-    r.validate :not_renewable?, :not_in_past?, :on => :create
+    r.validate :start_date_before_due_date?, :matched_object_and_model?, :not_in_past?,
+              :duration_allowed?, :available?, :quantity_eq_model_allowed?, :quantity_cat_allowed?
+    r.validate :not_renewable?, :no_overdue_reservations?, :on => :create
   end
 
   scope :recent, order('start_date, due_date, reserver_id')
