@@ -164,6 +164,25 @@ else
     entered_num = STDIN.gets.chomp.to_i
   end
 
+  # Requirement generation
+  entered_num = ask_for_records("Requirement")
+
+  if entered_num.integer? && entered_num > 0
+    requirement = entered_num.times.map do
+      Requirement.create! do |req|
+        req.equipment_models = equipment_model.sample(r.rand(1..3))
+        req.contact_name = Faker::Name.name
+        req.contact_info = Faker::PhoneNumber.short_phone_number
+        req.notes = Faker::HipsterIpsum.paragraph(4)
+        req.description = Faker::HipsterIpsum.sentence
+      end
+    end
+    STDOUT.puts "\n#{entered_num} records successfully created!"
+  else
+    STDOUT.puts "\nPlease enter a whole number greater than 0."
+    entered_num = STDIN.gets.chomp.to_i
+  end
+
   #CheckinProcedure generation
   entered_num = ask_for_records("CheckinProcedure")
 
