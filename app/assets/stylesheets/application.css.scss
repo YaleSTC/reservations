@@ -1,14 +1,39 @@
-// Import our webfont
-@import "open-sans/stylesheet";
+// This is the SCSS manifest for all of Reservations' CSS/SASS. This file
+// imports all of our stylesheets to compile into one CSS file.
+//
+// Order matters! The font must be loaded before everything else, or else it
+// won't be available to Bootstrap. Bootstrap must come second, since all of our
+// styling is based on the variables and mixins that Bootstrap defines. After
+// that, the order is pretty self explanatory. The order of imports under
+// "Partial Imports" doesn't really matter, as long as layouts comes first.
+// Make sure to add a new import rule whenever you make a new folder in the
+// stylesheets directory.
+// -----------------------------------------------------------------------------
 
-@import "autocomplete";
-@import "bootstrap_and_overrides";
+
+// Import our webfont
+// ============================
+@import "open-sans/stylesheet"; // must be loaded first
+
+// Twitter Bootstrap and our variable customizations for it
+// ============================
+@import "bootstrap_and_overrides"; // must be loaded before everything but the webfont
+
+// Custom rolled jQuery UI CSS for integrating with Bootstrap
+// ============================
 @import "jquery-ui-1.8.16.custom";
+
+// Autocomplete CSS
+// ============================
+@import "autocomplete";
+
+// Fancy select dropdowns
+// ============================
 @import "select2";
 @import "select2_customizations";
 
 // Our Custom Mixins
-// =========================
+// ============================
 @import "mixins";
 
 // Application Variables
@@ -17,13 +42,12 @@ $h3-line-height: 27px;
 $user_label-size: 1.5;
 
 // Global Application Styles
-// ==============================
+// ============================
 @import "global";
 
 // Partial Imports
 // ============================
-
-@import "layouts/*";
+@import "layouts/*"; // must come first
 @import "reservations/*";
 @import "catalog/*";
 @import "users/*";
