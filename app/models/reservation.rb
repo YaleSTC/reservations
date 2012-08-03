@@ -224,21 +224,26 @@ class Reservation < ActiveRecord::Base
     if self.times_renewed == NIL
       self.times_renewed = 0
     end
+    
+    # you can't renew a checked in reservation
+    if self.checked_in
+      return false
+    end
+
     if self.equipment_model.maximum_renewal_times == "unrestricted"
       if self.equipment_model.maximum_renewal_days_before_due == "unrestricted"
         # if they're both NIL
-        true
+        return true
       else
         # due_date has a time zone, eradicate with to_date; use to_i to change to integer;
         # are we within the date range for which the button should appear?
-        ((self.due_date.to_date - Date.today).to_i < self.equipment_model.maximum_renewal_days_before_due)
+        return ((self.due_date.to_date - Date.today).to_i < self.equipment_model.maximum_renewal_days_before_due)
       end
     elsif (self.equipment_model.maximum_renewal_days_before_due == "unrestricted")
-      # implicitly, max_renewal_times != NIL, so we can check it
-      self.times_renewed < self.equipment_model.maximum_renewal_times
+      return (self.times_renewed < self.equipment_model.maximum_renewal_times)
     else
       # if neither is NIL, check both
-      ((self.due_date.to_date - Date.today).to_i < self.equipment_model.maximum_renewal_days_before_due) and (self.times_renewed < self.equipment_model.maximum_renewal_times)
+      return (((self.due_date.to_date - Date.today).to_i < self.equipment_model.maximum_renewal_days_before_due) and (self.times_renewed < self.equipment_model.maximum_renewal_times))
     end
   end
 end
