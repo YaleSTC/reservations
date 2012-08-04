@@ -4,7 +4,8 @@
   <div class="well-nomargin span4 checkin">
 <% end %>
   <header>
-    <h3><%= link_to "Reservation ##{reservation.id}", reservation %></h3>
+    <h3><%= link_to "Reservation ##{reservation.id}", reservation, target:
+    '_blank' %></h3>
   </header>
 
   <hr>
@@ -14,37 +15,36 @@
       <p><%= link_to reservation.equipment_model, target: '_blank' do %>
             <%= image_tag reservation.equipment_model.photo.url(:medium) %>
           <% end %></p>
-      <%= label_tag "reservations[#{reservation.id}][checkin?]",
-      'Equipment Item' %>
-      <%= check_box_tag "reservations[#{reservation.id}][checkin?]",
-      reservation.equipment_object.name %>
-
-    </div>
-    <p><h4><%= reservation.equipment_model.name %></h4></p>
-    <ul>
+      <%= label_tag "reservations[#{reservation.id}][checkin?]" do %>
         <%= check_box_tag "reservations[#{reservation.id}][checkin?]" %>
         <%= reservation.equipment_object.name %>
-    </ul>
+      <% end %>
+
+    </div>
 
     <p>
       <p><h4>Notes</h4></p>
-		  <%= text_area_tag "reservations[#{reservation.id}][notes]", reservation.notes, class: 'span3', rows: 6 %>
+		  <%= text_area_tag "reservations[#{reservation.id}][notes]", reservation.notes,
+      class: 'span3', rows: 6 %>
 		  <%= render :partial => 'shared/markdown_button' %>
     </p>
 
     <p>
       <p><h4>Check-In Procedures</h4></p>
-      <ul>
+      <ol class="rectangle-list">
         <% if reservation.equipment_model.checkin_procedures.empty? %>
-          <em>(none)</em>
+          <li><em>(none)</em></li>
         <% else %>
           <% reservation.equipment_model.checkin_procedures.each do |checkin_procedure| %>
-            <li style="list-style: none">
-              <%= check_box_tag "reservations[#{reservation.id}][checkin_procedures][#{checkin_procedure.id}]" %> <%= checkin_procedure.step %>
+            <li>
+              <%= label_tag "reservations[#{reservation.id}][checkin_procedures][#{checkin_procedure.id}]" do %>
+                <%= check_box_tag "reservations[#{reservation.id}][checkin_procedures][#{checkin_procedure.id}]" %>
+                <%= checkin_procedure.step %>
+              <% end %>
             </li>
           <% end %>
         <% end %>
-      </ul>
+      </ol>
     </p>
 
     <% if reservation.due_date.to_date < Date.today %>
