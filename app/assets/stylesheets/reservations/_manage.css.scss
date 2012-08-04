@@ -1,0 +1,12 @@
+.well-em-manage {
+  background-color: darken(desaturate($bodyBackground, 10%), 12%);
+  text-align: center;
+
+  a {
+    color: darken($navbarLinkColor, 50%);
+    > img {
+      background: white;
+      @include img-outline;
+    }
+  }
+}
