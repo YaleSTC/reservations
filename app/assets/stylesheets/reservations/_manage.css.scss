@@ -7,7 +7,7 @@
 
     > img {
       background: white;
-      @include img-outline;
+      @include img-outline(desaturate(darken($bodyBackground, 20%), 30%));
     }
   }
 }
