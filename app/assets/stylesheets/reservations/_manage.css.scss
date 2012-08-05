@@ -12,20 +12,24 @@
   }
 }
 
-.rectangle-list {
-  label {
-    margin-bottom: 0;
+.checkin, .checkout {
+  .rectangle-list {
+    margin-bottom: 2em;
 
-    > input[type="checkbox"] {
-      float: left;
-      margin-top: .3em;
-    }
+    label {
+      margin-bottom: 0;
 
-    > span {
-      display: block;
-      margin-left: 1.5em;
-      padding-left: .5em;
-      border-left: solid 1px lighten($rectangle-list-li-background, 6%);
+      > input[type="checkbox"] {
+        float: left;
+        margin-top: .3em;
+      }
+
+      > span {
+        display: block;
+        margin-left: 1.5em;
+        padding-left: .5em;
+        border-left: solid 1px lighten($rectangle-list-li-background, 6%);
+      }
     }
   }
 }
