@@ -253,6 +253,7 @@ $(document).ready(function() {
   $('select#equipment_model_requirements').select2();
   $('select#equipment_object_equipment_model_id').select2();
   $('select#requirement_equipment_model').select2();
+  $('select.dropdown.dropselect').select2();
 
 });
 // to disable selection of dates in the past with datepicker
