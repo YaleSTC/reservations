@@ -10,7 +10,14 @@
 
 // Make labels semi-bold
 // =============================================================================
-label { font-weight: 600; }
+label {
+  font-weight: 600;
+
+  > span {
+    font-weight: normal;
+    // unbolds checkbox / radio button labels if they're wrapped in a span tag
+  }
+}
 
 // Change alert margins to account for body padding
 // =============================================================================

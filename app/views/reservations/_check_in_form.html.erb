@@ -39,7 +39,7 @@
             <li>
               <%= label_tag "reservations[#{reservation.id}][checkin_procedures][#{checkin_procedure.id}]" do %>
                 <%= check_box_tag "reservations[#{reservation.id}][checkin_procedures][#{checkin_procedure.id}]" %>
-                <%= checkin_procedure.step %>
+                <span><%= checkin_procedure.step %></span>
               <% end %>
             </li>
           <% end %>
