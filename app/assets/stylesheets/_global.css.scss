@@ -19,6 +19,13 @@ label {
   }
 }
 
+// Form actions background change
+
+.form-actions {
+  background-color: darken(desaturate($bodyBackground, 10%), 6%);
+  border-top: 1px solid darken(desaturate($bodyBackground, 10%), 15%);
+}
+
 // Change alert margins to account for body padding
 // =============================================================================
 .alert {
@@ -46,7 +53,7 @@ a > img {
   @include transition(opacity .2s ease-out);
 
   &:hover, &:active {
-    opacity: .5;
+    opacity: .6;
   }
 }
 

@@ -4,6 +4,7 @@
 
   a {
     color: darken($navbarLinkColor, 50%);
+
     > img {
       background: white;
       @include img-outline;
