@@ -16,8 +16,10 @@
 
     <div class="row">
       <div class="span9">
-        <%= render partial: "check_in_form", collection: @check_in_set,
-        as: :reservation %>
+        <div class="row">
+          <%= render partial: "check_in_form", collection: @check_in_set,
+          as: :reservation %>
+        </div>
       </div>
     </div>
 
@@ -57,8 +59,10 @@
     <% end %>
     <div class="row">
       <div class="span9">
-        <%= render partial: 'check_out_form', collection: @check_out_set,
-        as: :reservation %>
+        <div class="row">
+          <%= render partial: 'check_out_form', collection: @check_out_set,
+          as: :reservation %>
+        </div>
       </div>
     </div>
 
