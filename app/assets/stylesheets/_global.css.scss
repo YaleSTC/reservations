@@ -10,7 +10,21 @@
 
 // Make labels semi-bold
 // =============================================================================
-label { font-weight: 600; }
+label {
+  font-weight: 600;
+
+  > span {
+    font-weight: normal;
+    // unbolds checkbox / radio button labels if they're wrapped in a span tag
+  }
+}
+
+// Form actions background change
+
+.form-actions {
+  background-color: darken(desaturate($bodyBackground, 10%), 6%);
+  border-top: 1px solid darken(desaturate($bodyBackground, 10%), 15%);
+}
 
 // Change alert margins to account for body padding
 // =============================================================================
@@ -31,6 +45,16 @@ label { font-weight: 600; }
 // =============================================================================
 .nav > li > a:hover {
   background-color: darken(desaturate($bodyBackground, 10%), 7%);
+}
+
+// Animated hover state for all linked images
+// =============================================================================
+a > img {
+  @include transition(opacity .2s ease-out);
+
+  &:hover, &:active {
+    opacity: .6;
+  }
 }
 
 // List styles

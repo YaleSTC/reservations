@@ -1,4 +1,6 @@
-<p><%= simple_form_for @user, :url => url_for( :action => "create_admin_user", :controller => "application_setup"), :html => { :class => "form-horizontal" } do |f| %>
+<% title "Create Admin Account" %>
+
+<%= simple_form_for @user, :url => url_for( :action => "create_admin_user", :controller => "application_setup"), :html => { :class => "form-horizontal" } do |f| %>
   <%= f.error_notification %>
   <% if current_user and (current_user.is_admin_in_adminmode? or ((current_user.is_admin_in_checkoutpersonmode? or current_user.is_checkout_person?) and @user.id == NIL)) %>
     <%= f.input :login %>
@@ -19,13 +21,12 @@
       <%= hidden_field_tag(:from_cart, false) %>
       <%#= f.input :from_cart, :as => :hidden, :value => false %>
     <% end %>
-    
+
   <% if current_user && current_user.is_admin_in_adminmode? %>
       <%= f.input :is_banned %>
       <%= f.input :is_checkout_person %>
       <%= f.input :is_admin %>
-      <%= f.input :deleted_at, label: "Disabled", :as => :deleted %>    
+      <%= f.input :deleted_at, label: "Disabled", :as => :deleted %>
   <% end %>
-  <%= f.button :wrapped, :cancel => root_path %>
+  <%= f.button :wrapped %>
 <% end %>
-</p>

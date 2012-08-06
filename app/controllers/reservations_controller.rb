@@ -51,6 +51,17 @@ class ReservationsController < ApplicationController
       flash[:error] = "You need to add items to your cart before making a reservation."
       redirect_to catalog_path
     else
+      # error handling
+      @errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
+      
+      unless @errors.empty?
+        if current_user.is_admin_in_adminmode?
+          flash[:error] = 'Are you sure you want to continue? Please review the errors below.'
+        else
+          flash[:error] = 'Please review the errors below.'
+        end
+      end
+      
       # this is used to initialize each reservation later
       @reservation = Reservation.new(start_date: cart.start_date, due_date: cart.due_date, reserver_id: cart.reserver_id)
     end

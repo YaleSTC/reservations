@@ -1,0 +1,35 @@
+.well-em-manage {
+  background-color: darken(desaturate($bodyBackground, 10%), 12%);
+  text-align: center;
+
+  a {
+    color: darken($navbarLinkColor, 50%);
+
+    > img {
+      background: white;
+      @include img-outline(desaturate(darken($bodyBackground, 20%), 30%));
+    }
+  }
+}
+
+.checkin, .checkout {
+  .rectangle-list {
+    margin-bottom: 2em;
+
+    label {
+      margin-bottom: 0;
+
+      > input[type="checkbox"] {
+        float: left;
+        margin-top: .3em;
+      }
+
+      > span {
+        display: block;
+        margin-left: 1.5em;
+        padding-left: .5em;
+        border-left: solid 1px lighten($rectangle-list-li-background, 6%);
+      }
+    }
+  }
+}

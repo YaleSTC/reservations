@@ -1,48 +1,63 @@
-<% if check_in_form.due_date.to_date < Date.today %>
-  <div class="well-nomargin span4 warning checkin"> <%# also change color %>
+<% if reservation.due_date.to_date < Date.today %>
+  <div class="span4 warning checkin"> <%# also change color %>
 <% else %>
-  <div class="well-nomargin span4 checkin">
+  <div class="span4 checkin">
 <% end %>
-  <header>
-    <h3><%= link_to "Reservation ##{check_in_form.id}", check_in_form %></h3>
-  </header>
+  <div class="well">
+    <header>
+      <h3><%= link_to "Reservation ##{reservation.id}", reservation, target:
+      '_blank' %></h3>
+    </header>
 
-  <hr>
-    <p><h4><%= check_in_form.equipment_model.name %></h4></p>
-    <ul>
-        <%= check_box_tag "reservations[#{check_in_form.id}][checkin?]" %>
-        <%= check_in_form.equipment_object.name %>
-    </ul>
-
-    <p>
-      <p><h4>Notes</h4></p>
-		  <%= text_area_tag "reservations[#{check_in_form.id}][notes]", check_in_form.notes, class: 'span3', rows: 6 %>
-		  <%= render :partial => 'shared/markdown_button' %>
-    </p>
-
-    <p>
-      <p><h4>Check-In Procedures</h4></p>
-      <ul>
-        <% if check_in_form.equipment_model.checkin_procedures.empty? %>
-          <em>(none)</em>
-        <% else %>
-          <% check_in_form.equipment_model.checkin_procedures.each do |checkin_procedure| %>
-            <li style="list-style: none">
-              <%= check_box_tag "reservations[#{check_in_form.id}][checkin_procedures][#{checkin_procedure.id}]" %> <%= checkin_procedure.step %>
-            </li>
-          <% end %>
-        <% end %>
-      </ul>
-    </p>
-
-    <% if check_in_form.due_date.to_date < Date.today %>
     <hr>
-    <footer>
-      <p>
-        This equipment is <strong class="error">overdue.</strong><br />
-        At a fee of <%= number_to_currency(check_in_form.late_fee) %> / day, the renter owes <strong><%= number_to_currency(check_in_form.late_fee * (Date.today - check_in_form.due_date.to_date).to_i)  %></strong> total.
-      </p>
-    </footer>
+      <div class="well well-em-manage">
+        <h4><p><%= link_to reservation.equipment_model.name, reservation.equipment_model,
+        target: '_blank' %></p></h4>
+        <p><%= link_to reservation.equipment_model, target: '_blank' do %>
+              <%= image_tag reservation.equipment_model.photo.url(:medium) %>
+            <% end %></p>
+        <%= label_tag "reservations[#{reservation.id}][checkin?]" do %>
+          <%= check_box_tag "reservations[#{reservation.id}][checkin?]" %>
+          <%= reservation.equipment_object.name %>
+        <% end %>
 
-    <% end %>
+      </div>
+
+      <p>
+        <p><h4>Notes</h4></p>
+        <%= text_area_tag "reservations[#{reservation.id}][notes]", reservation.notes,
+        class: 'span3', rows: 6 %>
+        <%= render :partial => 'shared/markdown_button' %>
+      </p>
+
+      <p>
+        <p><h4>Check-In Procedures</h4></p>
+        <ol class="rectangle-list">
+          <% if reservation.equipment_model.checkin_procedures.empty? %>
+            <li><em>(none)</em></li>
+          <% else %>
+            <% reservation.equipment_model.checkin_procedures.each do |checkin_procedure| %>
+              <li>
+                <%= label_tag "reservations[#{reservation.id}][checkin_procedures][#{checkin_procedure.id}]" do %>
+                  <%= check_box_tag "reservations[#{reservation.id}][checkin_procedures][#{checkin_procedure.id}]" %>
+                  <span><%= checkin_procedure.step %></span>
+                <% end %>
+              </li>
+            <% end %>
+          <% end %>
+        </ol>
+      </p>
+
+      <% if reservation.due_date.to_date < Date.today %>
+      <hr>
+      <footer>
+        <p>
+          This equipment is <strong class="error">overdue.</strong><br />
+          At a fee of <%= number_to_currency(reservation.late_fee) %> / day, the renter owes <strong><%= number_to_currency(reservation.late_fee * (Date.today - reservation.due_date.to_date).to_i)  %></strong> total.
+        </p>
+      </footer>
+
+      <% end %>
   </div>
+
+</div>

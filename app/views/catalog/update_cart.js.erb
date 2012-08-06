@@ -1,1 +1,8 @@
 $('#list_items_in_cart').replaceWith('<%= escape_javascript(render :partial => 'reservations/list_items_in_cart') %>');
+
+<% if (flash[:error].blank? && flash[:notice].blank? && flash[:alert].blank?) %>
+  $('#flashes').replaceWith('<div id="flashes"></div>');
+<% else %>
+  $('#flashes').replaceWith('<div id = "flashes" ><%= escape_javascript(render :partial => 'layouts/flash_alerts') %></div>');
+  <% flash.clear %>
+<% end %>

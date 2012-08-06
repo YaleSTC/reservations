@@ -64,7 +64,7 @@
           <div class="tabbable">
             <ul class="nav nav-tabs">
               <li class="active"><a href="#date_range" data-toggle="tab">Date Range</a></li>
-              <li><a href="#calendar" data-toggle="tab">Calendar</a></li>
+              <%# <li><a href="#calendar" data-toggle="tab">Calendar</a></li> %>
             </ul>
 
             <div class="tab-content">
@@ -89,8 +89,6 @@
                         </ul>
                       <% end %>
 
-                      <%# TODO: dynamically generate bar width, borrow from equipment_model show page %>
-
                       <%= content_tag :div, class: 'bar', style: "width: " << bar_progress_res do %>
                         <%= content_tag :span, reservation_length_in_words, style: bar_span_positioning_fix %>
                       <% end %>
@@ -109,9 +107,9 @@
                 </div>
 
               </div>
-              <div id="calendar" class="tab-pane">
-                I'M GOING TO BE A CALENDAR !!!!!1111oneone
-              </div>
+              <%# <div id="calendar" class="tab-pane"> %>
+                <%# This will be our calendar view, whenever we add it. See issue #12. %>
+              <%# </div> %>
             </div>
             <hr>
           </div>
@@ -176,7 +174,6 @@
       </div>
     </div>
   </div>
-
 
   <hr>
   <%# NOTES %>

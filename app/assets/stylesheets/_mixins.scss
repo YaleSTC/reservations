@@ -35,8 +35,8 @@
   background-repeat: no-repeat;
 }
 
-@mixin img-outline {
-  outline: 1px solid desaturate(darken($bodyBackground, 10%), 30%);
+@mixin img-outline ($color: desaturate(darken($bodyBackground, 10%), 30%)) {
+  outline: 1px solid $color;
 }
 
 @mixin warning-icon-drop-shadow {
