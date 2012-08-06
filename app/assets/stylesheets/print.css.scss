@@ -1,23 +1,46 @@
 // Import our webfont
 // ============================
 @import "open-sans/stylesheet"; // must be loaded first
+@import "font-awesome";
 @import "bootstrap_overrides";
 @import "bootstrap/variables";
 @import "bootstrap/mixins";
+@import "bootstrap/type";
 @import "variables";
 
 body {
-  font-family: OpenSans, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  line-height: 18px;
+  font-family: $sansFontFamily;
+  line-height: $baseLineHeight;
 }
 
-#header, #navigation_bar, #sidebar-right, #top_buttons, .form-actions,
-#pagination_line, #add_to_cart, .pagination, .container > hr, a[href="#date_range"] {
+#header, #sidebar-right, #top_buttons, .form-actions,
+#pagination_line, #add_to_cart, .pagination, .container > hr, a[href="#date_range"], #links_box, .nav, .nav-collapse {
 	display: none;
 }
 
+.navbar {
+  .brand {
+    display: block;
+    // Vertically center the text given $navbarHeight
+    $elementHeight: 20px;
+    padding: (($navbarHeight - $elementHeight) / 2 - 2) 20px (($navbarHeight - $elementHeight) / 2 + 2);
+    margin-left: -20px; // negative indent to left-align the text down the page
+    font-size: 30px;
+    font-weight: 200;
+    line-height: 1;
+    text-decoration: none;
+    border-bottom: solid 1px black;
+
+    &:after {
+      content: "";
+    }
+  }
+}
 #footer {
-	display: none;
+	// display: none;
+  border: solid 2px black;
+  @include border-radius(5px);
+  padding: 10px;
 }
 
 #receipt_box {
@@ -43,6 +66,11 @@ a[href^="#"]:after { display: none; }
 
 .well-inverse {
   float: left;
+  display: block;
+
+  a {
+    display: block;
+  }
 }
 
 input { display: none; }
