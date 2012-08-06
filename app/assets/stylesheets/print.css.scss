@@ -1,0 +1,61 @@
+// Import our webfont
+// ============================
+@import "open-sans/stylesheet"; // must be loaded first
+@import "bootstrap/mixins";
+@import "variables";
+
+body {
+  font-family: OpenSans, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: 18px;
+}
+
+#header, #navigation_bar, #sidebar-right, #top_buttons, .form-actions,
+#pagination_line, #add_to_cart, .pagination, .container > hr, a[href="#date_range"] {
+	display: none;
+}
+
+#footer {
+	display: none;
+}
+
+#receipt_box {
+	width: 300px ;
+}
+
+img { max-width: 300px; }
+
+a {
+  word-wrap: break-word;
+
+  &:after {
+    content: " (" attr(href) ")";
+    font-size: 75%;
+  }
+
+  &.btn {
+    display: none;
+  }
+}
+
+a[href^="#"]:after { display: none; }
+
+.well-inverse {
+  float: left;
+}
+
+input { display: none; }
+
+.bar > span:before {
+  content: 'Length of Reservation: ';
+  font-weight: bold;
+}
+
+.user_label {
+  // TODO: extract into a mixin?
+  @extend .label;
+  @include border-radius(5px);
+  padding: $user_label-size*1px $user_label-size*4px $user_label-size*2px;
+  font-size: $baseFontSize * 1.5;
+  line-height: 14px;
+  margin-right: 10px;
+}
