@@ -14,8 +14,9 @@ body {
   background: white;
 }
 
-#header, #sidebar-right, #top_buttons, .form-actions,
-#pagination_line, #add_to_cart, .pagination, .container > hr, a[href="#date_range"], #links_box, .nav, .nav-collapse, #res_right_column nav.nav-tabs {
+#header, #sidebar-right, #top_buttons, .form-actions, #pagination_line,
+#add_to_cart, .pagination, .container > hr, a[href="#date_range"], #links_box,
+.nav, .nav-collapse, #res_right_column nav.nav-tabs {
 	display: none;
 }
 
@@ -39,10 +40,10 @@ body {
   }
 }
 #footer {
-	// display: none;
   border: solid 2px black;
   @include border-radius(5px);
   padding: 10px;
+  float: left;
 }
 
 #receipt_box {
@@ -105,4 +106,13 @@ input { display: none; }
   font-weight: bold;
   line-height: 14px;
   margin-right: 10px;
+}
+
+#res_left_column, #res_right_column {
+  width: 46%;
+  float: left;
+}
+
+#res_left_column{
+  padding-right: 7%;
 }
