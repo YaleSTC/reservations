@@ -35,8 +35,8 @@
       <% if @reservation.is_eligible_for_renew? &&
       (@reservation.max_renewal_length_available != 0) && (!@reservation.checked_out.nil?) %>
         <div id="renew_box">
-          You are currently eligible to renew the <%= @reservation.equipment_model.name.singularize %>
-          reservation for <strong><%= pluralize(@reservation.max_renewal_length_available, 'day') %></strong>.
+          <p>You are currently eligible to renew the <%= @reservation.equipment_model.name.singularize %>
+          reservation for <strong><%= pluralize(@reservation.max_renewal_length_available, 'day') %></strong>.</p>
           <hr>
           <%= manage_reservations_btn %>
           <%= link_to "Renew Now", renew_reservation_path, :method => :put, remote: true, class: 'btn btn-primary' %>

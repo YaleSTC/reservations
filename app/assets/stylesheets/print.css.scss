@@ -2,6 +2,10 @@
 // ============================
 @import "open-sans/stylesheet"; // must be loaded first
 @import "font-awesome";
+
+// $baseFontSize: 12pt;
+// $baseLineHeight: 22px;
+
 @import "bootstrap_overrides";
 @import "bootstrap/variables";
 @import "bootstrap/mixins";
@@ -14,10 +18,19 @@ body {
   background: white;
 }
 
+p {
+  line-height: 1.4 * $baseLineHeight;
+}
+
 #header, #sidebar-right, #top_buttons, .form-actions, #pagination_line,
 #add_to_cart, .pagination, .container > hr, a[href="#date_range"], #links_box,
-.nav, .nav-collapse, #res_right_column nav.nav-tabs {
+.nav, .nav-collapse, #res_right_column nav.nav-tabs, #footer_feedback, input,
+#people_row i.icon-user {
 	display: none;
+}
+
+#people_row i.icon-user:after {
+  content: '';
 }
 
 .navbar {
@@ -40,10 +53,14 @@ body {
   }
 }
 #footer {
-  border: solid 2px black;
+  float: left;
+}
+
+.well {
+  border: solid 1px black;
   @include border-radius(5px);
   padding: 10px;
-  float: left;
+  margin-bottom: 10px;
 }
 
 #receipt_box {
@@ -87,10 +104,11 @@ a[href^="#"]:after { display: none; }
     }
   }
 }
+
 h1, h2, h3, h4, h5, h6 {
-  display: block;
+  // display: block;
+  // line-height: 1;
 }
-input { display: none; }
 
 .bar > span:before {
   content: 'Length of Reservation: ';
