@@ -11,10 +11,11 @@
 body {
   font-family: $sansFontFamily;
   line-height: $baseLineHeight;
+  background: white;
 }
 
 #header, #sidebar-right, #top_buttons, .form-actions,
-#pagination_line, #add_to_cart, .pagination, .container > hr, a[href="#date_range"], #links_box, .nav, .nav-collapse {
+#pagination_line, #add_to_cart, .pagination, .container > hr, a[href="#date_range"], #links_box, .nav, .nav-collapse, #res_right_column nav.nav-tabs {
 	display: none;
 }
 
@@ -29,6 +30,7 @@ body {
     font-weight: 200;
     line-height: 1;
     text-decoration: none;
+    text-align: center;
     border-bottom: solid 1px black;
 
     &:after {
@@ -68,11 +70,25 @@ a[href^="#"]:after { display: none; }
   float: left;
   display: block;
 
-  a {
+  h3:first-child {
     display: block;
+
+    a:before {
+      content: 'Equipment Model: ';
+      color: black;
+    }
+  }
+
+  h3:last-child {
+    a:before {
+      content: 'Item: ';
+      color: black;
+    }
   }
 }
-
+h1, h2, h3, h4, h5, h6 {
+  display: block;
+}
 input { display: none; }
 
 .bar > span:before {
@@ -82,10 +98,11 @@ input { display: none; }
 
 .user_label {
   // TODO: extract into a mixin?
-  @extend .label;
+  border: solid 1px black;
   @include border-radius(5px);
   padding: $user_label-size*1px $user_label-size*4px $user_label-size*2px;
   font-size: $baseFontSize * 1.5;
+  font-weight: bold;
   line-height: 14px;
   margin-right: 10px;
 }
