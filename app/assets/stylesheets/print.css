@@ -1,29 +1,9 @@
-#header {
-	display: none;
-}
-
-#navigation_bar {
-  display: none;
-}
-
-
-#sidebar-right {
+#header, #navigation_bar, #sidebar-right, #top_buttons, #form_actions, #renew_box,
+#pagination_line, #add_to_cart {
 	display: none;
 }
 
 #footer {
-	display: none;
-}
-
-#top_buttons {
-	display: none;
-}
-
-#form_actions {
-	display: none;
-}
-
-#renew_box {
 	display: none;
 }
 
