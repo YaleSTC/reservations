@@ -25,12 +25,8 @@ p {
 #header, #sidebar-right, #top_buttons, .form-actions, #pagination_line,
 #add_to_cart, .pagination, .container > hr, a[href="#date_range"], #links_box,
 .nav, .nav-collapse, #res_right_column nav.nav-tabs, #footer_feedback, input,
-#people_row i.icon-user {
+#people_row i.icon-user, .bar, .bar-dividers, #flashes {
 	display: none;
-}
-
-#people_row i.icon-user:after {
-  content: '';
 }
 
 .navbar {
@@ -54,6 +50,7 @@ p {
 }
 #footer {
   float: left;
+  width: 100%;
 }
 
 .well {
@@ -61,21 +58,22 @@ p {
   @include border-radius(5px);
   padding: 10px;
   margin-bottom: 10px;
+  float: left;
+  width: 96%;
 }
 
 #receipt_box {
 	width: 300px ;
 }
 
-img { max-width: 300px; }
+img {
+  max-width: 300px;
+  outline: none;
+  border: none;
+}
 
 a {
   word-wrap: break-word;
-
-  &:after {
-    content: " (" attr(href) ")";
-    font-size: 75%;
-  }
 
   &.btn {
     display: none;
@@ -110,11 +108,6 @@ h1, h2, h3, h4, h5, h6 {
   // line-height: 1;
 }
 
-.bar > span:before {
-  content: 'Length of Reservation: ';
-  font-weight: bold;
-}
-
 .user_label {
   // TODO: extract into a mixin?
   border: solid 1px black;
@@ -133,4 +126,23 @@ h1, h2, h3, h4, h5, h6 {
 
 #res_left_column{
   padding-right: 7%;
+}
+
+#res_dates {
+  float: left;
+  margin-top: -28px;
+
+  h4 {
+    font-weight: normal;
+  }
+}
+
+#dates_headings {
+  float: left;
+  margin-top: -28px;
+  margin-right: 10px;
+
+  h4:after {
+    content: ': ';
+  }
 }
