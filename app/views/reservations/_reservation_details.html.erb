@@ -13,7 +13,7 @@
 </div>
 <% end %>
 
-<% unless @reservation.notes.nil? %>
+<% unless @reservation.notes.blank? %>
   <strong>Notes:</strong>
   <%= markdown(@reservation.notes) %>
 <% end %>

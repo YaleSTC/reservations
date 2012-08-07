@@ -10,7 +10,7 @@
   <div class="row">
     <% @check_in_set.each do |reservation| %>
       <div class="span4">
-        <div class="well">
+        <div class="well well-receipt-box">
           <div class="receipt_box">
             <h3><%= link_to "Reservation ##{reservation.id}", reservation %></h3>
             <hr>
@@ -29,7 +29,7 @@
   <div class="row">
     <% @check_out_set.each do |reservation| %>
       <div class="span4">
-        <div class="well">
+        <div class="well well-receipt-box">
           <div class="receipt_box">
             <h3><%= link_to "Reservation ##{reservation.id}", reservation %></h3>
             <hr>
