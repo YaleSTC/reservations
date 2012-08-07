@@ -21,13 +21,19 @@ end
 #-------METHODS
 
 #Method for prompting the user for the number of records per model they want to seed into the database.
-def ask_for_records( model )
+def ask_for_records(model)
   STDOUT.puts "\nHow many #{model} records would you like to generate? (please enter a number)"
   STDIN.gets.chomp.to_i
 end
 
-def time_rand from = 0.0, to = Time.now
-  Time.at(from + rand * (to.to_f - from.to_f))
+def time_rand(from = 0.0, to = Time.now, length = 0)
+  range = to.to_f - from.to_f
+
+  if range > length.to_f
+    range = length.to_f
+  end
+
+  Time.at(from + rand * range)
 end
 
 def terms_of_service_text
@@ -226,18 +232,21 @@ else
   if entered_num.integer? && entered_num > 0
     reservation = entered_num.times.map do
       random_time = time_rand(Time.now - 2.months)
-      random_due_date = time_rand(random_time, Time.now.next_week)
+      # random_due_date = time_rand(random_time, Time.now.next_week, category.flatten.sample)
 
       Reservation.create! do |res|
         res.reserver_id = user.flatten.sample.id
         res.checkout_handler_id = user.flatten.select{|usr| usr.is_checkout_person}.sample.id
         res.checkin_handler_id = user.flatten.select{|usr| usr.is_checkout_person}.sample.id
-        res.start_date = random_time.to_datetime
-        res.due_date = [random_due_date.to_datetime, (random_time + category.flatten.sample.max_checkout_length.days).to_datetime].sample
-        res.checked_in = [nil, random_due_date.to_datetime, time_rand(random_due_date, random_due_date.next_month).to_datetime].sample
         res.checked_out = res.checked_in.nil? ? [nil, random_time.to_datetime].sample : random_time.to_datetime
         res.equipment_object_id = equipment_object.flatten.sample.id
         res.equipment_model_id = res.equipment_object.equipment_model_id
+        res.start_date = random_time.to_datetime
+        res.due_date = time_rand(random_time, Time.now.next_week, res.equipment_model.category.max_checkout_length).to_datetime
+        res.checked_in = [nil, time_rand(random_time, Time.now.next_week,
+                          res.equipment_model.category.max_checkout_length).to_datetime,
+                          time_rand(time_rand(random_time, Time.now.next_week, res.equipment_model.category.max_checkout_length),
+                          time_rand(random_time, Time.now.next_week, res.equipment_model.category.max_checkout_length).next_month).to_datetime].sample
         res.notes = Faker::HipsterIpsum.paragraph(8)
         res.notes_unsent = [true, false].sample
       end
