@@ -5,7 +5,7 @@
 
 <% if !@check_in_set.empty? %>
   <% title "Check-In Receipt for #{@user.name}" %>
-  <h3>The following equipment has been checked in on <%= Date.today.to_s(:long) %> by <%= current_user.name %>:</h3>
+  <h3>The following equipment has been checked in on <%= Date.today.to_s(:long) %> at <%= Time.now.strftime("%I:%M%p") %> by <%= current_user.name %>:</h3>
   <hr>
   <div class="row">
     <% @check_in_set.each do |reservation| %>
