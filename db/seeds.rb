@@ -78,7 +78,10 @@ r = Random.new
 if User.all.empty?
   STDOUT.puts "ERROR: You must sign into the app via CAS first to create a superuser account for your netID."
 else
-  #User generation
+
+  # User generation
+  # ============================================================================
+
   entered_num = ask_for_records("User")
 
   if entered_num.integer? && entered_num > 0
@@ -103,7 +106,9 @@ else
   end
 
 
-  #Category generation
+  # Category generation
+  # ============================================================================
+
   entered_num = ask_for_records("Category")
 
   if entered_num.integer? && entered_num > 0
@@ -125,7 +130,9 @@ else
   end
 
 
-  #EquipmentModel generation
+  # EquipmentModel generation
+  # ============================================================================
+
   entered_num = ask_for_records("EquipmentModel")
   STDOUT.puts "\nThis is going to take awhile...\n"
   if entered_num.integer? && entered_num > 0
@@ -152,7 +159,9 @@ else
   end
 
 
-  #EquipmentObject generation
+  # EquipmentObject generation
+  # ============================================================================
+
   entered_num = ask_for_records("EquipmentObject")
 
   if entered_num.integer? && entered_num > 0
@@ -171,6 +180,8 @@ else
   end
 
   # Requirement generation
+  # ============================================================================
+
   entered_num = ask_for_records("Requirement")
 
   if entered_num.integer? && entered_num > 0
@@ -189,7 +200,9 @@ else
     entered_num = STDIN.gets.chomp.to_i
   end
 
-  #CheckinProcedure generation
+  # CheckinProcedure generation
+  # ============================================================================
+
   entered_num = ask_for_records("CheckinProcedure")
 
   if entered_num.integer? && entered_num > 0
@@ -205,7 +218,9 @@ else
     entered_num = STDIN.gets.chomp.to_i
   end
 
-  #CheckoutProcedure generation
+  # CheckoutProcedure generation
+  # ============================================================================
+
   entered_num = ask_for_records("CheckoutProcedure")
 
   if entered_num.integer? && entered_num > 0
@@ -222,11 +237,15 @@ else
   end
 
   # Terms of Service generation
+  # ============================================================================
+
   ac = AppConfig.first
   ac.terms_of_service = terms_of_service_text
   ac.save!
 
-  #Reservation generation
+  # Reservation generation
+  # ============================================================================
+
   entered_num = ask_for_records("Reservation")
 
   if entered_num.integer? && entered_num > 0
@@ -258,6 +277,8 @@ else
   end
 
   # Blackout Date generation
+  # ============================================================================
+
   entered_num = ask_for_records("Blackout Dates")
 
   if entered_num.integer? && entered_num > 0
