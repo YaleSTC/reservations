@@ -27,14 +27,14 @@ module ActivationHelper
   end
 
   def activateChildren(current_model)
-    if (current_model.class == Category) #Equipment Objects have EMs and Categories that may need to be reactivated
+    if (current_model.class == Category) #Categories have EMs that need to be reactivated, and each of those EMs has EOs that need to be reactivated.
       EquipmentModel.include_deleted.where(category_id: current_model.id).each do |em|
         em.revive
         EquipmentObject.include_deleted.where(equipment_model_id: em.id).each do |eo|
           eo.revive
         end 
       end
-    elsif (current_model.class == EquipmentModel) #EMs have Categories that may need to be reactivated
+    elsif (current_model.class == EquipmentModel) #EMs have EOs that need to be re-activated
       EquipmentObject.include_deleted.where(equipment_model_id: current_model.id).each do |eo|
           eo.revive
         end
