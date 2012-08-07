@@ -44,8 +44,16 @@
      <%= link_to "Return to Catalog", catalog_path, :class => 'btn' %>
   <% end %>
   <% if params[:show_deleted] and current_user.is_admin_in_adminmode? %>
-    <%= link_to "Hide Deactivated Equipment Models from List", equipment_models_path, :class => "btn" %>
+    <% if (@category.nil?) %>
+      <%= link_to "Hide Deactivated Equipment Models from List", equipment_models_path, :class => "btn" %>
+    <% else %>
+      <%= link_to "Hide Deactivated Equipment Models from List", category_equipment_models_path(@category), :class => "btn" %>
+    <% end %>
   <% elsif current_user.is_admin_in_adminmode? %>
-    <%= link_to "Show Deactivated Equipment Models in List", equipment_models_path(:show_deleted => true), :class => "btn" %>
+    <% if (@category.nil?) %>
+      <%= link_to "Show Deactivated Equipment Models in List", equipment_models_path(:show_deleted => true), :class => "btn" %>
+    <% else %>
+      <%= link_to "Show Deactivated Equipment Models in List", category_equipment_models_path(@category, show_deleted: true), :class => "btn" %>
+    <% end %>
   <% end %>
 </div>
