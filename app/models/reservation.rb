@@ -85,12 +85,12 @@ class Reservation < ActiveRecord::Base
       errors << "Reservations cannot be made in the past" unless res.not_in_past?
       errors << "Reservations start dates must be before due dates" unless res.start_date_before_due_date?
       errors << "Reservations must have an associated equipment model" unless res.not_empty?
-      errors << res.equipment_object.name + " should be of type " + res.equipment_model.name unless res.matched_object_and_model?
+      errors << res.equipment_object.name + " must be of type " + res.equipment_model.name unless res.matched_object_and_model?
       errors << res.equipment_model.name + " should be renewed instead of re-checked out" unless res.not_renewable? if self.class == CartReservation
-      errors << "Duration problem with " + res.equipment_model.name unless res.duration_allowed?
-      errors << "Availablity problem with " + res.equipment_model.name unless res.available?(res_array)
-      errors << "Quantity equipment model problem with " + res.equipment_model.name unless res.quantity_eq_model_allowed?(res_array)
-      errors << "Quantity category problem with " + res.equipment_model.category.name unless res.quantity_cat_allowed?(res_array)
+      errors << "Duration of " + res.equipment_model.name + " reservation must be less than " + res.equipment_model.category.maximum_checkout_length.to_S unless res.duration_allowed?
+      errors << res.equipment_model.name + " is not available for the full time period requested" unless res.available?(res_array)
+      errors << "Quantity of " + res.equipment_model.name.pluralize + " must not exceed " + res.equipment_model.maximum_per_user.to_s unless res.quantity_eq_model_allowed?(res_array)
+      errors << "Quantity of " + res.equipment_model.category.name.pluralize + " must not exceed " + res.equipment_model.category.maximum_per_user.to_s unless res.quantity_cat_allowed?(res_array)
 	end
 	errors.uniq
   end

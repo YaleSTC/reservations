@@ -21,6 +21,7 @@ Installing Reservations locally
 You'll need the following to run Reservations:
 * [Ruby 1.9](http://www.ruby-lang.org/), with Bundler
 * a database server ([Sqlite](http://www.sqlite.org/), [MySQL](http://www.mysql.com/) or any database supported by Rails)
+* [ImageMagick](http://www.imagemagick.org/script/index.php)
 
 ###Installing 
 First, checkout a copy of Reservations using git:
