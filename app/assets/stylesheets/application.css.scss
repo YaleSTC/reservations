@@ -1,140 +1,52 @@
-// Import our webfont
-@import "open-sans/stylesheet";
+// This is the SCSS manifest for all of Reservations' CSS/SASS. This file
+// imports all of our stylesheets to compile into one CSS file.
+//
+// Order matters! The font must be loaded before everything else, or else it
+// won't be available to Bootstrap. Bootstrap must come second, since all of our
+// styling is based on the variables and mixins that Bootstrap defines. After
+// that, the order is pretty self explanatory. The order of imports under
+// "Partial Imports" doesn't really matter, as long as layouts comes first.
+// Make sure to add a new import rule whenever you make a new folder in the
+// stylesheets directory.
+// -----------------------------------------------------------------------------
 
-@import "autocomplete";
-@import "bootstrap_and_overrides";
+
+// Import our webfont
+// ============================
+@import "open-sans/stylesheet"; // must be loaded first
+
+// Twitter Bootstrap and our variable customizations for it
+// ============================
+@import "bootstrap_and_overrides"; // must be loaded before everything but the webfont
+
+// Custom rolled jQuery UI CSS for integrating with Bootstrap
+// ============================
 @import "jquery-ui-1.8.16.custom";
+
+// Autocomplete CSS
+// ============================
+@import "autocomplete";
+
+// Fancy select dropdowns
+// ============================
 @import "select2";
+@import "select2_customizations";
 
 // Our Custom Mixins
-// =========================
+// ============================
 @import "mixins";
 
 // Application Variables
 // ===========================
-$h3-line-height: 27px;
-$user_label-size: 1.5;
+@import "variables";
 
 // Global Application Styles
-// ==============================
-label { font-weight: 600; }
-.alert {
-	margin-bottom: 0px;
-	margin-top: 18px;
-}
-div.form-actions .view_all {
-	float: right;
-}
-.popover {
-	z-index: 1050;
-}
-
-// Styles for Select2 to make it visually integrate better with bootstrap
-
-.select2-results .select2-highlighted {
-  background: $dropdownLinkBackgroundHover;
-}
-
-.select2-drop {
-  border: 1px solid $inputBorder;
-  border-top: 0;
-}
-
-.select2-container div {
-  border-left: 1px solid $inputBorder;
-}
-
-.select2-search input {
-  background-color: $inputBackground;
-  border: 1px solid $inputBorder;
-  @include border-radius($inputBorderRadius);
-}
-
-// Multi-Select
-.select2-container-multi .select2-choices, .select2-container-multi.select2-container-active .select2-choices {
-  padding-right: 5px;
-  @include border-radius($inputBorderRadius);
-  @include box-shadow(inset 0 1px 1px rgba(0,0,0,.075));
-  @include transition(#{border linear .2s, box-shadow linear .2s});
-}
-
-.select2-container-multi.select2-container-active .select2-choices {
-  border-color: rgba(82,168,236,.8);
-  outline: 0;
-  outline: thin dotted \9; /* IE6-9 */
-  @include box-shadow(#{inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6)});
-}
-
-.select2-container-multi .select2-choices {
-  background-color: $inputBackground;
-  border: 1px solid $inputBorder;
-}
-
-// Single Select
-.select2-container .select2-choice {
-  background-color: $inputBackground;
-  border: 1px solid $inputBorder;
-}
-
-.select2-dropdown-open .select2-choice {
-  @include border-radius($inputBorderRadius);
-  @include box-shadow(inset 0 1px 1px rgba(0,0,0,.075));
-  @include transition(#{border linear .2s, box-shadow linear .2s});
-}
-
-.select2-container-active .select2-choice:focus {
-  border-color: rgba(82,168,236,.8);
-  outline: 0;
-  outline: thin dotted \9; /* IE6-9 */
-  @include box-shadow(#{inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6)});
-}
-
-// Make links in table cells expand to fill cell
-
-td > a, td > div.dropdown {
-  > a {
-  // to make table cells with links clickable throughout
-  // only works when ALL the text in the cell is ONE link
-  // as in no other links or text may be present
-  // because it then gives each element its own line
-    display: block;
-    padding: 0 0 30px;
-    margin: 0 0 -30px;
-  }
-
-  .dropdown-menu {
-    top: 50%; // needed to account for the huge padding of table cell links
-
-    &::before {
-    content: '';
-    display: inline-block;
-    border-left: 7px solid transparent;
-    border-right: 7px solid transparent;
-    border-bottom: 7px solid #CCC;
-    border-bottom-color: rgba(0, 0, 0, 0.2);
-    position: absolute;
-    top: -7px;
-    left: 9px;
-    }
-
-    &::after {
-    content: '';
-    display: inline-block;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-bottom: 6px solid white;
-    position: absolute;
-    top: -6px;
-    left: 10px;
-    }
-  }
-}
-
+// ============================
+@import "global";
 
 // Partial Imports
 // ============================
-
-@import "layouts/*";
+@import "layouts/*"; // must come first
 @import "reservations/*";
 @import "catalog/*";
 @import "users/*";

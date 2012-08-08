@@ -14,7 +14,7 @@ class User < ActiveRecord::Base
                   :deleted_at, :requirement_ids, :user_ids, :terms_of_service_accepted,
                   :created_by_admin
 
-  attr_accessor(:full_query, :created_by_admin)
+  attr_accessor   :full_query, :created_by_admin, :user_type, :csv_import
 
   validates :login,       :presence => true,
                           :uniqueness => true
@@ -23,7 +23,7 @@ class User < ActiveRecord::Base
             :affiliation, :presence => true
   validates :phone,       :presence    => true,
                           :format      => { :with => /\A\S[0-9\+\/\(\)\s\-]*\z/i },
-                          :length      => { :minimum => 10 }
+                          :length      => { :minimum => 10 }, :unless => :skip_phone_validation?
   validates :email,       :presence    => true,
                           :format      => { :with => /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i }
   validates :nickname,    :format      => { :with => /^[^0-9`!@#\$%\^&*+_=]+$/ },
@@ -109,6 +109,130 @@ class User < ActiveRecord::Base
   
   def render_name
      [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name, login].join(" ")
+  end
+  
+  def assign_type(user_type)
+    # we have to reset all the non-current user_types to NIL
+    # argh why is the database so stupid like this
+    # with three columns where one would suffice
+
+    if user_type == 'admin'
+      self.is_admin = '1'
+      self.is_checkout_person = nil
+      self.is_banned = nil
+    elsif user_type == 'checkout'
+      self.is_admin = nil
+      self.is_checkout_person = '1'
+      self.is_banned = nil
+    elsif user_type == 'normal'
+      self.is_admin = nil
+      self.is_checkout_person = nil
+      self.is_banned = nil
+    elsif user_type == 'banned'
+      self.is_admin = nil
+      self.is_checkout_person = nil
+      self.is_banned = '1'
+    end
+  end
+  
+  def self.import_with_ldap(user_data_hash)
+    # check LDAP for missing data
+    ldap_user_hash = User.search_ldap(user_data_hash[:login])
+    
+    # if nothing found via LDAP
+    if ldap_user_hash.nil?
+      return
+    end
+    
+    # fill-in missing key-values with LDAP data
+    user_data_hash.keys.each do |key|
+      if user_data_hash[key].blank? and !ldap_user_hash[key].blank?
+        user_data_hash[key] = ldap_user_hash[key]
+      end
+    end
+    user_data_hash
+  end
+  
+  def self.import_users(array_of_user_data,update_existing = false,user_type = 'normal') # give safe defaults if none selected
+    array_of_success = [] # will contain user-objects
+    array_of_fail = [] # will contain user_data hashes and error messages
+
+    array_of_user_data.each do |user_data|
+      # test size == 1 in case the admin tries any funny business (non-uniqueness) in the database
+      if update_existing and (User.where("login = ?", user_data[:login]).size == 1)
+        user = User.where("login = ?", user_data[:login]).first
+        user.csv_import = true
+
+        if user.update_attributes(user_data)
+          # assign type (isn't saved with update attributes, without adding to the user_data hash)
+          user.assign_type(user_type)
+          user.save
+          # exit
+          array_of_success << user
+          next
+        else
+          ldap_hash = User.import_with_ldap(user_data)
+          
+          if ldap_hash # if LDAP lookup succeeded
+            user_data = ldap_hash
+          else # if LDAP lookup failed
+            array_of_fail << [user_data, 'Incomplete user information. Unable to find user in online directory (LDAP).']
+            next
+          end
+          
+          # re-attempt save to database
+          if user.update_attributes(user_data)
+            # assign type (isn't saved with update attributes, without adding to the user_data hash)
+            user.assign_type(user_type)
+            user.save
+            # exit
+            array_of_success << user
+            next
+          else
+            array_of_fail << [user_data, user.errors.full_messages.to_sentence]
+            next
+          end
+        end
+      else
+        user = User.new(user_data)
+        user.csv_import = true
+        user.assign_type(user_type)
+        
+        if user.valid?
+          user.save
+          array_of_success << user
+          next
+        else
+          ldap_hash = User.import_with_ldap(user_data)
+          
+          if ldap_hash # if LDAP lookup succeeded
+            user_data = ldap_hash
+          else # if LDAP lookup failed
+            array_of_fail << [user_data, 'Incomplete user information. Unable to find user in online directory (LDAP).']
+            next
+          end
+          
+          # re-attempt save to database
+          user = User.new(user_data)
+          user.csv_import = true
+          user.assign_type(user_type)
+          
+          if user.valid?
+            user.save
+            array_of_success << user
+            next
+          else
+            array_of_fail << [user_data, user.errors.full_messages.to_sentence.capitalize + '.']
+            next
+          end
+        end
+      end
+    end
+    hash_of_statuses = {:success => array_of_success, :fail => array_of_fail}
+  end
+
+  def skip_phone_validation?
+    csv_import
   end
 
   #TODO: investigate why this is necessary; change to SQL

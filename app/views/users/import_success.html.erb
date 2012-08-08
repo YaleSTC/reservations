@@ -1,0 +1,16 @@
+<% title "Import Summary" %>
+
+<% unless @hash_of_statuses[:fail].empty? %>
+  <h2>Users not successfully imported</h2>
+  <table class="datatable-wide table table-striped table-bordered" id="user_import_errors_table">
+    <%= render :partial => 'import_table', :locals => {:users => @hash_of_statuses[:fail]} %>
+  </table>
+  <% unless @hash_of_statuses[:success].empty? %>
+    <hr />
+  <% end %>
+<% end %>
+
+<% unless @hash_of_statuses[:success].empty? %>
+  <h2>Users successfully imported</h2>
+    <%= render :partial => 'table', :locals => {:users => @hash_of_statuses[:success]} %>
+<% end %>

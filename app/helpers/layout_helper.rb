@@ -59,7 +59,7 @@ module LayoutHelper
     elsif current_user && current_user.checkoutpersonmode?
       'Checkout Person'
     elsif current_user && current_user.normalusermode?
-      'Normal User'
+      'Patron'
     elsif current_user && current_user.bannedmode?
       'Banned User'
     end

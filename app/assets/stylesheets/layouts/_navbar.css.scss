@@ -1,7 +1,7 @@
 .dropdown-menu {
 //	max-height: 440px;
 //	overflow-y: auto;
-	
+
 	.nav-header {
 		text-transform: lowercase;
 		font-variant: small-caps;
@@ -9,7 +9,9 @@
 }
 
 .navbar-search .search-query {
-	@include placeholder-extended;
+  @include box-shadow(#{inset 0 0 10px rgba(0,0,0,.5), 0 1px 0 rgba(255,255,255,.15)});
+	@include placeholder-extended($navbarSearchPlaceholderColor);
+  @include transition(#{background .2s ease-in-out, text-shadow .2s ease-in-out, box-shadow .2s ease-in-out});
 }
 
 .none-text {
@@ -25,4 +27,47 @@
 
 .navbar .brand {
   font-weight: 300;
+  @include transition(all .2s ease-out);
+
+  &:hover{
+    text-shadow: 0 0 10px lighten($right-1-color, 20%),
+                 0 0 20px lighten($right-1-color, 20%),
+                 0 0 30px lighten($right-1-color, 20%),
+                 0 0 40px lighten($right-1-color, 20%),
+                 0 0 70px lighten($right-1-color, 20%),
+                 0 0 80px lighten($right-1-color, 20%),
+                 0 0 100px lighten($right-1-color, 20%),
+                 0 0 150px lighten($right-1-color, 20%);
+    color: lighten($right-1-color, 60%);
+  }
+}
+
+.navbar-inner {
+  @include box-shadow(#{0 2px 20px rgba(0, 0, 0, 0.4), inset 0 0 14px rgba(0,0,0,.5)});
+}
+
+.navbar .nav > li
+> a {
+  @include gradient-radial-extended(lighten(rgba($right-1-color, 1), 20%), rgba(0,0,0,0), center, 100%);
+  @include transition(all .17s ease-out);
+  background-position: 0 44px;
+
+  &:hover {
+    background-position: 0 0;
+  }
+}
+
+.navbar .nav .active > a, .navbar .nav .active > a:hover {
+  @include box-shadow(inset 0 2px 10px rgba(black, .7));
+}
+
+@media (max-width: 979px) {
+  .navbar .nav > li > a {
+    background-image: none;
+    @include transition(none);
+  }
+
+  .navbar .brand {
+    @include transition(none);
+  }
 }

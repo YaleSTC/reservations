@@ -1,7 +1,6 @@
 <% title @equipment_model.name %>
-<% subtitle @equipment_model.category.name.singularize %>
+<% subtitle Category.include_deleted.find(@equipment_model.category_id).name.singularize %>
 
-   <% reqs = Requirement.where(:equipment_model_id => @equipment_model.id) %>
 
 <!-- EQUIPMENT MODEL INFO BOX -->
 <div class="row em_info">
@@ -30,7 +29,7 @@
     <div class="row">
       <div class="span4">
         <h3 class="availability">
-          <%= @equipment_model.available?(cart.start_date, cart.due_date) || "0"%> available of <%= @equipment_model.equipment_objects.size %>
+          <%= @equipment_model.num_available(cart.start_date, cart.due_date) || "0"%> available of <%= @equipment_model.equipment_objects.size %>
         </h3>
         <p>
           <%= content_tag :div, class: "progress #{progress_color}" do %>
@@ -41,8 +40,8 @@
       </div>
 
 
-      <div class="span2"> <%# Not super DRY right now, will refactor in the future %>
-            <% if !reqs.empty? && @equipment_model.model_restricted?(cart.reserver_id) %>
+      <div class="span2"> <%# TODO: Not super DRY right now, will refactor in the future %>
+            <% if @equipment_model.model_restricted?(cart.reserver_id) %>
               <%= link_to "#qualifications_modal", class: 'not-qualified-icon-em', rel: "tooltip", title: "Not Qualified (click for more info)", :"data-toggle" => 'modal' do %>
                 <i class="icon-warning-sign"></i>
             <% end %>
@@ -54,10 +53,10 @@
                 <h3>Qualification Required</h3>
               </div>
               <div class="modal-body">
-                <p>This model requires proper training before it can be reserved. Please contact <%=Requirement.where(:equipment_model_id => @equipment_model.id).first.contact_name %> at <%=Requirement.where(:equipment_model_id => @equipment_model.id).first.contact_info %> about becoming certified.</p>
+            <%# TODO: Eventually requirements will be handled with special Requests, similar to how extended reservations are handled. %>
+            <p> <%= Requirement.list_requirement_admins(current_user, @equipment_model)%> </p>
               </div>
             </div>
-
 
             <% elsif (a = BlackOut.date_is_blacked_out(cart.start_date)) && a.black_out_type_is_hard %>
               <%= link_to "#qualifications_modal", class: 'not-qualified-icon-em', rel: "tooltip", title: "Not Available (click for more info)", :"data-toggle" => 'modal' do %>
@@ -204,14 +203,11 @@
 
 
 <!-- Requirements -->
-    <% unless reqs.empty? %>
+     <% if @equipment_model.model_restricted?(cart.reserver_id) %>
       <section id="items">
         <h2>Requirements</h2><hr/>
-          <p>
-             This object requires special permission before it can be reserved. Users who wish to reserve this item must receive approval from <%= reqs.first.contact_name %> first.
-           <% if current_user.is_admin_in_adminmode? %> For more specific information, see the <%= link_to "Model Requirements Page", requirements_path %>
-           <% end %>
-          </p>
+            <%# TODO: Eventually requirements will be handled with special Requests, similar to how extended reservations are handled. %>
+            <p><%= Requirement.list_requirement_admins(current_user, @equipment_model) %></p>
       </section>
     <% end %>
 
@@ -230,7 +226,6 @@
       <% end %>
     </p>
   </section>
-
 
  <!-- PROCEDURES -->
 <section id="procedures">
@@ -262,7 +257,7 @@
       <% if @equipment_model.checkin_procedures.empty? %>
         (none)
       <% else %>
-        <ol>
+        <ol class="rectangle-list">
           <% @equipment_model.checkin_procedures.each do |checkin_procedure| %>
             <li><%= checkin_procedure.step %></li>
           <% end %>
@@ -273,12 +268,11 @@
   </section>
 <% end %>
 
-
-
 <div class="form-actions">
   <% if current_user.is_admin_in_adminmode? %>
     <%= link_to "Edit "+@equipment_model.name.truncate(30), edit_equipment_model_path(@equipment_model), :class => 'btn' %>
     <%= link_to "Destroy "+@equipment_model.name.truncate(30), @equipment_model, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete, :class => 'btn btn-danger' %>
   <% end %>
-  <%= link_to "View All "+@equipment_model.category.name.pluralize.truncate(30), category_equipment_models_path(@equipment_model.category), :class => 'btn view_all' %>
+  <%= link_to "View All "+ Category.include_deleted.find(@equipment_model.category_id)
+.name.pluralize.truncate(30), category_equipment_models_path(Category.include_deleted.find(@equipment_model.category_id)), :class => 'btn view_all' %>
 </div>

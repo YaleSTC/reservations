@@ -1,5 +1,3 @@
-// Place your application-specific JavaScript functions and classes here
-// This file is automatically included by javascript_include_tag :defaults
 //= require jquery
 //= require jquery_ujs
 //= require jquery.ui.datepicker
@@ -14,6 +12,7 @@
 //= require bootstrap-transition
 //= require bootstrap-alert
 //= require bootstrap-button
+//= require bootstrap-collapse
 //= require bootstrap-dropdown
 //= require bootstrap-modal
 //= require bootstrap-scrollspy
@@ -252,8 +251,10 @@ $(document).ready(function() {
   // Select2 - fancy select lists
   $('select#equipment_model_category_id').select2();
   $('select#equipment_model_associated_equipment_model_ids').select2();
+  $('select#equipment_model_requirements').select2();
   $('select#equipment_object_equipment_model_id').select2();
-  $('select#requirement_equipment_model_id').select2();
+  $('select#requirement_equipment_model').select2();
+  $('select.dropdown.dropselect').select2();
 
 });
 // to disable selection of dates in the past with datepicker

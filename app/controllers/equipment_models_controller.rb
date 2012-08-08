@@ -8,9 +8,12 @@ class EquipmentModelsController < ApplicationController
   include ActivationHelper
 
   def index
-    if params[:category_id]
+    if params[:category_id] && params[:show_deleted]
       @category = Category.include_deleted.find(params[:category_id])
-      @equipment_models = @category.equipment_models
+      @equipment_models = EquipmentModel.include_deleted.where(category_id: params[:category_id])
+    elsif params[:category_id]
+       @category = Category.include_deleted.find(params[:category_id])
+       @equipment_models = @category.equipment_models
     elsif params[:show_deleted]
       @equipment_models = EquipmentModel.include_deleted.find(:all, :include => :category, :order => 'categories.name ASC, equipment_models.name ASC')
     else

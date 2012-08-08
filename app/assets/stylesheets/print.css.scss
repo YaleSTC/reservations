@@ -1,0 +1,154 @@
+// Import our webfonts
+// =============================================================================
+@import "open-sans/stylesheet"; // must be loaded first
+@import "font-awesome";
+
+// Other imports needed for decent print output
+// =============================================================================
+@import "bootstrap_overrides";
+@import "bootstrap/variables";
+@import "bootstrap/mixins";
+@import "bootstrap/type";
+@import "variables";
+
+
+// Global / general styles
+// =============================================================================
+
+body {
+  font-family: $sansFontFamily;
+  line-height: $baseLineHeight;
+  background: white;
+}
+
+p {
+  line-height: 1.4 * $baseLineHeight;
+}
+
+#header, #sidebar-right, #top_buttons, .form-actions, #pagination_line,
+#add_to_cart, .pagination, .container > hr, a[href="#date_range"], #links_box,
+.nav, .nav-collapse, #res_right_column nav.nav-tabs, #footer_feedback, input,
+#people_row i.icon-user, .bar, .bar-dividers, #flashes {
+	display: none;
+}
+
+a {
+  word-wrap: break-word;
+
+  &.btn {
+    display: none;
+  }
+}
+
+.well {
+  border: solid 1px black;
+  @include border-radius(5px);
+  padding: 10px;
+  margin-bottom: 10px;
+  float: left;
+  width: 96%;
+}
+
+img {
+  max-width: 300px;
+  outline: none;
+  border: none;
+}
+
+.navbar {
+  .brand {
+    display: block;
+    // Vertically center the text given $navbarHeight
+    $elementHeight: 20px;
+    padding: (($navbarHeight - $elementHeight) / 2 - 2) 20px (($navbarHeight - $elementHeight) / 2 + 2);
+    margin-left: -20px; // negative indent to left-align the text down the page
+    font-size: 30px;
+    font-weight: 200;
+    line-height: 1;
+    text-decoration: none;
+    text-align: center;
+    border-bottom: solid 1px black;
+
+    &:after {
+      content: "";
+    }
+  }
+}
+
+#footer {
+  float: left;
+  width: 100%;
+}
+
+// Shared
+// =============================================================================
+.user_label {
+  // TODO: extract into a mixin?
+  border: solid 1px black;
+  @include border-radius(5px);
+  padding: $user_label-size*1px $user_label-size*4px $user_label-size*2px;
+  font-size: $baseFontSize * 1.5;
+  font-weight: bold;
+  line-height: 14px;
+  margin-right: 10px;
+}
+
+// Reservations - show and receipt actions
+// =============================================================================
+#receipt_box {
+  width: 300px ;
+}
+
+.well-inverse {
+  float: left;
+  display: block;
+
+  h3:first-child {
+    display: block;
+
+    a:before {
+      content: 'Equipment Model: ';
+      color: black;
+    }
+  }
+
+  h3:last-child {
+    a:before {
+      content: 'Item: ';
+      color: black;
+    }
+  }
+}
+
+#res_left_column, #res_right_column {
+  width: 46%;
+  float: left;
+}
+
+#res_left_column{
+  padding-right: 7%;
+}
+
+#res_dates {
+  float: left;
+  margin-top: -28px;
+
+  h4 {
+    font-weight: normal;
+  }
+}
+
+#dates_headings {
+  float: left;
+  margin-top: -28px;
+  margin-right: 10px;
+
+  h4:after {
+    content: ': ';
+  }
+}
+
+.well-receipt-box {
+  width: 45%;
+  margin-right: 10px;
+}

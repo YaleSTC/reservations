@@ -5,8 +5,8 @@
     <%= render :partial => 'top_buttons', :locals => {:reserver => @user} %>
   </div>
 </div>
-<hr>
 <% unless @check_in_set.empty? %>
+  <hr>
   <%= form_tag( checkin_path, :method => "put" ) do %>
     <div id="check_in_row" class="row">
       <div class="span9">
@@ -16,14 +16,18 @@
 
     <div class="row">
       <div class="span9">
-        <%= render :partial => "check_in_form", :collection => @check_in_set %>
+        <div class="row">
+          <%= render partial: "check_in_form", collection: @check_in_set,
+          as: :reservation %>
+        </div>
       </div>
     </div>
 
     <div class="row">
       <div class="span9">
         <div class="form-actions">
-          <%= submit_tag "Check-In Equipment", :class => 'btn btn-primary', :id => 'checkin_button', :method => :put %>
+          <%= submit_tag "Check-In Equipment", class: 'btn btn-primary', id:
+          'checkin_button', method: :put %>
         </div>
       </div>
     </div>
@@ -32,7 +36,7 @@
 <% end %>
 
 <% unless @check_out_set.empty? %>
-<hr>
+  <hr>
   <div id="check_out_row" class="row">
     <div class="span9">
       <p><h2>Check-Out</h2></p>
@@ -40,40 +44,42 @@
   </div>
 
   <%= form_tag( checkout_path, :method => "put" ) do %>
-  <% if !@user.terms_of_service_accepted %>
+    <% if !@user.terms_of_service_accepted %>
+      <div class="row">
+        <div class="span9">
+          <div class="well">
+            <p>This user hasn't accepted the <%= link_to("Terms of Service", tos_path, target: '_blank') %>.</p>
+            <%= label_tag :terms_of_service_accepted,
+            "I certify that I have given a copy of the terms of service, and the user has accepted." %>
+            <%= check_box_tag :terms_of_service_accepted %>
+          </div>
+        </div>
+      </div>
+
+    <% end %>
     <div class="row">
       <div class="span9">
-        <div class="well">
-          <p>This user hasn't accepted the <%= link_to("Terms of Service", tos_path, target: '_blank') %>.</p>
-          <%= label_tag :terms_of_service_accepted, "I certify that I have given a copy of the terms of service, and the user has accepted." %> 
-          <%= check_box_tag :terms_of_service_accepted %>
+        <div class="row">
+          <%= render partial: 'check_out_form', collection: @check_out_set,
+          as: :reservation %>
         </div>
       </div>
     </div>
 
-  <% end %>
-  <div class="row">
-    <div class="span9">
-      <% @check_out_set.each do |reservation| %>
-        <% @reservation = reservation %>
-        <%= render :partial => 'reservations/check_out_form' %>
-      <% end %>
-    </div>
-  </div>
-
     <div class="row">
         <div class="span9">
-          <div class="form-actions"><%= submit_tag "Check-Out Equipment", :class => 'btn btn-primary', :id => 'checkout_button', :method => :put %></div>
+          <div class="form-actions">
+            <%= submit_tag "Check-Out Equipment", class: 'btn btn-primary', id:
+            'checkout_button', method: :put %>
+          </div>
         </div>
     </div>
 
   <% end %>
 <% end %>
 
-<% if @check_out_set.empty? and @check_in_set.empty? %>
-<div class="span9">
-  <h3><%= @user.name %> has no scheduled reservations for today.</h3>
-
-</div>
-
+<% if @check_out_set.empty? && @check_in_set.empty? %>
+  <div class="span9">
+    <h3><%= @user.name %> has no scheduled reservations for today.</h3>
+  </div>
 <% end %>

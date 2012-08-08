@@ -8,6 +8,7 @@ class EquipmentModel < ActiveRecord::Base
   # has_and_belongs_to_many :reservations
   # has_many :equipment_models_reservations
   has_many :reservations
+
   has_many :checkin_procedures, :dependent => :destroy
   accepts_nested_attributes_for :checkin_procedures, :reject_if => :all_blank, :allow_destroy => true
   has_many :checkout_procedures, :dependent => :destroy
@@ -42,16 +43,16 @@ class EquipmentModel < ActiveRecord::Base
   end
 
   nilify_blanks :only => [:deleted_at]
-
+  
   include ApplicationHelper
-
   attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee,
                   :max_per_user, :document_attributes, :accessory_ids, :deleted_at,
                   :checkout_procedures_attributes, :checkin_procedures_attributes, :photo,
-                  :documentation, :max_renewal_times, :max_renewal_length, :renewal_days_before_due, :associated_equipment_model_ids
+                  :documentation, :max_renewal_times, :max_renewal_length, :renewal_days_before_due, :associated_equipment_model_ids,
+                  :requirement_ids, :requirements
 
   default_scope where(:deleted_at => nil)
-
+ 
   def self.include_deleted
     self.unscoped
   end
@@ -88,24 +89,23 @@ class EquipmentModel < ActiveRecord::Base
                     :path => ":rails_root/public/equipment_models/:attachment/:id/:style/:basename.:extension",
                     :preserve_files => true
 
-
   validates_attachment_content_type :photo,
                                     :content_type => ["image/jpg", "image/png", "image/jpeg"],
                                     :message => "must be jpeg, jpg, or png."
   validates_attachment_size         :photo,
                                     :less_than => 1.megabytes,
                                     :message => "must be less than 1 MB in size"
-
+  
   validates_attachment :documentation, :content_type => { :content_type => "application/pdf" }
-
+  
   Paperclip.interpolates :normalized_photo_name do |attachment, style|
     attachment.instance.normalized_photo_name
   end
-
+  
   def normalized_photo_name
-    "#{self.id}-#{self.photo_file_name.gsub( /[^a-zA-Z0-9_\.]/, '_')}"
+    "#{self.id}-#{self.photo_file_name.gsub( /[^a-zA-Z0-9_\.]/, '_')}" 
   end
-  #end of Paperclip code.
+  # end of Paperclip code.
 
 
   ## Functions ##
@@ -115,15 +115,15 @@ class EquipmentModel < ActiveRecord::Base
   def maximum_per_user
     max_per_user || category.maximum_per_user
   end
-
+  
   def maximum_renewal_length
     max_renewal_length || category.maximum_renewal_length
   end
-
+  
   def maximum_renewal_times
     max_renewal_times || category.maximum_renewal_times
   end
-
+  
   def maximum_renewal_days_before_due
     renewal_days_before_due || category.maximum_renewal_days_before_due
   end
@@ -144,7 +144,7 @@ class EquipmentModel < ActiveRecord::Base
 
 #TODO: blackout vs validation
 #TODO: doesn't return true/false so it should be num_available(*)
-#  def available?(start_date, due_date)
+#  def num_available(start_date, due_date)
 #    overall_count = self.equipment_objects.size
 #    start_date.to_date.upto(due_date.to_date) do |date|
 #      available_on_date = available_count(date)
@@ -152,7 +152,7 @@ class EquipmentModel < ActiveRecord::Base
 #    end
 #    overall_count
 #  end
-  def available?(start_date, due_date) #This does not actually return true or false, but rather the number available.
+  def num_available(start_date, due_date) #This does not actually return true or false, but rather the number available.
     qualification_met = true
       if ((a = BlackOut.date_is_blacked_out(start_date)) && a.black_out_type_is_hard) || ((a = BlackOut.date_is_blacked_out(due_date)) && a.black_out_type_is_hard) #If start or end of range is blacked out, and that is a hard blackout.
         return 0
@@ -164,20 +164,27 @@ class EquipmentModel < ActiveRecord::Base
     end
     overall_count
   end
-
-  def model_restricted?(reserver_id) #Returns 0 if the reserver is ineligible to checkout the model.
-    qualification_met = false
-    unless (Requirement.where(:equipment_model_id => self.id)).empty?
-      qualification_met = true
-        User.find(reserver_id).requirements.each do |req|
-          if req.equipment_model_id == self.id
-             qualification_met = false
-          end
-        end
-     end
-     return qualification_met
+  
+  #TODO: Test to see if this works when a 
+  def model_restricted?(reserver_id) # Returns true if the reserver is ineligible to checkout the model.        
+    reserver = User.find(reserver_id)
+    self.requirements.each do |em_req|
+      unless reserver.requirements.include?(em_req)
+         return true
+      end
+    end
+    return false
   end
 
+  # TODO: convert this to an SQL call?
+  def has_requirement?(model)
+    Requirement.all.each do |req|
+      if req.equipment_models.include?(self)
+        return true
+      end
+    end
+    return false
+  end
 
   def available_count(date)
     # get the total number of objects of this kind

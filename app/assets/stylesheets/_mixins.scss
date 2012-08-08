@@ -6,17 +6,39 @@
 
 @mixin placeholder-extended ($color: $placeholderText, $font-style: italic){
   &:-moz-placeholder {
+    position: relative;
+    top: 2px;
     color: $color;
     font-style: $font-style;
   }
   &:-ms-input-placeholder {
+    position: relative;
+    top: 2px;
     color: $color;
     font-style: $font-style;
-
   }
   &::-webkit-input-placeholder {
+    position: relative;
+    top: 2px;
     color: $color;
     font-style: $font-style;
-
   }
+}
+
+@mixin gradient-radial-extended($innerColor: #555, $outerColor: #333, $x-position: center, $y-position: center)  {
+  background-color: $outerColor;
+  background-image: -webkit-gradient(radial, $x-position $y-position, 0, $x-position $y-position, 460, from($innerColor), to($outerColor));
+  background-image: -webkit-radial-gradient($x-position $y-position, circle farthest-side, $innerColor, $outerColor);
+  background-image: -moz-radial-gradient($x-position $y-position, circle farthest-side, $innerColor, $outerColor);
+  background-image: -ms-radial-gradient($x-position $y-position, circle farthest-side, $innerColor, $outerColor);
+  background-image: -o-radial-gradient($x-position $y-position, circle farthest-side, $innerColor, $outerColor);
+  background-repeat: no-repeat;
+}
+
+@mixin img-outline ($color: desaturate(darken($bodyBackground, 10%), 30%)) {
+  outline: 1px solid $color;
+}
+
+@mixin warning-icon-drop-shadow {
+  text-shadow: 0 1px 1px lighten(black, 58%);
 }

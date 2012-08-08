@@ -1,22 +1,23 @@
-<table id="form_table">
-  <tr>
-    <th>Username</th>
-    <th>First Name</th>
-    <th>Nick Name</th>
-    <th>Last Name</th>
-    <th>Email</th>
-    <th>Employee ID</th>
-    <th>Role</th>
-      <th>Authentication Type</th>
-    <th>Import?</th>
-  </tr>
-  <% form_tag url_for(:action=>'save_import') do %>
-    <%= render :partial => "import_table_form" %>
-    <tr class="button_row">
-      <td colspan=2><%= submit_tag "Cancel"%></td>
-      <td colspan=2 align="right"><%= submit_tag "Save!"%></td>
+<thead>
+<tr>
+  <th>Login</th>
+  <th>Name</th>
+  <th>Phone</th>
+  <th>Email</th>
+  <th>Reason</th>
+</tr>
+</thead>
+<tbody>
+  <% users.each do |user_data| %>
+    <% user = user_data.first %>
+    <% message = user_data.last %>
+    <tr>
+      <td><%= user[:login] %></td>
+      <td><%= user[:first_name] + ' ' + user[:last_name] %></td>
+      <td><%= user[:phone] %></td>
+      <td><%= user[:email] %></td>
+      <td><%= message %></td>
     </tr>
-  <%end%>
-</table>
-#<%= button_to "Cancel", url_for(:action=>'import'), {:id=>"cancel"} %>
+  <% end %>
+</tbody>
 

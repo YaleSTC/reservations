@@ -1,42 +1,13 @@
 <% title "Users" %>
 
-<table id="table_users" class="datatable table table-striped table-bordered">
-  <thead>
-  <tr>
-    <th>NetID</th>
-    <th>First Name</th>
-    <th>Nickname</th>
-    <th>Last Name</th>
-    <% if current_user.is_admin_in_adminmode? %>
-      <th class="no_sort"> </th>
-      <th class="no_sort"> </th>
-    <% end %>
-  </tr>
-  </thead>
-  <tbody>
-  <% for user in @users %>
-    <% if user.deleted_at %> 
-      <tr class="deactivated">
-      <% @toggle = "link_to \"Activate\", activate_path(:users,user.id), :class => \"btn btn-success\", :method => :put" %>
-    <% else %>
-      <tr class= "activated">
-      <% @toggle = "link_to \"Deactivate\", deactivate_path(:users,user), :class => \"btn btn-danger\", :method => :put" %>
-    <% end %>
-    <td><%= user.login %></td>
-    <td><%= link_to user.first_name, user %></td>
-    <td><%= link_to user.nickname, user %></td>
-    <td><%= link_to user.last_name, user %></td>
-    <% if current_user.is_admin_in_adminmode? %>
-      <td><%= link_to "Edit", edit_user_path(user), :class => "btn" %></td>
-      <td><%= eval @toggle %></td>
-    <% end %>
-    </tr>
-  <% end %>
-  </tbody>
-</table>
+<%= render :partial => 'table', :locals => {:users => @users} %>
+
 <hr />
 <p> 
   <%= link_to "New User", new_user_path, :class => "btn btn-primary" %>
+  <% if current_user.can_checkout? %>
+    <%= link_to "Import Users", csv_import_page_path, :class => "btn" %>
+  <% end %>
   <% if params[:show_deleted] %>
     <%= link_to "Hide Deactivated Users from List", users_path, :class => "btn" %>
   <% else %>

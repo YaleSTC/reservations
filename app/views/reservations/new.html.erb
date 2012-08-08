@@ -1,24 +1,51 @@
 <% title "Create Reservation" %>
 
+<% unless @errors.empty? %>
+  <p>
+    <% if current_user.is_admin_in_adminmode? %>
+      <h3><i class="icon-warning-sign warning-icon"></i> Please be aware of the following errors:</h3>
+    <% else %>
+      <h3><i class="icon-warning-sign warning-icon"></i> Please <%= link_to "return to the Catalog", catalog_path %> and resolve the following errors:</h3>
+    <% end %>
+  </p>
+  <% @errors.each do |msg| %>
+    <ul>
+      <li><%= msg %></li>
+    </ul>
+  <% end %>
+  <p>
+    <h3>Equipment being reserved:</h3>
+  </p>
+<% end %>
+
 <%= simple_form_for @reservation do |f| %>
   <%= f.error_messages %>
-  <p>The following equipment will be reserved by
-  <%= User.include_deleted.find(cart.reserver_id).name %>
-  from
-  <%= cart.start_date.to_s(:long) %> to
-  <%= cart.due_date.to_s(:long) %>:
-  <%# hidden fields needed for data submission %>
-  <%= f.input :reserver_id, :as => :hidden, :value => cart.reserver_id %>
-  <%= f.input :start_date, :as => :hidden, :value => cart.start_date %>
-  <%= f.input :due_date, :as => :hidden, :value => cart.due_date %>
+  <p>
+    The following equipment will be reserved by
+    <%= User.include_deleted.find(cart.reserver_id).name %>
+    from
+    <%= cart.start_date.to_s(:long) %> to
+    <%= cart.due_date.to_s(:long) %>:
+    
+    <%# hidden fields needed for data submission %>
+    <%= f.input :reserver_id, :as => :hidden, :value => cart.reserver_id %>
+    <%= f.input :start_date, :as => :hidden, :value => cart.start_date %>
+    <%= f.input :due_date, :as => :hidden, :value => cart.due_date %>
   </p>
   <p>
-    <ul>
+    <ul class="rounded-list">
       <% cart.models_with_quantities.each_pair do |model_id, quantity| %>
-        <li><%= quantity %> x <%= link_to EquipmentModel.find(model_id).name, EquipmentModel.find(model_id) %></li>
+        <li data-value="<%= quantity %>"><%= link_to EquipmentModel.find(model_id).name, EquipmentModel.find(model_id) %></li>
       <% end %>
-      <li style="list-style: none"><small><%= link_to "Go back to the catalog", catalog_path %></small></li>
     </ul>
   </p>
-  <p><%= f.button :submit, "Finalize Reservation" %></p>
+  <div class="form-actions">
+    <% if @errors.empty? or current_user.is_admin_in_adminmode? %>
+      <%= f.button :submit, "Finalize Reservation" %>
+    <% else %>
+      <%= button_tag "Finalize Reservation", class: "btn disabled btn-primary", disabled: true %> 
+    <% end %>
+    <%= link_to "Return to Catalog", catalog_path, class: 'btn' %>
+  </div>
+  
 <% end %>

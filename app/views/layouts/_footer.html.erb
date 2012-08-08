@@ -12,10 +12,10 @@
         <% end %>
           Powered by <a href="https://github.com/YaleSTC/reservations">Reservations</a>, an open source equipment reservation app.<br />
           &copy; 2012 Yale Student Technology Collaborative
-
-          <hr>
-
-          <a href="https://docs.google.com/a/yale.edu/spreadsheet/viewform?formkey=dE8zTFprNVB4RTAwdURhWEVTTlpDQVE6MQ#gid=0">Provide feedback</a> (suggestions, issues, and bug reports)
+          <div id="footer_feedback">
+            <hr>
+            <a href="https://docs.google.com/a/yale.edu/spreadsheet/viewform?formkey=dE8zTFprNVB4RTAwdURhWEVTTlpDQVE6MQ#gid=0">Provide feedback</a> (suggestions, issues, and bug reports)
+          </div>
 
         </div>
 
@@ -52,9 +52,9 @@
                   <li><%= link_to 'Checkout Person', {:c_mode => 'ON'}%></li>
                 <% end %>
                 <% if current_user && current_user.normalusermode? %>
-                  <li class="active">Normal User</li>
+                  <li class="active">Patron</li>
                 <% else %>
-                  <li><%= link_to 'Normal User', {:n_mode => 'ON'}%></li>
+                  <li><%= link_to 'Patron', {:n_mode => 'ON'}%></li>
                 <% end %>
                 <% if current_user && current_user.bannedmode? %>
                   <li class="active">Banned User</li>

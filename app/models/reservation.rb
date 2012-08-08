@@ -13,9 +13,9 @@ class Reservation < ActiveRecord::Base
 
   # If there is no equipment model, it doesn't run the reservations that would break it
   with_options :if => :not_empty? do |r|
-    r.validate :no_overdue_reservations?, :no_overdue_reservations?, :start_date_before_due_date?,
-           :not_in_past?, :matched_object_and_model?, :not_renewable?, :duration_allowed?, :available?,
-           :quantity_eq_model_allowed?, :quantity_cat_allowed?
+    r.validate :start_date_before_due_date?, :matched_object_and_model?, :not_in_past?,
+              :duration_allowed?, :available?, :quantity_eq_model_allowed?, :quantity_cat_allowed?
+    r.validate :not_renewable?, :no_overdue_reservations?, :on => :create
   end
 
   scope :recent, order('start_date, due_date, reserver_id')
@@ -85,12 +85,12 @@ class Reservation < ActiveRecord::Base
       errors << "Reservations cannot be made in the past" unless res.not_in_past?
       errors << "Reservations start dates must be before due dates" unless res.start_date_before_due_date?
       errors << "Reservations must have an associated equipment model" unless res.not_empty?
-      errors << res.equipment_object.name + " should be of type " + res.equipment_model.name unless res.matched_object_and_model?
-      errors << res.equipment_model.name + " should be renewed instead of re-checked out" unless res.not_renewable?
-      errors << "Duration problem with " + res.equipment_model.name unless res.duration_allowed?
-      errors << "Availablity problem with " + res.equipment_model.name unless res.available?(res_array)
-      errors << "Quantity equipment model problem with " + res.equipment_model.name unless res.quantity_eq_model_allowed?(res_array)
-      errors << "Quantity category problem with " + res.equipment_model.category.name unless res.quantity_cat_allowed?(res_array)
+      errors << res.equipment_object.name + " must be of type " + res.equipment_model.name unless res.matched_object_and_model?
+      errors << res.equipment_model.name + " should be renewed instead of re-checked out" unless res.not_renewable? if self.class == CartReservation
+      errors << "Duration of " + res.equipment_model.name + " reservation must be less than " + res.equipment_model.category.maximum_checkout_length.to_S unless res.duration_allowed?
+      errors << res.equipment_model.name + " is not available for the full time period requested" unless res.available?(res_array)
+      errors << "Quantity of " + res.equipment_model.name.pluralize + " must not exceed " + res.equipment_model.maximum_per_user.to_s unless res.quantity_eq_model_allowed?(res_array)
+      errors << "Quantity of " + res.equipment_model.category.name.pluralize + " must not exceed " + res.equipment_model.category.maximum_per_user.to_s unless res.quantity_cat_allowed?(res_array)
 	end
 	errors.uniq
   end
@@ -201,7 +201,7 @@ class Reservation < ActiveRecord::Base
       # the available? method cannot accept dates with time zones, and due_date has a time zone
       possible_start = (self.due_date + 1.day).to_date
       possible_due = (self.due_date+(renewal_length.days)).to_date
-      if (self.equipment_model.available?(possible_start, possible_due) > 0)
+      if (self.equipment_model.num_available(possible_start, possible_due) > 0)
         # if it's available for the period, set available_period and escape loop
         available_period = renewal_length
       else
@@ -224,21 +224,26 @@ class Reservation < ActiveRecord::Base
     if self.times_renewed == NIL
       self.times_renewed = 0
     end
+    
+    # you can't renew a checked in reservation
+    if self.checked_in
+      return false
+    end
+
     if self.equipment_model.maximum_renewal_times == "unrestricted"
       if self.equipment_model.maximum_renewal_days_before_due == "unrestricted"
         # if they're both NIL
-        true
+        return true
       else
         # due_date has a time zone, eradicate with to_date; use to_i to change to integer;
         # are we within the date range for which the button should appear?
-        ((self.due_date.to_date - Date.today).to_i < self.equipment_model.maximum_renewal_days_before_due)
+        return ((self.due_date.to_date - Date.today).to_i < self.equipment_model.maximum_renewal_days_before_due)
       end
     elsif (self.equipment_model.maximum_renewal_days_before_due == "unrestricted")
-      # implicitly, max_renewal_times != NIL, so we can check it
-      self.times_renewed < self.equipment_model.maximum_renewal_times
+      return (self.times_renewed < self.equipment_model.maximum_renewal_times)
     else
       # if neither is NIL, check both
-      ((self.due_date.to_date - Date.today).to_i < self.equipment_model.maximum_renewal_days_before_due) and (self.times_renewed < self.equipment_model.maximum_renewal_times)
+      return (((self.due_date.to_date - Date.today).to_i < self.equipment_model.maximum_renewal_days_before_due) and (self.times_renewed < self.equipment_model.maximum_renewal_times))
     end
   end
 end

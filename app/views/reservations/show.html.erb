@@ -18,7 +18,7 @@
   </div>
   <div class="row">
     <%# left column  %>
-    <div class="span3">
+    <div id="res_left_column" class="span3">
       <div class="well well-inverse">
         <%# equipment section  %>
           <h3><%= link_to @reservation.equipment_model.name, @reservation.equipment_model %></h3>
@@ -35,8 +35,8 @@
       <% if @reservation.is_eligible_for_renew? &&
       (@reservation.max_renewal_length_available != 0) && (!@reservation.checked_out.nil?) %>
         <div id="renew_box">
-          You are currently eligible to renew the <%= @reservation.equipment_model.name.singularize %>
-          reservation for <strong><%= pluralize(@reservation.max_renewal_length_available, 'day') %></strong>.
+          <p>You are currently eligible to renew the <%= @reservation.equipment_model.name.singularize %>
+          reservation for <strong><%= pluralize(@reservation.max_renewal_length_available, 'day') %></strong>.</p>
           <hr>
           <%= manage_reservations_btn %>
           <%= link_to "Renew Now", renew_reservation_path, :method => :put, remote: true, class: 'btn btn-primary' %>
@@ -64,7 +64,7 @@
           <div class="tabbable">
             <ul class="nav nav-tabs">
               <li class="active"><a href="#date_range" data-toggle="tab">Date Range</a></li>
-              <li><a href="#calendar" data-toggle="tab">Calendar</a></li>
+              <%# <li><a href="#calendar" data-toggle="tab">Calendar</a></li> %>
             </ul>
 
             <div class="tab-content">
@@ -89,8 +89,6 @@
                         </ul>
                       <% end %>
 
-                      <%# TODO: dynamically generate bar width, borrow from equipment_model show page %>
-
                       <%= content_tag :div, class: 'bar', style: "width: " << bar_progress_res do %>
                         <%= content_tag :span, reservation_length_in_words, style: bar_span_positioning_fix %>
                       <% end %>
@@ -99,7 +97,7 @@
                   </div>
                 </div>
 
-                <div class="row">
+                <div id="res_dates" class="row">
                   <div class="span3">
                     <p><h4><%= @reservation.start_date.to_date.strftime("%a, %b %d, %Y") %></h4></p>
                   </div>
@@ -109,9 +107,9 @@
                 </div>
 
               </div>
-              <div id="calendar" class="tab-pane">
-                I'M GOING TO BE A CALENDAR !!!!!1111oneone
-              </div>
+              <%# <div id="calendar" class="tab-pane"> %>
+                <%# This will be our calendar view, whenever we add it. See issue #12. %>
+              <%# </div> %>
             </div>
             <hr>
           </div>
@@ -177,12 +175,11 @@
     </div>
   </div>
 
-
-  <hr>
   <%# NOTES %>
   <div class="row">
     <div class="span9">
-      <% unless @reservation.notes.nil? %>
+      <% unless @reservation.notes.blank? %>
+        <hr>
         <h2>Notes</h2>
         <p><%= markdown(@reservation.notes) %></p>
       <% end %>

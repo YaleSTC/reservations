@@ -1,7 +1,29 @@
-<% title "Import Users From CSV" %>
-<h3>Please upload a csv file in which the columns are thus: username, first name, nick name, last name, email, employee id number, and one role.</h3>
-<% form_tag url_for(:action => 'verify_import'), :multipart => true do %>
-   <p> <label for="file">File to Upload</label> <%= file_field_tag "file" %></p>
-    <p><%= submit_tag "Upload" %><p>
-  <% end %>
+<% title "Import Users" %>
 
+<h3>CSV Import Format</h3>
+<h5>Columns (must be in the first row of the CSV file)</h5>
+<%= markdown("
+    Login, First Name, Last Name, Nickname, Phone, Email, Affiliation") %>
+<h5>Example</h5>
+<%= markdown("
+    login,first_name,last_name,nickname,phone,email,affiliation
+    jd76,John,Doe,Jon,8295555555,john.doe@example.com,Library Services
+    sj2,Susan,Jane,,7395555555,susan.jane@email.net,IT Department") %>
+
+<hr />
+
+<%= form_tag csv_import_path, :multipart => true do %>
+
+  <label>Type of user to import:</label>
+  <%= select_tag :user_type, options_for_select(@select_options) %>
+
+  <p>
+    <label>CSV file with users to import:</label>
+    <%= file_field_tag 'csv_upload' %>
+  </p>
+  <p>
+    <label>Update existing users' information?</label>
+    <%= check_box_tag 'overwrite' %>
+  </p>
+  <%= submit_tag 'Import Users!', :class => 'btn' %>
+<% end %>

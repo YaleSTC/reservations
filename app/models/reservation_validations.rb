@@ -15,7 +15,7 @@ module ReservationValidations
   #TODO: admin override
   def no_overdue_reservations?
     if Reservation.overdue_reservations?(reserver)
-      errors.add(:base, "User has overdue reservations")
+      errors.add(:base, reserver.name + " has overdue reservations that prevent new ones from being created")
       return false
     end
     return true
@@ -25,7 +25,7 @@ module ReservationValidations
   # Same for CartReservations and Reservations
   def start_date_before_due_date?
     if due_date < start_date
-      errors.add(:base, "Reservation start date must be before due date")
+      errors.add(:base, "Reservations cannot be made in the past")
       return false
     end
     return true
@@ -36,7 +36,7 @@ module ReservationValidations
   def not_in_past?
     return true if self.class == Reservation && self.status != 'reserved'
     if (start_date < Date.today) || (due_date < Date.today)
-      errors.add(:base, "Reservation can't be in past")
+      errors.add(:base, "Reservations start dates must be before due dates")
       return false
     end
     return true
@@ -55,7 +55,7 @@ module ReservationValidations
   def matched_object_and_model?
     if self.class == Reservation && self.equipment_model && self.equipment_object
       if equipment_object.equipment_model != equipment_model
-        errors.add(:base, equipment_object.name + " is not of type " + equipment_model.name)
+        errors.add(:base, equipment_object.name + " must be of type " + equipment_model.name)
         return false
       end
     end
@@ -63,9 +63,9 @@ module ReservationValidations
   end
 
   # Checks that the reservation is not renewable
-  #TODO: should it be res.due_date.to_date >= self.start_date.to_date?
   #TODO: allow admin override
   def not_renewable?
+    return true unless self.class == CartReservation || self.status == "reserved"
     reserver.reservations_array.each do |res|
       if res.equipment_model == self.equipment_model && res.due_date.to_date == self.start_date.to_date && res.is_eligible_for_renew?
         errors.add(:base, res.equipment_model.name + " should be renewed instead of re-checked out")
@@ -82,7 +82,7 @@ module ReservationValidations
     cat_duration = equipment_model.category.maximum_checkout_length
     return true if cat_duration == "unrestricted"
     if duration > cat_duration
-      errors.add(:base, "duration problem with " + equipment_model.name)
+      errors.add(:base, "Duration of " + equipment_model.name + " reservation must be less than " + equipment_model.category.maximum_checkout_length.to_s)
       return false
     end
     return true
@@ -100,8 +100,8 @@ module ReservationValidations
     all_res << self if self.class != Reservation
     all_res.uniq!
     eq_objects_needed = same_model_count(all_res)
-    if equipment_model.available?(start_date, due_date) < eq_objects_needed
-      errors.add(:base, "availablity problem with " + equipment_model.name)
+    if equipment_model.num_available(start_date, due_date) < eq_objects_needed
+      errors.add(:base, equipment_model.name + " is not available for the full time period requested")
       return false
     end
     return true
@@ -119,7 +119,7 @@ module ReservationValidations
     all_res.uniq!
     num_reservations = same_model_count(all_res)
     if num_reservations > max
-      errors.add(:base, "quantity equipment model problem with " + equipment_model.name)
+      errors.add(:base, "Quantity of " + equipment_model.name.pluralize + " must not exceed " + equipment_model.maximum_per_user.to_s)
       return false
     end
     return true
@@ -139,7 +139,7 @@ module ReservationValidations
     cat_count = 0
     all_res.each { |res| cat_count += 1 if res.equipment_model.category == self.equipment_model.category }
     if cat_count > max
-      errors.add(:base, "quantity category problem with " + equipment_model.category.name)
+      errors.add(:base, "Quantity of " + equipment_model.category.name.pluralize + " must not exceed " + equipment_model.category.maximum_per_user.to_s)
       return false
     end
     return true

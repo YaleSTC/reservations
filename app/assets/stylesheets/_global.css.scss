@@ -1,0 +1,218 @@
+// Well stuff
+// =============================================================================
+.well-nomargin {
+  @extend .well;
+  margin-right: 20px;
+  margin-left: 0px;
+}
+
+.well { background-color: darken(desaturate($bodyBackground, 10%), 3%); }
+
+// Make labels semi-bold
+// =============================================================================
+label {
+  font-weight: 600;
+
+  > span {
+    font-weight: normal;
+    // unbolds checkbox / radio button labels if they're wrapped in a span tag
+  }
+}
+
+// Form actions background change
+
+.form-actions {
+  background-color: darken(desaturate($bodyBackground, 10%), 6%);
+  border-top: 1px solid darken(desaturate($bodyBackground, 10%), 15%);
+}
+
+// Change alert margins to account for body padding
+// =============================================================================
+.alert {
+  margin-bottom: 0;
+  margin-top: 18px;
+}
+
+// Make all view-all buttons float to the right
+// =============================================================================
+.form-actions .view_all { float: right; }
+
+// Fix for popovers to display over dropdowns
+// =============================================================================
+.popover { z-index: 1050; }
+
+// Make background color for hovering on nav links relative to body background
+// =============================================================================
+.nav > li > a:hover {
+  background-color: darken(desaturate($bodyBackground, 10%), 7%);
+}
+
+// Animated hover state for all linked images
+// =============================================================================
+a > img {
+  @include transition(opacity .2s ease-out);
+
+  &:hover, &:active {
+    opacity: .6;
+  }
+}
+
+// List styles
+// =============================================================================
+
+// Ordered list
+// ------------
+$rectangle-list-li-background: darken($bodyBackground, 10%);
+
+ol.rectangle-list {
+  counter-reset: li; // Initiate a counter
+  list-style: none; // Remove default numbering
+  *list-style: decimal; // Keep using default numbering for IE6/7
+  padding: 0;
+  margin-bottom: 4em;
+  text-shadow: 0 1px 0 rgba(255,255,255,.5);
+
+  ol {
+    margin: 0 0 0 2em; // Add some left margin for inner lists
+  }
+
+  li {
+    position: relative;
+    display: block;
+    padding: .4em .4em .4em .8em;
+    *padding: .4em;
+    margin: .6em 0 .5em .7em;
+    background: $rectangle-list-li-background;
+    @include border-radius(3px);
+    @include transition(background .3s ease-out);
+
+    &:hover {
+      background: lighten($rectangle-list-li-background, 7%);
+
+      &:after {
+        left: -.5em;
+        border-left-color: lighten($linkColor, 18%);
+      }
+    }
+
+    &:before {
+      content: counter(li);
+      counter-increment: li;
+      position: absolute;
+      left: -2.5em;
+      top: 50%;
+      margin-top: -1em;
+      background: lighten($linkColor, 18%);
+      height: 2em;
+      width: 2em;
+      line-height: 2em;
+      text-align: center;
+      font-weight: bold;
+      @include border-radius(3px);
+      color: black;
+    }
+
+    &:after {
+      position: absolute;
+      content: '';
+      border: .5em solid transparent;
+      left: -1em;
+      top: 50%;
+      margin-top: -.5em;
+      @include transition(all .3s ease-out);
+    }
+  }
+}
+
+// Unordered list
+// --------------
+ul.rounded-list {
+  list-style: none; // Remove default numbering
+  padding: 0;
+  margin-bottom: 4em;
+  margin-left: 1em;
+  text-shadow: 0 1px 0 rgba(255,255,255,.5);
+
+  ul {
+    margin: 0 0 0 2em; // Add some left margin for inner lists
+  }
+
+  li {
+    position: relative;
+    display: block;
+    padding: .4em .4em .4em 2em;
+    *padding: .4em;
+    margin: .5em 0;
+    background: $rectangle-list-li-background;
+    @include border-radius(.3em);
+    @include transition(all .3s ease-out);
+
+    &:hover {
+      background: lighten($rectangle-list-li-background, 7%);
+
+      &:before {
+        transform: rotate(360deg);
+      }
+    }
+
+    &:before {
+      content: attr(data-value);
+      position: absolute;
+      left: -1.3em;
+      top: 50%;
+      margin-top: -1.3em;
+      background: lighten($linkColor, 18%);
+      height: 2em;
+      width: 2em;
+      line-height: 2em;
+      border: .3em solid #fff;
+      text-align: center;
+      font-weight: bold;
+      @include border-radius(2em);
+      @include transition(all .3s ease-out);
+    }
+  }
+}
+
+
+// Make links in table cells expand to fill cell
+// =============================================================================
+
+td > a, td > div.dropdown {
+  > a {
+  // to make table cells with links clickable throughout
+  // only works when ALL the text in the cell is ONE link
+  // as in no other links or text may be present
+  // because it then gives each element its own line
+    display: block;
+    padding: 0 0 30px;
+    margin: 0 0 -30px;
+  }
+
+  .dropdown-menu {
+    top: 50%; // needed to account for the huge padding of table cell links
+
+    &::before {
+    content: '';
+    display: inline-block;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid #CCC;
+    border-bottom-color: rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: -7px;
+    left: 9px;
+    }
+
+    &::after {
+    content: '';
+    display: inline-block;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid white;
+    position: absolute;
+    top: -6px;
+    left: 10px;
+    }
+  }
+}

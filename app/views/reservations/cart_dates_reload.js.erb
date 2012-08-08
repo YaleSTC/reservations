@@ -8,5 +8,4 @@ $('#cart_dates').replaceWith('<%= escape_javascript(render :partial => 'reservat
   $('#flashes').replaceWith('<div id="flashes"></div>');
 <% else %>
   $('#flashes').replaceWith('<div id = "flashes" ><%= escape_javascript(render :partial => 'layouts/flash_alerts') %></div>');
-  <% flash.clear %>
 <% end %>

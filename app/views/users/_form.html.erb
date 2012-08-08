@@ -23,7 +23,8 @@
     <%= render partial: 'terms_of_service/user_accepted', locals: {f: f}%>
     
   <% if current_user && current_user.is_admin_in_adminmode? %>
-      <%= f.association :requirements, :collection => Requirement.all.map{|req| [EquipmentModel.find(req.equipment_model_id).name,req.id]}%>
+      <%# TODO: Make this a fancy box %>
+      <%= f.association :requirements, :collection => Requirement.all.map{|req| [req.description,req.id]}, :label => "Requirements user has satisfied"%>
       <%= f.input :is_banned %>
       <%= f.input :is_checkout_person %>
       <%= f.input :is_admin %>

@@ -100,5 +100,50 @@ class UsersController < ApplicationController
       redirect_to manage_reservations_for_user_path(@user.id) and return
     end
   end
+  
+  def import
+    unless current_user.is_admin_in_adminmode?
+      flash[:error] = 'Permission denied.'
+      redirect_to root_path and return
+    end
+  
+    # initialize
+    file = params[:csv_upload] # the file object
+    user_type = params[:user_type]
+    overwrite = (params[:overwrite] == '1') # update existing users?
+    filepath = file.tempfile.path # the rails CSV class needs a filepath
+    
+    imported_users = csv_import(filepath)
+    
+    # make sure import from CSV didn't totally fail
+    if imported_users.nil?
+      flash[:error] = 'Unable to import CSV file. Please ensure it matches the import format, and try again.'
+      redirect_to :back and return
+    end
+    
+    # make sure we have login data (otherwise all will always fail)
+    unless imported_users.first.keys.include?(:login)
+      flash[:error] = "Unable to import CSV file. None of the users will be able to log in without specifying 'login' data."
+      redirect_to :back and return
+    end
+    
+    # make sure the import went with proper headings / column handling
+    keys_array = current_user.attributes.symbolize_keys.keys
+    imported_users.first.keys.each do |key|
+      unless keys_array.include?(key)
+        flash[:error] = 'Unable to import CSV file. Please ensure the first line of the file includes proper header information (login,first_name,...) as indicated below, with no extraneous columns.'
+        redirect_to :back and return
+      end
+    end
+        
+    # create the users and exit
+    @hash_of_statuses = User.import_users(imported_users,overwrite,user_type)
+    render 'import_success'
+  end
+  
+  def import_page
+    @select_options = [['Patrons','normal'],['Checkout Persons','checkout'],['Administrators','admin'],['Banned Users','banned']]
+    render 'import'
+  end
 
 end

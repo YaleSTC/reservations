@@ -67,7 +67,7 @@
   </div>
 </div>
 
-<!-- TODO: Make this prettier -->
+<%# TODO: Make this prettier %>
 <% unless @user.requirements.empty? %>
 
   <div class="row">
@@ -80,7 +80,7 @@
     <div id="qualif_box" class="span9">
       <ul id="qualifications">
         <% @user.requirements.each do |req| %>
-          <li><i class="icon-ok"></i><%= link_to EquipmentModel.find(req.equipment_model_id).name, EquipmentModel.find(req.equipment_model_id) %></li>
+          <li><i class="icon-ok"></i><%= link_to req.description, req %></li>
         <% end %>
       </ul>
     </div>
