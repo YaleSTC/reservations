@@ -87,7 +87,7 @@ class Reservation < ActiveRecord::Base
       errors << "Reservations must have an associated equipment model" unless res.not_empty?
       errors << res.equipment_object.name + " must be of type " + res.equipment_model.name unless res.matched_object_and_model?
       errors << res.equipment_model.name + " should be renewed instead of re-checked out" unless res.not_renewable? if self.class == CartReservation
-      errors << "Duration of " + res.equipment_model.name + " reservation must be less than " + res.equipment_model.category.maximum_checkout_length.to_S unless res.duration_allowed?
+      errors << "Duration of " + res.equipment_model.name + " reservation must be less than " + res.equipment_model.category.maximum_checkout_length.to_s unless res.duration_allowed?
       errors << res.equipment_model.name + " is not available for the full time period requested" unless res.available?(res_array)
       errors << "Quantity of " + res.equipment_model.name.pluralize + " must not exceed " + res.equipment_model.maximum_per_user.to_s unless res.quantity_eq_model_allowed?(res_array)
       errors << "Quantity of " + res.equipment_model.category.name.pluralize + " must not exceed " + res.equipment_model.category.maximum_per_user.to_s unless res.quantity_cat_allowed?(res_array)
