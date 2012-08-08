@@ -81,7 +81,7 @@ class ReservationsController < ApplicationController
           end
           cart.items.each { |item| CartReservation.delete(item) }
           session[:cart] = Cart.new
-          unless AppConfig.first.reservation_confirmation_email_active?
+          if AppConfig.first.reservation_confirmation_email_active?
             UserMailer.reservation_confirmation(complete_reservation).deliver
           end
           if current_user.can_checkout?
