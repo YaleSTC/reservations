@@ -159,7 +159,9 @@ $(document).ready(function() {
   });
 
 // make the sidebar follow you down the page
+if ($(window).width() > 767) {
   $("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
+}
 
 // perform truncate, which is also defined outside of document ready
 // it needs to be both places due to a webkit bug not loading named
