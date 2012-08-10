@@ -24,24 +24,32 @@
 //= require_self
 
   function truncate() {
-    $(".caption_cat").dotdotdot({
-      height: 126,
-      after: ".more_info",
-      watch: 'window'
+    if ($(".caption_cat").length) {
+      $(".caption_cat").dotdotdot({
+        height: 126,
+        after: ".more_info",
+        watch: 'window'
       });
+    }
 
-    $(".equipment_title").dotdotdot({
-      height: 54, // must match .equipment_title height
-      watch: 'window'
+    if ($(".equipment_title").length) {
+      $(".equipment_title").dotdotdot({
+        height: 54, // must match .equipment_title height
+        watch: 'window'
       });
+    }
 
-    $(".equipment_title").each(function(){
-      $(this).trigger("isTruncated", function( isTruncated ) {
-        if ( isTruncated ) {
-          $(this).children(".equipment_title_link").tooltip();
-        }
-      });
-    });
+    // TODO: Refactor this so it won't so drastically impact client-side performance.
+    // Until it's refactored, it's better off disabled.
+    // This code displays a tooltip in the catalog if the equipment model name is truncated.
+    //
+    // $(".equipment_title").each(function(){
+    //   $(this).trigger("isTruncated", function( isTruncated ) {
+    //     if ( isTruncated ) {
+    //       $(this).children(".equipment_title_link").tooltip();
+    //     }
+    //   });
+    // });
   };
 
   function validate_checkin(){
@@ -156,24 +164,33 @@ $(document).ready(function() {
 // perform truncate, which is also defined outside of document ready
 // it needs to be both places due to a webkit bug not loading named
 // JS functions in (document).ready() until AFTER displaying all the things
-  $(".caption_cat").dotdotdot({
-    height: 126,
-    after: ".more_info",
-    watch: 'window'
-    });
 
-  $(".equipment_title").dotdotdot({
-    height: 54, // must match .equipment_title height
-    watch: 'window'
-  });
-
-  $(".equipment_title").each(function(){
-    $(this).trigger("isTruncated", function( isTruncated ) {
-      if ( isTruncated ) {
-        $(this).children(".equipment_title_link").tooltip();
-      }
+  if ($(".caption_cat").length) {
+    $(".caption_cat").dotdotdot({
+      height: 126,
+      after: ".more_info",
+      watch: 'window'
     });
-  });
+  }
+
+  if ($(".equipment_title").length) {
+    $(".equipment_title").dotdotdot({
+      height: 54, // must match .equipment_title height
+      watch: 'window'
+    });
+  }
+
+  // TODO: Refactor this so it won't so drastically impact client-side performance.
+  // Until it's refactored, it's better off disabled.
+  // This code displays a tooltip in the catalog if the equipment model name is truncated.
+  //
+  // $(".equipment_title").each(function(){
+  //   $(this).trigger("isTruncated", function( isTruncated ) {
+  //     if ( isTruncated ) {
+  //       $(this).children(".equipment_title_link").tooltip();
+  //     }
+  //   });
+  // });
 
   $(".btn#modal").tooltip();
   $(".not-qualified-icon").tooltip();
