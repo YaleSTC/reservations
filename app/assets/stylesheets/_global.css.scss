@@ -47,16 +47,6 @@ label {
   background-color: darken(desaturate($bodyBackground, 10%), 7%);
 }
 
-// Animated hover state for all linked images
-// =============================================================================
-a > img {
-  @include transition(opacity .2s ease-out);
-
-  &:hover, &:active {
-    opacity: .6;
-  }
-}
-
 // List styles
 // =============================================================================
 
