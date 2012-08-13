@@ -302,7 +302,7 @@ if entered_num.integer? && entered_num > 0
   reservation = entered_num.times.map do
     random_time = time_rand(Time.now - 2.months)
     # random_due_date = time_rand(random_time, Time.now.next_week, category.flatten.sample)
-
+binding.pry
     Reservation.create! do |res|
       res.reserver_id = user.flatten.sample.id
       res.checkout_handler_id = user.flatten.select{|usr| usr.is_checkout_person}.sample.id
@@ -311,7 +311,7 @@ if entered_num.integer? && entered_num > 0
       res.equipment_object_id = equipment_object.flatten.sample.id
       res.equipment_model_id = res.equipment_object.equipment_model_id
       res.start_date = random_time.to_datetime
-      res.due_date = time_rand(res.start_date, Time.now.next_week, res.equipment_model.category.max_checkout_length).to_datetime
+      res.due_date = time_rand(res.start_date.to_time, Time.now.next_week, res.equipment_model.category.max_checkout_length).to_datetime
       res.checked_in = [nil, time_rand(random_time, Time.now.next_week,
                         res.equipment_model.category.max_checkout_length).to_datetime,
                         time_rand(time_rand(random_time, Time.now.next_week, res.equipment_model.category.max_checkout_length),
