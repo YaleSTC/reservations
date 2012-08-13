@@ -152,7 +152,7 @@ class EquipmentModel < ActiveRecord::Base
 #    end
 #    overall_count
 #  end
-  def num_available(start_date, due_date) #This does not actually return true or false, but rather the number available.
+  def num_available(start_date, due_date) 
     qualification_met = true
       if ((a = BlackOut.date_is_blacked_out(start_date)) && a.black_out_type_is_hard) || ((a = BlackOut.date_is_blacked_out(due_date)) && a.black_out_type_is_hard) #If start or end of range is blacked out, and that is a hard blackout.
         return 0
