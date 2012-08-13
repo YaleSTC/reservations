@@ -195,7 +195,7 @@ class EquipmentModel < ActiveRecord::Base
   end
 
   def checked_out(date) #Returns the number of objects for a particular model that are checked out, and not overdue.
-    Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and equipment_model_id = ? and due_date > ?", self.id, Date.today.to_time.utc).size
+    Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and equipment_model_id = ? and due_date >= ?", self.id, Date.today.to_time.utc).size
   end
 
   def available_count(date)
@@ -204,7 +204,7 @@ class EquipmentModel < ActiveRecord::Base
     reserved_count = self.reserved_count(date)
     checked_out = self.checked_out(date)
     overdue_count = self.overdue_count(date)
-    total_count = equipment_objects.count
+    total_count = self.equipment_objects.count
 
     total_count - reserved_count - overdue_count - checked_out
   end
