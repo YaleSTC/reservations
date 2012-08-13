@@ -1,4 +1,6 @@
 // Styles for Select2 to make it visually integrate better with bootstrap
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 .select2-results .select2-highlighted {
   background: $dropdownLinkBackgroundHover;
@@ -19,7 +21,10 @@
   @include border-radius($inputBorderRadius);
 }
 
+//
 // Multi-Select
+// =============================================================================
+
 .select2-container-multi .select2-choices, .select2-container-multi.select2-container-active .select2-choices {
   padding-right: 5px;
   @include border-radius($inputBorderRadius);
@@ -39,7 +44,10 @@
   border: 1px solid $inputBorder;
 }
 
+//
 // Single Select
+// =============================================================================
+
 .select2-container .select2-choice {
   background-color: $inputBackground;
   border: 1px solid $inputBorder;
