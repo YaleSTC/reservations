@@ -88,6 +88,24 @@ module ReservationValidations
     return true
   end
 
+  # Checks that start date is not a black out date
+  def start_date_is_not_blackout?
+    if (a = BlackOut.date_is_blacked_out(start_date)) && a.black_out_type_is_hard
+      errors.add(:base, "A reservation cannot start on " + start_date.strftime('%m/%d') + " because equipment cannot be picked up on that date")
+      return false
+    end
+    return true
+  end
+
+  # Checks that due date is not a black out date
+  def due_date_is_not_blackout?
+    if (a = BlackOut.date_is_blacked_out(due_date)) && a.black_out_type_is_hard
+      errors.add(:base, "A reservation cannot end on " + due_date.strftime('%m/%d') + " because equipment cannot be returned on that date")
+      return false
+    end
+    return true
+  end
+
   ## For single or multiple reservations
   # Checks that the equipment model is available from start date to due date
   # Not called on overdue, missed, checked out, or checked in Reservations

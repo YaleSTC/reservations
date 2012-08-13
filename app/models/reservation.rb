@@ -14,7 +14,8 @@ class Reservation < ActiveRecord::Base
   # If there is no equipment model, it doesn't run the reservations that would break it
   with_options :if => :not_empty? do |r|
     r.validate :start_date_before_due_date?, :matched_object_and_model?, :not_in_past?,
-              :duration_allowed?, :available?, :quantity_eq_model_allowed?, :quantity_cat_allowed?
+              :duration_allowed?, :available?, :start_date_is_not_blackout?,
+              :due_date_is_not_blackout?, :quantity_eq_model_allowed?, :quantity_cat_allowed?
     r.validate :not_in_past?, :not_renewable?, :no_overdue_reservations?, :on => :create
   end
 
@@ -89,6 +90,8 @@ class Reservation < ActiveRecord::Base
       errors << res.equipment_model.name + " should be renewed instead of re-checked out" unless res.not_renewable? if self.class == CartReservation
       errors << "Duration of " + res.equipment_model.name + " reservation must be less than " + res.equipment_model.category.maximum_checkout_length.to_s unless res.duration_allowed?
       errors << res.equipment_model.name + " is not available for the full time period requested" unless res.available?(res_array)
+      errors << "A reservation cannot start on " + res.start_date.strftime('%m/%d') + " because equipment cannot be picked up on that date" unless res.start_date_is_not_blackout?
+      errors << "A reservation cannot end on " + res.due_date.strftime('%m/%d') + " because equipment cannot be returned on that date" unless res.due_date_is_not_blackout?
       errors << "Quantity of " + res.equipment_model.name.pluralize + " must not exceed " + res.equipment_model.maximum_per_user.to_s unless res.quantity_eq_model_allowed?(res_array)
       errors << "Quantity of " + res.equipment_model.category.name.pluralize + " must not exceed " + res.equipment_model.category.maximum_per_user.to_s unless res.quantity_cat_allowed?(res_array)
 	end
