@@ -166,7 +166,7 @@ if entered_num.integer? && entered_num > 0
       em.late_fee = r.rand(50.00..1000.00).round(2).to_d
       em.replacement_fee = r.rand(50.00..1000.00).round(2).to_d
       em.category_id = category.flatten[r.rand(0...category.length)].id
-      em.max_per_user = rand * em.category.max_per_user
+      em.max_per_user = (rand * em.category.max_per_user).to_i
       em.active = true
       em.max_renewal_times = r.rand(0..40)
       em.max_renewal_length = r.rand(0..40)
