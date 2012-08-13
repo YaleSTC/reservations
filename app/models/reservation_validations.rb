@@ -34,7 +34,7 @@ module ReservationValidations
   # Checks that reservation is not in the past
   # Does not run on checked out, checked in, overdue, or missed Reservations
   def not_in_past?
-    return true if self.class == Reservation && self.status != 'reserved'
+    #return true if self.class == Reservation && self.status != 'reserved'
     if (start_date < Date.today) || (due_date < Date.today)
       errors.add(:base, "Reservations start dates must be before due dates")
       return false
