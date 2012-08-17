@@ -1,6 +1,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require jquery.ui.datepicker
+//= require jquery.ui.autocomplete
 //= require jquery.sticky
 //= require jquery.dotdotdot-1.5.1
 //= require cocoon
