@@ -55,5 +55,5 @@ group :development do
 end
 
 group :production do
-  gem 'execjs'
+  gem "therubyracer", :require => 'v8'
 end
