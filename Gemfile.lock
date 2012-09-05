@@ -115,6 +115,7 @@ GEM
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
       railties (>= 3.0.0)
+    libv8 (3.3.10.4)
     libwebsocket (0.1.5)
       addressable
     listen (0.4.7)
@@ -234,6 +235,8 @@ GEM
       hike (~> 1.2)
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
+    therubyracer (0.10.2)
+      libv8 (~> 3.3.10)
     thin (1.4.1)
       daemons (>= 1.0.9)
       eventmachine (>= 0.12.6)
@@ -265,7 +268,6 @@ DEPENDENCIES
   cocoon
   coffee-rails
   dynamic_form
-  execjs
   factory_girl_rails
   ffaker
   font-awesome-sass-rails
@@ -297,6 +299,7 @@ DEPENDENCIES
   sass-rails
   select2-rails
   simple_form
+  therubyracer
   thin
   uglifier
   whenever
