@@ -1,3 +1,5 @@
+require 'bundler/capistrano'
+
 # == DEPLOYMENT DEFAULTS =========
 default_domain = ENV['DOMAIN'] ? ENV['DOMAIN'] : "mahi.its.yale.edu"
 default_application_prefix = ENV['PREFIX'] ? ENV['PREFIX'] : "reservations_test"
@@ -54,29 +56,28 @@ EOF
       put database_configuration, "#{shared_path}/config/database.yml"
     end
 
-    desc "Enter Hoptoad API code"
-    task :hoptoad do
-      set :api_key, Capistrano::CLI.ui.ask("Hoptoad API Key: ")
-      hoptoad_config=<<-EOF
-HoptoadNotifier.configure do |config|
+    desc "Enter Airbrake API code"
+    task :airbrake do
+      set :api_key, Capistrano::CLI.ui.ask("Airbrake API Key: ")
+      airbrake_config=<<-EOF
+Airbrake.configure do |config|
   config.api_key = '#{api_key}'
 end
-
 EOF
-      put hoptoad_config, "#{shared_path}/config/hoptoad.rb"
+      put airbrake_config, "#{shared_path}/config/airbrake.rb"
     end
+
 
     desc "Symlink shared configurations to current"
     task :localize, :roles => [:app] do
 
       run "ln -nsf #{shared_path}/config/database.yml #{current_path}/config/database.yml"
-      #Temporarily disabled until hoptoad integration is complete
-      #run "ln -nsf #{shared_path}/config/hoptoad.rb #{current_path}/config/initializers/hoptoad.rb"
-
+      run "ln -nsf #{shared_path}/config/airbrake.rb #{current_path}/config/initializers/airbrake.rb"
       run "mkdir -p #{shared_path}/log"
       run "mkdir -p #{shared_path}/pids"
       run "mkdir -p #{shared_path}/sessions"
       run "mkdir -p #{shared_path}/system/datas"
+
       run "ln -nsfF #{shared_path}/log/ #{current_path}/log"
       run "ln -nsfF #{shared_path}/pids/ #{current_path}/tmp/pids"      
       run "ln -nsfF #{shared_path}/sessions/ #{current_path}/tmp/sessions"
@@ -112,7 +113,8 @@ namespace :deploy do
   task :first, :roles => :app do
     setup
     update
-    #create_db
+    init.config.localize
+    create_db
     passenger_config
     migrate
     restart_apache
@@ -149,14 +151,21 @@ namespace :deploy do
 
   desc "Update the crontab file"
   task :update_crontab, :roles => :app do
-    run "cd #{release_path} && whenever --update-crontab #{application}-#{application_prefix} --set 'rails_root=#{current_path}'"
+    run "cd #{release_path} && bundle exec whenever --update-crontab #{application}-#{application_prefix} --set 'rails_root=#{current_path}'"
   end
 
 end
 
 after "deploy:setup", "init:config:database"
-#after "deploy:setup", "init:config:hoptoad"
+after "deploy:setup", "init:config:airbrake"
 after "deploy:symlink", "init:config:localize"
 after "deploy:symlink", "deploy:update_crontab"
 after "deploy", "deploy:cleanup"
+after "deploy", "init:config:localize"
 after "deploy:migrations", "deploy:cleanup"
+
+Dir[File.join(File.dirname(__FILE__), '..', 'vendor', 'gems', 'airbrake-*')].each do |vendored_notifier|
+  $: << File.join(vendored_notifier, 'lib')
+end
+
+require 'airbrake/capistrano'
