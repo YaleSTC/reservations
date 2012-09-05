@@ -163,6 +163,7 @@ after "deploy:symlink", "deploy:update_crontab"
 after "deploy", "deploy:cleanup"
 after "deploy", "init:config:localize"
 after "deploy:migrations", "deploy:cleanup"
+before "deploy:assets:precompile", "init:config:localize"
 
 Dir[File.join(File.dirname(__FILE__), '..', 'vendor', 'gems', 'airbrake-*')].each do |vendored_notifier|
   $: << File.join(vendored_notifier, 'lib')
