@@ -1,5 +1,5 @@
 GIT
-  remote: git@github.com:adambray/font-awesome-sass-rails.git
+  remote: git://github.com/adambray/font-awesome-sass-rails.git
   revision: c02246740004278aeb000cf0b992ed1fb3cf7fd0
   specs:
     font-awesome-sass-rails (2.0.0.0)
