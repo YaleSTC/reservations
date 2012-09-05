@@ -54,6 +54,7 @@ production:
 EOF
       run "mkdir -p #{shared_path}/config"
       put database_configuration, "#{shared_path}/config/database.yml"
+      run "ln -nsf #{shared_path}/config/database.yml #{current_path}/config/database.yml"
     end
 
     desc "Enter Airbrake API code"
