@@ -45,7 +45,7 @@ namespace :init do
       database_configuration =<<-EOF
 ---
 production:
-  adapter: mysql
+  adapter: mysql2
   database: #{application}_#{application_prefix}_production
   host: localhost
   username: #{mysql_user}
@@ -71,17 +71,17 @@ EOF
     desc "Symlink shared configurations to current"
     task :localize, :roles => [:app] do
 
-      run "ln -nsf #{shared_path}/config/database.yml #{current_path}/config/database.yml"
-      run "ln -nsf #{shared_path}/config/airbrake.rb #{current_path}/config/initializers/airbrake.rb"
+      run "ln -nsf #{shared_path}/config/database.yml #{release_path}/config/database.yml"
+      run "ln -nsf #{shared_path}/config/airbrake.rb #{release_path}/config/initializers/airbrake.rb"
       run "mkdir -p #{shared_path}/log"
       run "mkdir -p #{shared_path}/pids"
       run "mkdir -p #{shared_path}/sessions"
       run "mkdir -p #{shared_path}/system/datas"
 
-      run "ln -nsfF #{shared_path}/log/ #{current_path}/log"
-      run "ln -nsfF #{shared_path}/pids/ #{current_path}/tmp/pids"      
-      run "ln -nsfF #{shared_path}/sessions/ #{current_path}/tmp/sessions"
-      run "ln -nsfF #{shared_path}/system/ #{current_path}/public/system"
+      run "ln -nsfF #{shared_path}/log/ #{release_path}/log"
+      run "ln -nsfF #{shared_path}/pids/ #{release_path}/tmp/pids"      
+      run "ln -nsfF #{shared_path}/sessions/ #{release_path}/tmp/sessions"
+      run "ln -nsfF #{shared_path}/system/ #{release_path}/public/system"
     end    
   end  
 end
@@ -112,9 +112,8 @@ namespace :deploy do
   desc "Initializer. Runs setup, copies code, creates and migrates db, and starts app"
   task :first, :roles => :app do
     setup
+    #create_db
     update
-    create_db
-    init.config.localize
     passenger_config
     migrate
     restart_apache
