@@ -46,7 +46,7 @@ group :assets do
   gem 'coffee-rails'
   gem 'uglifier'
   gem 'bootstrap-sass', '~> 2.0.3'
-  gem 'font-awesome-sass-rails', :git => "git://github.com/adambray/font-awesome-sass-rails.git"
+  gem 'font-awesome-rails', :git => "git://github.com/mrnugget/font-awesome-rails.git"
 end
 
 group :development do
