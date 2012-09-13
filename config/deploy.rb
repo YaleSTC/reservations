@@ -67,12 +67,25 @@ EOF
       put airbrake_config, "#{shared_path}/config/airbrake.rb"
     end
 
+    task :prefix_initializer do
+      prefix_config_file =<<-EOF
+Reservations::Application.configure do
+  config.action_controller.relative_url_root = '/#{application_prefix}'
+end
+EOF
+
+      run "mkdir -p #{shared_path}/config"
+      put prefix_config_file, "#{shared_path}/config/prefix.rb"
+    end
+
+
 
     desc "Symlink shared configurations to current"
     task :localize, :roles => [:app] do
 
       run "ln -nsf #{shared_path}/config/database.yml #{release_path}/config/database.yml"
       run "ln -nsf #{shared_path}/config/airbrake.rb #{release_path}/config/initializers/airbrake.rb"
+      run "ln -nsf #{shared_path}/config/prefix.rb #{release_path}/config/initializers/prefix.rb"
       run "mkdir -p #{shared_path}/log"
       run "mkdir -p #{shared_path}/pids"
       run "mkdir -p #{shared_path}/sessions"
@@ -112,7 +125,7 @@ namespace :deploy do
   desc "Initializer. Runs setup, copies code, creates and migrates db, and starts app"
   task :first, :roles => :app do
     setup
-    #create_db
+    create_db
     update
     passenger_config
     migrate
@@ -127,7 +140,7 @@ namespace :deploy do
 
   desc "Create database"
   task :create_db, :roles => :app do
-    run "cd #{release_path} && #{sudo} rake db:create RAILS_ENV=production"
+    run "mysqladmin --user=root --password=#{mysql_pass} create #{application}_#{application_prefix}_production"
   end
 
   task :start, :roles => :app do
@@ -157,6 +170,7 @@ end
 
 after "deploy:setup", "init:config:database"
 after "deploy:setup", "init:config:airbrake"
+after "deploy:setup", "init:config:prefix_initializer"
 after "deploy:symlink", "init:config:localize"
 after "deploy:symlink", "deploy:update_crontab"
 after "deploy", "deploy:cleanup"
