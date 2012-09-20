@@ -127,6 +127,7 @@ namespace :deploy do
     setup
     create_db
     update
+    init.config.localize
     passenger_config
     migrate
     restart_apache
