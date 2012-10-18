@@ -21,7 +21,7 @@
   
   <%= f.input :late_fee, wrapper: :prepend do %>
     <%= content_tag :span, "$", class: "add-on" %><%= f.input_field :late_fee,
-    class: 'input-small', value: number_with_precision(f.object.replacement_fee, 
+    class: 'input-small', value: number_with_precision(f.object.late_fee, 
     precision: 2), type: 'number', step: 'any' %>
   <% end %>
   
