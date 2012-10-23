@@ -82,15 +82,16 @@ class ReservationsController < ApplicationController
           cart.items.each { |item| CartReservation.delete(item) }
           session[:cart] = Cart.new
           if AppConfig.first.reservation_confirmation_email_active?
-            UserMailer.reservation_confirmation(complete_reservation).deliver
+            #UserMailer.reservation_confirmation(complete_reservation).deliver
           end
           if current_user.can_checkout?
             redirect_to manage_reservations_for_user_path(params[:reservation][:reserver_id]) and return
           else
             redirect_to catalog_path, :flash => {:notice => "Successfully created reservation. " } and return
           end
-        rescue
-          format.html {redirect_to catalog_path, :flash => {:error => "Oops, something went wrong with making your reservation."} }
+        rescue Exception => e          
+          format.html {redirect_to catalog_path, :flash => {:error => "Oops, something went wrong with making your reservation.\nMessage #{e.message}"} }
+
           raise ActiveRecord::Rollback
         end
       end
