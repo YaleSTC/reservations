@@ -9,7 +9,7 @@
       <%= f.text_field :serial, :value => 'Enter serial # (optional)', :onclick => "if(this.value == 'Enter serial # (optional)') this.value='';" %>
     </p>
     <p>
-      <%= f.submit "Add Equipment Object" %>
+      <%= f.submit "Add Equipment Item" %>
       <%= link_to_function "cancel", "$(this).parents('.equipment_object').remove()" %>
     </p>
   <% end %>

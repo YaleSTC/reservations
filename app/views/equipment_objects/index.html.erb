@@ -46,15 +46,15 @@
   <div class="form-actions">
     <% if @equipment_model %>
      <%= link_to ("New "+@equipment_model.name.singularize), new_equipment_model_equipment_object_path(@equipment_model) %>
-     <%= link_to "View All Equipment Objects", equipment_objects_path %>
+     <%= link_to "View All Equipment Items", equipment_objects_path %>
     <% else %>
-      <%= link_to "New Equipment Object", new_equipment_object_path, :class => "btn btn-primary" %>
+      <%= link_to "New Equipment Item", new_equipment_object_path, :class => "btn btn-primary" %>
     <% end %>
 
     <% if params[:show_deleted] %>
-      <%= link_to "Hide Deactivated Objects", equipment_objects_path, :class => "btn" %>
+      <%= link_to "Hide Deactivated Items", equipment_objects_path, :class => "btn" %>
     <% else %>
-      <%= link_to "Show Deactivated Objects", equipment_objects_path(:show_deleted => true), :class => "btn" %>
+      <%= link_to "Show Deactivated Items", equipment_objects_path(:show_deleted => true), :class => "btn" %>
     <% end %>
   </div>
 

@@ -135,7 +135,7 @@
 <div class="form-actions">
   <%= link_to "Edit Information", edit_user_path(@user), :class => 'btn' %>
   <% if current_user.is_admin_in_adminmode? %>
-    <%= link_to "Destroy User", @user, :confirm => 'This will permanently delete the Object from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete, :class => 'btn btn-danger' %>
+    <%= link_to "Destroy User", @user, :confirm => 'This will permanently delete the Item from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete, :class => 'btn btn-danger' %>
     <%= link_to "View All Users", users_path, :class => 'btn', :id => 'view_all_users' %>
   <% end %>
 </div>
