@@ -235,11 +235,4 @@ class User < ActiveRecord::Base
     csv_import
   end
 
-  #TODO: investigate why this is necessary; change to SQL
-  def reservations_array
-    reservations = []
-    Reservation.all.each { |res| reservations << res if res.reserver = self }
-    reservations
-  end
-
 end
