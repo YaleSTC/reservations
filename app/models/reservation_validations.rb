@@ -66,7 +66,7 @@ module ReservationValidations
   #TODO: allow admin override
   def not_renewable?
     return true unless self.class == CartReservation || self.status == "reserved"
-    reserver.reservations_array.each do |res|
+    reserver.reservations.each do |res|
       if res.equipment_model == self.equipment_model && res.due_date.to_date == self.start_date.to_date && res.is_eligible_for_renew?
         errors.add(:base, res.equipment_model.name + " should be renewed instead of re-checked out")
         return false
@@ -136,11 +136,12 @@ module ReservationValidations
     all_res = reservations.dup
     all_res << self
     #include all reservations made by user
-    all_res.concat(reserver.reservations_array)
+    all_res.concat(reserver.reservations)
     all_res.uniq!
     
     #exclude reservations that don't overlap
-    overlapping_res = all_res.select{ |res| res.overlaps_with?(self) && (res.class == CartReservation || res.status != "returned") }
+    #TODO: Optimize into a finder scope
+    overlapping_res = all_res.select{ |res| res.overlaps_with?(self) && (res.class == CartReservation || res.checked_in == nil) }
     
     model_count = same_model_count(overlapping_res)
     if model_count > max
@@ -162,11 +163,12 @@ module ReservationValidations
     all_res = reservations.dup
     all_res << self
     #include all reservations made by user
-    all_res.concat(reserver.reservations_array)
+    all_res.concat(reserver.reservations)
     all_res.uniq!
     
     #exclude reservations that don't overlap
-    overlapping_res = all_res.select{ |res| res.overlaps_with?(self) && (res.class == CartReservation || res.status != "returned") }
+    #TODO: Optimize into a finder scope
+    overlapping_res = all_res.select{ |res| res.overlaps_with?(self) && (res.class == CartReservation || res.checked_in == nil) }
     
     cat_count = same_category_count(overlapping_res)
     if cat_count > max
