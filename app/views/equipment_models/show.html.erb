@@ -186,14 +186,14 @@
   <%= content_tag :div, :class => 'row' do %>
     <%= content_tag :div, :class => 'span3' do %>
       <h4>
-        <%= (link_to @equipment_model.documentation_file_name, @equipment_model.documentation.url, target: "_blank") unless !@equipment_model.documentation.exists? %>
+        <%= (link_to @equipment_model.documentation_file_name, asset_paths.compute_public_path(@equipment_model.documentation.url, ""), target: "_blank") if @equipment_model.documentation.exists? %>
       </h4>
     <% end %>
   <% end %>
   <!-- Content Row -->
   <%= content_tag :div, :class => 'row' do %>
     <%= content_tag :div, :class => 'span2' do %>
-      <%= link_to @equipment_model.documentation.url, target: "_blank" do %>
+      <%= link_to asset_paths.compute_public_path(@equipment_model.documentation.url, ""), target: "_blank" do %>
         <%= content_tag :i, nil, :class => 'icon-file document' %>
       <% end %>
     <% end %>
