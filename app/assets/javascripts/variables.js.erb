@@ -1,2 +1,2 @@
 <% environment.context_class.instance_eval { include Rails.application.routes.url_helpers } %>
-var new_user = "<%= "#{new_user_path}" + " #content" %>";
+var new_user = "<%= "#{Rails.application.config.action_controller.relative_url_root.to_s + new_user_path}" + " #content" %>";
