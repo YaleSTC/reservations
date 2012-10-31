@@ -11,7 +11,7 @@ class Reservation < ActiveRecord::Base
             :equipment_model,
             :presence => true
 
-  # If there is no equipment model, it doesn't run the reservations that would break it
+  # If there is no equipment model, don't run the validations that would break
   with_options :if => :not_empty? do |r|
     r.validate :start_date_before_due_date?, :matched_object_and_model?, :not_in_past?,
               :duration_allowed?, :available?, :start_date_is_not_blackout?,
@@ -47,20 +47,6 @@ class Reservation < ActiveRecord::Base
   end
 
   def status
-    # Old status method code
-    # =========================
-    # if checked_out.nil? && due_date >= Date.today
-    #   "reserved"
-    # elsif checked_out.nil? && due_date < Date.today
-    #   "missed"
-    # elsif checked_in.nil?
-    #   due_date < Date.today ? "overdue" : "checked out"
-    # else
-    #   "returned"
-    # end
-
-    # from status_for_report
-    # ==========================
     if checked_out.nil?
       if checked_in.nil?
         due_date >= Date.today ? "reserved" : "missed"
@@ -72,6 +58,7 @@ class Reservation < ActiveRecord::Base
     else
       due_date < checked_in.to_date ? "returned overdue" : "returned on time"
     end
+
   end
 
   ## Set validation
@@ -95,23 +82,9 @@ class Reservation < ActiveRecord::Base
       errors << "Quantity of " + res.equipment_model.name.pluralize + " must not exceed " + res.equipment_model.maximum_per_user.to_s unless res.quantity_eq_model_allowed?(res_array)
       errors << "Quantity of " + res.equipment_model.category.name.pluralize + " must not exceed " + res.equipment_model.category.maximum_per_user.to_s unless res.quantity_cat_allowed?(res_array)
 	end
-	errors.uniq
+  errors.uniq
   end
 
-  #should reconcile the two status functions
-  def status_for_report
-    if checked_out.nil?
-      if checked_in.nil?
-        due_date >= Date.today ? "reserved" : "missed"
-      else
-        "?"
-      end
-    elsif checked_in.nil?
-      due_date < Date.today ? "overdue" : "checked out"
-    else
-      due_date < checked_in.to_date ? "returned overdue" : "returned on time"
-    end
-  end
 
   def self.due_for_checkin(user)
     Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", user.id).order('due_date ASC') # put most-due ones first

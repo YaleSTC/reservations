@@ -90,7 +90,7 @@ class ReservationsController < ApplicationController
             redirect_to catalog_path, :flash => {:notice => "Successfully created reservation. " } and return
           end
         rescue Exception => e          
-          format.html {redirect_to catalog_path, :flash => {:error => "Oops, something went wrong with making your reservation.\nMessage #{e.message}"} }
+          format.html {redirect_to catalog_path, :flash => {:error => "Oops, something went wrong with making your reservation.<br/> #{e.message}".html_safe} }
 
           raise ActiveRecord::Rollback
         end

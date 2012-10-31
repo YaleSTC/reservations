@@ -125,37 +125,50 @@ module ReservationValidations
     return true
   end
 
-  # Checks that the number of equipment models that a user has reservered and in
+  # Checks that the number of equipment models that a user has reserved and in
   # the array of reservations is less than the equipment model maximum
   #TODO: admin override
   def quantity_eq_model_allowed?(reservations = [])
     max = equipment_model.maximum_per_user
     return true if max == "unrestricted"
+
+    #duplicate passed in array so we don't modify it for the next round of validations
     all_res = reservations.dup
     all_res << self
+    #include all reservations made by user
     all_res.concat(reserver.reservations_array)
     all_res.uniq!
-    num_reservations = same_model_count(all_res)
-    if num_reservations > max
+    
+    #exclude reservations that don't overlap
+    overlapping_res = all_res.select{ |res| res.overlaps_with?(self) && (res.class == CartReservation || res.status != "returned") }
+    
+    model_count = same_model_count(overlapping_res)
+    if model_count > max
       errors.add(:base, "Quantity of " + equipment_model.name.pluralize + " must not exceed " + equipment_model.maximum_per_user.to_s)
       return false
     end
     return true
   end
 
-  # Checks that the number of items that the user has reservered and in the
+  # Checks that the number of items that the user has reserved and in the
   # array of reservations does not exceed the maximum in the category of the
   # reservation it is called on
   #TODO: admin override
   def quantity_cat_allowed?(reservations = [])
     max = equipment_model.category.maximum_per_user
     return true if max == "unrestricted"
+    
+    #duplicate passed in array so we don't modify it for the next round of validations
     all_res = reservations.dup
     all_res << self
+    #include all reservations made by user
     all_res.concat(reserver.reservations_array)
     all_res.uniq!
-    cat_count = 0
-    all_res.each { |res| cat_count += 1 if res.equipment_model.category == self.equipment_model.category }
+    
+    #exclude reservations that don't overlap
+    overlapping_res = all_res.select{ |res| res.overlaps_with?(self) && (res.class == CartReservation || res.status != "returned") }
+    
+    cat_count = same_category_count(overlapping_res)
     if cat_count > max
       errors.add(:base, "Quantity of " + equipment_model.category.name.pluralize + " must not exceed " + equipment_model.category.maximum_per_user.to_s)
       return false
@@ -164,7 +177,7 @@ module ReservationValidations
   end
 
 
-  ## Validation helper##
+  ## Validation helpers##
 
   # Returns the number of reservations in the array of reservations it is passed
   # that have the same equipment model as the reservation count is called on
@@ -172,7 +185,21 @@ module ReservationValidations
   # Assumes that all reservations have same start and end date as self
   def same_model_count(reservations)
     count = 0
-    reservations.each { |res| count += 1 if res.equipment_model == self.equipment_model }
+    reservations.each { |res| count += 1 if (res.equipment_model == self.equipment_model) }
     count
   end
+
+  def same_category_count(reservations)
+    count = 0
+    reservations.each { |res| count += 1 if res.equipment_model.category == self.equipment_model.category }
+    count 
+  end
+
+  def overlaps_with?(other_res)
+    start_overlaps = (self.start_date >= other_res.start_date && self.start_date <= other_res.due_date)
+    end_overlaps = (self.due_date >= other_res.start_date && self.due_date <= other_res.due_date)
+    return true if start_overlaps || end_overlaps
+  end
+
+
 end

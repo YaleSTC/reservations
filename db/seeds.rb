@@ -68,7 +68,6 @@ Price does not include taxes. No Canadian coins. Tax, tag, and title not include
 No solicitors. No alcohol, dogs or horses. No anchovies unless otherwise specified. Avoid spraying into eyes. An 18% gratuity will be added for parties of 8 or more. Do not write under this line.
   }
 end
-# binding.pry
 
 #Random object that is used throughout for generating fake data that FFaker can't
 r = Random.new
@@ -302,7 +301,6 @@ if entered_num.integer? && entered_num > 0
   reservation = entered_num.times.map do
     random_time = time_rand(Time.now - 2.months)
     # random_due_date = time_rand(random_time, Time.now.next_week, category.flatten.sample)
-binding.pry
     Reservation.create! do |res|
       res.reserver_id = user.flatten.sample.id
       res.checkout_handler_id = user.flatten.select{|usr| usr.is_checkout_person}.sample.id

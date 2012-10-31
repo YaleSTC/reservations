@@ -8,10 +8,6 @@ gem 'mysql2'
 gem 'rdoc'
 gem 'rubycas-client-rails'
 gem 'rubycas-client', '2.2.1'
-gem 'pry'
-gem 'pry-rails'
-gem 'pry-debugger'
-gem 'pry-stack_explorer'
 gem 'dynamic_form'
 gem 'permanent_records', '~> 2.1.2'
 gem 'nilify_blanks'
@@ -52,6 +48,11 @@ end
 group :development do
   gem 'rb-readline'
 	gem 'thin'
+  gem 'pry'
+  gem 'pry-rails'
+  gem 'pry-debugger'
+  gem 'pry-stack_explorer'
+  gem 'pry-remote'
 end
 
 group :production do

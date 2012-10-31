@@ -82,10 +82,6 @@ class ApplicationController < ActionController::Base
     @current_user ||= User.include_deleted.find_by_login(session[:cas_user]) if session[:cas_user]
   end
 
-  def bind_pry_before_everything
-    binding.pry
-  end
-
   #-------- end before_filter methods --------
 
   def update_cart
@@ -108,9 +104,15 @@ class ApplicationController < ActionController::Base
   end
 
   def empty_cart
+    #destroy old cart reservations
+    current_cart = session[:cart]
+    CartReservation.where(:reserver_id => current_cart.reserver.id).destroy_all
+    
+    #create a new cart
     session[:cart] = Cart.new
     session[:cart].set_reserver_id(current_user.id)
     flash[:notice] = "Cart emptied."
+    
     redirect_to root_path
   end
 
