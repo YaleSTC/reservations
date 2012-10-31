@@ -86,15 +86,18 @@ EOF
       run "ln -nsf #{shared_path}/config/database.yml #{release_path}/config/database.yml"
       run "ln -nsf #{shared_path}/config/airbrake.rb #{release_path}/config/initializers/airbrake.rb"
       run "ln -nsf #{shared_path}/config/prefix.rb #{release_path}/config/initializers/prefix.rb"
+      
       run "mkdir -p #{shared_path}/log"
-      run "mkdir -p #{shared_path}/pids"
-      run "mkdir -p #{shared_path}/sessions"
-      run "mkdir -p #{shared_path}/system/datas"
-
       run "ln -nsfF #{shared_path}/log/ #{release_path}/log"
+
+      run "mkdir -p #{shared_path}/pids"
       run "ln -nsfF #{shared_path}/pids/ #{release_path}/tmp/pids"      
+
+      run "mkdir -p #{shared_path}/sessions"
       run "ln -nsfF #{shared_path}/sessions/ #{release_path}/tmp/sessions"
-      run "ln -nsfF #{shared_path}/system/ #{release_path}/public/system"
+
+      run "mkdir -p #{shared_path}/equipment_models"
+      run "ln -nsfF #{shared_path}/equipment_models/ #{release_path}/public/equipment_models"
     end    
   end  
 end
