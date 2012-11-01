@@ -16,7 +16,7 @@
       <hr class ="special-hr"/>
       <p>(<%= equipment_model.num_available(cart.start_date, cart.due_date) || "0" %> available from <br /><%= cart.start_date.strftime("%b %d, %Y") %> to <%= cart.due_date.strftime("%b %d, %Y") %>)</p>
       <p class="equipment_descr">
-        <%= equipment_model.description + " " %><%= link_to "More Info", equipment_model, :class => 'more_info' %>
+        <%= strip_tags(markdown(equipment_model.description)) + " " %><%= link_to "More Info", equipment_model, :class => 'more_info' %>
       </p>
     </div>
     <% if equipment_model.model_restricted?(cart.reserver_id) %>
