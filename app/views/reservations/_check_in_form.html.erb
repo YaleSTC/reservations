@@ -17,7 +17,7 @@
               <%= image_tag reservation.equipment_model.photo.url(:medium) %>
             <% end %></p>
         <%= label_tag "reservations[#{reservation.id}][checkin?]" do %>
-          <%= check_box_tag "reservations[#{reservation.id}][checkin?]" %>
+          <%= check_box_tag "reservations[#{reservation.id}][checkin?]", 1, false, class: "checkin-select" %>
           <%= reservation.equipment_object.name %>
         <% end %>
 

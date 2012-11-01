@@ -58,12 +58,15 @@
     $.each( $(".checkin"), function(i, l){
       var steps = $(this).find(':checkbox').length;
       var steps_completed = $(this).find("input:checked").length;
-        if (steps_completed != steps && steps_completed != 0) {
-          flag = true;
-        }
-        else {
-          //do nothing
-        }
+      var selected = $(this).find("input.checkin-select").is(':checked');
+      if ( selected  && (steps_completed < steps) ){
+        flag = true;
+      }
+      //If they don't select a given item to checkin, but select some of the steps
+      if ( !selected && (steps_completed > 0) ){
+        flag = true;
+      }
+
     });
     return flag;
   };
@@ -73,26 +76,23 @@
     $.each( $(".checkout"), function(i, l){
       var steps = $(this).find(':checkbox').length;
       var steps_completed = $(this).find("input:checked").length;
-      var selected = $(this).find(".dropselect").val();
-      if (selected != ""){
-        if (steps_completed != steps) {
-          flag = true;
-        }
-        else { // do nothing
-        }
-      } else {
-          if (steps_completed > 0) {
-            flag = true;
-          }
-          else {}
-        }
+      var selected = $(this).find("select.dropselect").val();
+      //If they select a given item to checkin, but not all the steps
+      if ((selected != "") && (steps_completed < steps) ){
+        flag = true;
+      }
+      //If they don't select a given item to checkin, but select some of the steps
+      if ((selected == "") && (steps_completed > 0) ){
+        flag = true;
+      }
+
     });
     return flag;
   };
 
   function confirm_checkinout(flag){
     if (flag){
-      if( confirm("One or more check in or check out procedures have not been completed. Are you sure you want to continue?")){
+      if( confirm("Oops! We've noticed one of the following issues:\n\nYou checked off procedures for an item you're not checking in/out.\n\n       or\n\nYou didn't check off all procedures for an item that you are checking in/out.\n\nAre you sure you want to continue?")){
         (this).submit();
         return false;
       } else {
