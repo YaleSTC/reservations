@@ -8,16 +8,14 @@
     <%= f.input :first_name %>
     <%= f.input :last_name %>
     <%= f.input :nickname %>
-    <%= f.input :phone %>
+    <%= f.input :phone, required: true, hint: "format like (555) 555-5555" %>
     <%= f.input :email %>
-    <%= f.input :affiliation, label: "Affiliation", hint: "including college, year, etc"%>
+    <%= f.input :affiliation, hint: "including college, year, etc"%>
 
     <% if params[:from_cart] == "true" %>
       <%= hidden_field_tag(:from_cart, true) %>
-      <%#= f.input :from_cart, :as => :hidden, :value  => true %>
     <% else %>
       <%= hidden_field_tag(:from_cart, false) %>
-      <%#= f.input :from_cart, :as => :hidden, :value => false %>
     <% end %>
     
     <%= render partial: 'terms_of_service/user_accepted', locals: {f: f}%>
