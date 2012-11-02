@@ -242,7 +242,7 @@
       <% if @equipment_model.checkout_procedures.empty? %>
         <p>(none)</p>
       <% else %>
-        <ol>
+        <ol class="rectangle-list">
           <% @equipment_model.checkout_procedures.each do |checkout_procedure| %>
             <li><%= checkout_procedure.step %></li>
           <% end %>
@@ -251,7 +251,7 @@
     <% end %>
     <%= content_tag :div, :class => 'span4' do %>
       <% if @equipment_model.checkin_procedures.empty? %>
-        (none)
+        <p>(none)</p>
       <% else %>
         <ol class="rectangle-list">
           <% @equipment_model.checkin_procedures.each do |checkin_procedure| %>
