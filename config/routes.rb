@@ -2,18 +2,18 @@ Reservations::Application.routes.draw do
    
   root :to => 'catalog#index'
 
-  resources :requirements
+  resources :documents, 
+            :equipment_objects,
+            :requirements
 
-  resources :documents, :equipment_objects
-  
-  resources :equipment_models do
-    resources :equipment_objects
-  end
-  
   resources :categories do
     resources :equipment_models
   end
-    
+
+  resources :equipment_models do
+    resources :equipment_objects
+  end
+
   match '/users/import' => 'users#import_page', :via => :get, :as => :csv_import_page
   match '/users/import' => 'users#import', :via => :post, :as => :csv_import
   resources :users do

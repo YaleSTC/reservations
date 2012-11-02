@@ -74,16 +74,16 @@ class EquipmentModel < ActiveRecord::Base
                             :medium => '-background none -gravity center -extent 250x250',
                             :small => '-background none -gravity center -extent 150x150',
                             :thumbnail => '-background none -gravity center -extent 260x180' },
-      :url  => "/equipment_models/:attachment/:id/:style/:basename.:extension",
-      :path => ":rails_root/public/equipment_models/:attachment/:id/:style/:basename.:extension",
+      :url  => "attachments/equipment_models/:attachment/:id/:style/:basename.:extension",
+      :path => ":rails_root/public/attachments/equipment_models/:attachment/:id/:style/:basename.:extension",
       :default_url => "/fat_cat.jpeg",
       :preserve_files => true
 
 
   has_attached_file :documentation, #generates document
                     :content_type => 'application/pdf',
-                    :url => "/equipment_models/:attachment/:id/:style/:basename.:extension",
-                    :path => ":rails_root/public/equipment_models/:attachment/:id/:style/:basename.:extension",
+                    :url => "attachments/equipment_models/:attachment/:id/:style/:basename.:extension",
+                    :path => ":rails_root/public/attachments/equipment_models/:attachment/:id/:style/:basename.:extension",
                     :preserve_files => true
 
   validates_attachment_content_type :photo,

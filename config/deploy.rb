@@ -96,8 +96,8 @@ EOF
       run "mkdir -p #{shared_path}/sessions"
       run "ln -nsfF #{shared_path}/sessions/ #{release_path}/tmp/sessions"
 
-      run "mkdir -p #{shared_path}/equipment_models"
-      run "ln -nsfF #{shared_path}/equipment_models/ #{release_path}/public/equipment_models"
+      run "mkdir -p #{shared_path}/attachments"
+      run "ln -nsfF #{shared_path}/attachments/ #{release_path}/public/attachments"
     end    
   end  
 end
