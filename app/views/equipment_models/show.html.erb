@@ -219,11 +219,7 @@
       <%= link_to "Create New " + @equipment_model.name.singularize.truncate(30) + " Item", new_equipment_model_equipment_object_path(@equipment_model), :class => 'btn' %>
     </p>
     <p id="equipment_objects">
-      <% if @equipment_model.equipment_objects.empty? %>
-        (none)
-      <% else %>
         <%= render 'equipment_objects_table' %>
-      <% end %>
     </p>
   </section>
 
