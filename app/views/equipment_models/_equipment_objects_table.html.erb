@@ -12,7 +12,7 @@
   </tr>
   </thead>
   <tbody>
-  <% for equipment_object in @equipment_model.equipment_objects %>
+  <% for equipment_object in EquipmentObject.include_deleted.where(:equipment_model_id => @equipment_model.id) %>
     <% if equipment_object.deleted_at %>
       <tr class="deactivated">
       <% @toggle = "link_to \"Activate\", activate_path(:equipment_objects,equipment_object), :class => \"btn btn-success\", :method => :put" %>

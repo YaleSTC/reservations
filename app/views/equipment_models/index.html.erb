@@ -45,15 +45,15 @@
   <% end %>
   <% if params[:show_deleted] and current_user.is_admin_in_adminmode? %>
     <% if (@category.nil?) %>
-      <%= link_to "Hide Deactivated Equipment Models from List", equipment_models_path, :class => "btn" %>
+      <%= link_to "Hide Deactivated Models", equipment_models_path, :class => "btn" %>
     <% else %>
-      <%= link_to "Hide Deactivated Equipment Models from List", category_equipment_models_path(@category), :class => "btn" %>
+      <%= link_to "Hide Deactivated Models", category_equipment_models_path(@category), :class => "btn" %>
     <% end %>
   <% elsif current_user.is_admin_in_adminmode? %>
     <% if (@category.nil?) %>
-      <%= link_to "Show Deactivated Equipment Models in List", equipment_models_path(:show_deleted => true), :class => "btn" %>
+      <%= link_to "Show Deactivated Models", equipment_models_path(show_deleted: true), :class => "btn" %>
     <% else %>
-      <%= link_to "Show Deactivated Equipment Models in List", category_equipment_models_path(@category, show_deleted: true), :class => "btn" %>
+      <%= link_to "Show Deactivated Models", category_equipment_models_path(@category, show_deleted: true), :class => "btn" %>
     <% end %>
   <% end %>
 </div>

@@ -12,7 +12,6 @@ class ApplicationController < ActionController::Base
   before_filter :first_time_user
   before_filter :cart
   before_filter :set_view_mode
-  #before_filter :bind_pry_before_everything
 
   helper_method :current_user
   helper_method :cart
@@ -171,13 +170,15 @@ class ApplicationController < ActionController::Base
   def activate
     if (current_user.is_admin)
       @model_to_activate = params[:controller].singularize.titleize.delete(' ').constantize.include_deleted.find(params[:id]) #Finds the current model (User, EM, EO, Category)
-      
+
       if (params[:controller] != "users") #Search for parents is not necessary if we are altering users.
         activateParents(@model_to_activate)
+        @model_to_activate.revive
         activateChildren(@model_to_activate)
+      else
+        @model_to_activate.revive
       end
-      @model_to_activate.revive #Activate the model you had originally intended to activate
-      
+
       flash[:notice] = "Successfully reactivated " + params[:controller].singularize.titleize + ". Any related reservations or equipment have been reactivated as well."
     else
       flash[:notice] = "Only administrators can do that!"
