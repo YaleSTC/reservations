@@ -5,33 +5,18 @@ class ReservationsController < ApplicationController
   before_filter :require_checkout_person, :only => [:check_out, :check_in]
 
   def index
-    if current_user.can_checkout?
-      if params[:reserved]
-        @reservations_set = [Reservation.reserved].delete_if{|a| a.empty?} # remove empty arrays from set
-      elsif params[:checked_out]
-        @reservations_set = [Reservation.checked_out].delete_if{|a| a.empty?}
-      elsif params[:overdue]
-        @reservations_set = [Reservation.overdue].delete_if{|a| a.empty?}
-      elsif params[:missed]
-        @reservations_set = [Reservation.missed].delete_if{|a| a.empty?}
-      elsif params[:returned]
-        @reservations_set = [Reservation.returned].delete_if{|a| a.empty?}
-      else
-        @reservations_set = [Reservation.upcoming].delete_if{|a| a.empty?}
-      end
-    else # for normal and banned users
-      if params[:checked_out]
-        @reservations_set = [current_user.reservations.checked_out].delete_if{|a| a.empty?} # remove empty arrays from set
-      elsif params[:overdue]
-        @reservations_set = [current_user.reservations.overdue].delete_if{|a| a.empty?}
-      elsif params[:missed]
-        @reservations_set = [current_user.reservations.missed].delete_if{|a| a.empty?}
-      elsif params[:returned]
-        @reservations_set = [current_user.reservations.returned].delete_if{|a| a.empty?}
-      else
-        @reservations_set = [current_user.reservations.reserved].delete_if{|a| a.empty?}
+    #define our source of reservations depending on user status
+    reservations_source = (current_user.can_checkout? ? "Reservation" : "current_user.reservations").constantize
+    
+    filters = [:reserved, :checked_out, :overdue, :missed, :returned, :upcoming]
+    #if the filter is defined in the params, store those reservations
+    filters.each do |filter|
+      if params[filter]
+        @reservations_set = [reservations_source.send(filter)].delete_if{|a| a.empty?}
       end
     end
+    #if no filter is defined
+    @reservations_set ||= [reservations_source.send(:upcoming)].delete_if{|a| a.empty?}
   end
 
   def show
