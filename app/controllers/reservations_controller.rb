@@ -6,7 +6,8 @@ class ReservationsController < ApplicationController
 
   def index
     #define our source of reservations depending on user status
-    reservations_source = (current_user.can_checkout? ? "Reservation" : "current_user.reservations").constantize
+    reservations_source = current_user.can_checkout? ? Reservation : current_user.reservations
+    default_filter = current_user.can_checkout? ? :upcoming : :reserved
     
     filters = [:reserved, :checked_out, :overdue, :missed, :returned, :upcoming]
     #if the filter is defined in the params, store those reservations
@@ -15,20 +16,13 @@ class ReservationsController < ApplicationController
         @reservations_set = [reservations_source.send(filter)].delete_if{|a| a.empty?}
       end
     end
+    
     #if no filter is defined
-    @reservations_set ||= [reservations_source.send(:upcoming)].delete_if{|a| a.empty?}
+    @reservations_set ||= [reservations_source.send(default_filter)].delete_if{|a| a.empty?}    
   end
 
   def show
     @reservation = Reservation.find(params[:id])
-  end
-
-  def show_all # Action called in _reservations_list partial view, allows checkout person to view all current reservations for one user
-    @user = User.include_deleted.find(params[:user_id])
-    @user_overdue_reservations_set = [Reservation.overdue_user_reservations(@user)].delete_if{|a| a.empty?}
-    @user_checked_out_today_reservations_set = [Reservation.checked_out_today_user_reservations(@user)].delete_if{|a| a.empty?}
-    @user_checked_out_previous_reservations_set = [Reservation.checked_out_previous_user_reservations(@user)].delete_if{|a| a.empty?}
-    @user_reserved_reservations_set = [Reservation.reserved_user_reservations(@user)].delete_if{|a| a.empty?}
   end
 
   def new
