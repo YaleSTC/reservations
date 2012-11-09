@@ -20,7 +20,7 @@ class EquipmentObject < ActiveRecord::Base
   def status
     # last_reservation = Reservation.find(self.reservation_ids.last.to_s)
     self.reservations.each do |r|
-      if (!r.checked_out.nil?) && (r.status != "returned")
+      if !r.checked_out.nil? && r.checked_in.nil?
         return "checked out by #{r.reserver.name} through #{r.due_date.strftime("%b %d")}"
       end
     end
