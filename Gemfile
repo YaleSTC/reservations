@@ -1,28 +1,45 @@
 source "https://rubygems.org"
-gem 'whenever'
-gem 'net-ldap'
-gem 'paperclip'
-gem 'rake'
+
+#standard gems
 gem 'rails', '3.2.8'
 gem 'mysql2'
+gem 'rake'
 gem 'rdoc'
+
+#authentication
 gem 'rubycas-client-rails'
 gem 'rubycas-client', '2.2.1'
-gem 'dynamic_form'
+
+#I don't think this is necessary -adam
+#gem 'mail'
+
+#scheduling
+gem 'whenever'
+
+#ldap integration
+gem 'net-ldap'
+
+#attachments
+gem 'paperclip'
+
 gem 'permanent_records', '~> 2.1.2'
 gem 'nilify_blanks'
-gem 'mail'
-gem 'simple_form'
+
+#ui
 gem 'jquery_datepicker'
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'jquery-datatables-rails'
-gem 'cocoon'
 gem 'rails3-jquery-autocomplete'
-gem 'kaminari'
-gem 'redcarpet'
 gem 'select2-rails'
-gem 'airbrake'
+gem 'kaminari'
+
+#forms / formatting
+gem 'dynamic_form'
+gem 'simple_form'
+gem 'cocoon'
+gem 'redcarpet'
+
 
 
 group :development, :test do
@@ -53,8 +70,10 @@ group :development do
   gem 'pry-debugger'
   gem 'pry-stack_explorer'
   gem 'pry-remote'
+  gem 'letter_opener' 
 end
 
 group :production do
-  gem "therubyracer", :require => 'v8'
+  gem 'therubyracer', :require => 'v8'
+  gem 'airbrake'
 end

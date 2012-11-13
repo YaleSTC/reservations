@@ -15,13 +15,15 @@ Reservations::Application.configure do
 
   # Don't care if the mailer can't send
   config.action_mailer.raise_delivery_errors = false
+  
+  # Use letter_opener for development mail testing
+  config.action_mailer.delivery_method = :letter_opener
 
   # Print deprecation notices to the Rails logger
   config.active_support.deprecation = :log
 
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
-
 
   #Rails 3 assets
   config.assets.compile = true

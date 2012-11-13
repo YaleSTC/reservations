@@ -123,6 +123,10 @@ GEM
     kaminari (0.14.1)
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
+    launchy (2.1.2)
+      addressable (~> 2.3)
+    letter_opener (1.0.0)
+      launchy (>= 2.0.4)
     libv8 (3.3.10.4)
     libwebsocket (0.1.5)
       addressable
@@ -281,7 +285,7 @@ DEPENDENCIES
   jquery-ui-rails
   jquery_datepicker
   kaminari
-  mail
+  letter_opener
   mysql2
   net-ldap
   nilify_blanks
