@@ -10,9 +10,6 @@ gem 'rdoc'
 gem 'rubycas-client-rails'
 gem 'rubycas-client', '2.2.1'
 
-#I don't think this is necessary -adam
-#gem 'mail'
-
 #scheduling
 gem 'whenever'
 
