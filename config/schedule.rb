@@ -20,7 +20,13 @@
 # Learn more: http://github.com/javan/whenever
 
 every 1.day, :at => '5:00 am' do
-  rake "mailman"
-  rake "unfulfilled"
+  #rake "send_upcoming_checkout_reminder"
+  rake "send_upcoming_checkin_reminder"
+  rake "send_overdue_checkout_reminder"
+  rake "send_overdue_checkin_reminder"
+  
+  rake "send_reservation_notes"
+  
+  #rake "unfulfilled"
 end
 

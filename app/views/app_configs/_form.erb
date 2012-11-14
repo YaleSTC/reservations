@@ -39,11 +39,12 @@
     You can use the following variables in each email:
   </p>
   <dl>
-    <dt>@user@</dt><dd>The full name of the particular user.</dd>
+    <dt>@user@</dt><dd>The full name of the user.</dd>
     <dt>@equipment_list@</dt><dd>The list of equipment that user either has reserved, missed, overdue, or checked out.</dd>
+    <dt>@reservation_id@</dt><dd>The id number of the reservation.</dd>
     <dt>@department_name@</dt><dd>The department name set above.</dd>
-    <dt>@return_date@</dt><dd>The due date for the particular reservation.</dd>
-    <dt>@late_fee@</dt><dd>The daily late fee for the equipment models in the particular reservation.</dd>
+    <dt>@return_date@</dt><dd>The due date for the reservation.</dd>
+    <dt>@late_fee@</dt><dd>The daily late fee for the equipment model in the reservation.</dd>
   </dl>
   <hr />
   <%= f.input :upcoming_checkin_email_active, label: 'Enable upcoming check-in notification?', 

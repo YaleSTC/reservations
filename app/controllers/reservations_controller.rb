@@ -141,13 +141,15 @@ class ReservationsController < ApplicationController
 
           # add procedures_not_done to r.notes so admin gets the errors
           # if no notes and some procedures not done
-          if (reservation_hash[:notes] == ('' or NIL)) and (!procedures_not_done.blank?)
-            r.notes = "The following checkout procedures were not performed:\n" + procedures_not_done
-          elsif procedures_not_done.blank? # if all procedures were done
-            r.notes = reservation_hash[:notes]
-          else # if there is a note and some checkout procedures were not done
+
+          if procedures_not_done.present?
             r.notes = reservation_hash[:notes] + "\n\nThe following checkout procedures were not performed:\n" + procedures_not_done
+            r.notes_unsent = true
+          elsif reservation_hash[:notes].present? # if all procedures were done
+            r.notes = reservation_hash[:notes]
+            r.notes_unsent = true           
           end
+          r.notes.strip!
 
           # put the data into the container we defined at the beginning of this action
           reservations_to_be_checked_out << r
@@ -186,7 +188,7 @@ class ReservationsController < ApplicationController
 
       # save reservations
       reservations_to_be_checked_out.each do |reservation| # updates to reservations are saved
-        reservation.save # save!
+        reservation.save! # save!
       end
 
       # prep for receipt page and exit
@@ -194,6 +196,8 @@ class ReservationsController < ApplicationController
       @check_in_set = []
       @check_out_set = reservations_to_be_checked_out
       render 'receipt' and return
+  rescue Exception => e
+    redirect_to manage_reservations_for_user_path(reservations_to_be_checked_out.first.reserver), :flash => {:error => "Oops, something went wrong checking in your reservation.<br/> #{e.message}".html_safe}
   end
 
   def checkin
@@ -216,14 +220,17 @@ class ReservationsController < ApplicationController
         end
 
         # add procedures_not_done to r.notes so admin gets the errors
-        # if no notes and some procedures not done
-        if (reservation_hash[:notes] == ("" or NIL)) and (!procedures_not_done.blank?)
-          r.notes = "\n\nThe following check-in procedures were not performed:\n" + procedures_not_done
-        elsif procedures_not_done.blank? # if all procedures were done
-          r.notes = "\n\n" + reservation_hash[:notes] # add blankline because there may well have been previous notes
-        else # if there is a note and some checkout procedures were not done
-          r.notes = "\n\n" + reservation_hash[:notes] + "\n\nThe following check-in procedures were not performed:\n" + procedures_not_done
+        previous_notes = r.notes.present? ? "Check-in Notes:\n" + r.notes + "\n\n" : ""
+        new_notes = "\n\nCheck Out Notes:\n" + reservation_hash[:notes]
+
+        if procedures_not_done.present?
+          r.notes = previous_notes + new_notes + "\n\nThe following check-in procedures were not performed:\n" + procedures_not_done
+          r.notes_unsent = true
+        elsif new_notes.present? # if all procedures were done
+          r.notes = previous_notes + new_notes # add blankline because there may well have been previous notes
+          r.notes_unsent = true
         end
+        r.notes.strip!
 
         # put the data into the container we defined at the beginning of this action
         reservations_to_be_checked_in << r
@@ -238,7 +245,7 @@ class ReservationsController < ApplicationController
 
     # save the reservations
     reservations_to_be_checked_in.each do |reservation|
-      reservation.save
+      reservation.save!
     end
 
     # prep for receipt page and exit
@@ -246,6 +253,8 @@ class ReservationsController < ApplicationController
     @check_in_set = reservations_to_be_checked_in
     @check_out_set = []
     render 'receipt' and return
+  rescue Exception => e
+    redirect_to manage_reservations_for_user_path(reservations_to_be_checked_in.first.reserver), :flash => {:error => "Oops, something went wrong checking in your reservation.<br/> #{e.message}".html_safe}
   end
 
   def destroy

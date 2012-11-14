@@ -1,6 +1,15 @@
 <% title @user.first_name + " " + (!@user.nickname.blank? ? "(#{@user.nickname}) " : "") + @user.last_name %>
 <% subtitle @user.login %>
 
+<% if current_user.can_checkout? %>
+  <div class="row">
+    <div class="span9">
+      <%= render :partial => 'reservations/top_buttons', :locals => {:reserver => @user} %>
+    </div>
+  </div>
+  <hr>
+<% end %>
+
 <div class="row">
   <div id="bool_labels" class="span9">
     <% if current_user.is_admin_in_adminmode? %>
@@ -11,18 +20,6 @@
     <% end %>
   </div>
 </div>
-
-<% if current_user.can_checkout? %>
-  <div class="row">
-    <div class="span9">
-      <div class="btn-group">
-          <%= link_to 'Manage Reservations', manage_reservations_for_user_path(@user.id), :class => 'btn btn-inverse' %>
-          <%= link_to 'Current Reservations', current_reservations_for_user_path(@user.id), :class => 'btn btn-inverse' %>
-      </div>
-    </div>
-  </div>
-  <hr>
-<% end %>
 
 
 <div class="row">
