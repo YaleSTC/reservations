@@ -10,7 +10,7 @@ class EquipmentObject < ActiveRecord::Base
   
   attr_accessible :name, :serial, :equipment_model_id, :deleted_at
   
-   default_scope where(:deleted_at => nil)
+  default_scope where(:deleted_at => nil)
    
     def self.include_deleted
       self.unscoped

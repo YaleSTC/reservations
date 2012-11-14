@@ -47,6 +47,7 @@ group :development, :test do
   gem 'yajl-ruby'
   gem 'ffaker'
   gem 'capistrano'
+  gem 'awesome_print'
 end
 
 # Gems used only for assets and not required

@@ -40,6 +40,7 @@ GEM
       builder
       girl_friday
     arel (3.0.2)
+    awesome_print (1.1.0)
     binding_of_caller (0.6.8)
     bootstrap-sass (2.0.4.2)
     builder (3.0.4)
@@ -272,6 +273,7 @@ PLATFORMS
 
 DEPENDENCIES
   airbrake
+  awesome_print
   bootstrap-sass (~> 2.0.3)
   capistrano
   capybara

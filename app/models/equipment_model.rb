@@ -179,27 +179,24 @@ class EquipmentModel < ActiveRecord::Base
     return false
   end
 
-  def reserved_count(date) #Returns the number of reserved objects for a particular model, as long as they have not been checked in or out
-    Reservation.where("checked_out IS NULL and checked_in IS NULL and equipment_model_id = ? and start_date <= ? and due_date >= ?", self.id, date.to_time.utc, date.to_time.utc).size
+  # Returns the number of reserved objects for a particular model, 
+  # as long as they have not been checked out
+  def number_reserved_on_date(date) 
+    Reservation.reserved_on_date(date).not_returned.for_eq_model(self).size
   end
 
-  def overdue_count(date) #Returns the number of overdue objects for a given model, as long as they have been checked out.
-    Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and equipment_model_id = ? and due_date < ?", self.id, Date.today.to_time.utc).size
+  # Returns the number of overdue objects for a given model, 
+  # as long as they have been checked out.
+  def number_overdue 
+    Reservation.overdue.where(equipment_model_id: self.id).size
   end
 
-  def checked_out(date) #Returns the number of objects for a particular model that are checked out, and not overdue.
-    Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and equipment_model_id = ? and due_date >= ?", self.id, Date.today.to_time.utc).size
-  end
 
   def available_count(date)
     # get the total number of objects of this kind
-    # then subtract the total quantity currently checked out, reserved, and overdue
-    reserved_count = self.reserved_count(date)
-    checked_out = self.checked_out(date)
-    overdue_count = self.overdue_count(date)
-    total_count = self.equipment_objects.count
-
-    total_count - reserved_count - overdue_count - checked_out
+    # then subtract the total quantity currently reserved, and overdue
+    total = equipment_objects.count
+    (total - number_reserved_on_date(date)) - number_overdue
   end
 
   def available_object_select_options

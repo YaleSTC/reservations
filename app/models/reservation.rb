@@ -29,12 +29,15 @@ class Reservation < ActiveRecord::Base
   scope :returned, where("checked_in IS NOT NULL and checked_out IS NOT NULL")
   scope :returned_on_time, where("checked_in IS NOT NULL and checked_out IS NOT NULL and due_date >= checked_in").recent
   scope :returned_overdue, where("checked_in IS NOT NULL and checked_out IS NOT NULL and due_date < checked_in").recent
+  scope :not_returned, where("checked_in IS NULL")
   scope :missed, lambda {where("checked_out IS NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc).recent}
   scope :upcoming, lambda {where("checked_out IS NULL and checked_in IS NULL and start_date = ? and due_date > ?", Time.now.midnight.utc, Time.now.midnight.utc).user_sort }
   scope :reserver_is_in, lambda {|user_id_arr| where(:reserver_id => user_id_arr)}
   scope :starts_on_days, lambda {|start_date, end_date|  where(:start_date => start_date..end_date)}
+  scope :reserved_on_date, lambda {|date|  where("start_date <= ? and due_date >= ?", date.to_time.utc, date.to_time.utc)}
+  scope :for_eq_model, lambda { |eq_model| where(equipment_model_id: eq_model.id) }
   scope :active, where("checked_in IS NULL") #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
-  scope :notes_unsent, :conditions => {:notes_unsent => true}
+  scope :notes_unsent, where(:notes_unsent => true)
 
   #TODO: Why the duplication in checkout_handler and checkout_handler_id (etc)?
   attr_accessible :checkout_handler, :checkout_handler_id,
