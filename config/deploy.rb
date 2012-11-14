@@ -1,8 +1,8 @@
 require 'bundler/capistrano'
 
 # == DEPLOYMENT DEFAULTS =========
-default_domain = ENV['DOMAIN'] ? ENV['DOMAIN'] : "mahi.its.yale.edu"
-default_application_prefix = ENV['PREFIX'] ? ENV['PREFIX'] : "reservations_test"
+default_domain = ENV['DOMAIN'] ? ENV['DOMAIN'] : "ulua.its.yale.edu"
+default_application_prefix = ENV['PREFIX'] ? ENV['PREFIX'] : "bmec"
 default_branch = ENV['BRANCH'] ? ENV['BRANCH'] : "master"
 
 # == INITIAL CONFIG ==============

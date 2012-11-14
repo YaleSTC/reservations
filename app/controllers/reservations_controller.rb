@@ -149,7 +149,7 @@ class ReservationsController < ApplicationController
             r.notes = reservation_hash[:notes]
             r.notes_unsent = true           
           end
-          r.notes.strip!
+          r.notes.strip! if r.notes?
 
           # put the data into the container we defined at the beginning of this action
           reservations_to_be_checked_out << r
@@ -230,7 +230,7 @@ class ReservationsController < ApplicationController
           r.notes = previous_notes + new_notes # add blankline because there may well have been previous notes
           r.notes_unsent = true
         end
-        r.notes.strip!
+        r.notes.strip! if r.notes?
 
         # put the data into the container we defined at the beginning of this action
         reservations_to_be_checked_in << r
@@ -254,7 +254,7 @@ class ReservationsController < ApplicationController
     @check_out_set = []
     render 'receipt' and return
   rescue Exception => e
-    redirect_to manage_reservations_for_user_path(reservations_to_be_checked_in.first.reserver), :flash => {:error => "Oops, something went wrong checking in your reservation.<br/> #{e.message}".html_safe}
+    redirect_to :back, :flash => {:error => "Oops, something went wrong checking in your reservation.<br/> #{e.message}".html_safe}
   end
 
   def destroy
