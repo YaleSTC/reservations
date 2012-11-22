@@ -17,7 +17,9 @@
     <tr>
       <td><%= link_to reservation.id, reservation %></td>
       <% if current_user.can_checkout? %>
-        <% if (reservation.reserver) %>
+        
+        <% begin %>
+          <% reservation.reserver %>
           <td>
           <div class="dropdown">
               <%= link_to reservation.reserver.name, '#', :"data-toggle" => 'dropdown' %>
@@ -30,8 +32,7 @@
               <% end %>
             </div>
           </td>
-
-        <% else %>
+        <% rescue %>
           <td>User no longer exists</td>
         <% end %>
       <% end %>
