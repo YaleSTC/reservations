@@ -24,6 +24,10 @@ class Category < ActiveRecord::Base
   
   nilify_blanks :only => [:deleted_at]  
 
+  # table_name is needed to resolve ambiguity for certain queries with 'includes'
+  scope :active, where("#{table_name}.deleted_at is null")
+
+
   def self.catalog_search(query)
     if query.blank? # if the string is blank, return all
       active
