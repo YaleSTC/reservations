@@ -19,8 +19,8 @@ module ActivationHelper
 
   def activateParents(current_model)
     if (current_model.class == EquipmentObject) #Equipment Objects have EMs and Categories that may need to be reactivated
-      Category.include_deleted.find(EquipmentModel.include_deleted.find(current_model.equipment_model_id).category_id).revive #Reactivate the Category
-      EquipmentModel.include_deleted.find(current_model.equipment_model_id).revive #Reactivate the EM
+      Category.include_deleted.find(EquipmentModel.find(current_model.equipment_model_id).category_id).revive #Reactivate the Category
+      EquipmentModel.find(current_model.equipment_model_id).revive #Reactivate the EM
     elsif (current_model.class == EquipmentModel) #EMs have Categories that may need to be reactivated
       Category.include_deleted.find(current_model.category_id).revive #Reactivate the category
     end
@@ -28,7 +28,7 @@ module ActivationHelper
 
   def activateChildren(current_model)
     if (current_model.class == Category) #Categories have EMs that need to be reactivated, and each of those EMs has EOs that need to be reactivated.
-      EquipmentModel.include_deleted.where(category_id: current_model.id).each do |em|
+      current_model.equipment_models.each do |em|
         em.revive
         EquipmentObject.include_deleted.where(equipment_model_id: em.id).each do |eo|
           eo.revive

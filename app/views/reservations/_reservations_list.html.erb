@@ -17,7 +17,7 @@
     <tr>
       <td><%= link_to reservation.id, reservation %></td>
       <% if current_user.can_checkout? %>
-        
+        <% #TODO - replace hacky code with a presenter class for reservations which is smarter about this  %>        
         <% begin %>
           <% reservation.reserver %>
           <td>
@@ -36,7 +36,7 @@
           <td>User no longer exists</td>
         <% end %>
       <% end %>
-      <td><%= link_to EquipmentModel.include_deleted.find(reservation.equipment_model_id).name, EquipmentModel.include_deleted.find(reservation.equipment_model_id) %></td>
+      <td><%= link_to reservation.equipment_model.name, reservation.equipment_model %></td>
       <td>
         <% if !reservation.equipment_object.nil? %>
           <%= reservation.equipment_object.name %>

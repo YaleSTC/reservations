@@ -10,19 +10,19 @@ class EquipmentModelsController < ApplicationController
   def index
     if params[:category_id] && params[:show_deleted]
       @category = Category.include_deleted.find(params[:category_id])
-      @equipment_models = EquipmentModel.include_deleted.where(category_id: params[:category_id])
+      @equipment_models = @category.equipment_models
     elsif params[:category_id]
-       @category = Category.include_deleted.find(params[:category_id])
-       @equipment_models = @category.equipment_models
+      @category = Category.include_deleted.find(params[:category_id])
+      @equipment_models = @category.equipment_models.active
     elsif params[:show_deleted]
-      @equipment_models = EquipmentModel.include_deleted.find(:all, :include => :category, :order => 'categories.name ASC, equipment_models.name ASC')
-    else
       @equipment_models = EquipmentModel.find(:all, :include => :category, :order => 'categories.name ASC, equipment_models.name ASC')
+    else
+      @equipment_models = EquipmentModel.active.find(:all, :include => :category, :order => 'categories.name ASC, equipment_models.name ASC')
     end
   end
 
   def show
-    @equipment_model = EquipmentModel.include_deleted.find(params[:id])
+    @equipment_model = EquipmentModel.find(params[:id])
     @associated_equipment_models = @equipment_model.associated_equipment_models.sample(6)
   end
 
@@ -43,11 +43,11 @@ class EquipmentModelsController < ApplicationController
   end
 
   def edit
-    @equipment_model = EquipmentModel.include_deleted.find(params[:id])
+    @equipment_model = EquipmentModel.find(params[:id])
   end
 
   def update
-    @equipment_model = EquipmentModel.include_deleted.find(params[:id])
+    @equipment_model = EquipmentModel.find(params[:id])
 
     unless params[:clear_documentation].nil? # if we want to delete the current docs
       # recursively remove files from filesystem
@@ -72,7 +72,7 @@ class EquipmentModelsController < ApplicationController
   end
 
   def destroy
-    @equipment_model = EquipmentModel.include_deleted.find(params[:id])
+    @equipment_model = EquipmentModel.find(params[:id])
     @equipment_model.destroy(:force)
     flash[:notice] = "Successfully destroyed equipment model."
     redirect_to equipment_models_url

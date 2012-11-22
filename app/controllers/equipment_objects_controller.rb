@@ -8,7 +8,7 @@ class EquipmentObjectsController < ApplicationController
   def index
     @equipment_objects = EquipmentObject.all
     if params[:equipment_model_id]
-      @equipment_model = EquipmentModel.include_deleted.find(params[:equipment_model_id])
+      @equipment_model = EquipmentModel.find(params[:equipment_model_id])
       @equipment_objects = @equipment_model.equipment_objects
     elsif params[:show_accessories]
       @equipment_objects = EquipmentObject.include_deleted.find(:all, :include => :equipment_model, :order => 'equipment_models.name ASC, equipment_objects.name ASC')
@@ -25,7 +25,7 @@ class EquipmentObjectsController < ApplicationController
   end
   
   def new
-    @equipment_model = EquipmentModel.include_deleted.find(params[:equipment_model_id]) if params[:equipment_model_id]
+    @equipment_model = EquipmentModel.find(params[:equipment_model_id]) if params[:equipment_model_id]
     @equipment_object = EquipmentObject.new(:equipment_model => @equipment_model)
   end
   

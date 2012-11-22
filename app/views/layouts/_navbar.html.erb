@@ -48,7 +48,7 @@
                 <% unless @current_reservations.blank? %>
                   <% @current_reservations.each do |res| %>
                     <li>
-                      <%= link_to "#{EquipmentModel.include_deleted.find(res.equipment_model_id).name}
+                      <%= link_to "#{res.equipment_model.name}
                                    (#{res.start_date.to_date.to_s(:long)} &ndash;
                                    #{res.due_date.to_date.to_s(:long)})".html_safe, res, rel: 'popover',
                                    title: res.equipment_model.name, :"data-content" => markdown(res.equipment_model.description).truncate(100) %>

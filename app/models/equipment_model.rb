@@ -1,12 +1,26 @@
 class EquipmentModel < ActiveRecord::Base
   include ApplicationHelper
 
-  has_and_belongs_to_many :requirements
+  nilify_blanks :only => [:deleted_at]
+
+  attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee,
+      :max_per_user, :document_attributes, :accessory_ids, :deleted_at,
+      :checkout_procedures_attributes, :checkin_procedures_attributes, :photo,
+      :documentation, :max_renewal_times, :max_renewal_length, :renewal_days_before_due, 
+      :associated_equipment_model_ids, :requirement_ids, :requirements
+
+  # table_name is needed to resolve ambiguity for certain queries with 'includes'
+  scope :active, where("#{table_name}.deleted_at is null")
+
+  ##################
+  ## Associations ##
+  ##################
+
   belongs_to :category
+  has_and_belongs_to_many :requirements
   has_many :equipment_objects
   has_many :documents
   has_many :reservations
-
   has_many :checkin_procedures, :dependent => :destroy
   accepts_nested_attributes_for :checkin_procedures, \
                                 :reject_if => :all_blank, :allow_destroy => true
@@ -21,8 +35,10 @@ class EquipmentModel < ActiveRecord::Base
     :association_foreign_key => "associated_equipment_model_id",
     :join_table => "equipment_models_associated_equipment_models"
 
-  ## Validations ##
-
+  ##################
+  ## Validations  ##
+  ##################
+  
   validates :name,
             :description,
             :category,     :presence => true
@@ -43,41 +59,22 @@ class EquipmentModel < ActiveRecord::Base
       errors.add(:associated_equipment_models, "You cannot associate a model with itself. Please deselect " + self.name)
     end
   end
+  
+  #################
+  ## Paperclip   ##
+  #################
 
-  nilify_blanks :only => [:deleted_at]
-
-  attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee,
-                  :max_per_user, :document_attributes, :accessory_ids, :deleted_at,
-                  :checkout_procedures_attributes, :checkin_procedures_attributes, :photo,
-                  :documentation, :max_renewal_times, :max_renewal_length, :renewal_days_before_due, :associated_equipment_model_ids,
-                  :requirement_ids, :requirements
-
-  default_scope where(:deleted_at => nil)
-
-  def self.include_deleted
-    self.unscoped
-  end
-
-  def self.catalog_search(query)
-    if query.blank? # if the string is blank, return all
-      find(:all)
-    else # in all other cases, search using the query text
-      find(:all, :conditions => ['name LIKE :query OR description LIKE :query', {:query => "%#{query}%"}])
-    end
-  end
-
-  #Code necessary for Paperclip and image/pdf uploading
   has_attached_file :photo, #generates profile picture
       :styles => {
-                            :large => { :geometry => "500x500", :format => "png" },
-                            :medium => { :geometry => "250x250", :format => "png" },
-                            :small => { :geometry => "150x150", :format => "png" },
-                            :thumbnail => { :geometry => "260x180", :format => "png" } },
+        :large => { :geometry => "500x500", :format => "png" },
+        :medium => { :geometry => "250x250", :format => "png" },
+        :small => { :geometry => "150x150", :format => "png" },
+        :thumbnail => { :geometry => "260x180", :format => "png" } },
       :convert_options => {
-                            :large => '-background none -gravity center -extent 500x500',
-                            :medium => '-background none -gravity center -extent 250x250',
-                            :small => '-background none -gravity center -extent 150x150',
-                            :thumbnail => '-background none -gravity center -extent 260x180' },
+        :large => '-background none -gravity center -extent 500x500',
+        :medium => '-background none -gravity center -extent 250x250',
+        :small => '-background none -gravity center -extent 150x150',
+        :thumbnail => '-background none -gravity center -extent 260x180' },
       :url  => "/attachments/equipment_models/:attachment/:id/:style/:basename.:extension",
       :path => ":rails_root/public/attachments/equipment_models/:attachment/:id/:style/:basename.:extension",
       :default_url => "/fat_cat.jpeg",
@@ -85,18 +82,17 @@ class EquipmentModel < ActiveRecord::Base
 
 
   has_attached_file :documentation, #generates document
-                    :content_type => 'application/pdf',
-                    :url => "/attachments/equipment_models/:attachment/:id/:style/:basename.:extension",
-                    :path => ":rails_root/public/attachments/equipment_models/:attachment/:id/:style/:basename.:extension",
-                    :preserve_files => true
+      :content_type => 'application/pdf',
+      :url => "/attachments/equipment_models/:attachment/:id/:style/:basename.:extension",
+      :path => ":rails_root/public/attachments/equipment_models/:attachment/:id/:style/:basename.:extension",
+      :preserve_files => true
 
   validates_attachment_content_type :photo,
-                                    :content_type => ["image/jpg", "image/png", "image/jpeg"],
-                                    :message => "must be jpeg, jpg, or png."
+      :content_type => ["image/jpg", "image/png", "image/jpeg"],
+      :message => "must be jpeg, jpg, or png."
   validates_attachment_size         :photo,
-                                    :less_than => 1.megabytes,
-                                    :message => "must be less than 1 MB in size"
-
+      :less_than => 1.megabytes,
+      :message => "must be less than 1 MB in size"
   validates_attachment :documentation, :content_type => { :content_type => "application/pdf" }
 
   Paperclip.interpolates :normalized_photo_name do |attachment, style|
@@ -117,7 +113,7 @@ class EquipmentModel < ActiveRecord::Base
     else # in all other cases, search using the query text
       results = []
       query.split.each do |q|
-        results << where("name LIKE :query OR description LIKE :query", {:query => "%#{q}%"})
+        results << active.where("name LIKE :query OR description LIKE :query", {:query => "%#{q}%"})
       end
       # take the intersection of the results for each word 
       # i.e. choose results matching all terms
@@ -125,6 +121,7 @@ class EquipmentModel < ActiveRecord::Base
     end
   end
 
+  #TODO: this appears to be dead code - verify and remove
   def self.select_options
     self.order('name ASC').collect{|item| [item.name, item.id]}
   end
@@ -175,15 +172,6 @@ class EquipmentModel < ActiveRecord::Base
     return false
   end
 
-  # TODO: convert this to an SQL call?
-  def has_requirement?(model)
-    Requirement.all.each do |req|
-      if req.equipment_models.include?(self)
-        return true
-      end
-    end
-    return false
-  end
 
   # Returns the number of reserved objects for a particular model, 
   # as long as they have not been checked out
