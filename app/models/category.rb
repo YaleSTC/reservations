@@ -18,7 +18,7 @@ class Category < ActiveRecord::Base
               :greater_than_or_equal_to => 0 }
   
   attr_accessible :name, :max_per_user, 
-                  :max_checkout_length, :deleted_at, :
+                  :max_checkout_length, :deleted_at,
                   :max_renewal_times, :max_renewal_length, 
                   :renewal_days_before_due
   
