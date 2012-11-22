@@ -17,24 +17,18 @@
     <tr>
       <td><%= link_to reservation.id, reservation %></td>
       <% if current_user.can_checkout? %>
-        <% #TODO - replace hacky code with a presenter class for reservations which is smarter about this  %>        
-        <% begin %>
-          <% reservation.reserver %>
-          <td>
-          <div class="dropdown">
-              <%= link_to reservation.reserver.name, '#', :"data-toggle" => 'dropdown' %>
-              <% if current_user.can_checkout? %>
+        <td>
+        <div class="dropdown">
+            <%= link_to reservation.reserver.name, '#', :"data-toggle" => 'dropdown' %>
+            <% if current_user.can_checkout? && reservation.reserver.id %>
               <ul class="dropdown-menu">
                 <li><%= link_to 'Profile', reservation.reserver %></li>
                 <li><%= link_to "Manage reservations", manage_reservations_for_user_path(reservation.reserver.id) %></li>
                 <li><%= link_to "Current reservations", current_reservations_for_user_path(reservation.reserver.id) %></li>
               </ul>
-              <% end %>
-            </div>
-          </td>
-        <% rescue %>
-          <td>User no longer exists</td>
-        <% end %>
+            <% end %>
+          </div>
+        </td>
       <% end %>
       <td><%= link_to reservation.equipment_model.name, reservation.equipment_model %></td>
       <td>

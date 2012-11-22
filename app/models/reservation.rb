@@ -47,6 +47,15 @@ class Reservation < ActiveRecord::Base
 
   def reserver
     User.include_deleted.find(self.reserver_id)
+  rescue 
+    #if user's been deleted, return a dummy user
+    User.new( first_name: "Deleted", 
+              last_name: "User", 
+              login: "deleted", 
+              email: "deleted.user@invalid.address",
+              nickname: "",
+              phone: "555-555-5555",
+              affiliation: "Deleted")
   end
 
   def status
