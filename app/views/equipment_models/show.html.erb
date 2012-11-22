@@ -1,5 +1,5 @@
 <% title @equipment_model.name %>
-<% subtitle Category.include_deleted.find(@equipment_model.category_id).name %>
+<% subtitle Category.find(@equipment_model.category_id).name %>
 
 
 <!-- EQUIPMENT MODEL INFO BOX -->
@@ -269,6 +269,6 @@
     <%= link_to "Edit "+@equipment_model.name.truncate(30), edit_equipment_model_path(@equipment_model), :class => 'btn' %>
     <%= link_to "Destroy "+@equipment_model.name.truncate(30), @equipment_model, :confirm => 'This will permanently delete the Item from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete, :class => 'btn btn-danger' %>
   <% end %>
-  <%= link_to "View All "+ Category.include_deleted.find(@equipment_model.category_id)
-.name.pluralize.truncate(30), category_equipment_models_path(Category.include_deleted.find(@equipment_model.category_id)), :class => 'btn view_all' %>
+  <%= link_to "View All "+ Category.find(@equipment_model.category_id)
+.name.pluralize.truncate(30), category_equipment_models_path(Category.find(@equipment_model.category_id)), :class => 'btn view_all' %>
 </div>

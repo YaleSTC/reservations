@@ -9,10 +9,10 @@ class EquipmentModelsController < ApplicationController
 
   def index
     if params[:category_id] && params[:show_deleted]
-      @category = Category.include_deleted.find(params[:category_id])
+      @category = Category.find(params[:category_id])
       @equipment_models = @category.equipment_models
     elsif params[:category_id]
-      @category = Category.include_deleted.find(params[:category_id])
+      @category = Category.find(params[:category_id])
       @equipment_models = @category.equipment_models.active
     elsif params[:show_deleted]
       @equipment_models = EquipmentModel.find(:all, :include => :category, :order => 'categories.name ASC, equipment_models.name ASC')
@@ -27,7 +27,7 @@ class EquipmentModelsController < ApplicationController
   end
 
   def new
-    @category = Category.include_deleted.find(params[:category_id]) if params[:category_id]
+    @category = Category.find(params[:category_id]) if params[:category_id]
     @equipment_model = EquipmentModel.new(:category => @category)
   end
 
