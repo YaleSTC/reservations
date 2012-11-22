@@ -106,11 +106,32 @@ class EquipmentModel < ActiveRecord::Base
   def normalized_photo_name
     "#{self.id}-#{self.photo_file_name.gsub( /[^a-zA-Z0-9_\.]/, '_')}"
   end
-  # end of Paperclip code.
 
+  ###################
+  ## Class Methods ##
+  ###################
 
-  ## Functions ##
+  def self.catalog_search(query)
+    if query.blank? # if the string is blank, return all
+      active
+    else # in all other cases, search using the query text
+      results = []
+      query.split.each do |q|
+        results << where("name LIKE :query OR description LIKE :query", {:query => "%#{q}%"})
+      end
+      # take the intersection of the results for each word 
+      # i.e. choose results matching all terms
+      results.inject(:&)
+    end
+  end
 
+  def self.select_options
+    self.order('name ASC').collect{|item| [item.name, item.id]}
+  end
+
+  ######################
+  ## Instance Methods ##
+  ######################
 
   #inherits from category if not defined
   def maximum_per_user
@@ -129,18 +150,10 @@ class EquipmentModel < ActiveRecord::Base
     renewal_days_before_due || category.maximum_renewal_days_before_due
   end
 
-  def self.select_options
-    self.order('name ASC').collect{|item| [item.name, item.id]}
-  end
-
   def document_attributes=(document_attributes)
     document_attributes.each do |attributes|
       documents.build(attributes)
     end
-  end
-
-  def photos
-    self.documents.images
   end
 
   #TODO: blackout vs validation
@@ -150,7 +163,6 @@ class EquipmentModel < ActiveRecord::Base
     end
     availability.min
   end
-
   
   # Returns true if the reserver is ineligible to checkout the model.
   def model_restricted?(reserver_id)
@@ -198,10 +210,6 @@ class EquipmentModel < ActiveRecord::Base
         .sort_by(&:name)\
         .collect{|item| "<option value=#{item.id}>#{item.name}</option>"}\
         .join.html_safe
-  end
-
-  def fake_category_id
-    self
   end
 
 end
