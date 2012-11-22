@@ -9,13 +9,9 @@ class EquipmentObject < ActiveRecord::Base
   nilify_blanks :only => [:deleted_at]
   
   attr_accessible :name, :serial, :equipment_model_id, :deleted_at
-  
-  default_scope where(:deleted_at => nil)
-   
-    def self.include_deleted
-      self.unscoped
-    end
 
+  # table_name is needed to resolve ambiguity for certain queries with 'includes'
+  scope :active, where("#{table_name}.deleted_at is null")
 
   def status
     # last_reservation = Reservation.find(self.reservation_ids.last.to_s)
@@ -33,10 +29,15 @@ class EquipmentObject < ActiveRecord::Base
   
   def self.catalog_search(query)
     if query.blank? # if the string is blank, return all
-      find(:all)
+      active
     else # in all other cases, search using the query text
-      find(:all, :conditions => ['name LIKE :query OR serial LIKE :query', {:query => "%#{query}%"}])
+      results = []
+      query.split.each do |q|
+        results << active.where("name LIKE :query OR serial LIKE :query", {:query => "%#{q}%"})
+      end
+      # take the intersection of the results for each word 
+      # i.e. choose results matching all terms
+      results.inject(:&)
     end
   end
-
 end
