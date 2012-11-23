@@ -22,7 +22,7 @@
   <%= f.error_messages %>
   <p>
     The following equipment will be reserved by
-    <%= User.include_deleted.find(cart.reserver_id).name %>
+    <%= User.find(cart.reserver_id).name %>
     from
     <%= cart.start_date.to_s(:long) %> to
     <%= cart.due_date.to_s(:long) %>:

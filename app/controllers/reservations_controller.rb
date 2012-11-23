@@ -270,13 +270,13 @@ class ReservationsController < ApplicationController
   end
 
   def manage # initializer
-    @user = User.include_deleted.find(params[:user_id])
+    @user = User.find(params[:user_id])
     @check_out_set = Reservation.due_for_checkout(@user)
     @check_in_set = Reservation.due_for_checkin(@user)
   end
 
   def current
-    @user = User.include_deleted.find(params[:user_id])
+    @user = User.find(params[:user_id])
 
     @user_overdue_reservations_set = [Reservation.overdue_user_reservations(@user)].delete_if{|a| a.empty?}
     @user_checked_out_today_reservations_set = [Reservation.checked_out_today_user_reservations(@user)].delete_if{|a| a.empty?}

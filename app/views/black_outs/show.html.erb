@@ -23,7 +23,7 @@
 
 <p>
   <b>Last Edited by:</b>
-  <%= User.include_deleted.find(@black_out.created_by).name %>
+  <%= User.find(@black_out.created_by).name %>
 </p>
 
 <p>

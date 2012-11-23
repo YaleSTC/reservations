@@ -46,7 +46,7 @@ class Reservation < ActiveRecord::Base
                   :equipment_object_id, :notes, :notes_unsent, :times_renewed
 
   def reserver
-    User.include_deleted.find(self.reserver_id)
+    User.find(self.reserver_id)
   rescue 
     #if user's been deleted, return a dummy user
     User.new( first_name: "Deleted", 

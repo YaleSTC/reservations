@@ -32,15 +32,9 @@ class User < ActiveRecord::Base
                           :acceptance => {:accept => true, :message => "You must accept the terms of service."},
                           on: :create,
                           :if => Proc.new { |u| !u.created_by_admin == "true" }
-                          
-                          
-                          
 
-   default_scope where(:deleted_at => nil)
-   
-    def self.include_deleted
-      self.unscoped
-    end
+  # table_name is needed to resolve ambiguity for certain queries with 'includes'
+  scope :active, where("#{table_name}.deleted_at is null")
 
   def name
      [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name].join(" ")

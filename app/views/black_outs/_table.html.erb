@@ -45,7 +45,7 @@
           </td>
         <% end %>
         <td><%= black_out.notice %></td>
-        <td><%= User.include_deleted.find((black_out[:created_by])).name %></td>
+        <td><%= User.find((black_out[:created_by])).name %></td>
         <td><%= black_out[:black_out_type] == "hard" ? "Hard Blackout" : "Notice Only" %></td>
         <% unless params[:action] == "show" %>
           <td><%= link_to 'Show', black_out, class: 'btn btn-inverse' %></td>
