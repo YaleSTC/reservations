@@ -6,11 +6,11 @@ module UsersHelper
   end
   
   def stats_icons stat
-    return 'icon-camera-retro' if stat == :current_equipment
-    return 'icon-list-alt' if stat == :current_reservations
-    return 'icon-exclamation-sign' if stat == :overdue_equipment
-    return 'icon-time' if stat == :past_equipment
-    return 'icon-minus-sign' if stat == :missed_reservations
-    return 'icon-thumbs-down' if stat == :past_overdue_equipment
+    return 'icon-camera-retro' if stat == :checked_out
+    return 'icon-list-alt' if stat == :future
+    return 'icon-exclamation-sign' if stat == :overdue
+    return 'icon-time' if stat == :past
+    return 'icon-minus-sign' if stat == :missed
+    return 'icon-thumbs-down' if stat == :past_overdue
   end
 end

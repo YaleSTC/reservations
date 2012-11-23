@@ -26,12 +26,14 @@ class UsersController < ApplicationController
     require_user_or_checkout_person(@user)
     @user_reservations = @user.reservations
     @all_equipment = Reservation.active_user_reservations(@user)
-    @show_equipment = { current_equipment: @user.reservations.select{|r| (r.status == "checked out") || (r.status == "overdue")}, 
-                        current_reservations: @user.reservations.reserved, 
-                        overdue_equipment: @user.reservations.overdue, 
-                        past_equipment: @user.reservations.returned,
-                        missed_reservations: @user.reservations.missed, 
-                        past_overdue_equipment: @user.reservations.returned.select{|r| r.checked_in > r.due_date} }
+    @show_equipment = { checked_out:  @user.reservations.select{|r| \
+                                              (r.status == "checked out") || (r.status == "overdue")}, 
+                        overdue:      @user.reservations.overdue, 
+                        future:       @user.reservations.reserved, 
+                        past:         @user.reservations.returned,
+                        missed:       @user.reservations.missed, 
+                        past_overdue: @user.reservations.returned.select{|r| \
+                                              r.status == "returned overdue"} }
   end
 
   def new
