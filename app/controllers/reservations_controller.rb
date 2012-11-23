@@ -139,11 +139,12 @@ class ReservationsController < ApplicationController
             end
           end
 
+          
           # add procedures_not_done to r.notes so admin gets the errors
           # if no notes and some procedures not done
-
           if procedures_not_done.present?
-            r.notes = reservation_hash[:notes] + "\n\nThe following checkout procedures were not performed:\n" + procedures_not_done
+            modified_notes = reservation_hash[:notes].present? ? reservation_hash[:notes] + "\n\n" : ""
+            r.notes = modified_notes + "The following checkout procedures were not performed:\n" + procedures_not_done
             r.notes_unsent = true
           elsif reservation_hash[:notes].present? # if all procedures were done
             r.notes = reservation_hash[:notes]
@@ -206,6 +207,13 @@ class ReservationsController < ApplicationController
     params[:reservations].each do |reservation_id, reservation_hash|
       if reservation_hash[:checkin?] == "1" then # update attributes for all equipment that is checked off
         r = Reservation.find(reservation_id)
+        
+        if r.checked_in
+          flash[:error] = "One or more items you were trying to checkout has already been checked in." 
+          redirect_to :back 
+          return
+        end
+        
         r.checkin_handler = current_user
         r.checked_in = Time.now
 
@@ -220,8 +228,8 @@ class ReservationsController < ApplicationController
         end
 
         # add procedures_not_done to r.notes so admin gets the errors
-        previous_notes = r.notes.present? ? "Check-in Notes:\n" + r.notes + "\n\n" : ""
-        new_notes = "\n\nCheck Out Notes:\n" + reservation_hash[:notes]
+        previous_notes = r.notes.present? ? "Checkout Notes:\n" + r.notes + "\n\n" : ""
+        new_notes = reservation_hash[:notes].present? ? "Checkin Notes:\n" + reservation_hash[:notes] : ""
 
         if procedures_not_done.present?
           r.notes = previous_notes + new_notes + "\n\nThe following check-in procedures were not performed:\n" + procedures_not_done
@@ -229,6 +237,8 @@ class ReservationsController < ApplicationController
         elsif new_notes.present? # if all procedures were done
           r.notes = previous_notes + new_notes # add blankline because there may well have been previous notes
           r.notes_unsent = true
+        else
+          r.notes = previous_notes
         end
         r.notes.strip! if r.notes?
 
