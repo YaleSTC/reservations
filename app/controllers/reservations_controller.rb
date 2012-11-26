@@ -55,6 +55,7 @@ class ReservationsController < ApplicationController
           cart.cart_reservations.each do |cart_res|
             @reservation = Reservation.new(params[:reservation])
             @reservation.equipment_model =  cart_res.equipment_model
+            @reservation.from_admin = current_user.is_admin_in_adminmode?
             @reservation.save!
             successful_reservations << @reservation
           end
@@ -68,7 +69,7 @@ class ReservationsController < ApplicationController
           else
             redirect_to catalog_path, :flash => {:notice => "Successfully created reservation. " } and return
           end
-        rescue Exception => e          
+        rescue Exception => e
           format.html {redirect_to catalog_path, :flash => {:error => "Oops, something went wrong with making your reservation.<br/> #{e.message}".html_safe} }
 
           raise ActiveRecord::Rollback
@@ -198,7 +199,7 @@ class ReservationsController < ApplicationController
       @check_out_set = reservations_to_be_checked_out
       render 'receipt' and return
   rescue Exception => e
-    redirect_to manage_reservations_for_user_path(reservations_to_be_checked_out.first.reserver), :flash => {:error => "Oops, something went wrong checking in your reservation.<br/> #{e.message}".html_safe}
+    redirect_to manage_reservations_for_user_path(reservations_to_be_checked_out.first.reserver), :flash => {:error => "Oops, something went wrong checking out your reservation.<br/> #{e.message}".html_safe}
   end
 
   def checkin

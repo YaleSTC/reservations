@@ -12,11 +12,15 @@ class Reservation < ActiveRecord::Base
             :presence => true
 
   # If there is no equipment model, don't run the validations that would break
-  with_options :if => :not_empty? do |r|
-    r.validate :start_date_before_due_date?, :matched_object_and_model?, :not_in_past?,
-              :duration_allowed?, :available?, :start_date_is_not_blackout?,
-              :due_date_is_not_blackout?, :quantity_eq_model_allowed?, :quantity_cat_allowed?
-    r.validate :not_in_past?, :not_renewable?, :no_overdue_reservations?, :on => :create
+  with_options :if => Proc.new {|r| r.not_empty? && !r.from_admin} do |r|
+    r.with_options :on => :create do |r|
+      r.validate  :not_in_past?, :not_renewable?, :no_overdue_reservations?, 
+                  :not_in_past?, :duration_allowed?,
+                  :start_date_is_not_blackout?, :due_date_is_not_blackout?,
+                  :quantity_eq_model_allowed?, :quantity_cat_allowed?
+    end
+    r.validate  :start_date_before_due_date?, :matched_object_and_model?,
+                :available?                
   end
 
   scope :recent, order('start_date, due_date, reserver_id')
@@ -44,6 +48,8 @@ class Reservation < ActiveRecord::Base
                   :checkin_handler, :checkin_handler_id,
                   :checked_out, :checked_in, :equipment_object,
                   :equipment_object_id, :notes, :notes_unsent, :times_renewed
+
+  attr_accessor :from_admin
 
   def reserver
     User.find(self.reserver_id)
@@ -93,8 +99,8 @@ class Reservation < ActiveRecord::Base
       errors << "A reservation cannot end on " + res.due_date.strftime('%m/%d') + " because equipment cannot be returned on that date" unless res.due_date_is_not_blackout?
       errors << "Quantity of " + res.equipment_model.name.pluralize + " must not exceed " + res.equipment_model.maximum_per_user.to_s unless res.quantity_eq_model_allowed?(res_array)
       errors << "Quantity of " + res.equipment_model.category.name.pluralize + " must not exceed " + res.equipment_model.category.maximum_per_user.to_s unless res.quantity_cat_allowed?(res_array)
-	end
-  errors.uniq
+    end
+    errors.uniq
   end
 
 
