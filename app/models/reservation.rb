@@ -12,6 +12,13 @@ class Reservation < ActiveRecord::Base
             :presence => true
 
   # If there is no equipment model, don't run the validations that would break
+  with_options :if => :not_empty? do |r|
+    r.validate  :start_date_before_due_date?, :matched_object_and_model?,
+                :available?               
+  end 
+  
+  # These can't be nested with the above block because with_options clobbers
+  # nested options that are the same (i.e., :if and :if)
   with_options :if => Proc.new {|r| r.not_empty? && !r.from_admin} do |r|
     r.with_options :on => :create do |r|
       r.validate  :not_in_past?, :not_renewable?, :no_overdue_reservations?, 
@@ -19,8 +26,6 @@ class Reservation < ActiveRecord::Base
                   :start_date_is_not_blackout?, :due_date_is_not_blackout?,
                   :quantity_eq_model_allowed?, :quantity_cat_allowed?
     end
-    r.validate  :start_date_before_due_date?, :matched_object_and_model?,
-                :available?                
   end
 
   scope :recent, order('start_date, due_date, reserver_id')
