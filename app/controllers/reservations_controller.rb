@@ -3,6 +3,7 @@ class ReservationsController < ApplicationController
 
   before_filter :require_login, :only => [:index, :show]
   before_filter :require_checkout_person, :only => [:check_out, :check_in]
+  before_filter :require_admin, :only => [:edit, :update]
 
   def index
     #define our source of reservations depending on user status

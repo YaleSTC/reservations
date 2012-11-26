@@ -80,7 +80,7 @@ module ReservationValidations
   def duration_allowed?
     duration = due_date.to_date - start_date.to_date + 1
     cat_duration = equipment_model.category.maximum_checkout_length
-    return true if cat_duration == "unrestricted"
+    return true if cat_duration == "unrestricted" || (self.class == Reservation && self.checked_in)
     if duration > cat_duration
       errors.add(:base, "Duration of " + equipment_model.name + " reservation must be less than " + equipment_model.category.maximum_checkout_length.to_s)
       return false
