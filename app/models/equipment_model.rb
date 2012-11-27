@@ -158,7 +158,7 @@ class EquipmentModel < ActiveRecord::Base
     availability = start_date.to_date.upto(due_date.to_date).map do |date|
        available_count(date)
     end
-    availability.min
+    availability.min > 0 ? availability.min : 0
   end
   
   # Returns true if the reserver is ineligible to checkout the model.
