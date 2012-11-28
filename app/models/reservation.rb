@@ -22,9 +22,9 @@ class Reservation < ActiveRecord::Base
   with_options :if => Proc.new {|r| r.not_empty? && !r.from_admin} do |r|
     r.with_options :on => :create do |r|
       r.validate  :not_in_past?, :not_renewable?, :no_overdue_reservations?, 
-                  :not_in_past?, :duration_allowed?,
-                  :start_date_is_not_blackout?, :due_date_is_not_blackout?,
-                  :quantity_eq_model_allowed?, :quantity_cat_allowed?
+                  :duration_allowed?, :start_date_is_not_blackout?, 
+                  :due_date_is_not_blackout?, :quantity_eq_model_allowed?, 
+                  :quantity_cat_allowed?
     end
   end
 

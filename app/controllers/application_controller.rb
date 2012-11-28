@@ -11,6 +11,7 @@ class ApplicationController < ActionController::Base
   before_filter :load_configs
   before_filter :first_time_user
   before_filter :cart
+  before_filter :fix_cart_date
   before_filter :set_view_mode
 
   helper_method :current_user
@@ -86,10 +87,14 @@ class ApplicationController < ActionController::Base
   def update_cart
     # set dates
     flash.clear
-    session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
-    session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
-    session[:cart].set_reserver_id(params[:reserver_id])
-    
+    begin
+      session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
+      session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
+      session[:cart].set_reserver_id(params[:reserver_id])
+    rescue ArgumentError => e
+      flash[:error] = "Please enter a valid start or due date."
+      return
+    end
     # validate
     errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
     flash[:error] = errors.to_sentence
@@ -100,6 +105,10 @@ class ApplicationController < ActionController::Base
         # guys i really don't like how this is rendering a template for js, but :action doesn't work at all
       format.html{render :partial => "reservations/cart_dates"}
     end
+  end
+
+  def fix_cart_date
+    cart.set_start_date(Date.today) if cart.start_date < Date.today
   end
 
   def empty_cart
