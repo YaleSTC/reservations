@@ -204,7 +204,7 @@
 
 <!-- Requirements -->
      <% if @equipment_model.model_restricted?(cart.reserver_id) %>
-      <section id="items">
+      <section id="requirements">
         <h2>Requirements</h2><hr/>
             <%# TODO: Eventually requirements will be handled with special Requests, similar to how extended reservations are handled. %>
             <p><%= Requirement.list_requirement_admins(current_user, @equipment_model) %></p>
