@@ -92,6 +92,7 @@ class ApplicationController < ActionController::Base
       session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
       session[:cart].set_reserver_id(params[:reserver_id])
     rescue ArgumentError => e
+      cart.set_start_date(Date.today)
       flash[:error] = "Please enter a valid start or due date."
       return
     end

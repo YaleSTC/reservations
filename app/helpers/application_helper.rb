@@ -6,6 +6,10 @@ module ApplicationHelper
     markdown.render(text).html_safe
   end
 
+  def markdown_to_plain_text(text)
+    strip_tags(markdown(text)).html_safe
+  end
+
   def paperclip_field_error(local_form_variable, *fields)
     # Field must be symbol
     fields.each do |field|
