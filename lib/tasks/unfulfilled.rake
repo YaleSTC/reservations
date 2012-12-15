@@ -1,11 +1,21 @@
-desc "Delete unfulfilled reservations"
-task :unfulfilled => :environment do
+desc "Delete missed reservations"
+task :delete_missed_reservations => :environment do
   #get all reservations that ended yesterday and weren't checked out
-  past_reservations = Reservation.find(:all, :conditions => ["checked_out IS NULL and due_date < ?", Time.now.midnight.utc])
-  puts "Found #{past_reservations.size} reservations that were never fulfilled. Deleting..."
-  past_reservations.each do |past_reservation|
-    past_reservation.delete
+  missed_reservations = Reservation.where("checked_out IS NULL and start_date < ?", Time.now.midnight.utc)
+  puts "Found #{missed_reservations.size} reservations that were never missed. Notifying and deleting..."
+  
+  if AppConfig.first.send_notifications_for_deleted_missed_reservations
+    missed_reservations.each do |missed_reservation|  
+      UserMailer.missed_reservation_deleted_notification(missed_reservation).deliver
+    end
   end
+  
+  if AppConfig.first.delete_missed_reservations
+    missed_reservations.each do |missed_reservation|  
+      missed_reservation.destroy
+    end
+  end
+
   puts "Done!"
 end
 

@@ -276,7 +276,6 @@ if AppConfig.all.empty?
   AppConfig.create do |ac|
     ac.terms_of_service = terms_of_service_text
     ac.upcoming_checkin_email_active = false
-    ac.overdue_checkout_email_active = false
     ac.reservation_confirmation_email_active = false
     ac.overdue_checkin_email_active = false
     ac.site_title = "Reservations"

@@ -54,13 +54,13 @@ class ApplicationSetupController < ApplicationController
 
                            Thank you,
                            @department_name@",
-                           :overdue_checkout_email_body => "Dear @user@,
-                           You have missed a scheduled equipment checkout, so your equipment may be released and checked out to other students.
+                           :overdue_checkin_email_body => "Dear @user@,
+                           You were supposed to return the equipment you borrowed from us on @return_date@ but because you have failed to do so, you will be charged @late_fee@ / day until the equipment is returned. Failure to return equipment will result in replacement fees and revocation of borrowing privileges.
 
                            Thank you,
                            @department_name@",
-                           :overdue_checkin_email_body => "Dear @user@,
-                           You were supposed to return the equipment you borrowed from us on @return_date@ but because you have failed to do so, you will be charged @late_fee@ / day until the equipment is returned. Failure to return equipment will result in replacement fees and revocation of borrowing privileges.
+                           :deleted_missed_reservation_email_body => "Dear @user@,
+                           Because you have missed a scheduled equipment checkout, your reservation has been cancelled. If you believe this is in error, please contact an administrator.
 
                            Thank you,
                            @department_name@"

@@ -6,6 +6,7 @@ module UserMailerHelper
     body.gsub!("@department_name@", @app_configs.department_name)
     body.gsub!("@equipment_list@", @reservation.equipment_model.name)
     body.gsub!("@return_date@", @reservation.due_date.to_date.to_s(:long))
+    body.gsub!("@start_date@", @reservation.start_date.to_date.to_s(:long))
     body.gsub!("@late_fee@", number_to_currency(@reservation.late_fee))
     return body
   end

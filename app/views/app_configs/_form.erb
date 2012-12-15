@@ -43,30 +43,39 @@
     <dt>@equipment_list@</dt><dd>The list of equipment that user either has reserved, missed, overdue, or checked out.</dd>
     <dt>@reservation_id@</dt><dd>The id number of the reservation.</dd>
     <dt>@department_name@</dt><dd>The department name set above.</dd>
+    <dt>@start_date@</dt><dd>The start date for the reservation.</dd>
     <dt>@return_date@</dt><dd>The due date for the reservation.</dd>
     <dt>@late_fee@</dt><dd>The daily late fee for the equipment model in the reservation.</dd>
   </dl>
   <hr />
-  <%= f.input :upcoming_checkin_email_active, label: 'Enable upcoming check-in notification?', 
-              hint: 'When enabled, users will get an email reminding them of their upcoming reservation(s).' %>
+  <%= f.input :upcoming_checkin_email_active, label: 'Send equipment check-in reminders?', 
+              hint: 'When enabled, patrons will get an email reminding them that reservation(s) are due.' %>
   <%= f.input :upcoming_checkin_email_body, input_html: { class: 'span6' } %>
   <hr />
-  <%= f.input :overdue_checkout_email_active, label: 'Enable overdue checkout notification?', 
-              hint: 'When enabled, users who have missed their reservation checkout date will get an email, typically informing them that their reserved equipment may be available to other users.' %>
-  <%= f.input :overdue_checkout_email_body, input_html: { class: 'span6' } %>
-  <hr />
-  <%= f.input :overdue_checkin_email_active, label: 'Enable overdue equipment notification?', 
-              hint: 'When enabled, users who have overdue equipment will get an email, informing them about late fees and other consequences.' %>
+  
+  <%= f.input :overdue_checkin_email_active, label: 'Send overdue check-in reminders?', 
+              hint: 'When enabled, patrons who have overdue equipment will get an email informing them about late fees and other consequences.' %>
   <%= f.input :overdue_checkin_email_body, input_html: { class: 'span6' } %>
   <hr />
+  
+  <%= f.input :delete_missed_reservations, label: 'Delete missed reservations?', 
+              hint: 'When enabled, reservations will be deleted the day after they were due to be checked out.' %>
+  <%= f.input :send_notifications_for_deleted_missed_reservations, label: 'Send notifications?', 
+              hint: 'When enabled, patrons will be notified that their reservations were deleted.' %>
+  <%= f.input :deleted_missed_reservation_email_body, input_html: { class: 'span6' } %>
+  <hr />
+  
   <%= f.input :reservation_confirmation_email_active, label: 'Enable reservation confirmation?', 
-              hint: 'When enabled, users will get an email confirmation containing the details of their reservation.' %>
+              hint: 'When enabled, patrons will get an email confirmation containing the details of their reservation.' %>
+  <hr />
+  
+  
 </fieldset>
 <fieldset>
   <legend>Terms of Service</legend>
   <%= f.input :terms_of_service, input_html: { class: 'span6' } %>
   <% unless params[:controller] == "application_setup" %>
-    <%= f.input :reset_tos_for_users, input_html: {type: "checkbox", value: '1'} , label: "Force all users to accept TOS again?", :hint => "i.e., if patrons need to be aware that the terms of service have changed." %>
+    <%= f.input :reset_tos_for_users, input_html: {type: "checkbox", value: '1'} , label: "Force all patrons to accept the TOS again?", :hint => "i.e., if patrons need to be aware that the terms of service have changed." %>
   <% end %>
 </fieldset>
 <div class="form-actions">

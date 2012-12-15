@@ -11,12 +11,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120724184424) do
+ActiveRecord::Schema.define(:version => 20130310101908) do
 
   create_table "app_configs", :force => true do |t|
-    t.boolean  "upcoming_checkin_email_active",         :default => true
-    t.boolean  "overdue_checkout_email_active",         :default => true
-    t.boolean  "reservation_confirmation_email_active", :default => true
+    t.boolean  "upcoming_checkin_email_active",                      :default => true
+    t.boolean  "reservation_confirmation_email_active",              :default => true
     t.string   "site_title"
     t.string   "admin_email"
     t.string   "department_name"
@@ -25,23 +24,16 @@ ActiveRecord::Schema.define(:version => 20120724184424) do
     t.string   "home_link_location"
     t.integer  "default_per_cat_page"
     t.text     "upcoming_checkin_email_body"
-    t.text     "overdue_checkout_email_body"
     t.text     "overdue_checkin_email_body"
-    t.boolean  "overdue_checkin_email_active",          :default => true
+    t.boolean  "overdue_checkin_email_active",                       :default => true
     t.text     "terms_of_service"
-    t.string   "auth_provider"
-    t.string   "ldap_host"
-    t.integer  "ldap_port"
-    t.string   "ldap_login"
-    t.string   "ldap_base_query"
-    t.string   "ldap_first_name"
-    t.string   "ldap_last_name"
-    t.string   "ldap_phone"
-    t.string   "ldap_email"
     t.string   "favicon_file_name"
     t.string   "favicon_content_type"
     t.integer  "favicon_file_size"
     t.datetime "favicon_updated_at"
+    t.boolean  "delete_missed_reservations",                         :default => true
+    t.text     "deleted_missed_reservation_email_body"
+    t.boolean  "send_notifications_for_deleted_missed_reservations", :default => true
   end
 
   create_table "black_outs", :force => true do |t|
@@ -208,21 +200,7 @@ ActiveRecord::Schema.define(:version => 20120724184424) do
     t.boolean  "bannedmode",                :default => false
     t.string   "deleted_at"
     t.boolean  "terms_of_service_accepted"
-    t.string   "encrypted_password",        :default => "",    :null => false
-    t.string   "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.integer  "failed_attempts",           :default => 0
-    t.string   "unlock_token"
-    t.datetime "locked_at"
-    t.string   "confirmation_token"
-    t.datetime "confirmed_at"
-    t.datetime "confirmation_sent_at"
   end
-
-  add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
-  add_index "users", ["email"], :name => "index_users_on_email", :unique => true
-  add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
-  add_index "users", ["unlock_token"], :name => "index_users_on_unlock_token", :unique => true
 
   create_table "users_requirements", :id => false, :force => true do |t|
     t.integer "user_id"
