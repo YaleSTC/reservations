@@ -1,4 +1,4 @@
-Dear <%= @complete_reservation.first.reserver.name %>,
+Dear <%= @complete_reservation.first.reserver.name.html_safe %>,
  
 This is a confirmation of your reservation for the following equipment: 
 <% @complete_reservation.each do |r| %>
