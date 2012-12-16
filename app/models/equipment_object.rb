@@ -8,7 +8,7 @@ class EquipmentObject < ActiveRecord::Base
 
   nilify_blanks :only => [:deleted_at]
   
-  attr_accessible :name, :serial, :equipment_model_id, :deleted_at
+  attr_accessible :name, :serial, :equipment_model_id, :equipment_model, :deleted_at
 
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
   scope :active, where("#{table_name}.deleted_at is null")

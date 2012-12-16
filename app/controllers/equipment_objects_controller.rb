@@ -26,7 +26,7 @@ class EquipmentObjectsController < ApplicationController
   
   def new
     @equipment_model = EquipmentModel.find(params[:equipment_model_id]) if params[:equipment_model_id]
-    @equipment_object = EquipmentObject.new(:equipment_model => @equipment_model)
+    @equipment_object = EquipmentObject.new(equipment_model: @equipment_model)
   end
   
   def create
