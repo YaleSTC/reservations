@@ -25,7 +25,7 @@ module ReservationValidations
   # Same for CartReservations and Reservations
   def start_date_before_due_date?
     if due_date < start_date
-      errors.add(:base, "Reservations cannot be made in the past")
+      errors.add(:base, "Reservation cannot be made in the past")
       return false
     end
     return true
@@ -36,7 +36,7 @@ module ReservationValidations
   def not_in_past?
     #return true if self.class == Reservation && self.status != 'reserved'
     if (start_date < Date.today) || (due_date < Date.today)
-      errors.add(:base, "Reservations start dates must be before due dates")
+      errors.add(:base, "Reservation start date must be before due date")
       return false
     end
     return true
@@ -45,7 +45,7 @@ module ReservationValidations
   # Checks that the reservation has an equipment model
   def not_empty?
     if equipment_model.nil?
-      errors.add(:base, "Reservations must have an associated equipment model")
+      errors.add(:base, "Reservation must be for a piece of equipment")
       return false
     end
     return true
@@ -82,7 +82,7 @@ module ReservationValidations
     cat_duration = equipment_model.category.maximum_checkout_length
     return true if cat_duration == "unrestricted" || (self.class == Reservation && self.checked_in)
     if duration > cat_duration
-      errors.add(:base, "Duration of " + equipment_model.name + " reservation must be less than " + equipment_model.category.maximum_checkout_length.to_s)
+      errors.add(:base, equipment_model.name + "cannot be reserved for more than " + equipment_model.category.maximum_checkout_length.to_s + " days at a time.")
       return false
     end
     return true
@@ -91,7 +91,7 @@ module ReservationValidations
   # Checks that start date is not a black out date
   def start_date_is_not_blackout?
     if (a = BlackOut.date_is_blacked_out(start_date)) && a.black_out_type_is_hard
-      errors.add(:base, "A reservation cannot start on " + start_date.strftime('%m/%d') + " because equipment cannot be picked up on that date")
+      errors.add(:base, "Reservation cannot start on " + start_date.strftime('%m/%d') + " because equipment cannot be picked up on that date")
       return false
     end
     return true
@@ -100,7 +100,7 @@ module ReservationValidations
   # Checks that due date is not a black out date
   def due_date_is_not_blackout?
     if (a = BlackOut.date_is_blacked_out(due_date)) && a.black_out_type_is_hard
-      errors.add(:base, "A reservation cannot end on " + due_date.strftime('%m/%d') + " because equipment cannot be returned on that date")
+      errors.add(:base, "Reservation cannot end on " + due_date.strftime('%m/%d') + " because equipment cannot be returned on that date")
       return false
     end
     return true
@@ -145,7 +145,7 @@ module ReservationValidations
     
     model_count = same_model_count(overlapping_res)
     if model_count > max
-      errors.add(:base, "Quantity of " + equipment_model.name.pluralize + " must not exceed " + equipment_model.maximum_per_user.to_s)
+      errors.add(:base, "Cannot reserve more than " + equipment_model.maximum_per_user.to_s + " " + equipment_model.name.pluralize)
       return false
     end
     return true
@@ -172,7 +172,7 @@ module ReservationValidations
     
     cat_count = same_category_count(overlapping_res)
     if cat_count > max
-      errors.add(:base, "Quantity of " + equipment_model.category.name.pluralize + " must not exceed " + equipment_model.category.maximum_per_user.to_s)
+      errors.add(:base, "Cannot reserve more than " + equipment_model.category.maximum_per_user.to_s + " " + equipment_model.category.name.pluralize)
       return false
     end
     return true
