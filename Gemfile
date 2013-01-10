@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 #standard gems
-gem 'rails', '3.2.8'
+gem 'rails', '3.2.11'
 gem 'mysql2'
 gem 'rake'
 gem 'rdoc'
