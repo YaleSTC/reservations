@@ -1,7 +1,6 @@
 Hello, <br /> <br />
 
-The following reservations checked in or checked out today contained notes. 
-Please review them for potential damage.<br /> <br />
+The following reservations checked in or checked out contained notes. 
 
 	<% @notes_reservations.each do |notes_reservation| %>
 		Equipment: <%= notes_reservation.equipment_model.name %> (<%= notes_reservation.equipment_object.name %>)<br />
@@ -11,8 +10,5 @@ Please review them for potential damage.<br /> <br />
 		--------- <br />
 	<% end %>
 <br />
-Have a great day!
 
-
-
- 
+-Reservations App

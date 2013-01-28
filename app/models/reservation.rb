@@ -28,6 +28,8 @@ class Reservation < ActiveRecord::Base
     end
   end
 
+  nilify_blanks only: [:notes]
+
   scope :recent, order('start_date, due_date, reserver_id')
   scope :user_sort, order('reserver_id')
   scope :reserved, lambda { where("checked_out IS NULL and checked_in IS NULL and due_date >= ?", Time.now.midnight.utc).recent}
