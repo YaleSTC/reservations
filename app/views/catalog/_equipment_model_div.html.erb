@@ -13,7 +13,9 @@
    <div class="caption_cat">
 
       <hr class ="special-hr"/>
-      <p>(<%= equipment_model.num_available(cart.start_date, cart.due_date) || "0" %> available from <br /><%= cart.start_date.strftime("%b %d, %Y") %> to <%= cart.due_date.strftime("%b %d, %Y") %>)</p>
+      <span class="giant-numbers span1"><%= equipment_model.num_available(cart.start_date, cart.due_date) || "0" %></span> 
+      <p class="model_availability">available from <%= cart.start_date.strftime("%b %d, %Y") %> to <%= cart.due_date.strftime("%b %d, %Y") %></p>
+      <hr class ="special-hr"/>
       <p class="equipment_descr">
         <%= markdown_to_plain_text(equipment_model.description) %><br/>
         <%= link_to "More Info", equipment_model, :class => 'more_info' %>

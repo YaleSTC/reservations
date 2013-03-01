@@ -27,7 +27,7 @@
   function truncate() {
     if ($(".caption_cat").length) {
       $(".caption_cat").dotdotdot({
-        height: 126,
+        height: 150,
         after: ".more_info",
         watch: 'window'
       });
@@ -35,7 +35,7 @@
 
     if ($(".equipment_title").length) {
       $(".equipment_title").dotdotdot({
-        height: 54, // must match .equipment_title height
+        height: 27, // must match .equipment_title height
         watch: 'window'
       });
     }
@@ -170,7 +170,7 @@ if ($(window).width() > 767) {
 
   if ($(".caption_cat").length) {
     $(".caption_cat").dotdotdot({
-      height: 126,
+      height: 150,
       after: ".more_info",
       watch: 'window'
     });
@@ -178,7 +178,7 @@ if ($(window).width() > 767) {
 
   if ($(".equipment_title").length) {
     $(".equipment_title").dotdotdot({
-      height: 54, // must match .equipment_title height
+      height: 27, // must match .equipment_title height
       watch: 'window'
     });
   }
