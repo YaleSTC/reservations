@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130310101908) do
+ActiveRecord::Schema.define(:version => 20130310101909) do
 
   create_table "app_configs", :force => true do |t|
     t.boolean  "upcoming_checkin_email_active",                      :default => true
@@ -34,6 +34,7 @@ ActiveRecord::Schema.define(:version => 20130310101908) do
     t.boolean  "delete_missed_reservations",                         :default => true
     t.text     "deleted_missed_reservation_email_body"
     t.boolean  "send_notifications_for_deleted_missed_reservations", :default => true
+    t.boolean  "checkout_persons_can_edit",                          :default => false
   end
 
   create_table "black_outs", :force => true do |t|
@@ -118,14 +119,6 @@ ActiveRecord::Schema.define(:version => 20130310101908) do
     t.integer "equipment_model_id", :null => false
   end
 
-  create_table "equipment_models_reservations", :force => true do |t|
-    t.integer  "equipment_model_id"
-    t.integer  "reservation_id"
-    t.integer  "quantity"
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
-  end
-
   create_table "equipment_objects", :force => true do |t|
     t.string   "name"
     t.string   "serial"
@@ -134,13 +127,6 @@ ActiveRecord::Schema.define(:version => 20130310101908) do
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
     t.string   "deleted_at"
-  end
-
-  create_table "equipment_objects_reservations", :force => true do |t|
-    t.integer  "equipment_object_id"
-    t.integer  "reservation_id"
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
   end
 
   create_table "requirements", :force => true do |t|

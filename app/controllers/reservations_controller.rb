@@ -2,8 +2,7 @@ class ReservationsController < ApplicationController
   layout 'application_with_sidebar'
 
   before_filter :require_login, :only => [:index, :show]
-  before_filter :require_checkout_person, :only => [:check_out, :check_in]
-  before_filter :require_admin, :only => [:edit, :update]
+  before_filter :permissions_check, :only => [:check_out, :check_in, :edit, :update]
 
   def index
     #define our source of reservations depending on user status
@@ -355,5 +354,19 @@ class ReservationsController < ApplicationController
       format.js{render :action => "renew_box"}
     end
   end
+
+  private
+  def permissions_check
+    if params[:action] == 'checkout' || params[:action] == 'checkin'
+      require_checkout_person
+    elsif params[:action] == 'edit' || params[:action] == 'update'
+      if @app_configs.checkout_persons_can_edit == true
+        require_checkout_person
+      else
+        require_admin
+      end
+    end
+  end
+
 
 end

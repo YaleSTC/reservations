@@ -7,7 +7,8 @@ class AppConfig < ActiveRecord::Base
                   :reservation_confirmation_email_active,
                   :delete_missed_reservations, :send_notifications_for_deleted_missed_reservations,
                   :deleted_missed_reservation_email_body,
-                  :default_per_cat_page, :terms_of_service, :favicon
+                  :default_per_cat_page, :terms_of_service, :favicon,
+                  :checkout_persons_can_edit
 
   has_attached_file :favicon, url: "/system/:attachment/:id/:style/favicon.:extension"
  
