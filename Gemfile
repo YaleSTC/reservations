@@ -70,7 +70,7 @@ group :development do
   gem 'letter_opener' 
 end
 
-group :production do
+group :production, :staging do
   gem 'therubyracer', :require => 'v8'
   gem 'airbrake'
 end
