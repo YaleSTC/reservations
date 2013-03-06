@@ -51,6 +51,13 @@ production:
   username: #{mysql_user}
   password: #{mysql_pass}
 
+staging:
+  adapter: mysql2
+  database: #{application}_#{application_prefix}_staging
+  host: localhost
+  username: #{mysql_user}
+  password: #{mysql_pass}
+
 EOF
       run "mkdir -p #{shared_path}/config"
       put database_configuration, "#{shared_path}/config/database.yml"
