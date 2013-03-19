@@ -58,7 +58,7 @@
               </div>
             </div>
 
-            <% elsif (a = BlackOut.date_is_blacked_out(cart.start_date)) && a.black_out_type_is_hard %>
+            <% elsif BlackOut.hard_backout_exists_on_date(cart.start_date) %>
               <%= link_to "#qualifications_modal", class: 'not-qualified-icon-em', rel: "tooltip", title: "Not Available (click for more info)", :"data-toggle" => 'modal' do %>
                 <i class="icon-warning-sign"></i>
             <% end %>
@@ -75,7 +75,7 @@
                 </p>
               </div>
             </div>
-            <% elsif (a = BlackOut.date_is_blacked_out(cart.due_date)) && a.black_out_type_is_hard %>
+            <% elsif BlackOut.hard_backout_exists_on_date(cart.due_date) %>
               <div id="qualifications_modal" class="modal hide fade">
                 <div class="modal-header">
                   <button type="button" class="close" data-dismiss="modal">×</button>

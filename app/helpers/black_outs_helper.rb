@@ -1,15 +1,23 @@
 module BlackOutsHelper
   def blackout_errors
-    if (a = BlackOut.date_is_blacked_out(cart.start_date)) && (b = BlackOut.date_is_blacked_out(cart.due_date))
-      if a == b
-        flash[:error] = a.notice + ((a.black_out_type == "hard") ? " Please choose different start and end dates in your Cart." : "")
+    start_black_outs = BlackOut.black_outs_on_date(cart.start_date)
+    end_black_outs = BlackOut.black_outs_on_date(cart.due_date)
+    
+    messages = [messages_for_black_outs(start_black_outs, "start") + messages_for_black_outs(end_black_outs, "end")].uniq.join("\n")
+    if messages.present?
+      if flash[:error]
+        flash[:error] += messages
       else
-        flash[:error] = a.notice + " " + b.notice + ((a.black_out_type == "hard" || (b.black_out_type == "hard")) ? " Please choose a different start or end date in your Cart." : "")
+        flash[:error] = messages
       end
-    elsif (a = BlackOut.date_is_blacked_out(cart.start_date))
-      flash[:error] = a.notice + ((a.black_out_type == "hard") ? " Please choose a different start date in your Cart." : "")
-    elsif (a = BlackOut.date_is_blacked_out(cart.due_date))
-      flash[:error] = a.notice + ((a.black_out_type == "hard") ? " Please choose a different end date in your Cart." : "")
     end
+  end
+
+  def messages_for_black_outs(black_outs, date_type)
+    messages = []
+    black_outs.each do |bo|
+      messages << bo.notice + ((bo.black_out_type == "hard") ? " Please choose a different #{date_type} date in your Cart." : "")
+    end
+    return messages
   end
 end
