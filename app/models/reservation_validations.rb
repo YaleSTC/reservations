@@ -15,7 +15,7 @@ module ReservationValidations
   #TODO: admin override
   def no_overdue_reservations?
     if Reservation.overdue_reservations?(reserver)
-      errors.add(:base, reserver.name + " has overdue reservations that prevent new ones from being created")
+      errors.add(:base, reserver.name + " has overdue reservations that prevent new ones from being created.\n")
       return false
     end
     return true
@@ -25,7 +25,7 @@ module ReservationValidations
   # Same for CartReservations and Reservations
   def start_date_before_due_date?
     if due_date < start_date
-      errors.add(:base, "Reservation cannot be made in the past")
+      errors.add(:base, "Reservation start date must be before due date.\n")
       return false
     end
     return true
@@ -36,7 +36,7 @@ module ReservationValidations
   def not_in_past?
     #return true if self.class == Reservation && self.status != 'reserved'
     if (start_date < Date.today) || (due_date < Date.today)
-      errors.add(:base, "Reservation start date must be before due date")
+      errors.add(:base, "Reservation cannot be made in the past.\n")
       return false
     end
     return true
@@ -45,7 +45,7 @@ module ReservationValidations
   # Checks that the reservation has an equipment model
   def not_empty?
     if equipment_model.nil?
-      errors.add(:base, "Reservation must be for a piece of equipment")
+      errors.add(:base, "Reservation must be for a piece of equipment.\n")
       return false
     end
     return true
@@ -55,7 +55,7 @@ module ReservationValidations
   def matched_object_and_model?
     if self.class == Reservation && self.equipment_model && self.equipment_object
       if equipment_object.equipment_model != equipment_model
-        errors.add(:base, equipment_object.name + " must be of type " + equipment_model.name)
+        errors.add(:base, equipment_object.name + " must be of type " + equipment_model.name + ".\n")
         return false
       end
     end
@@ -68,7 +68,7 @@ module ReservationValidations
     return true unless self.class == CartReservation || self.status == "reserved"
     reserver.reservations.each do |res|
       if res.equipment_model == self.equipment_model && res.due_date.to_date == self.start_date.to_date && res.is_eligible_for_renew?
-        errors.add(:base, res.equipment_model.name + " should be renewed instead of re-checked out")
+        errors.add(:base, res.equipment_model.name + " should be renewed instead of re-checked out.\n")
         return false
       end
     end
@@ -82,7 +82,7 @@ module ReservationValidations
     cat_duration = equipment_model.category.maximum_checkout_length
     return true if cat_duration == "unrestricted" || (self.class == Reservation && self.checked_in)
     if duration > cat_duration
-      errors.add(:base, equipment_model.name + "cannot be reserved for more than " + equipment_model.category.maximum_checkout_length.to_s + " days at a time.")
+      errors.add(:base, equipment_model.name + "cannot be reserved for more than " + equipment_model.category.maximum_checkout_length.to_s + " days at a time.\n")
       return false
     end
     return true
@@ -91,7 +91,7 @@ module ReservationValidations
   # Checks that start date is not a black out date
   def start_date_is_not_blackout?
     if BlackOut.hard_backout_exists_on_date(start_date)
-      errors.add(:base, "Reservation cannot start on " + start_date.strftime('%m/%d') + " because equipment cannot be picked up on that date")
+      errors.add(:base, "Reservation cannot start on " + start_date.strftime('%m/%d') + " because equipment cannot be picked up on that date.\n")
       return false
     end
     return true
@@ -100,7 +100,7 @@ module ReservationValidations
   # Checks that due date is not a black out date
   def due_date_is_not_blackout?
     if BlackOut.hard_backout_exists_on_date(due_date)
-      errors.add(:base, "Reservation cannot end on " + due_date.strftime('%m/%d') + " because equipment cannot be returned on that date")
+      errors.add(:base, "Reservation cannot end on " + due_date.strftime('%m/%d') + " because equipment cannot be returned on that date.\n")
       return false
     end
     return true
@@ -119,7 +119,7 @@ module ReservationValidations
     all_res.uniq!
     eq_objects_needed = same_model_count(all_res)
     if equipment_model.num_available(start_date, due_date) < eq_objects_needed
-      errors.add(:base, equipment_model.name + " is not available for the full time period requested")
+      errors.add(:base, equipment_model.name + " is not available for the full time period requested.\n")
       return false
     end
     return true
@@ -145,7 +145,7 @@ module ReservationValidations
     
     model_count = same_model_count(overlapping_res)
     if model_count > max
-      errors.add(:base, "Cannot reserve more than " + equipment_model.maximum_per_user.to_s + " " + equipment_model.name.pluralize)
+      errors.add(:base, "Cannot reserve more than " + equipment_model.maximum_per_user.to_s + " " + equipment_model.name.pluralize + ".\n")
       return false
     end
     return true
@@ -172,7 +172,7 @@ module ReservationValidations
     
     cat_count = same_category_count(overlapping_res)
     if cat_count > max
-      errors.add(:base, "Cannot reserve more than " + equipment_model.category.maximum_per_user.to_s + " " + equipment_model.category.name.pluralize)
+      errors.add(:base, "Cannot reserve more than " + equipment_model.category.maximum_per_user.to_s + " " + equipment_model.category.name.pluralize + ".\n")
       return false
     end
     return true
