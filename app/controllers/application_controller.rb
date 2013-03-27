@@ -167,7 +167,6 @@ class ApplicationController < ActionController::Base
     if (current_user.is_admin)
       @objects_class2 = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (User, EM, EO, Category)
       if (params[:controller] != "users") #Search for children is not necessary if we are altering users.
-        deactivateChildren(@objects_class2)
       end
       @objects_class2.destroy #Deactivate the model you had originally intended to deactivate
       flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + ". Any related reservations or equipment have been deactivated as well."
@@ -184,7 +183,6 @@ class ApplicationController < ActionController::Base
       if (params[:controller] != "users") #Search for parents is not necessary if we are altering users.
         activateParents(@model_to_activate)
         @model_to_activate.revive
-        activateChildren(@model_to_activate)
       else
         @model_to_activate.revive
       end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130310101909) do
+ActiveRecord::Schema.define(:version => 20130327193420) do
 
   create_table "app_configs", :force => true do |t|
     t.boolean  "upcoming_checkin_email_active",                      :default => true
@@ -65,7 +65,7 @@ ActiveRecord::Schema.define(:version => 20130310101909) do
     t.datetime "created_at",              :null => false
     t.datetime "updated_at",              :null => false
     t.integer  "sort_order"
-    t.string   "deleted_at"
+    t.datetime "deleted_at"
     t.integer  "max_renewal_times"
     t.integer  "max_renewal_length"
     t.integer  "renewal_days_before_due"
@@ -95,7 +95,7 @@ ActiveRecord::Schema.define(:version => 20130310101909) do
     t.integer  "category_id"
     t.datetime "created_at",                                                                  :null => false
     t.datetime "updated_at",                                                                  :null => false
-    t.string   "deleted_at"
+    t.datetime "deleted_at"
     t.string   "photo_file_name"
     t.string   "photo_content_type"
     t.integer  "photo_file_size"
@@ -119,6 +119,14 @@ ActiveRecord::Schema.define(:version => 20130310101909) do
     t.integer "equipment_model_id", :null => false
   end
 
+  create_table "equipment_models_reservations", :force => true do |t|
+    t.integer  "equipment_model_id"
+    t.integer  "reservation_id"
+    t.integer  "quantity"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+  end
+
   create_table "equipment_objects", :force => true do |t|
     t.string   "name"
     t.string   "serial"
@@ -126,7 +134,14 @@ ActiveRecord::Schema.define(:version => 20130310101909) do
     t.integer  "equipment_model_id"
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
-    t.string   "deleted_at"
+    t.datetime "deleted_at"
+  end
+
+  create_table "equipment_objects_reservations", :force => true do |t|
+    t.integer  "equipment_object_id"
+    t.integer  "reservation_id"
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
   end
 
   create_table "requirements", :force => true do |t|
@@ -157,6 +172,10 @@ ActiveRecord::Schema.define(:version => 20130310101909) do
     t.integer  "times_renewed"
   end
 
+  add_index "reservations", ["due_date"], :name => "due_date"
+  add_index "reservations", ["equipment_model_id"], :name => "equipment_model_id"
+  add_index "reservations", ["start_date"], :name => "start_date"
+
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false
     t.text     "data"
@@ -184,7 +203,7 @@ ActiveRecord::Schema.define(:version => 20130310101909) do
     t.boolean  "checkoutpersonmode",        :default => false
     t.boolean  "normalusermode",            :default => false
     t.boolean  "bannedmode",                :default => false
-    t.string   "deleted_at"
+    t.datetime "deleted_at"
     t.boolean  "terms_of_service_accepted"
   end
 

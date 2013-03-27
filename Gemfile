@@ -19,7 +19,7 @@ gem 'net-ldap'
 #attachments
 gem 'paperclip'
 
-gem 'permanent_records', '~> 2.1.2'
+gem 'permanent_records'
 gem 'nilify_blanks'
 
 #ui
