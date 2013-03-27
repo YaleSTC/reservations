@@ -1,5 +1,5 @@
 class Category < ActiveRecord::Base
-  has_many :equipment_models  
+  has_many :equipment_models, :dependent => :destroy
 
   validates :name,                :presence => true, 
                                   :uniqueness => true 

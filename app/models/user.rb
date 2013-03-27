@@ -1,7 +1,7 @@
 require 'net/ldap'
 
 class User < ActiveRecord::Base
-  has_many :reservations, :foreign_key => 'reserver_id'
+  has_many :reservations, :foreign_key => 'reserver_id', :dependent => :destroy
   nilify_blanks :only => [:deleted_at] 
   has_and_belongs_to_many :requirements,
                           :class_name => "Requirement",

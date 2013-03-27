@@ -267,7 +267,7 @@
 <div class="form-actions">
   <% if current_user.is_admin_in_adminmode? %>
     <%= link_to "Edit "+@equipment_model.name.truncate(30), edit_equipment_model_path(@equipment_model), :class => 'btn' %>
-    <%= link_to "Destroy "+@equipment_model.name.truncate(30), @equipment_model, :confirm => 'This will permanently delete the Item from your database and could have unintended consequences. You might break all the things. Are you sure?', :method => :delete, :class => 'btn btn-danger' %>
+    <%= link_to "Delete "+@equipment_model.name.truncate(30), @equipment_model, :confirm => 'Deleting this Equipment Model will delete all related Equipment Items and reservations. Are you sure you want to do this?', :method => :delete, :class => 'btn btn-danger' %>
   <% end %>
   <%= link_to "View All "+ Category.find(@equipment_model.category_id)
 .name.pluralize.truncate(30), category_equipment_models_path(Category.find(@equipment_model.category_id)), :class => 'btn view_all' %>
