@@ -14,16 +14,16 @@ class Reservation < ActiveRecord::Base
   # If there is no equipment model, don't run the validations that would break
   with_options :if => :not_empty? do |r|
     r.validate  :start_date_before_due_date?, :matched_object_and_model?,
-                :available?               
-  end 
-  
+                :available?
+  end
+
   # These can't be nested with the above block because with_options clobbers
   # nested options that are the same (i.e., :if and :if)
   with_options :if => Proc.new {|r| r.not_empty? && !r.from_admin} do |r|
     r.with_options :on => :create do |r|
-      r.validate  :not_in_past?, :not_renewable?, :no_overdue_reservations?, 
-                  :duration_allowed?, :start_date_is_not_blackout?, 
-                  :due_date_is_not_blackout?, :quantity_eq_model_allowed?, 
+      r.validate  :not_in_past?, :not_renewable?, :no_overdue_reservations?,
+                  :duration_allowed?, :start_date_is_not_blackout?,
+                  :due_date_is_not_blackout?, :quantity_eq_model_allowed?,
                   :quantity_cat_allowed?
     end
   end
@@ -60,11 +60,11 @@ class Reservation < ActiveRecord::Base
 
   def reserver
     User.find(self.reserver_id)
-  rescue 
+  rescue
     #if user's been deleted, return a dummy user
-    User.new( first_name: "Deleted", 
-              last_name: "User", 
-              login: "deleted", 
+    User.new( first_name: "Deleted",
+              last_name: "User",
+              login: "deleted",
               email: "deleted.user@invalid.address",
               nickname: "",
               phone: "555-555-5555",
@@ -83,7 +83,6 @@ class Reservation < ActiveRecord::Base
     else
       due_date < checked_in.to_date ? "returned overdue" : "returned on time"
     end
-
   end
 
   ## Set validation

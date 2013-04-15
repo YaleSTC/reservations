@@ -30,7 +30,10 @@
          <td> <%=equipment_object.name%> </td>
        <% end %>
       <td><%= equipment_object.serial %></td>
-      <td><%= equipment_object.status %></td>
+
+      <% current_res = equipment_object.current_reservation %>
+      <td><%= link_to_if current_res, equipment_object.status, current_res %></td>
+
       <% if current_user.is_admin_in_adminmode? %>
         <td><%= link_to "Edit", edit_equipment_object_path(equipment_object), :class => "btn" %></td>
         <td><%= eval @toggle %></td>
