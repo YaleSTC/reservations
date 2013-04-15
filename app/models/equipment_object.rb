@@ -14,13 +14,13 @@ class EquipmentObject < ActiveRecord::Base
   scope :active, where("#{table_name}.deleted_at is null")
 
   def status
-    return "Deactivated" if self.deleted?
-    self.reservations.each do |r|
-      if !r.checked_out.nil? && r.checked_in.nil?
-        return "checked out by #{r.reserver.name} through #{r.due_date.strftime("%b %d")}"
-      end
+    if self.deleted?
+      "Deactivated"
+    elsif r = self.current_reservation
+      "checked out by #{r.reserver.name} through #{r.due_date.strftime("%b %d")}"
+    else
+      "available"
     end
-    "available"
   end
 
   def current_reservation
