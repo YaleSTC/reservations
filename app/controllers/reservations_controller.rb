@@ -8,7 +8,7 @@ class ReservationsController < ApplicationController
     #define our source of reservations depending on user status
     reservations_source = current_user.can_checkout? ? Reservation : current_user.reservations
     default_filter = current_user.can_checkout? ? :upcoming : :reserved
-    
+
     filters = [:reserved, :checked_out, :overdue, :missed, :returned, :upcoming]
     #if the filter is defined in the params, store those reservations
     filters.each do |filter|
@@ -16,9 +16,9 @@ class ReservationsController < ApplicationController
         @reservations_set = [reservations_source.send(filter)].delete_if{|a| a.empty?}
       end
     end
-    
+
     #if no filter is defined
-    @reservations_set ||= [reservations_source.send(default_filter)].delete_if{|a| a.empty?}    
+    @reservations_set ||= [reservations_source.send(default_filter)].delete_if{|a| a.empty?}
   end
 
   def show
@@ -140,7 +140,7 @@ class ReservationsController < ApplicationController
             end
           end
 
-          
+
           # add procedures_not_done to r.notes so admin gets the errors
           # if no notes and some procedures not done
           if procedures_not_done.present?
@@ -149,7 +149,7 @@ class ReservationsController < ApplicationController
             r.notes_unsent = true
           elsif reservation_hash[:notes].present? # if all procedures were done
             r.notes = reservation_hash[:notes]
-            r.notes_unsent = true           
+            r.notes_unsent = true
           end
           r.notes.strip! if r.notes?
 
@@ -157,10 +157,9 @@ class ReservationsController < ApplicationController
           reservations_to_be_checked_out << r
 
         end
-      end
+    end
 
-  # done with throwing things into the array
-
+      # done with throwing things into the array
       #All-encompassing checks, only need to be done once
       if reservations_to_be_checked_out.first.nil? #Prevents the nil error from not selecting any reservations
         flash[:error] = "No reservation selected."
@@ -208,13 +207,13 @@ class ReservationsController < ApplicationController
     params[:reservations].each do |reservation_id, reservation_hash|
       if reservation_hash[:checkin?] == "1" then # update attributes for all equipment that is checked off
         r = Reservation.find(reservation_id)
-        
+
         if r.checked_in
-          flash[:error] = "One or more items you were trying to checkout has already been checked in." 
-          redirect_to :back 
+          flash[:error] = "One or more items you were trying to checkout has already been checked in."
+          redirect_to :back
           return
         end
-        
+
         r.checkin_handler = current_user
         r.checked_in = Time.now
 
