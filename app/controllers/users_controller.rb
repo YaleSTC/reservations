@@ -15,23 +15,28 @@ class UsersController < ApplicationController
 
   def index
     if params[:show_deleted]
-      @users = User.include_deleted.find(:all, :order => 'login ASC')
+      @users = User.order('login ASC')
     else
-      @users = User.find(:all, :order => 'login ASC')
+      @users = User.active.order('login ASC')
     end
   end
 
   def show
-    @user = User.include_deleted.find(params[:id])
+    @user = User.find(params[:id])
     require_user_or_checkout_person(@user)
     @user_reservations = @user.reservations
     @all_equipment = Reservation.active_user_reservations(@user)
-    @show_equipment = { current_equipment: @user.reservations.select{|r| (r.status == "checked out") || (r.status == "overdue")}, 
-                        current_reservations: @user.reservations.reserved, 
-                        overdue_equipment: @user.reservations.overdue, 
-                        past_equipment: @user.reservations.returned,
-                        missed_reservations: @user.reservations.missed, 
-                        past_overdue_equipment: @user.reservations.returned.select{|r| r.checked_in > r.due_date} }
+    @show_equipment = { checked_out:  @user.reservations.
+                                            select {|r| \
+                                              (r.status == "checked out") || \
+                                              (r.status == "overdue")}, 
+                        overdue:      @user.reservations.overdue, 
+                        future:       @user.reservations.reserved, 
+                        past:         @user.reservations.returned,
+                        missed:       @user.reservations.missed, 
+                        past_overdue: @user.reservations.returned.
+                                            select {|r| \
+                                              r.status == "returned overdue"} }
   end
 
   def new
@@ -60,12 +65,12 @@ class UsersController < ApplicationController
   end
 
   def edit
-    @user = User.include_deleted.find(params[:id])
+    @user = User.find(params[:id])
     require_user(@user)
   end
 
   def update
-    @user = User.include_deleted.find(params[:id])
+    @user = User.find(params[:id])
     require_user(@user)
     params[:user].delete(:login) unless current_user.is_admin_in_adminmode? #no changing login unless you're an admin
     if @user.update_attributes(params[:user])
@@ -81,7 +86,7 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    @user = User.include_deleted.find(params[:id])
+    @user = User.find(params[:id])
     @user.destroy(:force)
     flash[:notice] = "Successfully destroyed user."
     redirect_to users_url
@@ -95,7 +100,7 @@ class UsersController < ApplicationController
       flash[:alert] = "Please select a valid user"
       redirect_to :back and return
     else
-      @user = User.include_deleted.find(params[:searched_id])
+      @user = User.find(params[:searched_id])
       require_user_or_checkout_person(@user)
       redirect_to manage_reservations_for_user_path(@user.id) and return
     end

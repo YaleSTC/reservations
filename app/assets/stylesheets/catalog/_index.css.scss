@@ -25,12 +25,17 @@
 
 .equipment_title {
 	padding: 9px 9px 0px 9px;
-	height: 2 * $h3-line-height;
+	height: $h3-line-height;
 }
 
 .special-hr {
 	margin-top: 4px;
 	margin-bottom: 10px;
+}
+
+.model_availability {
+  padding-top: 10px;
+  margin-bottom: 19px;
 }
 
 .caption_cat { padding: 0px 9px 0px 9px; }

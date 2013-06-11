@@ -3,40 +3,50 @@ class EquipmentObject < ActiveRecord::Base
   has_one :category, :through => :equipment_model
   has_many :reservations
 
-  validates :name, 
+  validates :name,
             :equipment_model, :presence => true
 
   nilify_blanks :only => [:deleted_at]
-  
-  attr_accessible :name, :serial, :equipment_model_id, :deleted_at
-  
-   default_scope where(:deleted_at => nil)
-   
-    def self.include_deleted
-      self.unscoped
-    end
 
+  attr_accessible :name, :serial, :equipment_model_id, :equipment_model, :deleted_at
+
+  # table_name is needed to resolve ambiguity for certain queries with 'includes'
+  scope :active, where("#{table_name}.deleted_at is null")
 
   def status
-    # last_reservation = Reservation.find(self.reservation_ids.last.to_s)
+    if self.deleted?
+      "Deactivated"
+    elsif r = self.current_reservation
+      "checked out by #{r.reserver.name} through #{r.due_date.strftime("%b %d")}"
+    else
+      "available"
+    end
+  end
+
+  def current_reservation
     self.reservations.each do |r|
-      if (!r.checked_out.nil?) && (r.status != "returned")
-        return "checked out by #{r.reserver.name} through #{r.due_date.strftime("%b %d")}"
+      if !r.checked_out.nil? && r.checked_in.nil?
+        return r
       end
     end
-    "available"
+    return nil
   end
-  
+
   def available?
     status == "available"
   end
-  
+
   def self.catalog_search(query)
     if query.blank? # if the string is blank, return all
-      find(:all)
+      active
     else # in all other cases, search using the query text
-      find(:all, :conditions => ['name LIKE :query OR serial LIKE :query', {:query => "%#{query}%"}])
+      results = []
+      query.split.each do |q|
+        results << active.where("name LIKE :query OR serial LIKE :query", {:query => "%#{q}%"})
+      end
+      # take the intersection of the results for each word
+      # i.e. choose results matching all terms
+      results.inject(:&)
     end
   end
-
 end

@@ -1,25 +1,20 @@
 <%= simple_form_for @reservation, :html => { :class => "form-horizontal" } do |f| %>
   <%= f.error_notification %>
-  <% if current_user and current_user.is_admin_in_adminmode? %>
-    <%= f.input :fake_reserver_id, :as => :autocomplete, :url => autocomplete_user_last_name_reservations_path,
-                :id_element => '#reservation_reserver_id', label: "Reserver", placeholder: "Start typing a name or login", input_html: {value: @reservation.reserver.name} %>
-    <%= f.input :reserver_id, as: :hidden %>
-  <%else %>
-    <%= current_user.name %>
-    <%= f.input :reserver_id, :as => :hidden, :input_html => {:value => current_user.id} %>
-  <% end %>
-    <div class='control-group'>
-      <label class='control-label'>* Start date</label>
-      <div class="controls">
-        <%= datepicker_input "reservation", "start_date", :value => @reservation.start_date.strftime('%m/%d/%Y') %>
-      </div>
+  <%= f.input :fake_reserver_id, :as => :autocomplete, :url => autocomplete_user_last_name_reservations_path,
+              :id_element => '#reservation_reserver_id', label: "Reserver", placeholder: "Start typing a name or login", input_html: {value: @reservation.reserver.name} %>
+  <%= f.input :reserver_id, as: :hidden %>
+  <div class='control-group'>
+    <label class='control-label'>* Start date</label>
+    <div class="controls">
+      <%= datepicker_input "reservation", "start_date", :value => @reservation.start_date.strftime('%m/%d/%Y') %>
     </div>
-    <div class='control-group'>
-      <label class='control-label'>* Due date</label>
-      <div class="controls">
-        <%= datepicker_input "reservation", "due_date", :value => @reservation.due_date.strftime('%m/%d/%Y') %>
-      </div>
+  </div>
+  <div class='control-group'>
+    <label class='control-label'>* Due date</label>
+    <div class="controls">
+      <%= datepicker_input "reservation", "due_date", :value => @reservation.due_date.strftime('%m/%d/%Y') %>
     </div>
-    <%= f.input :notes, :as => :text, :hint => "#{render :partial => 'shared/markdown_button'}" %>
-    <%= f.button :wrapped, :cancel => reservations_path %> 
+  </div>
+  <%= f.input :notes, :as => :text, :hint => "#{render :partial => 'shared/markdown_button'}" %>
+  <%= f.button :wrapped, :cancel => reservations_path %>
 <% end %>

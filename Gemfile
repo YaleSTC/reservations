@@ -1,31 +1,43 @@
 source "https://rubygems.org"
-gem "whenever"
-gem "net-ldap"
-gem "paperclip"
-gem "rake"
-gem "rails", "3.2.0"
-gem "mysql2"
-gem "rdoc"
-gem "rubycas-client-rails"
-gem "rubycas-client", "2.2.1"
-gem "pry"
-gem "pry-rails"
-gem "pry-debugger"
-gem "pry-stack_explorer"
-gem "dynamic_form"
-gem "permanent_records", "~> 2.1.2"
-gem "nilify_blanks"
-gem "mail"
-gem "simple_form"
+
+#standard gems
+gem 'rails', '3.2.11'
+gem 'mysql2'
+gem 'rake'
+gem 'rdoc'
+
+#authentication
+gem 'rubycas-client-rails'
+gem 'rubycas-client', '2.2.1'
+
+#scheduling
+gem 'whenever'
+
+#ldap integration
+gem 'net-ldap'
+
+#attachments
+gem 'paperclip'
+
+gem 'permanent_records'
+gem 'nilify_blanks'
+
+#ui
 gem 'jquery_datepicker'
-gem "jquery-rails"
+gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'jquery-datatables-rails'
-gem "cocoon"
-gem "rails3-jquery-autocomplete"
-gem "kaminari"
-gem "redcarpet"
+gem 'rails3-jquery-autocomplete'
 gem 'select2-rails'
+gem 'kaminari'
+
+#forms / formatting
+gem 'dynamic_form'
+gem 'simple_form'
+gem 'cocoon'
+gem 'redcarpet'
+
+
 
 group :development, :test do
   gem "factory_girl_rails"
@@ -33,7 +45,9 @@ group :development, :test do
   gem 'capybara'
   gem 'guard-livereload'
   gem 'yajl-ruby'
-  gem "ffaker"
+  gem 'ffaker'
+  gem 'capistrano'
+  gem 'awesome_print'
 end
 
 # Gems used only for assets and not required
@@ -43,10 +57,20 @@ group :assets do
   gem 'coffee-rails'
   gem 'uglifier'
   gem 'bootstrap-sass', '~> 2.0.3'
-  gem 'font-awesome-sass-rails'
+  gem 'font-awesome-rails', :git => "git://github.com/mrnugget/font-awesome-rails.git"
 end
 
 group :development do
-  gem 'rb-readline'
 	gem 'thin'
+  gem 'pry'
+  gem 'pry-rails'
+  gem 'pry-debugger'
+  gem 'pry-stack_explorer'
+  gem 'pry-remote'
+  gem 'letter_opener' 
+end
+
+group :production, :staging do
+  gem 'therubyracer', :require => 'v8'
+  gem 'airbrake'
 end

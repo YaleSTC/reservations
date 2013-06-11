@@ -14,9 +14,9 @@
       <ul class="nav">
 
         <li <%= navigation_active catalog_path %><%= navigation_active root_path %>><%= link_to "Catalog", catalog_path %></li>
-      
+
       <% if current_user && current_user.can_checkout? %>
-        
+
           <li <%= navigation_active users_path %>><%= link_to "Users", users_path %></li>
           <% if current_user && current_user.is_admin_in_adminmode? %>
             <li class="dropdown">
@@ -40,7 +40,7 @@
             <% if current_user and current_user.can_checkout? %>
               <%= link_to "Reservations", reservations_path %>
             <% else %>
-              <%= link_to sanitize("My Reservations &nbsp;<span class=\"badge\">#{reservations_count}</span> <b class=\"caret\"></b>"), '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' %>              
+              <%= link_to sanitize("My Reservations &nbsp;<span class=\"badge\">#{reservations_count}</span> <b class=\"caret\"></b>"), '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' %>
             <% end %>
             <% if current_user and !current_user.can_checkout? %>
               <ul class="dropdown-menu">
@@ -48,10 +48,10 @@
                 <% unless @current_reservations.blank? %>
                   <% @current_reservations.each do |res| %>
                     <li>
-                      <%= link_to "#{EquipmentModel.include_deleted.find(res.equipment_model_id).name}
+                      <%= link_to "#{res.equipment_model.name}
                                    (#{res.start_date.to_date.to_s(:long)} &ndash;
-                                   #{res.due_date.to_date.to_s(:long)})".html_safe, res, rel: 'popover', 
-                                   title: res.equipment_model.name, :"data-content" => res.equipment_model.description.truncate(100) %>
+                                   #{res.due_date.to_date.to_s(:long)})".html_safe, res, rel: 'popover',
+                                   title: res.equipment_model.name, :"data-content" => markdown(res.equipment_model.description).truncate(100) %>
                     </li>
                   <% end %>
                   <li class="divider"></li>
@@ -61,9 +61,9 @@
                 <% end %>
               </ul>
             <% end %>
-          
+
           </li>
-        
+
           <!-- Equipment Dropdown -->
           <% if current_user and !current_user.can_checkout? %>
           <li id="my_equipment" class="dropdown">
@@ -79,7 +79,7 @@
                 <% @current_equipment.each do |res| %>
                 <li>
                   <%= link_to "#{res.equipment_model.name} (#{res.equipment_object.name})", res.equipment_model,
-                  rel: 'popover', title: res.equipment_model.name, :"data-content" => res.equipment_model.description.truncate(100) %>
+                  rel: 'popover', title: res.equipment_model.name, :"data-content" => markdown(res.equipment_model.description).truncate(100) %>
                 </li>
                 <li class="divider"></li>
                 <li><%= link_to "See More...", reservations_path %></li>
@@ -88,10 +88,10 @@
                 <li><div class="none-text">(none)</div></li>
               <% end %>
             </ul>
-          </li> 
+          </li>
           <% end %>
         <% end %>
-        
+
         <!-- Admin Dropdown -->
         <% if current_user && current_user.is_admin_in_adminmode? %>
           <li class="divider-vertical"></li>
@@ -103,9 +103,9 @@
                   <li><%= link_to "Reports", reports_path %></li>
                   <li><%= link_to "Settings", edit_app_configs_path %></li>
                 </ul>
-              </li> 
+              </li>
         <% end %>
-      
+
           <li class="divider-vertical"></li>
       </ul>
 
@@ -118,7 +118,7 @@
       <% if current_user.nil? %>
         <li><%= link_to "Sign In" %></li>
       <% elsif current_user %>
-      	<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user"></i> 
+      	<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user"></i>
         	<%= current_user.name %>
       	  <b class="caret"></b></a>
         	<ul class="dropdown-menu">

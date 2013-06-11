@@ -1,6 +1,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require jquery.ui.datepicker
+//= require jquery.ui.autocomplete
 //= require jquery.sticky
 //= require jquery.dotdotdot-1.5.1
 //= require cocoon
@@ -24,24 +25,32 @@
 //= require_self
 
   function truncate() {
-    $(".caption_cat").dotdotdot({
-      height: 126,
-      after: ".more_info",
-      watch: 'window'
+    if ($(".caption_cat").length) {
+      $(".caption_cat").dotdotdot({
+        height: 150,
+        after: ".more_info",
+        watch: 'window'
       });
+    }
 
-    $(".equipment_title").dotdotdot({
-      height: 54, // must match .equipment_title height
-      watch: 'window'
+    if ($(".equipment_title").length) {
+      $(".equipment_title").dotdotdot({
+        height: 27, // must match .equipment_title height
+        watch: 'window'
       });
+    }
 
-    $(".equipment_title").each(function(){
-      $(this).trigger("isTruncated", function( isTruncated ) {
-        if ( isTruncated ) {
-          $(this).children(".equipment_title_link").tooltip();
-        }
-      });
-    });
+    // TODO: Refactor this so it won't so drastically impact client-side performance.
+    // Until it's refactored, it's better off disabled.
+    // This code displays a tooltip in the catalog if the equipment model name is truncated.
+    //
+    // $(".equipment_title").each(function(){
+    //   $(this).trigger("isTruncated", function( isTruncated ) {
+    //     if ( isTruncated ) {
+    //       $(this).children(".equipment_title_link").tooltip();
+    //     }
+    //   });
+    // });
   };
 
   function validate_checkin(){
@@ -49,12 +58,15 @@
     $.each( $(".checkin"), function(i, l){
       var steps = $(this).find(':checkbox').length;
       var steps_completed = $(this).find("input:checked").length;
-        if (steps_completed != steps && steps_completed != 0) {
-          flag = true;
-        }
-        else {
-          //do nothing
-        }
+      var selected = $(this).find("input.checkin-select").is(':checked');
+      if ( selected  && (steps_completed < steps) ){
+        flag = true;
+      }
+      //If they don't select a given item to checkin, but select some of the steps
+      if ( !selected && (steps_completed > 0) ){
+        flag = true;
+      }
+
     });
     return flag;
   };
@@ -64,26 +76,23 @@
     $.each( $(".checkout"), function(i, l){
       var steps = $(this).find(':checkbox').length;
       var steps_completed = $(this).find("input:checked").length;
-      var selected = $(this).find(".dropselect").val();
-      if (selected != ""){
-        if (steps_completed != steps) {
-          flag = true;
-        }
-        else { // do nothing
-        }
-      } else {
-          if (steps_completed > 0) {
-            flag = true;
-          }
-          else {}
-        }
+      var selected = $(this).find("select.dropselect").val();
+      //If they select a given item to checkin, but not all the steps
+      if ((selected != "") && (steps_completed < steps) ){
+        flag = true;
+      }
+      //If they don't select a given item to checkin, but select some of the steps
+      if ((selected == "") && (steps_completed > 0) ){
+        flag = true;
+      }
+
     });
     return flag;
   };
 
   function confirm_checkinout(flag){
     if (flag){
-      if( confirm("One or more check in or check out procedures have not been completed. Are you sure you want to continue?")){
+      if( confirm("Oops! We've noticed one of the following issues:\n\nYou checked off procedures for an item you're not checking in/out.\n\n       or\n\nYou didn't check off all procedures for an item that you are checking in/out.\n\nAre you sure you want to continue?")){
         (this).submit();
         return false;
       } else {
@@ -151,29 +160,40 @@ $(document).ready(function() {
   });
 
 // make the sidebar follow you down the page
+if ($(window).width() > 767) {
   $("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
+}
 
 // perform truncate, which is also defined outside of document ready
 // it needs to be both places due to a webkit bug not loading named
 // JS functions in (document).ready() until AFTER displaying all the things
-  $(".caption_cat").dotdotdot({
-    height: 126,
-    after: ".more_info",
-    watch: 'window'
-    });
 
-  $(".equipment_title").dotdotdot({
-    height: 54, // must match .equipment_title height
-    watch: 'window'
-  });
-
-  $(".equipment_title").each(function(){
-    $(this).trigger("isTruncated", function( isTruncated ) {
-      if ( isTruncated ) {
-        $(this).children(".equipment_title_link").tooltip();
-      }
+  if ($(".caption_cat").length) {
+    $(".caption_cat").dotdotdot({
+      height: 150,
+      after: ".more_info",
+      watch: 'window'
     });
-  });
+  }
+
+  if ($(".equipment_title").length) {
+    $(".equipment_title").dotdotdot({
+      height: 27, // must match .equipment_title height
+      watch: 'window'
+    });
+  }
+
+  // TODO: Refactor this so it won't so drastically impact client-side performance.
+  // Until it's refactored, it's better off disabled.
+  // This code displays a tooltip in the catalog if the equipment model name is truncated.
+  //
+  // $(".equipment_title").each(function(){
+  //   $(this).trigger("isTruncated", function( isTruncated ) {
+  //     if ( isTruncated ) {
+  //       $(this).children(".equipment_title_link").tooltip();
+  //     }
+  //   });
+  // });
 
   $(".btn#modal").tooltip();
   $(".not-qualified-icon").tooltip();

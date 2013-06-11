@@ -6,14 +6,14 @@ class CategoriesController < ApplicationController
 
   def index
     if (params[:show_deleted])
-      @categories = Category.include_deleted.all
-    else
       @categories = Category.all
+    else
+      @categories = Category.active
     end
   end
 
   def show
-    @category = Category.include_deleted.find(params[:id])
+    @category = Category.find(params[:id])
   end
 
   def new
@@ -33,11 +33,11 @@ class CategoriesController < ApplicationController
   end
 
   def edit
-    @category = Category.include_deleted.find(params[:id])
+    @category = Category.find(params[:id])
   end
 
   def update
-    @category = Category.include_deleted.find(params[:id])
+    @category = Category.find(params[:id])
     @category.sort_order = params[:category][:sort_order].to_i
     if @category.update_attributes(params[:category])
       flash[:notice] = "Successfully updated category."
@@ -48,7 +48,7 @@ class CategoriesController < ApplicationController
   end
 
   def destroy
-    @category = Category.include_deleted.find(params[:id])
+    @category = Category.find(params[:id])
     @category.destroy(:force)
     flash[:notice] = "Successfully destroyed category."
     redirect_to categories_url

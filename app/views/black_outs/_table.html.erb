@@ -26,7 +26,7 @@
   <tbody>
     <% black_outs.each do |black_out| %>
       <tr>
-        <!-- <td><%# (black_out.equipment_model_id == 0) ? "All Equipment Models" : EquipmentModel.include_deleted.find(black_out.equipment_model_id).name %></td> -->
+        <!-- <td><%# (black_out.equipment_model_id == 0) ? "All Equipment Models" : EquipmentModel.find(black_out.equipment_model_id).name %></td> -->
         <td>
           <% if params[:action] == "show" %>
             <%= link_to black_out[:start_date].strftime('%m/%d/%Y'), black_out %>
@@ -45,7 +45,7 @@
           </td>
         <% end %>
         <td><%= black_out.notice %></td>
-        <td><%= User.include_deleted.find((black_out[:created_by])).name %></td>
+        <td><%= User.find((black_out[:created_by])).name %></td>
         <td><%= black_out[:black_out_type] == "hard" ? "Hard Blackout" : "Notice Only" %></td>
         <% unless params[:action] == "show" %>
           <td><%= link_to 'Show', black_out, class: 'btn btn-inverse' %></td>

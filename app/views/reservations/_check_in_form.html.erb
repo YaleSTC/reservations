@@ -17,7 +17,7 @@
               <%= image_tag reservation.equipment_model.photo.url(:medium) %>
             <% end %></p>
         <%= label_tag "reservations[#{reservation.id}][checkin?]" do %>
-          <%= check_box_tag "reservations[#{reservation.id}][checkin?]" %>
+          <%= check_box_tag "reservations[#{reservation.id}][checkin?]", 1, false, class: "checkin-select" %>
           <%= reservation.equipment_object.name %>
         <% end %>
 
@@ -25,8 +25,13 @@
 
       <p>
         <p><h4>Notes</h4></p>
-        <%= text_area_tag "reservations[#{reservation.id}][notes]", reservation.notes,
-        class: 'span3', rows: 6 %>
+        <% if reservation.notes.present? %>
+          <p><h5>Previous Notes</h5></p>
+          <p><%= markdown(reservation.notes) %></p>
+        <% end %>
+        <p><h5>New Notes</h5></p>
+        <%= text_area_tag "reservations[#{reservation.id}][notes]", "",
+                          class: 'span3', rows: 6 %>
         <%= render :partial => 'shared/markdown_button' %>
       </p>
 

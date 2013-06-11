@@ -42,8 +42,9 @@ class Cart
     current_item = CartReservation.new(:start_date => @start_date,
       :due_date => @due_date, :reserver => self.reserver)
     current_item.equipment_model = equipment_model
-    current_item.save
-    @items << current_item.id
+    if current_item.save
+      @items << current_item.id
+    end
   end
 
   # Removes CartReservation from database and ID from items array
@@ -74,13 +75,15 @@ class Cart
 
   # Sets start date and updates all CartReservations to match
   def set_start_date(date)
-    @start_date = date
-    fix_due_date
-    items.each do |item|
-      cart_res = CartReservation.find(item)
-      cart_res.start_date = start_date
-      cart_res.due_date = due_date
-      cart_res.save
+    if date >= Date.today 
+      @start_date = date
+      fix_due_date
+      items.each do |item|
+        cart_res = CartReservation.find(item)
+        cart_res.start_date = start_date
+        cart_res.due_date = due_date
+        cart_res.save
+      end
     end
   end
 
@@ -98,7 +101,7 @@ class Cart
 
   # If the dates were illogical, sets due date to day after start date
   def fix_due_date
-    if @start_date >= @due_date
+    if @start_date > @due_date
       #TODO: allow admin to set default reservation length and respect that length here
       @due_date = @start_date + 1.day
     end

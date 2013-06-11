@@ -61,5 +61,7 @@ module Reservations
     # Ensures that each controller doesn't load every helper in the application
     config.action_controller.include_all_helpers = false
 
+    PermanentRecords.dependent_record_window = 10.seconds
+
   end
 end

@@ -55,6 +55,6 @@
 
 <div class="form-actions">
   <%= link_to "Edit Category", edit_category_path(@category), class: 'btn' %>
-  <%= link_to "Destroy Category", @category, class: 'btn btn-danger', :confirm => 'Are you sure? This could have unintended consequences', :method => :delete %>
+  <%= link_to "Delete Category", @category, class: 'btn btn-danger', :confirm => 'Deleting this category will delete all related Equipment Models, Items, and reservations. Are you sure you want to do this?', :method => :delete %>
   <%= link_to "View All Categories", categories_path, class: 'btn' %>
 </div>

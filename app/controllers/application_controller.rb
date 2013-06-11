@@ -11,8 +11,8 @@ class ApplicationController < ActionController::Base
   before_filter :load_configs
   before_filter :first_time_user
   before_filter :cart
+  before_filter :fix_cart_date
   before_filter :set_view_mode
-  #before_filter :bind_pry_before_everything
 
   helper_method :current_user
   helper_method :cart
@@ -79,11 +79,7 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    @current_user ||= User.include_deleted.find_by_login(session[:cas_user]) if session[:cas_user]
-  end
-
-  def bind_pry_before_everything
-    binding.pry
+    @current_user ||= User.find_by_login(session[:cas_user]) if session[:cas_user]
   end
 
   #-------- end before_filter methods --------
@@ -91,10 +87,15 @@ class ApplicationController < ActionController::Base
   def update_cart
     # set dates
     flash.clear
-    session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
-    session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
-    session[:cart].set_reserver_id(params[:reserver_id])
-    
+    begin
+      session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
+      session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
+      session[:cart].set_reserver_id(params[:reserver_id])
+    rescue ArgumentError => e
+      cart.set_start_date(Date.today)
+      flash[:error] = "Please enter a valid start or due date."
+      return
+    end
     # validate
     errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
     flash[:error] = errors.to_sentence
@@ -107,10 +108,20 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def fix_cart_date
+    cart.set_start_date(Date.today) if cart.start_date < Date.today
+  end
+
   def empty_cart
+    #destroy old cart reservations
+    current_cart = session[:cart]
+    CartReservation.where(:reserver_id => current_cart.reserver.id).destroy_all
+    
+    #create a new cart
     session[:cart] = Cart.new
     session[:cart].set_reserver_id(current_user.id)
     flash[:notice] = "Cart emptied."
+    
     redirect_to root_path
   end
 
@@ -154,9 +165,8 @@ class ApplicationController < ActionController::Base
 
   def deactivate
     if (current_user.is_admin)
-      @objects_class2 = params[:controller].singularize.titleize.delete(' ').constantize.include_deleted.find(params[:id]) #Finds the current model (User, EM, EO, Category)
+      @objects_class2 = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (User, EM, EO, Category)
       if (params[:controller] != "users") #Search for children is not necessary if we are altering users.
-        deactivateChildren(@objects_class2)
       end
       @objects_class2.destroy #Deactivate the model you had originally intended to deactivate
       flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + ". Any related reservations or equipment have been deactivated as well."
@@ -168,11 +178,15 @@ class ApplicationController < ActionController::Base
 
   def activate
     if (current_user.is_admin)
-      @model_to_activate = params[:controller].singularize.titleize.delete(' ').constantize.include_deleted.find(params[:id]) #Finds the current model (User, EM, EO, Category)
+      @model_to_activate = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (User, EM, EO, Category)
+
       if (params[:controller] != "users") #Search for parents is not necessary if we are altering users.
         activateParents(@model_to_activate)
+        @model_to_activate.revive
+      else
+        @model_to_activate.revive
       end
-      @model_to_activate.revive #Activate the model you had originally intended to activate
+
       flash[:notice] = "Successfully reactivated " + params[:controller].singularize.titleize + ". Any related reservations or equipment have been reactivated as well."
     else
       flash[:notice] = "Only administrators can do that!"

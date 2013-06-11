@@ -11,22 +11,22 @@ class BlackOut < ActiveRecord::Base
             :black_out_type, 
             :end_date, :presence => true
 
-  def self.date_is_blacked_out(date) # Returns the black_out object that blacks out the day if the day is blacked out. Otherwise, returns nil.
-     BlackOut.all.each do |black_out|
-       if ((black_out.start_date..black_out.end_date).cover?(date))
-         return black_out
-       end
-     end
-    return nil
+  def self.black_outs_on_date(date) # Returns the black_out object that blacks out the day if the day is blacked out. Otherwise, returns nil.
+    black_outs = [] 
+    BlackOut.all.each do |black_out|
+      if ((black_out.start_date..black_out.end_date).cover?(date.to_date))
+        black_outs << black_out
+      end
+    end
+    black_outs
   end
   
-  def black_out_type_is_hard
-    # A hard blackout means that items cannot be checked out on the date specified.
-    # A soft blackout will display a warning notice, but still allow the user to create a reservation for equipment.
-    if self.black_out_type == "hard"
-      true
+  def self.hard_backout_exists_on_date(date)
+    black_outs = self.black_outs_on_date(date)
+    if black_outs && black_outs.map(&:black_out_type).include?('hard')
+      return true
     else
-      false
+      return false
     end
   end
   

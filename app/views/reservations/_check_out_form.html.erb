@@ -15,7 +15,7 @@
       'Equipment Item' %>
       <%= select_tag "reservations[#{reservation.id}][equipment_object_id]",
       reservation.equipment_model.available_object_select_options, class:
-      'dropdown dropselect', placeholder: 'Please select...', prompt: '' %>
+      'dropdown dropselect', placeholder: 'Please select an equipment item...', prompt: '', width: 80 %>
     </div>
 
     <p>

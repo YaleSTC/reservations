@@ -159,7 +159,7 @@ class ReportsController < ApplicationController
      DetailInfo.new("Equipment Model",eq_models,{:secondary_id => :equipment_model_id, :info_type => :name}),
      DetailInfo.new("Equipment Object",eq_objects,{:secondary_id => :equipment_object_id, :info_type => :name})]
      
-     fields = {:status_for_report => nil, :start_date => {:call =>:to_date}, :due_date => {:call =>:to_date},
+     fields = {:status => nil, :start_date => {:call =>:to_date}, :due_date => {:call =>:to_date},
      :checked_out => {:call =>:to_date}, :checked_in => {:call =>:to_date}}
      res_stats = collect_res_info(res_set,det_structs, fields)
      

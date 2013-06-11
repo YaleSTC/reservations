@@ -11,12 +11,24 @@ class Reservation < ActiveRecord::Base
             :equipment_model,
             :presence => true
 
-  # If there is no equipment model, it doesn't run the reservations that would break it
+  # If there is no equipment model, don't run the validations that would break
   with_options :if => :not_empty? do |r|
-    r.validate :start_date_before_due_date?, :matched_object_and_model?, :not_in_past?,
-              :duration_allowed?, :available?, :quantity_eq_model_allowed?, :quantity_cat_allowed?
-    r.validate :not_renewable?, :no_overdue_reservations?, :on => :create
+    r.validate  :start_date_before_due_date?, :matched_object_and_model?,
+                :available?
   end
+
+  # These can't be nested with the above block because with_options clobbers
+  # nested options that are the same (i.e., :if and :if)
+  with_options :if => Proc.new {|r| r.not_empty? && !r.from_admin} do |r|
+    r.with_options :on => :create do |r|
+      r.validate  :not_in_past?, :not_renewable?, :no_overdue_reservations?,
+                  :duration_allowed?, :start_date_is_not_blackout?,
+                  :due_date_is_not_blackout?, :quantity_eq_model_allowed?,
+                  :quantity_cat_allowed?
+    end
+  end
+
+  nilify_blanks only: [:notes]
 
   scope :recent, order('start_date, due_date, reserver_id')
   scope :user_sort, order('reserver_id')
@@ -28,12 +40,15 @@ class Reservation < ActiveRecord::Base
   scope :returned, where("checked_in IS NOT NULL and checked_out IS NOT NULL")
   scope :returned_on_time, where("checked_in IS NOT NULL and checked_out IS NOT NULL and due_date >= checked_in").recent
   scope :returned_overdue, where("checked_in IS NOT NULL and checked_out IS NOT NULL and due_date < checked_in").recent
+  scope :not_returned, where("checked_in IS NULL")
   scope :missed, lambda {where("checked_out IS NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc).recent}
   scope :upcoming, lambda {where("checked_out IS NULL and checked_in IS NULL and start_date = ? and due_date > ?", Time.now.midnight.utc, Time.now.midnight.utc).user_sort }
   scope :reserver_is_in, lambda {|user_id_arr| where(:reserver_id => user_id_arr)}
   scope :starts_on_days, lambda {|start_date, end_date|  where(:start_date => start_date..end_date)}
+  scope :reserved_on_date, lambda {|date|  where("start_date <= ? and due_date >= ?", date.to_time.utc, date.to_time.utc)}
+  scope :for_eq_model, lambda { |eq_model| where(equipment_model_id: eq_model.id) }
   scope :active, where("checked_in IS NULL") #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
-  scope :notes_unsent, :conditions => {:notes_unsent => true}
+  scope :notes_unsent, where(:notes_unsent => true)
 
   #TODO: Why the duplication in checkout_handler and checkout_handler_id (etc)?
   attr_accessible :checkout_handler, :checkout_handler_id,
@@ -41,25 +56,22 @@ class Reservation < ActiveRecord::Base
                   :checked_out, :checked_in, :equipment_object,
                   :equipment_object_id, :notes, :notes_unsent, :times_renewed
 
+  attr_accessor :from_admin
+
   def reserver
-    User.include_deleted.find(self.reserver_id)
+    User.find(self.reserver_id)
+  rescue
+    #if user's been deleted, return a dummy user
+    User.new( first_name: "Deleted",
+              last_name: "User",
+              login: "deleted",
+              email: "deleted.user@invalid.address",
+              nickname: "",
+              phone: "555-555-5555",
+              affiliation: "Deleted")
   end
 
   def status
-    # Old status method code
-    # =========================
-    # if checked_out.nil? && due_date >= Date.today
-    #   "reserved"
-    # elsif checked_out.nil? && due_date < Date.today
-    #   "missed"
-    # elsif checked_in.nil?
-    #   due_date < Date.today ? "overdue" : "checked out"
-    # else
-    #   "returned"
-    # end
-
-    # from status_for_report
-    # ==========================
     if checked_out.nil?
       if checked_in.nil?
         due_date >= Date.today ? "reserved" : "missed"
@@ -78,37 +90,25 @@ class Reservation < ActiveRecord::Base
   # the array of reservations passed in (use with cart.cart_reservations)
   # Returns an array of error messages or [] if reservations are all valid
   def self.validate_set(user, res_array = [])
-    all_res_array = res_array + user.reservations_array
+    all_res_array = res_array + user.reservations
     errors = []
     all_res_array.each do |res|
       errors << user.name + " has overdue reservations that prevent new ones from being created" unless res.no_overdue_reservations?
-      errors << "Reservations cannot be made in the past" unless res.not_in_past?
-      errors << "Reservations start dates must be before due dates" unless res.start_date_before_due_date?
-      errors << "Reservations must have an associated equipment model" unless res.not_empty?
-      errors << res.equipment_object.name + " should be of type " + res.equipment_model.name unless res.matched_object_and_model?
+      errors << "Reservation cannot be made in the past" unless res.not_in_past? if self.class == CartReservation
+      errors << "Reservation start date must be before due date" unless res.start_date_before_due_date?
+      errors << "Reservation must be for a piece of equipment" unless res.not_empty?
+      errors << res.equipment_object.name + " must be of type " + res.equipment_model.name unless res.matched_object_and_model?
       errors << res.equipment_model.name + " should be renewed instead of re-checked out" unless res.not_renewable? if self.class == CartReservation
-      errors << "Duration problem with " + res.equipment_model.name unless res.duration_allowed?
-      errors << "Availablity problem with " + res.equipment_model.name unless res.available?(res_array)
-      errors << "Quantity equipment model problem with " + res.equipment_model.name unless res.quantity_eq_model_allowed?(res_array)
-      errors << "Quantity category problem with " + res.equipment_model.category.name unless res.quantity_cat_allowed?(res_array)
-	end
-	errors.uniq
+      errors << res.equipment_model.name + "cannot be reserved for more than " + res.equipment_model.category.maximum_checkout_length.to_s + " days at a time." unless res.duration_allowed?
+      errors << res.equipment_model.name + " is not available for the full time period requested" unless res.available?(res_array)
+      errors << "A reservation cannot start on " + res.start_date.strftime('%m/%d') + " because equipment cannot be picked up on that date" unless res.start_date_is_not_blackout?
+      errors << "A reservation cannot end on " + res.due_date.strftime('%m/%d') + " because equipment cannot be returned on that date" unless res.due_date_is_not_blackout?
+      errors << "Cannot reserve more than " + res.equipment_model.maximum_per_user.to_s + " " + res.equipment_model.name.pluralize unless res.quantity_eq_model_allowed?(res_array)
+      errors << "Cannot reserve more than " + res.equipment_model.category.maximum_per_user.to_s + " " + res.equipment_model.category.name.pluralize unless res.quantity_cat_allowed?(res_array)
+    end
+    errors.uniq
   end
 
-  #should reconcile the two status functions
-  def status_for_report
-    if checked_out.nil?
-      if checked_in.nil?
-        due_date >= Date.today ? "reserved" : "missed"
-      else
-        "?"
-      end
-    elsif checked_in.nil?
-      due_date < Date.today ? "overdue" : "checked out"
-    else
-      due_date < checked_in.to_date ? "returned overdue" : "returned on time"
-    end
-  end
 
   def self.due_for_checkin(user)
     Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", user.id).order('due_date ASC') # put most-due ones first
@@ -224,7 +224,7 @@ class Reservation < ActiveRecord::Base
     if self.times_renewed == NIL
       self.times_renewed = 0
     end
-    
+
     # you can't renew a checked in reservation
     if self.checked_in
       return false

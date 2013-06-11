@@ -3,11 +3,11 @@
 
     <%= hidden_field_tag 'page', params[:page] %>
     <% if current_user && current_user.can_checkout? %>
-      <%= label_tag :reserver_id, 'Reserver' %>
+      <%= label_tag :reserver_id, 'Reserving For' %>
       <div class="input-append">
         <%# This must all be one one line for the button to display properly, sorry it's so ugly! %>
         <%= hidden_field_tag 'reserver_id', cart.reserver_id %>
-				<%= autocomplete_field_tag 'fake_reserver_id', User.include_deleted.find(cart.reserver_id).render_name, autocomplete_user_last_name_reservations_path, :size => 30, :class => 'submittable span2' %>
+				<%= autocomplete_field_tag 'fake_reserver_id', User.find(cart.reserver_id).render_name, autocomplete_user_last_name_reservations_path, :size => 30, :class => 'submittable span2' %>
 				<%= link_to sanitize("<i class=\"icon-plus\"></i>"), '#userModal', :class => 'btn', :id => 'modal', :rel => 'tooltip', :title => 'New Reserver', :"data-toggle" => 'modal' %>
       </div>
 
@@ -20,10 +20,10 @@
       </div>
     <% end %>
 
-      <%= label_tag :start_date, 'Start of reservation' %>
+      <%= label_tag :start_date, 'Start Date' %>
       <%= datepicker_input "cart", "start_date_cart", :class => 'autosubmitme span2', :value => cart.start_date.strftime('%m/%d/%Y') %>
       
-      <%= label_tag :due_date, 'End of reservation' %>
+      <%= label_tag :due_date, 'Due Date' %>
       <%= datepicker_input "cart", "due_date_cart", :class => 'autosubmitme span2', :value => cart.due_date.strftime('%m/%d/%Y'), :minDate => cart.start_date.strftime('%m/%d/%Y') %>
 
   <% end %>

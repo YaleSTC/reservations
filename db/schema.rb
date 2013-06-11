@@ -11,12 +11,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120724184424) do
+ActiveRecord::Schema.define(:version => 20130327193420) do
 
   create_table "app_configs", :force => true do |t|
-    t.boolean  "upcoming_checkin_email_active",         :default => true
-    t.boolean  "overdue_checkout_email_active",         :default => true
-    t.boolean  "reservation_confirmation_email_active", :default => true
+    t.boolean  "upcoming_checkin_email_active",                      :default => true
+    t.boolean  "reservation_confirmation_email_active",              :default => true
     t.string   "site_title"
     t.string   "admin_email"
     t.string   "department_name"
@@ -25,14 +24,17 @@ ActiveRecord::Schema.define(:version => 20120724184424) do
     t.string   "home_link_location"
     t.integer  "default_per_cat_page"
     t.text     "upcoming_checkin_email_body"
-    t.text     "overdue_checkout_email_body"
     t.text     "overdue_checkin_email_body"
-    t.boolean  "overdue_checkin_email_active",          :default => true
+    t.boolean  "overdue_checkin_email_active",                       :default => true
     t.text     "terms_of_service"
     t.string   "favicon_file_name"
     t.string   "favicon_content_type"
     t.integer  "favicon_file_size"
     t.datetime "favicon_updated_at"
+    t.boolean  "delete_missed_reservations",                         :default => true
+    t.text     "deleted_missed_reservation_email_body"
+    t.boolean  "send_notifications_for_deleted_missed_reservations", :default => true
+    t.boolean  "checkout_persons_can_edit",                          :default => false
   end
 
   create_table "black_outs", :force => true do |t|
@@ -63,7 +65,7 @@ ActiveRecord::Schema.define(:version => 20120724184424) do
     t.datetime "created_at",              :null => false
     t.datetime "updated_at",              :null => false
     t.integer  "sort_order"
-    t.string   "deleted_at"
+    t.datetime "deleted_at"
     t.integer  "max_renewal_times"
     t.integer  "max_renewal_length"
     t.integer  "renewal_days_before_due"
@@ -93,7 +95,7 @@ ActiveRecord::Schema.define(:version => 20120724184424) do
     t.integer  "category_id"
     t.datetime "created_at",                                                                  :null => false
     t.datetime "updated_at",                                                                  :null => false
-    t.string   "deleted_at"
+    t.datetime "deleted_at"
     t.string   "photo_file_name"
     t.string   "photo_content_type"
     t.integer  "photo_file_size"
@@ -132,7 +134,7 @@ ActiveRecord::Schema.define(:version => 20120724184424) do
     t.integer  "equipment_model_id"
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
-    t.string   "deleted_at"
+    t.datetime "deleted_at"
   end
 
   create_table "equipment_objects_reservations", :force => true do |t|
@@ -170,6 +172,10 @@ ActiveRecord::Schema.define(:version => 20120724184424) do
     t.integer  "times_renewed"
   end
 
+  add_index "reservations", ["due_date"], :name => "due_date"
+  add_index "reservations", ["equipment_model_id"], :name => "equipment_model_id"
+  add_index "reservations", ["start_date"], :name => "start_date"
+
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false
     t.text     "data"
@@ -197,7 +203,7 @@ ActiveRecord::Schema.define(:version => 20120724184424) do
     t.boolean  "checkoutpersonmode",        :default => false
     t.boolean  "normalusermode",            :default => false
     t.boolean  "bannedmode",                :default => false
-    t.string   "deleted_at"
+    t.datetime "deleted_at"
     t.boolean  "terms_of_service_accepted"
   end
 

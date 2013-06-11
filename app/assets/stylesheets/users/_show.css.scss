@@ -13,7 +13,7 @@
 }
 
 //Giant Stats Numbers
-.current_equipment_num, .current_reservations_num, .overdue_equipment_num, .past_equipment_num, .missed_reservations_num, .past_overdue_equipment_num {
+.checked_out_num, .future_num, .overdue_num, .past_num, .missed_num, .past_overdue_num {
 	@include giant-number;
 }
 
