@@ -13,6 +13,7 @@ class ApplicationController < ActionController::Base
   before_filter :cart
   before_filter :fix_cart_date
   before_filter :set_view_mode
+  before_filter :check_if_is_admin,  :only => [:activate, :deactivate]
 
   helper_method :current_user
   helper_method :cart
@@ -43,43 +44,37 @@ class ApplicationController < ActionController::Base
     session[:cart]
   end
 
-  def set_view_mode #(Analogous to department_chooser in shifts)
-    if (params[:a_mode] && current_user.is_admin)
-      current_user.update_attribute(:adminmode, 1)
-	    current_user.update_attribute(:checkoutpersonmode, 0)
-	    current_user.update_attribute(:normalusermode, 0)
-	    current_user.update_attribute(:bannedmode, 0)
-      flash[:notice] = "Viewing as Admin"
+  def set_view_mode #(Analogous to department_chooser in shifts) NOTE: logic changed since this comment
+
+    # check if user is admin and if exactly one of the modes is specified in params
+    if current_user.is_admin && ( !!params[:a_mode] ^ !!params[:c_mode] ^ !!params[:n_mode] ^ !!params[:b_mode] )
+      # set dictionary of values to update
+      values = {:adminmode =>             !!params[:a_mode], 
+                :checkoutpersonmode =>    !!params[:c_mode],
+                :normalusermode =>        !!params[:n_mode], 
+                :bannedmode =>            !!params[:b_mode] }
+      # dictionary of notices to display
+      notices = { :adminmode =>           "Viewing as Admin",
+                  :checkoutpersonmode =>  "Viewing as Checkout Person",
+                  :normalusermode =>      "Viewing as Patron",
+                  :bannedmode =>          "Viewing as Banned User" }
+
+      current_user.update_attributes( values )
+      flash[:notice] = notices[values.key(true)]
       redirect_to :action => "index" and return
     end
-    if (params[:c_mode] && current_user.is_admin)
-      current_user.update_attribute(:adminmode, 0)
-	    current_user.update_attribute(:checkoutpersonmode, 1)
-	    current_user.update_attribute(:normalusermode, 0)
-	    current_user.update_attribute(:bannedmode, 0)
-      flash[:notice] = "Viewing as Checkout Person"
-      redirect_to :action => "index" and return
-    end
-    if (params[:n_mode] && current_user.is_admin)
-	    current_user.update_attribute(:adminmode, 0)
-	    current_user.update_attribute(:checkoutpersonmode, 0)
-	    current_user.update_attribute(:normalusermode, 1)
-	    current_user.update_attribute(:bannedmode, 0)
-      flash[:notice] = "Viewing as Patron"
-      redirect_to :action => "index" and return
-    end
-    if (params[:b_mode] && current_user.is_admin)
-	    current_user.update_attribute(:adminmode, 0)
-      current_user.update_attribute(:checkoutpersonmode, 0)
-	    current_user.update_attribute(:normalusermode, 0)
-      current_user.update_attribute(:bannedmode, 1)
-      flash[:notice] = "Viewing as Banned User"
-      redirect_to :action => "index" and return
-    end
+
   end
 
   def current_user
     @current_user ||= User.find_by_login(session[:cas_user]) if session[:cas_user]
+  end
+
+  def check_if_is_admin
+    if ( !current_user.is_admin )
+      flash[:notice] = "Only administrators can do that!"
+      redirect_to request.referer
+    end
   end
 
   #-------- end before_filter methods --------
@@ -164,33 +159,21 @@ class ApplicationController < ActionController::Base
   end
 
   def deactivate
-    if (current_user.is_admin)
-      @objects_class2 = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (User, EM, EO, Category)
-      if (params[:controller] != "users") #Search for children is not necessary if we are altering users.
-      end
-      @objects_class2.destroy #Deactivate the model you had originally intended to deactivate
-      flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + ". Any related reservations or equipment have been deactivated as well."
-    else
-      flash[:notice] = "Only administrators can do that!"
-    end
+    @objects_class2 = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (User, EM, EO, Category)
+    @objects_class2.destroy #Deactivate the model you had originally intended to deactivate
+    flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + ". Any related reservations or equipment have been deactivated as well."
     redirect_to request.referer   # Or use redirect_to(back).
- end
+  end
 
   def activate
-    if (current_user.is_admin)
-      @model_to_activate = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (User, EM, EO, Category)
+    @model_to_activate = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (User, EM, EO, Category)
 
-      if (params[:controller] != "users") #Search for parents is not necessary if we are altering users.
-        activateParents(@model_to_activate)
-        @model_to_activate.revive
-      else
-        @model_to_activate.revive
-      end
-
-      flash[:notice] = "Successfully reactivated " + params[:controller].singularize.titleize + ". Any related reservations or equipment have been reactivated as well."
-    else
-      flash[:notice] = "Only administrators can do that!"
+    if (params[:controller] != "users") #Search for parents is not necessary if we are altering users.
+      activateParents(@model_to_activate)
     end
+    @model_to_activate.revive
+
+    flash[:notice] = "Successfully reactivated " + params[:controller].singularize.titleize + ". Any related reservations or equipment have been reactivated as well."
     redirect_to request.referer  # Or use redirect_to(back)
   end
   

@@ -12,6 +12,8 @@ class UsersController < ApplicationController
      
   require 'activationhelper'
   include ActivationHelper
+  require 'newuser'
+  include NewUser
 
   def index
     if params[:show_deleted]
@@ -40,12 +42,7 @@ class UsersController < ApplicationController
   end
 
   def new
-    if current_user and current_user.is_admin_in_adminmode?
-      @user = User.new
-    else
-      @user = User.new(User.search_ldap(session[:cas_user]))
-      @user.login = session[:cas_user] #default to current login
-    end
+    new_user
   end
 
   def create
