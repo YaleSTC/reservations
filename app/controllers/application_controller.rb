@@ -13,6 +13,7 @@ class ApplicationController < ActionController::Base
   before_filter :cart
   before_filter :fix_cart_date
   before_filter :set_view_mode
+  before_filter :check_if_is_admin,  :only => [:activate, :deactivate]
 
   helper_method :current_user
   helper_method :cart
@@ -67,6 +68,13 @@ class ApplicationController < ActionController::Base
 
   def current_user
     @current_user ||= User.find_by_login(session[:cas_user]) if session[:cas_user]
+  end
+
+  def check_if_is_admin
+    if ( !current_user.is_admin )
+      flash[:notice] = "Only administrators can do that!"
+      redirect_to request.referer
+    end
   end
 
   #-------- end before_filter methods --------
@@ -151,29 +159,21 @@ class ApplicationController < ActionController::Base
   end
 
   def deactivate
-    if (current_user.is_admin)
-      @objects_class2 = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (User, EM, EO, Category)
-      @objects_class2.destroy #Deactivate the model you had originally intended to deactivate
-      flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + ". Any related reservations or equipment have been deactivated as well."
-    else
-      flash[:notice] = "Only administrators can do that!"
-    end
+    @objects_class2 = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (User, EM, EO, Category)
+    @objects_class2.destroy #Deactivate the model you had originally intended to deactivate
+    flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + ". Any related reservations or equipment have been deactivated as well."
     redirect_to request.referer   # Or use redirect_to(back).
- end
+  end
 
   def activate
-    if (current_user.is_admin)
-      @model_to_activate = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (User, EM, EO, Category)
+    @model_to_activate = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (User, EM, EO, Category)
 
-      if (params[:controller] != "users") #Search for parents is not necessary if we are altering users.
-        activateParents(@model_to_activate)
-      end
-      @model_to_activate.revive
-
-      flash[:notice] = "Successfully reactivated " + params[:controller].singularize.titleize + ". Any related reservations or equipment have been reactivated as well."
-    else
-      flash[:notice] = "Only administrators can do that!"
+    if (params[:controller] != "users") #Search for parents is not necessary if we are altering users.
+      activateParents(@model_to_activate)
     end
+    @model_to_activate.revive
+
+    flash[:notice] = "Successfully reactivated " + params[:controller].singularize.titleize + ". Any related reservations or equipment have been reactivated as well."
     redirect_to request.referer  # Or use redirect_to(back)
   end
   
