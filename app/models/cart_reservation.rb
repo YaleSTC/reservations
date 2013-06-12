@@ -1,4 +1,5 @@
 class CartReservation < ActiveRecord::Base
+  include ReservationsBase
   include ReservationValidations
 
   validates :reserver,

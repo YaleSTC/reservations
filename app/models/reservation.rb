@@ -1,4 +1,5 @@
 class Reservation < ActiveRecord::Base
+  include ReservationsBase
   include ReservationValidations
 
   belongs_to :equipment_object
