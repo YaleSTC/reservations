@@ -43,39 +43,26 @@ class ApplicationController < ActionController::Base
     session[:cart]
   end
 
-  def set_view_mode #(Analogous to department_chooser in shifts)
-    if (params[:a_mode] && current_user.is_admin)
-      current_user.update_attribute(:adminmode, 1)
-	    current_user.update_attribute(:checkoutpersonmode, 0)
-	    current_user.update_attribute(:normalusermode, 0)
-	    current_user.update_attribute(:bannedmode, 0)
-      flash[:notice] = "Viewing as Admin"
+  def set_view_mode #(Analogous to department_chooser in shifts) NOTE: logic changed since this comment
+
+    # check if user is admin and if exactly one of the modes is specified in params
+    if current_user.is_admin && ( !!params[:a_mode] ^ !!params[:c_mode] ^ !!params[:n_mode] ^ !!params[:b_mode] )
+      # set dictionary of values to update
+      values = {:adminmode =>             !!params[:a_mode], 
+                :checkoutpersonmode =>    !!params[:c_mode],
+                :normalusermode =>        !!params[:n_mode], 
+                :bannedmode =>            !!params[:b_mode] }
+      # dictionary of notices to display
+      notices = { :adminmode =>           "Viewing as Admin",
+                  :checkoutpersonmode =>  "Viewing as Checkout Person",
+                  :normalusermode =>      "Viewing as Patron",
+                  :bannedmode =>          "Viewing as Banned User" }
+
+      current_user.update_attributes( values )
+      flash[:notice] = notices[values.key(true)]
       redirect_to :action => "index" and return
     end
-    if (params[:c_mode] && current_user.is_admin)
-      current_user.update_attribute(:adminmode, 0)
-	    current_user.update_attribute(:checkoutpersonmode, 1)
-	    current_user.update_attribute(:normalusermode, 0)
-	    current_user.update_attribute(:bannedmode, 0)
-      flash[:notice] = "Viewing as Checkout Person"
-      redirect_to :action => "index" and return
-    end
-    if (params[:n_mode] && current_user.is_admin)
-	    current_user.update_attribute(:adminmode, 0)
-	    current_user.update_attribute(:checkoutpersonmode, 0)
-	    current_user.update_attribute(:normalusermode, 1)
-	    current_user.update_attribute(:bannedmode, 0)
-      flash[:notice] = "Viewing as Patron"
-      redirect_to :action => "index" and return
-    end
-    if (params[:b_mode] && current_user.is_admin)
-	    current_user.update_attribute(:adminmode, 0)
-      current_user.update_attribute(:checkoutpersonmode, 0)
-	    current_user.update_attribute(:normalusermode, 0)
-      current_user.update_attribute(:bannedmode, 1)
-      flash[:notice] = "Viewing as Banned User"
-      redirect_to :action => "index" and return
-    end
+
   end
 
   def current_user
