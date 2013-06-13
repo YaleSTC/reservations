@@ -45,23 +45,25 @@ class EquipmentModelsController < ApplicationController
   def edit
     @equipment_model = EquipmentModel.find(params[:id])
   end
-
-  def update
-    @equipment_model = EquipmentModel.find(params[:id])
-
-    unless params[:clear_documentation].nil? # if we want to delete the current docs
+  
+  def delete_files
+    # for a given filetype affected by param value, the file in question is saved in path contained value
+    types = {"clear_documentation" => "documentations", "clear_photo" => "photos"}
+    
+    # only keep pairs that occur as keys with non-nil values in params
+    types.select! {|k,v| params.keys.member? (k) and !v.nil?} 
+    types.each do |k,path|
       # recursively remove files from filesystem
-      file_location = Rails.root.to_s + "/public/equipment_models/documentations/" + @equipment_model.id.to_s + "/"
+      file_location = Rails.root.to_s + "/public/attachments/equipment_models/" + path + "/" + @equipment_model.id.to_s + "/original/"
       FileUtils.rm_r file_location
       @equipment_model.documentation_file_name = NIL
     end
-
-    unless params[:clear_photo].nil? # if we want to delete the current photo
-      # recursively remove files from filesystem
-      file_location = Rails.root.to_s + "/public/equipment_models/photos/" + @equipment_model.id.to_s + "/"
-      FileUtils.rm_r file_location
-      @equipment_model.photo_file_name = NIL
-    end
+  end
+  
+  def update    
+    @equipment_model = EquipmentModel.find(params[:id])
+    
+    delete_files
 
     if @equipment_model.update_attributes(params[:equipment_model])
       flash[:notice] = "Successfully updated equipment model."
