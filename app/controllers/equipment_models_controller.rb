@@ -2,11 +2,16 @@ class EquipmentModelsController < ApplicationController
   layout 'application_with_sidebar', only: :show
 
   before_filter :require_admin
+  before_filter :get_equipment_model_by_id, :only => [:show, :edit, :update, :destroy]
   skip_before_filter :require_admin, :only => [:index, :show]
 
   require 'activationhelper'
   include ActivationHelper
-
+  
+  def get_equipment_model_by_id
+    @equipment_model = EquipmentModel.find(params[:id])
+  end
+  
   def index
     if params[:category_id] && params[:show_deleted]
       @category = Category.find(params[:category_id])
@@ -22,7 +27,6 @@ class EquipmentModelsController < ApplicationController
   end
 
   def show
-    @equipment_model = EquipmentModel.find(params[:id])
     @associated_equipment_models = @equipment_model.associated_equipment_models.sample(6)
   end
 
@@ -43,7 +47,6 @@ class EquipmentModelsController < ApplicationController
   end
 
   def edit
-    @equipment_model = EquipmentModel.find(params[:id])
   end
   
   def delete_files
@@ -60,9 +63,7 @@ class EquipmentModelsController < ApplicationController
     end
   end
   
-  def update    
-    @equipment_model = EquipmentModel.find(params[:id])
-    
+  def update
     delete_files
 
     if @equipment_model.update_attributes(params[:equipment_model])
@@ -74,7 +75,6 @@ class EquipmentModelsController < ApplicationController
   end
 
   def destroy
-    @equipment_model = EquipmentModel.find(params[:id])
     @equipment_model.destroy(:force)
     flash[:notice] = "Successfully destroyed equipment model."
     redirect_to equipment_models_url
