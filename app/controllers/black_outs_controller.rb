@@ -27,18 +27,19 @@ class BlackOutsController < ApplicationController
     @black_out = BlackOut.find(params[:id])
   end
 
-  #validates that date selection was done correctly when the form calls for a recurring blackout
+  #validates that date selection was done correctly when the form calls the create method
   def validate_recurring_date_params
+    if params[:recurring] == "true"
+      # make sure there are actually days selected
+      if params[:black_out][:days].first.blank?
 
-    # make sure there are actually days selected
-    if params[:black_out][:days].first.blank?
+        flash[:error] = 'You must select at least one day of the week for any recurring blackouts to be created.'
 
-      flash[:error] = 'You must select at least one day of the week for any recurring blackouts to be created.'
-
-      # exit
-      respond_to do |format|
-        format.html {redirect_to :back and return}
-        format.js {render :action => 'load_custom_errors' and return}
+        # exit
+        respond_to do |format|
+          format.html {redirect_to :back and return}
+          format.js {render :action => 'load_custom_errors' and return}
+        end
       end
     end
   end
@@ -97,7 +98,6 @@ class BlackOutsController < ApplicationController
     else
       params[:black_out][:set_id] = BlackOut.last.id + 1
     end
-    #params[:black_out][:set_id] = BlackOut.last.id.to_i + 1
 
     # create an array of the appropriate dates to create blackouts for
     recurring_blackout_set = BlackOut.array_of_black_outs(params[:black_out][:start_date], params[:black_out][:end_date], params[:black_out][:days])
@@ -122,7 +122,7 @@ class BlackOutsController < ApplicationController
   end
 
   def create
-
+    # create a non-recurring blackout
     if params[:recurring] != "true"
       params[:black_out][:set_id] = NIL # the blackouts not belonging to a set
       @black_out = BlackOut.new(params[:black_out])
@@ -138,6 +138,7 @@ class BlackOutsController < ApplicationController
         end
       end
     else
+      # otherwise, call this method to create a recurring blackout
       create_recurring_blackout_helper
     end
 
