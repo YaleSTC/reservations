@@ -7,23 +7,26 @@ class ApplicationController < ActionController::Base
 
   before_filter RubyCAS::Filter
   before_filter :app_setup, :if => lambda {|u| User.all.count == 0 }
-  before_filter :current_user
   before_filter :load_configs
-  before_filter :first_time_user
-  before_filter :cart
-  before_filter :fix_cart_date
-  before_filter :set_view_mode
-  before_filter :check_if_is_admin,  :only => [:activate, :deactivate]
+
+  with_options :unless => lambda {|u| User.all.count == 0 } do |c|
+    c.before_filter :current_user
+    c.before_filter :first_time_user
+    c.before_filter :cart
+    c.before_filter :fix_cart_date
+    c.before_filter :set_view_mode
+    c.before_filter :check_if_is_admin,  :only => [:activate, :deactivate]
+  end
 
   helper_method :current_user
   helper_method :cart
-  
+
   #-------- before_filter methods --------
 
   def app_setup
       redirect_to new_admin_user_path
   end
-  
+
   def load_configs
     @app_configs = AppConfig.first
   end
@@ -49,9 +52,9 @@ class ApplicationController < ActionController::Base
     # check if user is admin and if exactly one of the modes is specified in params
     if current_user.is_admin && ( !!params[:a_mode] ^ !!params[:c_mode] ^ !!params[:n_mode] ^ !!params[:b_mode] )
       # set dictionary of values to update
-      values = {:adminmode =>             !!params[:a_mode], 
+      values = {:adminmode =>             !!params[:a_mode],
                 :checkoutpersonmode =>    !!params[:c_mode],
-                :normalusermode =>        !!params[:n_mode], 
+                :normalusermode =>        !!params[:n_mode],
                 :bannedmode =>            !!params[:b_mode] }
       # dictionary of notices to display
       notices = { :adminmode =>           "Viewing as Admin",
@@ -111,12 +114,12 @@ class ApplicationController < ActionController::Base
     #destroy old cart reservations
     current_cart = session[:cart]
     CartReservation.where(:reserver_id => current_cart.reserver.id).destroy_all
-    
+
     #create a new cart
     session[:cart] = Cart.new
     session[:cart].set_reserver_id(current_user.id)
     flash[:notice] = "Cart emptied."
-    
+
     redirect_to root_path
   end
 
@@ -176,24 +179,24 @@ class ApplicationController < ActionController::Base
     flash[:notice] = "Successfully reactivated " + params[:controller].singularize.titleize + ". Any related reservations or equipment have been reactivated as well."
     redirect_to request.referer  # Or use redirect_to(back)
   end
-  
+
   def markdown_help
     respond_to do |format|
       format.html{render :partial => 'shared/markdown_help'}
       format.js{render :template => 'shared/markdown_help_js'}
     end
-  end  
+  end
 
   def csv_import(filepath)
     # initialize
     imported_objects = []
     string = File.read(filepath)
     require 'csv'
-    
+
     # import data by row
     CSV.parse(string, :headers => true) do |row|
       object_hash = row.to_hash.symbolize_keys
-      
+
       # make all nil values blank
       object_hash.keys.each do |key|
         if object_hash[key].nil?

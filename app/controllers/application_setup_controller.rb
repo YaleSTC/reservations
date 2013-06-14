@@ -8,14 +8,10 @@ class ApplicationSetupController < ApplicationController
   before_filter :new_admin_user
   before_filter :redirect_if_not_first_run
 
-  require 'newuser'
-  include NewUser
-
-
   def new_admin_user
     flash[:notice] = "Welcome to Reservations! Create your user and you will be guided
                       through a setup to get your application up and running."
-    new_user
+    redirect_to new_user_path
   end
 
   def create_admin_user
