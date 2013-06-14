@@ -1,4 +1,4 @@
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
 #standard gems
 gem 'rails', '3.2.11'
@@ -40,7 +40,7 @@ gem 'redcarpet'
 
 
 group :development, :test do
-  gem "factory_girl_rails"
+  gem 'factory_girl_rails'
   gem 'rspec-rails'
   gem 'capybara'
   gem 'guard-livereload'
@@ -57,7 +57,7 @@ group :assets do
   gem 'coffee-rails'
   gem 'uglifier'
   gem 'bootstrap-sass', '~> 2.0.3'
-  gem 'font-awesome-rails', :git => "git://github.com/mrnugget/font-awesome-rails.git"
+  gem 'font-awesome-rails', git: 'git://github.com/mrnugget/font-awesome-rails.git'
 end
 
 group :development do
@@ -67,10 +67,10 @@ group :development do
   gem 'pry-debugger'
   gem 'pry-stack_explorer'
   gem 'pry-remote'
-  gem 'letter_opener' 
+  gem 'letter_opener'
 end
 
 group :production, :staging do
-  gem 'therubyracer', :require => 'v8'
+  gem 'therubyracer', require: 'v8'
   gem 'airbrake'
 end
