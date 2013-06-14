@@ -38,6 +38,9 @@ Reservations::Application.routes.draw do
   match '/black_outs/new_recurring' => 'black_outs#new_recurring', :as => :new_recurring_black_out
 
   resources :black_outs do
+    collection do
+      post :create_recurring
+    end
     member do
       get :flash_message
       delete :destroy_recurring

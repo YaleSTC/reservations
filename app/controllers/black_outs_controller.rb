@@ -1,8 +1,9 @@
 class BlackOutsController < ApplicationController
 
   before_filter :require_admin
-  before_filter :set_params_for_create_and_update, :only => [:create, :update]
-  before_filter :set_current_blackout, :except => [:index, :new, :create, :new_recurring]
+  before_filter :set_params_for_create_and_update, :only => [:create, :create_recurring, :update]
+  before_filter :set_current_blackout, :only => [:edit, :show, :update, :destroy, :destroy_recurring]
+  before_filter :validate_recurring_date_params, :only => [:create_recurring]
 
   
   # ---------- before filter methods ------------ #
@@ -24,6 +25,24 @@ class BlackOutsController < ApplicationController
 
   def set_current_blackout
     @black_out = BlackOut.find(params[:id])
+  end
+
+  #validates that date selection was done correctly when the form calls the create method
+  def validate_recurring_date_params
+
+    if params[:recurring] == "true"
+      # make sure there are actually days selected
+      if params[:black_out][:days].first.blank?
+
+        flash[:error] = 'You must select at least one day of the week for any recurring blackouts to be created.'
+
+        # exit
+        respond_to do |format|
+          format.html {redirect_to :back and return}
+          format.js {render :action => 'load_custom_errors' and return}
+        end
+      end
+    end
   end
 
   # ---------- end before filter methods ------------ #
@@ -71,63 +90,51 @@ class BlackOutsController < ApplicationController
   def edit
   end
 
-  def create
-    array = []
+  #called when a recurring blackout is needed
+  def create_recurring
 
-    if params[:recurring] == "true"
-      # make sure there are actually days selected
-      if params[:black_out][:days].first.blank?
-        flash[:error] = 'You must select at least one day of the week for any recurring blackouts to be created.'
-
-        # exit
-        respond_to do |format|
-          format.html {redirect_to :back and return}
-          format.js {render :action => 'load_custom_errors' and return}
-        end
-      end
-
-      # create an array of the appropriate dates to create blackouts for
-      array = BlackOut.array_of_black_outs(params[:black_out][:start_date], params[:black_out][:end_date], params[:black_out][:days])
+    #generate a unique id for this blackout date set
+    if BlackOut.last.nil?
+      params[:black_out][:set_id] = 1
+    else
+      params[:black_out][:set_id] = BlackOut.last.id + 1
     end
 
-    if array.empty?
-      params[:black_out][:set_id] = NIL # the blackouts not belonging to a set
+    # create an array of the appropriate dates to create blackouts for
+    recurring_blackout_set = BlackOut.array_of_black_outs(params[:black_out][:start_date], params[:black_out][:end_date], params[:black_out][:days])
+    
+    # save each blackout date
+    recurring_blackout_set.each do |date|
+      # set start and end dates for recurring (only single dates)
+      params[:black_out][:start_date] = date
+      params[:black_out][:end_date] = date
+
+      # save
       @black_out = BlackOut.new(params[:black_out])
+      @black_out.save
+    end
 
-      # save and exit
-      respond_to do |format|
-        if @black_out.save
-          format.html { redirect_to @black_out, notice: 'Blackout was successfully created.' }
-          format.js {render :action => 'create_success' and return}
-        else
-          format.html { render action: "new" }
-          format.js { render :action => 'load_custom_errors', notice: 'Unable to save blackout date.' and return}
-        end
-      end
+    # exit
+    respond_to do |format|
+      format.html { redirect_to black_outs_path, notice: 'Blackouts were successfully created.' }
+      format.js { render :action => "create_success" }
+    end
 
-    else
-      # generate a unique id for this blackout date set
-      if BlackOut.last.nil?
-        params[:black_out][:set_id] = 1
+  end
+
+  def create
+    # create a non-recurring blackout
+    params[:black_out][:set_id] = NIL # the blackouts not belonging to a set
+    @black_out = BlackOut.new(params[:black_out])
+
+    # save and exit
+    respond_to do |format|
+      if @black_out.save
+        format.html { redirect_to @black_out, notice: 'Blackout was successfully created.' }
+        format.js {render :action => 'create_success' and return}
       else
-        params[:black_out][:set_id] = BlackOut.last.id + 1
-      end
-
-      # save each blackout date
-      array.each do |date|
-        # set start and end dates for recurring (only single dates)
-        params[:black_out][:start_date] = date
-        params[:black_out][:end_date] = date
-
-        # save
-        @black_out = BlackOut.new(params[:black_out])
-        @black_out.save
-      end
-
-      # exit
-      respond_to do |format|
-        format.html { redirect_to black_outs_path, notice: 'Blackouts were successfully created.' }
-        format.js { render :action => "create_success" }
+        format.html { render action: "new" }
+        format.js { render :action => 'load_custom_errors', notice: 'Unable to save blackout date.' and return}
       end
     end
   end
