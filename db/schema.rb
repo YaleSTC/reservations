@@ -119,14 +119,6 @@ ActiveRecord::Schema.define(:version => 20130327193420) do
     t.integer "equipment_model_id", :null => false
   end
 
-  create_table "equipment_models_reservations", :force => true do |t|
-    t.integer  "equipment_model_id"
-    t.integer  "reservation_id"
-    t.integer  "quantity"
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
-  end
-
   create_table "equipment_objects", :force => true do |t|
     t.string   "name"
     t.string   "serial"
@@ -135,13 +127,6 @@ ActiveRecord::Schema.define(:version => 20130327193420) do
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
     t.datetime "deleted_at"
-  end
-
-  create_table "equipment_objects_reservations", :force => true do |t|
-    t.integer  "equipment_object_id"
-    t.integer  "reservation_id"
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
   end
 
   create_table "requirements", :force => true do |t|
@@ -171,10 +156,6 @@ ActiveRecord::Schema.define(:version => 20130327193420) do
     t.boolean  "notes_unsent",        :default => true
     t.integer  "times_renewed"
   end
-
-  add_index "reservations", ["due_date"], :name => "due_date"
-  add_index "reservations", ["equipment_model_id"], :name => "equipment_model_id"
-  add_index "reservations", ["start_date"], :name => "start_date"
 
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false

@@ -134,9 +134,21 @@ end
 entered_num = ask_for_records("Category")
 
 if entered_num.integer? && entered_num > 0
+  category_names = Category.all
+  category_names.map! { |c| c.name }
+
   category = entered_num.times.map do
-      Category.create! do |c|
-      c.name = Faker::Product.brand
+    Category.create! do |c|
+      category_name = Faker::Product.brand
+
+      # Verify uniqueness of category name
+      while category_names.include?(category_name)
+        category_name = Faker::Product.brand
+      end
+
+      c.name = category_name
+      category_names << c.name
+
       c.max_per_user = r.rand(1..40)
       c.max_checkout_length = r.rand(1..40)
       c.sort_order = r.rand(100)
