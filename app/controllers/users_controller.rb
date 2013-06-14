@@ -1,16 +1,15 @@
 class UsersController < ApplicationController
   layout 'application_with_sidebar', only: [:show, :edit]
-  
+
   #necessary to set up initial users and admins
   skip_filter :first_time_user, :only => [:new, :create]
   skip_filter :new_admin_user, :only => [:new, :create]
   skip_filter :app_setup, :only => [:new, :create]
-  
-  
+
+
   skip_filter :cart, :only => [:new, :create]
   before_filter :require_checkout_person, :only => :index
-     
-  require 'activationhelper'
+
   include ActivationHelper
 
   def index
@@ -29,11 +28,11 @@ class UsersController < ApplicationController
     @show_equipment = { checked_out:  @user.reservations.
                                             select {|r| \
                                               (r.status == "checked out") || \
-                                              (r.status == "overdue")}, 
-                        overdue:      @user.reservations.overdue, 
-                        future:       @user.reservations.reserved, 
+                                              (r.status == "overdue")},
+                        overdue:      @user.reservations.overdue,
+                        future:       @user.reservations.reserved,
                         past:         @user.reservations.returned,
-                        missed:       @user.reservations.missed, 
+                        missed:       @user.reservations.missed,
                         past_overdue: @user.reservations.returned.
                                             select {|r| \
                                               r.status == "returned overdue"} }
@@ -105,33 +104,33 @@ class UsersController < ApplicationController
       redirect_to manage_reservations_for_user_path(@user.id) and return
     end
   end
-  
+
   def import
     unless current_user.is_admin_in_adminmode?
       flash[:error] = 'Permission denied.'
       redirect_to root_path and return
     end
-  
+
     # initialize
     file = params[:csv_upload] # the file object
     user_type = params[:user_type]
     overwrite = (params[:overwrite] == '1') # update existing users?
     filepath = file.tempfile.path # the rails CSV class needs a filepath
-    
+
     imported_users = csv_import(filepath)
-    
+
     # make sure import from CSV didn't totally fail
     if imported_users.nil?
       flash[:error] = 'Unable to import CSV file. Please ensure it matches the import format, and try again.'
       redirect_to :back and return
     end
-    
+
     # make sure we have login data (otherwise all will always fail)
     unless imported_users.first.keys.include?(:login)
       flash[:error] = "Unable to import CSV file. None of the users will be able to log in without specifying 'login' data."
       redirect_to :back and return
     end
-    
+
     # make sure the import went with proper headings / column handling
     keys_array = current_user.attributes.symbolize_keys.keys
     imported_users.first.keys.each do |key|
@@ -140,12 +139,12 @@ class UsersController < ApplicationController
         redirect_to :back and return
       end
     end
-        
+
     # create the users and exit
     @hash_of_statuses = User.import_users(imported_users,overwrite,user_type)
     render 'import_success'
   end
-  
+
   def import_page
     @select_options = [['Patrons','normal'],['Checkout Persons','checkout'],['Administrators','admin'],['Banned Users','banned']]
     render 'import'
