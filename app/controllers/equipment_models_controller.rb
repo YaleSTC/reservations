@@ -2,16 +2,16 @@ class EquipmentModelsController < ApplicationController
   layout 'application_with_sidebar', only: :show
 
   before_filter :require_admin
-  before_filter :get_equipment_model_by_id, :only => [:show, :edit, :update, :destroy]
+  before_filter :set_equipment_model, :only => [:show, :edit, :update, :destroy]
   skip_before_filter :require_admin, :only => [:index, :show]
 
   require 'activationhelper'
   include ActivationHelper
-  
-  def get_equipment_model_by_id
+
+  def set_equipment_model
     @equipment_model = EquipmentModel.find(params[:id])
   end
-  
+
   def index
     if params[:category_id] && params[:show_deleted]
       @category = Category.find(params[:category_id])
@@ -48,21 +48,22 @@ class EquipmentModelsController < ApplicationController
 
   def edit
   end
-  
+
   def delete_files
     # for a given filetype affected by param value, the file in question is saved in path contained value
     types = {"clear_documentation" => "documentations", "clear_photo" => "photos"}
-    
+
     # only keep pairs that occur as keys with non-nil values in params
-    types.select! {|k,v| params.keys.member? (k) and !v.nil?} 
+    types.select! {|k,v| params.keys.member? (k) and !v.nil?}
     types.each do |k,path|
+      # TODO: investigate a way to do this without hard-coded paths
       # recursively remove files from filesystem
       file_location = Rails.root.to_s + "/public/attachments/equipment_models/" + path + "/" + @equipment_model.id.to_s + "/original/"
       FileUtils.rm_r file_location
       @equipment_model.documentation_file_name = NIL
     end
   end
-  
+
   def update
     delete_files
 
