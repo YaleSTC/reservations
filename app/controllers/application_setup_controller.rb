@@ -8,17 +8,11 @@ class ApplicationSetupController < ApplicationController
   before_filter :new_admin_user
   before_filter :redirect_if_not_first_run
 
-
   def new_admin_user
     flash[:notice] = "Welcome to Reservations! Create your user and you will be guided
                       through a setup to get your application up and running."
-    if current_user and current_user.is_admin_in_adminmode?
-       @user = User.new
-     else
-       @user = User.new(User.search_ldap(session[:cas_user]))
-       @user.login = session[:cas_user] #default to current login
-     end
-   end
+    redirect_to new_user_path
+  end
 
   def create_admin_user
     @user = User.new(params[:user])
