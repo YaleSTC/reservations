@@ -151,7 +151,7 @@ class ImportUsersController < ApplicationController
             array_of_success << user
             next
           else
-            ldap_hash = User.import_with_ldap(user_data)
+            ldap_hash = import_with_ldap(user_data)
 
             if ldap_hash # if LDAP lookup succeeded
               user_data = ldap_hash
