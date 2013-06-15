@@ -16,13 +16,13 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_user
   helper_method :cart
-  
+
   #-------- before_filter methods --------
 
   def app_setup
       redirect_to new_admin_user_path
   end
-  
+
   def load_configs
     @app_configs = AppConfig.first
   end
@@ -116,12 +116,12 @@ class ApplicationController < ActionController::Base
     #destroy old cart reservations
     current_cart = session[:cart]
     CartReservation.where(:reserver_id => current_cart.reserver.id).destroy_all
-    
+
     #create a new cart
     session[:cart] = Cart.new
     session[:cart].set_reserver_id(current_user.id)
     flash[:notice] = "Cart emptied."
-    
+
     redirect_to root_path
   end
 
@@ -193,33 +193,12 @@ class ApplicationController < ActionController::Base
     end
     redirect_to request.referer  # Or use redirect_to(back)
   end
-  
+
   def markdown_help
     respond_to do |format|
       format.html{render :partial => 'shared/markdown_help'}
       format.js{render :template => 'shared/markdown_help_js'}
     end
-  end  
-
-  def csv_import(filepath)
-    # initialize
-    imported_objects = []
-    string = File.read(filepath)
-    require 'csv'
-    
-    # import data by row
-    CSV.parse(string, :headers => true) do |row|
-      object_hash = row.to_hash.symbolize_keys
-      
-      # make all nil values blank
-      object_hash.keys.each do |key|
-        if object_hash[key].nil?
-          object_hash[key] = ''
-        end
-      end
-      imported_objects << object_hash
-    end
-    # return array of imported objects
-    imported_objects
   end
+
 end
