@@ -106,25 +106,18 @@ class User < ActiveRecord::Base
   end
 
   def assign_type(user_type)
-    # we have to reset all the non-current user_types to NIL
-    # argh why is the database so stupid like this
-    # with three columns where one would suffice
+    # The database requires that we reset all of the values to nil when this method is called
+    # I don't know if what I did here is any better than what we had before (although it is more readable)
+
+    self.is_admin = nil
+    self.is_checkout_person = nil
+    self.is_banned = nil
 
     if user_type == 'admin'
       self.is_admin = '1'
-      self.is_checkout_person = nil
-      self.is_banned = nil
     elsif user_type == 'checkout'
-      self.is_admin = nil
       self.is_checkout_person = '1'
-      self.is_banned = nil
-    elsif user_type == 'normal'
-      self.is_admin = nil
-      self.is_checkout_person = nil
-      self.is_banned = nil
     elsif user_type == 'banned'
-      self.is_admin = nil
-      self.is_checkout_person = nil
       self.is_banned = '1'
     end
   end
