@@ -2,7 +2,7 @@ module BlackOutsHelper
   def blackout_errors
     start_black_outs = BlackOut.black_outs_on_date(cart.start_date)
     end_black_outs = BlackOut.black_outs_on_date(cart.due_date)
-    
+
     messages = [messages_for_black_outs(start_black_outs, "start") + messages_for_black_outs(end_black_outs, "end")].uniq.join("\n")
     if messages.present?
       if flash[:error]
