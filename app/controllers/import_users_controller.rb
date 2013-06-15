@@ -2,8 +2,6 @@ class ImportUsersController < ApplicationController
 
 
   def import
-    @select_options = [['Patrons','normal'],['Checkout Persons','checkout'],['Administrators','admin'],['Banned Users','banned']]
-
     unless current_user.is_admin_in_adminmode?
       flash[:error] = 'Permission denied.'
       redirect_to root_path and return
