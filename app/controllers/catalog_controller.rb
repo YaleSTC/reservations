@@ -2,6 +2,17 @@ class CatalogController < ApplicationController
   helper :black_outs
   layout 'application_with_sidebar'
 
+  before_filter :set_equipment_model, :only => [:add_to_cart, :remove_from_cart]
+
+  # --------- before filter methods --------- #
+
+  def set_equipment_model
+    @equipment_model = EquipmentModel.find(params[:id])
+  end
+
+  # --------- end before filter methods --------- #
+
+
   def index
     @reserver_id = session[:cart].reserver_id
     #push accessories to bottom by removing and reinserting
@@ -9,12 +20,12 @@ class CatalogController < ApplicationController
   end
 
   def add_to_cart
-    @equipment_model = EquipmentModel.find(params[:id])
+    #@equipment_model = EquipmentModel.find(params[:id])
     cart.add_item(@equipment_model)
-    
+
     errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
     flash[:error] = errors.to_sentence
-    
+
     respond_to do |format|
       format.html{redirect_to root_path}
       format.js{render :action => "update_cart"}
@@ -26,12 +37,12 @@ class CatalogController < ApplicationController
   end
 
   def remove_from_cart
-    @equipment_model = EquipmentModel.find(params[:id])
+    #@equipment_model = EquipmentModel.find(params[:id])
     cart.remove_item(@equipment_model)
-    
+
     errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
     flash[:error] = errors.to_sentence
-    
+
     respond_to do |format|
       format.html{redirect_to root_path}
       format.js{render :action => "update_cart"}
