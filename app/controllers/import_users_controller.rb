@@ -16,7 +16,7 @@ class ImportUsersController < ApplicationController
       redirect_to :back and return
     end
 
-    @user_type = params[:@user_type]
+    user_type = params[:@user_type]
     overwrite = (params[:overwrite] == '1') # update existing users?
     filepath = file.tempfile.path # the rails CSV class needs a filepath
 
@@ -25,7 +25,7 @@ class ImportUsersController < ApplicationController
     # check if input file is valid and return appropriate error message if not
     if valid_input_file?(imported_users)
       # create the users and exit
-      @hash_of_statuses = import_users(imported_users,overwrite,@user_type)
+      @hash_of_statuses = import_users(imported_users, overwrite, user_type)
       render 'import_success'
     end
   end
