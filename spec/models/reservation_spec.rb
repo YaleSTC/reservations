@@ -1,10 +1,20 @@
 require 'spec_helper'
 
 describe Reservation do
-	admin = User.new(login: "netid", first_name: "First", last_name: "Last", phone: "1234567890", email: "first.last@yale.edu", affiliation: "YC", adminmode: true, terms_of_service_accepted: true)
-	User.save!
-	#admin = FactoryGirl.create(:admin)
-	it "can run a test"
+	before(:all) do
+		binding.pry
+		admin = FactoryGirl.create(:admin)
+		user = FactoryGirl.create(:user)
+		object = FactoryGirl.create(:equipment_object)
+		model = object.equipment_model
+	end
+
+	after(:all) do
+		User.delete_all
+		EquipmentObject.delete_all
+		EquipmentModel.delete_all
+		Reservation.delete_all
+	end
 
 	it "can be created"
 	it "can be updated"

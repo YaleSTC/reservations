@@ -4,7 +4,7 @@ FactoryGirl.define do
   factory :reservation do
     start_date { Date.today }
     due_date { Date.tomorrow }
-    association :reserver, :factory => :user
+    reserver
     equipment_model
     after(:build) do |res|
       obj = FactoryGirl.create(:equipment_object, :equipment_model => res.equipment_model)

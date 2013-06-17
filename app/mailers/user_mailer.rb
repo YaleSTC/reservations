@@ -1,5 +1,5 @@
 class UserMailer < ActionMailer::Base
-  default :from => AppConfig.first.admin_email, :cc => AppConfig.first.admin_email
+  #default :from => AppConfig.first.admin_email, :cc => AppConfig.first.admin_email
 
   def checkin_receipt(reservation)
     set_app_config
