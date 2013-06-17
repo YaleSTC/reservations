@@ -1,29 +1,20 @@
 class ImportUsersController < ApplicationController
 
+  before_filter :require_admin
 
   def import
-    unless current_user.is_admin_in_adminmode?
-      flash[:error] = 'Permission denied.'
-      redirect_to root_path and return
-    end
-
     # initialize
     file = params[:csv_upload] # the file object
+    if file
+      user_type = params[:@user_type]
+      overwrite = (params[:overwrite] == '1') # update existing users?
+      filepath = file.tempfile.path # the rails CSV class needs a filepath
 
-    # check if the user has uploaded a file at all.
-    if !file
-      flash[:error] = 'Please select a file to upload.'
-      redirect_to :back and return
+      imported_users = csv_import(filepath)
     end
 
-    user_type = params[:@user_type]
-    overwrite = (params[:overwrite] == '1') # update existing users?
-    filepath = file.tempfile.path # the rails CSV class needs a filepath
-
-    imported_users = csv_import(filepath)
-
     # check if input file is valid and return appropriate error message if not
-    if valid_input_file?(imported_users)
+    if valid_input_file?(imported_users, file)
       # create the users and exit
       @hash_of_statuses = import_users(imported_users, overwrite, user_type)
       render 'import_success'
@@ -59,7 +50,13 @@ class ImportUsersController < ApplicationController
       imported_objects
     end
 
-    def valid_input_file?(imported_users)
+    def valid_input_file?(imported_users, file)
+      # check if the user has uploaded a file at all.
+      if !file
+        flash[:error] = 'Please select a file to upload.'
+        redirect_to :back and return
+      end
+
       # make sure import from CSV didn't totally fail
       if imported_users.nil?
         flash[:error] = 'Unable to import CSV file. Please ensure it matches the import format, and try again.'
