@@ -33,7 +33,7 @@ def time_rand(from = 0.0, to = Time.now, length = 0)
     range = length.to_f
   end
 
-  Time.at(from + rand * range)
+  Time.at(from.to_f + rand * range)
 end
 
 def terms_of_service_text
@@ -120,7 +120,7 @@ if entered_num.integer? && entered_num > 0
       u.is_checkout_person = [true, false].sample
     end
   end
-  user[0].is_checkout_person = true
+  user[0].is_checkout_person = true # hack to ensure at least one checkout person is created every time
   STDOUT.puts "\n#{entered_num} records successfully created!"
 else
   STDOUT.puts "\nPlease enter a whole number greater than 0."
@@ -134,8 +134,7 @@ end
 entered_num = ask_for_records("Category")
 
 if entered_num.integer? && entered_num > 0
-  category_names = Category.all
-  category_names.map! { |c| c.name }
+  category_names = Category.all.map! { |c| c.name }
 
   category = entered_num.times.map do
     Category.create! do |c|
@@ -274,6 +273,8 @@ end
 # ============================================================================
 
 if AppConfig.all.empty?
+
+# TODO: Validate user input
   STDOUT.puts "We need to setup application settings:"
   STDOUT.puts "Admin Email Address:"
   admin_email = STDIN.gets.chomp
@@ -285,7 +286,7 @@ if AppConfig.all.empty?
   home_link_text = STDIN.gets.chomp
   STDOUT.puts "Home Link location:"
   home_link_location = STDIN.gets.chomp
-  AppConfig.create do |ac|
+  AppConfig.create! do |ac|
     ac.terms_of_service = terms_of_service_text
     ac.upcoming_checkin_email_active = false
     ac.reservation_confirmation_email_active = false
