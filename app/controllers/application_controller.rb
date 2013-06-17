@@ -187,25 +187,4 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def csv_import(filepath)
-    # initialize
-    imported_objects = []
-    string = File.read(filepath)
-    require 'csv'
-
-    # import data by row
-    CSV.parse(string, :headers => true) do |row|
-      object_hash = row.to_hash.symbolize_keys
-
-      # make all nil values blank
-      object_hash.keys.each do |key|
-        if object_hash[key].nil?
-          object_hash[key] = ''
-        end
-      end
-      imported_objects << object_hash
-    end
-    # return array of imported objects
-    imported_objects
-  end
 end
