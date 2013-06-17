@@ -1,6 +1,51 @@
 class BlackOutsController < ApplicationController
 
   before_filter :require_admin
+  before_filter :set_params_for_create_and_update, :only => [:create, :create_recurring, :update]
+  before_filter :set_current_blackout, :only => [:edit, :show, :update, :destroy, :destroy_recurring]
+  before_filter :validate_recurring_date_params, :only => [:create_recurring]
+
+  
+  # ---------- before filter methods ------------ #
+
+  def set_params_for_create_and_update
+    # correct for date formatting
+    params[:black_out][:start_date] = Date.strptime(params[:black_out][:start_date],'%m/%d/%Y')
+    params[:black_out][:end_date] = Date.strptime(params[:black_out][:end_date],'%m/%d/%Y')
+  
+    # make sure dates are valid
+    if params[:black_out][:end_date] < params[:black_out][:start_date]
+      flash[:error] = 'Due date must be after the start date.'
+      redirect_to :back and return
+    end
+
+    params[:black_out][:created_by] = current_user[:id] # Last-edited-by is automatically set
+    params[:black_out][:equipment_model_id] = 0 # If per-equipment_model blackouts are implemented, delete this line.
+  end
+
+  def set_current_blackout
+    @black_out = BlackOut.find(params[:id])
+  end
+
+  #validates that date selection was done correctly when the form calls the create method
+  def validate_recurring_date_params
+
+    if params[:recurring] == "true"
+      # make sure there are actually days selected
+      if params[:black_out][:days].first.blank?
+
+        flash[:error] = 'You must select at least one day of the week for any recurring blackouts to be created.'
+
+        # exit
+        respond_to do |format|
+          format.html {redirect_to :back and return}
+          format.js {render :action => 'load_custom_errors' and return}
+        end
+      end
+    end
+  end
+
+  # ---------- end before filter methods ------------ #
 
   def index
     @black_outs = BlackOut.all
@@ -12,7 +57,6 @@ class BlackOutsController < ApplicationController
   end
 
   def show
-    @black_out = BlackOut.find(params[:id])
     unless @black_out.set_id.nil?
       @black_out_set = BlackOut.where("set_id = ?", @black_out.set_id)
     end
@@ -33,105 +77,69 @@ class BlackOutsController < ApplicationController
     end
   end
 
+  def new_recurring
+    @black_out = BlackOut.new
+    @black_out[:start_date] = Date.today # Necessary for datepicker functionality
+    @black_out[:end_date] = Date.today # Necessary for datepicker functionality
+
+    respond_to do |format|
+      format.html{render "new_recurring"}
+    end
+  end
+
   def edit
-    @black_out = BlackOut.find(params[:id])
+  end
+
+  #called when a recurring blackout is needed
+  def create_recurring
+
+    #generate a unique id for this blackout date set
+    if BlackOut.last.nil?
+      params[:black_out][:set_id] = 1
+    else
+      params[:black_out][:set_id] = BlackOut.last.id + 1
+    end
+
+    # create an array of the appropriate dates to create blackouts for
+    recurring_blackout_set = BlackOut.array_of_black_outs(params[:black_out][:start_date], params[:black_out][:end_date], params[:black_out][:days])
+    
+    # save each blackout date
+    recurring_blackout_set.each do |date|
+      # set start and end dates for recurring (only single dates)
+      params[:black_out][:start_date] = date
+      params[:black_out][:end_date] = date
+
+      # save
+      @black_out = BlackOut.new(params[:black_out])
+      @black_out.save
+    end
+
+    # exit
+    respond_to do |format|
+      format.html { redirect_to black_outs_path, notice: 'Blackouts were successfully created.' }
+      format.js { render :action => "create_success" }
+    end
+
   end
 
   def create
-    # correct for date formatting
-    params[:black_out][:start_date] = Date.strptime(params[:black_out][:start_date],'%m/%d/%Y')
-    params[:black_out][:end_date] = Date.strptime(params[:black_out][:end_date],'%m/%d/%Y')
+    # create a non-recurring blackout
+    params[:black_out][:set_id] = NIL # the blackouts not belonging to a set
+    @black_out = BlackOut.new(params[:black_out])
 
-    # make sure dates are valid
-    if params[:black_out][:end_date] < params[:black_out][:start_date]
-      flash[:error] = 'Due date must be after the start date.'
-      respond_to do |format|
-        format.html {redirect_to :back and return}
-        format.js {render :action => 'load_custom_errors' and return}
-      end
-    end
-
-    # set other params
-    params[:black_out][:created_by] = current_user[:id] # Last-edited-by is automatically set
-    params[:black_out][:equipment_model_id] = 0 # If per-equipment_model blackouts are implemented, delete this line.
-    array = []
-
-    if params[:recurring] == "true"
-      # make sure there are actually days selected
-      if params[:black_out][:days].first.blank?
-        flash[:error] = 'You must select at least one day of the week for any recurring blackouts to be created.'
-
-        # exit
-        respond_to do |format|
-          format.html {redirect_to :back and return}
-          format.js {render :action => 'load_custom_errors' and return}
-        end
-      end
-
-      # create an array of the appropriate dates to create blackouts for
-      array = BlackOut.array_of_black_outs(params[:black_out][:start_date], params[:black_out][:end_date], params[:black_out][:days])
-    end
-
-    if array.empty?
-      params[:black_out][:set_id] = NIL # the blackouts not belonging to a set
-      @black_out = BlackOut.new(params[:black_out])
-
-      # save and exit
-      respond_to do |format|
-        if @black_out.save
-          format.html { redirect_to @black_out, notice: 'Blackout was successfully created.' }
-          format.js {render :action => 'create_success' and return}
-        else
-          format.html { render action: "new" }
-          format.js { render :action => 'load_custom_errors', notice: 'Unable to save blackout date.' and return}
-        end
-      end
-
-    else
-      # generate a unique id for this blackout date set
-      if BlackOut.last.nil?
-        params[:black_out][:set_id] = 1
+    # save and exit
+    respond_to do |format|
+      if @black_out.save
+        format.html { redirect_to @black_out, notice: 'Blackout was successfully created.' }
+        format.js {render :action => 'create_success' and return}
       else
-        params[:black_out][:set_id] = BlackOut.last.id + 1
-      end
-
-      # save each blackout date
-      array.each do |date|
-        # set start and end dates for recurring (only single dates)
-        params[:black_out][:start_date] = date
-        params[:black_out][:end_date] = date
-
-        # save
-        @black_out = BlackOut.new(params[:black_out])
-        @black_out.save
-      end
-
-      # exit
-      respond_to do |format|
-        format.html { redirect_to black_outs_path, notice: 'Blackouts were successfully created.' }
-        format.js { render :action => "create_success" }
+        format.html { render action: "new" }
+        format.js { render :action => 'load_custom_errors', notice: 'Unable to save blackout date.' and return}
       end
     end
   end
 
   def update
-    @black_out = BlackOut.find(params[:id])
-
-    # correct for date formatting
-    params[:black_out][:start_date] = Date.strptime(params[:black_out][:start_date],'%m/%d/%Y')
-    params[:black_out][:end_date] = Date.strptime(params[:black_out][:end_date],'%m/%d/%Y')
-
-    # make sure dates are valid
-    if params[:black_out][:end_date] < params[:black_out][:start_date]
-      flash[:error] = 'Due date must be after the start date.'
-      redirect_to :back and return
-    end
-
-    # set other params
-    params[:black_out][:created_by] = current_user[:id] # Last-edited-by is automatically set
-    params[:black_out][:equipment_model_id] = 0 # If per-equipment_model blackouts are implemented, delete this line.
-
-    # do not leave a recurring set with one element
     unless @black_out.set_id.nil?
       @black_out_set = BlackOut.where("set_id = ?", @black_out.set_id)
       if @black_out_set.size <= 2
@@ -155,18 +163,7 @@ class BlackOutsController < ApplicationController
     end
   end
 
-  def new_recurring
-    @black_out = BlackOut.new
-    @black_out[:start_date] = Date.today # Necessary for datepicker functionality
-    @black_out[:end_date] = Date.today # Necessary for datepicker functionality
-
-    respond_to do |format|
-      format.html{render "new_recurring"}
-    end
-  end
-
   def destroy
-    @black_out = BlackOut.find(params[:id])
     @black_out.destroy(:force)
 
     respond_to do |format|
@@ -176,7 +173,6 @@ class BlackOutsController < ApplicationController
   end
 
   def destroy_recurring
-    @black_out = BlackOut.find(params[:id])
     black_out_set = BlackOut.where("set_id = ?", @black_out.set_id)
     black_out_set.each do |black_out|
       black_out.destroy(:force)
