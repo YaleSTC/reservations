@@ -5,12 +5,14 @@
 
   <body data-spy="scroll" data-target=".subnav" data-offset="100">
 
+    <%= render 'layouts/announcements' %>
     <%= render 'layouts/navbar' %>
 
     <div class="container">
       <%= render 'layouts/flash' %>
       <div class="row">
-      	<%# ================ MAIN PAGE CONTENT ================ %>
+
+        <%# ================ MAIN PAGE CONTENT ================ %>
       	<%= render 'layouts/content' %>
 
       </div>
