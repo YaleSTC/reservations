@@ -5,7 +5,6 @@ class EquipmentModelsController < ApplicationController
   before_filter :set_equipment_model, :only => [:show, :edit, :update, :destroy]
   skip_before_filter :require_admin, :only => [:index, :show]
 
-  require 'activationhelper'
   include ActivationHelper
 
   def set_equipment_model
