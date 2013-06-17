@@ -5,14 +5,14 @@ class BlackOutsController < ApplicationController
   before_filter :set_current_blackout, :only => [:edit, :show, :update, :destroy, :destroy_recurring]
   before_filter :validate_recurring_date_params, :only => [:create_recurring]
 
-  
+
   # ---------- before filter methods ------------ #
 
   def set_params_for_create_and_update
     # correct for date formatting
     params[:black_out][:start_date] = Date.strptime(params[:black_out][:start_date],'%m/%d/%Y')
     params[:black_out][:end_date] = Date.strptime(params[:black_out][:end_date],'%m/%d/%Y')
-  
+
     # make sure dates are valid
     if params[:black_out][:end_date] < params[:black_out][:start_date]
       flash[:error] = 'Due date must be after the start date.'
@@ -52,7 +52,6 @@ class BlackOutsController < ApplicationController
 
     respond_to do |format|
       format.html # index.html.erb
-      format.json { render json: @black_outs }
     end
   end
 
@@ -62,7 +61,6 @@ class BlackOutsController < ApplicationController
     end
     respond_to do |format|
       format.html # show.html.erb
-      format.json { render json: @black_out }
     end
   end
 
@@ -73,7 +71,6 @@ class BlackOutsController < ApplicationController
 
     respond_to do |format|
       format.html # new.html.erb
-      format.json { render json: @black_out }
     end
   end
 
@@ -102,7 +99,7 @@ class BlackOutsController < ApplicationController
 
     # create an array of the appropriate dates to create blackouts for
     recurring_blackout_set = BlackOut.array_of_black_outs(params[:black_out][:start_date], params[:black_out][:end_date], params[:black_out][:days])
-    
+
     # save each blackout date
     recurring_blackout_set.each do |date|
       # set start and end dates for recurring (only single dates)
@@ -155,10 +152,8 @@ class BlackOutsController < ApplicationController
     respond_to do |format|
       if @black_out.update_attributes(params[:black_out])
         format.html { redirect_to @black_out, notice: 'Blackout was successfully updated.' }
-        format.json { head :no_content }
       else
         format.html { render action: "edit" }
-        format.json { render json: @black_out.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -168,7 +163,6 @@ class BlackOutsController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to black_outs_url }
-      format.json { head :no_content }
     end
   end
 
