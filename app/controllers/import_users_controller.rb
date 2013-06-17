@@ -16,7 +16,7 @@ class ImportUsersController < ApplicationController
       redirect_to :back and return
     end
 
-    user_type = params[:user_type]
+    @user_type = params[:@user_type]
     overwrite = (params[:overwrite] == '1') # update existing users?
     filepath = file.tempfile.path # the rails CSV class needs a filepath
 
@@ -25,7 +25,7 @@ class ImportUsersController < ApplicationController
     # check if input file is valid and return appropriate error message if not
     if valid_input_file?(imported_users)
       # create the users and exit
-      @hash_of_statuses = import_users(imported_users,overwrite,user_type)
+      @hash_of_statuses = import_users(imported_users,overwrite,@user_type)
       render 'import_success'
     end
   end
@@ -99,81 +99,74 @@ class ImportUsersController < ApplicationController
       user_data_hash
     end
 
-    def import_users(array_of_user_data,update_existing = false,user_type = 'normal') # give safe defaults if none selected
-      array_of_success = [] # will contain user-objects
-      array_of_fail = [] # will contain user_data hashes and error messages
+    def set_or_create_user_for_import(user_data)
+      # set the user and attempt to save with given data
+      if @overwrite and (User.where("login = ?", user_data[:login]).size > 0)
+        user = User.where("login = ?", user_data[:login]).first
+      else
+        user = User.new(user_data)
+      end
+      return user
+    end
+
+    def attempt_save_with_csv_data?(user_data)
+      user = set_or_create_user_for_import(user_data)
+
+      user.update_attributes(user_data)
+      # if the updated or new user is valid, save to database and add to array of successful imports
+      if user.valid?
+        user.csv_import = true
+        user.assign_type(@user_type)
+        user.save
+        @array_of_success << user
+        return true
+      else
+        return false
+      end
+    end
+
+    def attempt_save_with_ldap(user_data)
+      ldap_hash = import_with_ldap(user_data)
+      if ldap_hash
+        user_data = ldap_hash
+      else
+        @array_of_fail << [user_data, 'Incomplete user information. Unable to find user in online directory (LDAP).']
+        return
+      end
+
+      user = set_or_create_user_for_import(user_data)
+
+      # set other user attributes
+      user.csv_import = true
+      user.assign_type(@user_type)
+
+      if user.valid?
+        user.save
+        @array_of_success << user
+        return
+      else
+        @array_of_fail << [user_data, user.errors.full_messages.to_sentence.capitalize + '.']
+        return
+      end
+    end
+
+    def import_users(array_of_user_data, overwrite = false, user_type = 'normal')
+      # give safe defaults if none selected
+
+      @array_of_success = [] # will contain user-objects
+      @array_of_fail = [] # will contain user_data hashes and error messages
+      @user_type = user_type
+      @overwrite = overwrite
 
       array_of_user_data.each do |user_data|
-        # test size == 1 in case the admin tries any funny business (non-uniqueness) in the database
-        if update_existing and (User.where("login = ?", user_data[:login]).size == 1)
-          user = User.where("login = ?", user_data[:login]).first
-          user.csv_import = true
-
-          if user.update_attributes(user_data)
-            # assign type (isn't saved with update attributes, without adding to the user_data hash)
-            user.assign_type(user_type)
-            user.save
-            # exit
-            array_of_success << user
-            next
-          else
-            ldap_hash = import_with_ldap(user_data)
-
-            if ldap_hash # if LDAP lookup succeeded
-              user_data = ldap_hash
-            else # if LDAP lookup failed
-              array_of_fail << [user_data, 'Incomplete user information. Unable to find user in online directory (LDAP).']
-              next
-            end
-
-            # re-attempt save to database
-            if user.update_attributes(user_data)
-              # assign type (isn't saved with update attributes, without adding to the user_data hash)
-              user.assign_type(user_type)
-              user.save
-              # exit
-              array_of_success << user
-              next
-            else
-              array_of_fail << [user_data, user.errors.full_messages.to_sentence]
-              next
-            end
-          end
+        if attempt_save_with_csv_data?(user_data)
+          next
         else
-          user = User.new(user_data)
-          user.csv_import = true
-          user.assign_type(user_type)
-
-          if user.valid?
-            user.save
-            array_of_success << user
-            next
-          else
-            ldap_hash = import_with_ldap(user_data)
-
-            if ldap_hash # if LDAP lookup succeeded
-              user_data = ldap_hash
-            else # if LDAP lookup failed
-              array_of_fail << [user_data, 'Incomplete user information. Unable to find user in online directory (LDAP).']
-              next
-            end
-
-            # re-attempt save to database
-            user = User.new(user_data)
-            user.csv_import = true
-            user.assign_type(user_type)
-
-            if user.valid?
-              user.save
-              array_of_success << user
-              next
-            else
-              array_of_fail << [user_data, user.errors.full_messages.to_sentence.capitalize + '.']
-              next
-            end
-          end
+          attempt_save_with_ldap(user_data)
+          next
         end
       end
-      hash_of_statuses = {:success => array_of_success, :fail => array_of_fail}
+
+      hash_of_statuses = {:success => @array_of_success, :fail => @array_of_fail}
     end
 end
