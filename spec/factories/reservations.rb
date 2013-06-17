@@ -24,15 +24,15 @@ FactoryGirl.define do
       due_date { Date.today }
       checked_out { Date.yesterday }
       checked_in { Date.today }
-      association :checkout_handler, factory: :user
-      association :checkin_handler, factory: :user
+      :checkout_handler
+      :checkin_handler
     end
 
     factory :overdue_reservation do
       start_date { Date.yesterday - 1 }
       due_date { Date.yesterday }
       checked_out { Date.yesterday - 1 }
-      association :checkout_handler, factory: :user
+      :checkout_handler
     end
   end
 end

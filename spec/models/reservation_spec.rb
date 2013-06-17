@@ -2,11 +2,10 @@ require 'spec_helper'
 
 describe Reservation do
 	before(:all) do
-		binding.pry
 		admin = FactoryGirl.create(:admin)
 		user = FactoryGirl.create(:user)
-		object = FactoryGirl.create(:equipment_object)
-		model = object.equipment_model
+		model = FactoryGirl.create(:equipment_model)
+		object = FactoryGirl.create(:equipment_object, equipment_model: model)
 	end
 
 	after(:all) do

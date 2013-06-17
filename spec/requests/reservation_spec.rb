@@ -14,13 +14,13 @@ describe 'reservation' do
   res.equipment_model = mod
 
   it 'can be created' do
-    res.save.should == true
+    res.save.should be_true
     Reservation.all.size.should == 1
     Reservation.all.first.should == res
   end
 
   it 'passes/fails no_overdue_reservations? correctly' do
-    res.no_overdue_reservations?.should == true
+    res.no_overdue_reservations?.should be_true
     overdue_res = FactoryGirl.build(:overdue_reservation, reserver: admin)
     overdue_res.save(:validate => false)
     res.no_overdue_reservations?.should == false
