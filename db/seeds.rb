@@ -1,17 +1,20 @@
 # This script is used to populate the database with preload data.
-# It does not clear the database - mainly because that would mean deleting your admin login.
-# All the numbers are pretty arbitrary, and can be changed to suit your needs, and how many records you want.
-# As it stands, you'll need to follow the format and create a new seed generation block for each
-# model you want to seed in the database, every time you create a model that isn't already here.
-# Order matters!! The script will fail if certain records (Catgeories, EquipmentModels) aren't
-# generated first and in the order listed.
+# It does not clear the database - mainly because that would mean deleting your
+# admin login. All the numbers are pretty arbitrary, and can be changed to suit
+# your needs, and how many records you want.
+#
+# As it stands, you'll need to follow the format and create a new seed
+# generation block for each model you want to seed in the database, every time
+# you create a model that isn't already here.
+#
+# Order matters!! The script will fail if certain records (Catgeories,
+# EquipmentModels) aren't generated first and in the order listed.
 
 require 'ffaker'
 
-
 #-------RESET PUBLIC DIR IF WE'VE RESET THE DATABASE
 if EquipmentModel.all.empty?
-  location_models = Rails.root.to_s + "/public/equipment_models"
+  location_models = Rails.root.to_s + '/public/equipment_models'
   if File.directory?(location_models) # if the directory exists
     FileUtils.rm_r location_models # delete it and everything inside
   end
@@ -22,12 +25,15 @@ end
 
 #Method for prompting the user for the number of records per model they want to seed into the database.
 def ask_for_records(model)
-  STDOUT.puts "\nHow many #{model} records would you like to generate? (please enter a number)"
+  formatted_model = model.camelize
+
+  puts "\nHow many #{formatted_model} records would you like to generate? (please enter a number)"
   STDIN.gets.chomp.to_i
 end
 
 
-def time_rand(from = 0.0, to = Time.now, length = 0)
+def time_rand(from = 0.0, to = Time.now, length = 0, options = {})
+
   range = to.to_f - from.to_f
 
   range = length.to_f if length > 0
@@ -77,18 +83,18 @@ r = Random.new
 # ============
 
 if User.all.empty?
-  STDOUT.puts "We need to create an account for you first. Please enter the following info:"
-  STDOUT.puts "First Name:"
+  puts 'We need to create an account for you first. Please enter the following info:'
+  puts 'First Name:'
   first_name = STDIN.gets.chomp
-  STDOUT.puts "Last Name:"
+  puts 'Last Name:'
   last_name = STDIN.gets.chomp
-  STDOUT.puts "Phone #:"
+  puts 'Phone #:'
   phone = STDIN.gets.chomp
-  STDOUT.puts "Email Address:"
+  puts 'Email Address:'
   email = STDIN.gets.chomp
-  STDOUT.puts "Login (i.e. NetID):"
+  puts 'Login (i.e. NetID):'
   login = STDIN.gets.chomp
-  STDOUT.puts "Affiliation:"
+  puts 'Affiliation:'
   affiliation = STDIN.gets.chomp
 
   User.create! do |u|
@@ -108,7 +114,7 @@ end
 # User generation
 # ============================================================================
 
-entered_num = ask_for_records("User")
+entered_num = ask_for_records('User')
 
 if entered_num.integer? && entered_num > 0
   user = entered_num.times.map do
@@ -119,15 +125,15 @@ if entered_num.integer? && entered_num > 0
       u.phone = Faker::PhoneNumber.short_phone_number
       u.email = Faker::Internet.email
       u.login = (0...3).map{65.+(rand(25)).chr}.join.downcase + r.rand(2..99).to_s
-      u.affiliation = "YC " + ["BK", "BR", "CC", "DC", "ES", "JE", "MC", "PC", "SM", "SY", "TC", "TD"].sample + " " + r.rand(2012..2015).to_s
+      u.affiliation = 'YC ' + %w{BK BR CC DC ES JE MC PC SM SY TC TD}.sample + ' ' + r.rand(2012..2015).to_s
       u.adminmode = false
       u.is_checkout_person = [true, false].sample
     end
   end
   user[0].is_checkout_person = true # hack to ensure at least one checkout person is created every time
-  STDOUT.puts "\n#{entered_num} records successfully created!"
+  puts "\n#{entered_num} records successfully created!"
 else
-  STDOUT.puts "\nPlease enter a whole number greater than 0."
+  puts "\nPlease enter a whole number greater than 0."
   entered_num = STDIN.gets.chomp.to_i
 end
 
@@ -135,7 +141,7 @@ end
 # Category generation
 # ============================================================================
 
-entered_num = ask_for_records("Category")
+entered_num = ask_for_records('Category')
 
 if entered_num.integer? && entered_num > 0
   category_names = Category.all.map! { |c| c.name }
@@ -160,9 +166,9 @@ if entered_num.integer? && entered_num > 0
       c.renewal_days_before_due = r.rand(0..9001)
     end
   end
-  STDOUT.puts "\n#{entered_num} records successfully created!"
+  puts "\n#{entered_num} records successfully created!"
 else
-  STDOUT.puts "\nPlease enter a whole number greater than 0."
+  puts "\nPlease enter a whole number greater than 0."
   entered_num = STDIN.gets.chomp.to_i
 end
 
@@ -171,7 +177,7 @@ end
 # ============================================================================
 
 entered_num = ask_for_records("EquipmentModel")
-STDOUT.puts "\nThis is going to take awhile...\n"
+puts "\nThis is going to take awhile...\n"
 if entered_num.integer? && entered_num > 0
   equipment_model = entered_num.times.map do
     EquipmentModel.create! do |em|
@@ -189,9 +195,9 @@ if entered_num.integer? && entered_num > 0
       em.associated_equipment_models = EquipmentModel.all.sample(6)
     end
   end
-  STDOUT.puts "\n#{entered_num} records successfully created!"
+  puts "\n#{entered_num} records successfully created!"
 else
-  STDOUT.puts "\nPlease enter a whole number greater than 0."
+  puts "\nPlease enter a whole number greater than 0."
   entered_num = STDIN.gets.chomp.to_i
 end
 
@@ -210,9 +216,9 @@ if entered_num.integer? && entered_num > 0
       eo.equipment_model_id = equipment_model.flatten.sample.id
     end
   end
-  STDOUT.puts "\n#{entered_num} records successfully created!"
+  puts "\n#{entered_num} records successfully created!"
 else
-  STDOUT.puts "\nPlease enter a whole number greater than 0."
+  puts "\nPlease enter a whole number greater than 0."
   entered_num = STDIN.gets.chomp.to_i
 end
 
@@ -232,9 +238,9 @@ if entered_num.integer? && entered_num > 0
       req.description = Faker::HipsterIpsum.sentence
     end
   end
-  STDOUT.puts "\n#{entered_num} records successfully created!"
+  puts "\n#{entered_num} records successfully created!"
 else
-  STDOUT.puts "\nPlease enter a whole number greater than 0."
+  puts "\nPlease enter a whole number greater than 0."
   entered_num = STDIN.gets.chomp.to_i
 end
 
@@ -251,9 +257,9 @@ if entered_num.integer? && entered_num > 0
       chi.equipment_model_id = equipment_model.flatten.sample.id
     end
   end
-  STDOUT.puts "\n#{entered_num} records successfully created!"
+  puts "\n#{entered_num} records successfully created!"
 else
-  STDOUT.puts "\nPlease enter a whole number greater than 0."
+  puts "\nPlease enter a whole number greater than 0."
   entered_num = STDIN.gets.chomp.to_i
 end
 
@@ -270,9 +276,9 @@ if entered_num.integer? && entered_num > 0
       cho.equipment_model_id = equipment_model.flatten.sample.id
     end
   end
-  STDOUT.puts "\n#{entered_num} records successfully created!"
+  puts "\n#{entered_num} records successfully created!"
 else
-  STDOUT.puts "\nPlease enter a whole number greater than 0."
+  puts "\nPlease enter a whole number greater than 0."
   entered_num = STDIN.gets.chomp.to_i
 end
 
@@ -283,16 +289,16 @@ end
 if AppConfig.all.empty?
 
 # TODO: Validate user input
-  STDOUT.puts "We need to setup application settings:"
-  STDOUT.puts "Admin Email Address:"
+  puts "We need to setup application settings:"
+  puts "Admin Email Address:"
   admin_email = STDIN.gets.chomp
-  STDOUT.puts "Department Name:"
+  puts "Department Name:"
   department_name = STDIN.gets.chomp
-  STDOUT.puts "Contact Link location:"
+  puts "Contact Link location:"
   contact_link_location = STDIN.gets.chomp
-  STDOUT.puts "Home Link Text:"
+  puts "Home Link Text:"
   home_link_text = STDIN.gets.chomp
-  STDOUT.puts "Home Link location:"
+  puts "Home Link location:"
   home_link_location = STDIN.gets.chomp
   AppConfig.create! do |ac|
     ac.terms_of_service = terms_of_service_text
@@ -321,28 +327,26 @@ entered_num = ask_for_records("Reservation")
 
 if entered_num.integer? && entered_num > 0
   reservation = entered_num.times.map do
-    random_time = time_rand(Time.now - 2.months)
-    # random_due_date = time_rand(random_time, Time.now.next_week, category.flatten.sample)
+    random_time_in_past = time_rand(Time.now - 2.months)
+    # random_due_date = time_rand(random_time_in_past, Time.now.next_week, category.flatten.sample)
     Reservation.create! do |res|
       res.reserver_id = user.flatten.sample.id
       res.checkout_handler_id = user.flatten.select{|usr| usr.is_checkout_person}.sample.id
       res.checkin_handler_id = user.flatten.select{|usr| usr.is_checkout_person}.sample.id
-      res.checked_out = res.checked_in.nil? ? [nil, random_time.to_datetime].sample : random_time.to_datetime
       res.equipment_object_id = equipment_object.flatten.sample.id
       res.equipment_model_id = res.equipment_object.equipment_model_id
-      res.start_date = random_time.to_datetime
+      res.start_date = random_time_in_past.to_datetime
       res.due_date = time_rand(res.start_date.to_time, Time.now.next_week, res.equipment_model.category.max_checkout_length).to_datetime
-      res.checked_in = [nil, time_rand(random_time, Time.now.next_week,
-                        res.equipment_model.category.max_checkout_length).to_datetime,
-                        time_rand(time_rand(random_time, Time.now.next_week, res.equipment_model.category.max_checkout_length),
-                        time_rand(random_time, Time.now.next_week, res.equipment_model.category.max_checkout_length).next_month).to_datetime].sample
+      res.checked_in = [nil, time_rand(random_time_in_past, Time.now.next_week,
+                        res.equipment_model.category.max_checkout_length).to_datetime].sample
+      res.checked_out = res.checked_in.nil? ? [nil, random_time_in_past.to_datetime].sample : random_time_in_past.to_datetime
       res.notes = Faker::HipsterIpsum.paragraph(8)
       res.notes_unsent = [true, false].sample
     end
   end
-  STDOUT.puts "\n#{entered_num} records successfully created!"
+  puts "\n#{entered_num} records successfully created!"
 else
-  STDOUT.puts "\nPlease enter a whole number greater than 0."
+  puts "\nPlease enter a whole number greater than 0."
   entered_num = STDIN.gets.chomp.to_i
 end
 
@@ -354,11 +358,11 @@ entered_num = ask_for_records("Blackout Dates")
 
 if entered_num.integer? && entered_num > 0
   blackout = entered_num.times.map do
-    random_time = time_rand(Time.now + 1.year)
-    random_end_date = time_rand(random_time, random_time.next_week)
+    random_time_in_past = time_rand(Time.now + 1.year)
+    random_end_date = time_rand(random_time_in_past, random_time_in_past.next_week)
 
     BlackOut.create! do |blk|
-      blk.start_date = random_time
+      blk.start_date = random_time_in_past
       blk.end_date = random_end_date
       blk.notice = Faker::HipsterIpsum.paragraph(2)
       blk.created_by = User.first.id
@@ -366,8 +370,8 @@ if entered_num.integer? && entered_num > 0
       blk.equipment_model_id = 0
     end
   end
-  STDOUT.puts "\n#{entered_num} records successfully created!"
+  puts "\n#{entered_num} records successfully created!"
 else
-  STDOUT.puts "\nPlease enter a whole number greater than 0."
+  puts "\nPlease enter a whole number greater than 0."
   entered_num = STDIN.gets.chomp.to_i
 end
