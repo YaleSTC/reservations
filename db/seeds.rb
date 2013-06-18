@@ -26,15 +26,15 @@ def ask_for_records(model)
   STDIN.gets.chomp.to_i
 end
 
+
 def time_rand(from = 0.0, to = Time.now, length = 0)
   range = to.to_f - from.to_f
 
-  if range > length.to_f
-    range = length.to_f
-  end
+  range = length.to_f if length > 0
 
   Time.at(from.to_f + rand * range)
 end
+
 
 def terms_of_service_text
   %q{
@@ -69,10 +69,12 @@ No solicitors. No alcohol, dogs or horses. No anchovies unless otherwise specifi
   }
 end
 
-#Random object that is used throughout for generating fake data that FFaker can't
+
+# Random object that is used throughout for generating fake data that FFaker can't
 r = Random.new
 
-#Start script
+# START SCRIPT
+# ============
 
 if User.all.empty?
   STDOUT.puts "We need to create an account for you first. Please enter the following info:"
@@ -101,6 +103,8 @@ if User.all.empty?
     u.is_checkout_person = true
   end
 end
+
+
 # User generation
 # ============================================================================
 
@@ -212,6 +216,7 @@ else
   entered_num = STDIN.gets.chomp.to_i
 end
 
+
 # Requirement generation
 # ============================================================================
 
@@ -233,6 +238,7 @@ else
   entered_num = STDIN.gets.chomp.to_i
 end
 
+
 # CheckinProcedure generation
 # ============================================================================
 
@@ -251,6 +257,7 @@ else
   entered_num = STDIN.gets.chomp.to_i
 end
 
+
 # CheckoutProcedure generation
 # ============================================================================
 
@@ -268,6 +275,7 @@ else
   STDOUT.puts "\nPlease enter a whole number greater than 0."
   entered_num = STDIN.gets.chomp.to_i
 end
+
 
 # Terms of Service generation
 # ============================================================================
@@ -304,6 +312,8 @@ else
   ac.terms_of_service = terms_of_service_text
   ac.save!
 end
+
+
 # Reservation generation
 # ============================================================================
 
@@ -335,6 +345,7 @@ else
   STDOUT.puts "\nPlease enter a whole number greater than 0."
   entered_num = STDIN.gets.chomp.to_i
 end
+
 
 # Blackout Date generation
 # ============================================================================
