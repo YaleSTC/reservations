@@ -90,7 +90,7 @@ class BlackOutsController < ApplicationController
   #called when a recurring blackout is needed
   def create_recurring
     # create an array of the appropriate dates to create blackouts for
-    BlackOut.create_black_out_set(params[:black_out][:start_date], params[:black_out][:end_date], params[:black_out][:days], params[:black_out])
+    BlackOut.create_black_out_set(params[:black_out])
 
     # exit
     respond_to do |format|
@@ -102,7 +102,6 @@ class BlackOutsController < ApplicationController
 
   def create
     # create a non-recurring blackout
-    params[:black_out][:set_id] = NIL # the blackouts not belonging to a set
     @black_out = BlackOut.new(params[:black_out])
 
     # save and exit

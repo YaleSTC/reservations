@@ -30,35 +30,30 @@ class BlackOut < ActiveRecord::Base
     end
   end
 
-  def self.create_black_out_set(start_date, end_date, days, params_hash)
-    #generate a unique id for this blackout date set
-    # test this new implimentation for setting :set_id
-    if BlackOut.last == nil
-      set_id = 1
-    else
-      set_id = BlackOut.last.id + 1
-    end
+  def self.create_black_out_set(params_hash)
+    #generate a unique id for this blackout date set, make sure that nil reads as 0 for the first blackout
+    params_hash[:set_id] = BlackOut.last.id.to_i + 1
 
     # create an array of individual black out dates to include in set
     individual_dates = []
-    date_range = start_date..end_date
+    date_range = params_hash[:start_date]..params_hash[:end_date]
     date_range.each do |date|
-      if days.include?(date.wday.to_s) # because it's passed as a string
+      if params_hash[:days].include?(date.wday.to_s) # because it's passed as a string
         individual_dates << date
       end
     end
 
     # save an individual blackout on each date
-    create_individual_black_outs_for_set(individual_dates, set_id, params_hash)
+    create_individual_black_outs_for_set(individual_dates, params_hash)
   end
 
-    def self.create_individual_black_outs_for_set(individual_dates, set_id, params_hash)
+  private
+    def self.create_individual_black_outs_for_set(individual_dates, params_hash)
       individual_dates.each do |date|
         # create and save
         @black_out = BlackOut.new(params_hash)
         @black_out.start_date = date
         @black_out.end_date = date
-        @black_out.set_id = set_id
         @black_out.save
       end
     end
