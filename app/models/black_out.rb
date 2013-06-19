@@ -42,19 +42,24 @@ class BlackOut < ActiveRecord::Base
         individual_dates << date
       end
     end
-
     # save an individual blackout on each date
-    create_individual_black_outs_for_set(individual_dates, params_hash)
+    return create_individual_black_outs_for_set(individual_dates, params_hash)
   end
 
   private
     def self.create_individual_black_outs_for_set(individual_dates, params_hash)
+      successful_save = false
       individual_dates.each do |date|
         # create and save
         @black_out = BlackOut.new(params_hash)
         @black_out.start_date = date
         @black_out.end_date = date
-        @black_out.save
+        successful_save = @black_out.save
+      end
+
+      # return the error message unless a successful save was achieved
+      unless successful_save
+        return 'The combination of days and dates chosen did not produce any valid blackout dates. Please change your selection and try again.'
       end
     end
 
