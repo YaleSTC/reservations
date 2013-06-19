@@ -1,8 +1,18 @@
 class EquipmentObjectsController < ApplicationController
   before_filter :require_admin, :except => :index
   before_filter :require_checkout_person, :only => :index
+  before_filter :set_current_equipment_object, :only => [:show, :edit, :update, :destroy]
 
   include ActivationHelper
+
+  # ---------- before filter methods ---------- #
+
+  def set_current_equipment_object
+    @equipment_object = EquipmentObject.find(params[:id])
+  end
+
+  # ---------- end before filter methods ---------- #
+
 
   def index
     @equipment_objects = EquipmentObject.active
@@ -20,7 +30,6 @@ class EquipmentObjectsController < ApplicationController
   end
 
   def show
-    @equipment_object = EquipmentObject.find(params[:id])
   end
 
   def new
@@ -42,11 +51,9 @@ class EquipmentObjectsController < ApplicationController
   end
 
   def edit
-    @equipment_object = EquipmentObject.find(params[:id])
   end
 
   def update
-    @equipment_object = EquipmentObject.find(params[:id])
     if @equipment_object.update_attributes(params[:equipment_object])
       flash[:notice] = "Successfully updated equipment object."
       redirect_to @equipment_object.equipment_model
@@ -56,7 +63,6 @@ class EquipmentObjectsController < ApplicationController
   end
 
   def destroy
-    @equipment_object = EquipmentObject.find(params[:id])
     @equipment_model = @equipment_object.equipment_model #We need this so that we know where to re-direct (look down 4 lines)
     @equipment_object.destroy(:force)
     flash[:notice] = "Successfully destroyed equipment object."
