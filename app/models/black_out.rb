@@ -11,6 +11,10 @@ class BlackOut < ActiveRecord::Base
             :black_out_type,
             :end_date, :presence => true
 
+  validate :validate_end_date_before_start_date
+  # this only matters if a user tries to inject into params because the datepicker
+  # doesn't allow form submission of invalid dates
+
   def self.black_outs_on_date(date) # Returns the black_out object that blacks out the day if the day is blacked out. Otherwise, returns nil.
     black_outs = []
     BlackOut.all.each do |black_out|
@@ -60,6 +64,12 @@ class BlackOut < ActiveRecord::Base
       # return the error message unless a successful save was achieved
       unless successful_save
         return 'The combination of days and dates chosen did not produce any valid blackout dates. Please change your selection and try again.'
+      end
+    end
+
+    def validate_end_date_before_start_date
+      if end_date && start_date
+        errors.add(:end_date, "Start date must be before end date.") if end_date < start_date
       end
     end
 

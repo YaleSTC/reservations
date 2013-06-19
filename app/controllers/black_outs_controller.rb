@@ -13,12 +13,6 @@ class BlackOutsController < ApplicationController
     params[:black_out][:start_date] = Date.strptime(params[:black_out][:start_date],'%m/%d/%Y')
     params[:black_out][:end_date] = Date.strptime(params[:black_out][:end_date],'%m/%d/%Y')
 
-    # make sure dates are valid
-    if params[:black_out][:end_date] < params[:black_out][:start_date]
-      flash[:error] = 'Due date must be after the start date.'
-      redirect_to :back and return
-    end
-
     params[:black_out][:created_by] = current_user[:id] # Last-edited-by is automatically set
     params[:black_out][:equipment_model_id] = 0 # If per-equipment_model blackouts are implemented, delete this line.
   end
