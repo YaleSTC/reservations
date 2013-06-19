@@ -1,10 +1,10 @@
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
-sequence :name do |n|
-  "EquipmentModel#{n}"
-end
-
 FactoryGirl.define do
+  sequence :name do |n|
+    "EquipmentModel#{n}"
+  end
+
   factory :equipment_model do
     name { generate(:name)}
     description "This is a description of an Equipment Model"
