@@ -19,7 +19,7 @@ describe 'reservation' do
     Reservation.all.first.should == res
   end
 
-  it 'passes/fails no_overdue_reservations? correctly' do
+  xit 'passes/fails no_overdue_reservations? correctly' do
     res.no_overdue_reservations?.should == true
     overdue_res = FactoryGirl.build(:overdue_reservation, reserver: admin)
     overdue_res.save(:validate => false)
@@ -29,7 +29,7 @@ describe 'reservation' do
     res.save.should == true
   end
 
-  it 'passes/fails start_date_before_due_date? correctly' do
+  xit 'passes/fails start_date_before_due_date? correctly' do
     res.start_date_before_due_date?.should == true
     res.due_date = Date.yesterday
     res.start_date_before_due_date?.should == false
@@ -38,7 +38,7 @@ describe 'reservation' do
     res.save.should == true
   end
 
-  it 'passes/fails not_in_past? correctly'do
+  xit 'passes/fails not_in_past? correctly'do
     res.not_in_past?.should == true
     res.start_date = Date.yesterday
     res.not_in_past?.should == false
@@ -53,7 +53,7 @@ describe 'reservation' do
     res.save.should == true
   end
 
-  it 'passes/fails not_empty? correctly' do
+  xit 'passes/fails not_empty? correctly' do
     res.not_empty?.should == true
     res.equipment_model = nil
     res.not_empty?.should == false
@@ -62,7 +62,7 @@ describe 'reservation' do
     res.save.should == true
   end
 
-  it 'passes/fails matched_object_and_model? correctly' do
+  xit 'passes/fails matched_object_and_model? correctly' do
     res.equipment_model = mod
     res.matched_object_and_model?.should == true #no assigned object
     res.equipment_object = FactoryGirl.create(:equipment_object)
@@ -75,7 +75,7 @@ describe 'reservation' do
     res.save.should == true
   end
 
-  it 'passes/fails not_renewable? correctly' do
+  xit 'passes/fails not_renewable? correctly' do
     res.not_renewable?.should == true
     renew = FactoryGirl.build(:checked_out_reservation)
     renew.save(:validate => false)
@@ -89,7 +89,7 @@ describe 'reservation' do
     Reservation.delete(renew.id)
   end
 
-  it 'passes/fails duration_allowed? correctly' do
+  xit 'passes/fails duration_allowed? correctly' do
     res.duration_allowed?.should == true
     allowed_duration = mod.category.maximum_checkout_length
     res.due_date = Date.tomorrow + allowed_duration
@@ -98,7 +98,7 @@ describe 'reservation' do
     res.due_date = Date.tomorrow
   end
 
-  it 'passes/fails available? correctly' do
+  xit 'passes/fails available? correctly' do
     available_res = FactoryGirl.build(:reservation)
     available_res.save.should == true
     available_res.available?.should == true
@@ -123,6 +123,7 @@ describe 'reservation' do
     max_res.quantity_eq_model_allowed?.should == true
     max_res2 = FactoryGirl.build(:reservation, reserver: admin, equipment_model: max_mod)
     max_res2.save(:validate => false)
+    binding.pry
     max_res.quantity_eq_model_allowed?.should == false
     max_res2.save.should == false
     unrestricted_mod = FactoryGirl.create(:equipment_model, max_per_user: nil)
@@ -151,7 +152,7 @@ describe 'reservation' do
     unrestricted_res.quantity_cat_allowed?.should == true
   end
 
-  it 'creates correct errors for validate_set' do
+  xit 'creates correct errors for validate_set' do
     Reservation.delete_all
     EquipmentModel.delete_all
     Reservation.validate_set(admin).should == []

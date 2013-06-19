@@ -132,11 +132,8 @@ module ReservationValidations
     all_res.concat(reserver.reservations)
     all_res.uniq!
     
-    #exclude reservations that don't overlap
-    #TODO: Optimize into a finder scope
-    overlapping_res = all_res.select{ |res| res.overlaps_with?(self) && (res.class == CartReservation || res.checked_in == nil) }
-    
-    model_count = same_model_count(overlapping_res)
+    #count number of model, excluding reservations that don't overlap
+    model_count = same_model_count(overlap(all_res))
     if model_count > max
       errors.add(:base, "Cannot reserve more than " + equipment_model.maximum_per_user.to_s + " " + equipment_model.name.pluralize + ".\n")
       return false
@@ -159,11 +156,8 @@ module ReservationValidations
     all_res.concat(reserver.reservations)
     all_res.uniq!
     
-    #exclude reservations that don't overlap
-    #TODO: Optimize into a finder scope
-    overlapping_res = all_res.select{ |res| res.overlaps_with?(self) && (res.class == CartReservation || res.checked_in == nil) }
-    
-    cat_count = same_category_count(overlapping_res)
+    #count number in category, excluding reservations that don't overlap
+    cat_count = same_category_count(overlap(all_res))
     if cat_count > max
       errors.add(:base, "Cannot reserve more than " + equipment_model.category.maximum_per_user.to_s + " " + equipment_model.category.name.pluralize + ".\n")
       return false
@@ -194,6 +188,10 @@ module ReservationValidations
     start_overlaps = (self.start_date >= other_res.start_date && self.start_date <= other_res.due_date)
     end_overlaps = (self.due_date >= other_res.start_date && self.due_date <= other_res.due_date)
     return true if start_overlaps || end_overlaps
+  end
+
+  def overlap(reservations)
+    reservations.select{ |res| res.overlaps_with?(self) && (res.class == CartReservation || res.checked_in == nil) }
   end
 
 
