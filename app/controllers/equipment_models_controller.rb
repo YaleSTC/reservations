@@ -7,9 +7,12 @@ class EquipmentModelsController < ApplicationController
 
   include ActivationHelper
 
+  # --------- before filter methods --------- #
   def set_equipment_model
     @equipment_model = EquipmentModel.find(params[:id])
   end
+  # --------- end before filter methods --------- #
+
 
   def index
     if params[:category_id] && params[:show_deleted]
