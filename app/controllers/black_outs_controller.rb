@@ -54,8 +54,7 @@ class BlackOutsController < ApplicationController
 
   def new
     @black_out = BlackOut.new
-    @black_out[:start_date] = Date.today # Necessary for datepicker functionality
-    @black_out[:end_date] = Date.today # Necessary for datepicker functionality
+    set_dates_for_datepicker
 
     respond_to do |format|
       format.html # new.html.erb
@@ -64,8 +63,7 @@ class BlackOutsController < ApplicationController
 
   def new_recurring
     @black_out = BlackOut.new
-    @black_out[:start_date] = Date.today # Necessary for datepicker functionality
-    @black_out[:end_date] = Date.today # Necessary for datepicker functionality
+    set_dates_for_datepicker
 
     respond_to do |format|
       format.html{render "new_recurring"}
@@ -168,5 +166,10 @@ class BlackOutsController < ApplicationController
         flash[:error] = 'Please provide a short description of the blackout.'
         return
       end
+    end
+
+    def set_dates_for_datepicker
+      @black_out[:start_date] = Date.today # Necessary for datepicker functionality
+      @black_out[:end_date] = Date.today # Necessary for datepicker functionality
     end
 end
