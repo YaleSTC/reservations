@@ -19,8 +19,6 @@ class CatalogController < ApplicationController
 
   def index
     @reserver_id = session[:cart].reserver_id
-    #push accessories to bottom by removing and reinserting
-    #@equipment_models_by_category[Category.find_by_name("Accessories")] = @equipment_models_by_category.delete(Category.find_by_name("Accessories"))
   end
 
   def add_to_cart
