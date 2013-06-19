@@ -4,16 +4,12 @@ class RequirementsController < ApplicationController
   before_filter :set_current_requirement, :only => [:show, :edit, :update, :destroy]
 
   # ------------- before filter methods ------------- #
-
   def set_current_requirement
     @requirement = Requirement.find(params[:id])
   end
-
   # ------------- end before filter methods ------------- #
 
-
   # GET /requirements
-  # GET /requirements.xml
   def index
     @requirements = Requirement.all
 
@@ -23,7 +19,6 @@ class RequirementsController < ApplicationController
   end
 
   # GET /requirements/1
-  # GET /requirements/1.xml
   def show
     # @reqSteps = RequirementStep.order("position")
 
@@ -33,7 +28,6 @@ class RequirementsController < ApplicationController
   end
 
   # GET /requirements/new
-  # GET /requirements/new.xml
   def new
     @requirement = Requirement.new
 
@@ -47,7 +41,6 @@ class RequirementsController < ApplicationController
   end
 
   # POST /requirements
-  # POST /requirements.xml
   def create
     @requirement = Requirement.new(params[:requirement])
      respond_to do |format|
@@ -60,7 +53,6 @@ class RequirementsController < ApplicationController
   end
 
   # PUT /requirements/1
-  # PUT /requirements/1.xml
   def update
     respond_to do |format|
       if @requirement.update_attributes(params[:requirement])
@@ -72,7 +64,6 @@ class RequirementsController < ApplicationController
   end
 
   # DELETE /requirements/1
-  # DELETE /requirements/1.xml
   def destroy
     @requirement.destroy(:force)
 
