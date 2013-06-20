@@ -123,7 +123,6 @@ describe 'reservation' do
     max_res.quantity_eq_model_allowed?.should == true
     max_res2 = FactoryGirl.build(:reservation, reserver: admin, equipment_model: max_mod)
     max_res2.save(:validate => false)
-    binding.pry
     max_res.quantity_eq_model_allowed?.should == false
     max_res2.save.should == false
     unrestricted_mod = FactoryGirl.create(:equipment_model, max_per_user: nil)
