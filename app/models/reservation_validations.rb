@@ -71,14 +71,15 @@ module ReservationValidations
   # Checks that the reservation is not longer than the max checkout length
   #TODO: admin override
   def duration_allowed?
-    duration = due_date.to_date - start_date.to_date + 1
-    cat_duration = equipment_model.category.maximum_checkout_length
-    return true if cat_duration == "unrestricted" || (self.class == Reservation && self.checked_in)
-    if duration > cat_duration
-      errors.add(:base, equipment_model.name + "cannot be reserved for more than " + equipment_model.category.maximum_checkout_length.to_s + " days at a time.\n")
+    max_duration = equipment_model.category.maximum_checkout_length
+    if max_duration == "unrestricted" || (self.class == Reservation && self.checked_in)
+      return true
+    elsif self.duration > max_duration
+      errors.add(:base, equipment_model.name + "cannot be reserved for more than " + max_duration.to_s + " days at a time.\n")
       return false
+    else
+      return true
     end
-    return true
   end
 
   # Checks that start date is not a black out date

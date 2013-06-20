@@ -7,4 +7,8 @@ module ReservationsBase
                          :equipment_model_id
   end
   
+  def duration
+  	due_date.to_date - start_date.to_date + 1
+  end
+
 end
