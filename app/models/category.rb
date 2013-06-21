@@ -31,21 +31,6 @@ class Category < ActiveRecord::Base
 
   searchable_on(:name)
 
-
-  # def self.catalog_search(query)
-  #   if query.blank? # if the string is blank, return all
-  #     active
-  #   else # in all other cases, search using the query text
-  #     results = []
-  #     query.split.each do |q|
-  #       results << active.where("name LIKE :query", {:query => "%#{q}%"})
-  #     end
-  #     # take the intersection of the results for each word
-  #     # i.e. choose results matching all terms
-  #     results.inject(:&)
-  #   end
-  # end
-
   def maximum_per_user
     max_per_user || "unrestricted"
   end
