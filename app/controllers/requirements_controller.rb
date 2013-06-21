@@ -9,38 +9,20 @@ class RequirementsController < ApplicationController
   end
   # ------------- end before filter methods ------------- #
 
-  # GET /requirements
   def index
     @requirements = Requirement.all
-
-    respond_to do |format|
-      format.html # index.html.erb
-    end
   end
 
-  # GET /requirements/1
   def show
-    # @reqSteps = RequirementStep.order("position")
-
-    respond_to do |format|
-      format.html # show.html.erb
-    end
   end
 
-  # GET /requirements/new
   def new
     @requirement = Requirement.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-    end
   end
 
-  # GET /requirements/1/edit
   def edit
   end
 
-  # POST /requirements
   def create
     @requirement = Requirement.new(params[:requirement])
      respond_to do |format|
@@ -52,7 +34,6 @@ class RequirementsController < ApplicationController
     end
   end
 
-  # PUT /requirements/1
   def update
     respond_to do |format|
       if @requirement.update_attributes(params[:requirement])
@@ -63,7 +44,6 @@ class RequirementsController < ApplicationController
     end
   end
 
-  # DELETE /requirements/1
   def destroy
     @requirement.destroy(:force)
 
