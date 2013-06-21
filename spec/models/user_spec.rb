@@ -146,7 +146,7 @@ describe User do
     end
   end
 
-  describe "#is_admin_in_adminmode?", focus: true do
+  describe "#is_admin_in_adminmode?" do
     it "should return true if user is an admin in admin mode" do
       admin_in_admin_mode = FactoryGirl.create(:admin, adminmode: "1")
       admin_in_admin_mode.is_admin_in_adminmode?.should == true
@@ -155,9 +155,116 @@ describe User do
       @user.save
       @user.is_admin_in_adminmode?.should == false
     end
-    it "should return false if user is admin but not in admin mode" do
-      admin_not_in_admin_mode = FactoryGirl.create(:admin, normalusermode: "1")
-      admin_not_in_admin_mode.is_admin_in_adminmode?.should == false
+    it "should return false if user is admin in normalusermode" do
+      admin_as_normal_user = FactoryGirl.create(:admin, normalusermode: "1")
+      admin_as_normal_user.is_admin_in_adminmode?.should == false
+    end
+    it "should return false if user is admin in bannedmode" do
+      admin_as_banned = FactoryGirl.create(:admin, bannedmode: "1")
+      admin_as_banned.is_admin_in_adminmode?.should == false
+    end
+    it "should return false if user is admin in checkoutpersonmode" do
+      admin_as_checkoutperson = FactoryGirl.create(:admin, checkoutpersonmode: "1")
+      admin_as_checkoutperson.is_admin_in_adminmode?.should == false
     end
   end
+
+  describe ".is_admin_in_checkoutpersonmode?" do
+    it "should return true if user is an admin in checkoutpersonmode" do
+      admin_as_checkoutperson = FactoryGirl.create(:admin, checkoutpersonmode: "1")
+      admin_as_checkoutperson.is_admin_in_checkoutpersonmode?.should == true
+    end
+    it "should return false if the user is not an admin" do
+      @user.save
+      @user.is_admin_in_checkoutpersonmode?.should == false
+    end
+    it "should return false if user is admin in normalusermode" do
+      admin_as_normal_user = FactoryGirl.create(:admin, normalusermode: "1")
+      admin_as_normal_user.is_admin_in_checkoutpersonmode?.should == false
+    end
+    it "should return false if user is admin in bannedmode" do
+      admin_as_banned = FactoryGirl.create(:admin, bannedmode: "1")
+      admin_as_banned.is_admin_in_checkoutpersonmode?.should == false
+    end
+    it "should return false if user is admin in adminmode" do
+      admin_as_admin = FactoryGirl.create(:admin, adminmode: "1")
+      admin_as_admin.is_admin_in_checkoutpersonmode?.should == false
+    end
+  end
+
+  describe ".is_admin_in_bannedmode?" do
+    it "should return true if user is an admin in bannedmode" do
+      admin_as_banned = FactoryGirl.create(:admin, bannedmode: "1")
+      admin_as_banned.is_admin_in_bannedmode?.should == true
+    end
+    it "should return false if the user is not an admin" do
+      @user.save
+      @user.is_admin_in_bannedmode?.should == false
+    end
+    it "should return false if user is admin in normalusermode" do
+      admin_as_normal_user = FactoryGirl.create(:admin, normalusermode: "1")
+      admin_as_normal_user.is_admin_in_bannedmode?.should == false
+    end
+    it "should return false if user is admin in checkoutpersonmode" do
+      admin_as_checkoutperson = FactoryGirl.create(:admin, checkoutpersonmode: "1")
+      admin_as_checkoutperson.is_admin_in_bannedmode?.should == false
+    end
+    it "should return false if user is admin in adminmode" do
+      admin_as_admin = FactoryGirl.create(:admin, adminmode: "1")
+      admin_as_admin.is_admin_in_bannedmode?.should == false
+    end
+  end
+
+  #TODO: write these tests once there are equipment_model, equipment_object, and reservation factories available
+  describe ".equipment_objects"
+  describe ".checked_out_models"
+
+  #TODO: find a way to simulate an ldap database using a test fixture/factory of some kind
+  describe "#search_ldap" do
+    it "should return a hash of user attributes if the ldap database has the login associated with user"
+    it "should return nil if the user is not in the ldap database"
+  end
+
+  # what does this method even do?
+  describe "#select_options"
+
+  describe ".render_name" do
+    it "should return the nickname, last name, and login id as a string if nickname exists" do
+      @user.render_name.should == "Sasha Fierce Knowles bgk1"
+    end
+    it "should return the first name, last name, and login id as a string if no nickname" do
+      @no_nickname = FactoryGirl.create(:justin)
+      @no_nickname.render_name.should == "Justin Timberlake jrt4"
+    end
+  end
+
+  describe ".assign_type", focus: true do
+    it "should set all types to nil except admin when passed 'admin' as type" do
+      @user.assign_type('admin')
+      @user.is_banned.should be_false
+      @user.is_checkout_person.should be_false
+      @user.is_admin.should be_true
+    end
+    it "should set all types to nil except checkout_person when passed 'checkout' as type" do
+      @user.assign_type('checkout')
+      @user.is_banned.should be_false
+      @user.is_admin.should be_false
+      @user.is_checkout_person.should be_true
+    end
+    it "should set all types to nil except is_banned when passed 'banned' as type" do
+      @user.assign_type('banned')
+      @user.is_admin.should be_false
+      @user.is_checkout_person.should be_false
+      @user.is_banned.should be_true
+    end
+    it "successfully removes old type when reassigning type from banned to admin" do
+      @banned_to_admin = FactoryGirl.create(:user, is_banned: "1")
+      @banned_to_admin.is_banned.should be_true
+      @banned_to_admin.is_admin.should be_false
+      @banned_to_admin.assign_type('admin')
+      @banned_to_admin.is_admin.should be_true
+      @banned_to_admin.is_banned.should be_false
+    end
+  end
+
 end
