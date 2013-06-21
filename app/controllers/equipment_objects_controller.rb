@@ -20,12 +20,10 @@ class EquipmentObjectsController < ApplicationController
 
 
   def index
-    if params[:equipment_model_id]
-      @equipment_objects = @equipment_model.equipment_objects
-    elsif params[:show_deleted]
-      @equipment_objects = EquipmentObject.all
+    if params[:show_deleted]
+      @equipment_objects = ( @equipment_object ? @equipment_object.equipment_models : EquipmentObject.all )
     else
-      @equipment_objects = EquipmentObject.active
+      @equipment_objects = ( @equipment_object ? @equipment_object.equipment_models.active : EquipmentObject.active )
     end
   end
 
