@@ -36,7 +36,7 @@ describe BlackOut do
   end
 
   it "validates a set_id if it is a recurring black out" do
-    # new feature
+    # new feature that should exist already
   end
 
   describe ".black_outs_on_date" do
