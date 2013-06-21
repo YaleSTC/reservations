@@ -1,4 +1,7 @@
 class EquipmentObject < ActiveRecord::Base
+
+  include Searchable
+
   belongs_to :equipment_model
   has_one :category, :through => :equipment_model
   has_many :reservations
@@ -12,6 +15,8 @@ class EquipmentObject < ActiveRecord::Base
 
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
   scope :active, where("#{table_name}.deleted_at is null")
+
+  searchable_on(:name, :serial)
 
   def status
     if self.deleted?
@@ -36,17 +41,4 @@ class EquipmentObject < ActiveRecord::Base
     status == "available"
   end
 
-  def self.catalog_search(query)
-    if query.blank? # if the string is blank, return all
-      active
-    else # in all other cases, search using the query text
-      results = []
-      query.split.each do |q|
-        results << active.where("name LIKE :query OR serial LIKE :query", {:query => "%#{q}%"})
-      end
-      # take the intersection of the results for each word
-      # i.e. choose results matching all terms
-      results.inject(:&)
-    end
-  end
 end

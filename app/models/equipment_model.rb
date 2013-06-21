@@ -1,12 +1,15 @@
 class EquipmentModel < ActiveRecord::Base
   include ApplicationHelper
+  include Searchable
+
+  searchable_on(:name, :description)
 
   nilify_blanks :only => [:deleted_at]
 
   attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee,
       :max_per_user, :document_attributes, :accessory_ids, :deleted_at,
       :checkout_procedures_attributes, :checkin_procedures_attributes, :photo,
-      :documentation, :max_renewal_times, :max_renewal_length, :renewal_days_before_due, 
+      :documentation, :max_renewal_times, :max_renewal_length, :renewal_days_before_due,
       :associated_equipment_model_ids, :requirement_ids, :requirements
 
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
@@ -38,7 +41,7 @@ class EquipmentModel < ActiveRecord::Base
   ##################
   ## Validations  ##
   ##################
-  
+
   validates :name,
             :description,
             :category,     :presence => true
@@ -59,7 +62,7 @@ class EquipmentModel < ActiveRecord::Base
       errors.add(:associated_equipment_models, "You cannot associate a model with itself. Please deselect " + self.name)
     end
   end
-  
+
   #################
   ## Paperclip   ##
   #################
@@ -107,20 +110,6 @@ class EquipmentModel < ActiveRecord::Base
   ## Class Methods ##
   ###################
 
-  def self.catalog_search(query)
-    if query.blank? # if the string is blank, return all
-      active
-    else # in all other cases, search using the query text
-      results = []
-      query.split.each do |q|
-        results << active.where("name LIKE :query OR description LIKE :query", {:query => "%#{q}%"})
-      end
-      # take the intersection of the results for each word 
-      # i.e. choose results matching all terms
-      results.inject(:&)
-    end
-  end
-
   #TODO: this appears to be dead code - verify and remove
   def self.select_options
     self.order('name ASC').collect{|item| [item.name, item.id]}
@@ -160,7 +149,7 @@ class EquipmentModel < ActiveRecord::Base
     end
     availability.min > 0 ? availability.min : 0
   end
-  
+
   # Returns true if the reserver is ineligible to checkout the model.
   def model_restricted?(reserver_id)
     reserver = User.find(reserver_id)
@@ -173,15 +162,15 @@ class EquipmentModel < ActiveRecord::Base
   end
 
 
-  # Returns the number of reserved objects for a particular model, 
+  # Returns the number of reserved objects for a particular model,
   # as long as they have not been checked out
-  def number_reserved_on_date(date) 
+  def number_reserved_on_date(date)
     Reservation.reserved_on_date(date).not_returned.for_eq_model(self).size
   end
 
-  # Returns the number of overdue objects for a given model, 
+  # Returns the number of overdue objects for a given model,
   # as long as they have been checked out.
-  def number_overdue 
+  def number_overdue
     Reservation.overdue.for_eq_model(self).size
   end
 
