@@ -151,7 +151,7 @@ describe 'reservation' do
     unrestricted_res.quantity_cat_allowed?.should == true
   end
 
-  it 'creates correct errors for validate_set' do
+  xit 'creates correct errors for validate_set' do
     Reservation.delete_all
     EquipmentModel.delete_all
     Reservation.validate_set(admin).should == []
