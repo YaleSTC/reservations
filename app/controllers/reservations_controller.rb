@@ -4,6 +4,14 @@ class ReservationsController < ApplicationController
   before_filter :require_login, :only => [:index, :show]
   before_filter :permissions_check, :only => [:check_out, :check_in, :edit, :update]
 
+  def set_user
+    @user = User.find(params[:user_id])
+  end
+
+  def set_reservation
+    @reservation = Reservation.find(params[:id])
+  end
+
   def index
     #define our source of reservations depending on user status
     reservations_source = current_user.can_checkout? ? Reservation : current_user.reservations
@@ -22,7 +30,7 @@ class ReservationsController < ApplicationController
   end
 
   def show
-    @reservation = Reservation.find(params[:id])
+    set_reservation
   end
 
   def new
@@ -80,11 +88,11 @@ class ReservationsController < ApplicationController
 
 
   def edit
-    @reservation = Reservation.find(params[:id])
+    set_reservation
   end
 
   def update # for editing reservations; not for checkout or check-in
-    @reservation = Reservation.find(params[:id])
+    set_reservation
 
     # adjust dates to match intended input of Month / Day / Year
     start = Date.strptime(params[:reservation][:start_date],'%m/%d/%Y')
@@ -113,13 +121,13 @@ class ReservationsController < ApplicationController
   def checkout
     error_msgs = ""
     reservations_to_be_checked_out = []
-    reserver = User.find(params[:user_id])
-    if !reserver.terms_of_service_accepted && !params[:terms_of_service_accepted]
+    set_user
+    if !@user.terms_of_service_accepted && !params[:terms_of_service_accepted]
       flash[:error] = "You must confirm that the user accepts the Terms of Service"
       redirect_to :back and return
-    elsif !reserver.terms_of_service_accepted && params[:terms_of_service_accepted]
-      reserver.terms_of_service_accepted = true
-      reserver.save
+    elsif !@user.terms_of_service_accepted && params[:terms_of_service_accepted]
+      @user.terms_of_service_accepted = true
+      @user.save
     end
 
     # throw all the reservations that are being checked out into an array
@@ -193,7 +201,6 @@ class ReservationsController < ApplicationController
       end
 
       # prep for receipt page and exit
-      @user = reserver
       @check_in_set = []
       @check_out_set = reservations_to_be_checked_out
       render 'receipt' and return
@@ -268,7 +275,7 @@ class ReservationsController < ApplicationController
   end
 
   def destroy
-    @reservation = Reservation.find(params[:id])
+    set_reservation
     require_user_or_checkout_person(@reservation.reserver)
     @reservation.destroy
     flash[:notice] = "Successfully destroyed reservation."
@@ -280,14 +287,13 @@ class ReservationsController < ApplicationController
   end
 
   def manage # initializer
-    @user = User.find(params[:user_id])
+    set_user
     @check_out_set = Reservation.due_for_checkout(@user)
     @check_in_set = Reservation.due_for_checkin(@user)
   end
 
   def current
-    @user = User.find(params[:user_id])
-
+    set_user
     @user_overdue_reservations_set = [Reservation.overdue_user_reservations(@user)].delete_if{|a| a.empty?}
     @user_checked_out_today_reservations_set = [Reservation.checked_out_today_user_reservations(@user)].delete_if{|a| a.empty?}
     @user_checked_out_previous_reservations_set = [Reservation.checked_out_previous_user_reservations(@user)].delete_if{|a| a.empty?}
@@ -298,7 +304,7 @@ class ReservationsController < ApplicationController
 
   #two paths to create receipt emails for checking in and checking out items.
   def checkout_email
-    @reservation =  Reservation.find(params[:id])
+    set_reservation
     if UserMailer.checkout_receipt(@reservation).deliver
       redirect_to :back
       flash[:notice] = "Successfully delivered receipt email."
@@ -309,7 +315,7 @@ class ReservationsController < ApplicationController
   end
 
   def checkin_email
-    @reservation =  Reservation.find(params[:id])
+    set_reservation
     if UserMailer.checkin_receipt(@reservation).deliver
       redirect_to :back
       flash[:notice] = "Successfully delivered receipt email."
@@ -336,7 +342,7 @@ class ReservationsController < ApplicationController
   end
 
   def renew
-    @reservation = Reservation.find(params[:id])
+    set_reservation
     @reservation.due_date += @reservation.max_renewal_length_available.days
     if @reservation.times_renewed == NIL # this check can be removed? just run the else now?
       @reservation.times_renewed = 1
