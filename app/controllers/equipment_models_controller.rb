@@ -4,24 +4,25 @@ class EquipmentModelsController < ApplicationController
   before_filter :require_admin
   before_filter :set_equipment_model, :only => [:show, :edit, :update, :destroy]
   skip_before_filter :require_admin, :only => [:index, :show]
+  before_filter :set_category_if_possible, :only => [:index, :new]
 
   include ActivationHelper
 
+  # --------- before filter methods --------- #
   def set_equipment_model
     @equipment_model = EquipmentModel.find(params[:id])
   end
+  def set_category_if_possible
+    @category = Category.find(params[:category_id]) if params[:category_id]
+  end
+  # --------- end before filter methods --------- #
+
 
   def index
-    if params[:category_id] && params[:show_deleted]
-      @category = Category.find(params[:category_id])
-      @equipment_models = @category.equipment_models
-    elsif params[:category_id]
-      @category = Category.find(params[:category_id])
-      @equipment_models = @category.equipment_models.active
-    elsif params[:show_deleted]
-      @equipment_models = EquipmentModel.find(:all, :include => :category, :order => 'categories.name ASC, equipment_models.name ASC')
+    if params[:show_deleted]
+      @equipment_models = ( @category ? @category.equipment_models : EquipmentModel.all )
     else
-      @equipment_models = EquipmentModel.active.find(:all, :include => :category, :order => 'categories.name ASC, equipment_models.name ASC')
+      @equipment_models = ( @category ? @category.equipment_models.active : EquipmentModel.active )
     end
   end
 
@@ -30,7 +31,6 @@ class EquipmentModelsController < ApplicationController
   end
 
   def new
-    @category = Category.find(params[:category_id]) if params[:category_id]
     @equipment_model = EquipmentModel.new(:category => @category)
   end
 

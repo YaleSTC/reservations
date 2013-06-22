@@ -1,4 +1,6 @@
 class Category < ActiveRecord::Base
+  include Searchable
+
   has_many :equipment_models, :dependent => :destroy
 
   validates :name,                :presence => true,
@@ -30,20 +32,7 @@ class Category < ActiveRecord::Base
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
   scope :active, where("#{table_name}.deleted_at is null")
 
-
-  def self.catalog_search(query)
-    if query.blank? # if the string is blank, return all
-      active
-    else # in all other cases, search using the query text
-      results = []
-      query.split.each do |q|
-        results << active.where("name LIKE :query", {:query => "%#{q}%"})
-      end
-      # take the intersection of the results for each word
-      # i.e. choose results matching all terms
-      results.inject(:&)
-    end
-  end
+  searchable_on(:name)
 
   def maximum_per_user
     max_per_user || "unrestricted"
