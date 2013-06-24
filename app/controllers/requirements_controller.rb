@@ -25,30 +25,23 @@ class RequirementsController < ApplicationController
 
   def create
     @requirement = Requirement.new(params[:requirement])
-     respond_to do |format|
-      if @requirement.save
-        format.html { redirect_to(@requirement, :notice => 'Requirement was successfully created.') }
-      else
-        format.html { render :action => "new" }
-      end
+    if @requirement.save
+      redirect_to(@requirement, :notice => 'Requirement was successfully created.')
+    else
+      render :action => "new"
     end
   end
 
   def update
-    respond_to do |format|
-      if @requirement.update_attributes(params[:requirement])
-        format.html { redirect_to(@requirement, :notice => 'Requirement was successfully updated.') }
-      else
-        format.html { render :action => "edit" }
-      end
+    if @requirement.update_attributes(params[:requirement])
+      redirect_to(@requirement, :notice => 'Requirement was successfully updated.')
+    else
+      render :action => "edit"
     end
   end
 
   def destroy
     @requirement.destroy(:force)
-
-    respond_to do |format|
-      format.html { redirect_to(requirements_url) }
-    end
+    redirect_to(requirements_url)
   end
 end
