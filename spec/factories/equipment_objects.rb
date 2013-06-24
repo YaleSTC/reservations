@@ -2,11 +2,17 @@
 
 FactoryGirl.define do
   factory :equipment_object do
-  	id 1
-    name "Number FGH4567"
+    id 1
+    name "First"
     serial "FGH4567"
-    equipment_model 1 #need to build the equipment_model factory and pass in one of those objects here.
-    equipment_model_id 1
-    deleted_at ""
+    equipment_model factory: :equipment_model
+  end
+
+  factory :deactivated, class: EquipmentObject do
+    id 2
+    name "Second"
+    serial "FGH4568"
+    equipment_model factory: :another_equipment_model
+    deleted_at "2013-01-01 00:00:00"
   end
 end

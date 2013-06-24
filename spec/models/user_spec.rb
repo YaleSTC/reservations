@@ -238,7 +238,7 @@ describe User do
     end
   end
 
-  describe ".assign_type", focus: true do
+  describe ".assign_type" do
     it "should set all types to nil except admin when passed 'admin' as type" do
       @user.assign_type('admin')
       @user.is_banned.should be_false
