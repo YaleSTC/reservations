@@ -46,11 +46,11 @@ class EquipmentModel < ActiveRecord::Base
   validates :late_fee,     :replacement_fee,
                            :numericality => { :greater_than_or_equal_to => 0 }
   validates :max_per_user, :numericality => { :allow_nil => true, \
-                                              :integer_only => true, \
+                                              :only_integer => true, \
                                               :greater_than_or_equal_to => 1 }
   validates :max_renewal_length,
             :max_renewal_times,
-            :renewal_days_before_due,  :numericality => { :allow_nil => true, :integer_only => true, :greater_than_or_equal_to => 0 }
+            :renewal_days_before_due,  :numericality => { :allow_nil => true, :only_integer => true, :greater_than_or_equal_to => 0 }
 
   validate :not_associated_with_self
 
