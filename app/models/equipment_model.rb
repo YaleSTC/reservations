@@ -147,6 +147,7 @@ class EquipmentModel < ActiveRecord::Base
     renewal_days_before_due || category.maximum_renewal_days_before_due
   end
 
+  # TODO: This appears to be dead code, verify and delete
   def document_attributes=(document_attributes)
     document_attributes.each do |attributes|
       documents.build(attributes)
@@ -166,7 +167,7 @@ class EquipmentModel < ActiveRecord::Base
     reserver = User.find(reserver_id)
     self.requirements.each do |em_req|
       unless reserver.requirements.include?(em_req)
-         return true
+        return true
       end
     end
     return false
