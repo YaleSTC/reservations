@@ -6,18 +6,8 @@ describe Category do
     @category = FactoryGirl.build(:category)
   end
 
-  it "validates presence of name" do
-    @category.name = ""
-    @category.save.should be_false
-    @category.name = "Camera"
-    @category.save.should be_true
-  end
-
-  it "validates uniqueness of name" do
-    @identical_user = FactoryGirl.build(:category)
-    @category.save
-    @identical_user.save.should be_false
-  end
+  it { should validate_presence_of(:name) }
+  it { should validate_uniqueness_of(:name) }
 
   # validate numericality for :max_renewal_length, :max_renewal_times, :renewal_days_before_due, :max_per_user, :sort_order, :max_checkout_length
   # this includes integer_only, and greater_than_or_equal_to => 0
@@ -133,7 +123,7 @@ describe Category do
   # custom scope to return active categories
   describe ".active" do
     before(:each) do
-      @deactivated = FactoryGirl.create(:microphone, deleted_at: "2013-01-01 00:00:00" )
+      @deactivated = FactoryGirl.create(:category, deleted_at: "2013-01-01 00:00:00" )
       @category.save
     end
 
@@ -148,8 +138,9 @@ describe Category do
 
   describe "#maximum_per_user" do
     before(:each) do
+      @category.max_per_user = 1
       @category.save
-      @unrestrected_category = FactoryGirl.create(:microphone, max_per_user: nil)
+      @unrestrected_category = FactoryGirl.create(:category, max_per_user: nil)
     end
     it "Should return maximum_per_user if defined" do
       @category.maximum_per_user.should == 1
@@ -161,8 +152,9 @@ describe Category do
 
   describe "#maximum_renewal_length" do
     before(:each) do
+      @category.max_renewal_length = 5
       @category.save
-      @unrestrected_category = FactoryGirl.create(:microphone, max_renewal_length: nil)
+      @unrestrected_category = FactoryGirl.create(:category, max_renewal_length: nil)
     end
     it "Should return maximum_renewal_length if defined" do
       @category.maximum_renewal_length.should == 5
@@ -174,8 +166,9 @@ describe Category do
 
   describe "#maximum_renewal_times" do
     before(:each) do
+      @category.max_renewal_times = 1
       @category.save
-      @unrestrected_category = FactoryGirl.create(:microphone, max_renewal_times: nil)
+      @unrestrected_category = FactoryGirl.create(:category, max_renewal_times: nil)
     end
     it "Should return maximum_renewal_times if defined" do
       @category.maximum_renewal_times.should == 1
@@ -187,8 +180,9 @@ describe Category do
 
   describe "#maximum_renewal_days_before_due" do
     before(:each) do
+      @category.renewal_days_before_due = 1
       @category.save
-      @unrestrected_category = FactoryGirl.create(:microphone, renewal_days_before_due: nil)
+      @unrestrected_category = FactoryGirl.create(:category, renewal_days_before_due: nil)
     end
     it "Should return maximum_renewal_days_before_due if defined" do
       @category.maximum_renewal_days_before_due.should == 1
@@ -200,8 +194,9 @@ describe Category do
 
   describe "#maximum_checkout_length" do
     before(:each) do
+      @category.max_checkout_length = 5
       @category.save
-      @unrestrected_category = FactoryGirl.create(:microphone, max_checkout_length: nil)
+      @unrestrected_category = FactoryGirl.create(:category, max_checkout_length: nil)
     end
     it "Should return maximum_checkout_length if defined" do
       @category.maximum_checkout_length.should == 5
@@ -215,7 +210,7 @@ describe Category do
     before(:each) do
       @category.name = "Tumblr hipster instagram sustainable"
       @category.save
-      @hipster = FactoryGirl.create(:microphone, name: "Tumblr starbucks PBR slackline music hipster")
+      @hipster = FactoryGirl.create(:category, name: "Tumblr starbucks PBR slackline music hipster")
     end
     it "Should return names matching all of the query words" do
       Category.catalog_search("Tumblr").should == [@category, @hipster]

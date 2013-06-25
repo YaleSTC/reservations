@@ -10,34 +10,31 @@ describe EquipmentModel do
       @model.save.should be_true
     end
 
-    it "requires a name" do
-      @model.name = ""
-      @model.save.should be_false
-      @model.name = "Model"
-      @model.save.should be_true
-    end
+    it { should belong_to(:category) }
+    it { should have_and_belong_to_many(:requirements) }
+    it { should have_many(:equipment_objects) }
 
-    it "requires a description" do
-      @model.description = ""
-      @model.save.should be_false
-      @model.description = "This is a model."
-      @model.save.should be_true
-    end
+    #TODO: figure out how to implement this in order to create a passing test (the model currently works but the test fails)
+    it { should have_many(:documents) }
+
+    it { should have_many(:reservations) }
+    it { should have_many(:checkin_procedures) }
+    it { should accept_nested_attributes_for(:checkin_procedures) }
+    it { should have_many(:checkout_procedures) }
+    it { should accept_nested_attributes_for(:checkout_procedures) }
+    it { should have_and_belong_to_many(:associated_equipment_models) }
+
+    it { should validate_presence_of(:name) }
+    it { should validate_presence_of(:description) }
 
     it "requires an associated category" do
       @model.category = nil
       @model.save.should be_false
-      @model.category = FactoryGirl.create(:microphone)
+      @model.category = FactoryGirl.create(:category)
       @model.save.should be_true
     end
 
-    # I don't like having to assign this to a different category, but I can't figure out how to
-    # use factories to generate one category and assign multiple models to it.
-    it "requires a unique name" do
-      @identical_model = FactoryGirl.build(:equipment_model, category: FactoryGirl.create(:microphone), name: "Model")
-      @model.save
-      @identical_model.save.should be_false
-    end
+    it { should validate_uniqueness_of(:name) }
 
     it "requires a late fee greater than or equal to 0" do
       @model.late_fee = "-1.00"
@@ -132,23 +129,21 @@ describe EquipmentModel do
 
   context "association validations" do
     before(:each) do
-      @model_with_accessory = FactoryGirl.build(:model_with_accessory)
+      @unique_id = FactoryGirl.generate(:unique_id)
+      @model = FactoryGirl.create(:equipment_model, id: @unique_id)
     end
     it "has a working association callback" do
-      @model_with_accessory.save.should be_true
+      @model.save.should be_true
     end
     it "does not permit association with itself" do
-      @model_with_accessory.associated_equipment_model_ids = [4]
-      @model_with_accessory.save.should be_false
-      @model_with_accessory.associated_equipment_model_ids = [3]
-      @model_with_accessory.save.should be_true
+      @model.associated_equipment_model_ids = [@unique_id]
+      @model.save.should be_false
     end
     describe ".not_associated_with_self" do
       it "creates an error if associated with self" do
-        @model_with_accessory.associated_equipment_model_ids = [4]
-        @associated_with_self = @model_with_accessory
-        @associated_with_self.not_associated_with_self
-        @associated_with_self.errors.first.should be_true
+        @model.associated_equipment_model_ids = [@unique_id]
+        @model.not_associated_with_self
+        @model.errors.first.should be_true
       end
     end
   end
@@ -160,7 +155,7 @@ describe EquipmentModel do
                                                       description: "You probably haven't heard of them jean shorts. Raw \
                                                                     denim you probably haven't heard of them vegan \
                                                                     8-bit occupy mustache four loko." )
-        @another_model = FactoryGirl.create(:another_equipment_model, name: "Tumblr hipster starbucks alternative music",
+        @another_model = FactoryGirl.create(:equipment_model, name: "Tumblr hipster starbucks alternative music",
                                                                       description: "Craft beer sartorial four loko blog jean \
                                                                                     shorts chillwave aesthetic. Roof party art party banh \
                                                                                     mi aesthetic, ennui Marfa kitsch readymade vegan food truck bag." )
@@ -184,42 +179,43 @@ describe EquipmentModel do
 
   context "instance methods" do
     before(:each) do
-      @model = FactoryGirl.create(:equipment_model)
+      @category = FactoryGirl.create(:category)
+      @model = FactoryGirl.create(:equipment_model, category: @category)
     end
     describe ".maximum_per_user" do
       it "should return the max_per_user if specified" do
-        @model.maximum_per_user.should == 10
+        @model.maximum_per_user.should == @model.max_per_user
       end
       it "should return the associated category's max_per_user if unspecified" do
         @model.max_per_user = nil
-        @model.maximum_per_user.should == 1
+        @model.maximum_per_user.should == @category.maximum_per_user
       end
     end
     describe ".maximum_renewal_length" do
       it "should return the max_renewal_length if specified" do
-        @model.maximum_renewal_length.should == 10
+        @model.maximum_renewal_length.should == @model.max_renewal_length
       end
       it "should return the associated category's max_renewal_length if unspecified" do
         @model.max_renewal_length = nil
-        @model.maximum_renewal_length.should == 5
+        @model.maximum_renewal_length.should == @category.maximum_renewal_length
       end
     end
     describe ".maximum_renewal_times" do
       it "should return the max_renewal_times if specified" do
-        @model.maximum_renewal_times.should == 10
+        @model.maximum_renewal_times.should == @model.max_renewal_times
       end
       it "should return the associated category's max_renewal_length if unspecified" do
         @model.max_renewal_times = nil
-        @model.maximum_renewal_times.should == 1
+        @model.maximum_renewal_times.should == @category.maximum_renewal_times
       end
     end
     describe ".maximum_renewal_days_before_due" do
       it "should return the model's renewal_days_before_due if specified" do
-        @model.maximum_renewal_days_before_due.should == 10
+        @model.maximum_renewal_days_before_due.should == @model.renewal_days_before_due
       end
       it "should return the associated category's renewal_days_before_due if unspecified" do
         @model.renewal_days_before_due = nil
-        @model.maximum_renewal_days_before_due.should == 1
+        @model.maximum_renewal_days_before_due.should == @category.maximum_renewal_days_before_due
       end
     end
 

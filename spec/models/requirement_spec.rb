@@ -22,7 +22,7 @@ describe Requirement do
       @another_requirement = FactoryGirl.create(:another_requirement)
       @equipment_model = FactoryGirl.create(:equipment_model, requirements: [@requirement, @another_requirement] )
       @user_with_unmet_requirement = FactoryGirl.create(:user)
-      @user_that_meets_some_requirements = FactoryGirl.create(:justin, requirements: [@requirement] )
+      @user_that_meets_some_requirements = FactoryGirl.create(:user, requirements: [@requirement] )
     end
 
     it "should return a list of admins and contact info if no requirements have been met." do

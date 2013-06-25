@@ -1,98 +1,64 @@
 require 'spec_helper'
 
 describe User do
-  before(:each) do
-    @user = FactoryGirl.build(:beyonce)
-  end
-  it "has a working factory" do\
-    @user.save.should be_true
+  it "has a working factory" do
+    FactoryGirl.create(:user).should be_valid
   end
 
-  it "requires a login (netid)" do
-    @user.login = ""
-    @user.save.should be_false
-    @user.login = "bgk1"
-    @user.save.should be_true
-  end
+  context "validations and associations" do
+    before(:each) do
+      @user = FactoryGirl.build(:user)
+    end
 
-  it "must have a unique login" do
-    @user.save
-    @user_doppleganger = FactoryGirl.build(:beyonce)
-    @user_doppleganger.save.should be_false
-  end
+    it { should have_many(:reservations) }
+    it { should have_and_belong_to_many(:requirements) }
 
-  it "must have a first name" do
-    @user.first_name = ""
-    @user.save.should be_false
-    @user.first_name = "Beyonce"
-    @user.save.should be_true
-  end
+    it { should validate_presence_of(:login) }
+    it { should validate_uniqueness_of(:login) }
+    it { should validate_presence_of(:first_name) }
+    it { should validate_presence_of(:last_name) }
+    it { should validate_presence_of(:affiliation) }
+    it { should validate_presence_of(:phone) }
+    it { should validate_presence_of(:email) }
 
-  it "must have a last name" do
-    @user.last_name = ""
-    @user.save.should be_false
-    @user.last_name = "Knowles"
-    @user.save.should be_true
-  end
+    # figure out what the regex is that's actually used in this validation
+    it "phone number must be ??" do
+      @user.phone = "555-555-5#55"
+      @user.save.should be_false
+      @user.phone = "55555555"
+      @user.save.should be_true
+    end
 
-  it "must have an affiliation" do
-    @user.affiliation = ""
-    @user.save.should be_false
-    @user.affiliation = "Destiny's Child"
-    @user.save.should be_true
-  end
+    # TODO
+    it "email must take the standard email format (sometext@something.something)"
+    it "nickname must not have any non-standard characters (see validation)"
 
-  it "must have a phone number" do
-    @user.phone = ""
-    @user.save.should be_false
-    @user.phone = "555-555-5555"
-    @user.save.should be_true
-  end
+    it "nickname may be blank or nil" do
+      @user.nickname = nil
+      @user.save.should be_true
+      @user.nickname = ""
+      @user.save.should be_true
+    end
 
-  # figure out what the regex is that's actually used in this validation
-  it "phone number must be ??" do
-    @user.phone = "555-555-5#55"
-    @user.save.should be_false
-    @user.phone = "55555555"
-    @user.save.should be_true
-  end
+    #TODO: figure out why it's saving with terms_of_service_accepted = false
+    it "must accept ToS" do
+      @user.terms_of_service_accepted = nil
+      @user.save.should be_false
+      @user.terms_of_service_accepted = "1"
+      @user.save.should be_true
+    end
 
-  it "must have an email" do
-    @user.email = ""
-    @user.save.should be_false
-    @user.email = "beyonce.knowles@yale.edu"
-    @user.save.should be_true
-  end
-
-  # figure out this regex as well in order to ensure that there is good test coverage
-  it "email must take the standard email format (sometext@something.something)"
-  it "nickname must not have any non-standard characters (see validation)"
-
-  it "nickname may be blank or nil" do
-    @user.nickname = nil
-    @user.save.should be_true
-    @user.nickname = ""
-    @user.save.should be_true
-  end
-
-  #TODO: figure out why it's allowing me to save with a false param
-  it "must accept ToS" do
-    @user.terms_of_service_accepted = nil
-    @user.save.should be_false
-    @user.terms_of_service_accepted = "1"
-    @user.save.should be_true
-  end
-
-  # this test means nothing if the previous one fails
-  it "doesn't have to accept ToS if created by an admin" do
-    @user_made_by_admin = FactoryGirl.build(:beyonce, created_by_admin: true, terms_of_service_accepted: false)
-    @user_made_by_admin.save.should be_true
+    # this test means nothing if the previous one fails
+    it "doesn't have to accept ToS if created by an admin" do
+      @user_made_by_admin = FactoryGirl.build(:user, created_by_admin: true, terms_of_service_accepted: false)
+      @user_made_by_admin.save.should be_true
+    end
   end
 
   describe ".active" do
     before(:each) do
-      @deactivated = FactoryGirl.create(:justin, deleted_at: "2013-01-01 00:00:00" )
-      @user.save
+      @user = FactoryGirl.create(:user)
+      @deactivated = FactoryGirl.create(:deactivated_user)
     end
 
     it "should return all active users" do
@@ -104,18 +70,18 @@ describe User do
     end
   end
 
-  describe "#name" do
-    it "should return the first and last name joined into one string if no nickname" do
-      @user.save
-      @user.name.should == "Sasha Fierce Knowles"
+  describe ".name" do
+    it "should return the nickname and last name joined into one string if nickname is specified" do
+      @user = FactoryGirl.create(:user, nickname: "Sasha Fierce")
+      @user.name.should == "#{@user.nickname} #{@user.last_name}"
     end
-    it "should return the nickname in place of first name if user has one specified" do
-      @no_nickname = FactoryGirl.create(:justin)
-      @no_nickname.name.should == "Justin Timberlake"
+    it "should return the first and last name if user has no nickname specified" do
+      @no_nickname = FactoryGirl.create(:user)
+      @no_nickname.name.should == "#{@no_nickname.first_name} #{@no_nickname.last_name}"
     end
   end
 
-  describe "#can_checkout?" do
+  describe ".can_checkout?" do
     it "should return true if user is a checkout person" do
       checkout_person = FactoryGirl.create(:checkout_person)
       checkout_person.can_checkout?.should == true
@@ -133,8 +99,8 @@ describe User do
       banned_user.can_checkout?.should be_false
     end
     it "should return false if user is normal" do
-      @user.save
-      @user.can_checkout?.should be_false
+      non_admin_user = FactoryGirl.create(:user)
+      non_admin_user.can_checkout?.should be_false
     end
     it "should return false if admin in bannedmode" do
       admin_in_bannedmode = FactoryGirl.create(:admin, bannedmode: "1")
@@ -152,8 +118,8 @@ describe User do
       admin_in_admin_mode.is_admin_in_adminmode?.should == true
     end
     it "should return false if user is not an admin" do
-      @user.save
-      @user.is_admin_in_adminmode?.should == false
+      non_admin_user = FactoryGirl.create(:user)
+      non_admin_user.is_admin_in_adminmode?.should == false
     end
     it "should return false if user is admin in normalusermode" do
       admin_as_normal_user = FactoryGirl.create(:admin, normalusermode: "1")
@@ -175,8 +141,8 @@ describe User do
       admin_as_checkoutperson.is_admin_in_checkoutpersonmode?.should == true
     end
     it "should return false if the user is not an admin" do
-      @user.save
-      @user.is_admin_in_checkoutpersonmode?.should == false
+      non_admin_user = FactoryGirl.create(:user)
+      non_admin_user.is_admin_in_checkoutpersonmode?.should == false
     end
     it "should return false if user is admin in normalusermode" do
       admin_as_normal_user = FactoryGirl.create(:admin, normalusermode: "1")
@@ -198,8 +164,8 @@ describe User do
       admin_as_banned.is_admin_in_bannedmode?.should == true
     end
     it "should return false if the user is not an admin" do
-      @user.save
-      @user.is_admin_in_bannedmode?.should == false
+      non_admin_user = FactoryGirl.create(:user)
+      non_admin_user.is_admin_in_bannedmode?.should == false
     end
     it "should return false if user is admin in normalusermode" do
       admin_as_normal_user = FactoryGirl.create(:admin, normalusermode: "1")
@@ -215,9 +181,29 @@ describe User do
     end
   end
 
-  #TODO: write these tests once there are equipment_model, equipment_object, and reservation factories available
-  describe ".equipment_objects"
-  describe ".checked_out_models"
+
+  describe ".equipment_objects" do
+    it "has a working reservation factory" do
+      @reservation = FactoryGirl.create(:reservation)
+    end
+    it "should return all equipment_objects reserved by the user" do
+      @user = FactoryGirl.create(:user)
+      @reservation = FactoryGirl.create(:reservation, reserver: @user)
+      @user.equipment_objects.should == [@reservation.equipment_object]
+    end
+  end
+
+  describe ".checked_out_models" do
+    it "should return a hash of checked out models and counts" do
+      @user = FactoryGirl.create(:user)
+      @model = FactoryGirl.create(:equipment_model)
+      # make two reservations of the same equipment model, only one of which is checked out
+      @reservation = FactoryGirl.create(:checked_out_reservation, reserver: @user, equipment_model: @model)
+      @another_reservation = FactoryGirl.create(:reservation, reserver: @user, equipment_model: @model)
+
+      @user.checked_out_models.should == {@model.id=>1}
+    end
+  end
 
   #TODO: find a way to simulate an ldap database using a test fixture/factory of some kind
   describe "#search_ldap" do
@@ -230,15 +216,19 @@ describe User do
 
   describe ".render_name" do
     it "should return the nickname, last name, and login id as a string if nickname exists" do
-      @user.render_name.should == "Sasha Fierce Knowles bgk1"
+      @user = FactoryGirl.create(:user, nickname: "Sasha Fierce")
+      @user.render_name.should == "#{@user.nickname} #{@user.last_name} #{@user.login}"
     end
     it "should return the first name, last name, and login id as a string if no nickname" do
-      @no_nickname = FactoryGirl.create(:justin)
-      @no_nickname.render_name.should == "Justin Timberlake jrt4"
+      @no_nickname = FactoryGirl.create(:user)
+      @no_nickname.render_name.should == "#{@no_nickname.first_name} #{@no_nickname.last_name} #{@no_nickname.login}"
     end
   end
 
   describe ".assign_type" do
+    before(:each) do
+      @user = FactoryGirl.create(:user)
+    end
     it "should set all types to nil except admin when passed 'admin' as type" do
       @user.assign_type('admin')
       @user.is_banned.should be_false
