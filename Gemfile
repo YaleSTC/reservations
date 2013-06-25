@@ -37,7 +37,9 @@ gem 'simple_form'
 gem 'cocoon'
 gem 'redcarpet'
 
-
+group :test do
+  gem 'shoulda-matchers'
+end
 
 group :development, :test do
   gem "factory_girl_rails"
@@ -67,7 +69,7 @@ group :development do
   gem 'pry-debugger'
   gem 'pry-stack_explorer'
   gem 'pry-remote'
-  gem 'letter_opener' 
+  gem 'letter_opener'
 end
 
 group :production, :staging do
