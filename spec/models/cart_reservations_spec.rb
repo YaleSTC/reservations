@@ -15,6 +15,8 @@ describe CartReservation do
 		its(:due_date) { should_not be_nil }
 		it 'should save' do
 			cart_reservation.save.should be_true
+			CartReservation.all.size.should == 1
+			CartReservation.all.first.should == cart_reservation
 		end
 		it 'can be updated' do
 			cart_reservation.due_date = Date.tomorrow + 1
@@ -43,6 +45,7 @@ describe CartReservation do
 		it { should_not be_valid }
 		it 'should not save' do
 			cart_reservation.save.should be_false
+			CartReservation.all.size.should == 0
 		end
 		it 'cannot be updated' do
 			cart_reservation.due_date = Date.tomorrow + 1
@@ -67,6 +70,7 @@ describe CartReservation do
 			cart_reservation.equipment_model = FactoryGirl.create(:equipment_model)
 			cart_reservation.save.should be_true
 			cart_reservation.should be_valid
+			CartReservation.all.size.should == 1
 		end
 	end
 
@@ -76,6 +80,7 @@ describe CartReservation do
 		it { should_not be_valid }
 		it 'should not save' do
 			cart_reservation.save.should be_false
+			CartReservation.all.size.should == 0
 		end
 		it 'cannot be updated' do
 			cart_reservation.start_date = Date.tomorrow
@@ -100,6 +105,7 @@ describe CartReservation do
 			cart_reservation.due_date = Date.tomorrow
 			cart_reservation.save.should be_true
 			cart_reservation.should be_valid
+			CartReservation.all.size.should == 1
 		end
 	end
 
