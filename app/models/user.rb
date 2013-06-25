@@ -57,10 +57,10 @@ class User < ActiveRecord::Base
   end
 
   def equipment_objects
-    self.reservations.collect{ |r| r.equipment_objects }.flatten
+    self.reservations.collect{ |r| r.equipment_object }.flatten
   end
 
-  # Returns array of the checked out equipment models and their counts for the user
+  # Returns hash of the checked out equipment models and their counts for the user
   def checked_out_models
     #Make a hash of the checked out eq. models and their counts for the user
     model_ids = self.reservations.collect do |r|
