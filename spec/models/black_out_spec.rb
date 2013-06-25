@@ -2,47 +2,23 @@ require 'spec_helper'
 
 # TODO: write test for   belongs_to :equipment_model
 
-describe BlackOut do
-  it "does not allow a blank notice" do
-    @vacation = FactoryGirl.build(:black_out, notice: "")
-    @vacation.save.should be_false
-    @vacation.notice = "It's spring break!"
-    @vacation.save.should be_true
-  end
+describe BlackOut, focus: true do
+  context "validations and associations" do
+    it { should validate_presence_of(:notice) }
+    it { should validate_presence_of(:start_date) }
+    it { should validate_presence_of(:end_date) }
+    it { should validate_presence_of(:black_out_type) }
 
-  it "validates presence of start date" do
-    @spring_break = FactoryGirl.build(:black_out, start_date: "")
-    @spring_break.save.should be_false
-    @spring_break.start_date = "2013-03-05"
-    @spring_break.save.should be_true
-  end
-
-  it "validates presence of end date" do
-    @spring_break = FactoryGirl.build(:black_out, end_date: "")
-    @spring_break.save.should be_false
-    @spring_break.end_date = "2013-03-22"
-    @spring_break.save.should be_true
-  end
-
-  it "validates presence of black out type" do
-    @spring_break = FactoryGirl.build(:black_out, black_out_type: "")
-    @spring_break.save.should be_false
-    @spring_break.black_out_type = "hard"
-    @spring_break.save.should be_true
-  end
-
-  # what does this even do? I see no evidence of this elsewhere in the application
-  it "validates presence of equipment_model_id" do
-  end
-
-  it "validates a set_id if it is a recurring black out" do
-    # new feature that should exist already
+    # what does this even do? I see no evidence of this elsewhere in the application
+    it "validates presence of equipment_model_id"
+    it "validates a set_id if it is a recurring black out"
+      # new feature that should exist already
   end
 
   describe ".black_outs_on_date" do
     before(:each) do
-      @black_out = FactoryGirl.create(:black_out)
-      @another_black_out = FactoryGirl.create(:black_out, end_date: "2013-03-18")
+      @black_out = FactoryGirl.create(:black_out, start_date: "2013-03-05", end_date: "2013-03-22")
+      @another_black_out = FactoryGirl.create(:black_out, start_date: "2013-03-05", end_date: "2013-03-18")
     end
 
     it "Should return the black_out blocking a passed date if exists" do
@@ -58,7 +34,7 @@ describe BlackOut do
 
   describe ".hard_backout_exists_on_date" do
     before(:each) do
-      @spring_break = FactoryGirl.create(:black_out)
+      @spring_break = FactoryGirl.create(:black_out, black_out_type: 'hard', start_date: "2013-03-05", end_date: "2013-03-22")
       @summer_break = FactoryGirl.create(:black_out, black_out_type: 'soft', start_date: "2013-06-01", end_date: "2013-09-01")
     end
     it "Should return true if there is a hard blackout on the given date" do
