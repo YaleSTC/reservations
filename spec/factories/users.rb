@@ -4,7 +4,7 @@ FactoryGirl.define do
 	factory :user, aliases: [:reserver, :checkout_handler, :checkin_handler] do
     login "netid"
     first_name "First"
-    last_name "Name"
+    last_name "Last"
     phone "1234567890"
     email { "#{first_name}.#{last_name}@yale.edu".downcase }
     affiliation "YC"

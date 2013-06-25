@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Reservation do
-	let!(:reservation) { FactoryGirl.create(:reservation) }
+	let(:reservation) { FactoryGirl.build(:reservation) }
 	subject { reservation }
 	
 	context "when valid" do
@@ -15,6 +15,8 @@ describe Reservation do
 		its(:due_date) { should_not be_nil }
 		it 'should save' do
 			reservation.save.should be_true
+			Reservation.all.size.should == 1
+			Reservation.all.first.should == reservation
 		end
 		it 'can be updated' do
 			reservation.due_date = Date.tomorrow + 1
@@ -32,7 +34,7 @@ describe Reservation do
 			reservation.should be_available
 			reservation.should be_quantity_eq_model_allowed
 			reservation.should be_quantity_cat_allowed
-			Reservation.validate_set(reservation.reserver).should be_true
+			Reservation.validate_set(reservation.reserver).should == []
 		end
 		context "when not checked out" do
 			its(:status) { should == 'reserved' }
