@@ -23,6 +23,16 @@ describe CartReservation do
 		it 'passes custom validations' do
 			cart_reservation.should be_not_empty
 			cart_reservation.should be_not_in_past
+
+			cart_reservation.should be_no_overdue_reservations
+			cart_reservation.should be_start_date_before_due_date
+			cart_reservation.should be_matched_object_and_model
+			cart_reservation.should be_duration_allowed
+			cart_reservation.should be_start_date_is_not_blackout
+			cart_reservation.should be_due_date_is_not_blackout
+			#cart_reservation.should be_available
+			cart_reservation.should be_quantity_eq_model_allowed
+			cart_reservation.should be_quantity_cat_allowed
 			Reservation.validate_set(cart_reservation.reserver).should == []
 		end
 	end
@@ -41,11 +51,22 @@ describe CartReservation do
 		it 'fails custom validations appropriately' do
 			cart_reservation.should_not be_not_empty
 			cart_reservation.should be_not_in_past
+
+			cart_reservation.should be_no_overdue_reservations
+			cart_reservation.should be_start_date_before_due_date
+			#cart_reservation.should be_matched_object_and_model
+			#cart_reservation.should be_duration_allowed
+			cart_reservation.should be_start_date_is_not_blackout
+			cart_reservation.should be_due_date_is_not_blackout
+			#cart_reservation.should be_available
+			#cart_reservation.should be_quantity_eq_model_allowed
+			#cart_reservation.should be_quantity_cat_allowed
 			#Reservation.validate_set(cart_reservation.reserver, [] << cart_reservation).should_not == []
 		end
 		it 'can be updated with equipment model' do
 			cart_reservation.equipment_model = FactoryGirl.create(:equipment_model)
 			cart_reservation.save.should be_true
+			cart_reservation.should be_valid
 		end
 	end
 
@@ -63,7 +84,22 @@ describe CartReservation do
 		it 'fails custom validations appropriately' do
 			cart_reservation.should be_not_empty
 			cart_reservation.should_not be_not_in_past
+
+			cart_reservation.should be_no_overdue_reservations
+			cart_reservation.should_not be_start_date_before_due_date
+			cart_reservation.should be_matched_object_and_model
+			cart_reservation.should be_duration_allowed
+			cart_reservation.should be_start_date_is_not_blackout
+			cart_reservation.should be_due_date_is_not_blackout
+			#cart_reservation.should be_available
+			cart_reservation.should be_quantity_eq_model_allowed
+			cart_reservation.should be_quantity_cat_allowed
 			#Reservation.validate_set(cart_reservation.reserver, [] << cart_reservation).should_not == []
+		end
+		it 'can be updated with fixed date' do
+			cart_reservation.due_date = Date.tomorrow
+			cart_reservation.save.should be_true
+			cart_reservation.should be_valid
 		end
 	end
 
