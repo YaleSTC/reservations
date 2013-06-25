@@ -2,9 +2,9 @@
 
 FactoryGirl.define do
 	factory :user, aliases: [:reserver, :checkout_handler, :checkin_handler] do
-    sequence(:login) {|n| "netid#{n}"}
-    sequence(:first_name) {|n| "First#{n}"}
-    sequence(:last_name) {|n| "Last#{n}"}
+    login "netid"
+    first_name "First"
+    last_name "Name"
     phone "1234567890"
     email { "#{first_name}.#{last_name}@yale.edu".downcase }
     affiliation "YC"
@@ -12,9 +12,9 @@ FactoryGirl.define do
     terms_of_service_accepted true
 
     factory :admin do
-    	sequence(:login) {|n| "adid#{n}"}
-      sequence(:first_name) {|n| "Admin#{n}"}
-      sequence(:last_name) {|n| "Strator#{n}"}
+    	login "adid"
+      first_name "Admin"
+      last_name "Strator"
       adminmode true
     end
   end
