@@ -11,9 +11,6 @@ FactoryGirl.define do
       res.equipment_object = obj
     end
 
-    factory :finalized_reservation do
-    end
-
     factory :checked_out_reservation do
       checked_out { Date.today }
       association :checkout_handler, factory: :user

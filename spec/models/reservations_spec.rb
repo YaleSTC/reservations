@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Reservation do
-	let!(:reservation) { reservation = FactoryGirl.create(:reservation) }
+	let!(:reservation) { FactoryGirl.create(:reservation) }
 	subject { reservation }
 	
 	context "when valid" do
@@ -14,6 +14,10 @@ describe Reservation do
 		its(:start_date) { should_not be_nil }
 		its(:due_date) { should_not be_nil }
 		it 'should save' do
+			reservation.save.should be_true
+		end
+		it 'can be updated' do
+			reservation.due_date = Date.tomorrow + 1
 			reservation.save.should be_true
 		end
 		it 'should pass custom validations' do
@@ -38,4 +42,6 @@ describe Reservation do
 		it { should respond_to(:late_fee) }
 		it { should respond_to(:max_renewal_length_available) }
 	end
+
+
 end
