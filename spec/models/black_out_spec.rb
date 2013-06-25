@@ -2,7 +2,7 @@ require 'spec_helper'
 
 # TODO: write test for   belongs_to :equipment_model
 
-describe BlackOut, focus: true do
+describe BlackOut do
   context "validations and associations" do
     it { should validate_presence_of(:notice) }
     it { should validate_presence_of(:start_date) }
