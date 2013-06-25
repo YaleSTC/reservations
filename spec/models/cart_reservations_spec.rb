@@ -3,9 +3,8 @@ require 'spec_helper'
 describe CartReservation do
 	
 	context "when valid" do
-		let(:cart_reservation) { FactoryGirl.build(:cart_reservation) }
-		subject { cart_reservation }
-		
+		subject(:cart_reservation) { FactoryGirl.build(:cart_reservation) }
+
 		it { should be_valid }
 		it 'should have a valid reserver' do
 			cart_reservation.reserver.should_not be_nil
@@ -29,11 +28,9 @@ describe CartReservation do
 	end
 
 	context "when empty" do
-		let(:cart_reservation) { FactoryGirl.build(:cart_reservation, equipment_model: nil) }
-		subject { cart_reservation }
-
+		subject(:cart_reservation) { FactoryGirl.build(:cart_reservation, equipment_model: nil) }
+		
 		it { should_not be_valid }
-		its(:equipment_model) { should be_nil }
 		it 'should not save' do
 			cart_reservation.save.should be_false
 		end
@@ -49,6 +46,24 @@ describe CartReservation do
 		it 'can be updated with equipment model' do
 			cart_reservation.equipment_model = FactoryGirl.create(:equipment_model)
 			cart_reservation.save.should be_true
+		end
+	end
+
+	context "with bad dates" do
+		subject(:cart_reservation) { FactoryGirl.build(:cart_reservation, due_date: Date.yesterday) }
+
+		it { should_not be_valid }
+		it 'should not save' do
+			cart_reservation.save.should be_false
+		end
+		it 'cannot be updated' do
+			cart_reservation.start_date = Date.tomorrow
+			cart_reservation.save.should be_false
+		end
+		it 'fails custom validations appropriately' do
+			cart_reservation.should be_not_empty
+			cart_reservation.should_not be_not_in_past
+			#Reservation.validate_set(cart_reservation.reserver, [] << cart_reservation).should_not == []
 		end
 	end
 

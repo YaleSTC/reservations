@@ -1,8 +1,7 @@
 require 'spec_helper'
 
 describe Reservation do
-	let(:reservation) { FactoryGirl.build(:reservation) }
-	subject { reservation }
+	subject(:reservation) { FactoryGirl.build(:reservation) }
 	
 	context "when valid" do
 		it { should be_valid }
