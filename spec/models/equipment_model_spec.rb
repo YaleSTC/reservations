@@ -182,7 +182,7 @@ describe EquipmentModel do
     end
   end
 
-  context "instance methods", focus: true do
+  context "instance methods" do
     before(:each) do
       @model = FactoryGirl.create(:equipment_model)
     end
