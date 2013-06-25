@@ -9,6 +9,8 @@ describe BlackOut, focus: true do
     it { should validate_presence_of(:end_date) }
     it { should validate_presence_of(:black_out_type) }
 
+    it { should belong_to(:equipment_model) }
+
     # what does this even do? I see no evidence of this elsewhere in the application
     it "validates presence of equipment_model_id"
     it "validates a set_id if it is a recurring black out"
