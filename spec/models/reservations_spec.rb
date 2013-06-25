@@ -113,4 +113,14 @@ describe Reservation do
 		end
 	end
 
+	context 'with no user' do
+		subject(:reservation) { FactoryGirl.build(:reservation, reserver: nil) }
+
+		it 'should have a deleted user' do
+			reservation.reserver.should_not be_nil
+			reservation.reserver.first_name.should == "Deleted"
+		end
+		it { should be_valid }
+	end
+
 end
