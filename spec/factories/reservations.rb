@@ -7,9 +7,13 @@ FactoryGirl.define do
     reserver
     equipment_model
 
+    factory :valid_reservation do
+      after(:build) { |res| res.equipment_object = FactoryGirl.create(:equipment_object, equipment_model: res.equipment_model) }
+    end
+
     factory :checked_out_reservation do
       checked_out { Date.today }
-      association :checkout_handler, factory: :user
+      checkout_handler
     end
 
     factory :checked_in_reservation do
@@ -17,15 +21,15 @@ FactoryGirl.define do
       due_date { Date.today }
       checked_out { Date.yesterday }
       checked_in { Date.today }
-      :checkout_handler
-      :checkin_handler
+      checkout_handler
+      checkin_handler
     end
 
     factory :overdue_reservation do
       start_date { Date.yesterday - 1 }
       due_date { Date.yesterday }
       checked_out { Date.yesterday - 1 }
-      :checkout_handler
+      checkout_handler
     end
   end
 end

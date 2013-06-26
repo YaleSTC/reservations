@@ -2,6 +2,6 @@
 
 FactoryGirl.define do
   factory :category do
-    name "Cat"
+    sequence(:name) { |n| "Cat#{n}" }
   end
 end

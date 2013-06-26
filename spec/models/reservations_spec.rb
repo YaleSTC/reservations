@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Reservation do
-	subject(:reservation) { FactoryGirl.build(:reservation) }
+	subject(:reservation) { FactoryGirl.build(:valid_reservation) }
 
 	context "when valid" do
 		it { should be_valid }
@@ -117,9 +117,7 @@ describe Reservation do
 	end
 
 	context 'with blacked out start date' do
-		let!(:blackout) { FactoryGirl.create(
-			:black_out, start_date: reservation.start_date, end_date: reservation.due_date)
-		}
+		let!(:blackout) { FactoryGirl.create(:black_out, start_date: reservation.start_date, end_date: reservation.due_date) }
 
 		it { should_not be_valid }
 		it 'should not save' do
@@ -162,7 +160,7 @@ describe Reservation do
 		subject(:reservation) { FactoryGirl.build(:reservation) }
 		let(:overdue_reserver) { reservation.reserver }
 		let!(:overdue) {
-			o = FactoryGirl.build(:overdue_reservation, reserver: overdue_reserver, equipment_model: reservation.equipment_model)
+			o = FactoryGirl.build(:overdue_reservation, reserver: overdue_reserver)
 			o.save(validate: false)
 			o
 		}
@@ -195,4 +193,43 @@ describe Reservation do
 		end
 	end
 
+	context 'with equipment object available problems' do
+		let!(:available_reservation) { FactoryGirl.create(:checked_out_reservation, equipment_model: reservation.equipment_model) }
+
+		it 'should have one equipment object' do
+			EquipmentObject.all.size.should == 1
+		end
+		it { should_not be_valid }
+		it 'should not save' do
+			reservation.save.should be_false
+			Reservation.all.size.should == 0
+		end
+		it 'cannot be updated' do
+			reservation.start_date = Date.tomorrow
+			reservation.save.should be_false
+		end
+		it 'fails appropriate validation' do
+			reservation.should_not be_available
+		end
+		it 'passes other custom validations' do
+			reservation.should be_matched_object_and_model
+			reservation.should be_duration_allowed
+			reservation.should be_quantity_eq_model_allowed
+			reservation.should be_quantity_cat_allowed
+			reservation.should be_no_overdue_reservations
+			reservation.should be_start_date_before_due_date
+			reservation.should be_not_in_past
+			reservation.should be_not_empty
+			reservation.should be_start_date_is_not_blackout
+			reservation.should be_due_date_is_not_blackout
+			#Reservation.validate_set(reservation.reserver).should_not == []
+		end
+	end
+
+	# context 'with equipment object/model matching problems' do
+	# 	subject(:reservation) {
+	# 		r = FactoryGirl.build(:reservation)
+	# 		r.equipment_
+	# 	}
+	# end
 end

@@ -3,7 +3,7 @@
 FactoryGirl.define do
 
   factory :equipment_model do
-    name "Mod"
+    sequence(:name) { |n| "Mod#{n}" }
     description "This is a description of an Equipment Model"
     late_fee 0
     replacement_fee 0

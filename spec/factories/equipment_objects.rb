@@ -2,7 +2,7 @@
 
 FactoryGirl.define do
   factory :equipment_object do
-  	name "Obj"
+  	sequence(:name) { |n| "Obj" }
   	equipment_model
   end
 end
