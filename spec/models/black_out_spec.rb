@@ -1,18 +1,15 @@
 require 'spec_helper'
 
-# TODO: write test for   belongs_to :equipment_model
-
 describe BlackOut do
   context "validations and associations" do
     it { should validate_presence_of(:notice) }
     it { should validate_presence_of(:start_date) }
     it { should validate_presence_of(:end_date) }
     it { should validate_presence_of(:black_out_type) }
+    it { should validate_presence_of(:equipment_model_id) } # I don't think that this is used anywhere else in the application
 
     it { should belong_to(:equipment_model) }
 
-    # what does this even do? I see no evidence of this elsewhere in the application
-    it "validates presence of equipment_model_id"
     it "validates a set_id if it is a recurring black out"
       # new feature that should exist already
   end
