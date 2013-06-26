@@ -1,10 +1,9 @@
 require 'spec_helper'
 
 describe Reservation do
-	
-	context "when valid" do
-		subject(:reservation) { FactoryGirl.build(:reservation) }
+	subject(:reservation) { FactoryGirl.build(:reservation) }
 
+	context "when valid" do
 		it { should be_valid }
 		it 'should have a valid reserver' do
 			reservation.reserver.should_not be_nil
@@ -22,7 +21,7 @@ describe Reservation do
 			reservation.due_date = Date.tomorrow + 1
 			reservation.save.should be_true
 		end
-		it 'should pass custom validations' do
+		it 'passes custom validations' do
 			reservation.should be_no_overdue_reservations
 			reservation.should be_start_date_before_due_date
 			reservation.should be_not_in_past
@@ -57,8 +56,10 @@ describe Reservation do
 			reservation.start_date = Date.tomorrow
 			reservation.save.should be_false
 		end
-		it 'passes and fails custom validations appropriately' do
+		it 'fails appropriate validation' do
 			reservation.should_not be_not_empty
+		end
+		it 'passes other custom validations' do
 			reservation.should be_no_overdue_reservations
 			reservation.should be_start_date_before_due_date
 			reservation.should be_not_in_past
@@ -91,9 +92,11 @@ describe Reservation do
 			reservation.start_date = Date.tomorrow
 			reservation.save.should be_false
 		end
-		it 'passes and fails custom validations appropriately' do
+		it 'fails appropriate validations' do
 			reservation.should_not be_start_date_before_due_date
 			reservation.should_not be_not_in_past
+		end
+		it 'passes other custom validations' do
 			reservation.should be_no_overdue_reservations
 			reservation.should be_not_empty
 			reservation.should be_matched_object_and_model
@@ -121,6 +124,43 @@ describe Reservation do
 			reservation.reserver.first_name.should == "Deleted"
 		end
 		it { should be_valid }
+	end
+
+	context 'when user has overdue reservation' do
+		subject(:reservation) { FactoryGirl.build(:reservation) }
+		let(:overdue_reserver) { reservation.reserver }
+		let!(:overdue) {
+			o = FactoryGirl.build(:overdue_reservation, reserver: overdue_reserver, equipment_model: reservation.equipment_model)
+			o.save(validate: false)
+			o
+		}
+
+		it { should_not be_valid }
+		it 'should not save' do
+			reservation.save.should be_false
+			Reservation.all.size.should == 1
+			Reservation.all.first.should == overdue
+		end
+		it 'cannot be updated' do
+			reservation.start_date = Date.tomorrow
+			reservation.save.should be_false
+		end
+		it 'fails appropriate validation' do
+			reservation.should_not be_no_overdue_reservations
+		end
+		it 'passes other custom validations' do
+			reservation.should be_start_date_before_due_date
+			reservation.should be_not_in_past
+			reservation.should be_not_empty
+			reservation.should be_matched_object_and_model
+			reservation.should be_duration_allowed
+			reservation.should be_start_date_is_not_blackout
+			reservation.should be_due_date_is_not_blackout
+			reservation.should be_available
+			reservation.should be_quantity_eq_model_allowed
+			reservation.should be_quantity_cat_allowed
+			#Reservation.validate_set(reservation.reserver).should_not == []
+		end
 	end
 
 end
