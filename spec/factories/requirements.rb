@@ -2,6 +2,7 @@
 
 FactoryGirl.define do
   factory :requirement do
+    id { generate(:unique_id) }
     contact_name "Adam Bray"
     description "You must attend a training session with Adam before using this equipment."
     contact_info "adam.bray@yale.edu"
