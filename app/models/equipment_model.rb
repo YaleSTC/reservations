@@ -175,7 +175,7 @@ class EquipmentModel < ActiveRecord::Base
 
 
   # Returns the number of reserved objects for a particular model,
-  # as long as they have not been checked out
+  # as long as they have not been checked in
   def number_reserved_on_date(date)
     Reservation.reserved_on_date(date).not_returned.for_eq_model(self).size
   end
@@ -189,7 +189,7 @@ class EquipmentModel < ActiveRecord::Base
 
   def available_count(date)
     # get the total number of objects of this kind
-    # then subtract the total quantity currently reserved, and overdue
+    # then subtract the total quantity currently reserved, checked-out, and overdue
     total = equipment_objects.active.count
     (total - number_reserved_on_date(date)) - number_overdue
   end
