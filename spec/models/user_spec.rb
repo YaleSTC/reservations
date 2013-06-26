@@ -20,25 +20,12 @@ describe User do
     it { should validate_presence_of(:affiliation) }
     it { should validate_presence_of(:phone) }
     it { should validate_presence_of(:email) }
-
-    # figure out what the regex is that's actually used in this validation
-    it "phone number must be ??" do
-      @user.phone = "555-555-5#55"
-      @user.save.should be_false
-      @user.phone = "55555555"
-      @user.save.should be_true
-    end
-
-    # TODO
-    it "email must take the standard email format (sometext@something.something)"
-    it "nickname must not have any non-standard characters (see validation)"
-
-    it "nickname may be blank or nil" do
-      @user.nickname = nil
-      @user.save.should be_true
-      @user.nickname = ""
-      @user.save.should be_true
-    end
+    it { should_not allow_value("abc", "!s@abc.com", "a@!d.com", "a@a.c0m").for(:email) }
+    it { should allow_value("example@example.com", "1a@a.edu", "a@2a.net").for(:email) }
+    it { should_not allow_value("abcdef", "555-555-55$5", "1234 1234 1234").for(:phone) }
+    it { should allow_value("555-555-5555", "15555555555").for(:phone) }
+    it { should_not allow_value("ab@", "ab1", "ab_c").for(:nickname) }
+    it { should allow_value(nil, "", "abc", "Example").for(:nickname) }
 
     #TODO: figure out why it's saving with terms_of_service_accepted = false
     it "must accept ToS" do
@@ -211,8 +198,13 @@ describe User do
     it "should return nil if the user is not in the ldap database"
   end
 
-  # what does this method even do?
-  describe "#select_options"
+  describe "#select_options" do
+    it "should return an array of all users ordered by last name, each represented by an array like this: ['first_name last_name', id]" do
+      @user1 = FactoryGirl.create(:user, first_name: "Joseph", last_name: "Smith", nickname: "Joe")
+      @user2 = FactoryGirl.create(:user, first_name: "Jessica", last_name: "Greene", nickname: "Jess")
+      User.select_options.should == [["#{@user2.last_name}, #{@user2.first_name}", @user2.id],["#{@user1.last_name}, #{@user1.first_name}", @user1.id]]
+    end
+  end
 
   describe ".render_name" do
     it "should return the nickname, last name, and login id as a string if nickname exists" do
@@ -256,5 +248,4 @@ describe User do
       @banned_to_admin.is_banned.should be_false
     end
   end
-
 end
