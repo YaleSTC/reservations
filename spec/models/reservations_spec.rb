@@ -30,7 +30,7 @@ describe Reservation do
 			reservation.should be_duration_allowed
 			reservation.should be_start_date_is_not_blackout
 			reservation.should be_due_date_is_not_blackout
-			reservation.should be_available
+			reservation.should be_available #how is this passing without an equipment object??
 			reservation.should be_quantity_eq_model_allowed
 			reservation.should be_quantity_cat_allowed
 			Reservation.validate_set(reservation.reserver).should == []
@@ -80,7 +80,7 @@ describe Reservation do
 		end
 	end
 
-	context 'with bad dates' do
+	context 'with past due date' do
 		subject(:reservation) { FactoryGirl.build(:reservation, due_date: Date.yesterday) }
 
 		it { should_not be_valid }
@@ -113,6 +113,38 @@ describe Reservation do
 			reservation.save.should be_true
 			reservation.should be_valid
 			Reservation.all.size.should == 1
+		end
+	end
+
+	context 'with blacked out start date' do
+		let!(:blackout) { FactoryGirl.create(
+			:black_out, start_date: reservation.start_date, end_date: reservation.due_date)
+		}
+
+		it { should_not be_valid }
+		it 'should not save' do
+			reservation.save.should be_false
+			Reservation.all.size.should == 0
+		end
+		it 'cannot be updated' do
+			reservation.start_date = Date.tomorrow
+			reservation.save.should be_false
+		end
+		it 'fails appropriate validations' do
+			reservation.should_not be_start_date_is_not_blackout
+			reservation.should_not be_due_date_is_not_blackout
+		end
+		it 'passes other custom validations' do
+			reservation.should be_start_date_before_due_date
+			reservation.should be_not_in_past
+			reservation.should be_no_overdue_reservations
+			reservation.should be_not_empty
+			reservation.should be_matched_object_and_model
+			reservation.should be_duration_allowed
+			reservation.should be_available
+			reservation.should be_quantity_eq_model_allowed
+			reservation.should be_quantity_cat_allowed
+			#Reservation.validate_set(reservation.reserver).should_not == []
 		end
 	end
 
