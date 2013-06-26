@@ -1,6 +1,5 @@
 require 'spec_helper'
 
-# TODO: find a way to test the 'has_many :equipment_models, :dependent => :destroy' relationship
 describe Category do
   before(:each) do
     @category = FactoryGirl.build(:category)
@@ -8,6 +7,8 @@ describe Category do
 
   it { should validate_presence_of(:name) }
   it { should validate_uniqueness_of(:name) }
+
+  it { should have_many(:equipment_models) }
 
   # validate numericality for :max_renewal_length, :max_renewal_times, :renewal_days_before_due, :max_per_user, :sort_order, :max_checkout_length
   # this includes integer_only, and greater_than_or_equal_to => 0
