@@ -226,35 +226,83 @@ describe EquipmentModel do
     # TODO: Need requirements model and factory to build the environment for this test.
     describe ".model_restricted?" do
       before(:each) do
-        @model = FactoryGirl.create(:equipment_model)
-        @user = FactoryGirl.create(:beyonce)
+        @requirement = FactoryGirl.create(:requirement)
+        @requirement2 = FactoryGirl.create(:requirement)
+        @model = FactoryGirl.create(:equipment_model, requirements: [@requirement, @requirement2])
       end
-      it "should return false if the user has fulfilled the requirements to use the model"
-      it "should return false if the model has no requirements"
-      it "should return true if the user has not fulfilled the requirements"
+      it "should return false if the user has fulfilled the requirements to use the model" do
+        @user = FactoryGirl.create(:user, requirements: [@requirement, @requirement2])
+        @model.model_restricted?(@user.id).should be_false
+      end
+      it "should return false if the model has no requirements" do
+        @model.requirements = []
+        @user = FactoryGirl.create(:user, requirements: [@requirement, @requirement2])
+        @model.model_restricted?(@user.id).should be_false
+      end
+      it "should return true if the user has not fulfilled all of the requirements" do
+        @user = FactoryGirl.create(:user, requirements: [@requirement])
+        @model.model_restricted?(@user.id).should be_true
+      end
+      it "should return true if the user has not fulfilled any of the requirements" do
+        @user = FactoryGirl.create(:user)
+        @model.model_restricted?(@user.id).should be_true
+      end
     end
 
     # TODO: All of these methods require reservation objects to be built.
     # Continue with this after merging with Erin's reservation tests and factories.
-    describe ".num_available" do
-      it "should return the number of that model available over a given date range"
-      it "should return 0 if no models are available"
-      it "should return 0 if the date range is in the past?"
-    end
-    describe ".number_reserved_on_date" do
-      it "should return the number of that model reserved on that date but not checked out"
-    end
-    describe ".number_overdue" do
-      it "should return the number of objects of a given model that are checked out and overdue"
-    end
-    describe ".available_count" do
-      it "should take the total # of the model, subtract the number reserved and overdue for the given date and return the result"
-    end
-    describe ".available_object_select_options" do
-      # not sure exactly what this is doing either
+    context "methods involving reservations" do
+      before(:each) do
+        @model = FactoryGirl.create(:equipment_model)
+        @object = FactoryGirl.create(:equipment_object, equipment_model: @model)
+      end
+      describe ".num_available" do
+        it "should return the number of objects of that model available over a given date range" do
+          @reservation = FactoryGirl.create(:reservation, equipment_model: @model)
+          @model.num_available(@reservation.start_date, @reservation.due_date).should == 1
+        end
+        it "should return 0 if no objects of that model are available" do
+          @object.destroy
+          @reservation = FactoryGirl.create(:reservation, equipment_model: @model)
+          @model.num_available(@reservation.start_date, @reservation.due_date).should == 0
+        end
+      end
+      describe ".number_reserved_on_date" do
+        it "should return the number of objects of that model reserved on that date but not checked out" do
+          @reservation = FactoryGirl.create(:reservation, equipment_model: @model)
+          @checked_out = FactoryGirl.create(:checked_out_reservation, equipment_model: @model)
+          @model.equipment_objects.size.should == 3
+          @model.number_reserved_on_date(Date.today).should == 2
+        end
+      end
+      describe ".number_overdue" do
+        it "should return the number of objects of a given model that are checked out and overdue" do
+          @reservation = FactoryGirl.build(:overdue_reservation, equipment_model: @model)
+          @reservation.save(validate: false)
+          @model.equipment_objects.size.should == 2
+          @model.number_overdue.should == 1
+        end
+      end
+      describe ".available_count" do
+        it "should take the total # of the model, subtract the number reserved, checked-out, and overdue for the given date and return the result" do
+          @reservation = FactoryGirl.create(:reservation, equipment_model: @model)
+          @checked_out = FactoryGirl.create(:checked_out_reservation, equipment_model: @model)
+          @overdue = FactoryGirl.build(:overdue_reservation, equipment_model: @model)
+          @overdue.save(validate: false)
+          @model.equipment_objects.size.should == 4
+          @model.available_count(Date.today).should == 1
+        end
+      end
+      describe ".available_object_select_options" do
+        it "should make a string listing the available objects" do
+          @reservation = FactoryGirl.create(:checked_out_reservation, equipment_model: @model)
+          @another_object = FactoryGirl.create(:equipment_object, equipment_model: @model)
+          @model.available_object_select_options.should == "<option value=#{@object.id}>#{@object.name}</option>"\
+                                                           "<option value=#{@another_object.id}>#{@another_object.name}</option>"
+        end
+      end
     end
   end
-
   context "paperclip" do
     # not sure what this is/how it works, research and complete later.
   end
