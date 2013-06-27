@@ -18,7 +18,7 @@ class BlackOutsController < ApplicationController
   end
 
   def set_current_blackout
-    @black_out = BlackOut.find(params[:id])
+    @blackout = BlackOut.find(params[:id])
   end
 
   #validates that date selection was done correctly when the form calls the create method
@@ -36,7 +36,7 @@ class BlackOutsController < ApplicationController
   # ---------- end before filter methods ------------ #
 
   def index
-    @black_outs = BlackOut.all
+    @blackouts = BlackOut.all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -44,8 +44,8 @@ class BlackOutsController < ApplicationController
   end
 
   def show
-    unless @black_out.set_id.nil?
-      @black_out_set = BlackOut.where("set_id = ?", @black_out.set_id)
+    unless @blackout.set_id.nil?
+      @blackout_set = BlackOut.where("set_id = ?", @blackout.set_id)
     end
     respond_to do |format|
       format.html # show.html.erb
@@ -53,7 +53,7 @@ class BlackOutsController < ApplicationController
   end
 
   def new
-    @black_out = BlackOut.new
+    @blackout = BlackOut.new
     set_dates_for_datepicker
 
     respond_to do |format|
@@ -62,7 +62,7 @@ class BlackOutsController < ApplicationController
   end
 
   def new_recurring
-    @black_out = BlackOut.new
+    @blackout = BlackOut.new
     set_dates_for_datepicker
 
     respond_to do |format|
@@ -94,12 +94,12 @@ class BlackOutsController < ApplicationController
 
   def create
     # create a non-recurring blackout
-    @black_out = BlackOut.new(params[:black_out])
+    @blackout = BlackOut.new(params[:black_out])
 
     # save and exit
     respond_to do |format|
-      if @black_out.save
-        format.html { redirect_to @black_out, notice: 'Blackout was successfully created.' }
+      if @blackout.save
+        format.html { redirect_to @blackout, notice: 'Blackout was successfully created.' }
         format.js {render :action => 'create_success' and return}
       else
         format.html { render action: "new" }
@@ -109,21 +109,21 @@ class BlackOutsController < ApplicationController
   end
 
   def update
-    unless @black_out.set_id.nil?
-      @black_out_set = BlackOut.where("set_id = ?", @black_out.set_id)
-      if @black_out_set.size <= 2
-        @black_out_set.each do |b|
+    unless @blackout.set_id.nil?
+      @blackout_set = BlackOut.where("set_id = ?", @blackout.set_id)
+      if @blackout_set.size <= 2
+        @blackout_set.each do |b|
           b.set_id = NIL
           b.save
         end
       else # individual edited reservations no longer belong to the set (so won't be mass-deleted in delete_recurring)
-        @black_out.set_id = NIL
+        @blackout.set_id = NIL
       end
     end
 
     respond_to do |format|
-      if @black_out.update_attributes(params[:black_out])
-        format.html { redirect_to @black_out, notice: 'Blackout was successfully updated.' }
+      if @blackout.update_attributes(params[:black_out])
+        format.html { redirect_to @blackout, notice: 'Blackout was successfully updated.' }
       else
         format.html { render action: "edit" }
       end
@@ -131,7 +131,7 @@ class BlackOutsController < ApplicationController
   end
 
   def destroy
-    @black_out.destroy(:force)
+    @blackout.destroy(:force)
 
     respond_to do |format|
       format.html { redirect_to black_outs_url }
@@ -139,9 +139,9 @@ class BlackOutsController < ApplicationController
   end
 
   def destroy_recurring
-    black_out_set = BlackOut.where("set_id = ?", @black_out.set_id)
-    black_out_set.each do |black_out|
-      black_out.destroy(:force)
+    blackout_set = BlackOut.where("set_id = ?", @blackout.set_id)
+    blackout_set.each do |blackout|
+      blackout.destroy(:force)
     end
 
     # exit
@@ -169,7 +169,7 @@ class BlackOutsController < ApplicationController
     end
 
     def set_dates_for_datepicker
-      @black_out[:start_date] = Date.today # Necessary for datepicker functionality
-      @black_out[:end_date] = Date.today # Necessary for datepicker functionality
+      @blackout[:start_date] = Date.today # Necessary for datepicker functionality
+      @blackout[:end_date] = Date.today # Necessary for datepicker functionality
     end
 end
