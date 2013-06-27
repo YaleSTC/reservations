@@ -14,20 +14,20 @@ describe BlackOut do
       # new feature that should exist already
   end
 
-  describe ".black_outs_on_date" do
+  describe ".blackouts_on_date" do
     before(:each) do
       @blackout = FactoryGirl.create(:black_out, start_date: "2013-03-05", end_date: "2013-03-22")
       @another_blackout = FactoryGirl.create(:black_out, start_date: "2013-03-05", end_date: "2013-03-18")
     end
 
     it "Should return the black_out blocking a passed date if exists" do
-      BlackOut.black_outs_on_date("2013-03-20").should == [@blackout]
+      BlackOut.blackouts_on_date("2013-03-20").should == [@blackout]
     end
     it "Should return nil if the date is not blacked out" do
-      BlackOut.black_outs_on_date("2013-03-30").should == []
+      BlackOut.blackouts_on_date("2013-03-30").should == []
     end
     it "Should return an array if multiple blackouts cover date" do
-      BlackOut.black_outs_on_date("2013-03-15").should == [@blackout, @another_blackout]
+      BlackOut.blackouts_on_date("2013-03-15").should == [@blackout, @another_blackout]
     end
   end
 

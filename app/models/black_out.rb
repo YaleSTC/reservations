@@ -15,7 +15,7 @@ class BlackOut < ActiveRecord::Base
   # this only matters if a user tries to inject into params because the datepicker
   # doesn't allow form submission of invalid dates
 
-  def self.black_outs_on_date(date) # Returns the black_out object that blacks out the day if the day is blacked out. Otherwise, returns nil.
+  def self.blackouts_on_date(date) # Returns the black_out object that blacks out the day if the day is blacked out. Otherwise, returns nil.
     black_outs = []
     BlackOut.all.each do |black_out|
       if ((black_out.start_date..black_out.end_date).cover?(date.to_date))
@@ -28,7 +28,7 @@ class BlackOut < ActiveRecord::Base
   #TODO: fix typo here and everywhere that this method is called. While at it, put a space in black_out since that's
   # it is everywhere else.
   def self.hard_blackout_exists_on_date(date)
-    black_outs = self.black_outs_on_date(date)
+    black_outs = self.blackouts_on_date(date)
     if black_outs && black_outs.map(&:black_out_type).include?('hard')
       return true
     else
