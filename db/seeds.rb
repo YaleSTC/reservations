@@ -12,7 +12,6 @@
 
 require 'ffaker'
 require 'ruby-progressbar'
-# require 'progress_bar'
 
 #-------RESET PUBLIC DIR IF WE'VE RESET THE DATABASE
 if EquipmentModel.all.empty?
@@ -360,7 +359,7 @@ entered_num = ask_for_records("Reservation")
 if entered_num.integer? && entered_num > 0
   progress = ProgressBar.create(format: progress_str, total: entered_num)
   reservation = entered_num.times.map do
-    random_time_in_past = time_rand(Time.now - 2.months)
+    random_time_in_future = time_rand(Time.now, Time.now + 2.months)
     # random_due_date = time_rand(random_time_in_past, Time.now.next_week, category.flatten.sample)
     progress.increment
     Reservation.create! do |res|
@@ -369,15 +368,27 @@ if entered_num.integer? && entered_num > 0
       res.checkin_handler_id = user.flatten.select{|usr| usr.is_checkout_person}.sample.id
       res.equipment_object_id = equipment_object.flatten.sample.id
       res.equipment_model_id = res.equipment_object.equipment_model_id
-      res.start_date = random_time_in_past.to_datetime
-      res.due_date = time_rand(res.start_date.to_time, Time.now.next_week, res.equipment_model.category.max_checkout_length).to_datetime
-      res.checked_in = [nil, time_rand(random_time_in_past, Time.now.next_week,
+      res.start_date = random_time_in_future.to_datetime
+      res.due_date = time_rand(res.start_date.to_time, res.start_date.next_week, res.equipment_model.category.max_checkout_length).to_datetime
+      res.checked_in = [nil, time_rand(random_time_in_future, random_time_in_future.next_week,
                         res.equipment_model.category.max_checkout_length).to_datetime].sample
-      res.checked_out = res.checked_in.nil? ? [nil, random_time_in_past.to_datetime].sample : random_time_in_past.to_datetime
+      res.checked_out = res.checked_in.nil? ? [nil, random_time_in_future.to_datetime].sample : random_time_in_future.to_datetime
       res.notes = Faker::HipsterIpsum.paragraph(8)
       res.notes_unsent = [true, false].sample
     end
   end
+
+  # TODO: update_attribute start_date & due_date on a random subset of created reservations to make them in past; make all original reservations for the future
+  to_fling_into_the_past = reservation.sample(rand((entered_num / 4)..entered_num))
+  to_fling_into_the_past.each do |res|
+    random_time_in_past = time_rand(Time.now - 2.months)
+    res.update_attributes(start_date: random_time_in_past.to_datetime,
+                          due_date: time_rand(res.start_date.to_time, Time.now.next_week, res.equipment_model.category.max_checkout_length).to_datetime,
+                          checked_in: [nil, time_rand(random_time_in_past, Time.now.next_week, res.equipment_model.category.max_checkout_length).to_datetime].sample,
+                          checked_out: res.checked_in.nil? ? [nil, random_time_in_past.to_datetime].sample : random_time_in_past.to_datetime)
+    res.save(false)
+  end
+
   puts "\n#{entered_num} records successfully created!"
 else
   puts "\nPlease enter a whole number greater than 0."
