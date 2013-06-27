@@ -26,11 +26,11 @@ describe Reservation do
 			reservation.should be_start_date_before_due_date
 			reservation.should be_not_in_past
 			reservation.should be_not_empty
-			reservation.should be_matched_object_and_model #how is this passing without an equipment object??
+			reservation.should be_matched_object_and_model #was passing with no equipment object...
 			reservation.should be_duration_allowed
 			reservation.should be_start_date_is_not_blackout
 			reservation.should be_due_date_is_not_blackout
-			reservation.should be_available #how is this passing without an equipment object??
+			reservation.should be_available
 			reservation.should be_quantity_eq_model_allowed
 			reservation.should be_quantity_cat_allowed
 			Reservation.validate_set(reservation.reserver).should == []
@@ -42,7 +42,7 @@ describe Reservation do
 
 	context 'when not checked out' do
 		its(:status) { should == 'reserved' }
-		#it { should_not be_is_eligible_for_renew } currently returns true; doesn't check for checked out
+		it { should_not be_is_eligible_for_renew } #currently returns true; doesn't check for checked out
 	end
 
 	context 'when checked out' do
@@ -70,7 +70,7 @@ describe Reservation do
 	 	subject { FactoryGirl.build(:missed_reservation) }
 
 	 	its(:status) { should == 'missed' }
-	 	#it { should_not be_is_eligible_for_renew} #returns true; should it?
+	 	it { should_not be_is_eligible_for_renew} #returns true; should it?
 	 end
 
 	context 'when empty' do
@@ -93,13 +93,13 @@ describe Reservation do
 			reservation.should be_start_date_before_due_date
 			reservation.should be_not_in_past
 			reservation.should be_matched_object_and_model
-			#reservation.should be_duration_allowed
+			reservation.should be_duration_allowed #fails: tries to run validations on nil
 			reservation.should be_start_date_is_not_blackout
 			reservation.should be_due_date_is_not_blackout
-			#reservation.should be_available
-			#reservation.should be_quantity_eq_model_allowed
-			#reservation.should be_quantity_cat_allowed
-			#Reservation.validate_set(reservation.reserver).should_not == []
+			reservation.should be_available #fails: tries to run validations on nil
+			reservation.should be_quantity_eq_model_allowed #fails: tries to run validations on nil
+			reservation.should be_quantity_cat_allowed #fails: tries to run validations on nil
+			Reservation.validate_set(reservation.reserver).should_not == [] #fails
 		end
 		it 'updates with equipment model' do
 			reservation.equipment_model = FactoryGirl.build(:equipment_model)
@@ -171,7 +171,7 @@ describe Reservation do
 			reservation.should be_available
 			reservation.should be_quantity_eq_model_allowed
 			reservation.should be_quantity_cat_allowed
-			Reservation.validate_set(reservation.reserver).should_not == []
+			Reservation.validate_set(reservation.reserver).should_not == [] #fails
 		end
 	end
 
@@ -183,6 +183,44 @@ describe Reservation do
 			reservation.reserver.first_name.should == "Deleted"
 		end
 		it { should be_valid }
+	end
+
+	context 'with no start date' do #these fail because it tries to run other validations on nil
+		subject(:reservation) { FactoryGirl.build(:reservation, start_date: nil) }
+
+		it { should_not be_valid }
+		it 'should not save' do
+			reservation.save.should be_false
+			Reservation.all.size.should == 0
+		end
+		it 'cannot be updated' do
+			reservation.due_date = Date.tomorrow
+			reservation.save.should be_false
+		end
+		it 'can be updated with start date' do
+			reservation.start_date = Date.today
+			reservation.save.should be_true
+			Reservation.all.size.should == 1
+		end
+	end
+
+	context 'with no due date' do #these fail because it tries to run other validations on nil
+		subject(:reservation) { FactoryGirl.build(:reservation, due_date: nil) }
+
+		it { should_not be_valid }
+		it 'should not save' do
+			reservation.save.should be_false
+			Reservation.all.size.should == 0
+		end
+		it 'cannot be updated' do
+			reservation.start_date = Date.tomorrow
+			reservation.save.should be_false
+		end
+		it 'can be updated with start date' do
+			reservation.due_date = Date.tomorrow
+			reservation.save.should be_true
+			Reservation.all.size.should == 1
+		end
 	end
 
 	context 'when user has overdue reservation' do
@@ -218,11 +256,11 @@ describe Reservation do
 			reservation.should be_available
 			reservation.should be_quantity_eq_model_allowed
 			reservation.should be_quantity_cat_allowed
-			Reservation.validate_set(reservation.reserver).should_not == []
+			Reservation.validate_set(reservation.reserver).should_not == [] #fails
 		end
 	end
 
-	context 'with equipment object available problems' do
+	context 'with equipment object available problems' do # this all fails - problem w/ available
 		let!(:available_reservation) { FactoryGirl.create(:checked_out_reservation, equipment_model: reservation.equipment_model) }
 
 		it { should_not be_valid }
@@ -282,7 +320,7 @@ describe Reservation do
 			reservation.should be_not_empty
 			reservation.should be_start_date_is_not_blackout
 			reservation.should be_due_date_is_not_blackout
-			Reservation.validate_set(reservation.reserver).should_not == []
+			Reservation.validate_set(reservation.reserver).should_not == [] #fails
 		end
 	end
 
@@ -315,7 +353,7 @@ describe Reservation do
 			reservation.should be_not_empty
 			reservation.should be_start_date_is_not_blackout
 			reservation.should be_due_date_is_not_blackout
-			Reservation.validate_set(reservation.reserver).should_not == []
+			Reservation.validate_set(reservation.reserver).should_not == [] #fails
 		end
 	end
 
@@ -350,7 +388,7 @@ describe Reservation do
 			reservation.should be_not_empty
 			reservation.should be_start_date_is_not_blackout
 			reservation.should be_due_date_is_not_blackout
-			Reservation.validate_set(reservation.reserver).should_not == []
+			Reservation.validate_set(reservation.reserver).should_not == [] #fails
 		end 
 	end
 
@@ -384,7 +422,7 @@ describe Reservation do
 			reservation.should be_not_empty
 			reservation.should be_start_date_is_not_blackout
 			reservation.should be_due_date_is_not_blackout
-			Reservation.validate_set(reservation.reserver).should_not == []
+			Reservation.validate_set(reservation.reserver).should_not == [] #fails
 		end
 	end
 end
