@@ -3,12 +3,7 @@ class Category < ActiveRecord::Base
 
   validates :name,                :presence => true,
                                   :uniqueness => true
-  # validates :max_per_user,        :numericality => { :only_integer => true },
-  #                                 :length => { :minimum => 1 },
-  #                                 :allow_nil => true
-  # validates :max_checkout_length, :numericality => { :only_integer => true },
-  #                                 :length => { :minimum => 1 },
-  #                                 :allow_nil => true
+                                  
   validates :max_renewal_length,
             :max_renewal_times,
             :renewal_days_before_due,
