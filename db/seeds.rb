@@ -378,7 +378,7 @@ if entered_num.integer? && entered_num > 0
     end
   end
 
-  # TODO: update_attribute start_date & due_date on a random subset of created reservations to make them in past; make all original reservations for the future
+  # TODO: only generate dates that are not blackout dates
   to_fling_into_the_past = reservation.sample(rand((entered_num / 4)..entered_num))
   to_fling_into_the_past.each do |res|
     random_time_in_past = time_rand(Time.now - 2.months)
