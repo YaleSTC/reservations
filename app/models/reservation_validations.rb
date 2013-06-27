@@ -84,7 +84,7 @@ module ReservationValidations
 
   # Checks that start date is not a black out date
   def start_date_is_not_blackout?
-    if BlackOut.hard_backout_exists_on_date(start_date)
+    if Blackout.hard_blackout_exists_on_date(start_date)
       errors.add(:base, "Reservation cannot start on " + start_date.strftime('%m/%d') + " because equipment cannot be picked up on that date.\n")
       return false
     end
@@ -93,7 +93,7 @@ module ReservationValidations
 
   # Checks that due date is not a black out date
   def due_date_is_not_blackout?
-    if BlackOut.hard_backout_exists_on_date(due_date)
+    if Blackout.hard_blackout_exists_on_date(due_date)
       errors.add(:base, "Reservation cannot end on " + due_date.strftime('%m/%d') + " because equipment cannot be returned on that date.\n")
       return false
     end
@@ -164,7 +164,7 @@ module ReservationValidations
   def same_category_count(reservations)
     count = 0
     reservations.each { |res| count += 1 if res.equipment_model.category == self.equipment_model.category }
-    count 
+    count
   end
 
   def overlaps_with?(other_res)

@@ -146,7 +146,7 @@ describe Reservation do
 	end
 
 	context 'with blacked out start date' do
-		let!(:blackout) { FactoryGirl.create(:black_out, start_date: reservation.start_date, end_date: reservation.due_date) }
+		let!(:blackout) { FactoryGirl.create(:blackout, start_date: reservation.start_date, end_date: reservation.due_date) }
 
 		it { should_not be_valid }
 		it 'should not save' do
@@ -368,7 +368,7 @@ describe Reservation do
 		it 'should not save' do
 			reservation.save.should be_false
 			Reservation.all.size.should == 1
-			Reservation.all.first.should_not == reservation 
+			Reservation.all.first.should_not == reservation
 		end
 		it 'cannot be updated' do
 			reservation.start_date = Date.tomorrow
@@ -389,7 +389,7 @@ describe Reservation do
 			reservation.should be_start_date_is_not_blackout
 			reservation.should be_due_date_is_not_blackout
 			Reservation.validate_set(reservation.reserver).should_not == [] #fails
-		end 
+		end
 	end
 
 	context 'with equipment model quantity problems' do
@@ -402,7 +402,7 @@ describe Reservation do
 		it 'should not save' do
 			reservation.save.should be_false
 			Reservation.all.size.should == 1
-			Reservation.all.first.should_not == reservation 
+			Reservation.all.first.should_not == reservation
 		end
 		it 'cannot be updated' do
 			reservation.start_date = Date.tomorrow
