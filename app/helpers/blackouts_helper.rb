@@ -1,7 +1,7 @@
-module BlackOutsHelper
+module BlackoutsHelper
   def blackout_errors
-    start_blackouts = BlackOut.blackouts_on_date(cart.start_date)
-    end_blackouts = BlackOut.blackouts_on_date(cart.due_date)
+    start_blackouts = Blackout.blackouts_on_date(cart.start_date)
+    end_blackouts = Blackout.blackouts_on_date(cart.due_date)
 
     messages = [messages_for_blackouts(start_blackouts, "start") + messages_for_blackouts(end_blackouts, "end")].uniq.join("\n")
     if messages.present?
@@ -16,7 +16,7 @@ module BlackOutsHelper
   def messages_for_blackouts(blackouts, date_type)
     messages = []
     blackouts.each do |bo|
-      messages << bo.notice + ((bo.black_out_type == "hard") ? " Please choose a different #{date_type} date in your Cart." : "")
+      messages << bo.notice + ((bo.blackout_type == "hard") ? " Please choose a different #{date_type} date in your Cart." : "")
     end
     return messages
   end

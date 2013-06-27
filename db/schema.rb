@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130327193420) do
+ActiveRecord::Schema.define(:version => 20130627211001) do
 
   create_table "app_configs", :force => true do |t|
     t.boolean  "upcoming_checkin_email_active",                      :default => true
@@ -37,13 +37,13 @@ ActiveRecord::Schema.define(:version => 20130327193420) do
     t.boolean  "checkout_persons_can_edit",                          :default => false
   end
 
-  create_table "black_outs", :force => true do |t|
+  create_table "blackouts", :force => true do |t|
     t.integer  "equipment_model_id"
     t.date     "start_date"
     t.date     "end_date"
     t.text     "notice"
     t.integer  "created_by"
-    t.text     "black_out_type"
+    t.text     "blackout_type"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
     t.integer  "set_id"

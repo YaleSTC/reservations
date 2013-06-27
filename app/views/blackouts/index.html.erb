@@ -11,13 +11,13 @@
   date falls within the Blackout period.
 </p>
 <p>
-  <%= link_to 'New Blackout'.titleize, new_black_out_path, class: 'btn btn-primary' %>
-  <%= link_to 'New Recurring Blackout'.titleize, new_recurring_black_out_path, :class => 'btn btn-primary' %>
+  <%= link_to 'New Blackout'.titleize, new_blackout_path, class: 'btn btn-primary' %>
+  <%= link_to 'New Recurring Blackout'.titleize, new_recurring_blackout_path, :class => 'btn btn-primary' %>
 </p>
 <hr />
 
 <% unless @blackouts.empty? %>
-  <%= render :partial => 'table', :locals => {:black_outs => @blackouts} %>
+  <%= render :partial => 'table', :locals => {:blackouts => @blackouts} %>
   <br />
 <% else %>
   <h3>No black-out dates found.</h3>

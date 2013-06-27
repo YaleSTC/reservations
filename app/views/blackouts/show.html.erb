@@ -28,19 +28,19 @@
 
 <p>
   <b>Type:</b>
-  <%= @blackout[:black_out_type] == "hard" ? "Hard Blackout" : "Notice Only" %>
+  <%= @blackout[:blackout_type] == "hard" ? "Hard Blackout" : "Notice Only" %>
 </p>
 
 <% unless @blackout.set_id.nil? or (@blackout_set.size == 1) %>
-  <%= link_to 'Edit just this blackout', edit_black_out_path(@blackout), :class => 'btn' %>
-  <%= link_to 'View all blackout dates', black_outs_path, :class => 'btn' %>
+  <%= link_to 'Edit just this blackout', edit_blackout_path(@blackout), :class => 'btn' %>
+  <%= link_to 'View all blackout dates', blackouts_path, :class => 'btn' %>
   <hr />
   <p>
     <h3>All Blackouts in this set</h3>
   </p>
-  <%= render :partial => 'table', :locals => {:black_outs => @blackout_set} %>
+  <%= render :partial => 'table', :locals => {:blackouts => @blackout_set} %>
 <% else %>
-  <%= link_to 'Edit', edit_black_out_path(@blackout), :class => 'btn' %>
-  <%= link_to 'View all blackout dates', black_outs_path, :class => 'btn' %>
+  <%= link_to 'Edit', edit_blackout_path(@blackout), :class => 'btn' %>
+  <%= link_to 'View all blackout dates', blackouts_path, :class => 'btn' %>
   <%= link_to 'Destroy', @blackout, confirm: 'Are you sure?', method: :delete, class: 'btn btn-danger' %>
 <% end %>

@@ -1,5 +1,5 @@
 class CatalogController < ApplicationController
-  helper :black_outs
+  helper :blackouts
   layout 'application_with_sidebar'
 
   before_filter :set_equipment_model, :only => [:add_to_cart, :remove_from_cart]
