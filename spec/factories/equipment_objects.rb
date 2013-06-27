@@ -1,13 +1,7 @@
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do
-  sequence :name do |n|
-    "Name#{n}"
-  end
-
-  sequence :serial do |n|
-    "FLKJDSF#{n}"
-  end
+  # Sequences defined in _sequences.rb
 
   factory :equipment_object do
     name

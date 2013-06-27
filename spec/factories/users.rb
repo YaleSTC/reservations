@@ -17,7 +17,7 @@ FactoryGirl.define do
   end
 
   factory :user, aliases: [:reserver, :checkout_handler, :checkin_handler], traits: [:default_user_characteristics] do
-    login
+    sequence(:login) { |n| "netid#{n}" }
     first_name "First"
     last_name "Last"
     affiliation "Yale"

@@ -6,9 +6,5 @@ FactoryGirl.define do
     due_date { Date.tomorrow }
     reserver
     equipment_model
-    # after(:build) do |res|
-    #   obj = FactoryGirl.create(:equipment_object, :equipment_model => res.equipment_model)
-    #   res.equipment_object = obj
-    # end
   end
 end

@@ -4,7 +4,7 @@ FactoryGirl.define do
   factory :app_config do
     upcoming_checkin_email_active true
     reservation_confirmation_email_active true
-    site_title "MyString"
+    site_title "Reservations Specs"
     admin_email "my@email.com"
     department_name "MyString"
     contact_link_location "MyString"

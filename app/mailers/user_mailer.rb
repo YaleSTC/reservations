@@ -3,7 +3,6 @@ class UserMailer < ActionMailer::Base
   unless (AppConfig.first.nil?)
     default :from => AppConfig.first.admin_email, :cc => AppConfig.first.admin_email
   end
-  
 
   def checkin_receipt(reservation)
     set_app_config

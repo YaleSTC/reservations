@@ -14,5 +14,13 @@ FactoryGirl.define do
     max_renewal_times 10
     max_renewal_length 10
     renewal_days_before_due 10
+    
+    active true
+    
+    factory :equipment_model_with_object do
+      after(:create) do |model|
+        FactoryGirl.create(:equipment_object, equipment_model: model)
+      end
+    end
   end
 end
