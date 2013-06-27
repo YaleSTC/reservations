@@ -3,5 +3,6 @@
 FactoryGirl.define do
   factory :category do
     name
+    sort_order
   end
 end

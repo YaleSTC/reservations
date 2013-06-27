@@ -164,11 +164,7 @@ class EquipmentModel < ActiveRecord::Base
 
 
   # Returns the number of reserved objects for a particular model,
-<<<<<<< HEAD
   # as long as they have not been checked in
-=======
-  # as long as they have not been checked out
->>>>>>> development
   def number_reserved_on_date(date)
     Reservation.reserved_on_date(date).not_returned.for_eq_model(self).size
   end
