@@ -36,7 +36,7 @@ class BlackOut < ActiveRecord::Base
     end
   end
 
-  def self.create_black_out_set(params_hash)
+  def self.create_blackout_set(params_hash)
     #generate a unique id for this blackout date set, make sure that nil reads as 0 for the first blackout
     params_hash[:set_id] = BlackOut.last.id.to_i + 1
 
@@ -57,10 +57,10 @@ class BlackOut < ActiveRecord::Base
       successful_save = false
       individual_dates.each do |date|
         # create and save
-        @black_out = BlackOut.new(params_hash)
-        @black_out.start_date = date
-        @black_out.end_date = date
-        successful_save = @black_out.save
+        @blackout = BlackOut.new(params_hash)
+        @blackout.start_date = date
+        @blackout.end_date = date
+        successful_save = @blackout.save
       end
 
       # return the error message unless a successful save was achieved

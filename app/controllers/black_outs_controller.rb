@@ -77,7 +77,7 @@ class BlackOutsController < ApplicationController
   def create_recurring
     # this class method will parse the params hash and create separate blackouts on each appropriate date
     # method will return an error message if save is not successful
-    flash[:error] = BlackOut.create_black_out_set(params[:black_out])
+    flash[:error] = BlackOut.create_blackout_set(params[:black_out])
 
     respond_to do |format|
       # if there is an error, show it and redirect :back

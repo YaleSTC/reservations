@@ -1,46 +1,46 @@
-<% title "Blackout of " + (@black_out.equipment_model_id == 0 ? "All Equipment Items" : EquipmentModel.find(@black_out.equipment_model_id).name) %>
+<% title "Blackout of " + (@blackout.equipment_model_id == 0 ? "All Equipment Items" : EquipmentModel.find(@blackout.equipment_model_id).name) %>
 
 <%# Setting black-outs on a per-model basis has been disabled %>
-<!--<p> 
+<!--<p>
   <b>Equipment model affected:</b>
-  <%# (@black_out.equipment_model_id == 0) ? "All Equipment Models" : EquipmentModel.find(@black_out.equipment_model_id).name %>
+  <%# (@blackout.equipment_model_id == 0) ? "All Equipment Models" : EquipmentModel.find(@blackout.equipment_model_id).name %>
 </p> -->
 
 <p>
   <b>Start date:</b>
-  <%= @black_out.start_date.strftime('%m/%d/%Y') %>
+  <%= @blackout.start_date.strftime('%m/%d/%Y') %>
 </p>
 
 <p>
   <b>End date:</b>
-  <%= @black_out.end_date.strftime('%m/%d/%Y') %>
+  <%= @blackout.end_date.strftime('%m/%d/%Y') %>
 </p>
 
 <p>
   <b>Notice:</b>
-  <%= @black_out.notice %>
+  <%= @blackout.notice %>
 </p>
 
 <p>
   <b>Last Edited by:</b>
-  <%= User.find(@black_out.created_by).name %>
+  <%= User.find(@blackout.created_by).name %>
 </p>
 
 <p>
   <b>Type:</b>
-  <%= @black_out[:black_out_type] == "hard" ? "Hard Blackout" : "Notice Only" %>
+  <%= @blackout[:black_out_type] == "hard" ? "Hard Blackout" : "Notice Only" %>
 </p>
 
-<% unless @black_out.set_id.nil? or (@black_out_set.size == 1) %>
-  <%= link_to 'Edit just this blackout', edit_black_out_path(@black_out), :class => 'btn' %>
+<% unless @blackout.set_id.nil? or (@blackout_set.size == 1) %>
+  <%= link_to 'Edit just this blackout', edit_black_out_path(@blackout), :class => 'btn' %>
   <%= link_to 'View all blackout dates', black_outs_path, :class => 'btn' %>
   <hr />
   <p>
     <h3>All Blackouts in this set</h3>
   </p>
-  <%= render :partial => 'table', :locals => {:black_outs => @black_out_set} %>
+  <%= render :partial => 'table', :locals => {:black_outs => @blackout_set} %>
 <% else %>
-  <%= link_to 'Edit', edit_black_out_path(@black_out), :class => 'btn' %> 
+  <%= link_to 'Edit', edit_black_out_path(@blackout), :class => 'btn' %>
   <%= link_to 'View all blackout dates', black_outs_path, :class => 'btn' %>
-  <%= link_to 'Destroy', @black_out, confirm: 'Are you sure?', method: :delete, class: 'btn btn-danger' %>
+  <%= link_to 'Destroy', @blackout, confirm: 'Are you sure?', method: :delete, class: 'btn btn-danger' %>
 <% end %>
