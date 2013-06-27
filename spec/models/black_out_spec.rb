@@ -31,17 +31,17 @@ describe BlackOut do
     end
   end
 
-  describe ".hard_backout_exists_on_date" do
+  describe ".hard_blackout_exists_on_date" do
     before(:each) do
       @spring_break = FactoryGirl.create(:black_out, black_out_type: 'hard', start_date: "2013-03-05", end_date: "2013-03-22")
       @summer_break = FactoryGirl.create(:black_out, black_out_type: 'soft', start_date: "2013-06-01", end_date: "2013-09-01")
     end
     it "Should return true if there is a hard blackout on the given date" do
-      BlackOut.hard_backout_exists_on_date("2013-03-17").should == true
+      BlackOut.hard_blackout_exists_on_date("2013-03-17").should == true
     end
     it "Should return false if there is a soft blackout or no blackout on the given date" do
-      BlackOut.hard_backout_exists_on_date("2013-07-01").should == false
-      BlackOut.hard_backout_exists_on_date("2013-05-01").should == false
+      BlackOut.hard_blackout_exists_on_date("2013-07-01").should == false
+      BlackOut.hard_blackout_exists_on_date("2013-05-01").should == false
     end
   end
 

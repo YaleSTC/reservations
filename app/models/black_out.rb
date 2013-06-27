@@ -27,7 +27,7 @@ class BlackOut < ActiveRecord::Base
 
   #TODO: fix typo here and everywhere that this method is called. While at it, put a space in black_out since that's
   # it is everywhere else.
-  def self.hard_backout_exists_on_date(date)
+  def self.hard_blackout_exists_on_date(date)
     black_outs = self.black_outs_on_date(date)
     if black_outs && black_outs.map(&:black_out_type).include?('hard')
       return true
