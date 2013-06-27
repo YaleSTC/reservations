@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Cart do
   before (:each) do
     @cart = FactoryGirl.build(:cart)
-    @cart.items = []
+    @cart.items = [] # Needed to avoid db flushing problems
   end
 
   it "has a working factory" do
@@ -41,79 +41,110 @@ describe Cart do
   ### TODO: Error-handling functions
 
   describe "Item handling" do
+    before (:each) do
+      @equipment_model = FactoryGirl.build(:equipment_model)
+    end
     
     describe ".add_item" do
       it "adds an item" do
-        @cart.items.count.should == 0
-        lambda {
-          mod = FactoryGirl.build(:equipment_model)
-          @cart.add_item(mod)
-          }.should change(@cart.items, :count).by(1)
+        expect { @cart.add_item(@equipment_model) }.to change {@cart.items.count}.by(1)
       end
     end
 
     describe ".remove_item" do
-      it "removes an item" do # fails after the first RSpec run, db doesn't clear; FIXME
-        @cart.items.count.should == 0
-        @equipment_model = FactoryGirl.build(:equipment_model)
+      before (:each) do
+        @equipment_model_2 = FactoryGirl.build(:equipment_model)
         @cart.add_item(@equipment_model)
-
+        @cart.add_item(@equipment_model_2)
+      end
+      
+      it "removes an item from cart" do
         lambda {
           @cart.remove_item(@equipment_model)
-          }.should change(@cart.items, :count).by(-1)
+        }.should change(@cart.items, :count).by(-1)
+      end
+      
+      it "removes a CartReservation from database" do
+        expect { @cart.remove_item(@equipment_model) }.to change{CartReservation.all.count}.by(-1)
       end
 
-        it "removes the right model" # do
-        #       lambda {
-        #         @cart.remove_item(equipment_model_2)
-        #       }.should change(@cart.items.each(&:equipment_model).select(|k,v| v == equipment_model_2) ).by(-1)
-        #     end
-
-        it "does not remove another model" # do
-        #       lambda {
-        #         @cart.remove_item(equipment_model_2)
-        #       }.should_not change(@cart.items.each(&:equipment_model).select(|k,v| v == equipment_model) ).by(-1)
-        #     end
+      it "removes the right model from cart" do
+        expect { @cart.remove_item(@equipment_model_2) }.to change { @cart.items.select { |id|
+                  CartReservation.where(equipment_model_id: @equipment_model_2).map(&:id).member? id}.count}.by(-1)
+      end
     end
   end
 
-  describe ".@cart_reservations" do
-    it "finds items"
+  describe ".cart_reservations" do
+    it "finds items" do
+      @cart.cart_reservations.should == CartReservation.find(@cart.items)
+    end
   end
 
   describe ".models_with_quantities" do
-    it "returns a hash"
-    it "gets the correct count of models"
+    it "gets the correct count of models" do
+      # n different models
+      n = rand(3..10)
+      models = Array.new(n) {FactoryGirl.build(:equipment_model)}
+      
+      # add each model to cart arbitrary number of times 
+      amounts = Array.new(n) {rand(0..3)} 
+      models.each_with_index do |mod, index|
+        amounts[index].times {@cart.add_item(mod)} 
+      end
+      
+      # combine models and amounts into one Hash, omit zero amounts
+      result = Hash[models.map(&:id).zip(amounts).select {|mod, amt| amt > 0}]
+
+      @cart.models_with_quantities.should == result
+    end
   end
 
   describe ".empty?" do
-    it "is true when there are no items in @cart"
-    it "is false when there are some items in @cart"
+    it "is true when there are no items in cart"
+    it "is false when there are some items in cart"
   end
 
   describe ".set_start_date" do
     it "does not set a past date"
     # it "sets due date as start_date + 1 if due date precedes start date"
     # it "does not affect due date if unnecessary"
-    it "sets new start and due dates for all items in @cart"
+    it "sets new start and due dates for all items in cart"
   end
 
   describe ".set_due_date" do
     # it "sets due date as start_date + 1 if due date precedes start date"
     # it "does not affect due date if unnecessary"
-    it "sets new due dates for all items in @cart"
+    it "sets new due dates for all items in cart"
   end
 
   # If broken, then .set_due_date and .set_start_date are broken
   describe ".fix_due_date" do
-    it "sets due date as start_date + 1 if due date precedes start date"
-    it "does not affect due date if unnecessary"
+    it "sets due date as start_date + 1 if due date precedes start date" do
+      @cart.start_date = 1.week.from_now
+      @cart.due_date = 1.year.ago
+      expect { @cart.fix_due_date }.to change{@cart.due_date}.to(@cart.start_date + 1.day)
+    end
+    it "does not affect due date when due date does not precede start date" do
+      dates = [[1.week.ago, 2.days.ago],
+               [1.day.ago, DateTime.now],
+               [DateTime.now, DateTime.tomorrow],
+               [1.week.from_now, 1.month.from_now]] # past, current, future dates
+      dates.each do |start, due|
+        @cart.start_date = start
+        @cart.due_date = due
+        expect { @cart.fix_due_date }.to_not change{@cart.due_date}
+      end
+    end
   end
 
   describe ".renewable_reservation" do # TODO: Figure out
+    it "should do something complex"
   end
 
   describe ".duration" do
-    it "should give the right result"
+    it "should give the right result" do
+      @cart.duration.should == @cart.due_date - @cart.start_date + 1
+    end
   end
 end
