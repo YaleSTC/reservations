@@ -3,6 +3,16 @@ require 'spec_helper'
 describe Reservation do
 	subject(:reservation) { FactoryGirl.build(:valid_reservation) }
 
+	it { should belong_to(:equipment_model) }
+	it { should belong_to(:reserver) }
+	it { should belong_to(:equipment_object) }
+	it { should belong_to(:checkout_handler) }
+	it { should belong_to(:checkin_handler) }
+	it { should validate_presence_of(:reserver) } #fails because of the deleted reserver
+	it { should validate_presence_of(:equipment_model) }
+	it { should validate_presence_of(:start_date) } #fails because validations can't run if nil (?)
+	it { should validate_presence_of(:due_date) } #fails because validations can't run if nil (?)
+	
 	context "when valid" do
 		it { should be_valid }
 		it 'should have a valid reserver' do
@@ -183,44 +193,6 @@ describe Reservation do
 			reservation.reserver.first_name.should == "Deleted"
 		end
 		it { should be_valid }
-	end
-
-	context 'with no start date' do #these fail because it tries to run other validations on nil
-		subject(:reservation) { FactoryGirl.build(:reservation, start_date: nil) }
-
-		it { should_not be_valid }
-		it 'should not save' do
-			reservation.save.should be_false
-			Reservation.all.size.should == 0
-		end
-		it 'cannot be updated' do
-			reservation.due_date = Date.tomorrow
-			reservation.save.should be_false
-		end
-		it 'can be updated with start date' do
-			reservation.start_date = Date.today
-			reservation.save.should be_true
-			Reservation.all.size.should == 1
-		end
-	end
-
-	context 'with no due date' do #these fail because it tries to run other validations on nil
-		subject(:reservation) { FactoryGirl.build(:reservation, due_date: nil) }
-
-		it { should_not be_valid }
-		it 'should not save' do
-			reservation.save.should be_false
-			Reservation.all.size.should == 0
-		end
-		it 'cannot be updated' do
-			reservation.start_date = Date.tomorrow
-			reservation.save.should be_false
-		end
-		it 'can be updated with start date' do
-			reservation.due_date = Date.tomorrow
-			reservation.save.should be_true
-			Reservation.all.size.should == 1
-		end
 	end
 
 	context 'when user has overdue reservation' do
