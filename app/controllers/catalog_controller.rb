@@ -2,44 +2,31 @@ class CatalogController < ApplicationController
   helper :black_outs
   layout 'application_with_sidebar'
 
-  def index
-    @reserver_id = session[:cart].reserver_id
-    #push accessories to bottom by removing and reinserting
-    #@equipment_models_by_category[Category.find_by_name("Accessories")] = @equipment_models_by_category.delete(Category.find_by_name("Accessories"))
-  end
+  before_filter :set_equipment_model, :only => [:add_to_cart, :remove_from_cart]
 
-  def add_to_cart
+  # --------- before filter methods --------- #
+
+  def set_equipment_model
     @equipment_model = EquipmentModel.find(params[:id])
-    cart.add_item(@equipment_model)
-    
-    errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
-    flash[:error] = errors.to_sentence
-    
-    respond_to do |format|
-      format.html{redirect_to root_path}
-      format.js{render :action => "update_cart"}
-    end
   rescue ActiveRecord::RecordNotFound
     logger.error("Attempt to add invalid equipment model #{params[:id]}")
     flash[:notice] = "Invalid equipment_model"
     redirect_to root_path
   end
 
+  # --------- end before filter methods --------- #
+
+
+  def index
+    @reserver_id = session[:cart].reserver_id
+  end
+
+  def add_to_cart
+    change_cart(:add_item, @equipment_model)
+  end
+
   def remove_from_cart
-    @equipment_model = EquipmentModel.find(params[:id])
-    cart.remove_item(@equipment_model)
-    
-    errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
-    flash[:error] = errors.to_sentence
-    
-    respond_to do |format|
-      format.html{redirect_to root_path}
-      format.js{render :action => "update_cart"}
-    end
-  rescue ActiveRecord::RecordNotFound
-    logger.error("Attempt to remove invalid equipment model #{params[:id]}")
-    flash[:notice] = "Invalid equipment_model"
-    redirect_to root_path
+    change_cart(:remove_item, @equipment_model)
   end
 
   def update_user_per_cat_page
@@ -61,4 +48,16 @@ class CatalogController < ApplicationController
     end
   end
 
+  private
+    def change_cart(action, item)
+      cart.send(action, item)
+
+      errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
+      flash[:error] = errors.to_sentence
+
+      respond_to do |format|
+        format.html{redirect_to root_path}
+        format.js{render :action => "update_cart"}
+      end
+    end
 end

@@ -1,19 +1,27 @@
 class Category < ActiveRecord::Base
+  include Searchable
+  searchable_on(:name)
+
   has_many :equipment_models, :dependent => :destroy
 
   validates :name,                :presence => true,
                                   :uniqueness => true
-                                  
-  validates :max_renewal_length,
+
+  validates :sort_order,          :uniqueness => true,
+                                  :numericality => {
+                                    :allow_nil => false,
+                                    :integer_only => true,
+                                    :greater_than_or_equal_to => 0 }
+
+  validates :max_per_user,
+            :max_checkout_length,
+            :max_renewal_length,
             :max_renewal_times,
             :renewal_days_before_due,
-            :sort_order,
-            :max_checkout_length,
-            :max_per_user,
                                   :numericality => {
-                                    :only_integer => true,
-                                    :greater_than_or_equal_to => 0,
-                                    :allow_nil => true }
+                                    :allow_nil => true,
+                                    :integer_only => true,
+                                    :greater_than_or_equal_to => 0 }
 
   attr_accessible :name, :max_per_user,
                   :max_checkout_length, :deleted_at,
@@ -25,20 +33,6 @@ class Category < ActiveRecord::Base
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
   scope :active, where("#{table_name}.deleted_at is null")
 
-
-  def self.catalog_search(query)
-    if query.blank? # if the string is blank, return all
-      active
-    else # in all other cases, search using the query text
-      results = []
-      query.split.each do |q|
-        results << active.where("name LIKE :query", {:query => "%#{q}%"})
-      end
-      # take the intersection of the results for each word
-      # i.e. choose results matching all terms
-      results.inject(:&)
-    end
-  end
 
   def maximum_per_user
     max_per_user || "unrestricted"
