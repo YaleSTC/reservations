@@ -219,6 +219,7 @@ GEM
     rubinius-actor (0.0.2)
       rubinius-core-api
     rubinius-core-api (0.0.1)
+    ruby-progressbar (1.1.1)
     rubycas-client (2.2.1)
       activesupport
     rubycas-client-rails (0.1.0)
@@ -306,6 +307,7 @@ DEPENDENCIES
   rdoc
   redcarpet
   rspec-rails
+  ruby-progressbar
   rubycas-client (= 2.2.1)
   rubycas-client-rails
   sass-rails

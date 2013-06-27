@@ -11,6 +11,8 @@
 # EquipmentModels) aren't generated first and in the order listed.
 
 require 'ffaker'
+require 'ruby-progressbar'
+# require 'progress_bar'
 
 #-------RESET PUBLIC DIR IF WE'VE RESET THE DATABASE
 if EquipmentModel.all.empty?
@@ -33,7 +35,6 @@ end
 
 
 def time_rand(from = 0.0, to = Time.now, length = 0, options = {})
-
   range = to.to_f - from.to_f
 
   range = length.to_f if length > 0
@@ -79,6 +80,21 @@ end
 # Random object that is used throughout for generating fake data that FFaker can't
 r = Random.new
 
+# Progress bar format string
+progress_str = "%t: [%B] %P%% | %c / %C | %E"
+
+# initialize arrays for objects created this session
+user = []
+category = []
+equipment_model = []
+equipment_object = []
+requirement = []
+checkin_procedure = []
+checkout_procedure = []
+reservation = []
+blackout = []
+
+
 # START SCRIPT
 # ============
 
@@ -117,7 +133,10 @@ end
 entered_num = ask_for_records('User')
 
 if entered_num.integer? && entered_num > 0
+  progress = ProgressBar.create(format: progress_str, total: entered_num)
+
   user = entered_num.times.map do
+    progress.increment
     User.create do |u|
       u.first_name = Faker::Name.first_name
       u.last_name = Faker::Name.last_name
@@ -129,6 +148,7 @@ if entered_num.integer? && entered_num > 0
       u.adminmode = false
       u.is_checkout_person = [true, false].sample
     end
+
   end
   user[0].is_checkout_person = true # hack to ensure at least one checkout person is created every time
   puts "\n#{entered_num} records successfully created!"
@@ -145,8 +165,10 @@ entered_num = ask_for_records('Category')
 
 if entered_num.integer? && entered_num > 0
   category_names = Category.all.map! { |c| c.name }
+  progress = ProgressBar.create(format: progress_str, total: entered_num)
 
   category = entered_num.times.map do
+    progress.increment
     Category.create! do |c|
       category_name = Faker::Product.brand
 
@@ -179,7 +201,9 @@ end
 entered_num = ask_for_records("EquipmentModel")
 puts "\nThis is going to take awhile...\n"
 if entered_num.integer? && entered_num > 0
+  progress = ProgressBar.create(format: progress_str, total: entered_num)
   equipment_model = entered_num.times.map do
+    progress.increment
     EquipmentModel.create! do |em|
       em.name = Faker::Product.product + " " + r.rand(1..9001).to_s
       em.description = Faker::HipsterIpsum.paragraph(16)
@@ -208,7 +232,9 @@ end
 entered_num = ask_for_records("EquipmentObject")
 
 if entered_num.integer? && entered_num > 0
+  progress = ProgressBar.create(format: progress_str, total: entered_num)
   equipment_object = entered_num.times.map do
+    progress.increment
     EquipmentObject.create! do |eo|
       eo.name = "Number #{(0...3).map{65.+(rand(25)).chr}.join}" + r.rand(1..9001).to_s
       eo.serial = (0...8).map{65.+(rand(25)).chr}.join
@@ -229,7 +255,9 @@ end
 entered_num = ask_for_records("Requirement")
 
 if entered_num.integer? && entered_num > 0
+  progress = ProgressBar.create(format: progress_str, total: entered_num)
   requirement = entered_num.times.map do
+    progress.increment
     Requirement.create! do |req|
       req.equipment_models = equipment_model.sample(r.rand(1..3))
       req.contact_name = Faker::Name.name
@@ -251,7 +279,9 @@ end
 entered_num = ask_for_records("CheckinProcedure")
 
 if entered_num.integer? && entered_num > 0
+  progress = ProgressBar.create(format: progress_str, total: entered_num)
   checkin_procedure = entered_num.times.map do
+    progress.increment
     CheckinProcedure.create! do |chi|
       chi.step = Faker::HipsterIpsum.sentence
       chi.equipment_model_id = equipment_model.flatten.sample.id
@@ -270,8 +300,10 @@ end
 entered_num = ask_for_records("CheckoutProcedure")
 
 if entered_num.integer? && entered_num > 0
-  checkin_procedure = entered_num.times.map do
-    CheckinProcedure.create! do |cho|
+  progress = ProgressBar.create(format: progress_str, total: entered_num)
+  checkout_procedure = entered_num.times.map do
+    progress.increment
+    CheckoutProcedure.create! do |cho|
       cho.step = Faker::HipsterIpsum.sentence
       cho.equipment_model_id = equipment_model.flatten.sample.id
     end
@@ -326,9 +358,11 @@ end
 entered_num = ask_for_records("Reservation")
 
 if entered_num.integer? && entered_num > 0
+  progress = ProgressBar.create(format: progress_str, total: entered_num)
   reservation = entered_num.times.map do
     random_time_in_past = time_rand(Time.now - 2.months)
     # random_due_date = time_rand(random_time_in_past, Time.now.next_week, category.flatten.sample)
+    progress.increment
     Reservation.create! do |res|
       res.reserver_id = user.flatten.sample.id
       res.checkout_handler_id = user.flatten.select{|usr| usr.is_checkout_person}.sample.id
@@ -357,9 +391,12 @@ end
 entered_num = ask_for_records("Blackout Dates")
 
 if entered_num.integer? && entered_num > 0
+  progress = ProgressBar.create(format: progress_str, total: entered_num)
+
   blackout = entered_num.times.map do
     random_time_in_past = time_rand(Time.now + 1.year)
     random_end_date = time_rand(random_time_in_past, random_time_in_past.next_week)
+    progress.increment
 
     BlackOut.create! do |blk|
       blk.start_date = random_time_in_past
