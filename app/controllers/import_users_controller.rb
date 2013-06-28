@@ -17,7 +17,7 @@ class ImportUsersController < ApplicationController
     if valid_input_file?(imported_users, file)
       # create the users and exit
       @hash_of_statuses = import_users(imported_users, overwrite, user_type)
-      render 'import_success'
+      render 'imported'
     end
   end
 

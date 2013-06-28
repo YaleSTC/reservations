@@ -9,7 +9,7 @@ class UsersController < ApplicationController
 
   skip_filter :cart, :only => [:new, :create]
   before_filter :require_checkout_person, :only => :index
-  before_filter :set_user, :only => [:show, :edit, :update, :destroy]
+  before_filter :set_user, :only => [:show, :edit, :update, :destroy, :deactivate, :activate]
 
   include ActivationHelper
 
@@ -111,4 +111,15 @@ class UsersController < ApplicationController
     end
   end
 
+  def deactivate
+    @user.destroy #Deactivate the model you had originally intended to deactivate
+    flash[:notice] = "Successfully deactivated user. Any related reservations or equipment have been deactivated as well."
+    redirect_to users_path  # always redirect to show page for deactivated user
+  end
+
+  def activate
+    @user.revive
+    flash[:notice] = "Successfully reactivated user. Any related reservations or equipment have been reactivated as well."
+    redirect_to users_path
+  end
 end

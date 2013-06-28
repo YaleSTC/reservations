@@ -58,7 +58,7 @@ class ApplicationController < ActionController::Base
       current_user.view_mode = params[:view_mode]
       current_user.save!
       flash[:notice] = "Viewing as #{messages_hash[current_user.view_mode]}."
-      redirect_to :action => "index" and return
+      redirect_to(:back) and return
     end
 
   end
@@ -155,23 +155,20 @@ class ApplicationController < ActionController::Base
     render 'terms_of_service/index'
   end
 
+  # activate and deactivate are overridden in the users controller because users are activated and deactivated differently
   def deactivate
-    @objects_class2 = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (User, EM, EO, Category)
+    @objects_class2 = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (EM, EO, Category)
     @objects_class2.destroy #Deactivate the model you had originally intended to deactivate
     flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + ". Any related reservations or equipment have been deactivated as well."
-    redirect_to request.referer   # Or use redirect_to(back).
+    redirect_to request.referer  # Or use redirect_to(back).
   end
 
   def activate
-    @model_to_activate = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (User, EM, EO, Category)
-
-    if (params[:controller] != "users") #Search for parents is not necessary if we are altering users.
-      activateParents(@model_to_activate)
-    end
+    @model_to_activate = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (EM, EO, Category)
+    activateParents(@model_to_activate)
     @model_to_activate.revive
-
     flash[:notice] = "Successfully reactivated " + params[:controller].singularize.titleize + ". Any related reservations or equipment have been reactivated as well."
-    redirect_to request.referer  # Or use redirect_to(back)
+    redirect_to request.referer # Or use redirect_to(back)
   end
 
   def markdown_help
