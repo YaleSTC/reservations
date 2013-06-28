@@ -8,27 +8,30 @@ FactoryGirl.define do
     equipment_model
 
     factory :valid_reservation do
-      after(:build) { |res| res.equipment_object = FactoryGirl.create(:equipment_object, equipment_model: res.equipment_model) }
+      after(:build) do |res|
+        if res.equipment_model.equipment_objects.empty?
+          FactoryGirl.create(:equipment_object, equipment_model: res.equipment_model)
+        end
+      end
 
       factory :checked_out_reservation do
         checked_out { Date.today }
         checkout_handler
-      end
+        after(:build) { |res| res.equipment_object = res.equipment_model.equipment_objects.first }
 
-      factory :checked_in_reservation do
-        start_date { Date.yesterday }
-        due_date { Date.today }
-        checked_out { Date.yesterday }
-        checked_in { Date.today }
-        checkout_handler
-        checkin_handler
-      end
+        factory :checked_in_reservation do
+          start_date { Date.yesterday }
+          due_date { Date.today }
+          checked_out { Date.yesterday }
+          checked_in { Date.today }
+          checkin_handler
+        end
 
-      factory :overdue_reservation do
-        start_date { Date.yesterday - 1 }
-        due_date { Date.yesterday }
-        checked_out { Date.yesterday - 1 }
-        checkout_handler
+        factory :overdue_reservation do
+          start_date { Date.yesterday - 1 }
+          due_date { Date.yesterday }
+          checked_out { Date.yesterday - 1 }
+        end
       end
 
       factory :missed_reservation do
