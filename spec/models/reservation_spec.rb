@@ -43,7 +43,7 @@ describe Reservation do
 			reservation.should be_available
 			reservation.should be_quantity_eq_model_allowed
 			reservation.should be_quantity_cat_allowed
-			Reservation.validate_set(reservation.reserver).should == []
+			Reservation.validate_set(reservation.reserver, [] << reservation).should == []
 		end
 		it { should respond_to(:fake_reserver_id) }
 		it { should respond_to(:late_fee) }
@@ -97,7 +97,7 @@ describe Reservation do
 		end
 		it 'fails appropriate validations' do
 			reservation.should_not be_not_empty
-			Reservation.validate_set(reservation.reserver).should_not == [] #fails
+			Reservation.validate_set(reservation.reserver, [] << reservation).should_not == [] #fails
 		end
 		it 'passes other custom validations' do
 			reservation.should be_no_overdue_reservations
@@ -134,7 +134,7 @@ describe Reservation do
 		it 'fails appropriate validations' do
 			reservation.should_not be_start_date_before_due_date
 			reservation.should_not be_not_in_past
-			Reservation.validate_set(reservation.reserver).should_not == [] #fails
+			Reservation.validate_set(reservation.reserver, [] << reservation).should_not == [] #fails
 		end
 		it 'passes other custom validations' do
 			reservation.should be_no_overdue_reservations
@@ -170,7 +170,7 @@ describe Reservation do
 		it 'fails appropriate validations' do
 			reservation.should_not be_start_date_is_not_blackout
 			reservation.should_not be_due_date_is_not_blackout
-			Reservation.validate_set(reservation.reserver).should_not == [] #fails
+			Reservation.validate_set(reservation.reserver, [] << reservation).should_not == [] #fails
 		end
 		it 'passes other custom validations' do
 			reservation.should be_start_date_before_due_date
@@ -216,7 +216,7 @@ describe Reservation do
 		end
 		it 'fails appropriate validations' do
 			reservation.should_not be_no_overdue_reservations
-			Reservation.validate_set(reservation.reserver).should_not == [] #fails
+			Reservation.validate_set(reservation.reserver, [] << reservation).should_not == [] #fails
 		end
 		it 'passes other custom validations' do
 			reservation.should be_start_date_before_due_date
@@ -246,7 +246,7 @@ describe Reservation do
 		end
 		it 'fails appropriate validations' do
 			reservation.should_not be_available
-			Reservation.validate_set(reservation.reserver).should_not == []
+			Reservation.validate_set(reservation.reserver, [] << reservation).should_not == []
 		end
 		it 'passes other custom validations' do
 			reservation.should be_matched_object_and_model
@@ -280,7 +280,7 @@ describe Reservation do
 		end
 		it 'fails appropriate validations' do
 			reservation.should_not be_matched_object_and_model
-			Reservation.validate_set(reservation.reserver).should_not == [] #fails
+			Reservation.validate_set(reservation.reserver, [] << reservation).should_not == [] #fails
 		end
 		it 'passes other custom validations' do
 			reservation.should be_available
@@ -313,7 +313,7 @@ describe Reservation do
 		end
 		it 'fails appropriate validations' do
 			reservation.should_not be_duration_allowed
-			Reservation.validate_set(reservation.reserver).should_not == [] #fails
+			Reservation.validate_set(reservation.reserver, [] << reservation).should_not == [] #fails
 		end
 		it 'passes other custom validations' do
 			reservation.should be_available
@@ -348,7 +348,7 @@ describe Reservation do
 		end
 		it 'fails appropriate validations' do
 			reservation.should_not be_quantity_cat_allowed
-			Reservation.validate_set(reservation.reserver).should_not == [] #fails
+			Reservation.validate_set(reservation.reserver, [] << reservation).should_not == [] #fails
 		end
 		it 'passes other custom validations' do
 			reservation.should be_available
@@ -384,7 +384,7 @@ describe Reservation do
 		it 'fails appropriate validations' do
 			reservation.should_not be_quantity_cat_allowed
 			reservation.should_not be_quantity_eq_model_allowed
-			Reservation.validate_set(reservation.reserver).should_not == [] #fails
+			Reservation.validate_set(reservation.reserver, [] << reservation).should_not == [] #fails
 		end
 		it 'passes other custom validations' do
 			reservation.should be_available

@@ -41,7 +41,7 @@ describe CartReservation do
       cart_reservation.should be_available
       cart_reservation.should be_quantity_eq_model_allowed
       cart_reservation.should be_quantity_cat_allowed
-      Reservation.validate_set(cart_reservation.reserver).should == []
+      Reservation.validate_set(cart_reservation.reserver, [] << cart_reservation).should == []
     end
   end
 
