@@ -95,8 +95,9 @@ describe Reservation do
 			reservation.start_date = Date.tomorrow
 			reservation.save.should be_false
 		end
-		it 'fails appropriate validation' do
+		it 'fails appropriate validations' do
 			reservation.should_not be_not_empty
+			Reservation.validate_set(reservation.reserver).should_not == [] #fails
 		end
 		it 'passes other custom validations' do
 			reservation.should be_no_overdue_reservations
@@ -109,7 +110,6 @@ describe Reservation do
 			reservation.should be_available #fails: tries to run validations on nil
 			reservation.should be_quantity_eq_model_allowed #fails: tries to run validations on nil
 			reservation.should be_quantity_cat_allowed #fails: tries to run validations on nil
-			Reservation.validate_set(reservation.reserver).should_not == [] #fails
 		end
 		it 'updates with equipment model' do
 			reservation.equipment_model = FactoryGirl.build(:equipment_model)
@@ -134,6 +134,7 @@ describe Reservation do
 		it 'fails appropriate validations' do
 			reservation.should_not be_start_date_before_due_date
 			reservation.should_not be_not_in_past
+			Reservation.validate_set(reservation.reserver).should_not == [] #fails
 		end
 		it 'passes other custom validations' do
 			reservation.should be_no_overdue_reservations
@@ -145,7 +146,6 @@ describe Reservation do
 			reservation.should be_available
 			reservation.should be_quantity_eq_model_allowed
 			reservation.should be_quantity_cat_allowed
-			Reservation.validate_set(reservation.reserver).should_not == []
 		end
 		it 'updates with fixed date' do
 			reservation.due_date = Date.tomorrow
@@ -170,6 +170,7 @@ describe Reservation do
 		it 'fails appropriate validations' do
 			reservation.should_not be_start_date_is_not_blackout
 			reservation.should_not be_due_date_is_not_blackout
+			Reservation.validate_set(reservation.reserver).should_not == [] #fails
 		end
 		it 'passes other custom validations' do
 			reservation.should be_start_date_before_due_date
@@ -181,7 +182,6 @@ describe Reservation do
 			reservation.should be_available
 			reservation.should be_quantity_eq_model_allowed
 			reservation.should be_quantity_cat_allowed
-			Reservation.validate_set(reservation.reserver).should_not == [] #fails
 		end
 	end
 
@@ -214,8 +214,9 @@ describe Reservation do
 			reservation.start_date = Date.tomorrow
 			reservation.save.should be_false
 		end
-		it 'fails appropriate validation' do
+		it 'fails appropriate validations' do
 			reservation.should_not be_no_overdue_reservations
+			Reservation.validate_set(reservation.reserver).should_not == [] #fails
 		end
 		it 'passes other custom validations' do
 			reservation.should be_start_date_before_due_date
@@ -228,7 +229,6 @@ describe Reservation do
 			reservation.should be_available
 			reservation.should be_quantity_eq_model_allowed
 			reservation.should be_quantity_cat_allowed
-			Reservation.validate_set(reservation.reserver).should_not == [] #fails
 		end
 	end
 
@@ -244,8 +244,9 @@ describe Reservation do
 			reservation.start_date = Date.tomorrow
 			reservation.save.should be_false
 		end
-		it 'fails appropriate validation' do
+		it 'fails appropriate validations' do
 			reservation.should_not be_available
+			Reservation.validate_set(reservation.reserver).should_not == []
 		end
 		it 'passes other custom validations' do
 			reservation.should be_matched_object_and_model
@@ -258,7 +259,6 @@ describe Reservation do
 			reservation.should be_not_empty
 			reservation.should be_start_date_is_not_blackout
 			reservation.should be_due_date_is_not_blackout
-			Reservation.validate_set(reservation.reserver).should_not == []
 		end
 	end
 
@@ -278,8 +278,9 @@ describe Reservation do
 			reservation.start_date = Date.tomorrow
 			reservation.save.should be_false
 		end
-		it 'fails appropriate validation' do
+		it 'fails appropriate validations' do
 			reservation.should_not be_matched_object_and_model
+			Reservation.validate_set(reservation.reserver).should_not == [] #fails
 		end
 		it 'passes other custom validations' do
 			reservation.should be_available
@@ -292,7 +293,6 @@ describe Reservation do
 			reservation.should be_not_empty
 			reservation.should be_start_date_is_not_blackout
 			reservation.should be_due_date_is_not_blackout
-			Reservation.validate_set(reservation.reserver).should_not == [] #fails
 		end
 	end
 
@@ -311,8 +311,9 @@ describe Reservation do
 			reservation.start_date = Date.tomorrow
 			reservation.save.should be_false
 		end
-		it 'fails appropriate validation' do
+		it 'fails appropriate validations' do
 			reservation.should_not be_duration_allowed
+			Reservation.validate_set(reservation.reserver).should_not == [] #fails
 		end
 		it 'passes other custom validations' do
 			reservation.should be_available
@@ -325,7 +326,6 @@ describe Reservation do
 			reservation.should be_not_empty
 			reservation.should be_start_date_is_not_blackout
 			reservation.should be_due_date_is_not_blackout
-			Reservation.validate_set(reservation.reserver).should_not == [] #fails
 		end
 	end
 
@@ -346,8 +346,9 @@ describe Reservation do
 			reservation.start_date = Date.tomorrow
 			reservation.save.should be_false
 		end
-		it 'fails appropriate validation' do
+		it 'fails appropriate validations' do
 			reservation.should_not be_quantity_cat_allowed
+			Reservation.validate_set(reservation.reserver).should_not == [] #fails
 		end
 		it 'passes other custom validations' do
 			reservation.should be_available
@@ -360,13 +361,13 @@ describe Reservation do
 			reservation.should be_not_empty
 			reservation.should be_start_date_is_not_blackout
 			reservation.should be_due_date_is_not_blackout
-			Reservation.validate_set(reservation.reserver).should_not == [] #fails
 		end 
 	end
 
 	context 'with equipment model quantity problems' do
 		before do
 			reservation.equipment_model.category.max_per_user = 1
+			reservation.equipment_model.max_per_user = 1
 			FactoryGirl.create(:reservation, equipment_model: reservation.equipment_model, reserver: reservation.reserver)
 		end
 
@@ -380,9 +381,10 @@ describe Reservation do
 			reservation.start_date = Date.tomorrow
 			reservation.save.should be_false
 		end
-		it 'fails appropriate validation' do
+		it 'fails appropriate validations' do
 			reservation.should_not be_quantity_cat_allowed
 			reservation.should_not be_quantity_eq_model_allowed
+			Reservation.validate_set(reservation.reserver).should_not == [] #fails
 		end
 		it 'passes other custom validations' do
 			reservation.should be_available
@@ -394,7 +396,6 @@ describe Reservation do
 			reservation.should be_not_empty
 			reservation.should be_start_date_is_not_blackout
 			reservation.should be_due_date_is_not_blackout
-			Reservation.validate_set(reservation.reserver).should_not == [] #fails
 		end
 	end
 end
