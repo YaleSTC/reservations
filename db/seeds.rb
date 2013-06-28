@@ -34,13 +34,34 @@ end
 
 
 def time_rand(from = 0.0, to = Time.now, length = 0, options = {})
+  options[:passes_blackout_validations] = true
+
   range = to.to_f - from.to_f
 
   range = length.to_f if length > 0
 
-  Time.at(from.to_f + rand * range)
+  random_time = Time.at(from.to_f + rand * range)
+  blackouts = BlackOut.all.map { |blk| blk.start_date..blk.end_date }
+
+  if options[:passes_blackout_validations] && !blackouts.blank?
+    while includes?(blackouts, random_time)
+      random_time = Time.at(from.to_f + rand * range)
+      binding.pry
+    end
+  end
+
+  random_time
 end
 
+def includes?(array_of_ranges, elem)
+  array_of_ranges.each do |rng|
+    if rng.include?(elem)
+      return true
+    else
+      return false
+    end
+  end
+end
 
 def terms_of_service_text
   %q{
@@ -351,6 +372,35 @@ else
 end
 
 
+# Blackout Date generation
+# ============================================================================
+
+entered_num = ask_for_records("Blackout Dates")
+
+if entered_num.integer? && entered_num > 0
+  progress = ProgressBar.create(format: progress_str, total: entered_num)
+
+  blackout = entered_num.times.map do
+    random_time_in_past = time_rand(Time.now + 1.year)
+    random_end_date = time_rand(random_time_in_past, random_time_in_past.next_week)
+    progress.increment
+
+    BlackOut.create! do |blk|
+      blk.start_date = random_time_in_past
+      blk.end_date = random_end_date
+      blk.notice = Faker::HipsterIpsum.paragraph(2)
+      blk.created_by = User.first.id
+      blk.black_out_type = ['soft', 'hard'].sample
+      blk.equipment_model_id = 0
+    end
+  end
+  puts "\n#{entered_num} records successfully created!"
+else
+  puts "\nPlease enter a whole number greater than 0."
+  entered_num = STDIN.gets.chomp.to_i
+end
+
+
 # Reservation generation
 # ============================================================================
 
@@ -389,35 +439,6 @@ if entered_num.integer? && entered_num > 0
     res.save(false)
   end
 
-  puts "\n#{entered_num} records successfully created!"
-else
-  puts "\nPlease enter a whole number greater than 0."
-  entered_num = STDIN.gets.chomp.to_i
-end
-
-
-# Blackout Date generation
-# ============================================================================
-
-entered_num = ask_for_records("Blackout Dates")
-
-if entered_num.integer? && entered_num > 0
-  progress = ProgressBar.create(format: progress_str, total: entered_num)
-
-  blackout = entered_num.times.map do
-    random_time_in_past = time_rand(Time.now + 1.year)
-    random_end_date = time_rand(random_time_in_past, random_time_in_past.next_week)
-    progress.increment
-
-    BlackOut.create! do |blk|
-      blk.start_date = random_time_in_past
-      blk.end_date = random_end_date
-      blk.notice = Faker::HipsterIpsum.paragraph(2)
-      blk.created_by = User.first.id
-      blk.black_out_type = ['soft', 'hard'].sample
-      blk.equipment_model_id = 0
-    end
-  end
   puts "\n#{entered_num} records successfully created!"
 else
   puts "\nPlease enter a whole number greater than 0."
