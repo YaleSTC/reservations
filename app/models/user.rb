@@ -105,9 +105,4 @@ class User < ActiveRecord::Base
     [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name, login].join(" ")
   end
 
-  # This method could be refactored out since role was collapsed into one attribute
-  def assign_type(user_type)
-    self.role = user_type
-  end
-
 end
