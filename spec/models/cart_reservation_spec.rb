@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe CartReservation do
-  subject(:cart_reservation) { FactoryGirl.build(:cart_reservation) }
+  subject(:cart_reservation) { FactoryGirl.build(:valid_cart_reservation) }
 
   it { should belong_to(:equipment_model) }
   it { should belong_to(:reserver) }
@@ -9,7 +9,6 @@ describe CartReservation do
   it { should validate_presence_of(:start_date) }
   it { should validate_presence_of(:due_date) } 
 
-  
   context "when valid" do
     it { should be_valid }
     it 'should have a valid reserver' do
@@ -29,17 +28,6 @@ describe CartReservation do
       cart_reservation.save.should be_true
     end
     it 'passes custom validations' do
-      cart_reservation.should be_not_empty
-      cart_reservation.should be_not_in_past
-      cart_reservation.should be_no_overdue_reservations
-      cart_reservation.should be_start_date_before_due_date
-      cart_reservation.should be_matched_object_and_model
-      cart_reservation.should be_duration_allowed
-      cart_reservation.should be_start_date_is_not_blackout
-      cart_reservation.should be_due_date_is_not_blackout
-      cart_reservation.should be_available
-      cart_reservation.should be_quantity_eq_model_allowed
-      cart_reservation.should be_quantity_cat_allowed
       Reservation.validate_set(cart_reservation.reserver, [] << cart_reservation).should == []
     end
   end

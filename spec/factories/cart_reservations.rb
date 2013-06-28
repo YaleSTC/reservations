@@ -10,7 +10,7 @@ FactoryGirl.define do
     factory :valid_cart_reservation do
       after(:build) do |cart_res|
         if cart_res.equipment_model.equipment_objects.empty?
-          FactoryGirl.create(:equipment_object, equipment_model: res.equipment_model)
+          FactoryGirl.create(:equipment_object, equipment_model: cart_res.equipment_model)
         end
       end
     end
