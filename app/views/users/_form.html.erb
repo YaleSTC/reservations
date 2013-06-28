@@ -1,6 +1,6 @@
 <%= simple_form_for @user, :html => { :class => "form-horizontal" }, :remote => true do |f| %>
   <%= f.error_notification %>
-  <% if current_user and (current_user.is_admin_in_adminmode? or ((current_user.is_admin_in_checkoutpersonmode? or current_user.role == 'checkout') and @user.id == NIL)) %>
+  <% if current_user and (current_user.is_admin?(:as => 'admin') or ((current_user.is_admin?(:as => 'checkout') or current_user.role == 'checkout') and @user.id == NIL)) %>
     <%= f.input :login %>
     <% else %>
       <%= f.input :login, :readonly => true, :input_html => {:value => @user.login}%>
@@ -20,7 +20,7 @@
 
     <%= render partial: 'terms_of_service/user_accepted', locals: {f: f}%>
 
-  <% if current_user && current_user.is_admin_in_adminmode? %>
+  <% if current_user && current_user.is_admin?(:as => 'admin') %>
       <%# TODO: Make this a fancy box %>
       <%= f.association :requirements, :collection => Requirement.all.map{|req| [req.description,req.id]}, :label => "Requirements user has satisfied"%>
       <%= f.input :role, collection: ['normal', 'checkout', 'admin', 'banned'], placeholder: 'normal' %>

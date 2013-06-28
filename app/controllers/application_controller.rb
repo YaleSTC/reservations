@@ -123,7 +123,7 @@ class ApplicationController < ActionController::Base
   end
 
   def require_admin(new_path=root_path)
-    restricted_redirect_to(new_path) unless current_user.is_admin_in_adminmode?
+    restricted_redirect_to(new_path) unless current_user.is_admin?(:as => 'admin')
   end
 
   def require_checkout_person(new_path=root_path)
@@ -138,7 +138,7 @@ class ApplicationController < ActionController::Base
   end
 
   def require_user(user, new_path=root_path)
-    restricted_redirect_to(new_path) unless current_user == user or current_user.is_admin_in_adminmode?
+    restricted_redirect_to(new_path) unless current_user == user or current_user.is_admin?(:as => 'admin')
   end
 
   def require_user_or_checkout_person(user, new_path=root_path)

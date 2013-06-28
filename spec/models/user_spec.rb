@@ -99,72 +99,76 @@ describe User do
     end
   end
 
-  describe "#is_admin_in_adminmode?" do
-    it "should return true if user is an admin in admin mode" do
-      admin_in_admin_mode = FactoryGirl.create(:admin, view_mode: 'admin')
-      admin_in_admin_mode.is_admin_in_adminmode?.should == true
+  describe ".is_admin?" do
+    it "should return true if user is admin and passed no parameter" do
+      user = FactoryGirl.create(:admin)
+      user.is_admin?.should be_true
     end
-    it "should return false if user is not an admin" do
-      non_admin_user = FactoryGirl.create(:user)
-      non_admin_user.is_admin_in_adminmode?.should == false
+    context "not an admin" do
+      before(:each) do
+        @user = FactoryGirl.create(:user)
+      end
+      it "should return false if user is not an admin and passed no parameter" do
+        @user.is_admin?.should be_false
+      end
+      it "should return false if user is not admin and passed a parameter" do
+        @user.is_admin?(:as => 'admin').should be_false
+        @user.is_admin?(:as => 'checkout').should be_false
+        @user.is_admin?(:as => 'banned').should be_false
+        @user.is_admin?(:as => 'normal').should be_false
+      end
     end
-    it "should return false if user is admin in normalusermode" do
-      admin_as_normal_user = FactoryGirl.create(:admin, view_mode: 'normal')
-      admin_as_normal_user.is_admin_in_adminmode?.should == false
+    context "admin view_mode" do
+      before(:each) do
+        @user = FactoryGirl.create(:admin, view_mode: 'admin')
+      end
+      it "should return true if passed the parameter matching the view_mode" do
+        @user.is_admin?(:as => 'admin').should be_true
+      end
+      it "should return false if passed a parameter not matching the view_mode" do
+        @user.is_admin?(:as => 'checkout').should be_false
+        @user.is_admin?(:as => 'normal').should be_false
+        @user.is_admin?(:as => 'banned').should be_false
+      end
     end
-    it "should return false if user is admin in bannedmode" do
-      admin_as_banned = FactoryGirl.create(:admin, view_mode: 'banned')
-      admin_as_banned.is_admin_in_adminmode?.should == false
+    context "checkout view_mode" do
+      before(:each) do
+        @user = FactoryGirl.create(:admin, view_mode: 'checkout')
+      end
+      it "should return true if passed the parameter matching the view_mode" do
+        @user.is_admin?(:as => 'checkout').should be_true
+      end
+      it "should return false if passed a parameter not matching the view_mode" do
+        @user.is_admin?(:as => 'admin').should be_false
+        @user.is_admin?(:as => 'normal').should be_false
+        @user.is_admin?(:as => 'banned').should be_false
+      end
     end
-    it "should return false if user is admin in checkoutpersonmode" do
-      admin_as_checkoutperson = FactoryGirl.create(:admin, view_mode: 'checkout')
-      admin_as_checkoutperson.is_admin_in_adminmode?.should == false
+    context "banned view_mode" do
+      before(:each) do
+        @user = FactoryGirl.create(:admin, view_mode: 'banned')
+      end
+      it "should return true if passed the parameter matching the view_mode" do
+        @user.is_admin?(:as => 'banned').should be_true
+      end
+      it "should return false if passed a parameter not matching the view_mode" do
+        @user.is_admin?(:as => 'checkout').should be_false
+        @user.is_admin?(:as => 'normal').should be_false
+        @user.is_admin?(:as => 'admin').should be_false
+      end
     end
-  end
-
-  describe ".is_admin_in_checkoutpersonmode?" do
-    it "should return true if user is an admin in checkoutpersonmode" do
-      admin_as_checkoutperson = FactoryGirl.create(:admin, view_mode: 'checkout')
-      admin_as_checkoutperson.is_admin_in_checkoutpersonmode?.should == true
-    end
-    it "should return false if the user is not an admin" do
-      non_admin_user = FactoryGirl.create(:user)
-      non_admin_user.is_admin_in_checkoutpersonmode?.should == false
-    end
-    it "should return false if user is admin in normalusermode" do
-      admin_as_normal_user = FactoryGirl.create(:admin, view_mode: 'normal')
-      admin_as_normal_user.is_admin_in_checkoutpersonmode?.should == false
-    end
-    it "should return false if user is admin in bannedmode" do
-      admin_as_banned = FactoryGirl.create(:admin, view_mode: 'banned')
-      admin_as_banned.is_admin_in_checkoutpersonmode?.should == false
-    end
-    it "should return false if user is admin in adminmode" do
-      admin_as_admin = FactoryGirl.create(:admin, view_mode: 'admin')
-      admin_as_admin.is_admin_in_checkoutpersonmode?.should == false
-    end
-  end
-
-  describe ".is_admin_in_bannedmode?" do
-    it "should return true if user is an admin in bannedmode" do
-      admin_as_banned = FactoryGirl.create(:admin, view_mode: 'banned')
-      admin_as_banned.is_admin_in_bannedmode?.should == true
-    end
-    it "should return false if the user is not an admin" do
-      non_admin_user = FactoryGirl.create(:user)
-      non_admin_user.is_admin_in_bannedmode?.should == false
-    end
-    it "should return false if user is admin in normalusermode" do
-      admin_as_normal_user = FactoryGirl.create(:admin, view_mode: 'normal')
-      admin_as_normal_user.is_admin_in_bannedmode?.should == false
-    end
-    it "should return false if user is admin in checkoutpersonmode" do
-      admin_as_checkoutperson = FactoryGirl.create(:admin, view_mode: 'checkout')
-      admin_as_checkoutperson.is_admin_in_bannedmode?.should == false
-    end
-    it "should return false if user is admin in adminmode" do
-      admin_as_admin = FactoryGirl.create(:admin, view_mode: 'admin')
-      admin_as_admin.is_admin_in_bannedmode?.should == false
+    context "normal view_mode" do
+      before(:each) do
+        @user = FactoryGirl.create(:admin, view_mode: 'normal')
+      end
+      it "should return true if passed the parameter matching the view_mode" do
+        @user.is_admin?(:as => 'normal').should be_true
+      end
+      it "should return false if passed a parameter not matching the view_mode" do
+        @user.is_admin?(:as => 'checkout').should be_false
+        @user.is_admin?(:as => 'admin').should be_false
+        @user.is_admin?(:as => 'banned').should be_false
+      end
     end
   end
 

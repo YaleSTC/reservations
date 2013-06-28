@@ -41,19 +41,16 @@ class User < ActiveRecord::Base
   end
 
   def can_checkout?
-    self.role == 'checkout' || self.is_admin_in_adminmode? || self.is_admin_in_checkoutpersonmode?
+    role == 'checkout' || self.is_admin?(:as => 'admin') || self.is_admin?(:as => 'checkout')
   end
 
-  def is_admin_in_adminmode?
-    role == 'admin' && view_mode == 'admin'
-  end
-
-  def is_admin_in_checkoutpersonmode?
-    role == 'admin' && view_mode == 'checkout'
-  end
-
-  def is_admin_in_bannedmode?
-    role == 'admin' && view_mode == 'banned'
+  def is_admin?(options = {})
+    if role == 'admin'
+      if options.empty? || options[:as] == view_mode
+        return true
+      end
+    end
+    return false
   end
 
   def equipment_objects

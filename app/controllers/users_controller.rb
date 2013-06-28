@@ -48,7 +48,7 @@ class UsersController < ApplicationController
   end
 
   def new
-    if current_user and current_user.is_admin_in_adminmode?
+    if current_user and current_user.is_admin?(:as => 'admin')
       @user = User.new
     else
       @user = User.new(User.search_ldap(session[:cas_user]))
@@ -78,7 +78,7 @@ class UsersController < ApplicationController
 
   def update
     require_user(@user)
-    params[:user].delete(:login) unless current_user.is_admin_in_adminmode? #no changing login unless you're an admin
+    params[:user].delete(:login) unless current_user.is_admin?(:as => 'admin') #no changing login unless you're an admin
     if @user.update_attributes(params[:user])
       respond_to do |format|
         flash[:notice] = "Successfully updated user."
