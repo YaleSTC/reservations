@@ -23,7 +23,7 @@
   <% if current_user && current_user.is_admin_in_adminmode? %>
       <%# TODO: Make this a fancy box %>
       <%= f.association :requirements, :collection => Requirement.all.map{|req| [req.description,req.id]}, :label => "Requirements user has satisfied"%>
-      <%= f.input :role %>
+      <%= f.input :role, collection: ['normal', 'checkout', 'admin', 'banned'], placeholder: 'normal' %>
       <%= f.input :deleted_at, label: "Disabled", :as => :deleted %>
   <% end %>
   <% if @user %>
