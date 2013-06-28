@@ -17,7 +17,7 @@ class ApplicationSetupController < ApplicationController
   def create_admin_user
     @user = User.new(params[:user])
     @user.login = session[:cas_user] unless current_user and current_user.can_checkout?
-    @user.is_admin = true
+    @user.role = 'admin'
     if @user.save
       flash[:notice] = "Successfully created Admin."
       redirect_to new_app_configs_path

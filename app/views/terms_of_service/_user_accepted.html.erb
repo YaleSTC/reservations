@@ -1,24 +1,24 @@
 <% accepted = @user.terms_of_service_accepted == true %>
 <% new_user_by_self = !current_user %>
-<% new_user_by_admin = (params[:action] == 'new') && current_user && (current_user.is_admin || current_user.is_checkout_person) %>
+<% new_user_by_admin = (params[:action] == 'new') && current_user && (current_user.role == 'admin' || current_user.role == 'checkout') %>
 <% edit_user_by_self = current_user == @user %>
-<% edit_user_by_admin = current_user && (current_user.is_admin || current_user.is_checkout_person) %>
+<% edit_user_by_admin = current_user && (current_user.role == 'admin' || current_user.role == 'checkout') %>
 
 <% if new_user_by_self %>
-    <%= f.input :terms_of_service_accepted, 
-                  input_html: {type: "checkbox", value: accepted }, 
+    <%= f.input :terms_of_service_accepted,
+                  input_html: {type: "checkbox", value: accepted },
                   label: "I accept the #{link_to("Terms of Service", tos_path, target: '_blank')}" %>
 <% elsif new_user_by_admin %>
 	<%= f.input :created_by_admin, as: :hidden, value: true %>
 	<%= f.input :terms_of_service_accepted,
-                  input_html: {value: accepted, disabled: true }, 
+                  input_html: {value: accepted, disabled: true },
                   label: "User must accept the #{link_to("Terms of Service", tos_path, target: '_blank')} during first checkout." %>
 <% elsif edit_user_by_self %>
 	<%= f.input :terms_of_service_accepted,
-              input_html: {type: "checkbox", value: accepted }, 
+              input_html: {type: "checkbox", value: accepted },
               label: "I accept the #{link_to("Terms of Service", tos_path, target: '_blank')}" %>
 <% elsif edit_user_by_admin %>
 	<%= f.input :terms_of_service_accepted,
-                  input_html: {type: "checkbox", value: accepted, disabled: true }, 
+                  input_html: {type: "checkbox", value: accepted, disabled: true },
                   label: "Has user accepted the #{link_to("Terms of Service", tos_path, target: '_blank')}?" %>
 <% end %>

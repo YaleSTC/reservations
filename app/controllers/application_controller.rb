@@ -47,23 +47,17 @@ class ApplicationController < ActionController::Base
     session[:cart]
   end
 
-  def set_view_mode #(Analogous to department_chooser in shifts) NOTE: logic changed since this comment
+  def set_view_mode
+    if current_user.role == 'admin' && params[:view_mode]
+      # gives a more user friendly notice when changing view modes
+      messages_hash = { 'admin' => 'Admin',
+                        'banned' => 'Banned User',
+                        'checkout' => 'Checkout Person',
+                        'normal' => 'Patron'}
 
-    # check if user is admin and if exactly one of the modes is specified in params
-    if current_user.is_admin && ( !!params[:a_mode] ^ !!params[:c_mode] ^ !!params[:n_mode] ^ !!params[:b_mode] )
-      # set dictionary of values to update
-      values = {:adminmode =>             !!params[:a_mode],
-                :checkoutpersonmode =>    !!params[:c_mode],
-                :normalusermode =>        !!params[:n_mode],
-                :bannedmode =>            !!params[:b_mode] }
-      # dictionary of notices to display
-      notices = { :adminmode =>           "Viewing as Admin",
-                  :checkoutpersonmode =>  "Viewing as Checkout Person",
-                  :normalusermode =>      "Viewing as Patron",
-                  :bannedmode =>          "Viewing as Banned User" }
-
-      current_user.update_attributes( values )
-      flash[:notice] = notices[values.key(true)]
+      current_user.view_mode = params[:view_mode]
+      current_user.save!
+      flash[:notice] = "Viewing as #{messages_hash[current_user.view_mode]}."
       redirect_to :action => "index" and return
     end
 
@@ -74,13 +68,13 @@ class ApplicationController < ActionController::Base
   end
 
   def check_if_is_admin
-    if ( !current_user.is_admin )
+    unless current_user.role == 'admin'
       flash[:notice] = "Only administrators can do that!"
       redirect_to request.referer
     end
   end
 
-  #-------- end before_filter methods --------
+  #-------- end before_filter methods --------#
 
   def update_cart
     # set dates
