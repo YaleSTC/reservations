@@ -6,10 +6,10 @@ class Reservation < ActiveRecord::Base
   belongs_to :checkout_handler, :class_name => 'User'
   belongs_to :checkin_handler, :class_name => 'User'
 
-  validates :reserver,
-            :start_date,
-            :due_date,
-            :equipment_model,
+  validates :equipment_model,
+            # :reserver,
+            # :start_date,
+            # :due_date,
             :presence => true
 
   # If there is no equipment model, don't run the validations that would break

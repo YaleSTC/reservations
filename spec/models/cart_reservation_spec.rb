@@ -6,7 +6,6 @@ describe CartReservation do
   it { should belong_to(:equipment_model) }
   it { should belong_to(:reserver) }
   it { should validate_presence_of(:reserver) }
-  it { should validate_presence_of(:equipment_model) }
   it { should validate_presence_of(:start_date) }
   it { should validate_presence_of(:due_date) } 
 
