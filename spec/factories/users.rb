@@ -32,6 +32,7 @@ FactoryGirl.define do
 
     factory :admin do
       is_admin true
+      adminmode '1'
     end
 
     factory :checkout_person do

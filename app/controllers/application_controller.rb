@@ -5,23 +5,25 @@ class ApplicationController < ActionController::Base
   helper :layout
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
-  before_filter RubyCAS::Filter
+
+  before_filter RubyCAS::Filter unless Rails.env.test?
+
   before_filter :app_setup, :if => lambda {|u| User.all.count == 0 }
   before_filter :load_configs
 
   with_options :unless => lambda {|u| User.all.count == 0 } do |c|
-    c.before_filter :current_user
-    c.before_filter :first_time_user
-    c.before_filter :cart
-    c.before_filter :fix_cart_date
-    c.before_filter :set_view_mode
+    c.before_filter :current_user unless Rails.env.test?
+    c.before_filter :first_time_user unless Rails.env.test?
+    c.before_filter :cart unless Rails.env.test?
+    c.before_filter :fix_cart_date unless Rails.env.test?
+    c.before_filter :set_view_mode unless Rails.env.test?
     c.before_filter :check_if_is_admin,  :only => [:activate, :deactivate]
   end
 
   helper_method :current_user
   helper_method :cart
 
-  #-------- before_filter methods --------
+  # -------- before_filter methods -------- #
 
   def app_setup
       redirect_to new_admin_user_path

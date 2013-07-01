@@ -1,6 +1,6 @@
 class RequirementsController < ApplicationController
 
-  before_filter :require_admin
+  before_filter :require_admin unless Rails.env.test?
   before_filter :set_current_requirement, :only => [:show, :edit, :update, :destroy]
 
   # ------------- before filter methods ------------- #
