@@ -2,25 +2,18 @@ require 'spec_helper'
 
 describe RequirementsController, focus: true do
   before(:all) do
-    @user = FactoryGirl.create(:admin)
     @app_config = FactoryGirl.create(:app_config)
   end
-  after(:all) do
-    @user.destroy
-  end
   before(:each) do
-    @controller.stub(:current_user).and_return(@user)
+    @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
     @controller.stub(:first_time_user).and_return(nil)
     @controller.stub(:require_admin).and_return(true)
+    @requirement = FactoryGirl.create(:requirement)
   end
   describe 'GET index' do
     before(:each) do
-      @requirement = FactoryGirl.create(:requirement)
       get :index
     end
-    # it "what does it redirect to?" do
-    #   response.should redirect_to(catalog_path)
-    # end
     it { should respond_with(:success) }
     it { should render_template(:index) }
     it { should_not set_the_flash }
@@ -59,5 +52,9 @@ describe RequirementsController, focus: true do
     it 'assigns the selected requirement to @requirement'
     it 'removes @requirement from the database'
     it 'redirects to the :index view'
+  end
+  after(:all) do
+    @user.destroy
+    @app_config.destroy
   end
 end
