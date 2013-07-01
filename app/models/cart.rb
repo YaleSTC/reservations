@@ -60,6 +60,11 @@ class Cart
     cart_reservations = CartReservation.find(@items)
   end
 
+  # Returns the ActiveRecord *relation* of CartReservations that correspond to the IDs in the items array
+  def cart_reservations_relation
+    CartReservation.where('id in (?)', @items)
+  end
+
   # Returns a hash of the equipment models in the cart with their quantities
   def models_with_quantities
     models = Hash.new
@@ -78,7 +83,7 @@ class Cart
     if date >= Date.today 
       @start_date = date
       fix_due_date
-      CartReservation.where('id in (?)', @items).update_all({start_date: @start_date, due_date: @due_date})
+      cart_reservations_relation.update_all({start_date: @start_date, due_date: @due_date})
     end
   end
 
@@ -86,7 +91,7 @@ class Cart
   def set_due_date(date)
     @due_date = date
     fix_due_date
-    CartReservation.where('id in (?)', @items).update_all({start_date: @start_date, due_date: @due_date})
+    cart_reservations_relation.update_all({start_date: @start_date, due_date: @due_date})
   end
 
   # If the dates were illogical, sets due date to day after start date
@@ -131,7 +136,7 @@ class Cart
   # Sets reserver id and updates the CartReservations to match
   def set_reserver_id(user_id)
     @reserver_id = user_id
-    CartReservation.where('id in (?)', @items).update_all(reserver_id: @reserver_id)
+    cart_reservations_relation.update_all(reserver_id: @reserver_id)
   end
 
   # Returns the reserver
