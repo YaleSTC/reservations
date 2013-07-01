@@ -1,23 +1,17 @@
 require 'spec_helper'
 
-describe RequirementsController do
-  before(:each) do
-    # ApplicationController.class.skip_before_filter RubyCAS::Filter
-    # # ApplicationController.skip_before_filter :current_user
-    # ApplicationController.class.skip_before_filter :first_time_user
-    # # ApplicationController.skip_before_filter :cart
-    # # ApplicationController.skip_before_filter :fix_cart_date
-    # # ApplicationController.skip_before_filter :set_view_mode
-    # ApplicationController.class.skip_before_filter :app_setup
-    # # ApplicationController.skip_before_filter :load_configs
-    # RequirementsController.class.skip_before_filter :require_admin
-
-    # set the application configs
+describe RequirementsController, focus: true do
+  before(:all) do
+    @user = FactoryGirl.create(:admin)
     @app_config = FactoryGirl.create(:app_config)
-    # create an admin user in admin mode
-    @user = FactoryGirl.create(:admin, login: 'dasdf34')
-    # set current_user
-    session[:current_user] = @user
+  end
+  after(:all) do
+    @user.destroy
+  end
+  before(:each) do
+    @controller.stub(:current_user).and_return(@user)
+    @controller.stub(:first_time_user).and_return(nil)
+    @controller.stub(:require_admin).and_return(true)
   end
   describe 'GET index' do
     before(:each) do
@@ -65,10 +59,5 @@ describe RequirementsController do
     it 'assigns the selected requirement to @requirement'
     it 'removes @requirement from the database'
     it 'redirects to the :index view'
-  end
-  after(:all) do
-    @current_user = nil
-    @app_config = nil
-    @user.destroy
   end
 end

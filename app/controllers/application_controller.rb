@@ -12,11 +12,11 @@ class ApplicationController < ActionController::Base
   before_filter :load_configs
 
   with_options :unless => lambda {|u| User.all.count == 0 } do |c|
-    c.before_filter :current_user unless Rails.env.test?
-    c.before_filter :first_time_user unless Rails.env.test?
-    c.before_filter :cart unless Rails.env.test?
-    c.before_filter :fix_cart_date unless Rails.env.test?
-    c.before_filter :set_view_mode unless Rails.env.test?
+    c.before_filter :current_user
+    c.before_filter :first_time_user
+    c.before_filter :cart
+    c.before_filter :fix_cart_date
+    c.before_filter :set_view_mode
     c.before_filter :check_if_is_admin,  :only => [:activate, :deactivate]
   end
 
