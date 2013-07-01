@@ -78,12 +78,7 @@ class Cart
     if date >= Date.today 
       @start_date = date
       fix_due_date
-      items.each do |item|
-        cart_res = CartReservation.find(item)
-        cart_res.start_date = start_date
-        cart_res.due_date = due_date
-        cart_res.save
-      end
+      CartReservation.where('id in (?)', @items).update_all({start_date: @start_date, due_date: @due_date})
     end
   end
 
@@ -91,12 +86,7 @@ class Cart
   def set_due_date(date)
     @due_date = date
     fix_due_date
-    items.each do |item|
-      cart_res = CartReservation.find(item)
-      cart_res.start_date = start_date
-      cart_res.due_date = due_date
-      cart_res.save
-    end
+    CartReservation.where('id in (?)', @items).update_all({start_date: @start_date, due_date: @due_date})
   end
 
   # If the dates were illogical, sets due date to day after start date
@@ -141,12 +131,7 @@ class Cart
   # Sets reserver id and updates the CartReservations to match
   def set_reserver_id(user_id)
     @reserver_id = user_id
-    @items.each do |item|
-      cart_res = CartReservation.find(item)
-      cart_res.reserver_id = user_id
-      #cart_res.reserver = reserver
-      cart_res.save
-    end
+    CartReservation.where('id in (?)', @items).update_all(reserver_id: @reserver_id)
   end
 
   # Returns the reserver
