@@ -2,7 +2,7 @@ require 'spec_helper'
 
 # note, these tests are complex in order to test the admin security features -- namely, it was necessary
 # to test two contexts for each method: the user being an admin, and not.
-describe RequirementsController, focus: true do
+describe RequirementsController do
   before(:all) do
     @app_config = FactoryGirl.create(:app_config)
   end
@@ -161,7 +161,7 @@ describe RequirementsController, focus: true do
             post :create, requirement: FactoryGirl.attributes_for(:requirement, contact_name: nil)
           }.not_to change(Requirement,:count)
         end
-        it { should_not set_the_flash }
+        it { should set_the_flash }
         it { should render_template(:new) }
       end
     end
