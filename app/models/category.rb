@@ -26,7 +26,7 @@ class Category < ActiveRecord::Base
   attr_accessible :name, :max_per_user,
                   :max_checkout_length, :deleted_at,
                   :max_renewal_times, :max_renewal_length,
-                  :renewal_days_before_due
+                  :renewal_days_before_due, :sort_order
 
   nilify_blanks :only => [:deleted_at]
 
