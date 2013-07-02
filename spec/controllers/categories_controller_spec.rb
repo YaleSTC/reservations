@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe CategoriesController, focus: true do
+describe CategoriesController do
   before(:all) do
     @app_config = FactoryGirl.create(:app_config)
   end
@@ -10,17 +10,24 @@ describe CategoriesController, focus: true do
   end
   # admin and non-admin results are the same for GET #index and GET #show in the categories controller
   describe 'GET index' do
+    before(:each) do
+      @inactive_category = FactoryGirl.create(:category, deleted_at: Date.today - 1)
+    end
     context 'user is admin' do
       before(:each) do
         @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
         get :index
       end
+      it 'should populate an array of all categories if show deleted is true' do
+        get :index, show_deleted: true
+        expect(assigns(:categories)).to eq([@category, @inactive_category])
+      end
+      it 'should populate an array of active categories if show deleted is nil or false' do
+        expect(assigns(:categories)).to eq([@category])
+      end
       it { should respond_with(:success) }
       it { should render_template(:index) }
       it { should_not set_the_flash }
-      it 'should populate an array of all categories' do
-        expect(assigns(:categories)).to eq([@category])
-      end
     end
     context 'user is not admin' do
       before(:each) do
@@ -30,7 +37,11 @@ describe CategoriesController, focus: true do
       it { should respond_with(:success) }
       it { should render_template(:index) }
       it { should_not set_the_flash }
-      it 'should populate an array of all categories' do
+      it 'should populate an array of all categories if show deleted is true' do
+        get :index, show_deleted: true
+        expect(assigns(:categories)).to eq([@category, @inactive_category])
+      end
+      it 'should populate an array of active categories if show deleted is nil or false' do
         expect(assigns(:categories)).to eq([@category])
       end
     end
