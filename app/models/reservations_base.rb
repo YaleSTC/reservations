@@ -5,6 +5,7 @@ module ReservationsBase
     base.belongs_to :reserver, :class_name => 'User'
     base.attr_accessible :reserver, :reserver_id, :start_date, :due_date,
                          :equipment_model_id
+    base.validates :reserver, :start_date, :due_date, :presence => true
   end
   
   def duration
