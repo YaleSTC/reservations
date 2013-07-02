@@ -1,8 +1,16 @@
 class CategoriesController < ApplicationController
+
   before_filter :require_admin
+  before_filter :set_current_category, :only => [:show, :edit, :update, :destroy]
   skip_before_filter :require_admin, :only => [:index, :show]
 
   include ActivationHelper
+
+  # --------- before filter methods -------- #
+  def set_current_category
+    @category = Category.find(params[:id])
+  end
+  # --------- end before filter methods -------- #
 
   def index
     if (params[:show_deleted])
@@ -13,7 +21,6 @@ class CategoriesController < ApplicationController
   end
 
   def show
-    @category = Category.find(params[:id])
   end
 
   def new
@@ -33,11 +40,9 @@ class CategoriesController < ApplicationController
   end
 
   def edit
-    @category = Category.find(params[:id])
   end
 
   def update
-    @category = Category.find(params[:id])
     @category.sort_order = params[:category][:sort_order].to_i
     if @category.update_attributes(params[:category])
       flash[:notice] = "Successfully updated category."
@@ -48,7 +53,6 @@ class CategoriesController < ApplicationController
   end
 
   def destroy
-    @category = Category.find(params[:id])
     @category.destroy(:force)
     flash[:notice] = "Successfully destroyed category."
     redirect_to categories_url
