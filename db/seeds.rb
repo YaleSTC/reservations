@@ -41,7 +41,7 @@ def time_rand(from = 0.0, to = Time.now, length = 0, options = {})
   range = length.to_f if length > 0
 
   random_time = Time.at(from.to_f + rand * range)
-  blackouts = BlackOut.all.map { |blk| blk.start_date..blk.end_date }
+  blackouts = Blackout.all.map { |blk| blk.start_date..blk.end_date }
 
   if options[:passes_blackout_validations] && !blackouts.blank?
     while includes?(blackouts, random_time)
@@ -140,9 +140,8 @@ if User.all.empty?
     u.email = email
     u.login = login
     u.affiliation = affiliation
-    u.is_admin = true
-    u.adminmode = true
-    u.is_checkout_person = true
+    u.role = 'admin'
+    u.view_mode = 'admin'
   end
 end
 
@@ -165,12 +164,11 @@ if entered_num.integer? && entered_num > 0
       u.email = Faker::Internet.email
       u.login = (0...3).map{65.+(rand(25)).chr}.join.downcase + r.rand(2..99).to_s
       u.affiliation = 'YC ' + %w{BK BR CC DC ES JE MC PC SM SY TC TD}.sample + ' ' + r.rand(2012..2015).to_s
-      u.adminmode = false
-      u.is_checkout_person = [true, false].sample
+      u.role = ['normal', 'checkout'].sample
     end
 
   end
-  user[0].is_checkout_person = true # hack to ensure at least one checkout person is created every time
+  user[0].role ='checkout' # hack to ensure at least one checkout person is created every time
   puts "\n#{entered_num} records successfully created!"
 else
   puts "\nPlease enter a whole number greater than 0."
@@ -385,12 +383,12 @@ if entered_num.integer? && entered_num > 0
     random_end_date = time_rand(random_time_in_past, random_time_in_past.next_week)
     progress.increment
 
-    BlackOut.create! do |blk|
+    Blackout.create! do |blk|
       blk.start_date = random_time_in_past
       blk.end_date = random_end_date
       blk.notice = Faker::HipsterIpsum.paragraph(2)
       blk.created_by = User.first.id
-      blk.black_out_type = ['soft', 'hard'].sample
+      blk.blackout_type = ['soft', 'hard'].sample
       blk.equipment_model_id = 0
     end
   end
@@ -414,8 +412,8 @@ if entered_num.integer? && entered_num > 0
     progress.increment
     Reservation.create! do |res|
       res.reserver_id = user.flatten.sample.id
-      res.checkout_handler_id = user.flatten.select{|usr| usr.is_checkout_person}.sample.id
-      res.checkin_handler_id = user.flatten.select{|usr| usr.is_checkout_person}.sample.id
+      res.checkout_handler_id = user.flatten.select{|usr| usr.can_checkout?}.sample.id
+      res.checkin_handler_id = user.flatten.select{|usr| usr.can_checkout?}.sample.id
       res.equipment_object_id = equipment_object.flatten.sample.id
       res.equipment_model_id = res.equipment_object.equipment_model_id
       res.start_date = random_time_in_future.to_datetime
@@ -432,11 +430,10 @@ if entered_num.integer? && entered_num > 0
   to_fling_into_the_past = reservation.sample(rand((entered_num / 4)..entered_num))
   to_fling_into_the_past.each do |res|
     random_time_in_past = time_rand(Time.now - 2.months)
-    res.update_attributes(start_date: random_time_in_past.to_datetime,
-                          due_date: time_rand(res.start_date.to_time, Time.now.next_week, res.equipment_model.category.max_checkout_length).to_datetime,
-                          checked_in: [nil, time_rand(random_time_in_past, Time.now.next_week, res.equipment_model.category.max_checkout_length).to_datetime].sample,
-                          checked_out: res.checked_in.nil? ? [nil, random_time_in_past.to_datetime].sample : random_time_in_past.to_datetime)
-    res.save(false)
+    res.update_attribute(:start_date, random_time_in_past.to_datetime)
+    res.update_attribute(:due_date, time_rand(res.start_date.to_time, Time.now.next_week, res.equipment_model.category.max_checkout_length).to_datetime)
+    res.update_attribute(:checked_in, [nil, time_rand(random_time_in_past, Time.now.next_week, res.equipment_model.category.max_checkout_length).to_datetime].sample)
+    res.update_attribute(:checked_out, res.checked_in.nil? ? [nil, random_time_in_past.to_datetime].sample : random_time_in_past.to_datetime)
   end
 
   puts "\n#{entered_num} records successfully created!"
