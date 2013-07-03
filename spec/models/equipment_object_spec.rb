@@ -44,7 +44,7 @@ describe EquipmentObject do
     it "returns 'available' if the object is active and not currently checked out" do
       @object = FactoryGirl.create(:equipment_object)
       @object.status.should == 'available'
-      @reservation = FactoryGirl.create(:reservation)
+      @reservation = FactoryGirl.create(:valid_reservation)
       @reserved_object = @reservation.equipment_object
       @reserved_object.status.should == 'available'
     end
