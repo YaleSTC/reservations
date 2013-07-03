@@ -9,10 +9,8 @@ class User < ActiveRecord::Base
                           :join_table => "users_requirements"
 
   attr_accessible :login, :first_name, :last_name, :nickname, :phone, :email,
-                  :affiliation, :is_banned, :is_checkout_person, :is_admin,
-                  :adminmode, :checkoutpersonmode, :normalusermode, :bannedmode,
-                  :deleted_at, :requirement_ids, :user_ids, :terms_of_service_accepted,
-                  :created_by_admin
+                  :affiliation, :role, :view_mode, :created_by_admin,
+                  :deleted_at, :requirement_ids, :user_ids, :terms_of_service_accepted
 
   attr_accessor   :full_query, :created_by_admin, :user_type, :csv_import
 
@@ -32,6 +30,8 @@ class User < ActiveRecord::Base
                           :acceptance => {:accept => true, :message => "You must accept the terms of service."},
                           on: :create,
                           :if => Proc.new { |u| !u.created_by_admin == "true" }
+  validates :role,
+            :view_mode,   :inclusion => { in: ['admin', 'normal', 'checkout', 'banned'] }
 
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
   scope :active, where("#{table_name}.deleted_at is null")
@@ -41,19 +41,16 @@ class User < ActiveRecord::Base
   end
 
   def can_checkout?
-    self.is_checkout_person? || self.is_admin_in_adminmode? || self.is_admin_in_checkoutpersonmode?
+    role == 'checkout' || self.is_admin?(:as => 'admin') || self.is_admin?(:as => 'checkout')
   end
 
-  def is_admin_in_adminmode?
-    is_admin? && adminmode?
-  end
-
-  def is_admin_in_checkoutpersonmode?
-    is_admin? && checkoutpersonmode?
-  end
-
-  def is_admin_in_bannedmode?
-    is_admin? && bannedmode?
+  def is_admin?(options = {})
+    if role == 'admin'
+      if options.empty? || options[:as] == view_mode
+        return true
+      end
+    end
+    return false
   end
 
   def equipment_objects
@@ -103,23 +100,6 @@ class User < ActiveRecord::Base
 
   def render_name
     [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name, login].join(" ")
-  end
-
-  def assign_type(user_type)
-    # The database requires that we reset all of the values to nil when this method is called
-    # I don't know if what I did here is any better than what we had before (although it is more readable)
-
-    self.is_admin = nil
-    self.is_checkout_person = nil
-    self.is_banned = nil
-
-    if user_type == 'admin'
-      self.is_admin = '1'
-    elsif user_type == 'checkout'
-      self.is_checkout_person = '1'
-    elsif user_type == 'banned'
-      self.is_banned = '1'
-    end
   end
 
 end

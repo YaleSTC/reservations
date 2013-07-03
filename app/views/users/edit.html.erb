@@ -4,7 +4,7 @@
   <%= render :partial => 'form' %>
 </div>
 
-<% if current_user.is_admin_in_adminmode? %>
+<% if current_user.is_admin?(:as => 'admin') %>
   <p>
     <%= link_to "Show", @user %> |
     <%= link_to "View All", users_path %> |

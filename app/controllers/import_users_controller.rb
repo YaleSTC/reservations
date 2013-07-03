@@ -6,7 +6,7 @@ class ImportUsersController < ApplicationController
     # initialize
     file = params[:csv_upload] # the file object
     if file
-      user_type = params[:@user_type]
+      user_type = params[:user_type]
       overwrite = (params[:overwrite] == '1') # update existing users?
       filepath = file.tempfile.path # the rails CSV class needs a filepath
 
@@ -17,7 +17,7 @@ class ImportUsersController < ApplicationController
     if valid_input_file?(imported_users, file)
       # create the users and exit
       @hash_of_statuses = import_users(imported_users, overwrite, user_type)
-      render 'import_success'
+      render 'imported'
     end
   end
 
@@ -113,7 +113,7 @@ class ImportUsersController < ApplicationController
       # if the updated or new user is valid, save to database and add to array of successful imports
       if user.valid?
         user.csv_import = true
-        user.assign_type(@user_type)
+        user.role = @user_type
         user.save
         @array_of_success << user
         return true
@@ -135,7 +135,7 @@ class ImportUsersController < ApplicationController
 
       # set other user attributes
       user.csv_import = true
-      user.assign_type(@user_type)
+      user.role = @user_type
 
       if user.valid?
         user.save
@@ -147,7 +147,7 @@ class ImportUsersController < ApplicationController
       end
     end
 
-    def import_users(array_of_user_data, overwrite = false, user_type = 'normal')
+    def import_users(array_of_user_data, overwrite=false, user_type='normal')
       # give safe defaults if none selected
 
       @array_of_success = [] # will contain user-objects
