@@ -1,24 +1,26 @@
 <%= simple_form_for @user, :html => { :class => "form-horizontal" }, :remote => true do |f| %>
   <%= f.error_notification %>
-  <% if current_user and (current_user.is_admin?(:as => 'admin') or ((current_user.is_admin?(:as => 'checkout') or current_user.role == 'checkout') and @user.id == NIL)) %>
+
+  <% if current_user and ( current_user.is_admin?(:as => 'admin') or (current_user.can_checkout? and @user.id == NIL) ) %>
     <%= f.input :login %>
-    <% else %>
+  <% else %>
       <%= f.input :login, :readonly => true, :input_html => {:value => @user.login}%>
-    <% end %>
-    <%= f.input :first_name %>
-    <%= f.input :last_name %>
-    <%= f.input :nickname %>
-    <%= f.input :phone, required: true, hint: "format like (555) 555-5555" %>
-    <%= f.input :email %>
-    <%= f.input :affiliation, hint: "including college, year, etc"%>
+  <% end %>
 
-    <% if params[:from_cart] == "true" %>
-      <%= hidden_field_tag(:from_cart, true) %>
-    <% else %>
-      <%= hidden_field_tag(:from_cart, false) %>
-    <% end %>
+  <%= f.input :first_name %>
+  <%= f.input :last_name %>
+  <%= f.input :nickname %>
+  <%= f.input :phone, required: true, hint: "format like (555) 555-5555" %>
+  <%= f.input :email %>
+  <%= f.input :affiliation, hint: "including college, year, etc"%>
 
-    <%= render partial: 'terms_of_service/user_accepted', locals: {f: f}%>
+  <% if params[:from_cart] == "true" %>
+    <%= hidden_field_tag(:from_cart, true) %>
+  <% else %>
+    <%= hidden_field_tag(:from_cart, false) %>
+  <% end %>
+
+  <%= render partial: 'terms_of_service/user_accepted', locals: {f: f}%>
 
   <% if current_user && current_user.is_admin?(:as => 'admin') %>
       <%# TODO: Make this a fancy box %>
@@ -26,9 +28,11 @@
       <%= f.input :role, collection: ['normal', 'checkout', 'admin', 'banned'], placeholder: 'normal' %>
       <%= f.input :deleted_at, label: "Disabled", :as => :deleted %>
   <% end %>
+
   <% if @user %>
     <%= f.button :wrapped, cancel: @user %>
   <% else %>
     <%= f.button :wrapped, cancel: root_path %>
   <% end %>
+
 <% end %>

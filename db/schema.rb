@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130628165324) do
+ActiveRecord::Schema.define(:version => 20130628154151) do
 
   create_table "app_configs", :force => true do |t|
     t.boolean  "upcoming_checkin_email_active",                      :default => true

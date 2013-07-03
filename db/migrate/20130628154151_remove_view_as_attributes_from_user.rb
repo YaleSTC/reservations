@@ -2,7 +2,7 @@ class RemoveViewAsAttributesFromUser < ActiveRecord::Migration
   def up
     add_column :users, :view_mode, :string, :default => 'admin'
 
-    User.each do |user|
+    User.all.each do |user|
       if user.bannedmode
         user.view_mode = 'banned'
       elsif user.checkoutpersonmode
@@ -28,7 +28,7 @@ class RemoveViewAsAttributesFromUser < ActiveRecord::Migration
     add_column :users, :normalusermode, :boolean, :default => false
     add_column :users, :bannedmode, :boolean, :default => false
 
-    User.each do |user|
+    User.all.each do |user|
       if user.view_mode == 'admin'
         user.adminmode = true
       elsif user.view_mode == 'checkout'

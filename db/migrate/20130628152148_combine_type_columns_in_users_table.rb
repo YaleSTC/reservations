@@ -2,7 +2,7 @@ class CombineTypeColumnsInUsersTable < ActiveRecord::Migration
   def up
     add_column :users, :role, :string, :default => 'normal'
 
-    User.each do |user|
+    User.all.each do |user|
       if user.is_banned
         user.role = 'banned'
       elsif user.is_admin
@@ -26,7 +26,7 @@ class CombineTypeColumnsInUsersTable < ActiveRecord::Migration
     add_column :users, :is_admin, :boolean, :default => false
     add_column :users, :is_checkout_person, :boolean, :default => false
 
-    User.each do |user|
+    User.all.each do |user|
       if user.role == 'banned'
         user.is_banned = true
       elsif user.role == 'admin'
