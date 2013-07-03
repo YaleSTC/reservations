@@ -1,8 +1,8 @@
-<% accepted = @user.terms_of_service_accepted == true %>
+<% accepted = (@user.terms_of_service_accepted == true) %>
 <% new_user_by_self = !current_user %>
-<% new_user_by_admin = (params[:action] == 'new') && current_user && (current_user.role == 'admin' || current_user.role == 'checkout') %>
-<% edit_user_by_self = current_user == @user %>
-<% edit_user_by_admin = current_user && (current_user.role == 'admin' || current_user.role == 'checkout') %>
+<% new_user_by_admin = ((params[:action] == 'new') && current_user && (current_user.can_checkout?)) %>
+<% edit_user_by_self = (current_user == @user) %>
+<% edit_user_by_admin = (current_user && current_user.can_checkout?) %>
 
 <% if new_user_by_self %>
     <%= f.input :terms_of_service_accepted,
