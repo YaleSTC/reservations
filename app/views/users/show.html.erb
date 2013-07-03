@@ -12,11 +12,11 @@
 
 <div class="row">
   <div id="bool_labels" class="span9">
-    <% if current_user.is_admin_in_adminmode? %>
-      <%= "<span class=\"user_label label-important\">Banned</span>".html_safe if @user.is_banned? %>
+    <% if current_user.is_admin?(:as => 'admin') %>
+      <%= "<span class=\"user_label label-important\">Banned</span>".html_safe if @user.role == 'banned' %>
       <%= "<span class=\"user_label label-warning\">Deactivated</span>".html_safe if @user.deleted_at %>
-      <%= "<span class=\"user_label label-success\">Admin</span>".html_safe if @user.is_admin? %>
-      <%= "<span class=\"user_label\">Checkout Person</span>".html_safe if @user.is_checkout_person? %>
+      <%= "<span class=\"user_label label-success\">Admin</span>".html_safe if @user.role == 'admin' %>
+      <%= "<span class=\"user_label\">Checkout Person</span>".html_safe if @user.role == 'checkout' %>
     <% end %>
   </div>
 </div>
@@ -131,7 +131,7 @@
 
 <div class="form-actions">
   <%= link_to "Edit Information", edit_user_path(@user), :class => 'btn' %>
-  <% if current_user.is_admin_in_adminmode? %>
+  <% if current_user.is_admin?(:as => 'admin') %>
     <% if @user.deleted_at %>
       <%= link_to "Activate User", activate_path(:users,@user.id), :class => "btn btn-success", :method => :put %>
     <% else %>
