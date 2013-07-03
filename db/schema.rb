@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130327193420) do
+ActiveRecord::Schema.define(:version => 20130628154151) do
 
   create_table "app_configs", :force => true do |t|
     t.boolean  "upcoming_checkin_email_active",                      :default => true
@@ -37,13 +37,13 @@ ActiveRecord::Schema.define(:version => 20130327193420) do
     t.boolean  "checkout_persons_can_edit",                          :default => false
   end
 
-  create_table "black_outs", :force => true do |t|
+  create_table "blackouts", :force => true do |t|
     t.integer  "equipment_model_id"
     t.date     "start_date"
     t.date     "end_date"
     t.text     "notice"
     t.integer  "created_by"
-    t.text     "black_out_type"
+    t.text     "blackout_type"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
     t.integer  "set_id"
@@ -175,17 +175,12 @@ ActiveRecord::Schema.define(:version => 20130327193420) do
     t.string   "phone"
     t.string   "email"
     t.string   "affiliation"
-    t.boolean  "is_banned",                 :default => false
-    t.boolean  "is_admin",                  :default => false
-    t.boolean  "is_checkout_person",        :default => false
-    t.datetime "created_at",                                   :null => false
-    t.datetime "updated_at",                                   :null => false
-    t.boolean  "adminmode",                 :default => true
-    t.boolean  "checkoutpersonmode",        :default => false
-    t.boolean  "normalusermode",            :default => false
-    t.boolean  "bannedmode",                :default => false
+    t.datetime "created_at",                                      :null => false
+    t.datetime "updated_at",                                      :null => false
     t.datetime "deleted_at"
     t.boolean  "terms_of_service_accepted"
+    t.string   "role",                      :default => "normal"
+    t.string   "view_mode",                 :default => "admin"
   end
 
   create_table "users_requirements", :id => false, :force => true do |t|

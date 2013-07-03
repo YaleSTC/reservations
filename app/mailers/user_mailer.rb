@@ -1,5 +1,8 @@
 class UserMailer < ActionMailer::Base
-  default :from => AppConfig.first.admin_email, :cc => AppConfig.first.admin_email
+  # Workaround so that RSpec start-up doesn't fail. TODO: Have RSpec initialize AppConfig with configuration.
+  unless (AppConfig.first.nil?)
+    default :from => AppConfig.first.admin_email, :cc => AppConfig.first.admin_email
+  end
 
   def checkin_receipt(reservation)
     set_app_config

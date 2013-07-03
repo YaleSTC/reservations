@@ -37,11 +37,10 @@ gem 'simple_form'
 gem 'cocoon'
 gem 'redcarpet'
 
-
-
 group :development, :test do
   gem 'factory_girl_rails'
   gem 'rspec-rails'
+  gem 'shoulda-matchers'
   gem 'capybara'
   gem 'guard-livereload'
   gem 'yajl-ruby'

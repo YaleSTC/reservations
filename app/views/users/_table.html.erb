@@ -5,7 +5,7 @@
     <th>First Name</th>
     <th>Nickname</th>
     <th>Last Name</th>
-    <% if current_user.is_admin_in_adminmode? %>
+    <% if current_user.is_admin?(:as => 'admin') %>
       <th class="no_sort"> </th>
       <th class="no_sort"> </th>
     <% end %>
@@ -13,7 +13,7 @@
   </thead>
   <tbody>
   <% for user in users %>
-    <% if user.deleted_at %> 
+    <% if user.deleted_at %>
       <tr class="deactivated">
       <% @toggle = "link_to \"Activate\", activate_path(:users,user.id), :class => \"btn btn-success\", :method => :put" %>
     <% else %>
@@ -24,7 +24,7 @@
     <td><%= link_to user.first_name, user %></td>
     <td><%= link_to user.nickname, user %></td>
     <td><%= link_to user.last_name, user %></td>
-    <% if current_user.is_admin_in_adminmode? %>
+    <% if current_user.is_admin?(:as => 'admin') %>
       <td><%= link_to "Edit", edit_user_path(user), :class => "btn" %></td>
       <td><%= eval @toggle %></td>
     <% end %>

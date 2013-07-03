@@ -12,46 +12,46 @@
 
 <div class="row">
   <div id="bool_labels" class="span9">
-    <% if current_user.is_admin_in_adminmode? %>
-      <%= "<span class=\"user_label label-important\">Banned</span>".html_safe if @user.is_banned? %>
+    <% if current_user.is_admin?(:as => 'admin') %>
+      <%= "<span class=\"user_label label-important\">Banned</span>".html_safe if @user.role == 'banned' %>
       <%= "<span class=\"user_label label-warning\">Deactivated</span>".html_safe if @user.deleted_at %>
-      <%= "<span class=\"user_label label-success\">Admin</span>".html_safe if @user.is_admin? %>
-      <%= "<span class=\"user_label\">Checkout Person</span>".html_safe if @user.is_checkout_person? %>
+      <%= "<span class=\"user_label label-success\">Admin</span>".html_safe if @user.role == 'admin' %>
+      <%= "<span class=\"user_label\">Checkout Person</span>".html_safe if @user.role == 'checkout' %>
     <% end %>
   </div>
 </div>
 
 
 <div class="row">
-  
-  
+
+
   <dl id="user_info" class="dl-horizontal span4">
     <div class="well">
     <dt>Login</dt>
     <dd><%= @user.login %></dd>
-    
+
     <dt>First Name</dt>
     <dd><%= @user.first_name %></dd>
-    
+
     <dt>Last Name</dt>
     <dd><%= @user.last_name %></dd>
-    
+
     <dt>Nickname</dt>
     <dd><%= !@user.nickname.blank? ? @user.nickname : "(none)" %></dd>
-    
+
     <dt>Phone</dt>
     <dd><%= @user.phone %></dd>
-    
+
     <dt>Email</dt>
     <dd><%= mail_to @user.email, @user.email %></dd>
-    
+
     <dt>Affiliation</dt>
     <dd><%= @user.affiliation %></dd>
     </div>
   </dl>
-  
+
   <div id="user_stats" class="span5">
-    
+
   <% @show_equipment.each do |key, value| %>
     <%= content_tag :div, :id => "#{key}_count", :class => 'span2' do %>
       <%= content_tag :h4, key.to_s.titleize %>
@@ -100,7 +100,7 @@
 
 <div class="row">
   <div class="tabbable tabs-left span9">
-  
+
     <ul class="nav nav-tabs">
       <% @show_equipment.each do |key, value| %>
         <%= content_tag :li, :class => active_tab(key) do %>
@@ -111,7 +111,7 @@
         <% end %>
       <% end %>
     </ul>
-    
+
     <div class="tab-content">
       <% @show_equipment.each do |key, value| %>
         <p>
@@ -122,17 +122,17 @@
           <% end %>
         </p>
       <% end %>
-      
+
     </div>
-    
+
   </div>
 </div>
 
 
 <div class="form-actions">
   <%= link_to "Edit Information", edit_user_path(@user), :class => 'btn' %>
-  <% if current_user.is_admin_in_adminmode? %>
-    <% if @user.deleted_at %> 
+  <% if current_user.is_admin?(:as => 'admin') %>
+    <% if @user.deleted_at %>
       <%= link_to "Activate User", activate_path(:users,@user.id), :class => "btn btn-success", :method => :put %>
     <% else %>
       <%= link_to "Deactivate User", deactivate_path(:users, @user), :class => "btn btn-danger", :method => :put %>

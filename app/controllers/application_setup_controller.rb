@@ -8,28 +8,12 @@ class ApplicationSetupController < ApplicationController
   before_filter :new_admin_user
   before_filter :redirect_if_not_first_run
 
+  ## TODO: Replace everything below with rake task per issue 415
 
   def new_admin_user
     flash[:notice] = "Welcome to Reservations! Create your user and you will be guided
                       through a setup to get your application up and running."
-    if current_user and current_user.is_admin_in_adminmode?
-       @user = User.new
-     else
-       @user = User.new(User.search_ldap(session[:cas_user]))
-       @user.login = session[:cas_user] #default to current login
-     end
-   end
-
-  def create_admin_user
-    @user = User.new(params[:user])
-    @user.login = session[:cas_user] unless current_user and current_user.can_checkout?
-    @user.is_admin = true
-    if @user.save
-      flash[:notice] = "Successfully created Admin."
-      redirect_to new_app_configs_path
-    else
-      render :action => 'new_admin_user'
-    end
+    redirect_to new_user_path
   end
 
   def load_configs
