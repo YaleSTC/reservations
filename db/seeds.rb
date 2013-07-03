@@ -345,12 +345,12 @@ if entered_num.integer? && entered_num > 0
     random_time = time_rand(Time.now + 1.year)
     random_end_date = time_rand(random_time, random_time.next_week)
 
-    BlackOut.create! do |blk|
+    Blackout.create! do |blk|
       blk.start_date = random_time
       blk.end_date = random_end_date
       blk.notice = Faker::HipsterIpsum.paragraph(2)
       blk.created_by = User.first.id
-      blk.black_out_type = ['soft', 'hard'].sample
+      blk.blackout_type = ['soft', 'hard'].sample
       blk.equipment_model_id = 0
     end
   end

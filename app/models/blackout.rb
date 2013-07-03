@@ -1,44 +1,44 @@
-class BlackOut < ActiveRecord::Base
+class Blackout < ActiveRecord::Base
 
   belongs_to :equipment_model
-  attr_accessible :start_date, :end_date, :notice, :equipment_model_id, :black_out_type, :created_by, :set_id
+  attr_accessible :start_date, :end_date, :notice, :equipment_model_id, :blackout_type, :created_by, :set_id
 
   attr_accessor :days # needed for days of the week checkboxes in new_recurring
 
   validates :notice,
             :start_date,
             :equipment_model_id,
-            :black_out_type,
+            :blackout_type,
             :end_date, :presence => true
 
   validate :validate_end_date_before_start_date
   # this only matters if a user tries to inject into params because the datepicker
   # doesn't allow form submission of invalid dates
 
-  def self.black_outs_on_date(date) # Returns the black_out object that blacks out the day if the day is blacked out. Otherwise, returns nil.
-    black_outs = []
-    BlackOut.all.each do |black_out|
-      if ((black_out.start_date..black_out.end_date).cover?(date.to_date))
-        black_outs << black_out
+  def self.blackouts_on_date(date) # Returns the blackout object that blacks out the day if the day is blacked out. Otherwise, returns nil.
+    blackouts = []
+    Blackout.all.each do |blackout|
+      if ((blackout.start_date..blackout.end_date).cover?(date.to_date))
+        blackouts << blackout
       end
     end
-    black_outs
+    blackouts
   end
 
-  #TODO: fix typo here and everywhere that this method is called. While at it, put a space in black_out since that's
+  #TODO: fix typo here and everywhere that this method is called. While at it, put a space in blackout since that's
   # it is everywhere else.
-  def self.hard_backout_exists_on_date(date)
-    black_outs = self.black_outs_on_date(date)
-    if black_outs && black_outs.map(&:black_out_type).include?('hard')
+  def self.hard_blackout_exists_on_date(date)
+    blackouts = self.blackouts_on_date(date)
+    if blackouts && blackouts.map(&:blackout_type).include?('hard')
       return true
     else
       return false
     end
   end
 
-  def self.create_black_out_set(params_hash)
+  def self.create_blackout_set(params_hash)
     #generate a unique id for this blackout date set, make sure that nil reads as 0 for the first blackout
-    params_hash[:set_id] = BlackOut.last.id.to_i + 1
+    params_hash[:set_id] = Blackout.last.id.to_i + 1
 
     # create an array of individual black out dates to include in set
     individual_dates = []
@@ -49,18 +49,18 @@ class BlackOut < ActiveRecord::Base
       end
     end
     # save an individual blackout on each date
-    return create_individual_black_outs_for_set(individual_dates, params_hash)
+    return create_individual_blackouts_for_set(individual_dates, params_hash)
   end
 
   private
-    def self.create_individual_black_outs_for_set(individual_dates, params_hash)
+    def self.create_individual_blackouts_for_set(individual_dates, params_hash)
       successful_save = false
       individual_dates.each do |date|
         # create and save
-        @black_out = BlackOut.new(params_hash)
-        @black_out.start_date = date
-        @black_out.end_date = date
-        successful_save = @black_out.save
+        @blackout = Blackout.new(params_hash)
+        @blackout.start_date = date
+        @blackout.end_date = date
+        successful_save = @blackout.save
       end
 
       # return the error message unless a successful save was achieved
