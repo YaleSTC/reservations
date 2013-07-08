@@ -7,15 +7,39 @@ describe EquipmentObjectsController do
 
 	context 'with admin user' do
     before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
-    
+
     describe 'GET index' do
-      before(:each) do
-        get :index
-      end
+      before { get :index }
       it { should respond_with(:success) }
       it { should render_template(:index) }
       it { should_not set_the_flash }
-      it 'should have a lot more tests'
+      context 'without show deleted' do
+        context 'with @equipment_model set' do
+          it 'should populate an array of all requirements' do
+            get :index, equipment_model_id: object.equipment_model
+            expect(assigns(:equipment_objects)).to eq(object.equipment_model.equipment_objects)
+          end
+        end
+        context 'without @equipment_model set' do
+          it 'should populate an array of all objects' do
+            expect(assigns(:equipment_objects)).to eq(EquipmentObject.active)
+          end
+        end
+      end
+      context 'with show deleted' do
+        context 'with @equipment_model set' do
+          it 'should populate an array of all requirements' do
+            get :index, equipment_model_id: object.equipment_model, show_deleted: true
+            expect(assigns(:equipment_objects)).to eq(object.equipment_model.equipment_objects.active)
+          end
+        end
+        context 'without @equipment_model set' do
+          it 'should populate an array of all objects' do
+            get :index, show_deleted: true
+            expect(assigns(:equipment_objects)).to eq(EquipmentObject.all)
+          end     
+        end   
+      end
     end
 
     describe 'GET show' do
@@ -131,7 +155,9 @@ describe EquipmentObjectsController do
   context 'with checkout person user' do
     before { @controller.stub(:current_user).and_return(FactoryGirl.create(:checkout_person)) }
     describe 'GET index' do
-      it 'should respond like it did for admin'
+      before { get :index }
+      it { should respond_with(:success) }
+      it { should render_template(:index) }
     end
   end
 
