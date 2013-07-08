@@ -14,36 +14,86 @@ describe EquipmentModelsController do
       it { should render_template(:index) }
       it { should_not set_the_flash }
       context 'without show deleted' do
+				let!(:mod_other_cat_active) { FactoryGirl.create(:equipment_model) }
+				let!(:mod_other_cat_inactive) { FactoryGirl.create(:equipment_model,
+					deleted_at: Date.today) }
         context 'with @category set' do
           it 'should populate an array of of active category-type equipment models' do
+          	mod_same_cat_inactive = FactoryGirl.create(:equipment_model,
+          		category: model.category, deleted_at: Date.today)
             get :index, category_id: model.category
-            expect(assigns(:equipment_models)).to eq(model.category.equipment_models.active)
+            assigns(:equipment_models).include?(model).should be_true
+            assigns(:equipment_models).include?(mod_other_cat_active).should_not be_true
+            assigns(:equipment_models).include?(mod_same_cat_inactive).should_not be_true
+            assigns(:equipment_models).include?(mod_other_cat_inactive).should_not be_true 
+            expect(assigns(:equipment_models).size).to eq(1)            
           end
         end
         context 'without @category set' do
           it 'should populate an array of all active equipment models' do
-            expect(assigns(:equipment_models)).to eq(EquipmentModel.active)
+            assigns(:equipment_models).include?(model).should be_true
+            assigns(:equipment_models).include?(mod_other_cat_active).should be_true
+            assigns(:equipment_models).include?(mod_other_cat_inactive).should_not be_true 
+            expect(assigns(:equipment_models).size).to eq(2)           
           end
         end
       end
-      context 'with show deleted' do
+	    context 'with show deleted' do
+				let!(:mod_other_cat_active) { FactoryGirl.create(:equipment_model) }
+				let!(:mod_other_cat_inactive) { FactoryGirl.create(:equipment_model,
+					deleted_at: Date.today) }
         context 'with @category set' do
           it 'should populate an array of category-type equipment models' do
+          	mod_same_cat_inactive = FactoryGirl.create(:equipment_model,
+          		category: model.category, deleted_at: Date.today)
             get :index, category_id: model.category, show_deleted: true
-            expect(assigns(:equipment_models)).to eq(model.category.equipment_models)
+            assigns(:equipment_models).include?(model).should be_true
+            assigns(:equipment_models).include?(mod_other_cat_active).should_not be_true
+            assigns(:equipment_models).include?(mod_same_cat_inactive).should be_true            
+            assigns(:equipment_models).include?(mod_other_cat_inactive).should_not be_true 
+            expect(assigns(:equipment_models).size).to eq(2)      
           end
         end
         context 'without @category set' do
           it 'should populate an array of all equipment models' do
             get :index, show_deleted: true
-            expect(assigns(:equipment_models)).to eq(EquipmentModel.all)
+            assigns(:equipment_models).include?(model).should be_true
+            assigns(:equipment_models).include?(mod_other_cat_active).should be_true
+            assigns(:equipment_models).include?(mod_other_cat_inactive).should be_true 
+            expect(assigns(:equipment_models).size).to eq(3)
           end     
         end   
       end
     end
 		
-		describe 'GET show'
-
+		describe 'GET show' do
+      before { get :show, id: model }
+      it { should respond_with(:success) }
+      it { should render_template(:show) }
+      it { should_not set_the_flash }
+      it 'should set to correct equipment model' do
+        expect(assigns(:equipment_model)).to eq(model)
+      end
+      it 'should set @associated_equipment_models' do
+      	mod1 = FactoryGirl.create(:equipment_model)
+      	model.associated_equipment_models = [mod1]
+      	get :show, id: model
+      	expect(assigns(:associated_equipment_models).size).to eq(1)
+      	expect(assigns(:associated_equipment_models)).to eq([] << mod1)
+      end
+      it 'should limit @associated_equipment_models to maximum 6' do
+      	mod1 = FactoryGirl.create(:equipment_model)
+      	mod2 = FactoryGirl.create(:equipment_model)
+      	mod3 = FactoryGirl.create(:equipment_model)
+      	mod4 = FactoryGirl.create(:equipment_model)
+      	mod5 = FactoryGirl.create(:equipment_model)
+      	mod6 = FactoryGirl.create(:equipment_model)
+      	mod7 = FactoryGirl.create(:equipment_model)
+      	model.associated_equipment_models = [mod1, mod2, mod3, mod4, mod5, mod6, mod7]
+      	get :show, id: model
+      	expect(assigns(:associated_equipment_models).size).to eq(6)
+      end
+    end
 		
     describe 'GET new' do
       before { get :new }
