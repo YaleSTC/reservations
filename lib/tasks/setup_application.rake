@@ -24,7 +24,7 @@ namespace :app do
         phone = STDIN.gets.chomp
         puts 'Email Address:'
         email = STDIN.gets.chomp
-        puts 'Login (i.e. NetID, please double check that this is correct as this script does not perform the normal validations):'
+        puts 'Login (i.e. NetID, please double check that this is correct):'
         login = STDIN.gets.chomp
         puts 'Affiliation (i.e. Yale College):'
         affiliation = STDIN.gets.chomp
@@ -86,7 +86,7 @@ namespace :app do
         puts ''
         puts 'Site title (this will show across the top of the browser window when visiting your site):'
         site_title = STDIN.gets.chomp
-        puts 'Administrator Email (emails sent to this address will forward to ????):'
+        puts 'Administrator Email (this email address will receive administrator notifications from the application):'
         admin_email = STDIN.gets.chomp
         puts 'Department Name (e.g. School of Art Digital Technology Office):'
         department_name = STDIN.gets.chomp
@@ -94,8 +94,6 @@ namespace :app do
         home_link_text = STDIN.gets.chomp
         puts 'Home Link Location (e.g. http://clc.yale.edu):'
         home_link_location = STDIN.gets.chomp
-        puts 'Default number of items shown in catalog on homepage:'
-        default_per_cat_page = STDIN.gets.chomp
 
         ActiveRecord::Base.transaction do
           begin
@@ -113,7 +111,7 @@ namespace :app do
               ac.department_name = department_name
               ac.home_link_text = home_link_text
               ac.home_link_location = home_link_location
-              ac.default_per_cat_page = default_per_cat_page
+              ac.default_per_cat_page = 20
             end
           rescue Exception => e
             ActiveRecord::Rollback

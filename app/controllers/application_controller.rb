@@ -6,10 +6,10 @@ class ApplicationController < ActionController::Base
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
   before_filter RubyCAS::Filter
-  before_filter :app_setup, :if => lambda {|u| User.all.count == 0 }
-  before_filter :load_configs
+  before_filter :app_setup_check
 
   with_options :unless => lambda {|u| User.all.count == 0 } do |c|
+    c.before_filter :load_configs
     c.before_filter :current_user
     c.before_filter :first_time_user
     c.before_filter :cart
@@ -23,8 +23,13 @@ class ApplicationController < ActionController::Base
 
   #-------- before_filter methods --------
 
-  def app_setup
-      redirect_to new_admin_user_path
+  def app_setup_check
+    if User.all.blank? || !AppConfig.first
+      flash[:notice] = "Hey there! It looks like you haven't fully set up your application yet. To \
+      create your first admin user and configure the application, please run $bundle exec rake app:setup \
+      in the terminal. For more information, please see our github page: https://github.com/YaleSTC/reservations"
+      render file: 'application_setup/index', layout: 'application'
+    end
   end
 
   def load_configs
@@ -48,7 +53,7 @@ class ApplicationController < ActionController::Base
   end
 
   def set_view_mode
-    if current_user.role == 'admin' && params[:view_mode]
+    if current_user && current_user.role == 'admin' && params[:view_mode]
       # gives a more user friendly notice when changing view modes
       messages_hash = { 'admin' => 'Admin',
                         'banned' => 'Banned User',
