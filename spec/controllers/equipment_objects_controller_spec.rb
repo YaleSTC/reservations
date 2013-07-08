@@ -20,7 +20,6 @@ describe EquipmentObjectsController do
 
     describe 'GET show' do
       before { get :show, id: object }
-
       it { should respond_with(:success) }
       it { should render_template(:show) }
       it { should_not set_the_flash }
@@ -31,7 +30,6 @@ describe EquipmentObjectsController do
     
     describe 'GET new' do
       before { get :new }
-
       it { should respond_with(:success) }
       it { should render_template(:new) }
       it { should_not set_the_flash }
@@ -51,9 +49,8 @@ describe EquipmentObjectsController do
         
     describe 'POST create' do
       context 'with valid attributes' do
-        before { post :create, equipment_object: FactoryGirl.attributes_for(
-          :equipment_object, serial: "Enter serial # (optional)", equipment_model_id: object.equipment_model.id) }
-        
+        before { post :create, equipment_object: FactoryGirl.attributes_for(:equipment_object,
+          serial: "Enter serial # (optional)", equipment_model_id: object.equipment_model.id) }
         it 'should save object' do
           expect{ post :create, equipment_object: FactoryGirl.attributes_for(
             :equipment_object, equipment_model_id: object.equipment_model.id)
@@ -67,13 +64,13 @@ describe EquipmentObjectsController do
       end
 
       context 'without valid attributes' do
-        before { post :create, equipment_object: FactoryGirl.attributes_for(:equipment_object, name: nil) }
-
+        before { post :create,
+          equipment_object: FactoryGirl.attributes_for(:equipment_object, name: nil) }
         it { should_not set_the_flash }
         it { should render_template(:new) }
         it 'should not save' do
-          expect{ post :create, equipment_object: FactoryGirl.attributes_for(:equipment_object, name: nil)
-            }.not_to change(EquipmentObject, :count)
+          expect{ post :create,equipment_object: FactoryGirl.attributes_for(
+            :equipment_object, name: nil) }.not_to change(EquipmentObject, :count)
         end
         it { should render_template(:new) }
       end
@@ -81,7 +78,6 @@ describe EquipmentObjectsController do
 
     describe 'GET edit' do
       before { get :edit, id: object }
-
       it { should respond_with(:success) }
       it { should render_template(:edit) }
       it { should_not set_the_flash }
@@ -92,8 +88,8 @@ describe EquipmentObjectsController do
     
     describe 'PUT update' do
       context 'with valid attributes' do
-        before { put :update, id: object, equipment_object: FactoryGirl.attributes_for(:equipment_object, name: 'Obj') }
-
+        before { put :update, id: object,
+          equipment_object: FactoryGirl.attributes_for(:equipment_object, name: 'Obj') }
         it { should set_the_flash }
         it 'sets @equipment_object to selected object' do
           expect(assigns(:equipment_object)).to eq(object)
@@ -106,8 +102,8 @@ describe EquipmentObjectsController do
       end
 
       context 'without valid attributes' do
-        before { put :update, id: object, equipment_object: FactoryGirl.attributes_for(:equipment_object, name: nil) }
-
+        before { put :update, id: object,
+          equipment_object: FactoryGirl.attributes_for(:equipment_object, name: nil) }
         it { should_not set_the_flash }
         it 'should not update attributes' do
           object.reload
@@ -123,7 +119,6 @@ describe EquipmentObjectsController do
       end
       context do
         before { delete :destroy, id: object }
-
         it { should set_the_flash }
         it { should redirect_to(object.equipment_model) }
         it 'sets @equipment_object to selected object' do
