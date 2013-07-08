@@ -1,8 +1,11 @@
 class AppConfigsController < ApplicationController
   before_filter :require_admin
-  
+  skip_before_filter :seen_app_configs, only: [:edit, :update]
+
   def edit
     @app_config = AppConfig.first || AppConfig.new
+    @app_config.viewed = true
+    @app_config.save!
   end
 
   def update
@@ -17,7 +20,7 @@ class AppConfigsController < ApplicationController
         @app_config.favicon = nil
         @app_config.save
       end
-      
+
       flash[:notice] = "Application settings updated successfully."
       redirect_to catalog_path
     else

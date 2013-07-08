@@ -10,6 +10,7 @@ class ApplicationController < ActionController::Base
 
   with_options :unless => lambda {|u| User.all.count == 0 } do |c|
     c.before_filter :load_configs
+    c.before_filter :seen_app_configs
     c.before_filter :current_user
     c.before_filter :first_time_user
     c.before_filter :cart
@@ -34,6 +35,14 @@ class ApplicationController < ActionController::Base
 
   def load_configs
     @app_configs = AppConfig.first
+  end
+
+  def seen_app_configs
+    if AppConfig.first.viewed == false
+      flash[:notice] = "Since this is your first time viewing the application configurations, we recoomend\
+      that you take some time to read each option and make sure that the settings are appropriate for your needs."
+      redirect_to edit_app_configs_path
+    end
   end
 
   def first_time_user

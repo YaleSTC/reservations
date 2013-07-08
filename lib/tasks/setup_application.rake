@@ -112,6 +112,7 @@ namespace :app do
               ac.home_link_text = home_link_text
               ac.home_link_location = home_link_location
               ac.default_per_cat_page = 20
+              ac.viewed = false
             end
           rescue Exception => e
             ActiveRecord::Rollback
