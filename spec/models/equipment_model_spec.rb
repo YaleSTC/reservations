@@ -249,8 +249,6 @@ describe EquipmentModel do
       end
     end
 
-    # TODO: All of these methods require reservation objects to be built.
-    # Continue with this after merging with Erin's reservation tests and factories.
     context "methods involving reservations" do
       before(:each) do
         @model = FactoryGirl.create(:equipment_model)
@@ -258,18 +256,18 @@ describe EquipmentModel do
       end
       describe ".num_available" do
         it "should return the number of objects of that model available over a given date range" do
-          @reservation = FactoryGirl.create(:reservation, equipment_model: @model)
+          @reservation = FactoryGirl.create(:valid_reservation, equipment_model: @model)
           @model.num_available(@reservation.start_date, @reservation.due_date).should == 1
         end
         it "should return 0 if no objects of that model are available" do
           @object.destroy
-          @reservation = FactoryGirl.create(:reservation, equipment_model: @model)
+          @reservation = FactoryGirl.create(:valid_reservation, equipment_model: @model)
           @model.num_available(@reservation.start_date, @reservation.due_date).should == 0
         end
       end
       describe ".number_reserved_on_date" do
         it "should return the number of objects of that model reserved on that date but not checked out" do
-          @reservation = FactoryGirl.create(:reservation, equipment_model: @model)
+          @reservation = FactoryGirl.create(:valid_reservation, equipment_model: @model)
           @checked_out = FactoryGirl.create(:checked_out_reservation, equipment_model: @model)
           @model.equipment_objects.size.should == 3
           @model.number_reserved_on_date(Date.today).should == 2
@@ -285,7 +283,7 @@ describe EquipmentModel do
       end
       describe ".available_count" do
         it "should take the total # of the model, subtract the number reserved, checked-out, and overdue for the given date and return the result" do
-          @reservation = FactoryGirl.create(:reservation, equipment_model: @model)
+          @reservation = FactoryGirl.create(:valid_reservation, equipment_model: @model)
           @checked_out = FactoryGirl.create(:checked_out_reservation, equipment_model: @model)
           @overdue = FactoryGirl.build(:overdue_reservation, equipment_model: @model)
           @overdue.save(validate: false)

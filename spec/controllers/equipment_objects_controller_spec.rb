@@ -17,7 +17,7 @@ describe EquipmentObjectsController do
         context 'with @equipment_model set' do
           it 'should populate an array of all active model-type equipment objects' do
             get :index, equipment_model_id: object.equipment_model
-            expect(assigns(:equipment_objects)).to eq(object.equipment_model.equipment_objects)
+            expect(assigns(:equipment_objects)).to eq(object.equipment_model.equipment_objects.active)
           end
         end
         context 'without @equipment_model set' do
@@ -30,7 +30,7 @@ describe EquipmentObjectsController do
         context 'with @equipment_model set' do
           it 'should populate an array of all model-type equipment objects' do
             get :index, equipment_model_id: object.equipment_model, show_deleted: true
-            expect(assigns(:equipment_objects)).to eq(object.equipment_model.equipment_objects.active)
+            expect(assigns(:equipment_objects)).to eq(object.equipment_model.equipment_objects)
           end
         end
         context 'without @equipment_model set' do

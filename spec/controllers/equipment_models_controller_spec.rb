@@ -17,7 +17,7 @@ describe EquipmentModelsController do
         context 'with @category set' do
           it 'should populate an array of of active category-type equipment models' do
             get :index, category_id: model.category
-            expect(assigns(:equipment_models)).to eq(model.category.equipment_models)
+            expect(assigns(:equipment_models)).to eq(model.category.equipment_models.active)
           end
         end
         context 'without @category set' do
@@ -30,7 +30,7 @@ describe EquipmentModelsController do
         context 'with @category set' do
           it 'should populate an array of category-type equipment models' do
             get :index, category_id: model.category, show_deleted: true
-            expect(assigns(:equipment_models)).to eq(model.category.equipment_models.active)
+            expect(assigns(:equipment_models)).to eq(model.category.equipment_models)
           end
         end
         context 'without @category set' do
@@ -43,6 +43,7 @@ describe EquipmentModelsController do
     end
 		
 		describe 'GET show'
+
 		
     describe 'GET new' do
       before { get :new }

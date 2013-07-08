@@ -42,7 +42,7 @@ class ReservationsController < ApplicationController
       @errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
 
       unless @errors.empty?
-        if current_user.is_admin_in_adminmode?
+        if current_user.is_admin?(:as => 'admin')
           flash[:error] = 'Are you sure you want to continue? Please review the errors below.'
         else
           flash[:error] = 'Please review the errors below.'
@@ -63,7 +63,7 @@ class ReservationsController < ApplicationController
           cart.cart_reservations.each do |cart_res|
             @reservation = Reservation.new(params[:reservation])
             @reservation.equipment_model =  cart_res.equipment_model
-            @reservation.from_admin = current_user.is_admin_in_adminmode?
+            @reservation.from_admin = current_user.is_admin?(:as => 'admin')
             @reservation.save!
             successful_reservations << @reservation
           end
@@ -185,7 +185,7 @@ class ReservationsController < ApplicationController
 
       # act on the errors
       if !error_msgs.empty? # If any requirements are not met...
-        if current_user.is_admin_in_adminmode? # Admins can ignore them
+        if current_user.is_admin?(:as => 'admin') # Admins can ignore them
           error_msgs = " Admin Override: Equipment has been successfully checked out even though " + error_msgs
         else # everyone else is redirected
           flash[:error] = error_msgs
