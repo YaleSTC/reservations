@@ -8,7 +8,39 @@ describe EquipmentModelsController do
 	context 'with admin user' do
 		before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
 
-		describe 'GET index'
+		describe 'GET index' do
+			before { get :index }
+      it { should respond_with(:success) }
+      it { should render_template(:index) }
+      it { should_not set_the_flash }
+      context 'without show deleted' do
+        context 'with @category set' do
+          it 'should populate an array of of active category-type equipment models' do
+            get :index, category_id: model.category
+            expect(assigns(:equipment_models)).to eq(model.category.equipment_models)
+          end
+        end
+        context 'without @category set' do
+          it 'should populate an array of all active equipment models' do
+            expect(assigns(:equipment_models)).to eq(EquipmentModel.active)
+          end
+        end
+      end
+      context 'with show deleted' do
+        context 'with @category set' do
+          it 'should populate an array of category-type equipment models' do
+            get :index, category_id: model.category, show_deleted: true
+            expect(assigns(:equipment_models)).to eq(model.category.equipment_models.active)
+          end
+        end
+        context 'without @category set' do
+          it 'should populate an array of all equipment models' do
+            get :index, show_deleted: true
+            expect(assigns(:equipment_models)).to eq(EquipmentModel.all)
+          end     
+        end   
+      end
+    end
 		
 		describe 'GET show'
 		

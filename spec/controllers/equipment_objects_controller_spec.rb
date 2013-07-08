@@ -15,26 +15,26 @@ describe EquipmentObjectsController do
       it { should_not set_the_flash }
       context 'without show deleted' do
         context 'with @equipment_model set' do
-          it 'should populate an array of all requirements' do
+          it 'should populate an array of all active model-type equipment objects' do
             get :index, equipment_model_id: object.equipment_model
             expect(assigns(:equipment_objects)).to eq(object.equipment_model.equipment_objects)
           end
         end
         context 'without @equipment_model set' do
-          it 'should populate an array of all objects' do
+          it 'should populate an array of all active equipment objects' do
             expect(assigns(:equipment_objects)).to eq(EquipmentObject.active)
           end
         end
       end
       context 'with show deleted' do
         context 'with @equipment_model set' do
-          it 'should populate an array of all requirements' do
+          it 'should populate an array of all model-type equipment objects' do
             get :index, equipment_model_id: object.equipment_model, show_deleted: true
             expect(assigns(:equipment_objects)).to eq(object.equipment_model.equipment_objects.active)
           end
         end
         context 'without @equipment_model set' do
-          it 'should populate an array of all objects' do
+          it 'should populate an array of all equipment objects' do
             get :index, show_deleted: true
             expect(assigns(:equipment_objects)).to eq(EquipmentObject.all)
           end     
