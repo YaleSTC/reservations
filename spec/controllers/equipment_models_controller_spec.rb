@@ -126,10 +126,11 @@ describe EquipmentModelsController do
 
 		describe 'POST create' do
       context 'with valid attributes' do
-        before { post :create, equipment_model: FactoryGirl.attributes_for(:equipment_model) }
-        it 'should save object' do
+        before { post :create, equipment_model: FactoryGirl.attributes_for(
+        	:equipment_model, category_id: model.category) }
+        it 'should save model' do
           expect{ post :create, equipment_model: FactoryGirl.attributes_for(
-            :equipment_model) }.to change(EquipmentModel, :count).by(1)
+            :equipment_model, category_id: model.category) }.to change(EquipmentModel, :count).by(1)
         end
         it { should set_the_flash }
         it { should redirect_to(EquipmentModel.last) }
@@ -148,7 +149,33 @@ describe EquipmentModelsController do
       end
     end
 		
-		describe 'PUT update'
+		describe 'PUT update' do
+      context 'with valid attributes' do
+        before { put :update, id: model, equipment_model:
+        	FactoryGirl.attributes_for(:equipment_model, name: 'Mod') }
+        it { should set_the_flash }
+        it 'sets @equipment_model to selected model' do
+          expect(assigns(:equipment_model)).to eq(model)
+        end
+        it 'updates attributes' do
+          model.reload
+          model.name.should == 'Mod'
+        end
+        it { should redirect_to(model) }
+      end
+
+      context 'without valid attributes' do
+        before { put :update, id: model, equipment_model:
+        	FactoryGirl.attributes_for(:equipment_model, name: nil) }
+        it { should_not set_the_flash }
+        it 'should not update attributes' do
+          model.reload
+          model.name.should_not be_nil
+        end
+        it { should render_template(:edit) }
+      end
+      it 'calls delete_files'
+    end
 
 		describe 'DELETE destroy' do
 			it 'should remove model from database' do
