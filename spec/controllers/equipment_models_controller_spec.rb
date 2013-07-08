@@ -124,7 +124,29 @@ describe EquipmentModelsController do
       end
     end
 
-		describe 'POST create'
+		describe 'POST create' do
+      context 'with valid attributes' do
+        before { post :create, equipment_model: FactoryGirl.attributes_for(:equipment_model) }
+        it 'should save object' do
+          expect{ post :create, equipment_model: FactoryGirl.attributes_for(
+            :equipment_model) }.to change(EquipmentModel, :count).by(1)
+        end
+        it { should set_the_flash }
+        it { should redirect_to(EquipmentModel.last) }
+      end
+
+      context 'without valid attributes' do
+        before { post :create, equipment_model: FactoryGirl.attributes_for(
+        	:equipment_model, name: nil) }
+        it { should set_the_flash }
+        it { should render_template(:new) }
+        it 'should not save' do
+          expect{ post :create, equipment_model: FactoryGirl.attributes_for(
+            :equipment_model, name: nil) }.not_to change(EquipmentModel, :count)
+        end
+        it { should render_template(:new) }
+      end
+    end
 		
 		describe 'PUT update'
 

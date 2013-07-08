@@ -112,12 +112,12 @@ describe EquipmentObjectsController do
       end
 
       context 'without valid attributes' do
-        before { post :create,
-          equipment_object: FactoryGirl.attributes_for(:equipment_object, name: nil) }
+        before { post :create, equipment_object: FactoryGirl.attributes_for(
+          :equipment_object, name: nil) }
         it { should_not set_the_flash }
         it { should render_template(:new) }
         it 'should not save' do
-          expect{ post :create,equipment_object: FactoryGirl.attributes_for(
+          expect{ post :create, equipment_object: FactoryGirl.attributes_for(
             :equipment_object, name: nil) }.not_to change(EquipmentObject, :count)
         end
         it { should render_template(:new) }
