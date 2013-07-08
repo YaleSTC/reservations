@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ContactController, focus: true do
+describe ContactController do
   before(:all) do
     @app_config = FactoryGirl.create(:app_config)
   end
