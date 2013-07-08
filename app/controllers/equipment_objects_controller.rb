@@ -18,11 +18,13 @@ class EquipmentObjectsController < ApplicationController
 
   # ---------- end before filter methods ---------- #
 
-
+  # I think this code is wrong
   def index
     if params[:show_deleted]
+      #should be:        = ( @equipment_model  ? @equipment_model.equipment_objects : EquipmentObject.all )
       @equipment_objects = ( @equipment_object ? @equipment_object.equipment_models : EquipmentObject.all )
     else
+      #should be:        = ( @equipment_model  ? @equipment_model.equipment_objects.active : EquipmentObject.active )
       @equipment_objects = ( @equipment_object ? @equipment_object.equipment_models.active : EquipmentObject.active )
     end
   end
