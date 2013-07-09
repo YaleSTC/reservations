@@ -4,8 +4,7 @@ class AppConfigsController < ApplicationController
 
   def edit
     @app_config = AppConfig.first || AppConfig.new
-    @app_config.viewed = true
-    @app_config.save!
+    @app_config.update_attribute(:viewed, true)
   end
 
   def update
