@@ -15,9 +15,11 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <% if @app_configs.favicon.present? %>
-    <%= favicon_link_tag @app_configs.favicon %>
-  <% else %>
-    <%= favicon_link_tag %>
+  <% if @app_configs # this is required in case the user attempts to view the site before running the app:setup rake task %>
+    <% if @app_configs.favicon.present? %>
+      <%= favicon_link_tag @app_configs.favicon %>
+    <% else %>
+      <%= favicon_link_tag %>
+    <% end %>
   <% end %>
 </head>

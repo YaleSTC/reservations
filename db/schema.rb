@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130628154151) do
+ActiveRecord::Schema.define(:version => 20130708215903) do
 
   create_table "app_configs", :force => true do |t|
     t.boolean  "upcoming_checkin_email_active",                      :default => true
@@ -35,6 +35,7 @@ ActiveRecord::Schema.define(:version => 20130628154151) do
     t.text     "deleted_missed_reservation_email_body"
     t.boolean  "send_notifications_for_deleted_missed_reservations", :default => true
     t.boolean  "checkout_persons_can_edit",                          :default => false
+    t.boolean  "viewed",                                             :default => true
   end
 
   create_table "blackouts", :force => true do |t|

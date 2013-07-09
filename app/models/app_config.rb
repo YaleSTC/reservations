@@ -20,5 +20,6 @@ class AppConfig < ActiveRecord::Base
 							:length => {:maximum => 20 }
   validates :admin_email,
 							:format => { :with => /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i }
+  validates :default_per_cat_page, :numericality => { :only_integer => true }
 
 end
