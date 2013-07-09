@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
   # -------- before_filter methods -------- #
 
   def app_setup
-      redirect_to new_admin_user_path
+    redirect_to new_admin_user_path
   end
 
   def load_configs
@@ -72,7 +72,8 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    @current_user ||= User.find_by_login(session[:cas_user]) if session[:cas_user]
+    # the commented out if statement is not necessary since User.find_by_login(nil) will return nil anyway
+    @current_user ||= User.find_by_login(session[:cas_user]) # if session[:cas_user]
   end
 
   def check_if_is_admin
