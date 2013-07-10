@@ -9,7 +9,7 @@ class UsersController < ApplicationController
 
   skip_filter :cart, :only => [:new, :create]
   before_filter :require_checkout_person, :only => :index
-  before_filter :set_user, :only => [:show, :edit, :update, :destroy]
+  before_filter :set_user, :only => [:show, :edit, :update, :destroy, :deactivate, :activate]
 
   include ActivationHelper
 
@@ -48,7 +48,7 @@ class UsersController < ApplicationController
   end
 
   def new
-    if current_user and current_user.is_admin_in_adminmode?
+    if current_user and current_user.is_admin?(:as => 'admin')
       @user = User.new
     else
       @user = User.new(User.search_ldap(session[:cas_user]))
@@ -59,7 +59,7 @@ class UsersController < ApplicationController
   def create
     @user = User.new(params[:user])
     @user.login = session[:cas_user] unless current_user and current_user.can_checkout?
-    @user.is_admin = true if User.count == 0
+    @user.role = 'admin' if User.count == 0
     if @user.save
       respond_to do |format|
         flash[:notice] = "Successfully created user."
@@ -78,7 +78,7 @@ class UsersController < ApplicationController
 
   def update
     require_user(@user)
-    params[:user].delete(:login) unless current_user.is_admin_in_adminmode? #no changing login unless you're an admin
+    params[:user].delete(:login) unless current_user.is_admin?(:as => 'admin') #no changing login unless you're an admin
     if @user.update_attributes(params[:user])
       respond_to do |format|
         flash[:notice] = "Successfully updated user."
@@ -111,4 +111,15 @@ class UsersController < ApplicationController
     end
   end
 
+  def deactivate
+    @user.destroy #Deactivate the model you had originally intended to deactivate
+    flash[:notice] = "Successfully deactivated user. Any related reservations or equipment have been deactivated as well."
+    redirect_to users_path  # always redirect to show page for deactivated user
+  end
+
+  def activate
+    @user.revive
+    flash[:notice] = "Successfully reactivated user. Any related reservations or equipment have been reactivated as well."
+    redirect_to users_path
+  end
 end

@@ -17,7 +17,7 @@ Reservations::Application.configure do
 
   # Don't care if the mailer can't send
   config.action_mailer.raise_delivery_errors = false
-  
+
   # Use letter_opener for development mail testing
   config.action_mailer.delivery_method = :letter_opener
 
@@ -33,4 +33,7 @@ Reservations::Application.configure do
   config.assets.js_compressor = :uglifier
   config.assets.debug = false
   config.assets.digest = false
+
+  # Set Paperclip path
+  Paperclip.options[:command_path] = '/usr/local/bin'
 end

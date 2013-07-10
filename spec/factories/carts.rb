@@ -1,6 +1,3 @@
-# Read about factories at https://github.com/thoughtbot/factory_girl
-
-# TODO: Cart is stored in session.
 FactoryGirl.define do
   factory :cart do
     reserver_id { FactoryGirl.create(:user).id }

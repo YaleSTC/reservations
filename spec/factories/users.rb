@@ -6,17 +6,7 @@ FactoryGirl.define do
     "abc#{n}"
   end
 
-  trait :default_user_characteristics do
-    adminmode nil
-    checkoutpersonmode nil
-    bannedmode nil
-    normalusermode nil
-    is_admin false
-    is_checkout_person false
-    is_banned false
-  end
-
-  factory :user, aliases: [:reserver, :checkout_handler, :checkin_handler], traits: [:default_user_characteristics] do
+  factory :user, aliases: [:reserver, :checkout_handler, :checkin_handler] do
     sequence(:login) { |n| "netid#{n}" }
     first_name "First"
     last_name "Last"
@@ -31,12 +21,11 @@ FactoryGirl.define do
     end
 
     factory :admin do
-      is_admin true
-      adminmode '1'
+      role 'admin'
     end
 
     factory :checkout_person do
-      is_checkout_person true
+      role 'checkout'
     end
   end
 end
