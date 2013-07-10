@@ -6,9 +6,11 @@ describe EquipmentObjectsController do
 	let!(:object) { FactoryGirl.create(:equipment_object) }
 
   describe 'GET index' do
-    before { get :index }
     context 'with admin user' do
-      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
+      before do
+        @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
+        get :index
+      end
       it { should respond_with(:success) }
       it { should render_template(:index) }
       it { should_not set_the_flash }
@@ -65,22 +67,28 @@ describe EquipmentObjectsController do
       end
     end
     context 'with checkout person user' do
-      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:checkout_person)) }
+      before do
+        @controller.stub(:current_user).and_return(FactoryGirl.create(:checkout_person))
+        get :index
+      end
       it { should respond_with(:success) }
       it { should render_template(:index) }
     end
     context 'with non-admin user' do
       before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
       it 'should redirect to root' do
+        get :index
         response.should redirect_to(root_url)
       end
     end 
   end
 
   describe 'GET show' do
-    before { get :show, id: object }
     context 'with admin user' do
-      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
+      before do
+        @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
+        get :show, id: object
+      end
       it { should respond_with(:success) }
       it { should render_template(:show) }
       it { should_not set_the_flash }
@@ -89,7 +97,10 @@ describe EquipmentObjectsController do
       end
     end
     context 'with non-admin user' do
-      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
+      before do
+        @controller.stub(:current_user).and_return(FactoryGirl.create(:user))
+        get :show, id: object
+      end
       it 'should redirect to root' do
         get :show, id: object
         response.should redirect_to(root_url)
@@ -98,9 +109,11 @@ describe EquipmentObjectsController do
   end
     
   describe 'GET new' do
-    before { get :new }
     context 'with admin user' do
-      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
+      before do
+        @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
+        get :new
+      end
       it { should respond_with(:success) }
       it { should render_template(:new) }
       it { should_not set_the_flash }
@@ -118,7 +131,10 @@ describe EquipmentObjectsController do
       end
     end
     context 'with non-admin user' do
-      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
+      before do
+        @controller.stub(:current_user).and_return(FactoryGirl.create(:user))
+        get :new
+      end
       it 'should redirect to root' do
         get :new
         response.should redirect_to(root_url)
@@ -165,9 +181,11 @@ describe EquipmentObjectsController do
   end
 
   describe 'GET edit' do
-    before { get :edit, id: object }
     context 'with admin user' do
-      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }    
+      before do
+        @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
+        get :edit, id: object
+      end   
       it { should respond_with(:success) }
       it { should render_template(:edit) }
       it { should_not set_the_flash }
@@ -213,7 +231,7 @@ describe EquipmentObjectsController do
     end
     context 'with non-admin user' do
       before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
-      it 'PUT update should redirect to root' do
+      it 'should redirect to root' do
         put :update, id: object, equipment_object: FactoryGirl.attributes_for(:equipment_object)
         response.should redirect_to(root_url)
       end
@@ -237,7 +255,7 @@ describe EquipmentObjectsController do
     end
     context 'with non-admin user' do
       before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
-      it 'DELETE destroy should redirect to root' do
+      it 'should redirect to root' do
         delete :destroy, id: object
         response.should redirect_to(root_url)
       end
