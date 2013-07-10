@@ -83,7 +83,11 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  #-------- end before_filter methods --------
+  def fix_cart_date
+    cart.set_start_date(Date.today) if cart.start_date < Date.today
+  end
+
+  #-------- end before_filter methods --------#
 
   def update_cart
     # set dates
@@ -109,15 +113,12 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def fix_cart_date
-    cart.set_start_date(Date.today) if cart.start_date < Date.today
-  end
-
   def empty_cart
     #destroy old cart reservations
     current_cart = session[:cart]
     CartReservation.where(:reserver_id => current_cart.reserver.id).destroy_all
 
+    # session[:cart] = nil # do this instead?
     #create a new cart
     session[:cart] = Cart.new
     session[:cart].set_reserver_id(current_user.id)
