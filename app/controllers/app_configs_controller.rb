@@ -1,6 +1,6 @@
 class AppConfigsController < ApplicationController
   before_filter :require_admin
-  skip_before_filter :seen_app_configs, only: [:edit, :update]
+  skip_before_filter :seen_app_configs, only: [:edit]
 
   def edit
     @app_config = AppConfig.first || AppConfig.new
