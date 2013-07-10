@@ -161,7 +161,7 @@ describe RequirementsController do
             post :create, requirement: FactoryGirl.attributes_for(:requirement, contact_name: nil)
           }.not_to change(Requirement,:count)
         end
-        it { should set_the_flash }
+        it { should_not set_the_flash }
         it { should render_template(:new) }
       end
     end

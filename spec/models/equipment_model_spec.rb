@@ -250,53 +250,54 @@ describe EquipmentModel do
     end
 
     context "methods involving reservations" do
-      before(:each) do
-        @model = FactoryGirl.create(:equipment_model)
-        @object = FactoryGirl.create(:equipment_object, equipment_model: @model)
-      end
+      # @model and @category are already set.
       describe ".num_available" do
         it "should return the number of objects of that model available over a given date range" do
           @reservation = FactoryGirl.create(:valid_reservation, equipment_model: @model)
-          @model.num_available(@reservation.start_date, @reservation.due_date).should == 1
+          @extra_object = FactoryGirl.create(:equipment_object, equipment_model: @model)
+          @model.equipment_objects.size.should eq(2)
+          @model.num_available(@reservation.start_date, @reservation.due_date).should eq(1)
         end
         it "should return 0 if no objects of that model are available" do
-          @object.destroy
           @reservation = FactoryGirl.create(:valid_reservation, equipment_model: @model)
-          @model.num_available(@reservation.start_date, @reservation.due_date).should == 0
+          @model.num_available(@reservation.start_date, @reservation.due_date).should eq(0)
         end
       end
       describe ".number_reserved_on_date" do
-        it "should return the number of objects of that model reserved on that date but not checked out" do
+        it "should return the number of objects of that model reserved on that date but not checked in" do
           @reservation = FactoryGirl.create(:valid_reservation, equipment_model: @model)
-          @checked_out = FactoryGirl.create(:checked_out_reservation, equipment_model: @model)
-          @model.equipment_objects.size.should == 3
-          @model.number_reserved_on_date(Date.today).should == 2
+          @extra_object = FactoryGirl.create(:equipment_object, equipment_model: @model)
+          @model.equipment_objects.size.should eq(2)
+          @model.number_reserved_on_date(Date.today).should eq(1)
         end
       end
       describe ".number_overdue" do
         it "should return the number of objects of a given model that are checked out and overdue" do
           @reservation = FactoryGirl.build(:overdue_reservation, equipment_model: @model)
           @reservation.save(validate: false)
-          @model.equipment_objects.size.should == 2
-          @model.number_overdue.should == 1
+          @extra_object = FactoryGirl.create(:equipment_object, equipment_model: @model)
+          @model.equipment_objects.size.should eq(2)
+          @model.number_overdue.should eq(1)
         end
       end
       describe ".available_count" do
         it "should take the total # of the model, subtract the number reserved, checked-out, and overdue for the given date and return the result" do
-          @reservation = FactoryGirl.create(:valid_reservation, equipment_model: @model)
-          @checked_out = FactoryGirl.create(:checked_out_reservation, equipment_model: @model)
+          4.times do
+            FactoryGirl.create(:equipment_object, equipment_model: @model)
+          end
+          FactoryGirl.create(:valid_reservation, equipment_model: @model)
+          FactoryGirl.create(:checked_out_reservation, equipment_model: @model)
           @overdue = FactoryGirl.build(:overdue_reservation, equipment_model: @model)
           @overdue.save(validate: false)
-          @model.equipment_objects.size.should == 4
-          @model.available_count(Date.today).should == 1
+          @model.equipment_objects.size.should eq(4)
+          @model.available_count(Date.today).should eq(1)
         end
       end
       describe ".available_object_select_options" do
         it "should make a string listing the available objects" do
           @reservation = FactoryGirl.create(:checked_out_reservation, equipment_model: @model)
-          @another_object = FactoryGirl.create(:equipment_object, equipment_model: @model)
-          @model.available_object_select_options.should == "<option value=#{@object.id}>#{@object.name}</option>"\
-                                                           "<option value=#{@another_object.id}>#{@another_object.name}</option>"
+          @object = FactoryGirl.create(:equipment_object, equipment_model: @model)
+          @model.available_object_select_options.should eq("<option value=#{@object.id}>#{@object.name}</option>")
         end
       end
     end

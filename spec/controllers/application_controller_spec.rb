@@ -38,6 +38,7 @@ end
 
 describe TestController do
   before(:each) do
+    @app_config = FactoryGirl.create(:app_config)
     @first_user = FactoryGirl.create(:user) # this is to ensure that all before_filters are run
     controller.stub(:app_setup)
     controller.stub(:load_configs)
@@ -55,11 +56,9 @@ describe TestController do
 
   describe 'load_configs' do
     it 'should set @app_configs to the first AppConfig' do
-      AppConfig.destroy_all
-      @app_config = FactoryGirl.create(:app_config)
       controller.unstub(:load_configs)
       get :index
-      expect(assigns(:app_configs)).to eq(@app_config)
+      expect(assigns(:app_configs)).to eq(AppConfig.first)
     end
   end
 
@@ -226,6 +225,7 @@ end
 
 describe ApplicationController do
   before(:each) do
+    @app_config = FactoryGirl.create(:app_config)
     @first_user = FactoryGirl.create(:user) # this is to ensure that all before_filters are run
     controller.stub(:app_setup)
     controller.stub(:load_configs)

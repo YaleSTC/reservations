@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe CatalogController do
   before(:each) do
+    @app_config = FactoryGirl.create(:app_config)
     @user = FactoryGirl.create(:user)
     @cart = FactoryGirl.build(:cart, reserver_id: @user.id)
     @controller.stub(:current_user).and_return(@user)

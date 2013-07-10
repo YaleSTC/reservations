@@ -9,8 +9,9 @@ FactoryGirl.define do
 
     factory :valid_reservation do
       after(:build) do |res|
-        if res.equipment_model.equipment_objects.empty?
-          FactoryGirl.create(:equipment_object, equipment_model: res.equipment_model)
+        mod = EquipmentModel.find(res.equipment_model)
+        if mod.equipment_objects.empty?
+          FactoryGirl.create(:equipment_object, equipment_model: mod)
         end
       end
 
