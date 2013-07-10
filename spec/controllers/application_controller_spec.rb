@@ -36,7 +36,7 @@ class TestController < ApplicationController
   end
 end
 
-describe TestController, focus: true do
+describe TestController do
   before(:each) do
     @first_user = FactoryGirl.create(:user) # this is to ensure that all before_filters are run
     controller.stub(:app_setup)
@@ -224,7 +224,7 @@ describe TestController, focus: true do
   describe 'require_user_or_checkout_person'
 end
 
-describe ApplicationController, focus: true do
+describe ApplicationController do
   before(:each) do
     @first_user = FactoryGirl.create(:user) # this is to ensure that all before_filters are run
     controller.stub(:app_setup)
