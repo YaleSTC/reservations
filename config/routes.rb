@@ -23,7 +23,7 @@ Reservations::Application.routes.draw do
     end
   end
 
-  match '/catalog/search' => 'catalog#search', :as => :catalog_search # what kind of http request is this?
+  get '/catalog/search' => 'catalog#search', :as => :catalog_search # what kind of http request is this?
   get '/markdown_help' => 'application#markdown_help', :as => :markdown_help
 
   resources :reservations do
@@ -75,7 +75,7 @@ Reservations::Application.routes.draw do
 
   match '/logout' => 'application#logout', :as => :logout # what kind of http request is this?
 
-  match '/terms_of_service' => 'application#terms_of_service', :as => :tos # see what this method actually does
+  get '/terms_of_service' => 'application#terms_of_service', :as => :tos # see what this method actually does
 
   # yes, both of these are needed to override rails defaults of /controller/:id/edit
   get '/app_configs/' => 'app_configs#edit', :as => :edit_app_configs

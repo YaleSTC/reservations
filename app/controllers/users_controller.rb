@@ -1,12 +1,6 @@
 class UsersController < ApplicationController
   layout 'application_with_sidebar', only: [:show, :edit]
 
-  #necessary to set up initial users and admins
-  skip_filter :first_time_user, :only => [:new, :create]
-  skip_filter :new_admin_user, :only => [:new, :create]
-  skip_filter :app_setup, :only => [:new, :create]
-
-
   skip_filter :cart, :only => [:new, :create]
   before_filter :require_checkout_person, :only => :index
   before_filter :set_user, :only => [:show, :edit, :update, :destroy, :deactivate, :activate]
@@ -59,7 +53,6 @@ class UsersController < ApplicationController
   def create
     @user = User.new(params[:user])
     @user.login = session[:cas_user] unless current_user and current_user.can_checkout?
-    @user.role = 'admin' if User.count == 0
     if @user.save
       flash[:notice] = "Successfully created user."
       render :action => 'create_success'

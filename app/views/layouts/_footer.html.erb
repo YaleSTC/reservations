@@ -23,7 +23,9 @@
         <div class="span3">
           <ul id="links_box" class="nav nav-list">
             <li class="nav-header">Links</li>
-            <li><%= link_to @app_configs.home_link_text, @app_configs.home_link_location %></li>
+            <% if @app_configs # this is required to ensure that pages will render even if the user hasn't run the app:setup task %>
+              <li><%= link_to @app_configs.home_link_text, @app_configs.home_link_location %></li>
+            <% end %>
             <li><%= link_to "Contact Us", contact_us_path %></li>
             <li><%= link_to "Terms of Service", tos_path %></li>
           </ul>
