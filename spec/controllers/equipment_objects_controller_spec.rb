@@ -5,11 +5,10 @@ describe EquipmentObjectsController do
 	before { @controller.stub(:first_time_user).and_return(:nil) }
 	let!(:object) { FactoryGirl.create(:equipment_object) }
 
-	context 'with admin user' do
-    before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
-
-    describe 'GET index' do
-      before { get :index }
+  describe 'GET index' do
+    before { get :index }
+    context 'with admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
       it { should respond_with(:success) }
       it { should render_template(:index) }
       it { should_not set_the_flash }
@@ -65,9 +64,23 @@ describe EquipmentObjectsController do
         end   
       end
     end
+    context 'with checkout person user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:checkout_person)) }
+      it { should respond_with(:success) }
+      it { should render_template(:index) }
+    end
+    context 'with non-admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
+      it 'should redirect to root' do
+        response.should redirect_to(root_url)
+      end
+    end 
+  end
 
-    describe 'GET show' do
-      before { get :show, id: object }
+  describe 'GET show' do
+    before { get :show, id: object }
+    context 'with admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
       it { should respond_with(:success) }
       it { should render_template(:show) }
       it { should_not set_the_flash }
@@ -75,9 +88,19 @@ describe EquipmentObjectsController do
         expect(assigns(:equipment_object)).to eq(object)
       end
     end
+    context 'with non-admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
+      it 'should redirect to root' do
+        get :show, id: object
+        response.should redirect_to(root_url)
+      end
+    end
+  end
     
-    describe 'GET new' do
-      before { get :new }
+  describe 'GET new' do
+    before { get :new }
+    context 'with admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
       it { should respond_with(:success) }
       it { should render_template(:new) }
       it { should_not set_the_flash }
@@ -94,8 +117,18 @@ describe EquipmentObjectsController do
         expect(assigns(:equipment_object).equipment_model).to eq(model)
       end
     end
+    context 'with non-admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
+      it 'should redirect to root' do
+        get :new
+        response.should redirect_to(root_url)
+      end
+    end
+  end
         
-    describe 'POST create' do
+  describe 'POST create' do
+    context 'with admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
       context 'with valid attributes' do
         before { post :create, equipment_object: FactoryGirl.attributes_for(:equipment_object,
           serial: "Enter serial # (optional)", equipment_model_id: object.equipment_model.id) }
@@ -110,7 +143,6 @@ describe EquipmentObjectsController do
           EquipmentObject.last.serial.should == nil
         end
       end
-
       context 'without valid attributes' do
         before { post :create, equipment_object: FactoryGirl.attributes_for(
           :equipment_object, name: nil) }
@@ -123,9 +155,19 @@ describe EquipmentObjectsController do
         it { should render_template(:new) }
       end
     end
+    context 'with non-admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
+      it 'should redirect to root' do
+        post :create, equipment_object: FactoryGirl.attributes_for(:equipment_object)
+        response.should redirect_to(root_url)
+      end
+    end
+  end
 
-    describe 'GET edit' do
-      before { get :edit, id: object }
+  describe 'GET edit' do
+    before { get :edit, id: object }
+    context 'with admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }    
       it { should respond_with(:success) }
       it { should render_template(:edit) }
       it { should_not set_the_flash }
@@ -133,8 +175,18 @@ describe EquipmentObjectsController do
         expect(assigns(:equipment_object)).to eq(object)
       end
     end
+    context 'with non-admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
+      it 'should redirect to root' do
+        get :edit, id: object
+        response.should redirect_to(root_url)
+      end
+    end
+  end
     
-    describe 'PUT update' do
+  describe 'PUT update' do
+    context 'with admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
       context 'with valid attributes' do
         before { put :update, id: object,
           equipment_object: FactoryGirl.attributes_for(:equipment_object, name: 'Obj') }
@@ -148,7 +200,6 @@ describe EquipmentObjectsController do
         end
         it { should redirect_to(object.equipment_model) }
       end
-
       context 'without valid attributes' do
         before { put :update, id: object,
           equipment_object: FactoryGirl.attributes_for(:equipment_object, name: nil) }
@@ -160,8 +211,18 @@ describe EquipmentObjectsController do
         it { should render_template(:edit) }
       end
     end
+    context 'with non-admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
+      it 'PUT update should redirect to root' do
+        put :update, id: object, equipment_object: FactoryGirl.attributes_for(:equipment_object)
+        response.should redirect_to(root_url)
+      end
+    end
+  end
 
-    describe 'DELETE destroy' do
+  describe 'DELETE destroy' do
+    context 'with admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
       it 'should remove object from database' do
         expect{ delete :destroy, id: object }.to change(EquipmentObject, :count).by(-1)
       end
@@ -174,46 +235,12 @@ describe EquipmentObjectsController do
         end
       end
     end
-  end
-
-  context 'with checkout person user' do
-    before { @controller.stub(:current_user).and_return(FactoryGirl.create(:checkout_person)) }
-    describe 'GET index' do
-      before { get :index }
-      it { should respond_with(:success) }
-      it { should render_template(:index) }
-    end
-  end
-
-  context 'with non-admin user' do
-    before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
-    it 'GET index should redirect to root' do
-      get :index
-      response.should redirect_to(root_url)
-    end 
-    it 'GET show should redirect to root' do
-      get :show, id: object
-      response.should redirect_to(root_url)
-    end
-    it 'GET new should redirect to root' do
-      get :new
-      response.should redirect_to(root_url)
-    end
-    it 'POST create should redirect to root' do
-      post :create, equipment_object: FactoryGirl.attributes_for(:equipment_object)
-      response.should redirect_to(root_url)
-    end
-    it 'GET edit should redirect to root' do
-      get :edit, id: object
-      response.should redirect_to(root_url)
-    end
-    it 'PUT update should redirect to root' do
-      put :update, id: object, equipment_object: FactoryGirl.attributes_for(:equipment_object)
-      response.should redirect_to(root_url)
-    end
-    it 'DELETE destroy should redirect to root' do
-      delete :destroy, id: object
-      response.should redirect_to(root_url)
+    context 'with non-admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
+      it 'DELETE destroy should redirect to root' do
+        delete :destroy, id: object
+        response.should redirect_to(root_url)
+      end
     end
   end
   

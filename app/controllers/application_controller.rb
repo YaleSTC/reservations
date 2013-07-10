@@ -125,6 +125,7 @@ class ApplicationController < ActionController::Base
   end
 
   def require_admin(new_path=root_path)
+    binding.pry
     restricted_redirect_to(new_path) unless current_user.is_admin?(:as => 'admin')
   end
 

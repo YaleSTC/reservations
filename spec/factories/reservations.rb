@@ -9,15 +9,20 @@ FactoryGirl.define do
 
     factory :valid_reservation do
       after(:build) do |res|
-        if res.equipment_model.equipment_objects.empty?
-          FactoryGirl.create(:equipment_object, equipment_model: res.equipment_model)
+        #for some reason this code is required instead of just calling it on res.equipment_model
+        mod = EquipmentModel.find(res.equipment_model)
+        if mod.equipment_objects.empty?
+          FactoryGirl.create(:equipment_object, equipment_model: mod)
         end
       end
 
       factory :checked_out_reservation do
         checked_out { Date.today }
         checkout_handler
-        after(:build) { |res| res.equipment_object = res.equipment_model.equipment_objects.first }
+        after(:build) do |res|
+          mod = EquipmentModel.find(res.equipment_model)
+          res.equipment_object = mod.equipment_objects.first
+        end
 
         factory :checked_in_reservation do
           start_date { Date.yesterday }
