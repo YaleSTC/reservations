@@ -5,11 +5,12 @@ describe EquipmentModelsController do
 	before { @controller.stub(:first_time_user).and_return(:nil) }
 	let!(:model) { FactoryGirl.create(:equipment_model) }
 
-	context 'with admin user' do
-		before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
-
-		describe 'GET index' do
-			before { get :index }
+	describe 'GET index' do
+    context 'with admin user' do
+			before do
+        @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
+        get :index
+      end
       it { should respond_with(:success) }
       it { should render_template(:index) }
       it { should_not set_the_flash }
@@ -65,9 +66,22 @@ describe EquipmentModelsController do
         end   
       end
     end
+    context 'with non-admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
+      describe 'should function normally' do
+        before { get :index }
+        it { should respond_with(:success) }
+        it { should render_template(:index) }
+      end
+    end
+  end
 		
-		describe 'GET show' do
-      before { get :show, id: model }
+	describe 'GET show' do
+    context 'with admin user' do
+      before do
+        @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
+        get :show, id: model
+      end
       it { should respond_with(:success) }
       it { should render_template(:show) }
       it { should_not set_the_flash }
@@ -94,9 +108,22 @@ describe EquipmentModelsController do
       	expect(assigns(:associated_equipment_models).size).to eq(6)
       end
     end
+    context 'with non-admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
+      describe 'should funciton normally' do
+        before { get :show, id: model }
+        it { should respond_with(:success) }
+        it { should render_template(:show) }
+      end
+    end
+  end
 		
-    describe 'GET new' do
-      before { get :new }
+  describe 'GET new' do
+    context 'with admin user' do
+      before do
+        @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
+        get :new
+      end
       it { should respond_with(:success) }
       it { should render_template(:new) }
       it { should_not set_the_flash }
@@ -113,9 +140,21 @@ describe EquipmentModelsController do
         expect(assigns(:equipment_model).category).to eq(cat)
       end
     end
+    context 'with non-admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
+      it 'should redirect to root' do
+        get :new
+        response.should redirect_to(root_url)
+      end
+    end
+  end
 
-    describe 'GET edit' do
-      before { get :edit, id: model }
+  describe 'GET edit' do
+    context 'with admin user' do
+      before do
+        @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
+        get :edit, id: model
+      end
       it { should respond_with(:success) }
       it { should render_template(:edit) }
       it { should_not set_the_flash }
@@ -123,8 +162,18 @@ describe EquipmentModelsController do
         expect(assigns(:equipment_model)).to eq(model)
       end
     end
+    context 'with non-admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
+      it 'should redirect to root' do
+        get :edit, id: model
+        response.should redirect_to(root_url)
+      end
+    end
+  end
 
-		describe 'POST create' do
+	describe 'POST create' do
+    context 'with admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
       context 'with valid attributes' do
         before { post :create, equipment_model: FactoryGirl.attributes_for(
         	:equipment_model, category_id: model.category) }
@@ -148,8 +197,18 @@ describe EquipmentModelsController do
         it { should render_template(:new) }
       end
     end
+    context 'with non-admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
+      it 'should redirect to root' do
+        post :create, equipment_model: FactoryGirl.attributes_for(:equipment_model)
+        response.should redirect_to(root_url)
+      end
+    end
+  end
 		
-		describe 'PUT update' do
+	describe 'PUT update' do
+    context 'with admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
       context 'with valid attributes' do
         before { put :update, id: model, equipment_model:
         	FactoryGirl.attributes_for(:equipment_model, name: 'Mod') }
@@ -176,8 +235,18 @@ describe EquipmentModelsController do
       end
       it 'calls delete_files'
     end
+    context 'with non-admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
+      it 'should redirect to root' do
+        put :update, id: model, equipment_model: FactoryGirl.attributes_for(:equipment_model)
+        response.should redirect_to(root_url)
+      end
+    end
+  end
 
-		describe 'DELETE destroy' do
+  describe 'DELETE destroy' do
+    context 'with admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
 			it 'should remove model from database' do
         expect{ delete :destroy, id: model }.to change(EquipmentModel, :count).by(-1)
       end
@@ -190,40 +259,13 @@ describe EquipmentModelsController do
         it { should redirect_to(equipment_models_url) }
       end
     end
-	end
-
-  context 'with non-admin user' do
-	  before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
-	  describe 'GET index should function normally' do
-	    before { get :index }
-	    it { should respond_with(:success) }
-	    it { should render_template(:index) }
-	  end 
-	  describe 'GET show should funciton normally' do
-	    before { get :show, id: model }
-	    it { should respond_with(:success) }
-	    it { should render_template(:show) }
-	  end
-	  it 'GET new should redirect to root' do
-	    get :new
-	    response.should redirect_to(root_url)
-	  end
-	  it 'POST create should redirect to root' do
-	    post :create, equipment_model: FactoryGirl.attributes_for(:equipment_model)
-	    response.should redirect_to(root_url)
-	  end
-	  it 'GET edit should redirect to root' do
-	    get :edit, id: model
-	    response.should redirect_to(root_url)
-	  end
-	  it 'PUT update should redirect to root' do
-	    put :update, id: model, equipment_model: FactoryGirl.attributes_for(:equipment_model)
-	    response.should redirect_to(root_url)
-	  end
-	  it 'DELETE destroy should redirect to root' do
-	    delete :destroy, id: model
-	    response.should redirect_to(root_url)
-	  end
+    context 'with non-admin user' do
+      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
+      it 'DELETE destroy should redirect to root' do
+        delete :destroy, id: model
+        response.should redirect_to(root_url)
+      end
+    end
 	end
 
 	after(:all) { @app_config.destroy }
