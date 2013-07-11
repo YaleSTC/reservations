@@ -124,10 +124,10 @@ class ApplicationController < ActionController::Base
     current_cart = session[:cart]
     CartReservation.where(:reserver_id => current_cart.reserver.id).destroy_all
 
-    # session[:cart] = nil # do this instead?
+    session[:cart] = nil # do this instead?
     #create a new cart
-    session[:cart] = Cart.new
-    session[:cart].set_reserver_id(current_user.id)
+    # session[:cart] = Cart.new
+    # session[:cart].set_reserver_id(current_user.id)
     flash[:notice] = "Cart emptied."
 
     redirect_to root_path

@@ -40,8 +40,9 @@ describe TestController do
   before(:each) do
     @app_config = FactoryGirl.create(:app_config)
     @first_user = FactoryGirl.create(:user) # this is to ensure that all before_filters are run
-    controller.stub(:app_setup)
+    controller.stub(:app_setup_check)
     controller.stub(:load_configs)
+    controller.stub(:seen_app_configs)
     controller.stub(:first_time_user)
     controller.stub(:cart)
     controller.stub(:fix_cart_date)
@@ -50,8 +51,59 @@ describe TestController do
     controller.stub(:check_if_is_admin)
   end
 
-  describe 'app_setup' do
-    # this has changed as a result of issue #415
+  describe 'app_setup_check' do
+    before(:each) do
+      controller.unstub(:app_setup_check)
+    end
+    context 'user and appconfig in the db' do
+      before(:each) do
+        get :index
+      end
+      it { should respond_with(:success) }
+      it { should render_template(:text => "hello world") }
+      it { should_not set_the_flash }
+    end
+    context 'no app_config' do
+      before(:each) do
+        AppConfig.delete_all
+        get :index
+      end
+      it { should set_the_flash }
+      it { should render_template(%w(layouts/application application_setup/index)) }
+    end
+    context 'no user in the db' do
+      before(:each) do
+        User.delete_all
+        get :index
+      end
+      it { should set_the_flash }
+      it { should render_template(%w(layouts/application application_setup/index)) }
+    end
+  end
+
+  describe 'seen_app_configs' do
+    before(:each) do
+      controller.stub(:load_configs).and_return(@app_config)
+      controller.unstub(:seen_app_configs)
+    end
+    context 'app configs have not been viewed' do
+      before(:each) do
+        AppConfig.delete_all
+        @app_config = FactoryGirl.create(:app_config, viewed: false)
+        get :index
+      end
+      it { should set_the_flash }
+      it { should respond_with(:redirect) }
+      it { should redirect_to(edit_app_configs_path) }
+    end
+    context 'app configs have been viewed' do
+      before(:each) do
+        get :index
+      end
+      it { should_not set_the_flash }
+      it { should respond_with(:success) }
+      it { should_not redirect_to(edit_app_configs_path) }
+    end
   end
 
   describe 'load_configs' do
@@ -207,6 +259,8 @@ describe TestController do
     end
   end
 
+  # it may be better to test these methods within the controllers that call them, because the
+  # restrictions that they enforce need to be tested anyway for those actions.
   describe 'require_admin' do
     context 'admin user' do
       it 'does nothing if admin in admin mode'
@@ -227,8 +281,9 @@ describe ApplicationController do
   before(:each) do
     @app_config = FactoryGirl.create(:app_config)
     @first_user = FactoryGirl.create(:user) # this is to ensure that all before_filters are run
-    controller.stub(:app_setup)
+    controller.stub(:app_setup_check)
     controller.stub(:load_configs)
+    controller.stub(:seen_app_configs)
     controller.stub(:first_time_user)
     controller.stub(:cart)
     controller.stub(:fix_cart_date)
@@ -237,8 +292,36 @@ describe ApplicationController do
     controller.stub(:check_if_is_admin)
   end
 
-  describe 'PUT update_cart'
-  describe 'DELETE empty_cart'
+  #TODO - This may involve rewriting the method somewhat
+  describe 'PUT update_cart' do
+    context 'valid parameters' do
+      it 'should add an item to the cart'
+      it 'should create a CartReservation'
+      it 'should not set the flash'
+    end
+    context 'invalid parameters' do
+      it 'should set the flash'
+      it 'should not add an item to the cart'
+      it 'should not create a CartReservation'
+    end
+  end
+
+  describe 'DELETE empty_cart' do
+    before(:each) do
+      session[:cart] = Cart.new
+      session[:cart].reserver_id = @first_user.id
+      @cart_reservation = FactoryGirl.create(:cart_reservation, reserver: @first_user)
+      delete :empty_cart
+    end
+    it 'destroys cart reservations for the reserver associated with the current cart' do
+      CartReservation.find_by_reserver_id(@first_user.id).should be_nil
+    end
+    it 'sets the session[:cart] variable back to nil' do
+      session[:cart].should be_nil
+    end
+    it { should redirect_to(root_path) }
+    it { should set_the_flash }
+  end
 
   describe 'GET logout' do
     it 'should always set @current_user to nil' do
@@ -262,8 +345,20 @@ describe ApplicationController do
     end
   end
 
-  describe 'PUT deactivate'
-  describe 'PUT activate'
+  describe 'PUT deactivate' do
+    it 'should assign @objects_class2 to the object and controller specified by params'
+    it 'should delete @objects_class2'
+    it 'should set the flash'
+    it 'should redirect to request.referer'
+  end
+
+  describe 'PUT activate' do
+    it 'should assign @model_to_activate to the model to be activated'
+    it 'should call activatParents on the assigned model'
+    it 'should revive @model_to_activate'
+    it 'should set the flash'
+    it 'should redirect to request.referer'
+  end
 
   describe 'GET markdown_help' do
     before(:each) do
