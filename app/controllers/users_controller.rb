@@ -97,6 +97,8 @@ class UsersController < ApplicationController
       redirect_to :back and return
     elsif params[:searched_id].blank?
       # this code is a hack to allow hitting enter in the search box to go direclty to the first user
+      # and still user the rails3-jquery-autocomplete gem for the search box. Unfortunately the feature
+      # isn't built into the gem.
       users = get_autocomplete_items(:term => params[:fake_searched_id])
       if !users.blank?
         @user = users.first
