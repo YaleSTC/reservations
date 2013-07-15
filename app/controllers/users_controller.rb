@@ -6,6 +6,7 @@ class UsersController < ApplicationController
   before_filter :set_user, :only => [:show, :edit, :update, :destroy, :deactivate, :activate]
 
   include ActivationHelper
+  include Autocomplete
 
   # ------------ before filter methods ------------ #
 
@@ -96,18 +97,9 @@ class UsersController < ApplicationController
       redirect_to :back and return
     elsif params[:searched_id].blank?
       # this code is a hack to allow hitting enter in the search box to go direclty to the first user
-      users = User.select("nickname, first_name, last_name,login, id, deleted_at").reject {|user| ! user.deleted_at.nil?}
-      term = params[:fake_searched_id].downcase
-      @search_result = []
-      users.each do |user|
-        if user.login.downcase.include?(term) ||
-          user.name.downcase.include?(term) ||
-          [user.first_name.downcase, user.last_name.downcase].join(" ").include?(term)
-          @search_result << user
-        end
-      end
-      @user = @search_result.first
-      if @user
+      users = get_autocomplete_items(:term => params[:fake_searched_id])
+      if !users.blank?
+        @user = users.first
         require_user_or_checkout_person(@user)
         redirect_to manage_reservations_for_user_path(@user.id) and return
       else
