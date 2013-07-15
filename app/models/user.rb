@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
 
   attr_accessible :login, :first_name, :last_name, :nickname, :phone, :email,
                   :affiliation, :role, :view_mode, :created_by_admin,
-                  :deleted_at, :requirement_ids, :user_ids, :terms_of_service_accepted
+                  :deleted_at, :requirement_ids, :user_ids, :terms_of_service_accepted, :csv_import
 
   attr_accessor   :full_query, :created_by_admin, :user_type, :csv_import
 
@@ -20,8 +20,9 @@ class User < ActiveRecord::Base
             :last_name,
             :affiliation, :presence => true
   validates :phone,       :presence    => true,
-                          :format      => { :with => /\A\S[0-9\+\/\(\)\s\-]*\z/i }
-                          #:length      => { :minimum => 10 }, :unless => :skip_phone_validation?
+                          :format      => { :with => /\A\S[0-9\+\/\(\)\s\-]*\z/i },
+                          :length      => { :minimum => 10 }, :unless => lambda {|x| x.skip_phone_validation?}
+
   validates :email,       :presence    => true,
                           :format      => { :with => /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i }
   validates :nickname,    :format      => { :with => /^[^0-9`!@#\$%\^&*+_=]+$/ },
@@ -35,6 +36,12 @@ class User < ActiveRecord::Base
 
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
   scope :active, where("#{table_name}.deleted_at is null")
+
+  # ------- validations -------- #
+  def skip_phone_validation?
+    return ( @csv_import ? true : false )
+  end
+  # ------- end validations -------- #
 
   def name
     [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name].join(" ")
