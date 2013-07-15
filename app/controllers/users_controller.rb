@@ -95,8 +95,25 @@ class UsersController < ApplicationController
       flash[:alert] = "Search field cannot be blank"
       redirect_to :back and return
     elsif params[:searched_id].blank?
-      flash[:alert] = "Please select a valid user"
-      redirect_to :back and return
+      # this code is a hack to allow hitting enter in the search box to go direclty to the first user
+      users = User.select("nickname, first_name, last_name,login, id, deleted_at").reject {|user| ! user.deleted_at.nil?}
+      term = params[:fake_searched_id].downcase
+      @search_result = []
+      users.each do |user|
+        if user.login.downcase.include?(term) ||
+          user.name.downcase.include?(term) ||
+          [user.first_name.downcase, user.last_name.downcase].join(" ").include?(term)
+          @search_result << user
+        end
+      end
+      @user = @search_result.first
+      if @user
+        require_user_or_checkout_person(@user)
+        redirect_to manage_reservations_for_user_path(@user.id) and return
+      else
+        flash[:alert] = "Please select a valid user"
+        redirect_to :back and return
+      end
     else
       @user = User.find(params[:searched_id])
       require_user_or_checkout_person(@user)
