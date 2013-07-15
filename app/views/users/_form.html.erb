@@ -10,7 +10,11 @@
   <%= f.input :first_name %>
   <%= f.input :last_name %>
   <%= f.input :nickname %>
-  <%= f.input :phone, required: true, hint: "format like (555) 555-5555" %>
+  <% if AppConfig.first.require_phone %>
+    <%= f.input :phone, required: true, hint: "format like (555) 555-5555" %>
+  <% else %>
+    <%= f.input :phone, hint: "format like (555) 555-5555" %>
+  <% end %>
   <%= f.input :email %>
   <%= f.input :affiliation, hint: "including college, year, etc"%>
 
