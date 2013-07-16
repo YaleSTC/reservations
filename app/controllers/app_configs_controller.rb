@@ -10,8 +10,11 @@ class AppConfigsController < ApplicationController
   def update
     @app_config = AppConfig.first
 
+    reset_tos = params[:app_config][:reset_tos_for_users]
+    params[:app_config].delete(:reset_tos_for_users)
+
     if @app_config.update_attributes(params[:app_config])
-      if params[:app_config][:reset_tos_for_users] == '1'
+      if reset_tos == '1'
         User.update_all(['terms_of_service_accepted = ?', false])
       end
 

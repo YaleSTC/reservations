@@ -66,8 +66,24 @@ describe AppConfigsController do
         # TODO: FIXME
         context 'With valid parameters' do
           # TODO: Simulate successful ActiveRecord update_attributes call
-          it 'resets TOS status for all users when :reset_tos_for_users is 1'
-          it 'maintains TOS status for all users when :reset_tos_for_users is not 1'
+          it 'resets TOS status for all users when :reset_tos_for_users is 1' do
+            @user = FactoryGirl.create(:user)
+            @params = @params.merge({reset_tos_for_users: 1})
+            Rails.logger.debug @params
+            post :update, app_config: @params
+            @user.reload
+            expect(@user.terms_of_service_accepted).to be_false
+          end
+
+          it 'maintains TOS status for all users when :reset_tos_for_users is not 1' do
+            @user = FactoryGirl.create(:user)
+            @params = @params.merge({reset_tos_for_users: 0})
+            Rails.logger.debug @params
+            post :update, app_config: @params 
+            @user.reload
+            expect(@user.terms_of_service_accepted).to be_true
+          end
+          
           it 'restores favicon when appropriate'
           # it { should respond_with(:success) }
           # it { should redirect_to(catalog_path) }
