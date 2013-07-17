@@ -52,6 +52,7 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(params[:user])
+    # this line is what allows checkoutpeople to create users
     @user.login = session[:cas_user] unless current_user and current_user.can_checkout?
     if @user.save
       respond_to do |format|
