@@ -7,7 +7,7 @@ describe User do
 
   context "validations and associations" do
     before(:each) do
-      @user = FactoryGirl.build(:user)
+      @user = FactoryGirl.create(:user)
     end
 
     it { should have_many(:reservations) }
@@ -29,7 +29,7 @@ describe User do
 
     #TODO: figure out why it's saving with terms_of_service_accepted = false
     it "must accept ToS" do
-      @user.terms_of_service_accepted = nil
+      @user.terms_of_service_accepted = false
       @user.save.should be_false
       @user.terms_of_service_accepted = "1"
       @user.save.should be_true

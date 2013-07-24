@@ -18,6 +18,7 @@ class AppConfigsController < ApplicationController
         User.update_all(['terms_of_service_accepted = ?', false])
       end
 
+      # TODO: Does this work? Checkbox shouldn't have value of 'on'??
       if params[:restore_favicon] == 'on'
         @app_config.favicon = nil
         @app_config.save

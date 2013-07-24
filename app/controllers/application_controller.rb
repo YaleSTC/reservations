@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
 
   before_filter RubyCAS::Filter unless Rails.env.test?
   before_filter :app_setup_check
+  before_filter :cart
 
   with_options :unless => lambda {|u| User.all.count == 0 } do |c|
     c.before_filter :load_configs
@@ -97,19 +98,21 @@ class ApplicationController < ActionController::Base
 
   def update_cart
     # set dates
+    cart = session[:cart]
     flash.clear
     begin
-      session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
-      session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
-      session[:cart].set_reserver_id(params[:reserver_id])
+      cart.set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
+      cart.set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
+      cart.set_reserver_id(params[:reserver_id])
     rescue ArgumentError => e
       cart.set_start_date(Date.today)
       flash[:error] = "Please enter a valid start or due date."
-      return
     end
+    
     # validate
     errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
-    flash[:error] = errors.to_sentence
+    # don't over-write flash if invalid date was set above
+    flash[:error] ||= errors.to_sentence 
 
     # reload appropriate divs / exit
     respond_to do |format|

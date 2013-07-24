@@ -294,16 +294,45 @@ describe ApplicationController do
 
   #TODO - This may involve rewriting the method somewhat
   describe 'PUT update_cart' do
+    before(:each) do
+      session[:cart] = Cart.new
+      session[:cart].reserver_id = @first_user.id
+      session[:cart].set_start_date(Date.today + 1.day)
+      session[:cart].set_due_date(Date.today + 2.days)
+      
+
+      equipment_model = FactoryGirl.create(:equipment_model)
+      session[:cart].add_item(equipment_model)
+      @new_reserver = FactoryGirl.create(:user)
+    end
+
     context 'valid parameters' do
-      it 'should add an item to the cart'
-      it 'should create a CartReservation'
-      it 'should not set the flash'
+      it 'should update cart dates' do
+        new_start = Date.today + 3.days
+        new_end = Date.today + 4.days
+        
+        put :update_cart, cart: {start_date_cart: new_start.strftime('%m/%d/%Y'), due_date_cart: new_end.strftime('%m/%d/%Y')}, reserver_id: @new_reserver.id
+        
+        session[:cart].start_date.should eq(new_start)
+        session[:cart].due_date.should eq(new_end)
+        session[:cart].reserver_id.should eq(@new_reserver.id.to_s)
+      end
+
+      it 'should not set the flash' do
+        flash.should be_empty
+      end
     end
+
     context 'invalid parameters' do
-      it 'should set the flash'
-      it 'should not add an item to the cart'
-      it 'should not create a CartReservation'
-    end
+      it 'should set the flash' do
+        new_start = Date.today - 300.days
+        new_end = Date.today + 4000.days
+        
+        put :update_cart, cart: {start_date_cart: new_start.strftime('%m/%d/%Y'), due_date_cart: new_end.strftime('%m/%d/%Y')}, reserver_id: @new_reserver.id
+        
+        flash.should_not be_empty
+     end
+   end
   end
 
   describe 'DELETE empty_cart' do
