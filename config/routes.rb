@@ -34,6 +34,12 @@ Reservations::Application.routes.draw do
     end
     get :autocomplete_user_last_name, :on => :collection
   end
+<<<<<<< HEAD
+=======
+
+  match '/black_outs/flash_message' => 'black_outs#flash_message', :as => :flash_message
+  match '/black_outs/new_recurring' => 'black_outs#new_recurring', :as => :new_recurring_black_out
+>>>>>>> master
 
   match '/blackouts/flash_message' => 'blackouts#flash_message', :as => :flash_message
   match '/blackouts/new_recurring' => 'blackouts#new_recurring', :as => :new_recurring_blackout
