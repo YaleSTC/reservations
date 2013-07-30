@@ -31,7 +31,7 @@ class EquipmentModelsController < ApplicationController
   end
 
   def new
-    @equipment_model = EquipmentModel.new(:category => @category)
+    @equipment_model = EquipmentModel.new(category: @category)
   end
 
   def create

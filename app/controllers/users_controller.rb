@@ -54,14 +54,10 @@ class UsersController < ApplicationController
     @user = User.new(params[:user])
     @user.login = session[:cas_user] unless current_user and current_user.can_checkout?
     if @user.save
-      respond_to do |format|
-        flash[:notice] = "Successfully created user."
-        format.js {render :action => 'create_success'}
-      end
+      flash[:notice] = "Successfully created user."
+      render :action => 'create_success'
     else
-      respond_to do |format|
-        format.js {render :action => 'load_validations'}
-      end
+      render :action => 'load_validations'
     end
   end
 
@@ -73,14 +69,10 @@ class UsersController < ApplicationController
     require_user(@user)
     params[:user].delete(:login) unless current_user.is_admin?(:as => 'admin') #no changing login unless you're an admin
     if @user.update_attributes(params[:user])
-      respond_to do |format|
-        flash[:notice] = "Successfully updated user."
-        format.js {render :action => 'create_success'}
-      end
+      flash[:notice] = "Successfully updated user."
+      render :action => 'create_success'
     else
-      respond_to do |format|
-        format.js {render :action => 'load_validations'}
-      end
+      render :action => 'load_validations'
     end
   end
 

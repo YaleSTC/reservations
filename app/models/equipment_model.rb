@@ -6,7 +6,7 @@ class EquipmentModel < ActiveRecord::Base
 
   nilify_blanks :only => [:deleted_at]
 
-  attr_accessible :name, :category_id, :description, :late_fee, :replacement_fee,
+  attr_accessible :name, :category, :category_id, :description, :late_fee, :replacement_fee,
       :max_per_user, :document_attributes, :deleted_at,
       :checkout_procedures_attributes, :checkin_procedures_attributes, :photo,
       :documentation, :max_renewal_times, :max_renewal_length, :renewal_days_before_due,

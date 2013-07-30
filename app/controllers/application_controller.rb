@@ -5,8 +5,9 @@ class ApplicationController < ActionController::Base
   helper :layout
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
-  before_filter RubyCAS::Filter
+  before_filter RubyCAS::Filter unless Rails.env.test?
   before_filter :app_setup_check
+  before_filter :cart
 
   with_options :unless => lambda {|u| User.all.count == 0 } do |c|
     c.before_filter :load_configs
@@ -22,7 +23,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_user
   helper_method :cart
 
-  #-------- before_filter methods --------
+  # -------- before_filter methods -------- #
 
   def app_setup_check
     if User.all.blank? || !AppConfig.first
@@ -78,7 +79,8 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    @current_user ||= User.find_by_login(session[:cas_user]) if session[:cas_user]
+    # the commented out if statement is not necessary since User.find_by_login(nil) will return nil anyway
+    @current_user ||= User.find_by_login(session[:cas_user]) # if session[:cas_user]
   end
 
   def check_if_is_admin
@@ -88,23 +90,29 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def fix_cart_date
+    cart.set_start_date(Date.today) if cart.start_date < Date.today
+  end
+
   #-------- end before_filter methods --------#
 
   def update_cart
     # set dates
+    cart = session[:cart]
     flash.clear
     begin
-      session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
-      session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
-      session[:cart].set_reserver_id(params[:reserver_id])
+      cart.set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
+      cart.set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
+      cart.set_reserver_id(params[:reserver_id])
     rescue ArgumentError => e
       cart.set_start_date(Date.today)
       flash[:error] = "Please enter a valid start or due date."
-      return
     end
+    
     # validate
     errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
-    flash[:error] = errors.to_sentence
+    # don't over-write flash if invalid date was set above
+    flash[:error] ||= errors.to_sentence 
 
     # reload appropriate divs / exit
     respond_to do |format|
@@ -114,18 +122,15 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def fix_cart_date
-    cart.set_start_date(Date.today) if cart.start_date < Date.today
-  end
-
   def empty_cart
     #destroy old cart reservations
     current_cart = session[:cart]
     CartReservation.where(:reserver_id => current_cart.reserver.id).destroy_all
 
+    session[:cart] = nil # do this instead?
     #create a new cart
-    session[:cart] = Cart.new
-    session[:cart].set_reserver_id(current_user.id)
+    # session[:cart] = Cart.new
+    # session[:cart].set_reserver_id(current_user.id)
     flash[:notice] = "Cart emptied."
 
     redirect_to root_path
