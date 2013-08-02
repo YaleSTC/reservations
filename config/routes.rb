@@ -34,12 +34,9 @@ Reservations::Application.routes.draw do
     end
     get :autocomplete_user_last_name, :on => :collection
   end
-<<<<<<< HEAD
-=======
 
   match '/black_outs/flash_message' => 'black_outs#flash_message', :as => :flash_message
   match '/black_outs/new_recurring' => 'black_outs#new_recurring', :as => :new_recurring_black_out
->>>>>>> master
 
   get '/blackouts/flash_message' => 'blackouts#flash_message', :as => :flash_message
   get '/blackouts/new_recurring' => 'blackouts#new_recurring', :as => :new_recurring_blackout
@@ -97,9 +94,10 @@ Reservations::Application.routes.draw do
   get 'contact' => 'contact#new', :as => 'contact_us', :via => :get
   post 'contact' => 'contact#create', :as => 'contact_us', :via => :post
 
+  match 'announcements/:id/hide', to: 'announcements#hide', as: 'hide_announcement'
+
   match ':controller(/:action(/:id(.:format)))'
 
-  match 'announcements/:id/hide', to: 'announcements#hide', as: 'hide_announcement'
 
 
 end
