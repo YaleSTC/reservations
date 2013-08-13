@@ -51,6 +51,7 @@ Reservations::Application.routes.draw do
     end
   end
 
+#resources :announcements
   # reservations views
   get '/reservations/manage/:user_id' => 'reservations#manage', :as => :manage_reservations_for_user
   get '/reservations/current/:user_id' => 'reservations#current', :as => :current_reservations_for_user
@@ -95,6 +96,10 @@ Reservations::Application.routes.draw do
   post 'contact' => 'contact#create', :as => 'contact_us', :via => :post
 
   match 'announcements/:id/hide', to: 'announcements#hide', as: 'hide_announcement'
+   get 'announcements' => 'announcements#index', :as => :announcements
+   match 'announcements/:id/edit' => 'announcements#edit', as: 'edit_announcement'
+   match 'announcements/:id/delete', to: 'announcements#delete', as: 'delete_announcement'
+
 
   match ':controller(/:action(/:id(.:format)))'
 

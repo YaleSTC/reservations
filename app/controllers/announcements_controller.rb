@@ -28,19 +28,26 @@ class AnnouncementsController < ApplicationController
   	end
   end
 
+  def edit
+  end
+
   def update
       if @announcement.update_attributes(params[:announcement])
       	respond_to do |format|   
-        format.html { redirect_to @announcement, notice: 'Announcement was successfully updated.' }
-  		format.js {render :aciton => 'create_success'}
-      	end
+          format.html { redirect_to @announcement, notice: 'Announcement was successfully updated.' }
+  		    format.js {render :aciton => 'create_success'}
+        end
+      else
+        render :action => 'edit'
       end
   end
 
-  def delete
-  	@announcement.destroy
-  	# respond_to do |format|
-  	# 	format.html {}
+  def delete 
+  	@announcement = Announcement.find(params[:id])
+    @announcement.destroy
+  	 respond_to do |format|
+  	 	format.html {redirect_to announcements_url}
+     end
   end
 
 
