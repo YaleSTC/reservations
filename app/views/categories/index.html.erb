@@ -16,20 +16,20 @@
   </thead>
   <tbody>
   <% for category in @categories %>
-    <% if category.deleted_at %>
-      <tr class="deactivated">
-      <% @toggle = "link_to \"Activate\", activate_path(:categories,category), :class => \"btn btn-success\", :method => :put" %>
-    <% else %>
-      <tr class= "activated">
-      <% @toggle = "link_to \"Deactivate\", deactivate_path(:categories,category), :class => \"btn btn-danger\", :method => :put" %>
-    <% end %>
+    <tr>
       <td><%= link_to category.name, category %></td>
       <td><%= category.maximum_per_user %></td>
       <td><%= category.maximum_checkout_length %></td>
       <td><%= category.sort_order %></td>
       <% if current_user.is_admin?(:as => 'admin') %>
        <td><%= link_to "Edit", edit_category_path(category), :class => "btn" %></td>
-       <td><%= eval @toggle %></td>
+       <td>
+        <% if category.deleted_at %>
+          <%= make_activate_btn(:categories,category) %>
+        <% else %>
+          <%= make_deactivate_btn(:categories,category) %>
+        <% end %>
+       </td>
       <% end %>
     </tr>
   <% end %>

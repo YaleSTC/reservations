@@ -173,15 +173,15 @@ class ApplicationController < ActionController::Base
   def deactivate
     @objects_class2 = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (EM, EO, Category)
     @objects_class2.destroy #Deactivate the model you had originally intended to deactivate
-    flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + ". Any related reservations or equipment have been deactivated as well."
+    flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + ". Any related equipment has been deactivated as well. Any related reservations have been perminently deleted."
     redirect_to request.referer  # Or use redirect_to(back).
   end
 
   def activate
     @model_to_activate = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (EM, EO, Category)
-    activateParents(@model_to_activate)
+    activate_parents(@model_to_activate)
     @model_to_activate.revive
-    flash[:notice] = "Successfully reactivated " + params[:controller].singularize.titleize + ". Any related reservations or equipment have been reactivated as well."
+    flash[:notice] = "Successfully reactivated " + params[:controller].singularize.titleize + ". Any related equipment has been reactivated as well."
     redirect_to request.referer # Or use redirect_to(back)
   end
 

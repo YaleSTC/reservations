@@ -106,14 +106,14 @@ class UsersController < ApplicationController
   end
 
   def deactivate
-    @user.destroy #Deactivate the model you had originally intended to deactivate
-    flash[:notice] = "Successfully deactivated user. Any related reservations or equipment have been deactivated as well."
+    @user.destroy #Deactivate the user model
+    flash[:notice] = "Successfully deactivated user. Any related equipment has been deactivated as well. All reservations for this user have been permanently destroyed."
     redirect_to users_path  # always redirect to show page for deactivated user
   end
 
   def activate
     @user.revive
-    flash[:notice] = "Successfully reactivated user. Any related reservations or equipment have been reactivated as well."
+    flash[:notice] = "Successfully reactivated user."
     redirect_to users_path
   end
 end

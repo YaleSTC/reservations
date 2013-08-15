@@ -11,7 +11,15 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130717084037) do
+ActiveRecord::Schema.define(:version => 20130815225046) do
+
+  create_table "announcements", :force => true do |t|
+    t.text     "messag"
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
   create_table "app_configs", :force => true do |t|
     t.boolean  "upcoming_checkin_email_active",                      :default => true
@@ -80,6 +88,7 @@ ActiveRecord::Schema.define(:version => 20130717084037) do
     t.string   "step"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
+    t.datetime "deleted_at"
   end
 
   create_table "checkout_procedures", :force => true do |t|
@@ -87,6 +96,7 @@ ActiveRecord::Schema.define(:version => 20130717084037) do
     t.string   "step"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
+    t.datetime "deleted_at"
   end
 
   create_table "equipment_models", :force => true do |t|
