@@ -1,7 +1,10 @@
 class ImportUsersController < ApplicationController
+  include CsvImport
 
   before_filter :require_admin
 
+  # functions like the RESTful create action by submitting a POST request to create/update a bunch
+  # of users, and it renders the 'imported' page.
   def import
     # initialize
     file = params[:csv_upload] # the file object
@@ -21,35 +24,18 @@ class ImportUsersController < ApplicationController
     end
   end
 
+  # functions like the RESTful new action by rendering a form with a GET request
   def import_page
+    # limits the options for user.role to the following array, and displays them with more user-friendly labels.
     @select_options = [['Patrons','normal'],['Checkout Persons','checkout'],['Administrators','admin'],['Banned Users','banned']]
-    render 'import'
+    render 'import' # a form for uploading a csv file of users to import
   end
 
+
   private
-
-    def csv_import(filepath)
-      # initialize
-      imported_objects = []
-      string = File.read(filepath)
-      require 'csv'
-
-      # import data by row
-      CSV.parse(string, :headers => true) do |row|
-        object_hash = row.to_hash.symbolize_keys
-
-        # make all nil values blank
-        object_hash.keys.each do |key|
-          if object_hash[key].nil?
-            object_hash[key] = ''
-          end
-        end
-        imported_objects << object_hash
-      end
-      # return array of imported objects
-      imported_objects
-    end
-
+    # this method checks that the user has uploaded a file and displays flash messages if there is an error.
+    # putting these validations in the controller is not idiomatic in rails and there is likely a cleaner way to
+    # do this. If we ever have to validate more input than this, we should remove this to a csv_import validations model.
     def valid_input_file?(imported_users, file)
       # check if the user has uploaded a file at all.
       if !file
@@ -76,94 +62,5 @@ class ImportUsersController < ApplicationController
         redirect_to :back and return
       end
       return true
-    end
-
-    def import_with_ldap(user_data_hash)
-      # check LDAP for missing data
-      ldap_user_hash = User.search_ldap(user_data_hash[:login])
-
-      # if nothing found via LDAP
-      if ldap_user_hash.nil?
-        return
-      end
-
-      # fill-in missing key-values with LDAP data
-      user_data_hash.keys.each do |key|
-        if user_data_hash[key].blank? and !ldap_user_hash[key].blank?
-          user_data_hash[key] = ldap_user_hash[key]
-        end
-      end
-      user_data_hash
-    end
-
-    def set_or_create_user_for_import(user_data)
-      # set the user and attempt to save with given data
-      if @overwrite and (User.where("login = ?", user_data[:login]).size > 0)
-        user = User.where("login = ?", user_data[:login]).first
-      else
-        user = User.new(user_data)
-      end
-      return user
-    end
-
-    def attempt_save_with_csv_data?(user_data)
-      user = set_or_create_user_for_import(user_data)
-
-      user.update_attributes(user_data)
-      # if the updated or new user is valid, save to database and add to array of successful imports
-      if user.valid?
-        user.csv_import = true
-        user.role = @user_type
-        user.save
-        @array_of_success << user
-        return true
-      else
-        return false
-      end
-    end
-
-    def attempt_save_with_ldap(user_data)
-      ldap_hash = import_with_ldap(user_data)
-      if ldap_hash
-        user_data = ldap_hash
-      else
-        @array_of_fail << [user_data, 'Incomplete user information. Unable to find user in online directory (LDAP).']
-        return
-      end
-
-      user = set_or_create_user_for_import(user_data)
-
-      # set other user attributes
-      user.csv_import = true
-      user.role = @user_type
-
-      if user.valid?
-        user.save
-        @array_of_success << user
-        return
-      else
-        @array_of_fail << [user_data, user.errors.full_messages.to_sentence.capitalize + '.']
-        return
-      end
-    end
-
-    def import_users(array_of_user_data, overwrite=false, user_type='normal')
-      # give safe defaults if none selected
-
-      @array_of_success = [] # will contain user-objects
-      @array_of_fail = [] # will contain user_data hashes and error messages
-      @user_type = user_type
-      @overwrite = overwrite
-
-      array_of_user_data.each do |user_data|
-        if attempt_save_with_csv_data?(user_data)
-          next
-        else
-          attempt_save_with_ldap(user_data)
-          next
-        end
-      end
-
-      hash_of_statuses = {:success => @array_of_success, :fail => @array_of_fail}
     end
 end
