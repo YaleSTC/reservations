@@ -93,4 +93,7 @@ Reservations::Application.routes.draw do
 
   match ':controller(/:action(/:id(.:format)))'
 
+  match 'announcements/:id/hide', to: 'announcements#hide', as: 'hide_announcement'
+
+
 end

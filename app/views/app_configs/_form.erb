@@ -35,6 +35,7 @@
   <%= f.input :checkout_persons_can_edit, label: 'Edit reservations', hint: 'Allow checkout persons to edit reservations.' %>
   <%= f.input :override_on_create, label: 'Override on create', hint: 'Give checkout persons admin-level override capability when creating a reservation. For example, they would be able to create a reservation on a blackout date, or for a period longer than the permitted length for that item.' %>
   <%= f.input :override_at_checkout, label: 'Override at checkout', hint: 'Give checkout persons admin-level override capability when checking out. For example, they would be able to checkout equipment to someone with an overdue reservation.' %>
+  <%= f.input :require_phone, label: 'Can users create a profile without giving a phone number?' %>
 </fieldset>
 
 <fieldset>

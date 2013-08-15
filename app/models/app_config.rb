@@ -9,7 +9,7 @@ class AppConfig < ActiveRecord::Base
                   :deleted_missed_reservation_email_body,
                   :default_per_cat_page, :terms_of_service, :favicon,
                   :checkout_persons_can_edit, :override_on_create,
-                  :override_at_checkout
+                  :override_at_checkout, :require_phone
 
   has_attached_file :favicon, url: "/system/:attachment/:id/:style/favicon.:extension"
 

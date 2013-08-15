@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(:version => 20130717084037) do
     t.boolean  "viewed",                                             :default => true
     t.boolean  "override_on_create",                                 :default => false
     t.boolean  "override_at_checkout",                               :default => false
+    t.boolean  "require_phone",                                      :default => true
   end
 
   create_table "blackouts", :force => true do |t|

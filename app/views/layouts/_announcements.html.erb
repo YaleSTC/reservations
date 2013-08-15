@@ -1,0 +1,10 @@
+<% Announcement.current(cookies.signed[:hidden_announcement_ids]).each do |announcement| %>
+  <%= div_for announcement, :class => "alert alert-info" do %>
+    <%= announcement.message %>
+    <%= link_to "hide announcement", hide_announcement_path(announcement), remote: true do %>
+      <button class="close">×</button >
+          <%= link_to "hide announcement", hide_announcement_path(announcement)%>
+
+    <% end %>
+  <% end %>
+<% end %>
