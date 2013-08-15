@@ -63,7 +63,8 @@ class ReservationsController < ApplicationController
           cart.cart_reservations.each do |cart_res|
             @reservation = Reservation.new(params[:reservation])
             @reservation.equipment_model =  cart_res.equipment_model
-            @reservation.from_admin = current_user.is_admin?(:as => 'admin')
+            # the attribute is called from_admin, but now that we can give checkout people this permission, the name doesn't quite make sense.
+            @reservation.from_admin = current_user.can_override_reservation_restrictions?
             @reservation.save!
             successful_reservations << @reservation
           end
@@ -185,7 +186,7 @@ class ReservationsController < ApplicationController
 
       # act on the errors
       if !error_msgs.empty? # If any requirements are not met...
-        if current_user.is_admin?(:as => 'admin') # Admins can ignore them
+        if current_user.can_override_checkout_restrictions? # Admins can ignore them
           error_msgs = " Admin Override: Equipment has been successfully checked out even though " + error_msgs
         else # everyone else is redirected
           flash[:error] = error_msgs
