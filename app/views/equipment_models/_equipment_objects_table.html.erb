@@ -13,13 +13,7 @@
   </thead>
   <tbody>
   <% for equipment_object in @equipment_model.equipment_objects %>
-    <% if equipment_object.deleted_at %>
-      <tr class="deactivated">
-      <% @toggle = "link_to \"Activate\", activate_path(:equipment_objects,equipment_object), :class => \"btn btn-success\", :method => :put" %>
-    <% else %>
-      <tr class= "activated">
-      <% @toggle = "link_to \"Deactivate\", deactivate_path(:equipment_objects,equipment_object), :class => \"btn btn-danger\", :method => :put" %>
-    <% end %>
+    <tr>
       <td><%= link_to equipment_object.name, equipment_object %></td>
       <td><%= equipment_object.serial %></td>
       <% if equipment_object.status == "available" %>
@@ -30,7 +24,13 @@
       <% end %>
       <% if current_user.is_admin?(:as => 'admin') %>
         <td><%= link_to "Edit", edit_equipment_object_path(equipment_object), :class => "btn" %></td>
-        <td><%= eval @toggle %></td>
+        <td>
+          <% if equipment_object.deleted_at %>
+            <%= make_activate_btn(:equipment_objects,equipment_object) %>
+          <% else %>
+            <%= make_deactivate_btn(:equipment_objects,equipment_object) %>
+          <% end %>
+        </td>
       <% end %>
     </tr>
   <% end %>
