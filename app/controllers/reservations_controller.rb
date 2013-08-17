@@ -1,4 +1,10 @@
 class ReservationsController < ApplicationController
+  include Autocomplete
+  # this is a call to the gem method 'autocomplete' of the rails3-jquery-autocomplete gem
+  # it sets up what table and attributes will be used to display autocomplete information when searched
+  # via this controller.
+  autocomplete :user, :last_name, :extra_data => [:first_name, :login], :display_value => :render_name
+
   layout 'application_with_sidebar'
 
   before_filter :require_login, :only => [:index, :show]
@@ -324,22 +330,6 @@ class ReservationsController < ApplicationController
       redirect_to @reservation
       flash[:error] = "Unable to deliver receipt email. Please contact administrator for more support. "
     end
-  end
-
-  autocomplete :user, :last_name, :extra_data => [:first_name, :login], :display_value => :render_name
-
-  def get_autocomplete_items(parameters)
-    parameters[:term] = parameters[:term].downcase
-    users=User.select("nickname, first_name, last_name,login, id, deleted_at").reject {|user| ! user.deleted_at.nil?}
-    @search_result = []
-    users.each do |user|
-        if user.login.downcase.include?(parameters[:term]) ||
-          user.name.downcase.include?(parameters[:term]) ||
-          [user.first_name.downcase, user.last_name.downcase].join(" ").include?(parameters[:term])
-          @search_result << user
-        end
-      end
-      users = @search_result
   end
 
   def renew
