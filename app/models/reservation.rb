@@ -1,15 +1,12 @@
 class Reservation < ActiveRecord::Base
+  include ReservationsBase
   include ReservationValidations
 
   belongs_to :equipment_object
   belongs_to :checkout_handler, :class_name => 'User'
   belongs_to :checkin_handler, :class_name => 'User'
 
-  validates :reserver,
-            :start_date,
-            :due_date,
-            :equipment_model,
-            :presence => true
+  validates :equipment_model, :presence => true
 
   # If there is no equipment model, don't run the validations that would break
   with_options :if => :not_empty? do |r|

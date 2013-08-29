@@ -219,6 +219,7 @@ GEM
     rubinius-actor (0.0.2)
       rubinius-core-api
     rubinius-core-api (0.0.1)
+    ruby-progressbar (1.1.1)
     rubycas-client (2.2.1)
       activesupport
     rubycas-client-rails (0.1.0)
@@ -237,6 +238,8 @@ GEM
       libwebsocket (~> 0.1.3)
       multi_json (~> 1.0)
       rubyzip
+    shoulda-matchers (2.2.0)
+      activesupport (>= 3.0.0)
     simple_form (2.0.4)
       actionpack (~> 3.0)
       activemodel (~> 3.0)
@@ -306,10 +309,12 @@ DEPENDENCIES
   rdoc
   redcarpet
   rspec-rails
+  ruby-progressbar
   rubycas-client (= 2.2.1)
   rubycas-client-rails
   sass-rails
   select2-rails
+  shoulda-matchers
   simple_form
   therubyracer
   thin

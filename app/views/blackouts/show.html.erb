@@ -1,0 +1,46 @@
+<% title "Blackout of " + (@blackout.equipment_model_id == 0 ? "All Equipment Items" : EquipmentModel.find(@blackout.equipment_model_id).name) %>
+
+<%# Setting black-outs on a per-model basis has been disabled %>
+<!--<p>
+  <b>Equipment model affected:</b>
+  <%# (@blackout.equipment_model_id == 0) ? "All Equipment Models" : EquipmentModel.find(@blackout.equipment_model_id).name %>
+</p> -->
+
+<p>
+  <b>Start date:</b>
+  <%= @blackout.start_date.strftime('%m/%d/%Y') %>
+</p>
+
+<p>
+  <b>End date:</b>
+  <%= @blackout.end_date.strftime('%m/%d/%Y') %>
+</p>
+
+<p>
+  <b>Notice:</b>
+  <%= @blackout.notice %>
+</p>
+
+<p>
+  <b>Last Edited by:</b>
+  <%= User.find(@blackout.created_by).name %>
+</p>
+
+<p>
+  <b>Type:</b>
+  <%= @blackout[:blackout_type] == "hard" ? "Hard Blackout" : "Notice Only" %>
+</p>
+
+<% unless @blackout.set_id.nil? or (@blackout_set.size == 1) %>
+  <%= link_to 'Edit just this blackout', edit_blackout_path(@blackout), :class => 'btn' %>
+  <%= link_to 'View all blackout dates', blackouts_path, :class => 'btn' %>
+  <hr />
+  <p>
+    <h3>All Blackouts in this set</h3>
+  </p>
+  <%= render :partial => 'table', :locals => {:blackouts => @blackout_set} %>
+<% else %>
+  <%= link_to 'Edit', edit_blackout_path(@blackout), :class => 'btn' %>
+  <%= link_to 'View all blackout dates', blackouts_path, :class => 'btn' %>
+  <%= link_to 'Destroy', @blackout, confirm: 'Are you sure?', method: :delete, class: 'btn btn-danger' %>
+<% end %>

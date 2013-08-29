@@ -4,7 +4,7 @@ module UsersHelper
       return 'active'
     end
   end
-  
+
   def stats_icons stat
     return 'icon-camera-retro' if stat == :checked_out
     return 'icon-list-alt' if stat == :future

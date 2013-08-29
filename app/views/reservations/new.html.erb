@@ -2,7 +2,7 @@
 
 <% unless @errors.empty? %>
   <p>
-    <% if current_user.is_admin_in_adminmode? %>
+    <% if current_user.is_admin?(:as => 'admin') %>
       <h3><i class="icon-warning-sign warning-icon"></i> Please be aware of the following errors:</h3>
     <% else %>
       <h3><i class="icon-warning-sign warning-icon"></i> Please <%= link_to "return to the Catalog", catalog_path %> and resolve the following errors:</h3>
@@ -26,7 +26,7 @@
     from
     <%= cart.start_date.to_s(:long) %> to
     <%= cart.due_date.to_s(:long) %>:
-    
+
     <%# hidden fields needed for data submission %>
     <%= f.input :reserver_id, :as => :hidden, :value => cart.reserver_id %>
     <%= f.input :start_date, :as => :hidden, :value => cart.start_date %>
@@ -40,12 +40,12 @@
     </ul>
   </p>
   <div class="form-actions">
-    <% if @errors.empty? or current_user.is_admin_in_adminmode? %>
+    <% if @errors.empty? or current_user.can_override_reservation_restrictions? %>
       <%= f.button :submit, "Finalize Reservation" %>
     <% else %>
-      <%= button_tag "Finalize Reservation", class: "btn disabled btn-primary", disabled: true %> 
+      <%= button_tag "Finalize Reservation", class: "btn disabled btn-primary", disabled: true %>
     <% end %>
     <%= link_to "Return to Catalog", catalog_path, class: 'btn' %>
   </div>
-  
+
 <% end %>
