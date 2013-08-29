@@ -8,7 +8,7 @@ describe Announcement do
   	upcoming = Announcement.create! starts_at: 1.hour.from_now, ends_at: 1.from_now
   end
 
-  it "does not include ids passed in to current" do 
+  it "does not include ids passed in to current" do
   	current1 = Announcement.create! starts_at: 1.hour.ago, ends_at: 1.day.from_now
   	current2 = Announcement.create! starts_at: 1.hour.ago, ends_at: 1.day.from_now
   	Announcement.current([current2.id]).should eq([current1])

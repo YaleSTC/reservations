@@ -11,10 +11,10 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130815225046) do
+ActiveRecord::Schema.define(:version => 20130617030854) do
 
   create_table "announcements", :force => true do |t|
-    t.text     "messag"
+    t.text     "message"
     t.datetime "starts_at"
     t.datetime "ends_at"
     t.datetime "created_at", :null => false

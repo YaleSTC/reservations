@@ -30,7 +30,7 @@ class AnnouncementsController < ApplicationController
 
   def update
       if @announcement.update_attributes(params[:announcement])
-      	respond_to do |format|   
+      	respond_to do |format|
         format.html { redirect_to @announcement, notice: 'Announcement was successfully updated.' }
   		format.js {render :aciton => 'create_success'}
       	end

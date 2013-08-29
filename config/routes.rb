@@ -91,9 +91,8 @@ Reservations::Application.routes.draw do
   match 'contact' => 'contact#new', :as => 'contact_us', :via => :get
   match 'contact' => 'contact#create', :as => 'contact_us', :via => :post
 
-  match ':controller(/:action(/:id(.:format)))'
-
   match 'announcements/:id/hide', to: 'announcements#hide', as: 'hide_announcement'
 
+  match ':controller(/:action(/:id(.:format)))'
 
 end
