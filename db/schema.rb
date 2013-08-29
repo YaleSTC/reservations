@@ -43,15 +43,19 @@ ActiveRecord::Schema.define(:version => 20130617030854) do
     t.text     "deleted_missed_reservation_email_body"
     t.boolean  "send_notifications_for_deleted_missed_reservations", :default => true
     t.boolean  "checkout_persons_can_edit",                          :default => false
+    t.boolean  "viewed",                                             :default => true
+    t.boolean  "override_on_create",                                 :default => false
+    t.boolean  "override_at_checkout",                               :default => false
+    t.boolean  "require_phone",                                      :default => true
   end
 
-  create_table "black_outs", :force => true do |t|
+  create_table "blackouts", :force => true do |t|
     t.integer  "equipment_model_id"
     t.date     "start_date"
     t.date     "end_date"
     t.text     "notice"
     t.integer  "created_by"
-    t.text     "black_out_type"
+    t.text     "blackout_type"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
     t.integer  "set_id"
@@ -84,6 +88,7 @@ ActiveRecord::Schema.define(:version => 20130617030854) do
     t.string   "step"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
+    t.datetime "deleted_at"
   end
 
   create_table "checkout_procedures", :force => true do |t|
@@ -91,6 +96,7 @@ ActiveRecord::Schema.define(:version => 20130617030854) do
     t.string   "step"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
+    t.datetime "deleted_at"
   end
 
   create_table "equipment_models", :force => true do |t|
@@ -183,17 +189,12 @@ ActiveRecord::Schema.define(:version => 20130617030854) do
     t.string   "phone"
     t.string   "email"
     t.string   "affiliation"
-    t.boolean  "is_banned",                 :default => false
-    t.boolean  "is_admin",                  :default => false
-    t.boolean  "is_checkout_person",        :default => false
-    t.datetime "created_at",                                   :null => false
-    t.datetime "updated_at",                                   :null => false
-    t.boolean  "adminmode",                 :default => true
-    t.boolean  "checkoutpersonmode",        :default => false
-    t.boolean  "normalusermode",            :default => false
-    t.boolean  "bannedmode",                :default => false
+    t.datetime "created_at",                                      :null => false
+    t.datetime "updated_at",                                      :null => false
     t.datetime "deleted_at"
     t.boolean  "terms_of_service_accepted"
+    t.string   "role",                      :default => "normal"
+    t.string   "view_mode",                 :default => "admin"
   end
 
   create_table "users_requirements", :id => false, :force => true do |t|

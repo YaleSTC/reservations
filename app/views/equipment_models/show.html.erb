@@ -58,7 +58,7 @@
               </div>
             </div>
 
-            <% elsif BlackOut.hard_backout_exists_on_date(cart.start_date) %>
+            <% elsif Blackout.hard_blackout_exists_on_date(cart.start_date) %>
               <%= link_to "#qualifications_modal", class: 'not-qualified-icon-em', rel: "tooltip", title: "Not Available (click for more info)", :"data-toggle" => 'modal' do %>
                 <i class="icon-warning-sign"></i>
             <% end %>
@@ -75,7 +75,7 @@
                 </p>
               </div>
             </div>
-            <% elsif BlackOut.hard_backout_exists_on_date(cart.due_date) %>
+            <% elsif Blackout.hard_blackout_exists_on_date(cart.due_date) %>
               <div id="qualifications_modal" class="modal hide fade">
                 <div class="modal-header">
                   <button type="button" class="close" data-dismiss="modal">×</button>
@@ -130,7 +130,7 @@
     <% if @equipment_model.documentation.exists? %>
       <li><a href="#documentation">Documentation</a></li>
     <% end %>
-    <% if current_user.is_admin_in_adminmode? %>
+    <% if current_user.is_admin?(:as => 'admin') %>
       <li><a href="#items">Items</a></li>
       <li><a href="#procedures">Procedures</a></li>
     <% end %>
@@ -159,7 +159,7 @@
       <h4>Replacement Fee</h4>
     <% end %>
     <%= content_tag :div, :class => 'span2' do %>
-      <% if current_user.is_admin_in_adminmode? %>
+      <% if current_user.is_admin?(:as => 'admin') %>
         <h4>Max. Per User</h4>
       <% end %>
     <% end %>
@@ -173,7 +173,7 @@
       <%= number_to_currency(@equipment_model.replacement_fee) %>
     <% end %>
     <%= content_tag :div, :class => 'span2' do %>
-      <%= @equipment_model.maximum_per_user if current_user.is_admin_in_adminmode? %>
+      <%= @equipment_model.maximum_per_user if current_user.is_admin?(:as => 'admin') %>
     <% end %>
   <% end %>
 </section>
@@ -212,7 +212,7 @@
     <% end %>
 
 <!-- ITEMS -->
-<% if current_user.is_admin_in_adminmode? %>
+<% if current_user.is_admin?(:as => 'admin') %>
   <section id="items">
     <h2>Items</h2><hr />
     <p>
@@ -265,7 +265,7 @@
 <% end %>
 
 <div class="form-actions">
-  <% if current_user.is_admin_in_adminmode? %>
+  <% if current_user.is_admin?(:as => 'admin') %>
     <%= link_to "Edit "+@equipment_model.name.truncate(30), edit_equipment_model_path(@equipment_model), :class => 'btn' %>
     <%= link_to "Delete "+@equipment_model.name.truncate(30), @equipment_model, :confirm => 'Deleting this Equipment Model will delete all related Equipment Items and reservations. Are you sure you want to do this?', :method => :delete, :class => 'btn btn-danger' %>
   <% end %>

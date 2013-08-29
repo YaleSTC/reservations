@@ -1,12 +1,5 @@
 module ReservationValidations
 
-  def self.included(base)
-    base.belongs_to :equipment_model
-    base.belongs_to :reserver, :class_name => 'User'
-    base.attr_accessible :reserver, :reserver_id, :start_date, :due_date,
-                         :equipment_model_id
-  end
-
   ## Validations ##
 
   ## For individual reservations only
@@ -78,19 +71,20 @@ module ReservationValidations
   # Checks that the reservation is not longer than the max checkout length
   #TODO: admin override
   def duration_allowed?
-    duration = due_date.to_date - start_date.to_date + 1
-    cat_duration = equipment_model.category.maximum_checkout_length
-    return true if cat_duration == "unrestricted" || (self.class == Reservation && self.checked_in)
-    if duration > cat_duration
-      errors.add(:base, equipment_model.name + "cannot be reserved for more than " + equipment_model.category.maximum_checkout_length.to_s + " days at a time.\n")
+    max_duration = equipment_model.category.maximum_checkout_length
+    if max_duration == "unrestricted" || (self.class == Reservation && self.checked_in)
+      return true
+    elsif self.duration > max_duration
+      errors.add(:base, equipment_model.name + "cannot be reserved for more than " + max_duration.to_s + " days at a time.\n")
       return false
+    else
+      return true
     end
-    return true
   end
 
   # Checks that start date is not a black out date
   def start_date_is_not_blackout?
-    if BlackOut.hard_backout_exists_on_date(start_date)
+    if Blackout.hard_blackout_exists_on_date(start_date)
       errors.add(:base, "Reservation cannot start on " + start_date.strftime('%m/%d') + " because equipment cannot be picked up on that date.\n")
       return false
     end
@@ -99,7 +93,7 @@ module ReservationValidations
 
   # Checks that due date is not a black out date
   def due_date_is_not_blackout?
-    if BlackOut.hard_backout_exists_on_date(due_date)
+    if Blackout.hard_blackout_exists_on_date(due_date)
       errors.add(:base, "Reservation cannot end on " + due_date.strftime('%m/%d') + " because equipment cannot be returned on that date.\n")
       return false
     end
@@ -131,20 +125,8 @@ module ReservationValidations
   def quantity_eq_model_allowed?(reservations = [])
     max = equipment_model.maximum_per_user
     return true if max == "unrestricted"
-
-    #duplicate passed in array so we don't modify it for the next round of validations
-    all_res = reservations.dup
-    all_res << self
-    #include all reservations made by user
-    all_res.concat(reserver.reservations)
-    all_res.uniq!
-    
-    #exclude reservations that don't overlap
-    #TODO: Optimize into a finder scope
-    overlapping_res = all_res.select{ |res| res.overlaps_with?(self) && (res.class == CartReservation || res.checked_in == nil) }
-    
-    model_count = same_model_count(overlapping_res)
-    if model_count > max
+    #count number of model for given and reserver's reservations, excluding those that don't overlap
+    if same_model_count(get_overlapping_reservations(reservations)) > max
       errors.add(:base, "Cannot reserve more than " + equipment_model.maximum_per_user.to_s + " " + equipment_model.name.pluralize + ".\n")
       return false
     end
@@ -158,20 +140,8 @@ module ReservationValidations
   def quantity_cat_allowed?(reservations = [])
     max = equipment_model.category.maximum_per_user
     return true if max == "unrestricted"
-    
-    #duplicate passed in array so we don't modify it for the next round of validations
-    all_res = reservations.dup
-    all_res << self
-    #include all reservations made by user
-    all_res.concat(reserver.reservations)
-    all_res.uniq!
-    
-    #exclude reservations that don't overlap
-    #TODO: Optimize into a finder scope
-    overlapping_res = all_res.select{ |res| res.overlaps_with?(self) && (res.class == CartReservation || res.checked_in == nil) }
-    
-    cat_count = same_category_count(overlapping_res)
-    if cat_count > max
+    #count number in category for given and reserver's reservations, excluding those that don't overlap
+    if same_category_count(get_overlapping_reservations(reservations)) > max
       errors.add(:base, "Cannot reserve more than " + equipment_model.category.maximum_per_user.to_s + " " + equipment_model.category.name.pluralize + ".\n")
       return false
     end
@@ -194,13 +164,23 @@ module ReservationValidations
   def same_category_count(reservations)
     count = 0
     reservations.each { |res| count += 1 if res.equipment_model.category == self.equipment_model.category }
-    count 
+    count
   end
 
   def overlaps_with?(other_res)
     start_overlaps = (self.start_date >= other_res.start_date && self.start_date <= other_res.due_date)
     end_overlaps = (self.due_date >= other_res.start_date && self.due_date <= other_res.due_date)
     return true if start_overlaps || end_overlaps
+  end
+
+  def get_overlapping_reservations(reservations)
+    #duplicate passed in array so we don't modify it for the next round of validations
+    reservations = reservations.dup
+    reservations << self
+    #include all reservations made by user
+    reservations.concat(reserver.reservations)
+    reservations.uniq!
+    reservations.select{ |res| res.overlaps_with?(self) && (res.class == CartReservation || res.checked_in == nil) }
   end
 
 

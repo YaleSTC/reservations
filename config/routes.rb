@@ -14,8 +14,9 @@ Reservations::Application.routes.draw do
     resources :equipment_objects
   end
 
-  match '/users/import' => 'users#import_page', :via => :get, :as => :csv_import_page
-  match '/users/import' => 'users#import', :via => :post, :as => :csv_import
+  match '/import_users/import' => 'import_users#import_page', :via => :get, :as => :csv_import_page
+  match '/import_users/imported' => 'import_users#import', :via => :post, :as => :csv_imported
+
   resources :users do
     collection do
       get :find
@@ -34,10 +35,10 @@ Reservations::Application.routes.draw do
     get :autocomplete_user_last_name, :on => :collection
   end
 
-  match '/black_outs/flash_message' => 'black_outs#flash_message', :as => :flash_message
-  match '/black_outs/new_recurring' => 'black_outs#new_recurring', :as => :new_recurring_black_out
+  match '/blackouts/flash_message' => 'blackouts#flash_message', :as => :flash_message
+  match '/blackouts/new_recurring' => 'blackouts#new_recurring', :as => :new_recurring_blackout
 
-  resources :black_outs do
+  resources :blackouts do
     collection do
       post :create_recurring
     end

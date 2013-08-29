@@ -34,7 +34,7 @@ module LayoutHelper
   end
 
   def reservations_count
-    if current_user && current_user.is_admin_in_adminmode? || current_user.is_checkout_person?
+    if current_user && current_user.is_admin?(:as => 'admin') || current_user.role == 'checkout'
       count = Reservation.where(:checked_in => nil).size
     else
       @current_reservations = current_user.reservations.where(:checked_in => nil)
@@ -54,13 +54,13 @@ module LayoutHelper
   end
 
   def view_as_selected
-    if current_user && current_user.adminmode?
+    if current_user && current_user.view_mode == 'admin'
       'Admin'
-    elsif current_user && current_user.checkoutpersonmode?
+    elsif current_user && current_user.view_mode == 'checkout'
       'Checkout Person'
-    elsif current_user && current_user.normalusermode?
+    elsif current_user && current_user.view_mode == 'normal'
       'Patron'
-    elsif current_user && current_user.bannedmode?
+    elsif current_user && current_user.view_mode == 'banned'
       'Banned User'
     end
   end
