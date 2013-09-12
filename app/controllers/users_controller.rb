@@ -2,6 +2,7 @@ class UsersController < ApplicationController
   layout 'application_with_sidebar', only: [:show, :edit]
 
   skip_filter :cart, :only => [:new, :create]
+  skip_filter :first_time_user, only: [:new, :create]
   before_filter :require_checkout_person, :only => :index
   before_filter :set_user, :only => [:show, :edit, :update, :destroy, :deactivate, :activate]
 
