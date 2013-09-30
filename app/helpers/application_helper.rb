@@ -20,11 +20,11 @@ module ApplicationHelper
   end
 
   # model_symbol must be a symbol for the model that is being deactivated, eg --> :equipment_models
-  def make_activate_btn(model_symbol, model_object, activate)
-    link_to "Activate", activate_path(model_symbol,model_object), :class => "btn btn-success", :method => :put
+  def make_activate_btn(model_symbol, model_object)
+    link_to "Activate", activate_path(model_symbol, model_object), :class => "btn btn-success", :method => :put
   end
 
   def make_deactivate_btn(model_symbol, model_object)
-    link_to "Deactivate", deactivate_path(model_symbol,model_object), :class => "btn btn-danger", :method => :put, :confirm => "Deactivating this #{model_object.class} will permanently destroy all associated reservations, are you sure you want to do this?"
+    link_to "Deactivate", deactivate_path(model_symbol, model_object), :class => "btn btn-danger", :method => :put, :confirm => "Deactivating this #{model_object.class} will permanently destroy all associated reservations, are you sure you want to do this?"
   end
 end
