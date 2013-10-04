@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130617030854) do
+ActiveRecord::Schema.define(:version => 20130815225046) do
 
   create_table "announcements", :force => true do |t|
     t.text     "message"
@@ -44,9 +44,9 @@ ActiveRecord::Schema.define(:version => 20130617030854) do
     t.boolean  "send_notifications_for_deleted_missed_reservations", :default => true
     t.boolean  "checkout_persons_can_edit",                          :default => false
     t.boolean  "viewed",                                             :default => true
+    t.boolean  "require_phone",                                      :default => true
     t.boolean  "override_on_create",                                 :default => false
     t.boolean  "override_at_checkout",                               :default => false
-    t.boolean  "require_phone",                                      :default => true
   end
 
   create_table "blackouts", :force => true do |t|

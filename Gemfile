@@ -41,7 +41,7 @@ group :development, :test do
   gem 'factory_girl_rails'
   gem 'rspec-rails'
   gem 'shoulda-matchers'
-  gem 'capybara'
+  gem 'capybara', '~> 2.0.0'
   gem 'guard-livereload'
   gem 'yajl-ruby'
   gem 'ffaker'
