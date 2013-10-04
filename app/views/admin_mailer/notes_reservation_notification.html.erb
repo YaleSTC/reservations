@@ -1,8 +1,8 @@
 Hello, <br /> <br />
 
-The following reservations checked in or checked out contained notes. 
+The following reservations checked out contained notes. 
 
-	<% @notes_reservations.each do |notes_reservation| %>
+	<% @notes_reservations_out.each do |notes_reservation| %>
 		Equipment: <%= notes_reservation.equipment_model.name %> (<%= notes_reservation.equipment_object.name %>)<br />
 		Reserver: <%= notes_reservation.reserver.name.html_safe %> <br />
 		Due Date: <%= notes_reservation.due_date.strftime(" %B %e, %Y")  %><br />
@@ -11,4 +11,13 @@ The following reservations checked in or checked out contained notes.
 	<% end %>
 <br />
 
+The following reservations checked in contained notes.
+
+	<% @notes_reservations_in.each do |notes_reservation| %>
+		Equipment: <%= notes_reservation.equipment_model.name %> (<%= notes_reservation.equipment_object.name %>)<br />
+		Reserver: <%= notes_reservation.reserver.name.html_safe %> <br />
+		Due Date: <%= notes_reservation.due_date.strftime(" %B %e, %Y")  %><br />
+		Notes: <%= notes_reservation.notes %><br /> <%# TODO: add markdown? %>
+		--------- <br />
+	<% end %>
 -Reservations App
