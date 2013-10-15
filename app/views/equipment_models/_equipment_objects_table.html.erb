@@ -18,6 +18,8 @@
       <td><%= equipment_object.serial %></td>
       <% if equipment_object.status == "available" %>
         <td><span class="label label-success eo-table">Available</span></td>
+      <% elsif equipment_object.status == "Deactivated" %>
+        <td><span class="label label-warning eo-table">Deactivated</span></td>
       <% else %>
         <% current_res = equipment_object.current_reservation %>
         <td><%= link_to_if current_res, equipment_object.status, current_res %></td>
