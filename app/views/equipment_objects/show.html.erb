@@ -16,10 +16,37 @@
 </p>
 <p>
   <strong>Status:</strong>
-  <%= @equipment_object.status %>
+  <% if @equipment_object.status == 'Deactivated' %>
+    <span class="label label-warning eo-table">Deactivated</span>
+  <% elsif @equipment_object.status == 'available' %>
+    <span class="label label-success eo-table">Available</span>
+  <% else %>
+    <%= link_to "#{@equipment_object.status}", @equipment_object.current_reservation %>
+  <%end%>
 </p>
+
+<section>
+  <h2>Associated Reservations</h2><hr />
+  <div class="row">
+    <div class="span9">
+      <%= render :partial => "reservations/reservations_list", locals: { :reservations_list => Reservation.where("equipment_object_id = ?", @equipment_object) } %>
+    </div>
+  </div>
+</section>
+
+<section id="row">
+  <h2>Deactivation Records</h2><hr />
+    <div class="row">
+      <div class="span9">
+        <p>
+          This data is not currently tracked by the database, we will hopefully be adding this feature soon!
+        </p>
+      </div>
+    </div>
+</section>
+
 <div class="form-actions">
   <%= link_to "Edit", edit_equipment_object_path(@equipment_object), class: 'btn' %>
   <%= link_to "Delete", @equipment_object, :confirm => 'Deleting this Equipment Item will delete all related reservations. Are you sure you want to do this?', :method => :delete, class: 'btn btn-danger' %>
-  <%= link_to "View All", equipment_objects_path, class: 'btn' %>
+  <%= link_to "View All #{@equipment_object.equipment_model.name}'s", equipment_model_path(@equipment_object.equipment_model_id, anchor: 'items'), class: 'btn' %>
 </div>
