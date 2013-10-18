@@ -1,6 +1,6 @@
 Hello, <br /> <br />
 
-The following reservations checked out contained notes. 
+<b>The following reservations checked out contained notes. </b><br />
 
 	<% @notes_reservations_out.each do |notes_reservation| %>
 		Equipment: <%= notes_reservation.equipment_model.name %> (<%= notes_reservation.equipment_object.name %>)<br />
@@ -9,9 +9,8 @@ The following reservations checked out contained notes.
 		Notes: <%= notes_reservation.notes %><br /> <%# TODO: add markdown? %>
 		--------- <br />
 	<% end %>
-<br />
-
-The following reservations checked in contained notes.
+<br /><br />
+<b>The following reservations checked in contained notes. </b><br />
 
 	<% @notes_reservations_in.each do |notes_reservation| %>
 		Equipment: <%= notes_reservation.equipment_model.name %> (<%= notes_reservation.equipment_object.name %>)<br />

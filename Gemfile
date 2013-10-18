@@ -68,6 +68,7 @@ group :development do
   gem 'pry-stack_explorer'
   gem 'pry-remote'
   gem 'letter_opener'
+  gem 'letter_opener_web', '~> 1.1.0'
 end
 
 group :production, :staging do

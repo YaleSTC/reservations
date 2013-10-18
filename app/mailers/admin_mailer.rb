@@ -1,7 +1,7 @@
 class AdminMailer < ActionMailer::Base
   default :from => "no-reply@reservations.app"
   
-  def notes_reservation_notification_out(notes_reservations_out, notes_reservations_in)
+  def notes_reservation_notification(notes_reservations_out, notes_reservations_in)
     @app_configs = AppConfig.first
     @notes_reservations_out = notes_reservations_out
     @notes_reservations_in = notes_reservations_in

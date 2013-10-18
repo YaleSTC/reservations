@@ -19,7 +19,8 @@ Reservations::Application.configure do
   config.action_mailer.raise_delivery_errors = true
 
   # Use letter_opener for development mail testing
-  config.action_mailer.delivery_method = :letter_opener
+  #config.action_mailer.delivery_method = :letter_opener_web
+  config.action_mailer.delivery_method = ENV['USER'] == 'vagrant' ? :letter_opener_web : :letter_opener
 
   # Print deprecation notices to the Rails logger
   config.active_support.deprecation = :log
