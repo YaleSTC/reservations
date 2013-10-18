@@ -36,15 +36,13 @@ task :send_reservation_notes => :environment do
   notes_reservations_in = Reservation.find(:all, 
     :conditions => ["notes IS NOT NULL and checked_out IS NOT NULL and checked_in IS NOT NULL and notes_unsent = ?", true])
   puts "Found #{notes_reservations_out.size} reservations checked out with notes and #{notes_reservations_in.size} reservations checked in with notes. Sending a reminder email..."
-  unless notes_reservations_out.empty?
+  unless notes_reservations_out.empty? and note_reservations_in.empty?
     AdminMailer.notes_reservation_notification(notes_reservations_out, notes_reservations_in).deliver
   end
-  notes_reservations_out.each do |notes_reservation_out| 
-    notes_reservation_out.update_attribute(:notes_unsent, false)
+  (notes_reservations_out + notes_reservations_in).each do |notes_reservation| 
+    notes_reservation.update_attribute(:notes_unsent, false)
   end
-  notes_reservations_in.each do |notes_reservation_in|
-    notes_reservation_in.update_attribute(:notes_unsent, false)
-  end
+
   puts "Done!"
 end
   
