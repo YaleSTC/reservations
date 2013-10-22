@@ -1,7 +1,13 @@
 <% title "New User" unless params[:from_cart] == "true" %>
 
-<%= render :partial => 'form' %>
+<% if params[:from_cart] == "true" && User.search_ldap(params[:possible_netid]) %>
+  <%= render :partial => 'short_form' %>
+<% elsif %>
+  <%= render :partial => 'invalid_netID_modal' %>
+<% else %>
+  <%= render :partial => 'form' %>
+<% end%>
 
-<% if current_user %>
+<% if current_user && params[:from_cart] != "true" %>
   <p><%= link_to "Back to List", users_path %></p>
 <% end %>

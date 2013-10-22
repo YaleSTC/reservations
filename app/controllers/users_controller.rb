@@ -44,8 +44,11 @@ class UsersController < ApplicationController
 
   def new
     if current_user and current_user.can_checkout?
-      binding.pry
-      @user = User.new
+      if params[:possible_netid]
+        @user = User.new(User.search_ldap(params[:possible_netid]))
+      else
+        @user = User.new
+      end
     else
       @user = User.new(User.search_ldap(session[:cas_user]))
       @user.login = session[:cas_user] #default to current login

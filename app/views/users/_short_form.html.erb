@@ -1,0 +1,29 @@
+<div class="span5">
+  <%= simple_form_for @user, :html => { :class => "form-horizontal" }, :remote => true do |f| %>
+    <%= f.error_notification %>
+
+    <%= hidden_field_tag :login %>
+    <%= f.input :first_name, :readonly => true %>
+    <%= f.input :last_name, :readonly => true %>
+
+    <% if AppConfig.first.require_phone %>
+      <%= f.input :phone, required: true, hint: "format like (555) 555-5555" %>
+    <% else %>
+      <%= f.input :phone, hint: "format like (555) 555-5555" %>
+    <% end %>
+
+    <%= f.input :email, :readonly => true %>
+    <%= f.input :affiliation, :readonly => true, hint: "including college, year, etc"%>
+
+    <%= params[:from_cart] == "true" ? hidden_field_tag(:from_cart, true) : hidden_field_tag(:from_cart, false) %>
+
+    <%= hidden_field_tag :role, collection: ['normal', 'checkout', 'admin', 'banned'], placeholder: 'normal' %>
+
+    <% if @user %>
+      <%= f.button :wrapped, cancel: @user %>
+    <% else %>
+      <%= f.button :wrapped, cancel: root_path %>
+    <% end %>
+
+  <% end %>
+</div>
