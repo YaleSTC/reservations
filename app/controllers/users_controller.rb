@@ -43,7 +43,8 @@ class UsersController < ApplicationController
   end
 
   def new
-    if current_user and current_user.is_admin?(:as => 'admin')
+    if current_user and current_user.can_checkout?
+      binding.pry
       @user = User.new
     else
       @user = User.new(User.search_ldap(session[:cas_user]))
