@@ -1,8 +1,9 @@
 <div class="span5">
   <%= simple_form_for @user, :html => { :class => "form-horizontal" }, :remote => true do |f| %>
     <%= f.error_notification %>
+    </br>
 
-    <%= hidden_field_tag :login %>
+    <%= f.input :login, as: :hidden %>
     <%= f.input :first_name, :readonly => true %>
     <%= f.input :last_name, :readonly => true %>
 
@@ -13,17 +14,10 @@
     <% end %>
 
     <%= f.input :email, :readonly => true %>
-    <%= f.input :affiliation, :readonly => true, hint: "including college, year, etc"%>
+    <%= f.input :affiliation, :readonly => true %>
 
     <%= params[:from_cart] == "true" ? hidden_field_tag(:from_cart, true) : hidden_field_tag(:from_cart, false) %>
 
-    <%= hidden_field_tag :role, collection: ['normal', 'checkout', 'admin', 'banned'], placeholder: 'normal' %>
-
-    <% if @user %>
-      <%= f.button :wrapped, cancel: @user %>
-    <% else %>
-      <%= f.button :wrapped, cancel: root_path %>
-    <% end %>
-
+    <%= f.button :wrapped, cancel: root_path %>
   <% end %>
 </div>
