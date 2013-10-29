@@ -1,4 +1,13 @@
 class AnnouncementsController < ApplicationController
+  before_filter :require_admin
+  before_filter :set_current_announcement, :only => [:edit, :update, :destroy]
+
+  # ------------- before filter methods ------------- #
+  def set_current_announcement
+    @announcement = Announcement.find(params[:id])
+  end
+  # ------------- end before filter methods ------------- #
+
   def hide
     ids = [params[:id], *cookies.signed[:hidden_announcement_ids]]
     cookies.permanent.signed[:hidden_announcement_ids] = ids
@@ -12,59 +21,46 @@ class AnnouncementsController < ApplicationController
   	@announcements = Announcement.all
   end
 
-  # def show
-  # end
-
   def new
-  	if current_user and current_user.is_admin?(:as => 'admin')
-  		@announcement = Announcement.new
-  	end
+  	@announcement = Announcement.new
   end
 
+
   def create
+    parse_time
   	@announcement = Announcement.new(params[:announcement])
   	if @announcement.save
-  		respond_to do |format|
-  			flash[:notice] = "Successfully created announcement."
-  			format.js {render :aciton => 'create_success'}
-        format.html {redirect_to announcements_url}
-  		end
-  	end
+  		redirect_to(announcements_url, :notice => 'Announcement was successfully created.')
+    else
+      render :action => "new"
+    end
   end
 
   def edit
-    @announcement = Announcement.find(params[:id])
   end
 
   def update
-    @announcement = Announcement.find(params[:id])
-      if  @announcement.update_attributes(params[:announcement])
-      	respond_to do |format|   
-          format.html { redirect_to announcements_url, notice: 'Announcement was successfully updated.' }
-  		     format.js {render :aciton => 'create_success'}
-      end        
-      else
-        render :action => 'edit'
-      end
-      
-
+    parse_time
+    if  @announcement.update_attributes(params[:announcement])
+    	redirect_to(announcements_url, :notice => 'Announcement was successfully updated.')
+    else
+      render :action => "edit"
+    end
   end
 
-  def destroy 
-  	@announcement = Announcement.find(params[:id])
-    if @announcement.present?
-      @announcement.destroy
-      redirect_to announcements_url
-    else
-      redirect_to :back
-end
-end
 
-  #   @announcement.delete
-  # 	 respond_to do |format|
-  # 	 	format.html {redirect_to announcements_url}
-  #    end
-  # end
+
+   def destroy
+    @announcement.destroy(:force)
+    redirect_to(announcements_url)
+  end
+
+  private
+
+  def parse_time
+    params[:announcement][:starts_at] = DateTime.strptime(params[:announcement][:starts_at], "%m/%d/%Y %l:%M:%S %p")
+    params[:announcement][:ends_at] = DateTime.strptime(params[:announcement][:ends_at], "%m/%d/%Y %l:%M:%S %p")
+  end
 
 
 end

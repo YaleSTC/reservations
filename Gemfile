@@ -23,6 +23,7 @@ gem 'permanent_records'
 gem 'nilify_blanks'
 
 #ui
+gem 'jquery-timepicker-rails'
 gem 'jquery_datepicker'
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
@@ -58,6 +59,8 @@ group :assets do
   gem 'uglifier'
   gem 'bootstrap-sass', '~> 2.0.3'
   gem 'font-awesome-rails', git: 'git://github.com/mrnugget/font-awesome-rails.git'
+  gem 'bootstrap-datetimepicker-rails'
+  gem 'jquery-timepicker-rails'
 end
 
 group :development do
