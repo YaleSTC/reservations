@@ -4,7 +4,7 @@
     <%= hidden_field_tag 'page', params[:page] %>
     <% if current_user && current_user.can_checkout? %>
       <%= label_tag :reserver_id, 'Reserving For' %>
-      <p>(note that this field should be blank unless reserving for someone else)</p>
+      <p>(this field should be blank unless reserving for someone else)</p>
       <div class="input-append">
         <%# This must all be one one line for the button to display properly, sorry it's so ugly! %>
         <%= hidden_field_tag 'reserver_id', cart.reserver_id %>
@@ -36,8 +36,6 @@
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal">×</button>
     <h3>Quick Create New User</h3></br>
-    <p>Please double check that this information is correct.
-      The user can update their personal information later by clicking 'edit' on their profile page.</p>
   </div>
   <div class="modal-body">
   </div>

@@ -1,9 +1,21 @@
 <% title "New User" unless params[:from_cart] == "true" %>
 
-<% if params[:from_cart] == "true" && User.search_ldap(params[:possible_netid]) %>
+<% if params[:from_cart] == "true" && User.search_ldap(params[:possible_netid]) && !User.exists?(login: params[:possible_netid]) %>
   <%= render :partial => 'short_form' %>
-<% elsif %>
-  <%= render :partial => 'invalid_netID_modal' %>
+<% elsif params[:from_cart] == "true" && !User.search_ldap(params[:possible_netid]) %>
+  <div class="span5">
+  <p>Sorry, the netID that you entered does not exist.
+  You cannot create a user profile without a valid netID.</p>
+  </div>
+  <div class="span5">
+  </div>
+<% elsif params[:from_cart] == "true" && User.exists?(login: params[:possible_netid]) %>
+  <div class="span5">
+    <p>This user already exists! If you would like to reserve for them, please select from the drop-down
+      options.</p>
+  </div>
+  <div class="span5">
+  </div>
 <% else %>
   <%= render :partial => 'form' %>
 <% end%>
