@@ -3,6 +3,7 @@ Hello, <br /> <br />
 <b>The following reservations checked out contained notes. </b><br />
 
 	<% @notes_reservations_out.each do |notes_reservation| %>
+    Reservation: <%= notes_reservation.id %>
 		Equipment: <%= notes_reservation.equipment_model.name %> (<%= notes_reservation.equipment_object.name %>)<br />
 		Reserver: <%= notes_reservation.reserver.name.html_safe %> <br />
 		Due Date: <%= notes_reservation.due_date.strftime(" %B %e, %Y")  %><br />
@@ -13,6 +14,7 @@ Hello, <br /> <br />
 <b>The following reservations checked in contained notes. </b><br />
 
 	<% @notes_reservations_in.each do |notes_reservation| %>
+	  Reservation: <%= notes_reservation.id %>
 		Equipment: <%= notes_reservation.equipment_model.name %> (<%= notes_reservation.equipment_object.name %>)<br />
 		Reserver: <%= notes_reservation.reserver.name.html_safe %> <br />
 		Due Date: <%= notes_reservation.due_date.strftime(" %B %e, %Y")  %><br />
