@@ -82,8 +82,8 @@
                       <%# TODO: extract to a helper method? %>
                       <% unless reservation_length > 31 %>
                         <ul class="bar-dividers">
-                          <% reservation_length.times do %>
-                            <%= content_tag :li, nil, style: "width: #{100.0 / reservation_length.to_f}%" %>
+                          <% (reservation_length + 1).times do %>
+                            <%= content_tag :li, nil, style: "width: #{100.0 / (reservation_length.to_f + 1)}%" %>
                           <% end %>
                         </ul>
                       <% end %>
