@@ -16,9 +16,9 @@
     <% end %>
 
     <%= f.input :email, :readonly => true %>
-    <%= f.input :affiliation, :readonly => true %>
+    <%= f.input :affiliation %>
 
-    <%= params[:from_cart] == "true" ? hidden_field_tag(:from_cart, true) : hidden_field_tag(:from_cart, false) %>
+    <%= hidden_field_tag(:from_cart, true) %>
 
     <%= f.button :wrapped, cancel: root_path %>
   <% end %>
