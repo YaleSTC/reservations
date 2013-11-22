@@ -13,7 +13,7 @@ class AnnouncementsController < ApplicationController
   end
 
   def new
-  	if current_user and current_user.is_admin?(:as => 'admin')
+  	if current_user and current_user.is_admin?(as: 'admin')
   		@announcement = Announcement.new
   	end
   end
@@ -23,7 +23,7 @@ class AnnouncementsController < ApplicationController
   	if @announcement.save
   		respond_to do |format|
   			flash[:notice] = "Successfully created announcement."
-  			format.js {render :aciton => 'create_success'}
+  			format.js {render aciton: 'create_success'}
   		end
   	end
   end
@@ -32,7 +32,7 @@ class AnnouncementsController < ApplicationController
       if @announcement.update_attributes(params[:announcement])
       	respond_to do |format|
         format.html { redirect_to @announcement, notice: 'Announcement was successfully updated.' }
-  		format.js {render :aciton => 'create_success'}
+  		format.js {render aciton: 'create_success'}
       	end
       end
   end

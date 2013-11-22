@@ -5,7 +5,7 @@ module ReservationsHelper
 
   def bar_progress_res
     define_width_res
-    number_to_percentage(@width * 100 || 0, :precision => 0)
+    number_to_percentage(@width * 100 || 0, precision: 0)
   end
 
   def reservation_length_in_words

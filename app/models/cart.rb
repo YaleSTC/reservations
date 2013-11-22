@@ -4,7 +4,7 @@ class Cart
   include ActiveModel::Validations
   extend ActiveModel::Naming
 
-  validates :reserver_id, :start_date, :due_date, :presence => true
+  validates :reserver_id, :start_date, :due_date, presence: true
 
   attr_accessor :items, :start_date, :due_date, :reserver_id
   attr_reader   :errors
@@ -39,8 +39,8 @@ class Cart
 
   # Adds CartReservation to database; saves ID into items array
   def add_item(equipment_model)
-    current_item = CartReservation.new(:start_date => @start_date,
-      :due_date => @due_date, :reserver => self.reserver)
+    current_item = CartReservation.new(start_date: @start_date,
+      due_date: @due_date, reserver: self.reserver)
     current_item.equipment_model = equipment_model
     if current_item.save
       @items << current_item.id
