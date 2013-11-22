@@ -79,8 +79,7 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    # the commented out if statement is not necessary since User.find_by_login(nil) will return nil anyway
-    @current_user ||= User.find_by_login(session[:cas_user]) # if session[:cas_user]
+    @current_user ||= User.find_by_login(session[:cas_user])
   end
 
   def check_if_is_admin
@@ -108,11 +107,11 @@ class ApplicationController < ActionController::Base
       cart.set_start_date(Date.today)
       flash[:error] = "Please enter a valid start or due date."
     end
-    
+
     # validate
     errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
     # don't over-write flash if invalid date was set above
-    flash[:error] ||= errors.to_sentence 
+    flash[:error] ||= errors.to_sentence
 
     # reload appropriate divs / exit
     respond_to do |format|
@@ -127,10 +126,7 @@ class ApplicationController < ActionController::Base
     current_cart = session[:cart]
     CartReservation.where(:reserver_id => current_cart.reserver.id).destroy_all
 
-    session[:cart] = nil # do this instead?
-    #create a new cart
-    # session[:cart] = Cart.new
-    # session[:cart].set_reserver_id(current_user.id)
+    session[:cart] = nil
     flash[:notice] = "Cart emptied."
 
     redirect_to root_path
