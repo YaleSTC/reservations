@@ -1,8 +1,8 @@
 class EquipmentObjectsController < ApplicationController
-  before_filter :require_admin, :except => :index
-  before_filter :require_checkout_person, :only => :index
-  before_filter :set_current_equipment_object, :only => [:show, :edit, :update, :destroy]
-  before_filter :set_equipment_model_if_possible, :only => [:index, :new]
+  before_filter :require_admin, except: :index
+  before_filter :require_checkout_person, only: :index
+  before_filter :set_current_equipment_object, only: [:show, :edit, :update, :destroy]
+  before_filter :set_equipment_model_if_possible, only: [:index, :new]
 
   include ActivationHelper
 
@@ -43,7 +43,7 @@ class EquipmentObjectsController < ApplicationController
       flash[:notice] = "Successfully created equipment object. #{@equipment_object.serial}"
       redirect_to @equipment_object.equipment_model
     else
-      render :action => 'new'
+      render action: 'new'
     end
   end
 
@@ -55,7 +55,7 @@ class EquipmentObjectsController < ApplicationController
       flash[:notice] = "Successfully updated equipment object."
       redirect_to @equipment_object.equipment_model
     else
-      render :action => 'edit'
+      render action: 'edit'
     end
   end
 

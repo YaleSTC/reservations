@@ -1,7 +1,7 @@
 class RequirementsController < ApplicationController
 
   before_filter :require_admin
-  before_filter :set_current_requirement, :only => [:show, :edit, :update, :destroy]
+  before_filter :set_current_requirement, only: [:show, :edit, :update, :destroy]
 
   # ------------- before filter methods ------------- #
   def set_current_requirement
@@ -26,17 +26,17 @@ class RequirementsController < ApplicationController
   def create
     @requirement = Requirement.new(params[:requirement])
     if @requirement.save
-      redirect_to(@requirement, :notice => 'Requirement was successfully created.')
+      redirect_to(@requirement, notice: 'Requirement was successfully created.')
     else
-      render :action => "new"
+      render action: "new"
     end
   end
 
   def update
     if @requirement.update_attributes(params[:requirement])
-      redirect_to(@requirement, :notice => 'Requirement was successfully updated.')
+      redirect_to(@requirement, notice: 'Requirement was successfully updated.')
     else
-      render :action => "edit"
+      render action: "edit"
     end
   end
 

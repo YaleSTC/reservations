@@ -7,7 +7,7 @@ module CsvImport
     require 'csv'
 
     # import data by row
-    CSV.parse(string, :headers => true) do |row|
+    CSV.parse(string, headers: true) do |row|
       object_hash = row.to_hash.symbolize_keys
 
       # make all nil values blank
@@ -43,7 +43,7 @@ module CsvImport
       end
     end
 
-    hash_of_statuses = {:success => @array_of_success, :fail => @array_of_fail}
+    hash_of_statuses = {success: @array_of_success, fail: @array_of_fail}
   end
 
   # attempts to import with LDAP, returns nil if the login is not found, otherwise it

@@ -7,7 +7,7 @@ class DocumentsControllerTest < ActionController::TestCase
   end
   
   def test_show
-    get :show, :id => Document.first
+    get :show, id: Document.first
     assert_template 'show'
   end
   
@@ -29,25 +29,25 @@ class DocumentsControllerTest < ActionController::TestCase
   end
   
   def test_edit
-    get :edit, :id => Document.first
+    get :edit, id: Document.first
     assert_template 'edit'
   end
   
   def test_update_invalid
     Document.any_instance.stubs(:valid?).returns(false)
-    put :update, :id => Document.first
+    put :update, id: Document.first
     assert_template 'edit'
   end
   
   def test_update_valid
     Document.any_instance.stubs(:valid?).returns(true)
-    put :update, :id => Document.first
+    put :update, id: Document.first
     assert_redirected_to document_url(assigns(:document))
   end
   
   def test_destroy
     document = Document.first
-    delete :destroy, :id => document
+    delete :destroy, id: document
     assert_redirected_to documents_url
     assert !Document.exists?(document.id)
   end
