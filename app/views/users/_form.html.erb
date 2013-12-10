@@ -18,7 +18,7 @@
   <%= f.input :email %>
   <%= f.input :affiliation, hint: "including college, year, etc"%>
 
-  <%= params[:from_cart] == "true" ? hidden_field_tag(:from_cart, true) : hidden_field_tag(:from_cart, false) %>
+  <%= hidden_field_tag(:from_cart, false) %>
 
   <%= render partial: 'terms_of_service/user_accepted', locals: {f: f}%>
 
