@@ -28,7 +28,7 @@ class AppConfigsController < ApplicationController
       redirect_to catalog_path
     else
       # flash[:error] = "Error saving application settings."
-      render :action => 'edit'
+      render action: 'edit'
     end
   end
 

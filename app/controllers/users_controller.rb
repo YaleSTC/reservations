@@ -1,11 +1,13 @@
 class UsersController < ApplicationController
   layout 'application_with_sidebar', only: [:show, :edit]
 
-  skip_filter :cart, :only => [:new, :create]
-  before_filter :require_checkout_person, :only => :index
-  before_filter :set_user, :only => [:show, :edit, :update, :destroy, :deactivate, :activate]
+  skip_filter :cart, only: [:new, :create]
+  skip_filter :first_time_user, only: [:new, :create]
+  before_filter :require_checkout_person, only: :index
+  before_filter :set_user, only: [:show, :edit, :update, :destroy, :deactivate, :activate]
 
   include ActivationHelper
+  include Autocomplete
 
   # ------------ before filter methods ------------ #
 
@@ -42,8 +44,12 @@ class UsersController < ApplicationController
   end
 
   def new
-    if current_user and current_user.is_admin?(:as => 'admin')
-      @user = User.new
+    if current_user and current_user.can_checkout?
+      if params[:possible_netid]
+        @user = User.new(User.search_ldap(params[:possible_netid]))
+      else
+        @user = User.new
+      end
     else
       @user = User.new(User.search_ldap(session[:cas_user]))
       @user.login = session[:cas_user] #default to current login
@@ -52,12 +58,17 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(params[:user])
+    # this line is what allows checkoutpeople to create users
     @user.login = session[:cas_user] unless current_user and current_user.can_checkout?
     if @user.save
-      flash[:notice] = "Successfully created user."
-      render :action => 'create_success'
+      respond_to do |format|
+        flash[:notice] = "Successfully created user."
+        format.js {render action: 'create_success'}
+      end
     else
-      render :action => 'load_validations'
+      respond_to do |format|
+        format.js {render :action => 'load_form_errors'}
+      end
     end
   end
 
@@ -67,12 +78,16 @@ class UsersController < ApplicationController
 
   def update
     require_user(@user)
-    params[:user].delete(:login) unless current_user.is_admin?(:as => 'admin') #no changing login unless you're an admin
+    params[:user].delete(:login) unless current_user.is_admin?(as: 'admin') #no changing login unless you're an admin
     if @user.update_attributes(params[:user])
-      flash[:notice] = "Successfully updated user."
-      render :action => 'create_success'
+      respond_to do |format|
+        flash[:notice] = "Successfully updated user."
+        format.js {render action: 'create_success'}
+      end
     else
-      render :action => 'load_validations'
+      respond_to do |format|
+        format.js {render :action => 'load_form_errors'}
+      end
     end
   end
 
@@ -87,8 +102,18 @@ class UsersController < ApplicationController
       flash[:alert] = "Search field cannot be blank"
       redirect_to :back and return
     elsif params[:searched_id].blank?
-      flash[:alert] = "Please select a valid user"
-      redirect_to :back and return
+      # this code is a hack to allow hitting enter in the search box to go direclty to the first user
+      # and still user the rails3-jquery-autocomplete gem for the search box. Unfortunately the feature
+      # isn't built into the gem.
+      users = get_autocomplete_items(term: params[:fake_searched_id])
+      if !users.blank?
+        @user = users.first
+        require_user_or_checkout_person(@user)
+        redirect_to manage_reservations_for_user_path(@user.id) and return
+      else
+        flash[:alert] = "Please select a valid user"
+        redirect_to :back and return
+      end
     else
       @user = User.find(params[:searched_id])
       require_user_or_checkout_person(@user)
@@ -97,14 +122,14 @@ class UsersController < ApplicationController
   end
 
   def deactivate
-    @user.destroy #Deactivate the model you had originally intended to deactivate
-    flash[:notice] = "Successfully deactivated user. Any related reservations or equipment have been deactivated as well."
+    @user.destroy #Deactivate the user model
+    flash[:notice] = "Successfully deactivated user. Any related equipment has been deactivated as well. All reservations for this user have been permanently destroyed."
     redirect_to users_path  # always redirect to show page for deactivated user
   end
 
   def activate
     @user.revive
-    flash[:notice] = "Successfully reactivated user. Any related reservations or equipment have been reactivated as well."
+    flash[:notice] = "Successfully reactivated user."
     redirect_to users_path
   end
 end

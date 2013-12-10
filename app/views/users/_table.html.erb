@@ -13,20 +13,20 @@
   </thead>
   <tbody>
   <% for user in users %>
-    <% if user.deleted_at %>
-      <tr class="deactivated">
-      <% @toggle = "link_to \"Activate\", activate_path(:users,user.id), :class => \"btn btn-success\", :method => :put" %>
-    <% else %>
-      <tr class= "activated">
-      <% @toggle = "link_to \"Deactivate\", deactivate_path(:users,user), :class => \"btn btn-danger\", :method => :put" %>
-    <% end %>
+    <tr>
     <td><%= user.login %></td>
     <td><%= link_to user.first_name, user %></td>
     <td><%= link_to user.nickname, user %></td>
     <td><%= link_to user.last_name, user %></td>
     <% if current_user.is_admin?(:as => 'admin') %>
       <td><%= link_to "Edit", edit_user_path(user), :class => "btn" %></td>
-      <td><%= eval @toggle %></td>
+      <td>
+        <% if user.deleted_at %>
+          <%= make_activate_btn(:users,user) %>
+        <% else %>
+          <%= make_deactivate_btn(:users,user) %>
+        <% end %>
+      </td>
     <% end %>
     </tr>
   <% end %>

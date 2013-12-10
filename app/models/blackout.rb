@@ -9,7 +9,7 @@ class Blackout < ActiveRecord::Base
             :start_date,
             :equipment_model_id,
             :blackout_type,
-            :end_date, :presence => true
+            :end_date, presence: true
 
   validate :validate_end_date_before_start_date
   # this only matters if a user tries to inject into params because the datepicker

@@ -2,7 +2,7 @@ class CatalogController < ApplicationController
   helper :blackouts
   layout 'application_with_sidebar'
 
-  before_filter :set_equipment_model, :only => [:add_to_cart, :remove_from_cart]
+  before_filter :set_equipment_model, only: [:add_to_cart, :remove_from_cart]
 
   # --------- before filter methods --------- #
 
@@ -33,7 +33,7 @@ class CatalogController < ApplicationController
     session[:user_per_cat_page] = params[:user_cat_items_per_page] if !params[:user_cat_items_per_page].blank?
     respond_to do |format|
       format.html{redirect_to root_path}
-      format.js{render :action => "cat_pagination"}
+      format.js{render action: "cat_pagination"}
     end
   end
 
@@ -62,7 +62,7 @@ class CatalogController < ApplicationController
 
       respond_to do |format|
         format.html{redirect_to root_path}
-        format.js{render :action => "update_cart"}
+        format.js{render action: "update_cart"}
       end
     end
 end

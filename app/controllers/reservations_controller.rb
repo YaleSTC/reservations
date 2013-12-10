@@ -1,8 +1,14 @@
 class ReservationsController < ApplicationController
+  include Autocomplete
+  # this is a call to the gem method 'autocomplete' of the rails3-jquery-autocomplete gem
+  # it sets up what table and attributes will be used to display autocomplete information when searched
+  # via this controller.
+  autocomplete :user, :last_name, extra_data: [:first_name, :login], display_value: :render_name
+
   layout 'application_with_sidebar'
 
-  before_filter :require_login, :only => [:index, :show]
-  before_filter :permissions_check, :only => [:check_out, :check_in, :edit, :update]
+  before_filter :require_login, only: [:index, :show]
+  before_filter :permissions_check, only: [:check_out, :check_in, :edit, :update]
 
   def set_user
     @user = User.find(params[:user_id])
@@ -42,7 +48,7 @@ class ReservationsController < ApplicationController
       @errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
 
       unless @errors.empty?
-        if current_user.is_admin?(:as => 'admin')
+        if current_user.is_admin?(as: 'admin')
           flash[:error] = 'Are you sure you want to continue? Please review the errors below.'
         else
           flash[:error] = 'Please review the errors below.'
@@ -63,7 +69,8 @@ class ReservationsController < ApplicationController
           cart.cart_reservations.each do |cart_res|
             @reservation = Reservation.new(params[:reservation])
             @reservation.equipment_model =  cart_res.equipment_model
-            @reservation.from_admin = current_user.is_admin?(:as => 'admin')
+            # the attribute is called from_admin, but now that we can give checkout people this permission, the name doesn't quite make sense.
+            @reservation.from_admin = current_user.can_override_reservation_restrictions?
             @reservation.save!
             successful_reservations << @reservation
           end
@@ -75,10 +82,10 @@ class ReservationsController < ApplicationController
           if current_user.can_checkout?
             redirect_to manage_reservations_for_user_path(params[:reservation][:reserver_id]) and return
           else
-            redirect_to catalog_path, :flash => {:notice => "Successfully created reservation. " } and return
+            redirect_to catalog_path, flash: {notice: "Successfully created reservation. " } and return
           end
         rescue Exception => e
-          format.html {redirect_to catalog_path, :flash => {:error => "Oops, something went wrong with making your reservation.<br/> #{e.message}".html_safe} }
+          format.html {redirect_to catalog_path, flash: {error: "Oops, something went wrong with making your reservation.<br/> #{e.message}".html_safe} }
 
           raise ActiveRecord::Rollback
         end
@@ -185,7 +192,7 @@ class ReservationsController < ApplicationController
 
       # act on the errors
       if !error_msgs.empty? # If any requirements are not met...
-        if current_user.is_admin?(:as => 'admin') # Admins can ignore them
+        if current_user.can_override_checkout_restrictions? # Admins can ignore them
           error_msgs = " Admin Override: Equipment has been successfully checked out even though " + error_msgs
         else # everyone else is redirected
           flash[:error] = error_msgs
@@ -205,7 +212,7 @@ class ReservationsController < ApplicationController
       @check_out_set = reservations_to_be_checked_out
       render 'receipt' and return
   rescue Exception => e
-    redirect_to manage_reservations_for_user_path(reservations_to_be_checked_out.first.reserver), :flash => {:error => "Oops, something went wrong checking out your reservation.<br/> #{e.message}".html_safe}
+    redirect_to manage_reservations_for_user_path(reservations_to_be_checked_out.first.reserver), flash: {error: "Oops, something went wrong checking out your reservation.<br/> #{e.message}".html_safe}
   end
 
   def checkin
@@ -271,7 +278,7 @@ class ReservationsController < ApplicationController
     @check_out_set = []
     render 'receipt' and return
   rescue Exception => e
-    redirect_to :back, :flash => {:error => "Oops, something went wrong checking in your reservation.<br/> #{e.message}".html_safe}
+    redirect_to :back, flash: {error: "Oops, something went wrong checking in your reservation.<br/> #{e.message}".html_safe}
   end
 
   def destroy
@@ -325,22 +332,6 @@ class ReservationsController < ApplicationController
     end
   end
 
-  autocomplete :user, :last_name, :extra_data => [:first_name, :login], :display_value => :render_name
-
-  def get_autocomplete_items(parameters)
-    parameters[:term] = parameters[:term].downcase
-    users=User.select("nickname, first_name, last_name,login, id, deleted_at").reject {|user| ! user.deleted_at.nil?}
-    @search_result = []
-    users.each do |user|
-        if user.login.downcase.include?(parameters[:term]) ||
-          user.name.downcase.include?(parameters[:term]) ||
-          [user.first_name.downcase, user.last_name.downcase].join(" ").include?(parameters[:term])
-          @search_result << user
-        end
-      end
-      users = @search_result
-  end
-
   def renew
     set_reservation
     @reservation.due_date += @reservation.max_renewal_length_available.days
@@ -356,7 +347,7 @@ class ReservationsController < ApplicationController
     end
     respond_to do |format|
       format.html{redirect_to root_path}
-      format.js{render :action => "renew_box"}
+      format.js{render action: "renew_box"}
     end
   end
 

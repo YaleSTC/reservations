@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   before_filter :app_setup_check
   before_filter :cart
 
-  with_options :unless => lambda {|u| User.all.count == 0 } do |c|
+  with_options unless: lambda {|u| User.all.count == 0 } do |c|
     c.before_filter :load_configs
     c.before_filter :seen_app_configs
     c.before_filter :current_user
@@ -17,7 +17,7 @@ class ApplicationController < ActionController::Base
     c.before_filter :cart
     c.before_filter :fix_cart_date
     c.before_filter :set_view_mode
-    c.before_filter :check_if_is_admin,  :only => [:activate, :deactivate]
+    c.before_filter :check_if_is_admin,  only: [:activate, :deactivate]
   end
 
   helper_method :current_user
@@ -115,16 +115,16 @@ class ApplicationController < ActionController::Base
 
     # reload appropriate divs / exit
     respond_to do |format|
-      format.js{render :template => "reservations/cart_dates_reload"}
+      format.js{render template: "reservations/cart_dates_reload"}
         # guys i really don't like how this is rendering a template for js, but :action doesn't work at all
-      format.html{render :partial => "reservations/cart_dates"}
+      format.html{render partial: "reservations/cart_dates"}
     end
   end
 
   def empty_cart
     #destroy old cart reservations
     current_cart = session[:cart]
-    CartReservation.where(:reserver_id => current_cart.reserver.id).destroy_all
+    CartReservation.where(reserver_id: current_cart.reserver.id).destroy_all
 
     session[:cart] = nil
     flash[:notice] = "Cart emptied."
@@ -138,7 +138,7 @@ class ApplicationController < ActionController::Base
   end
 
   def require_admin(new_path=root_path)
-    restricted_redirect_to(new_path) unless current_user.is_admin?(:as => 'admin')
+    restricted_redirect_to(new_path) unless current_user.is_admin?(as: 'admin')
   end
 
   def require_checkout_person(new_path=root_path)
@@ -153,7 +153,7 @@ class ApplicationController < ActionController::Base
   end
 
   def require_user(user, new_path=root_path)
-    restricted_redirect_to(new_path) unless current_user == user or current_user.is_admin?(:as => 'admin')
+    restricted_redirect_to(new_path) unless current_user == user or current_user.is_admin?(as: 'admin')
   end
 
   def require_user_or_checkout_person(user, new_path=root_path)
@@ -174,22 +174,22 @@ class ApplicationController < ActionController::Base
   def deactivate
     @objects_class2 = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (EM, EO, Category)
     @objects_class2.destroy #Deactivate the model you had originally intended to deactivate
-    flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + ". Any related reservations or equipment have been deactivated as well."
+    flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + ". Any related equipment has been deactivated as well. Any related reservations have been perminently deleted."
     redirect_to request.referer  # Or use redirect_to(back).
   end
 
   def activate
     @model_to_activate = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (EM, EO, Category)
-    activateParents(@model_to_activate)
+    activate_parents(@model_to_activate)
     @model_to_activate.revive
-    flash[:notice] = "Successfully reactivated " + params[:controller].singularize.titleize + ". Any related reservations or equipment have been reactivated as well."
+    flash[:notice] = "Successfully reactivated " + params[:controller].singularize.titleize + ". Any related equipment has been reactivated as well."
     redirect_to request.referer # Or use redirect_to(back)
   end
 
   def markdown_help
     respond_to do |format|
-      format.html{render :partial => 'shared/markdown_help'}
-      format.js{render :template => 'shared/markdown_help_js'}
+      format.html{render partial: 'shared/markdown_help'}
+      format.js{render template: 'shared/markdown_help_js'}
     end
   end
 

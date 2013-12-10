@@ -40,7 +40,7 @@
     </ul>
   </p>
   <div class="form-actions">
-    <% if @errors.empty? or current_user.is_admin?(:as => 'admin') %>
+    <% if @errors.empty? or current_user.can_override_reservation_restrictions? %>
       <%= f.button :submit, "Finalize Reservation" %>
     <% else %>
       <%= button_tag "Finalize Reservation", class: "btn disabled btn-primary", disabled: true %>

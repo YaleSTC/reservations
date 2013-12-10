@@ -1,8 +1,8 @@
 class CategoriesController < ApplicationController
 
   before_filter :require_admin
-  before_filter :set_current_category, :only => [:show, :edit, :update, :destroy]
-  skip_before_filter :require_admin, :only => [:index, :show]
+  before_filter :set_current_category, only: [:show, :edit, :update, :destroy]
+  skip_before_filter :require_admin, only: [:index, :show]
 
   include ActivationHelper
 
@@ -34,7 +34,7 @@ class CategoriesController < ApplicationController
       redirect_to @category
     else
       flash[:error] = "Oops! Something went wrong with creating the category."
-      render :action => 'new'
+      render action: 'new'
     end
   end
 
@@ -46,7 +46,7 @@ class CategoriesController < ApplicationController
       flash[:notice] = "Successfully updated category."
       redirect_to @category
     else
-      render :action => 'edit'
+      render action: 'edit'
     end
   end
 
