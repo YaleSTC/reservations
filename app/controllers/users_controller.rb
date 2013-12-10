@@ -67,7 +67,7 @@ class UsersController < ApplicationController
       end
     else
       respond_to do |format|
-        format.js {render :action => 'load_validations'}
+        format.js {render :action => 'load_form_errors'}
       end
     end
   end
@@ -86,7 +86,7 @@ class UsersController < ApplicationController
       end
     else
       respond_to do |format|
-        format.js {render :action => 'load_validations'}
+        format.js {render :action => 'load_form_errors'}
       end
     end
   end
