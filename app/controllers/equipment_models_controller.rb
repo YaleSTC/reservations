@@ -2,9 +2,9 @@ class EquipmentModelsController < ApplicationController
   layout 'application_with_sidebar', only: :show
 
   before_filter :require_admin
-  before_filter :set_equipment_model, :only => [:show, :edit, :update, :destroy]
-  skip_before_filter :require_admin, :only => [:index, :show]
-  before_filter :set_category_if_possible, :only => [:index, :new]
+  before_filter :set_equipment_model, only: [:show, :edit, :update, :destroy]
+  skip_before_filter :require_admin, only: [:index, :show]
+  before_filter :set_category_if_possible, only: [:index, :new]
 
   include ActivationHelper
 
@@ -31,7 +31,7 @@ class EquipmentModelsController < ApplicationController
   end
 
   def new
-    @equipment_model = EquipmentModel.new(:category => @category)
+    @equipment_model = EquipmentModel.new(category: @category)
   end
 
   def create
@@ -41,7 +41,7 @@ class EquipmentModelsController < ApplicationController
       redirect_to @equipment_model
     else
       flash[:error] = "Please review the errors below. "
-      render :action => 'new'
+      render action: 'new'
     end
   end
 
@@ -70,7 +70,7 @@ class EquipmentModelsController < ApplicationController
       flash[:notice] = "Successfully updated equipment model."
       redirect_to @equipment_model
     else
-      render :action => 'edit'
+      render action: 'edit'
     end
   end
 
