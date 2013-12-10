@@ -4,11 +4,11 @@
     <%= hidden_field_tag 'page', params[:page] %>
     <% if current_user && current_user.can_checkout? %>
       <%= label_tag :reserver_id, 'Reserving For' %>
+      <p>(this field should be blank unless reserving for someone else)</p>
       <div class="input-append">
         <%# This must all be one one line for the button to display properly, sorry it's so ugly! %>
         <%= hidden_field_tag 'reserver_id', cart.reserver_id %>
-				<%= autocomplete_field_tag 'fake_reserver_id', '', autocomplete_user_last_name_reservations_path, :size => 30, :placeholder => "Enter a name or login", :class => 'submittable span2' %>
-				<%= link_to sanitize("<i class=\"icon-plus\"></i>"), '#userModal', :class => 'btn', :id => 'modal', :rel => 'tooltip', :title => 'New Reserver', :"data-toggle" => 'modal' %>
+				<%= autocomplete_field_tag 'fake_reserver_id', User.find(cart.reserver_id)  == current_user ? '' : User.find(cart.reserver_id).render_name, autocomplete_user_last_name_reservations_path, :size => 30, :placeholder => "Enter a name or login", :class => 'submittable span2' %><%= link_to sanitize("<i class=\"icon-plus\"></i>"), '#userModal', :class => 'btn', :id => 'modal', :rel => 'tooltip', :title => 'New Reserver', :"data-toggle" => 'modal' %>
       </div>
 
     <% elsif !current_user %>
@@ -34,7 +34,7 @@
 <div class="modal hide fade" id="userModal">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal">×</button>
-    <h3><%= "New User" %></h3>
+    <h3>Quick Create New User</h3></br>
   </div>
   <div class="modal-body">
   </div>

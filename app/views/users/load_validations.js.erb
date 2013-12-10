@@ -1,6 +1,10 @@
 // loads the simple form validations by reloading the page
 <% if params[:action] == "create" %>
-  $('#new_user').replaceWith('<%= escape_javascript(render :partial => "form") %>');
+  <% if params[:from_cart] == "true" %>
+    $('#new_user').replaceWith('<%= escape_javascript(render :partial => "short_form") %>');
+  <% else %>
+    $('#new_user').replaceWith('<%= escape_javascript(render :partial => "form") %>');
+  <% end %>
 <% elsif params[:action] == "update" %>
   $('#edit_form').replaceWith('<%= escape_javascript(render :partial => "form") %>');
 <% else %>
