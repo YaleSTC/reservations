@@ -1,5 +1,7 @@
 Reservations::Application.routes.draw do
 
+  get "status/index"
+
   root :to => 'catalog#index'
 
   resources :documents,
@@ -92,6 +94,8 @@ Reservations::Application.routes.draw do
   match 'contact' => 'contact#create', :as => 'contact_us', :via => :post
 
   match 'announcements/:id/hide', to: 'announcements#hide', as: 'hide_announcement'
+
+  get 'status' => 'status#index'
 
   match ':controller(/:action(/:id(.:format)))'
 
