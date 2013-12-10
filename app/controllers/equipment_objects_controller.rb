@@ -18,12 +18,12 @@ class EquipmentObjectsController < ApplicationController
 
   # ---------- end before filter methods ---------- #
 
-
+  #I'm not sure if there's ever a way @equipment_model could be set?
   def index
     if params[:show_deleted]
-      @equipment_objects = ( @equipment_object ? @equipment_object.equipment_models : EquipmentObject.all )
+      @equipment_objects = ( @equipment_model  ? @equipment_model.equipment_objects : EquipmentObject.all )
     else
-      @equipment_objects = ( @equipment_object ? @equipment_object.equipment_models.active : EquipmentObject.active )
+      @equipment_objects = ( @equipment_model  ? @equipment_model.equipment_objects.active : EquipmentObject.active )
     end
   end
 

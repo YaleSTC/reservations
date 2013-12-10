@@ -45,7 +45,7 @@ describe EquipmentObject do
       @object = FactoryGirl.create(:equipment_object)
       @object.status.should == 'available'
       @reservation = FactoryGirl.create(:valid_reservation)
-      @reserved_object = @reservation.equipment_object
+      @reserved_object = EquipmentObject.find_by_equipment_model_id(@reservation.equipment_model.id)
       @reserved_object.status.should == 'available'
     end
     it "returns a description of the reservation that it is currently associated with if it is active and checked out" do
@@ -68,15 +68,13 @@ describe EquipmentObject do
   end
 
   describe ".available?" do
-    before(:each) do
-      @reservation = FactoryGirl.create(:checked_out_reservation)
-      @checked_out_object = @reservation.equipment_object
-      @object = FactoryGirl.create(:equipment_object)
-    end
     it "returns true if the equipment object is not checked out" do
+      @object = FactoryGirl.create(:equipment_object)
       @object.available?.should be_true
     end
     it "returns false if the equipment object is currently checked out" do
+      @reservation = FactoryGirl.create(:checked_out_reservation)
+      @checked_out_object = @reservation.equipment_object
       @checked_out_object.available?.should be_false
     end
   end
