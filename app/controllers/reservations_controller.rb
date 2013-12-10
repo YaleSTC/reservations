@@ -3,12 +3,12 @@ class ReservationsController < ApplicationController
   # this is a call to the gem method 'autocomplete' of the rails3-jquery-autocomplete gem
   # it sets up what table and attributes will be used to display autocomplete information when searched
   # via this controller.
-  autocomplete :user, :last_name, :extra_data => [:first_name, :login], :display_value => :render_name
+  autocomplete :user, :last_name, extra_data: [:first_name, :login], display_value: :render_name
 
   layout 'application_with_sidebar'
 
-  before_filter :require_login, :only => [:index, :show]
-  before_filter :permissions_check, :only => [:check_out, :check_in, :edit, :update]
+  before_filter :require_login, only: [:index, :show]
+  before_filter :permissions_check, only: [:check_out, :check_in, :edit, :update]
 
   def set_user
     @user = User.find(params[:user_id])
@@ -48,7 +48,7 @@ class ReservationsController < ApplicationController
       @errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
 
       unless @errors.empty?
-        if current_user.is_admin?(:as => 'admin')
+        if current_user.is_admin?(as: 'admin')
           flash[:error] = 'Are you sure you want to continue? Please review the errors below.'
         else
           flash[:error] = 'Please review the errors below.'
@@ -82,10 +82,10 @@ class ReservationsController < ApplicationController
           if current_user.can_checkout?
             redirect_to manage_reservations_for_user_path(params[:reservation][:reserver_id]) and return
           else
-            redirect_to catalog_path, :flash => {:notice => "Successfully created reservation. " } and return
+            redirect_to catalog_path, flash: {notice: "Successfully created reservation. " } and return
           end
         rescue Exception => e
-          format.html {redirect_to catalog_path, :flash => {:error => "Oops, something went wrong with making your reservation.<br/> #{e.message}".html_safe} }
+          format.html {redirect_to catalog_path, flash: {error: "Oops, something went wrong with making your reservation.<br/> #{e.message}".html_safe} }
 
           raise ActiveRecord::Rollback
         end
@@ -212,7 +212,7 @@ class ReservationsController < ApplicationController
       @check_out_set = reservations_to_be_checked_out
       render 'receipt' and return
   rescue Exception => e
-    redirect_to manage_reservations_for_user_path(reservations_to_be_checked_out.first.reserver), :flash => {:error => "Oops, something went wrong checking out your reservation.<br/> #{e.message}".html_safe}
+    redirect_to manage_reservations_for_user_path(reservations_to_be_checked_out.first.reserver), flash: {error: "Oops, something went wrong checking out your reservation.<br/> #{e.message}".html_safe}
   end
 
   def checkin
@@ -278,7 +278,7 @@ class ReservationsController < ApplicationController
     @check_out_set = []
     render 'receipt' and return
   rescue Exception => e
-    redirect_to :back, :flash => {:error => "Oops, something went wrong checking in your reservation.<br/> #{e.message}".html_safe}
+    redirect_to :back, flash: {error: "Oops, something went wrong checking in your reservation.<br/> #{e.message}".html_safe}
   end
 
   def destroy
@@ -347,7 +347,7 @@ class ReservationsController < ApplicationController
     end
     respond_to do |format|
       format.html{redirect_to root_path}
-      format.js{render :action => "renew_box"}
+      format.js{render action: "renew_box"}
     end
   end
 

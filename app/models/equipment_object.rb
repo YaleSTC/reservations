@@ -3,13 +3,13 @@ class EquipmentObject < ActiveRecord::Base
   include Searchable
 
   belongs_to :equipment_model
-  has_one :category, :through => :equipment_model
+  has_one :category, through: :equipment_model
   has_many :reservations
 
   validates :name,
-            :equipment_model, :presence => true
+            :equipment_model, presence: true
 
-  nilify_blanks :only => [:deleted_at]
+  nilify_blanks only: [:deleted_at]
 
   attr_accessible :name, :serial, :equipment_model_id, :equipment_model, :deleted_at
 

@@ -1,15 +1,15 @@
 class Requirement < ActiveRecord::Base
   has_and_belongs_to_many :equipment_models
   has_and_belongs_to_many :users,
-                          :class_name => "User",
-                          :association_foreign_key => "user_id",
-                          :join_table => "users_requirements" # This join table associates users with the requirements that they have fulfilled. To give a user permission to reserve an item with a requirement, go to their Edit page.
+                          class_name: "User",
+                          association_foreign_key: "user_id",
+                          join_table: "users_requirements" # This join table associates users with the requirements that they have fulfilled. To give a user permission to reserve an item with a requirement, go to their Edit page.
    attr_accessible :user_id, :description, :equipment_model_id, :contact_info, :contact_name, :requirement_ids, :user_ids, :equipment_model_ids, :notes
    #serialize :requirement_steps
 
   validates :contact_info, 
             :description,
-            :contact_name, :presence => true
+            :contact_name, presence: true
 
 
 def self.list_requirement_admins(current_user, equipment_model)
