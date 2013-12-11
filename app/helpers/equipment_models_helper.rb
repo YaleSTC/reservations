@@ -1,7 +1,7 @@
 module EquipmentModelsHelper
   def bar_progress
     define_width
-    @width_percentage = number_to_percentage(@width * 100 || "0%", :precision => 0)
+    @width_percentage = number_to_percentage(@width * 100 || "0%", precision: 0)
   end
 
   def progress_color

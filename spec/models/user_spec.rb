@@ -113,10 +113,10 @@ describe User do
         @user.is_admin?.should be_false
       end
       it "should return false if user is not admin and passed a parameter" do
-        @user.is_admin?(:as => 'admin').should be_false
-        @user.is_admin?(:as => 'checkout').should be_false
-        @user.is_admin?(:as => 'banned').should be_false
-        @user.is_admin?(:as => 'normal').should be_false
+        @user.is_admin?(as: 'admin').should be_false
+        @user.is_admin?(as: 'checkout').should be_false
+        @user.is_admin?(as: 'banned').should be_false
+        @user.is_admin?(as: 'normal').should be_false
       end
     end
     context "admin view_mode" do
@@ -124,12 +124,12 @@ describe User do
         @user = FactoryGirl.create(:admin, view_mode: 'admin')
       end
       it "should return true if passed the parameter matching the view_mode" do
-        @user.is_admin?(:as => 'admin').should be_true
+        @user.is_admin?(as: 'admin').should be_true
       end
       it "should return false if passed a parameter not matching the view_mode" do
-        @user.is_admin?(:as => 'checkout').should be_false
-        @user.is_admin?(:as => 'normal').should be_false
-        @user.is_admin?(:as => 'banned').should be_false
+        @user.is_admin?(as: 'checkout').should be_false
+        @user.is_admin?(as: 'normal').should be_false
+        @user.is_admin?(as: 'banned').should be_false
       end
     end
     context "checkout view_mode" do
@@ -137,12 +137,12 @@ describe User do
         @user = FactoryGirl.create(:admin, view_mode: 'checkout')
       end
       it "should return true if passed the parameter matching the view_mode" do
-        @user.is_admin?(:as => 'checkout').should be_true
+        @user.is_admin?(as: 'checkout').should be_true
       end
       it "should return false if passed a parameter not matching the view_mode" do
-        @user.is_admin?(:as => 'admin').should be_false
-        @user.is_admin?(:as => 'normal').should be_false
-        @user.is_admin?(:as => 'banned').should be_false
+        @user.is_admin?(as: 'admin').should be_false
+        @user.is_admin?(as: 'normal').should be_false
+        @user.is_admin?(as: 'banned').should be_false
       end
     end
     context "banned view_mode" do
@@ -150,12 +150,12 @@ describe User do
         @user = FactoryGirl.create(:admin, view_mode: 'banned')
       end
       it "should return true if passed the parameter matching the view_mode" do
-        @user.is_admin?(:as => 'banned').should be_true
+        @user.is_admin?(as: 'banned').should be_true
       end
       it "should return false if passed a parameter not matching the view_mode" do
-        @user.is_admin?(:as => 'checkout').should be_false
-        @user.is_admin?(:as => 'normal').should be_false
-        @user.is_admin?(:as => 'admin').should be_false
+        @user.is_admin?(as: 'checkout').should be_false
+        @user.is_admin?(as: 'normal').should be_false
+        @user.is_admin?(as: 'admin').should be_false
       end
     end
     context "normal view_mode" do
@@ -163,12 +163,12 @@ describe User do
         @user = FactoryGirl.create(:admin, view_mode: 'normal')
       end
       it "should return true if passed the parameter matching the view_mode" do
-        @user.is_admin?(:as => 'normal').should be_true
+        @user.is_admin?(as: 'normal').should be_true
       end
       it "should return false if passed a parameter not matching the view_mode" do
-        @user.is_admin?(:as => 'checkout').should be_false
-        @user.is_admin?(:as => 'admin').should be_false
-        @user.is_admin?(:as => 'banned').should be_false
+        @user.is_admin?(as: 'checkout').should be_false
+        @user.is_admin?(as: 'admin').should be_false
+        @user.is_admin?(as: 'banned').should be_false
       end
     end
   end

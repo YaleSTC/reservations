@@ -1,3 +1,10 @@
+// This prevents a weird scrolling bug when viewing the modal box to create a
+// new user from the catalog
+// =============================================================================
+.modal-open {
+  overflow: hidden;
+}
+
 // Well stuff
 // =============================================================================
 .well-nomargin {

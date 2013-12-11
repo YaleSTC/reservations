@@ -18,19 +18,19 @@ class AnnouncementsController < ApplicationController
   end
 
   def index
-  	@announcements = Announcement.all
+    @announcements = Announcement.all
   end
 
   def new
-  	@announcement = Announcement.new
+    @announcement = Announcement.new
   end
 
 
   def create
     parse_time
-  	@announcement = Announcement.new(params[:announcement])
-  	if @announcement.save
-  		redirect_to(announcements_url, :notice => 'Announcement was successfully created.')
+    @announcement = Announcement.new(params[:announcement])
+    if @announcement.save
+      redirect_to(announcements_url, :notice => 'Announcement was successfully created.')
     else
       render :action => "new"
     end
@@ -42,15 +42,13 @@ class AnnouncementsController < ApplicationController
   def update
     parse_time
     if  @announcement.update_attributes(params[:announcement])
-    	redirect_to(announcements_url, :notice => 'Announcement was successfully updated.')
+      redirect_to(announcements_url, :notice => 'Announcement was successfully updated.')
     else
       render :action => "edit"
     end
   end
 
-
-
-   def destroy
+  def destroy
     @announcement.destroy(:force)
     redirect_to(announcements_url)
   end
@@ -61,6 +59,4 @@ class AnnouncementsController < ApplicationController
     params[:announcement][:starts_at] = DateTime.strptime(params[:announcement][:starts_at], "%m/%d/%Y %l:%M:%S %p")
     params[:announcement][:ends_at] = DateTime.strptime(params[:announcement][:ends_at], "%m/%d/%Y %l:%M:%S %p")
   end
-
-
 end

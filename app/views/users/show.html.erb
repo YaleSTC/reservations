@@ -40,7 +40,7 @@
     <dd><%= !@user.nickname.blank? ? @user.nickname : "(none)" %></dd>
 
     <dt>Phone</dt>
-    <dd><%= @user.phone %></dd>
+    <dd><%= !@user.phone.blank? ? @user.phone : "(none)" %></dd>
 
     <dt>Email</dt>
     <dd><%= mail_to @user.email, @user.email %></dd>
@@ -135,7 +135,7 @@
     <% if @user.deleted_at %>
       <%= link_to "Activate User", activate_path(:users,@user.id), :class => "btn btn-success", :method => :put %>
     <% else %>
-      <%= link_to "Deactivate User", deactivate_path(:users, @user), :class => "btn btn-danger", :method => :put %>
+      <%= link_to "Deactivate User", deactivate_path(:users, @user), :class => "btn btn-danger", :method => :put, :confirm => "Deactivating this user will permanently destroy all of their reservations, are you sure you want to do this?" %>
     <% end %>
     <%= link_to "View All Users", users_path, :class => 'btn', :id => 'view_all_users' %>
   <% end %>

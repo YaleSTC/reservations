@@ -3,6 +3,7 @@
 .DS_Store
 .rbenv-version
 .sass-cache/
+.vagrant
 *.orig
 db/*.sqlite3
 log/*.log
@@ -15,3 +16,4 @@ public/system
 public/assets
 public/attachments
 diff.py
+Vagrantfile

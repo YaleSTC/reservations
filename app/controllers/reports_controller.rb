@@ -19,7 +19,7 @@ class ReportsController < ApplicationController
     full_set = Reservation.starts_on_days(@start_date,@end_date).includes(:equipment_model)
     res_rels = default_relations(full_set)
     res_rels << ResRelation.new("User Count", full_set, 
-      {:id_type => :equipment_model_id, :stat_type => :count, :secondary_id => :reserver_id})
+      {id_type: :equipment_model_id, stat_type: :count, secondary_id: :reserver_id})
 
     # should this be redone?  Mostly done in two parts to only collect the uniq ids
     # collecting the arrays of ids for each table
@@ -30,7 +30,7 @@ class ReportsController < ApplicationController
 
     cat_em_ids = {}
     eq_models.each do |em|
-      eq_model_info << ResSetInfo.new(em.name, :equipment_model_id, [em.id],for_model_report_path(:id => em.id))
+      eq_model_info << ResSetInfo.new(em.name, :equipment_model_id, [em.id],for_model_report_path(id: em.id))
       if cat_em_ids[em.category.id]
         cat_em_ids[em.category.id] << em.id
       else
@@ -39,7 +39,7 @@ class ReportsController < ApplicationController
     end
     categories = Category.find(cat_em_ids.keys)
     category_info = categories.collect {|cat| ResSetInfo.new(cat.name,:equipment_model_id, cat_em_ids[cat.id],
-      for_model_set_reports_path({:ids => cat_em_ids[cat.id]})) }
+      for_model_set_reports_path({ids: cat_em_ids[cat.id]})) }
 
     ### commented out for speed, the problem is pagination, not the queries
     ### also should probably give it a separate res_rels, because it doesn't need user count
@@ -53,14 +53,14 @@ class ReportsController < ApplicationController
 
     ### commented out for speed see above
     # res_sets = {:total => all_models, :users => reserver_info, :categories => category_info, :equipment_models => eq_model_info}
-    res_sets = {:total => all_models, :categories => category_info, :equipment_models => eq_model_info}
+    res_sets = {total: all_models, categories: category_info, equipment_models: eq_model_info}
     @data_tables = {}
     res_sets.each do |name,info_struct|
       @data_tables[name] = collect_stat_set(info_struct,res_rels)
     end
     respond_to do |format| 
       format.html          
-      format.csv { render :layout => false }
+      format.csv { render layout: false }
     end
   end
   
@@ -72,9 +72,9 @@ class ReportsController < ApplicationController
     session[:report_end_date] = @end_date
     
     respond_to do |format|
-      format.js{render :template => "reports/report_dates_reload"}
+      format.js{render template: "reports/report_dates_reload"}
       # guys i really don't like how this is rendering a template for js, but :action doesn't work at all
-      format.html{render :partial => "reports/report_dates"} # delete this line? replace with redirect_to root_path ? otherwise it's not doing any harm
+      format.html{render partial: "reports/report_dates"} # delete this line? replace with redirect_to root_path ? otherwise it's not doing any harm
     end
     # @end_date = (Date.strptime(params[:report][:end_date],'%m/%d/%Y'))
   end
@@ -117,7 +117,7 @@ class ReportsController < ApplicationController
     rel_hash ||= {:"Total" => nil, :"Reserved" => :reserved, :"Checked Out" => :checked_out, :"Overdue" => :overdue,
       :"Returned On Time" => :returned_on_time, :"Returned Overdue" => :returned_overdue, :"Missed" => :missed}
 
-      def_options = {:stat_type => :count}
+      def_options = {stat_type: :count}
       def_options.merge!(options) if options
 
       res_rels = []
@@ -130,16 +130,16 @@ class ReportsController < ApplicationController
 
   # build the canned report for a model/set of models
   def models_subreport(ids,start_date,end_date,eq_models)
-    res_set = Reservation.includes(:equipment_model,:equipment_object).starts_on_days(start_date,end_date).where(:equipment_model_id => ids)
+    res_set = Reservation.includes(:equipment_model,:equipment_object).starts_on_days(start_date,end_date).where(equipment_model_id: ids)
     res_rels = default_relations(res_set)
-    res_rels << ResRelation.new("Avg Planned Duration", res_set, {:id_type => :equipment_model_id, :stat_type => :duration,
-      :secondary_id => {:date_type1 => :start_date, :date_type2 => :due_date}})
-    res_rels << ResRelation.new("Avg Duration Checked Out", res_set, {:id_type => :equipment_model_id, :stat_type => :duration,
-      :secondary_id => {:date_type1 => :checked_out, :date_type2 => :checked_in, :catch2 => Date.today}})
+    res_rels << ResRelation.new("Avg Planned Duration", res_set, {id_type: :equipment_model_id, stat_type: :duration,
+      secondary_id: {date_type1: :start_date, date_type2: :due_date}})
+    res_rels << ResRelation.new("Avg Duration Checked Out", res_set, {id_type: :equipment_model_id, stat_type: :duration,
+      secondary_id: {date_type1: :checked_out, date_type2: :checked_in, catch2: Date.today}})
 
 
     em_info = eq_models.collect do |em|
-      em_link = ids.size > 1 ? for_model_report_path(:id => em.id) : nil
+      em_link = ids.size > 1 ? for_model_report_path(id: em.id) : nil
       ResSetInfo.new(em.name,:equipment_model_id, [em.id], em_link)
     end
     em_stats = collect_stat_set(em_info,res_rels)
@@ -147,24 +147,24 @@ class ReportsController < ApplicationController
     # collect data for users table
     reserver_ids = res_set.collect{|r| r.reserver_id}.uniq
     users = User.find(reserver_ids)
-    user_info = users.collect {|user| ResSetInfo.new(user.name,:reserver_id, [user.id], user_path(:id => user.id))}
+    user_info = users.collect {|user| ResSetInfo.new(user.name,:reserver_id, [user.id], user_path(id: user.id))}
     user_stats = collect_stat_set(user_info,res_rels)
 
     # collect data by equipment object
-    eq_objects = EquipmentObject.find(:all, :conditions => {:equipment_model_id => ids})
+    eq_objects = EquipmentObject.find(:all, conditions: {equipment_model_id: ids})
     obj_info = eq_objects.collect {|obj| ResSetInfo.new(obj.name,:equipment_object_id, [obj.id])}
     obj_stats = collect_stat_set(obj_info,res_rels)
     
-    det_structs = [DetailInfo.new("Reserver",users,{:secondary_id => :reserver_id, :info_type => :name}),
-     DetailInfo.new("Equipment Model",eq_models,{:secondary_id => :equipment_model_id, :info_type => :name}),
-     DetailInfo.new("Equipment Object",eq_objects,{:secondary_id => :equipment_object_id, :info_type => :name})]
+    det_structs = [DetailInfo.new("Reserver",users,{secondary_id: :reserver_id, info_type: :name}),
+     DetailInfo.new("Equipment Model",eq_models,{secondary_id: :equipment_model_id, info_type: :name}),
+     DetailInfo.new("Equipment Object",eq_objects,{secondary_id: :equipment_object_id, info_type: :name})]
      
-     fields = {:status => nil, :start_date => {:call =>:to_date}, :due_date => {:call =>:to_date},
-     :checked_out => {:call =>:to_date}, :checked_in => {:call =>:to_date}}
+     fields = {status: nil, start_date: {call::to_date}, due_date: {call::to_date},
+     checked_out: {call::to_date}, checked_in: {call::to_date}}
      res_stats = collect_res_info(res_set,det_structs, fields)
      
     # model_tables = {:equipment_models => em_stats,:equipment_objects => obj_stats, :users => user_stats}
-    model_tables = {:equipment_models => em_stats,:equipment_objects => obj_stats, :users => user_stats, :reservations => res_stats}
+    model_tables = {equipment_models: em_stats,equipment_objects: obj_stats, users: user_stats, reservations: res_stats}
     return model_tables
   end
 

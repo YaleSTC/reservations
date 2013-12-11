@@ -1,5 +1,7 @@
 Reservations::Application.routes.draw do
 
+  get "status/index"
+
   root :to => 'catalog#index'
 
   resources :documents,
@@ -15,8 +17,8 @@ Reservations::Application.routes.draw do
     resources :equipment_objects
   end
 
-  get '/import_users/import' => 'import_users#import_page', :via => :get, :as => :csv_import_page
-  post '/import_users/imported' => 'import_users#import', :via => :post, :as => :csv_imported
+  get '/import_users/import' => 'import_users#import_page', :as => :csv_import_page
+  post '/import_users/imported' => 'import_users#import', :as => :csv_imported
 
   resources :users do
     collection do
@@ -36,9 +38,6 @@ Reservations::Application.routes.draw do
     get :autocomplete_user_last_name, :on => :collection
   end
 
-  match '/black_outs/flash_message' => 'black_outs#flash_message', :as => :flash_message
-  match '/black_outs/new_recurring' => 'black_outs#new_recurring', :as => :new_recurring_black_out
-
   get '/blackouts/flash_message' => 'blackouts#flash_message', :as => :flash_message
   get '/blackouts/new_recurring' => 'blackouts#new_recurring', :as => :new_recurring_blackout
 
@@ -52,21 +51,20 @@ Reservations::Application.routes.draw do
     end
   end
 
-#resources :announcements
   # reservations views
   get '/reservations/manage/:user_id' => 'reservations#manage', :as => :manage_reservations_for_user
   get '/reservations/current/:user_id' => 'reservations#current', :as => :current_reservations_for_user
 
 
   # reservation checkout / check-in actions
-  put '/reservations/checkout/:user_id' => 'reservations#checkout', :via => :put, :as => :checkout
-  put '/reservations/check-in/:user_id' => 'reservations#checkin', :via => :put, :as => :checkin
+  put '/reservations/checkout/:user_id' => 'reservations#checkout', :as => :checkout
+  put '/reservations/check-in/:user_id' => 'reservations#checkin', :as => :checkin
 
   put '/catalog/update_view' => 'catalog#update_user_per_cat_page', :as => :update_user_per_cat_page
   get '/catalog' => 'catalog#index', :as => :catalog
-  put '/add_to_cart/:id' => 'catalog#add_to_cart', :via => :put, :as => :add_to_cart
-  put '/remove_from_cart/:id' => 'catalog#remove_from_cart', :via => :put, :as => :remove_from_cart
-  delete '/cart/empty' => 'application#empty_cart', :via => :delete, :as => :empty_cart
+  put '/add_to_cart/:id' => 'catalog#add_to_cart', :as => :add_to_cart
+  put '/remove_from_cart/:id' => 'catalog#remove_from_cart', :as => :remove_from_cart
+  delete '/cart/empty' => 'application#empty_cart', :as => :empty_cart
   put '/cart/update' => 'application#update_cart', :as => :update_cart
 
   get '/reports/index' => 'reports#index', :as => :reports
@@ -75,8 +73,8 @@ Reservations::Application.routes.draw do
   match '/reports/update' => 'reports#update_dates', :as => :update_dates
   put '/reports/generate' => 'reports#generate', :as => :generate_report
 
-  put '/:controller/:id/deactivate' => ':controller#deactivate', :via => :put, :as => 'deactivate'
-  put '/:controller/:id/activate' => ':controller#activate', :via => :put, :as => 'activate'
+  put '/:controller/:id/deactivate' => ':controller#deactivate', :as => 'deactivate'
+  put '/:controller/:id/activate' => ':controller#activate', :as => 'activate'
 
   match '/logout' => 'application#logout', :as => :logout # what kind of http request is this?
 
@@ -93,17 +91,20 @@ Reservations::Application.routes.draw do
   get '/new_app_configs' => 'application_setup#new_app_configs', :as => :new_app_configs
   post '/create_app_configs' => 'application_setup#create_app_configs', :as => :create_app_configs
 
-  get 'contact' => 'contact#new', :as => 'contact_us', :via => :get
-  post 'contact' => 'contact#create', :as => 'contact_us', :via => :post
+  get 'contact' => 'contact#new', :as => 'contact_us'
+  post 'contact' => 'contact#create', :as => 'contact_us'
 
   match 'announcements/:id/hide', to: 'announcements#hide', as: 'hide_announcement'
-   # get 'announcements' => 'announcements#index', :as => :announcements
-   # match 'announcements/:id/edit' => 'announcements#edit', as: 'edit_announcement'
-   # match 'announcements/:id/delete', to: 'announcements#delete', as: 'delete_announcement'
-
 
   match ':controller(/:action(/:id(.:format)))'
 
+  get 'status' => 'status#index'
 
+  match ':controller(/:action(/:id(.:format)))'
+
+  # this is a fix for running letter opener inside vagrant
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+  end
 
 end

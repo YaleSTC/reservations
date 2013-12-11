@@ -257,7 +257,7 @@ if ($(window).width() > 767) {
   }
 
   $('#modal').click(function() {
-    $('#userModal div.modal-body').load(new_user, {from_cart : true }); // new_user defined in variables.js.erb
+    $('#userModal div.modal-body').load(new_user, {from_cart : true, possible_netid : $('#fake_reserver_id').val() }); // new_user defined in variables.js.erb
   });
 
   $('.date_start').datepicker({
@@ -299,16 +299,15 @@ $(document).on('railsAutocomplete.select', '#fake_reserver_id', function(event, 
     $(this).parents('form').submit();
 });
 
-
-  $(function() {
-    $('#datetimepicker2').datetimepicker({
-      language: 'en',
-      pick12HourFormat: true
-    });
-    $('#datetimepicker3').datetimepicker({
-      language: 'en',
-      pick12HourFormat: true
-    });
-    $('#test').timepicker();
-
+$(function() {
+  $('#datetimepicker2').datetimepicker({
+    language: 'en',
+    pick12HourFormat: true
   });
+  $('#datetimepicker3').datetimepicker({
+    language: 'en',
+    pick12HourFormat: true
+  });
+  $('#test').timepicker();
+
+});

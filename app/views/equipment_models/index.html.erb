@@ -14,18 +14,18 @@
   </thead>
   <tbody>
   <% for equipment_model in @equipment_models %>
-    <% if equipment_model.deleted_at %>
-      <tr class="deactivated">
-      <% @toggle = "link_to \"Activate\", activate_path(:equipment_models,equipment_model), :class => \"btn btn-success\", :method => :put" %>
-    <% else %>
-      <tr class= "activated">
-      <% @toggle = "link_to \"Deactivate\", deactivate_path(:equipment_models,equipment_model), :class => \"btn btn-danger\", :method => :put" %>
-    <% end %>
+    <tr>
       <td><%= link_to equipment_model.name, equipment_model %></td>
       <%= ("<td>" + (link_to equipment_model.category.name.singularize, equipment_model.category) + "</td>").html_safe unless @category %>
       <% if current_user.is_admin?(:as => 'admin') %>
         <td><%= link_to "Edit", edit_equipment_model_path(equipment_model), :class => "btn" %></td>
-        <td><%= eval @toggle %></td>
+        <td>
+        <% if equipment_model.deleted_at %>
+          <%= make_activate_btn(:equipment_models,equipment_model) %>
+        <% else %>
+          <%= make_deactivate_btn(:equipment_models,equipment_model) %>
+        <% end %>
+        </td>
       <% end %>
     </tr>
   <% end %>
