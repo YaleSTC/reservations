@@ -41,7 +41,7 @@ group :development, :test do
   gem 'factory_girl_rails'
   gem 'rspec-rails'
   gem 'shoulda-matchers'
-  gem 'capybara'
+  gem 'capybara', '~> 2.0.0'
   gem 'guard-livereload'
   gem 'yajl-ruby'
   gem 'ffaker'
@@ -68,6 +68,7 @@ group :development do
   gem 'pry-stack_explorer'
   gem 'pry-remote'
   gem 'letter_opener'
+  gem 'letter_opener_web', '~> 1.1.0'
 end
 
 group :production, :staging do

@@ -99,4 +99,9 @@ Reservations::Application.routes.draw do
 
   match ':controller(/:action(/:id(.:format)))'
 
+  # this is a fix for running letter opener inside vagrant
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+  end
+
 end

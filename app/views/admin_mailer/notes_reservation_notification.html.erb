@@ -1,14 +1,9 @@
 Hello, <br /> <br />
 
-The following reservations checked in or checked out contained notes. 
+<p><b>The following reservations checked out contained notes. </b></p>
+<%= render partial: 'reservation_note', collection: @notes_reservations_out %>
 
-	<% @notes_reservations.each do |notes_reservation| %>
-		Equipment: <%= notes_reservation.equipment_model.name %> (<%= notes_reservation.equipment_object.name %>)<br />
-		Reserver: <%= notes_reservation.reserver.name.html_safe %> <br />
-		Due Date: <%= notes_reservation.due_date.strftime(" %B %e, %Y")  %><br />
-		Notes: <%= notes_reservation.notes %><br /> <%# TODO: add markdown? %>
-		--------- <br />
-	<% end %>
 <br />
 
--Reservations App
+<p><b>The following reservations checked in contained notes. </b></p>
+<%= render partial: 'reservation_note', collection: @notes_reservations_in %>

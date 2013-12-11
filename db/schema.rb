@@ -45,6 +45,7 @@ ActiveRecord::Schema.define(:version => 20130815225046) do
     t.boolean  "checkout_persons_can_edit",                          :default => false
     t.boolean  "require_phone",                                      :default => false
     t.boolean  "viewed",                                             :default => true
+    t.boolean  "require_phone",                                      :default => true
     t.boolean  "override_on_create",                                 :default => false
     t.boolean  "override_at_checkout",                               :default => false
   end
