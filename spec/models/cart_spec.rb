@@ -42,7 +42,7 @@ describe Cart do
     before (:each) do
       @equipment_model = FactoryGirl.build(:equipment_model)
     end
-    
+
     describe ".add_item" do
       it "adds an item" do
         expect { @cart.add_item(@equipment_model) }.to change {@cart.items.count}.by(1)
@@ -55,13 +55,13 @@ describe Cart do
         @cart.add_item(@equipment_model)
         @cart.add_item(@equipment_model_2)
       end
-      
+
       it "removes an item from cart" do
         lambda {
           @cart.remove_item(@equipment_model)
         }.should change(@cart.items, :count).by(-1)
       end
-      
+
       it "removes a CartReservation from database" do
         expect { @cart.remove_item(@equipment_model) }.to change{CartReservation.all.count}.by(-1)
       end
@@ -85,10 +85,10 @@ describe Cart do
         n = rand(3..10)
         models = Array.new(n) {FactoryGirl.build(:equipment_model)}
 
-        # add each model to cart arbitrary number of times 
-        amounts = Array.new(n) {rand(0..3)} 
+        # add each model to cart arbitrary number of times
+        amounts = Array.new(n) {rand(0..3)}
         models.each_with_index do |mod, index|
-          amounts[index].times {@cart.add_item(mod)} 
+          amounts[index].times {@cart.add_item(mod)}
         end
 
         # combine models and amounts into one Hash, omit zero amounts
@@ -121,7 +121,7 @@ describe Cart do
       @cart.empty?.should be_false
     end
   end
-  
+
   describe "Reservation date changes" do
     before (:each) do
       n = 5
@@ -175,19 +175,19 @@ describe Cart do
       end
     end
   end
-  
+
   describe ".set_reserver_id" do
     it "should flag every CartReservation with passed user_id" do
       user_id = FactoryGirl.create(:user).id
       @cart.add_item(FactoryGirl.build(:equipment_model))
       @cart.set_reserver_id(user_id)
-      
+
       @cart.items.each do |item|
         CartReservation.find(item).reserver_id.should == user_id
       end
     end
   end
-  
+
   ### TODO: Error-handling functions
   ### TODO: .renewable_reservations (not called from anywhere)
 end

@@ -5,10 +5,11 @@ class ApplicationController < ActionController::Base
   helper :layout
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
-  before_filter RubyCAS::Filter
+  before_filter RubyCAS::Filter unless Rails.env.test?
   before_filter :app_setup_check
+  before_filter :cart
 
-  with_options :unless => lambda {|u| User.all.count == 0 } do |c|
+  with_options unless: lambda {|u| User.all.count == 0 } do |c|
     c.before_filter :load_configs
     c.before_filter :seen_app_configs
     c.before_filter :current_user
@@ -16,13 +17,13 @@ class ApplicationController < ActionController::Base
     c.before_filter :cart
     c.before_filter :fix_cart_date
     c.before_filter :set_view_mode
-    c.before_filter :check_if_is_admin,  :only => [:activate, :deactivate]
+    c.before_filter :check_if_is_admin,  only: [:activate, :deactivate]
   end
 
   helper_method :current_user
   helper_method :cart
 
-  #-------- before_filter methods --------
+  # -------- before_filter methods -------- #
 
   def app_setup_check
     if User.all.blank? || !AppConfig.first
@@ -78,7 +79,7 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    @current_user ||= User.find_by_login(session[:cas_user]) if session[:cas_user]
+    @current_user ||= User.find_by_login(session[:cas_user])
   end
 
   def check_if_is_admin
@@ -88,44 +89,44 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def fix_cart_date
+    cart.set_start_date(Date.today) if cart.start_date < Date.today
+  end
+
   #-------- end before_filter methods --------#
 
   def update_cart
     # set dates
+    cart = session[:cart]
     flash.clear
     begin
-      session[:cart].set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
-      session[:cart].set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
-      session[:cart].set_reserver_id(params[:reserver_id])
+      cart.set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
+      cart.set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
+      cart.set_reserver_id(params[:reserver_id])
     rescue ArgumentError => e
       cart.set_start_date(Date.today)
       flash[:error] = "Please enter a valid start or due date."
-      return
     end
+
     # validate
     errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
-    flash[:error] = errors.to_sentence
+    # don't over-write flash if invalid date was set above
+    flash[:error] ||= errors.to_sentence
 
     # reload appropriate divs / exit
     respond_to do |format|
-      format.js{render :template => "reservations/cart_dates_reload"}
+      format.js{render template: "reservations/cart_dates_reload"}
         # guys i really don't like how this is rendering a template for js, but :action doesn't work at all
-      format.html{render :partial => "reservations/cart_dates"}
+      format.html{render partial: "reservations/cart_dates"}
     end
-  end
-
-  def fix_cart_date
-    cart.set_start_date(Date.today) if cart.start_date < Date.today
   end
 
   def empty_cart
     #destroy old cart reservations
     current_cart = session[:cart]
-    CartReservation.where(:reserver_id => current_cart.reserver.id).destroy_all
+    CartReservation.where(reserver_id: current_cart.reserver.id).destroy_all
 
-    #create a new cart
-    session[:cart] = Cart.new
-    session[:cart].set_reserver_id(current_user.id)
+    session[:cart] = nil
     flash[:notice] = "Cart emptied."
 
     redirect_to root_path
@@ -137,7 +138,7 @@ class ApplicationController < ActionController::Base
   end
 
   def require_admin(new_path=root_path)
-    restricted_redirect_to(new_path) unless current_user.is_admin?(:as => 'admin')
+    restricted_redirect_to(new_path) unless current_user.is_admin?(as: 'admin')
   end
 
   def require_checkout_person(new_path=root_path)
@@ -152,7 +153,7 @@ class ApplicationController < ActionController::Base
   end
 
   def require_user(user, new_path=root_path)
-    restricted_redirect_to(new_path) unless current_user == user or current_user.is_admin?(:as => 'admin')
+    restricted_redirect_to(new_path) unless current_user == user or current_user.is_admin?(as: 'admin')
   end
 
   def require_user_or_checkout_person(user, new_path=root_path)
@@ -187,8 +188,8 @@ class ApplicationController < ActionController::Base
 
   def markdown_help
     respond_to do |format|
-      format.html{render :partial => 'shared/markdown_help'}
-      format.js{render :template => 'shared/markdown_help_js'}
+      format.html{render partial: 'shared/markdown_help'}
+      format.js{render template: 'shared/markdown_help_js'}
     end
   end
 

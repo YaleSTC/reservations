@@ -1,0 +1,6 @@
+Reservation: <%= reservation_note.id %><br />
+Equipment: <%= reservation_note.equipment_model.name %> (<%= reservation_note.equipment_object.name %>)<br />
+Reserver: <%= reservation_note.reserver.name.html_safe %><br />
+Due Date: <%= reservation_note.due_date.strftime(" %B %e, %Y")  %><br />
+Notes: <%= reservation_note.notes %> <%# TODO: add markdown? %><br />
+---------<br /><br />

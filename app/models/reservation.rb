@@ -3,21 +3,21 @@ class Reservation < ActiveRecord::Base
   include ReservationValidations
 
   belongs_to :equipment_object
-  belongs_to :checkout_handler, :class_name => 'User'
-  belongs_to :checkin_handler, :class_name => 'User'
+  belongs_to :checkout_handler, class_name: 'User'
+  belongs_to :checkin_handler, class_name: 'User'
 
-  validates :equipment_model, :presence => true
+  validates :equipment_model, presence: true
 
   # If there is no equipment model, don't run the validations that would break
-  with_options :if => :not_empty? do |r|
+  with_options if: :not_empty? do |r|
     r.validate  :start_date_before_due_date?, :matched_object_and_model?,
                 :available?
   end
 
   # These can't be nested with the above block because with_options clobbers
   # nested options that are the same (i.e., :if and :if)
-  with_options :if => Proc.new {|r| r.not_empty? && !r.from_admin} do |r|
-    r.with_options :on => :create do |r|
+  with_options if: Proc.new {|r| r.not_empty? && !r.from_admin} do |r|
+    r.with_options on: :create do |r|
       r.validate  :not_in_past?, :not_renewable?, :no_overdue_reservations?,
                   :duration_allowed?, :start_date_is_not_blackout?,
                   :due_date_is_not_blackout?, :quantity_eq_model_allowed?,
@@ -40,12 +40,12 @@ class Reservation < ActiveRecord::Base
   scope :not_returned, where("checked_in IS NULL")
   scope :missed, lambda {where("checked_out IS NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc).recent}
   scope :upcoming, lambda {where("checked_out IS NULL and checked_in IS NULL and start_date = ? and due_date > ?", Time.now.midnight.utc, Time.now.midnight.utc).user_sort }
-  scope :reserver_is_in, lambda {|user_id_arr| where(:reserver_id => user_id_arr)}
-  scope :starts_on_days, lambda {|start_date, end_date|  where(:start_date => start_date..end_date)}
+  scope :reserver_is_in, lambda {|user_id_arr| where(reserver_id: user_id_arr)}
+  scope :starts_on_days, lambda {|start_date, end_date|  where(start_date: start_date..end_date)}
   scope :reserved_on_date, lambda {|date|  where("start_date <= ? and due_date >= ?", date.to_time.utc, date.to_time.utc)}
   scope :for_eq_model, lambda { |eq_model| where(equipment_model_id: eq_model.id) }
   scope :active, where("checked_in IS NULL") #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
-  scope :notes_unsent, where(:notes_unsent => true)
+  scope :notes_unsent, where(notes_unsent: true)
 
   #TODO: Why the duplication in checkout_handler and checkout_handler_id (etc)?
   attr_accessible :checkout_handler, :checkout_handler_id,

@@ -235,16 +235,16 @@ describe Reservation do
 	context 'with equipment object available problems' do # this all fails - problem w/ available
 		let!(:available_reservation) { FactoryGirl.create(:checked_out_reservation, equipment_model: reservation.equipment_model) }
 
-		it { should_not be_valid }
-		it 'should not save' do
+		it { should_not be_valid } #fails
+		it 'should not save' do #fails
 			reservation.save.should be_false
 			Reservation.all.size.should == 0
 		end
-		it 'cannot be updated' do
+		it 'cannot be updated' do #fails
 			reservation.start_date = Date.tomorrow
 			reservation.save.should be_false
 		end
-		it 'fails appropriate validations' do
+		it 'fails appropriate validations' do # fails
 			reservation.should_not be_available
 			Reservation.validate_set(reservation.reserver, [] << reservation).should_not == []
 		end

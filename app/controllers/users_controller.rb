@@ -1,10 +1,10 @@
 class UsersController < ApplicationController
   layout 'application_with_sidebar', only: [:show, :edit]
 
-  skip_filter :cart, :only => [:new, :create]
+  skip_filter :cart, only: [:new, :create]
   skip_filter :first_time_user, only: [:new, :create]
-  before_filter :require_checkout_person, :only => :index
-  before_filter :set_user, :only => [:show, :edit, :update, :destroy, :deactivate, :activate]
+  before_filter :require_checkout_person, only: :index
+  before_filter :set_user, only: [:show, :edit, :update, :destroy, :deactivate, :activate]
 
   include ActivationHelper
   include Autocomplete
@@ -44,8 +44,12 @@ class UsersController < ApplicationController
   end
 
   def new
-    if current_user and current_user.is_admin?(:as => 'admin')
-      @user = User.new
+    if current_user and current_user.can_checkout?
+      if params[:possible_netid]
+        @user = User.new(User.search_ldap(params[:possible_netid]))
+      else
+        @user = User.new
+      end
     else
       @user = User.new(User.search_ldap(session[:cas_user]))
       @user.login = session[:cas_user] #default to current login
@@ -59,11 +63,11 @@ class UsersController < ApplicationController
     if @user.save
       respond_to do |format|
         flash[:notice] = "Successfully created user."
-        format.js {render :action => 'create_success'}
+        format.js {render action: 'create_success'}
       end
     else
       respond_to do |format|
-        format.js {render :action => 'load_validations'}
+        format.js {render :action => 'load_form_errors'}
       end
     end
   end
@@ -74,15 +78,15 @@ class UsersController < ApplicationController
 
   def update
     require_user(@user)
-    params[:user].delete(:login) unless current_user.is_admin?(:as => 'admin') #no changing login unless you're an admin
+    params[:user].delete(:login) unless current_user.is_admin?(as: 'admin') #no changing login unless you're an admin
     if @user.update_attributes(params[:user])
       respond_to do |format|
         flash[:notice] = "Successfully updated user."
-        format.js {render :action => 'create_success'}
+        format.js {render action: 'create_success'}
       end
     else
       respond_to do |format|
-        format.js {render :action => 'load_validations'}
+        format.js {render :action => 'load_form_errors'}
       end
     end
   end
@@ -101,7 +105,7 @@ class UsersController < ApplicationController
       # this code is a hack to allow hitting enter in the search box to go direclty to the first user
       # and still user the rails3-jquery-autocomplete gem for the search box. Unfortunately the feature
       # isn't built into the gem.
-      users = get_autocomplete_items(:term => params[:fake_searched_id])
+      users = get_autocomplete_items(term: params[:fake_searched_id])
       if !users.blank?
         @user = users.first
         require_user_or_checkout_person(@user)
