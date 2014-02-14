@@ -39,14 +39,14 @@ class User < ActiveRecord::Base
 
   # ------- validations -------- #
   def skip_phone_validation?
-    if AppConfig.first
+    if AppConfig.first          # is there an app config?
       if !AppConfig.first.require_phone
-        return true
+        return true             # if phone not required, return true
       else
-        return ( @csv_import ? true : false )
+        return ( @csv_import ? true : false ) # no phone required if csv
       end
     end
-    return true
+    return true                 # no phone required if no app config
   end
   # ------- end validations -------- #
 
