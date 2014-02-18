@@ -3,19 +3,14 @@
     <span id="cart_is_empty">(empty)</span>
   <% else %>
     <table id="table_list_items" class="table table-bordered table-striped table-condensed">
-      <tbody>
       <% cart.models_with_quantities.each_pair do |model_id, quantity| %>
         <tr>
-          <td colspan="2"><%= quantity %> x <%= link_to EquipmentModel.find(model_id).name,
-          EquipmentModel.find(model_id) %></td>
-          <tr>
-            <td rowspan="2"><%=
-              link_to "Remove", remove_from_cart_path(EquipmentModel.find(model_id)),
-                                method: :put, remote: true, class: 'btn btn-mini' %>
+          <td colspan="2"><%= quantity %> x 
+            <div id="remove_button"><%= link_to "Remove", remove_from_cart_path(EquipmentModel.find(model_id)),
+                                method: :put, remote: true, class: 'btn btn-mini' %></div>
+            <%= link_to EquipmentModel.find(model_id).name, EquipmentModel.find(model_id) %><!--/td-->
             </td>
-          </tr>
         </tr>
-      </tbody>
     <% end %>
     </table>
   <% end %>
