@@ -33,6 +33,7 @@ namespace :app do
           begin
             User.create! do |u|
               u.first_name = first_name
+              u.nickname = ''
               u.last_name = last_name
               u.phone = phone
               u.email = email
