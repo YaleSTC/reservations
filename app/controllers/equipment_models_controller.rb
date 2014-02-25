@@ -65,8 +65,20 @@ class EquipmentModelsController < ApplicationController
 
   def update
     delete_files
-
     if @equipment_model.update_attributes(params[:equipment_model])
+      # look for deleted checkin / checkout procedures - this should definitely be refactored
+      checkout_params = params[:equipment_model][:checkout_procedures_attributes]
+      checkin_params = params[:equipment_model][:checkin_procedures_attributes]
+      checkout_params.each do |key, val|
+        if val["id"] and val["_destroy"] != "false"
+          @equipment_model.checkout_procedures[key.to_i].destroy(:force)
+        end
+      end
+      checkin_params.each do |key, val|
+        if val["id"] and val["_destroy"] != "false"
+          @equipment_model.checkin_procedures[key.to_i].destroy(:force)
+        end
+      end
       flash[:notice] = "Successfully updated equipment model."
       redirect_to @equipment_model
     else
