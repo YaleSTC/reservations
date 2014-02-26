@@ -32,4 +32,14 @@ module EquipmentModelsHelper
       @width = 0
     end
   end
+
+  def delete_procedures(params, phase)
+    # phase needs to be equal to either "checkout" or "checkin"
+    phase_params = params[:equipment_model][:"#{phase}_procedures_attributes"]
+    phase_params.each do |k, v|
+      if v["id"] and v["_destroy"] != "false"
+        @equipment_model.send(:"#{phase}_procedures")[k.to_i].destroy(:force)
+      end
+    end
+  end
 end

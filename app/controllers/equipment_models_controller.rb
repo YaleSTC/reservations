@@ -7,6 +7,7 @@ class EquipmentModelsController < ApplicationController
   before_filter :set_category_if_possible, only: [:index, :new]
 
   include ActivationHelper
+  include EquipmentModelsHelper
 
   # --------- before filter methods --------- #
   def set_equipment_model
@@ -67,18 +68,22 @@ class EquipmentModelsController < ApplicationController
     delete_files
     if @equipment_model.update_attributes(params[:equipment_model])
       # look for deleted checkin / checkout procedures - this should definitely be refactored
-      checkout_params = params[:equipment_model][:checkout_procedures_attributes]
-      checkin_params = params[:equipment_model][:checkin_procedures_attributes]
-      checkout_params.each do |key, val|
-        if val["id"] and val["_destroy"] != "false"
-          @equipment_model.checkout_procedures[key.to_i].destroy(:force)
-        end
-      end
-      checkin_params.each do |key, val|
-        if val["id"] and val["_destroy"] != "false"
-          @equipment_model.checkin_procedures[key.to_i].destroy(:force)
-        end
-      end
+      # checkout_params = params[:equipment_model][:checkout_procedures_attributes]
+      # checkin_params = params[:equipment_model][:checkin_procedures_attributes]
+      # checkout_params.each do |key, val|
+      #   if val["id"] and val["_destroy"] != "false"
+      #     @equipment_model.checkout_procedures[key.to_i].destroy(:force)
+      #   end
+      # end
+      # checkin_params.each do |key, val|
+      #   if val["id"] and val["_destroy"] != "false"
+      #     @equipment_model.checkin_procedures[key.to_i].destroy(:force)
+      #   end
+      # end
+
+      # attempting to use a helper function, still kludgy
+      delete_procedures(params, "checkout")
+      delete_procedures(params, "checkin")
       flash[:notice] = "Successfully updated equipment model."
       redirect_to @equipment_model
     else
