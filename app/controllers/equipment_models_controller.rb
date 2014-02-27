@@ -6,7 +6,7 @@ class EquipmentModelsController < ApplicationController
   skip_before_filter :require_admin, only: [:index, :show]
   before_filter :set_category_if_possible, only: [:index, :new]
 
-  include EquipmentModelsHelper
+  include ActivationHelper
 
   # --------- before filter methods --------- #
   def set_equipment_model
@@ -65,6 +65,7 @@ class EquipmentModelsController < ApplicationController
 
   def update
     delete_files
+    
     if @equipment_model.update_attributes(params[:equipment_model])
       # hard-delete any deleted checkin/checkout procedures
       delete_procedures(params, "checkout")
