@@ -192,8 +192,5 @@ class ApplicationController < ActionController::Base
       format.js{render template: 'shared/markdown_help_js'}
     end
   end
-<<<<<<< HEAD
 
-=======
->>>>>>> 3e146040b732f9aca95810e10778cfd295911d8c
 end
