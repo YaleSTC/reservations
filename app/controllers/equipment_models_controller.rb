@@ -65,7 +65,7 @@ class EquipmentModelsController < ApplicationController
 
   def update
     delete_files
-    
+
     if @equipment_model.update_attributes(params[:equipment_model])
       # hard-delete any deleted checkin/checkout procedures
       delete_procedures(params, "checkout")
@@ -82,4 +82,17 @@ class EquipmentModelsController < ApplicationController
     flash[:notice] = "Successfully destroyed equipment model."
     redirect_to equipment_models_url
   end
+
+  private
+
+    # function to check for deleted checkin/checkout procedures and hard-delete them after equipment model update
+    def delete_procedures(params, phase)
+      # phase needs to be equal to either "checkout" or "checkin"
+      phase_params = params[:equipment_model][:"#{phase}_procedures_attributes"]
+      phase_params.each do |k, v|
+        if v["id"] and v["_destroy"] != "false"
+          @equipment_model.send(:"#{phase}_procedures")[k.to_i].destroy(:force)
+        end
+      end
+    end
 end

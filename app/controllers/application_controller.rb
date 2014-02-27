@@ -193,15 +193,4 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  # function to check for deleted checkin/checkout procedures and hard-delete them after equipment model update
-  def delete_procedures(params, phase)
-    # phase needs to be equal to either "checkout" or "checkin"
-    phase_params = params[:equipment_model][:"#{phase}_procedures_attributes"]
-    phase_params.each do |k, v|
-      if v["id"] and v["_destroy"] != "false"
-        @equipment_model.send(:"#{phase}_procedures")[k.to_i].destroy(:force)
-      end
-    end
-  end
-
 end
