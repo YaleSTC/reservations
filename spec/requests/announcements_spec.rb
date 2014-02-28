@@ -10,10 +10,7 @@ describe "Announcements" do
     # check also that pressing the close button successfully closes the flash announcement.
     # for some reason capybara is not finding the button correctly -- someone with frontend
     # experience look at this?
-
-    # within(:css,'div#announcement_1.announcement.alert.alert-info') do
-    #   click_on('x')
-    # end
+    # click_on('.close')
   	# page.should_not have_content("Hello World")
   end
 end

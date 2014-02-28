@@ -9,7 +9,7 @@ require 'spec_helper'
 # match '/create_app_configs' => 'application_setup#create_app_configs', :as => :create_app_configs
 
 
-describe AppConfigsController, focus: true do
+describe AppConfigsController do
   before(:each) do
     @app_config = FactoryGirl.create(:app_config)
   end
