@@ -68,19 +68,19 @@ Reservations::Application.routes.draw do
 
   get '/reports/index' => 'reports#index', :as => :reports
   get '/reports/:id/for_model' => 'reports#for_model', :as => :for_model_report
-  match '/reports/for_model_set' => 'reports#for_model_set', :as => :for_model_set_reports
-  match '/reports/update' => 'reports#update_dates', :as => :update_dates
-  put '/reports/generate' => 'reports#generate', :as => :generate_report
+  match '/reports/for_model_set' => 'reports#for_model_set', :as => :for_model_set_reports # what http request?
+  match '/reports/update' => 'reports#update_dates', :as => :update_dates # what http request?
+  match '/reports/generate' => 'reports#generate', :as => :generate_report # what http request?
 
   put '/:controller/:id/deactivate' => ':controller#deactivate', :as => 'deactivate'
   put '/:controller/:id/activate' => ':controller#activate', :as => 'activate'
 
   match '/logout' => 'application#logout', :as => :logout # what kind of http request is this?
 
-  get '/terms_of_service' => 'application#terms_of_service', :as => :tos # see what this method actually does
+  match '/terms_of_service' => 'application#terms_of_service', :as => :tos # change match to get?
 
   # yes, both of these are needed to override rails defaults of /controller/:id/edit
-  get '/app_configs/' => 'app_configs#edit', :as => :edit_app_configs
+  match '/app_configs/' => 'app_configs#edit', :as => :edit_app_configs
   resources :app_configs, :only => [:update]
 
   get '/new_admin_user' => 'application_setup#new_admin_user', :as => :new_admin_user

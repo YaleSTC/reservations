@@ -8,7 +8,6 @@ describe User do
   context "validations and associations" do
     before(:each) do
       @user = FactoryGirl.create(:user)
-      
     end
 
     it { should have_many(:reservations) }
@@ -19,12 +18,18 @@ describe User do
     it { should validate_presence_of(:first_name) }
     it { should validate_presence_of(:last_name) }
     it { should validate_presence_of(:affiliation) }
-    it { should validate_presence_of(:phone) }
     it { should validate_presence_of(:email) }
     it { should_not allow_value("abc", "!s@abc.com", "a@!d.com", "a@a.c0m").for(:email) }
     it { should allow_value("example@example.com", "1a@a.edu", "a@2a.net").for(:email) }
-    it { should_not allow_value("abcdef", "555-555-55$5", "1234 1234 1234").for(:phone) }
-    it { should allow_value("555-555-5555", "15555555555").for(:phone) }
+
+    # These tests are commented because currently, the app does not validate
+    # phone unless that option is specifically requested by the admin. This
+    # needs to be expanded in order to test all admin options in app config.
+
+    # it { should validate_presence_of(:phone) }
+    # it { should_not allow_value("abcdef", "555-555-55$5").for(:phone) }
+    # it { should allow_value("555-555-5555", "15555555555").for(:phone) }
+
     it { should_not allow_value("ab@", "ab1", "ab_c").for(:nickname) }
     it { should allow_value(nil, "", "abc", "Example").for(:nickname) }
 

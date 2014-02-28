@@ -2,6 +2,7 @@
 ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
+require 'capybara/rspec'
 # require 'rspec/autorun'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
@@ -16,9 +17,11 @@ RSpec.configure do |config|
   # config.mock_with :mocha
   # config.mock_with :flexmock
   # config.mock_with :rr
-
   config.filter_run focus: true
   config.run_all_when_everything_filtered = true
+
+  # Needed in order to do integration tests with capybara
+  config.include Capybara::DSL
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   # config.fixture_path = "#{::Rails.root}/spec/fixtures"

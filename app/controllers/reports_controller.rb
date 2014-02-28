@@ -18,12 +18,12 @@ class ReportsController < ApplicationController
 
     full_set = Reservation.starts_on_days(@start_date,@end_date).includes(:equipment_model)
     res_rels = default_relations(full_set)
-    res_rels << ResRelation.new("User Count", full_set, 
+    res_rels << ResRelation.new("User Count", full_set,
       {id_type: :equipment_model_id, stat_type: :count, secondary_id: :reserver_id})
 
     # should this be redone?  Mostly done in two parts to only collect the uniq ids
     # collecting the arrays of ids for each table
-    eq_model_ids = full_set.collect {|res| res.equipment_model_id}.uniq 
+    eq_model_ids = full_set.collect {|res| res.equipment_model_id}.uniq
     eq_models = EquipmentModel.includes(:category).find(eq_model_ids)
 
     eq_model_info = []
@@ -43,7 +43,7 @@ class ReportsController < ApplicationController
 
     ### commented out for speed, the problem is pagination, not the queries
     ### also should probably give it a separate res_rels, because it doesn't need user count
-    # reserver_ids = full_set.collect {|res| res.reserver_id}.uniq 
+    # reserver_ids = full_set.collect {|res| res.reserver_id}.uniq
     # reservers = User.find(reserver_ids)
     # reserver_info = reservers.collect {|user| ResSetInfo.new(user.name,:reserver_id, [user.id],user_path(:id => user.id))}
 
@@ -58,19 +58,19 @@ class ReportsController < ApplicationController
     res_sets.each do |name,info_struct|
       @data_tables[name] = collect_stat_set(info_struct,res_rels)
     end
-    respond_to do |format| 
-      format.html          
+    respond_to do |format|
+      format.html
       format.csv { render layout: false }
     end
   end
-  
+
   # get dates from datepicker
   def update_dates
     @start_date = (Date.strptime(params[:report][:start_date],'%m/%d/%Y'))
     @end_date = (Date.strptime(params[:report][:end_date],'%m/%d/%Y'))
     session[:report_start_date] = @start_date
     session[:report_end_date] = @end_date
-    
+
     respond_to do |format|
       format.js{render template: "reports/report_dates_reload"}
       # guys i really don't like how this is rendering a template for js, but :action doesn't work at all
@@ -154,15 +154,15 @@ class ReportsController < ApplicationController
     eq_objects = EquipmentObject.find(:all, conditions: {equipment_model_id: ids})
     obj_info = eq_objects.collect {|obj| ResSetInfo.new(obj.name,:equipment_object_id, [obj.id])}
     obj_stats = collect_stat_set(obj_info,res_rels)
-    
+
     det_structs = [DetailInfo.new("Reserver",users,{secondary_id: :reserver_id, info_type: :name}),
      DetailInfo.new("Equipment Model",eq_models,{secondary_id: :equipment_model_id, info_type: :name}),
      DetailInfo.new("Equipment Object",eq_objects,{secondary_id: :equipment_object_id, info_type: :name})]
-     
-     fields = {status: nil, start_date: {call::to_date}, due_date: {call::to_date},
-     checked_out: {call::to_date}, checked_in: {call::to_date}}
-     res_stats = collect_res_info(res_set,det_structs, fields)
-     
+
+    fields = {status: nil, start_date: {:call => :to_date}, due_date: {:call => :to_date},
+              checked_out: {:call => :to_date}, checked_in: {:call => :to_date}}
+    res_stats = collect_res_info(res_set,det_structs, fields)
+
     # model_tables = {:equipment_models => em_stats,:equipment_objects => obj_stats, :users => user_stats}
     model_tables = {equipment_models: em_stats,equipment_objects: obj_stats, users: user_stats, reservations: res_stats}
     return model_tables
@@ -177,12 +177,12 @@ class ReportsController < ApplicationController
       res_rels.each do |rel_struct|
         rel = rel_struct[:relation]
         params = rel_struct[:params]
-        # select the reservations whose id of :id_type that are in the array of ids 
+        # select the reservations whose id of :id_type that are in the array of ids
         # e.g. equipment_model_id is a member of [1,2,3]
         res_set = info.ids ? rel.select{|res| info.ids.include?(res.send(info.id_type))} : rel.all
         case params[:stat_type]
         when :count
-          if params[:secondary_id] #count how many unique 
+          if params[:secondary_id] #count how many unique
             stat_row.data << res_set.collect{|res| res.send(params[:secondary_id])}.uniq.count
           else
             stat_row.data << res_set.count
@@ -197,7 +197,7 @@ class ReportsController < ApplicationController
             date1 ||=  params[:secondary_id][:catch1] if params[:secondary_id][:catch1]
             date2 = res.send(date_type2)
             date2 ||=  params[:secondary_id][:catch2] if params[:secondary_id][:catch2]
-            
+
             date1 && date2 ? date2.to_date - date1.to_date : nil
           end
           durations.compact!
@@ -233,13 +233,13 @@ class ReportsController < ApplicationController
     end
     return col_hash
   end
-  
+
   # for the collection of data for each of the reservations in the reservation set
   def collect_res_info(res_set, det_structs = nil, fields = {}) # collect information on the set of reservations
     det_columns = det_structs ? assoc_details(det_structs,res_set) : {} # collect data present on other tables
     fields.each do |f,option| #collect data for fields in the reservation table
       det_columns[f] = res_set.collect do |res|
-        if option && option[:call] 
+        if option && option[:call]
           res.send(f) ? res.send(f).send(option[:call]) : "N/A"
         else
           res.send(f)

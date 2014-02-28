@@ -46,7 +46,6 @@ def time_rand(from = 0.0, to = Time.now, length = 0, options = {})
   if options[:passes_blackout_validations] && !blackouts.blank?
     while includes?(blackouts, random_time)
       random_time = Time.at(from.to_f + rand * range)
-      binding.pry
     end
   end
 

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Announcement do
   #pending "add some examples to (or delete) #{__FILE__}"
-  it "has current scope", focus: true do
+  it "has current scope" do
   	passed = Announcement.create! starts_at: 1.day.ago, ends_at: 1.hour.ago
   	current = Announcement.create! starts_at: 1.hour.ago, ends_at: 1.day.from_now
   	upcoming = Announcement.create! starts_at: 1.hour.from_now, ends_at: 1.from_now
