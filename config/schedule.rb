@@ -26,7 +26,7 @@ every 1.day, :at => '5:00 am' do
   rake "delete_missed_reservations"
 end
 
-every 5.minutes do 
+every 60.minutes do 
   rake "send_reservation_notes"
 end
 
