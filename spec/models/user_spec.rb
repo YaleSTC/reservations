@@ -48,6 +48,22 @@ describe User do
     end
   end
 
+  describe "nickname" do
+    before(:each) do
+      @user = FactoryGirl.create(:user)
+    end
+
+    it "should default to empty string" do
+      @user.nickname.should == ''
+    end
+
+    it "should not allow nil" do
+      @user.nickname = nil
+      @user.save
+      User.find(@user.id).nickname.should_not be_nil
+    end
+  end
+
   describe ".active" do
     before(:each) do
       @user = FactoryGirl.create(:user)
