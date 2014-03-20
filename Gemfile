@@ -45,6 +45,7 @@ group :development, :test do
   gem 'guard-rspec'
   gem 'spork-rails'
   gem 'guard-spork'
+  gem 'fuubar'
   gem 'guard-livereload'
   gem 'yajl-ruby'
   gem 'ffaker'
