@@ -19,6 +19,9 @@ Reservations::Application.routes.draw do
   get '/import_users/import' => 'import_users#import_page', :as => :csv_import_page
   post '/import_users/imported' => 'import_users#import', :as => :csv_imported
 
+  get '/import_equipment/import' => 'import_equipment_models#import_page', :as => :equipment_import_page
+  post '/import_equipment/imported' => 'import_equipment_models#import', :as => :equipment_imported
+
   resources :users do
     collection do
       get :find

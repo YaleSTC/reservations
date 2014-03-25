@@ -1,0 +1,26 @@
+<% title "Import Equipment" %>
+
+<h3>CSV Import Format</h3>
+<h5>Columns (must be in the first row of the CSV file)</h5>
+<%= markdown("
+    Name, Description, Category, Late Fee, Replacement Fee") %>
+<h5>Example</h5>
+<%= markdown("
+    name,description,category,late_fee,replacement_fee
+    Nikon D70,Nikon D70 Digital SLR,DSLR,25,900
+    3-Prong Extension Cord,3-Prong Extension Cord,Cables,0,25") %>
+
+<hr />
+
+<%= form_tag equipment_imported_path, :multipart => true do %>
+
+  <p>
+    <label>CSV file with users to import:</label>
+    <%= file_field_tag 'csv_upload' %>
+  </p>
+  <p>
+    <label>Update existing equipment's information?</label>
+    <%= check_box_tag 'overwrite' %>
+  </p>
+  <%= submit_tag 'Import Equipment!', :class => 'btn' %>
+<% end %>

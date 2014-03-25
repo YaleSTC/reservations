@@ -1,0 +1,2 @@
+module ImportEquipmentModelsHelper
+end
