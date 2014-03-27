@@ -6,7 +6,8 @@ Reservations::Application.routes.draw do
 
   resources :documents,
             :equipment_objects,
-            :requirements
+            :requirements,
+            :announcements
 
   resources :categories do
     resources :equipment_models
@@ -94,6 +95,8 @@ Reservations::Application.routes.draw do
   post 'contact' => 'contact#create', :as => 'contact_us'
 
   match 'announcements/:id/hide', to: 'announcements#hide', as: 'hide_announcement'
+
+  match ':controller(/:action(/:id(.:format)))'
 
   get 'status' => 'status#index'
 

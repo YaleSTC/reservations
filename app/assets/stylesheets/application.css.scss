@@ -19,6 +19,8 @@
 // ============================
 @import "bootstrap_and_overrides"; // must be loaded before everything but the webfont
 
+@import 'bootstrap-datetimepicker';
+
 // Custom rolled jQuery UI CSS for integrating with Bootstrap
 // ============================
 @import "jquery-ui-1.8.16.custom";

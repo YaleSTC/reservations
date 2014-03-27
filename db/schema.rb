@@ -89,6 +89,7 @@ ActiveRecord::Schema.define(:version => 20130815225046) do
     t.string   "step"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
+    t.integer  "position"
     t.datetime "deleted_at"
   end
 

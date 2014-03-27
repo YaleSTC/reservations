@@ -40,9 +40,10 @@ GEM
       builder
       json
     arel (3.0.2)
-    awesome_print (1.2.0)
+    awesome_print (1.1.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
+    bootstrap-datetimepicker-rails (0.0.11)
     bootstrap-sass (2.0.4.2)
     builder (3.0.4)
     capistrano (2.15.5)
@@ -289,6 +290,7 @@ PLATFORMS
 DEPENDENCIES
   airbrake
   awesome_print
+  bootstrap-datetimepicker-rails
   bootstrap-sass (~> 2.0.3)
   capistrano
   capybara (~> 2.0.0)
@@ -301,6 +303,7 @@ DEPENDENCIES
   guard-livereload
   jquery-datatables-rails
   jquery-rails
+  jquery-timepicker-rails
   jquery-ui-rails
   jquery_datepicker
   kaminari

@@ -1,6 +1,8 @@
 //= require jquery
 //= require jquery_ujs
 //= require jquery.ui.datepicker
+//= require jquery.timepicker.js
+//= require datepair.js
 //= require jquery.ui.autocomplete
 //= require jquery.sticky
 //= require jquery.dotdotdot-1.5.1
@@ -22,6 +24,7 @@
 //= require bootstrap-popover
 //= require variables.js
 //= require select2
+//= require bootstrap-datetimepicker
 //= require_self
 
   function truncate() {
@@ -294,4 +297,17 @@ $(document).on('change', '.autosubmitme', function() {
 $(document).on('railsAutocomplete.select', '#fake_reserver_id', function(event, data){
     $("#reserver_id").val(data.item.id); // updating reserver_id here to make sure that it is done before it submits
     $(this).parents('form').submit();
+});
+
+$(function() {
+  $('#datetimepicker2').datetimepicker({
+    language: 'en',
+    pick12HourFormat: true
+  });
+  $('#datetimepicker3').datetimepicker({
+    language: 'en',
+    pick12HourFormat: true
+  });
+  $('#test').timepicker();
+
 });
