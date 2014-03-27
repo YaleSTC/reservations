@@ -34,7 +34,7 @@ task :send_reservation_notes => :environment do
   notes_reservations_out = Reservation.where("notes IS NOT NULL and checked_out IS NOT NULL and checked_in IS NULL and notes_unsent = true")
   notes_reservations_in = Reservation.where("notes IS NOT NULL and checked_out IS NOT NULL and checked_in IS NOT NULL and notes_unsent = true")
   puts "Found #{notes_reservations_out.size} reservations checked out with notes and #{notes_reservations_in.size} reservations checked in with notes. Sending a reminder email..."
-  unless notes_reservations_out.empty? and note_reservations_in.empty?
+  unless notes_reservations_out.empty? and notes_reservations_in.empty?
     AdminMailer.notes_reservation_notification(notes_reservations_out, notes_reservations_in).deliver
   end
   (notes_reservations_out + notes_reservations_in).each do |notes_reservation|
