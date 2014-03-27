@@ -8,8 +8,18 @@ Change Log
 * The release version should be visible from within the application (coming soon)
 * Any problems should be reported via the "report an issue" link in the footer of the application instance
 
-##v3.1.0.alpha8
 
+##v3.1.0.alpha10
+###New Features
+
+* None
+
+###Bug Fixes
+
+* Fix an error that was causing some emails to not send
+
+
+##v3.1.0.alpha9
 ###New Features
 
 * None
@@ -18,6 +28,10 @@ Change Log
 
 * Slow reservation notification emails to send hourly instead of every 5 minutes
 * Fix Chrome bug where `remove` button did not render correctly in the cart
+
+
+##v3.1.0.alpha8
+Accidentally was the same as v3.1.0.alpha7
 
 ##v3.1.0.alpha7
 
