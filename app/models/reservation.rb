@@ -87,7 +87,7 @@ class Reservation < ActiveRecord::Base
   # the array of reservations passed in (use with cart.cart_reservations)
   # Returns an array of error messages or [] if reservations are all valid
   def self.validate_set(user, res_array = [])
-    all_res_array = res_array + user.reservations
+    all_res_array = res_array + user.reservations.checked_out
     errors = []
     all_res_array.each do |res|
       errors << user.name + " has overdue reservations that prevent new ones from being created" unless res.no_overdue_reservations?
