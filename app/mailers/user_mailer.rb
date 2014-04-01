@@ -28,6 +28,12 @@ class UserMailer < ActionMailer::Base
     mail(to: reservation.reserver.email, subject: "[Reservation] OVERDUE: equipment checkin")
   end  
 
+  def overdue_checked_in_fine(overdue_checked_in)
+    set_app_config
+    @overdue_checked_in = overdue_checked_in
+    mail(to: overdue_checked_in.reserver.email, subject: "[Reservation] Overdue equipment fine")
+  end
+
   def reservation_confirmation(complete_reservation)
     set_app_config
     @complete_reservation = complete_reservation

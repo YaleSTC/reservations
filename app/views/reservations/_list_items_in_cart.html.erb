@@ -8,8 +8,8 @@
           <td colspan="2"><%= quantity %> x 
             <div id="remove_button"><%= link_to "Remove", remove_from_cart_path(EquipmentModel.find(model_id)),
                                 method: :put, remote: true, class: 'btn btn-mini' %></div>
-            <%= link_to EquipmentModel.find(model_id).name, EquipmentModel.find(model_id) %><!--/td-->
-            </td>
+            <%= link_to EquipmentModel.find(model_id).name, EquipmentModel.find(model_id) %>
+          </td>
         </tr>
     <% end %>
     </table>
