@@ -11,6 +11,47 @@ class ImportEquipmentController < ApplicationController
   	model_file = params[:model_upload]
   	object_file = params[:object_upload]
 
+    # if the user uploaded a category CSV file
+    if cat_file
+      # store the overwrite parameter
+      cat_overwrite = params[:cat_overwrite]
+      # process the category CSV file
+      processed_cats = cat_csv_process(cat_file, cat_overwrite)
+
+      # validate processed categories
+      if valid_cat_import?(processed_cats, cat_file)
+        # create categories
+        @cat_statuses = import_cats(processed_cats, cat_overwrite)
+      end
+    end
+
+    # next, import the EquipmentModels
+    if model_file
+      # store the overwrite parameter
+      model_overwrite = params[:model_overwrite]
+      # process the equipment model CSV file
+      processed_models = model_csv_process(model_file, model_overwrite)
+
+      # validate the processed equipment models
+      if valid_model_import?(processed_models, model_file)
+        # create EquipmentModels
+        @model_statuses = import_models(processed_models, model_overwrite)
+      end
+    end
+
+    # finally, import EquipmentObjects
+    if object_file
+      # no overwrite paramter since there is no index for EquipmentObjects
+      processed_objects = object_csv_process(object_file)
+
+      if valid_object_import?(processed_objects, object_file)
+        @object_statuses = import_objects(processed_objects)
+      end
+    end
+
+    # render the import status page
+    render 'imported'
+
   	# OK, so we need to check each file in turn, if it exists save the overwrite parameter and file path, process the CSV file, validate the processed data, attempt to import the data, and then report the import status
 
   	# we can definitely avoid duplicating the initial code (check for file, store overwrite, process CSV file); maybe store the three files in an array and just loop over it
