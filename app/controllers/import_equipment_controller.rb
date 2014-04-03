@@ -13,10 +13,12 @@ class ImportEquipmentController < ApplicationController
 
     # if the user uploaded a category CSV file
     if cat_file
-      # store the overwrite parameter
+      # store the overwrite parameter and filepath
       cat_overwrite = params[:cat_overwrite]
+      cat_filepath = cat_file.tempfile.path
+
       # process the category CSV file
-      processed_cats = cat_csv_process(cat_file, cat_overwrite)
+      processed_cats = csv_import(cat_filepath)
 
       # validate processed categories
       if valid_cat_import?(processed_cats, cat_file)
@@ -27,10 +29,12 @@ class ImportEquipmentController < ApplicationController
 
     # next, import the EquipmentModels
     if model_file
-      # store the overwrite parameter
+      # store the overwrite parameter and filepath
       model_overwrite = params[:model_overwrite]
+      model_filepath = model_file.tempfile.path
+
       # process the equipment model CSV file
-      processed_models = model_csv_process(model_file, model_overwrite)
+      processed_models = csv_import(model_filepath)
 
       # validate the processed equipment models
       if valid_model_import?(processed_models, model_file)
@@ -42,7 +46,9 @@ class ImportEquipmentController < ApplicationController
     # finally, import EquipmentObjects
     if object_file
       # no overwrite paramter since there is no index for EquipmentObjects
-      processed_objects = object_csv_process(object_file)
+      # store the filepath
+      object_filepath = object_file.tempfile.path
+      processed_objects = csv_import(object_filepath)
 
       if valid_object_import?(processed_objects, object_file)
         @object_statuses = import_objects(processed_objects)
