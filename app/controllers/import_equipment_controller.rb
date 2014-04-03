@@ -77,6 +77,8 @@ class ImportEquipmentController < ApplicationController
 
   private
 
+    # THIS STUFF ALL NEEDS TO MOVE TO A LIBRARY AS DISCUSSED WITH AUSTIN. THINK ABOUT THE BEST WAY TO REFACTOR CSV CODE (GENERAL CSV FUNCTIONS, USER-SPECIFIC FUNCTIONS, EQUIPMENT SPECIFIC FUNCTIONS) SO WE CAN CLEAN UP THE CONTROLLER.  ALSO, WE SHOULD WRITE TESTS FOR THE LIBRARIES AND ACTUALLY DO SOME TDD.  THIS ALL APPLIES TO REPORTS AS WELL.
+
     # this is for validations that are true for all imports
     def valid_equipment_import?(processed_stuff, file, type, accepted_keys, key_error)
       # check for file
@@ -136,4 +138,18 @@ class ImportEquipmentController < ApplicationController
         return true
       end
     end
+
+    # Ok, now we need to write the methods that will actually take our processed CSV hashes and try to import them
+    def import_cats(processed_cats, cat_overwrite=false)
+
+      @array_of_success = [] # will contain category objects
+      @array_of_fail = [] # will contain category_data hashes and error messages
+
+      processed_cats.each do |cat_data|
+        cat_data[:csv_import] = true
+        # if cat_overwrite and (Category.where())
+      end
+    end
+
+
 end
