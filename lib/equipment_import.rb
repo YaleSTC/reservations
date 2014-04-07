@@ -1,5 +1,21 @@
 module EquipmentImport
 
+	# IMPORT FUNCTIONS - these are all kinda similar, but we'll write them separately for now and we can always refactor later.
+
+	# import categories
+	def import_cats(processed_cats, cat_overwrite=false)
+
+		# let's make sure that we're consistent w/ scope on these variables
+		@array_of_success = [] # will contain category objects
+		@array_of_fail = [] # will contain category_data hashes and error messages
+
+		processed_cats.each do |cat_data|
+			cat_data[:csv_import] = true
+      # if cat_overwrite and (Category.where())
+		end
+
+	end
+
 	# VALIDATION FUNCTIONS - not sure if this should be here or if we need to create an import model to validate properly (see import_equipment_controller.rb)
 
 	# this is for validations that are true for all imports
