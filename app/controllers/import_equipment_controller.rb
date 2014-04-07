@@ -1,5 +1,6 @@
 class ImportEquipmentController < ApplicationController
   include CsvImport
+  include EquipmentImport
 
   before_filter :require_admin
 
