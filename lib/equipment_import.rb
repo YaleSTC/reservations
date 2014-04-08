@@ -6,17 +6,37 @@ module EquipmentImport
 	def import_cats(processed_cats, cat_overwrite=false)
 
 		# let's make sure that we're consistent w/ scope on these variables
-		@array_of_success = [] # will contain category objects
-		@array_of_fail = [] # will contain category_data hashes and error messages
+		array_of_success = [] # will contain category objects
+		array_of_fail = [] # will contain category_data hashes and error messages
 
 		processed_cats.each do |cat_data|
 			cat_data[:csv_import] = true
-      # if cat_overwrite and (Category.where())
+
+			# pick or create new category based on overwrite parameter
+			if cat_overwrite and (Category.where("name = ?", cat_data[:name]).size > 0)
+				cat = Category.where("name = ?", cat_data[:name]).first
+			else
+				cat = Category.new(cat_data)
+			end
+
+			cat.update_attributes(cat_data)
+			# if updated / new category is valid, save to database and add to array of success
+			if cat.valid?
+				cat.save
+				array_of_success << cat
+			# else, store to array of fail with error messages
+			else
+				array_of_fail << [cat_data, cat.errors.full_messages.to_sentence.capitalize+'.']
+			end
 		end
+
+		# return hash of status arrays
+		{ success: array_of_success, fail: array_of_fail }
 
 	end
 
 	# VALIDATION FUNCTIONS - not sure if this should be here or if we need to create an import model to validate properly (see import_equipment_controller.rb)
+	# ISSUE - I'm not sure if these redirections are working?
 
 	# this is for validations that are true for all imports
 	def valid_equipment_import?(processed_stuff, file, type, accepted_keys, key_error)
@@ -33,7 +53,7 @@ module EquipmentImport
 	  end
 
 	  # check for valid keys
-	  unless processed_stuff.first.keys == keys
+	  unless processed_stuff.first.keys == accepted_keys
 	    flash[:error] = key_error
 	    redirect_to :back and return
 	  end
@@ -45,7 +65,8 @@ module EquipmentImport
 	# category validators
 	def valid_cat_import?(processed_cats, cat_file)
     # define accepted keys and key error
-    accepted_keys = [:name,:max_per_user,:max_length,:max_renewals,:max_renewal_time,:renewal_days_before]
+    # NOTE: this must match the parameters in the database / model!!
+    accepted_keys = [:name, :max_per_user, :max_checkout_length, :max_renewal_times, :max_renewal_length, :renewal_days_before_due]
     key_error = 'Unable to import category CSV file. Please ensure that the first line of the file exactly matches the sample input (name,max_per_user, etc.) Note that headers are case sensitive and must be in the correct order'
     # general validations
     if valid_equipment_import?(processed_cats, cat_file, 'category', accepted_keys, key_error)

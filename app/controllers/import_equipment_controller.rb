@@ -7,7 +7,7 @@ class ImportEquipmentController < ApplicationController
   # modeled after the ImportUsersController
   def import
   	# initialize, we take up to three CSV files, now we have to check each
-  	binding.pry
+  	# binding.pry
   	cat_file = params[:cat_upload]
   	model_file = params[:model_upload]
   	object_file = params[:object_upload]
@@ -68,8 +68,6 @@ class ImportEquipmentController < ApplicationController
   	# similarly, after processing any equipment models, we move on to equipment items and search for the associated equipment models by name and store the id (if found)
 
   	# finally, we need to put together a relatively clean view to summarize the results of each requested import operation.
-
-  	render 'imported'
   end
 
   def import_page
