@@ -25,6 +25,8 @@ class ImportEquipmentController < ApplicationController
       if valid_cat_import?(processed_cats, cat_file)
         # create categories
         @cat_statuses = import_cats(processed_cats, cat_overwrite)
+      else
+        redirect_to :back and return
       end
     end
 
@@ -41,6 +43,8 @@ class ImportEquipmentController < ApplicationController
       if valid_model_import?(processed_models, model_file)
         # create EquipmentModels
         @model_statuses = import_models(processed_models, model_overwrite)
+      else
+        redirect_to :back and return
       end
     end
 
@@ -53,6 +57,8 @@ class ImportEquipmentController < ApplicationController
 
       if valid_object_import?(processed_objects, object_file)
         @object_statuses = import_objects(processed_objects)
+      else
+        redirect_to :back and return
       end
     end
 

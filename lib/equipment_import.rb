@@ -43,19 +43,19 @@ module EquipmentImport
 	  # check for file
 	  if !file
 	    flash[:error] = 'Please select a file to upload'
-	    redirect_to :back and return
+	    return false
 	  end
 
 	  # check for total CSV import failure
 	  if processed_stuff.nil?
 	    flash[:error] = "Unable to import #{type} CSV file.  Please ensure it matches the import format, and try again."
-	    redirect_to :back and return
+	    return false
 	  end
 
 	  # check for valid keys
 	  unless processed_stuff.first.keys == accepted_keys
 	    flash[:error] = key_error
-	    redirect_to :back and return
+	    return false
 	  end
 
 	  return true
@@ -72,6 +72,8 @@ module EquipmentImport
     if valid_equipment_import?(processed_cats, cat_file, 'category', accepted_keys, key_error)
       # custom validators for categories go here
       return true
+    else
+	    return false
     end
 	end
 
