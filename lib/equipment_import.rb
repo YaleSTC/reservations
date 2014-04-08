@@ -35,8 +35,75 @@ module EquipmentImport
 
 	end
 
+	# import models
+	def import_models(processed_models, model_overwrite=false)
+
+		# let's make sure that we're consistent w/ scope on these variables
+		array_of_success = [] # will contain model objects
+		array_of_fail = [] # will contain model_data hashes and error messages
+
+		processed_models.each do |model_data|
+			model_data[:csv_import] = true
+
+			# check for valid category and store id in relevant parameter (nil if no category found)
+			model_data[:category] = Category.where("name = ?", model_data[:category]).first
+
+			# pick or create new model based on overwrite parameter
+			if model_overwrite and (EquipmentModel.where("name = ?", model_data[:name]).size > 0)
+				model = EquipmentModel.where("name = ?", model_data[:name]).first
+			else
+				model = EquipmentModel.new(model_data)
+			end
+
+			model.update_attributes(model_data)
+			# if updated / new model is valid, save to database and add to array of success
+			if model.valid?
+				model.save
+				array_of_success << model
+			# else, store to array of fail with error messages
+			else
+				array_of_fail << [model_data, model_data[:category].nil? ? 'Category not found.' : model.errors.full_messages.to_sentence.capitalize+'.']
+			end
+		end
+
+		# return hash of status arrays
+		{ success: array_of_success, fail: array_of_fail }
+
+	end
+
+	# import objectss
+	def import_objects(processed_objects)
+
+		# let's make sure that we're consistent w/ scope on these variables
+		array_of_success = [] # will contain object objects
+		array_of_fail = [] # will contain object_data hashes and error messages
+
+		processed_objects.each do |object_data|
+			object_data[:csv_import] = true
+
+			# check for valid equipment_model and store id in relevant parameter (nil if no category found)
+			object_data[:equipment_model] = EquipmentModel.where("name = ?", object_data[:equipment_model]).first
+
+			# create new category
+			object = EquipmentObject.new(object_data)
+			object.update_attributes(object_data)
+
+			# if new object is valid, save to database and add to array of success
+			if object.valid?
+				object.save
+				array_of_success << object
+			# else, store to array of fail with error messages
+			else
+				array_of_fail << [object_data, object_data[:equipment_model].nil? ? 'Equipment Model not found.' : object.errors.full_messages.to_sentence.capitalize+'.']
+			end
+		end
+
+		# return hash of status arrays
+		{ success: array_of_success, fail: array_of_fail }
+
+	end
+
 	# VALIDATION FUNCTIONS - not sure if this should be here or if we need to create an import model to validate properly (see import_equipment_controller.rb)
-	# ISSUE - I'm not sure if these redirections are working?
 
 	# this is for validations that are true for all imports
 	def valid_equipment_import?(processed_stuff, file, type, accepted_keys, key_error)
@@ -80,12 +147,14 @@ module EquipmentImport
   # model validators
   def valid_model_import?(processed_models, model_file)
     # define accepted keys and key error
-    accepted_keys = [:category, :name, :description, :late_fee, :replacement_fee, :max_per_user, :max_length]
+    accepted_keys = [:category, :name, :description, :late_fee, :replacement_fee, :max_per_user, :max_renewal_length]
     key_error = 'Unable to import equipment model CSV file. Please ensure that the first line of the file exactly matches the sample input (category, name, etc.) Note that headers are case sensitive and must be in the correct order'
     # general validations
     if valid_equipment_import?(processed_models, model_file, 'equipment model', accepted_keys, key_error)
       # custom validators for equipment models go here
       return true
+    else
+	    return false
     end
   end
 
@@ -98,6 +167,8 @@ module EquipmentImport
     if valid_equipment_import?(processed_objects, object_file, 'equipment item', accepted_keys, key_error)
       # custom validators for equipment items go here
       return true
+    else
+	    return false
     end
   end
 
