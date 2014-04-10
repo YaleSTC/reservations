@@ -15,22 +15,22 @@
 <h3>Examples</h3>
 <h5>Categories</h5>
 <%= markdown("
-		name,max_per_user,max_checkout_length,max_renewal_times,max_renewal_length,renewal_days_before_due
+    name,max_per_user,max_checkout_length,max_renewal_times,max_renewal_length,renewal_days_before_due
     DSLRs,1,14,1,7,3
     Tripods,,7,2,7,
     Power Cables,,,,,") %>
 <h5>Equipment Models (ensure that the description contains no commas!)</h5>
 <%= markdown("
-		category,name,description,late_fee,replacement_fee,max_per_user,max_renewal_length
-		DSLRs,Nikon D70,Nikon D70 body,25,500,1,7
-		Tripods,Amazon Basics 60-inch,Amazon Basics 60-inch tripod,10,25,,
-		Power Cables,Three-Pronged Extension Cord,Three-pronged extension cord,0,10,,") %>
+    category,name,description,late_fee,replacement_fee,max_per_user,max_renewal_length
+    DSLRs,Nikon D70,Nikon D70 body,25,500,1,7
+    Tripods,Amazon Basics 60-inch,Amazon Basics 60-inch tripod,10,25,,
+    Power Cables,Three-Pronged Extension Cord,Three-pronged extension cord,0,10,,") %>
 <h5>Equipment Items (you can duplicate item names)</h5>
 <%= markdown("
-		equipment_model,name,serial
-		Nikon D70,Nikon D70,253X52
-		Nikon D70,Nikon D70,243G53
-		Amazon Basics 60-inch,Amazon Basics 60-inch,") %>
+    equipment_model,name,serial
+    Nikon D70,Nikon D70,253X52
+    Nikon D70,Nikon D70,243G53
+    Amazon Basics 60-inch,Amazon Basics 60-inch,") %>
 
 <hr />
 
