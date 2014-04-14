@@ -133,7 +133,7 @@ module EquipmentImport
 	def valid_cat_import?(processed_cats, cat_file)
     # define accepted keys and key error
     # NOTE: this must match the parameters in the database / model!!
-    accepted_keys = [:name, :max_per_user, :max_checkout_length, :max_renewal_times, :max_renewal_length, :renewal_days_before_due]
+    accepted_keys = [:name, :max_per_user, :max_checkout_length, :max_renewal_times, :max_renewal_length, :renewal_days_before_due, :sort_order]
     key_error = 'Unable to import category CSV file. Please ensure that the first line of the file exactly matches the sample input (name,max_per_user, etc.) Note that headers are case sensitive and must be in the correct order'
     # general validations
     if valid_equipment_import?(processed_cats, cat_file, 'category', accepted_keys, key_error)
