@@ -1,0 +1,14 @@
+
+<p>This is a notification for a late equipment checkin. </p>
+
+<p>Equipment picked up: <%= @overdue_checked_in.equipment_model.name%> (<%= @overdue_checked_in.equipment_object.name %>)</p>
+<p>Checkout date: <%= @overdue_checked_in.checked_out.strftime(" %B %e, %Y at %l:%M%P") %></p>
+<p>Due date: <%= @overdue_checked_in.due_date.strftime("%B %e, %Y") %></p>
+<% unless @overdue_checked_in.notes.nil? %> 
+  Notes: <%= @overdue_checked_in.notes %>
+<% end %>
+
+<p>The late fee is <%= number_to_currency(@overdue_checked_in.equipment_model.late_fee) %> per day, for a total of <%= number_to_currency(((@overdue_checked_in.checked_in - @overdue_checked_in.due_date )).to_i*(@overdue_checked_in.equipment_model.late_fee))%>
+</p>
+
+<br />
