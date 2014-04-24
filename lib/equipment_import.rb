@@ -119,8 +119,8 @@ module EquipmentImport
 	    return false
 	  end
 
-	  # check for valid keys
-	  unless processed_stuff.first.keys == accepted_keys
+	  # check for valid keys, ensure we don't raise a NoMethodError
+	  unless processed_stuff.first and processed_stuff.first.keys == accepted_keys
 	    flash[:error] = key_error
 	    return false
 	  end
