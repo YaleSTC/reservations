@@ -10,20 +10,12 @@ Change Log
 
 
 ###v3.1.0.alpha10
-####New Features
-
-* None
-
 ####Bug Fixes
 
 * Fix an error that was causing some emails to not send
 
 
 ###v3.1.0.alpha9
-####New Features
-
-* None
-
 ####Bug Fixes
 
 * Slow reservation notification emails to send hourly instead of every 5 minutes
@@ -31,7 +23,7 @@ Change Log
 
 
 ###v3.1.0.alpha8
-Accidentally was the same as v3.1.0.alpha7
+Accidentally the same as v3.1.0.alpha7
 
 ###v3.1.0.alpha7
 
