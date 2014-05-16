@@ -3,6 +3,7 @@ $('#cart_dates').replaceWith('<%= escape_javascript(render :partial => 'reservat
   $('#models_available').replaceWith('<%= escape_javascript(render :partial => 'catalog/models_available' ) %>');
   truncate();
 <% end %>
+$('#cartspinner').spin(false);
 
 <% if (flash[:error].blank? && flash[:notice].blank? && flash[:alert].blank?) %>
   $('#flashes').replaceWith('<div id="flashes"></div>');

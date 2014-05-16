@@ -1,4 +1,5 @@
 <div id="cart" class="well">
+  <div id="cartspinner"></div>
   <% unless current_user && current_user.can_checkout? %>
     <h2>My Cart</h2><br />
   <% else %>

@@ -285,6 +285,7 @@ $.datepicker.setDefaults({
 
 // general submit on change class
 $(document).on('change', '.autosubmitme', function() {
+  $('#cartspinner').spin("large");
   $(this).parents('form:first').submit();
 });
 
