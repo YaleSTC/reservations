@@ -4,6 +4,7 @@
 //= require jquery.ui.autocomplete
 //= require jquery.sticky
 //= require jquery.dotdotdot-1.5.1
+//= require jquery.spin
 //= require cocoon
 //= require autocomplete-rails
 //= require dataTables/jquery.dataTables
