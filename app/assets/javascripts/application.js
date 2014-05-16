@@ -285,7 +285,10 @@ $.datepicker.setDefaults({
 
 // general submit on change class
 $(document).on('change', '.autosubmitme', function() {
-  $('#cartspinner').spin("large");
+  // test for cart date fields to toggle cart spinner
+  if ( $(this).parents('div:first').is("#cart_dates") ) {
+    $('#cartSpinner').spin("large"); // toggle cart spinner
+  }
   $(this).parents('form:first').submit();
 });
 
