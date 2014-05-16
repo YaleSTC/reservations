@@ -296,6 +296,17 @@ $(document).on('change', '.autosubmitme', function() {
 //  $.ajax("update_dates");
 //});
 
+// click add to cart button
+$(document).on('click', '#add_to_cart', function () {
+  $('#cartSpinner').spin("large"); // toggle cart spinner
+  $('.add_to_cart_box').children('#add_to_cart').addClass("disabled"); // disable add to cart buttons
+});
+
+// click remove from cart button
+$(document).on('click', '#remove_button > a', function () {
+  $('#cartSpinner').spin("large"); // toggle cart spinner
+});
+
 $(document).on('railsAutocomplete.select', '#fake_reserver_id', function(event, data){
     $('#cartSpinner').spin("large"); // toggle cart spinner
     $("#reserver_id").val(data.item.id); // updating reserver_id here to make sure that it is done before it submits

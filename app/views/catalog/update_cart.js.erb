@@ -1,4 +1,6 @@
 $('#list_items_in_cart').replaceWith('<%= escape_javascript(render :partial => 'reservations/list_items_in_cart') %>');
+$('#cartSpinner').spin(false); // turn off cart spinner
+$('.add_to_cart_box').children('#add_to_cart').removeClass("disabled"); // enable add to cart buttons
 
 <% if (flash[:error].blank? && flash[:notice].blank? && flash[:alert].blank?) %>
   $('#flashes').replaceWith('<div id="flashes"></div>');
