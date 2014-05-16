@@ -112,6 +112,7 @@ class ApplicationController < ActionController::Base
     errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
     # don't over-write flash if invalid date was set above
     flash[:error] ||= errors.to_sentence
+    flash[:notice] = "Cart updated."
 
     # reload appropriate divs / exit
     respond_to do |format|
