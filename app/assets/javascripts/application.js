@@ -285,19 +285,26 @@ $.datepicker.setDefaults({
 
 // function to hold cart during update
 function pause_cart () {
-  $('#cart_form :input').prop("disabled", true); // disable the cart form
-  // TODO: fix session clearing (http://stackoverflow.com/questions/18275080/rails-3-2-13-session-gets-cleared-using-a-disabled-html-form)
-  $('#cart_form input[name="utf8"]').prop('disabled', false);
-  $('#cart_form input[name="authenticity_token"]').prop('disabled', false);
-  $('#cartSpinner').spin("large"); // toggle cart spinner
+  // disable the cart form (using `readonly` to avoid breaking the session)
+  $('#fake_reserver_id').prop('readonly', true);
+  $('#modal').addClass('disabled');
+  $('#cart_start_date_cart').prop('readonly', true);
+  $('#cart_due_date_cart').prop('readonly', true);
+  $('#cart_buttons').children('a').addClass("disabled"); // disable cart buttons
   $('.add_to_cart_box').children('#add_to_cart').addClass("disabled"); // disable add to cart buttons
+  $('#cartSpinner').spin("large"); // toggle cart spinner
 }
 
 // function to unlock cart after update
 function resume_cart () {
-  $('#cart_form :input').prop("disabled", false); // enable the cart form
-  $('#cartSpinner').spin(false); // turn off cart spinner
+  // enable the cart form
+  $('#fake_reserver_id').prop('readonly', false);
+  $('#modal').removeClass('disabled');
+  $('#cart_start_date_cart').prop('readonly', false);
+  $('#cart_due_date_cart').prop('readonly', false);
+  $('#cart_buttons').children('a').removeClass("disabled"); // disable cart buttons
   $('.add_to_cart_box').children('#add_to_cart').removeClass("disabled"); // enable add to cart buttons
+  $('#cartSpinner').spin(false); // turn off cart spinner
 }
 
 // general submit on change class
