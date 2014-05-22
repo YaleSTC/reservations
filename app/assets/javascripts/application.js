@@ -283,11 +283,28 @@ $.datepicker.setDefaults({
    minDate: new Date()
 });
 
+// function to hold cart during update
+function pause_cart () {
+  $('#cart_form :input').prop("disabled", true); // disable the cart form
+  // TODO: fix session clearing (http://stackoverflow.com/questions/18275080/rails-3-2-13-session-gets-cleared-using-a-disabled-html-form)
+  $('#cart_form input[name="utf8"]').prop('disabled', false);
+  $('#cart_form input[name="authenticity_token"]').prop('disabled', false);
+  $('#cartSpinner').spin("large"); // toggle cart spinner
+  $('.add_to_cart_box').children('#add_to_cart').addClass("disabled"); // disable add to cart buttons
+}
+
+// function to unlock cart after update
+function resume_cart () {
+  $('#cart_form :input').prop("disabled", false); // enable the cart form
+  $('#cartSpinner').spin(false); // turn off cart spinner
+  $('.add_to_cart_box').children('#add_to_cart').removeClass("disabled"); // enable add to cart buttons
+}
+
 // general submit on change class
 $(document).on('change', '.autosubmitme', function() {
   // test for cart date fields to toggle cart spinner
   if ( $(this).parents('div:first').is("#cart_dates") ) {
-    $('#cartSpinner').spin("large"); // toggle cart spinner
+    pause_cart();
   }
   $(this).parents('form:first').submit();
 });
@@ -298,17 +315,16 @@ $(document).on('change', '.autosubmitme', function() {
 
 // click add to cart button
 $(document).on('click', '#add_to_cart', function () {
-  $('#cartSpinner').spin("large"); // toggle cart spinner
-  $('.add_to_cart_box').children('#add_to_cart').addClass("disabled"); // disable add to cart buttons
+  pause_cart();
 });
 
 // click remove from cart button
 $(document).on('click', '#remove_button > a', function () {
-  $('#cartSpinner').spin("large"); // toggle cart spinner
+  pause_cart();
 });
 
 $(document).on('railsAutocomplete.select', '#fake_reserver_id', function(event, data){
-    $('#cartSpinner').spin("large"); // toggle cart spinner
-    $("#reserver_id").val(data.item.id); // updating reserver_id here to make sure that it is done before it submits
-    $(this).parents('form').submit();
+  pause_cart();
+  $("#reserver_id").val(data.item.id); // updating reserver_id here to make sure that it is done before it submits
+  $(this).parents('form').submit();
 });
