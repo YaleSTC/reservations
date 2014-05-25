@@ -5,13 +5,13 @@
     <table id="table_list_items" class="table table-bordered table-striped table-condensed">
       <% cart.models_with_quantities.each_pair do |model_id, quantity| %>
         <tr>
-          <td colspan="2"><%= quantity %> x 
+          <td colspan="2"><%= quantity %> x
             <div id="remove_button"><%= link_to "Remove", remove_from_cart_path(EquipmentModel.find(model_id)),
                                 method: :put, remote: true, class: 'btn btn-mini' %></div>
             <%= link_to EquipmentModel.find(model_id).name, EquipmentModel.find(model_id) %>
           </td>
         </tr>
-    <% end %>
+      <% end %>
     </table>
   <% end %>
 </div>
