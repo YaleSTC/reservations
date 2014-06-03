@@ -1,13 +1,37 @@
 ---
 layout: page
-title: User Documentation
+title: Documentation
 permalink: /user-doc/
 ---
+What you want on this page depends on your role within the *Reservations* application.
+
+If you are an Admin, you might want to read more about:
+
+* Setting up the *Reservations* application
+* Managing App Configuration
+* Managing Categories
+* Managing Equipment Models
+* Managing Equipment Items
+* Managing Requirements
+* Managing Users
+* Managing Announcements
+* Managing Blackouts
+* Managing Emails
+* and Usage Reports.
+
+If you're an employee that oversees Reservation checkins and checkouts, you're a Checkout Person. You might want to read more about:
 
 <ul>
 {% for page in site.pages %}
   {% if page.layout == 'user-page' %}  
-    <li><a href="/reservations{{ page.url }}">{{ page.title }}</a></li>
+    <li><a href="{{ page.url | prepend: site.baseurl }}">{{ page.title }}</a></li>
   {% endif %}
 {% endfor %}
 </ul>
+
+If you're using Reservations to occasionally check items out, you're a Patron. You might want to read more about:
+
+* Using a Cart
+* Navigating the Catalog
+* Terms of Service
+* Basic Troubleshooting.
