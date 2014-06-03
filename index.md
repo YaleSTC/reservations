@@ -10,3 +10,5 @@ permalink: /
 * Allows people to reserve equipment in advance, according to the rules you set.
 * Enforces rules on who can reserve equipment, and for how long.
 * Manages checking equipment in and out, including a requirement checklists for each item.
+
+[See the feature overview in greater detail](/reservations/features/) or [take a look at our documentation](/reservations/user-doc/).
