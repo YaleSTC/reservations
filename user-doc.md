@@ -27,9 +27,6 @@ If you're an employee that oversees Reservation checkins and checkouts, you're a
 {% endfor %}
 </ul>
 
-* Checking In Equipment
-* Checking Out Equipment
-
 If you're using Reservations to occasionally check items out, you're a Patron. You might want to read more about:
 
 <ul>
@@ -39,4 +36,3 @@ If you're using Reservations to occasionally check items out, you're a Patron. Y
   {% endif %}
 {% endfor %}
 </ul>
-* Terms of Service

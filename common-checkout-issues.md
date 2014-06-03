@@ -14,4 +14,4 @@ Some items require special training before they can be checked out. If your acco
 
 This is another known issue with Reservations. Unfortunately, the only working solution is to resubmit the user ID and dates until they register on the Finalize Reservation screen. This is an open issue that the Reservations team is currently working on.
 
-You may also want to read about [common reservation issues]({{ site.url }}/reservations/user-doc/common-reservation-issues)
+You may also want to read about [common reservation issues]({{ site.url }}/reservations/user-doc/common-reservation-issues).
