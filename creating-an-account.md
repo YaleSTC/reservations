@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: user-page
 title: Creating an Account
 permalink: /user-doc/creating-an-account/
 ---

@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: user-page
 title: Browsing the Catalog
 permalink: /user-doc/browsing-the-catalog/
 ---
