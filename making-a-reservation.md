@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: user-page
 title: Making A Reservation
 permalink: /user-doc/making-a-reservation/
 ---
