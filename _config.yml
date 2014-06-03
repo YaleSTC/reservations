@@ -1,0 +1,10 @@
+# Site settings
+title: "Reservations"
+email: "stc-reservations@yale.edu"
+description: "Reservation is an open-source application for item loan management. It is developed by Yale STC."
+baseurl: ""
+url: "http://yalestc.github.com/reservations"
+
+# Build settings
+markdown: kramdown
+permalink: pretty
