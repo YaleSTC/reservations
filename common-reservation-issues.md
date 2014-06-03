@@ -1,5 +1,5 @@
 ---
-layout: user-page
+layout: page
 title: Common Reservation Issues
 permalink: /user-doc/common-reservation-issues/
 ---
