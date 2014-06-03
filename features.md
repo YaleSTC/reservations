@@ -36,23 +36,18 @@ Administrators can set up announcements for different contexts and audiences.
 
 ### Creating Reservations
 
-Users can easily reserve equipment on their own, through the catalog. To do so, set the desired start and end dates, check availability on the catalog (updated automatically), and add items to your cart. Once you'veve added all items you'd like to reserve, click the 'finalize reservation' button, which confirms the reservation is valid (doesn't violate any limitations on reservation length, number, etc.) and then approves it.
+Users can easily reserve equipment through the catalog. They can use the Cart to collect items they want to check out.
 
-(Users use the Cart to collect items they want to check out.)
-
-Admins and Checkout Persons can create reservations for other users, and in some cases, override restrictions on length and number of items in the reservation.
+Additionally, Admins and Checkout Persons can create reservations for other users  and, if necessary, override restrictions on length and number of items in the reservation.
 
 ### Checking in/out
+*Reservations* tracks whether reservations are upcoming, missed, and due or overdue to be returned. Reservations supports sending emails automatically to users when their reservations reach a pre-defined stage.
 
-To check equipment in or out, an Admin or Checkout Person can simply enter a persons name or login into the 'Find User' search box.
-
-*Reservations* tracks whether reservations are upcoming, missed, and due or overdue to be returned.
-
-*(Temporarily disabled in version 3.0)* ~~Reservations supports sending emails automatically to users when their reservations reach a pre-defined stage.~~
+To confirm equipment checkin or checkout, an Admin or Checkout Person can simply enter a patron's name/identifier into the 'Find User' search box and resolve their reservations.
 
 ### Requirements
 
-Requirements are optional; they are, in other words, qualifications. You can require that a person be tagged as meeting a given requirement before reserving a specific Equipment Model.
+You can require that a patron be tagged as meeting a given requirement before they can reserve a specific Equipment Model.
 
 For example, you might offer safety training to check out light kits. In this case, you could create a requirement for 'Light Kit Training', and add that requirement to all your Light Kit Equipment Models. Before a user can reserve a light kit, an admin must add the 'Light Kit Training' qualification to that user's account.
 
@@ -60,7 +55,7 @@ For example, you might offer safety training to check out light kits. In this ca
 
 Blackout Dates allow you to specify dates during which users' reservations cannot begin or end, although they can still span said dates. This is useful if your office is closed on some days.
 
-There are two types of blackout dates:
+*Reservations* implements two types of blackout dates:
 
 * **Recurring blackouts** automatically renew themselves after a set period of time. They are useful, for example, if your office closes for weekends.
 * **One-time blackouts** are set for a specific date. They are useful, for example, for holidays such as the Memorial Day.
