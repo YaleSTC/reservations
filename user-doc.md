@@ -19,9 +19,16 @@ If you are an Admin, you might want to read more about:
 
 If you're an employee that oversees Reservation checkins and checkouts, you're a Checkout Person. You might want to read more about:
 
+<ul>
+{% for page in site.pages %}
+  {% if page.layout == 'cp-page' %}  
+    <li><a href="{{ page.url | prepend: site.baseurl }}">{{ page.title }}</a></li>
+  {% endif %}
+{% endfor %}
+</ul>
+
 * Checking In Equipment
 * Checking Out Equipment
-* Common Reservation Issues
 
 If you're using Reservations to occasionally check items out, you're a Patron. You might want to read more about:
 
