@@ -9,9 +9,7 @@ If you are an Admin, you might want to read more about:
 
 * Setting up the *Reservations* application
 * Managing App Configuration
-* Managing Categories
-* Managing Equipment Models
-* Managing Equipment Items
+* [Managing Categories, Equipment Models and Equipment Items](/reservations/user-doc/managing-equipment/)
 * Managing Requirements
 * Managing Users
 * Managing Announcements
@@ -35,4 +33,3 @@ If you're using Reservations to occasionally check items out, you're a Patron. Y
 {% endfor %}
 </ul>
 * Terms of Service
-
