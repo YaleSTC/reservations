@@ -13,6 +13,7 @@ permalink: /features/
 
 ## Specific Overview
 ### Application Setup
+
 *Reservations* provides an easy set-up.
 
 ### Managing Equipment
