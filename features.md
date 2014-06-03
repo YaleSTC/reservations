@@ -33,8 +33,6 @@ To get started, you will create your first category by choosing `Equipment -> Ca
 
 Once you've added your first Category, create your first Equipment Model by clicking the 'Add Model' button on the category page and entering the details. Finally, create at least an Equipment Item for that model by clicking the 'Create New Item' button on the Equipment Model page.
 
-*Reservations* includes
-
 ### Managing Users
 
 Currently, Reservations only supports [CAS](http://www.jasig.org/cas/) for user authentication, but we are working on adding built-in authentication so anyone can use it.
@@ -55,7 +53,7 @@ There are three types of users:
 ### Reservations
 
 #### Creating Reservations
-Users can easily reserve equipement on their own, through the catalog. To do so, set the desired start and end dates, check availability on the catalog (updated automatically), and add itmes to your cart. Once you'veve added all items you'd like to reserve, click the 'finalize reservation' button, which confirms the reservation is valid (doesn't violate any limitations on reservation length, number, etc.) and then approves it.
+Users can easily reserve equipment on their own, through the catalog. To do so, set the desired start and end dates, check availability on the catalog (updated automatically), and add items to your cart. Once you'veve added all items you'd like to reserve, click the 'finalize reservation' button, which confirms the reservation is valid (doesn't violate any limitations on reservation length, number, etc.) and then approves it.
 
 (Users use the Cart to collect items they want to check out.)
 
