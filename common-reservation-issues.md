@@ -1,9 +1,9 @@
 ---
-layout: page
+layout: user-page
 title: Common Reservation Issues
 permalink: /user-doc/common-reservation-issues/
 ---
-* It didn't register the dates I wanted to check out for/the user I wanted to check out for!
+* It didn't register the dates I wanted to check out for!
 
 This is a known bug of Reservations that we are working on. The current work around is to re-enter the data and re-submit it until the finalize reservation page displays the correct information.
 
