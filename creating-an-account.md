@@ -4,8 +4,6 @@ title: Creating an Account
 permalink: /creating-an-account/
 ---
 
-Creating an Account
-===================
 
 Users
 -----
@@ -17,4 +15,4 @@ Checkout persons
 
 Administrators and users with "checkout person" privileges can create accounts for other users by first navigating to the **Users** tab and clicking **New User**. The patron will need to provide his/her login credentials and other account information and will accept the Terms of Service upon first checkout.
 
-![Screen](/images/users.png)
+![Screen](reservations/images/users.png)
