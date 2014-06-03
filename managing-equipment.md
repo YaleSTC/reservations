@@ -3,8 +3,8 @@ layout: admin-page
 title: Managing Categories, Equipment Models and Equipment Items
 permalink: /user-doc/managing-equipment/
 ---
-## Managing Categories, Equipment Models and Equipment Items
-### Terminology
+
+## Terminology
 
 Reservations organizes your equipment on three levels: Categories, Equipment Models, and Equipment Items.
 
@@ -14,7 +14,7 @@ Reservations organizes your equipment on three levels: Categories, Equipment Mod
 
 **Equipment Items** represent real, physical instances of an Equipment Model. These are used to determine how many are available for checkout on the catalog. Reservations tracks them by identifiers, so that you know who checked out a specific item. You can also store item-level information on Equipment Items, such as serial numbers.
 
-### Getting Started
+## Getting Started
 
 To get started, you will create your first category by choosing `Equipment -> Categories` from the top menu bar. When creating a category, Reservations provides options for things like how many a person can check out at a time. These are used as the default for all Equipment Models in this category, but can be over-ridden for a specific model when you create it.
 
