@@ -8,6 +8,6 @@ permalink: /user-doc/
 
 {% for page in site.pages %}
   {% if page.layout == 'user-page' %}  
-    <h3><a href="{{ page.url }}">{{ page.title }}</a></h3>
+    * [{{ page.title }}]({{ page.url }})
   {% endif %}
 {% endfor %}
