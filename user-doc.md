@@ -11,7 +11,7 @@ If you are an Admin, you might want to read more about:
 * Managing App Configuration
 * [Managing Categories, Equipment Models and Equipment Items](/reservations/user-doc/managing-equipment/)
 * Managing Requirements
-* Managing Users
+* [Managing Users](/reservations/user-doc/managing-users/)
 * Managing Announcements
 * Managing Blackouts
 * Managing Emails

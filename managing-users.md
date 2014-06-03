@@ -1,7 +1,7 @@
 ---
 layout: admin-page
 title: Managing Users
-permalink: /managing-users/
+permalink: /user-doc/managing-users/
 ---
 
 ## Preliminaries
