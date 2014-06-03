@@ -21,3 +21,12 @@ When a new user logs in for the first time, an account will automatically be cre
 ## User Management
 
 To manage users, click 'Users' in the menu bar. You can add, deactivate, or edit users, as well as view their profile. Profiles give you at-a-glance information about a user, such as what items they've reserved (past, current, and future), and stats on missed and overdue reservations.
+
+## Import CSV
+*Reservations* allows you to import a comma-separated list of users. To do so, go to the `Users` screen and click the `Import Users` button.
+
+![image](/reservations/images/user_import_1.png)
+
+You will select what kind of users you are importing; you can even import users to ban. Otherwise, the form provides all the information you will need.
+
+![image](/reservations/images/user_import_2.png)
