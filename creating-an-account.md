@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Creating an Account
-permalink: /creating-an-account/
+permalink: /user-doc/creating-an-account/
 ---
 
 

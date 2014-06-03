@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Common Reservation Issues
-permalink: /common-reservation-issues/
+permalink: /user-doc/common-reservation-issues/
 ---
 * It didn't register the dates I wanted to check out for/the user I wanted to check out for!
 
