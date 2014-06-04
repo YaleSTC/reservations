@@ -10,7 +10,11 @@ Users have the ability to create accounts [on their own]({{ site.url }}/reservat
 
 ![sc]({{ site.url }}/reservations/images/new-user3.png)
 
-Alternatively, new accounts can also be created by navigating to the `Users` tab ![Users Tab]({{ site.url }}/reservations/images/users-1.png) and clicking `New User`. 
+Alternatively, new accounts can also be created by navigating to the `Users` tab 
+
+![Users Tab]({{ site.url }}/reservations/images/users-1.png)
+
+and clicking `New User`. 
 
 
 ![New User]({{ site.url }}/reservations/images/users-2.png) 
