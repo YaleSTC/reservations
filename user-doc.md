@@ -13,7 +13,7 @@ If you are an Admin, you might want to read more about:
 * Managing Requirements
 * [Managing Users](/reservations/user-doc/managing-users/)
 * Managing Announcements
-* Managing Blackouts
+* [Managing Blackouts](/reservations/user-doc/blackouts/)
 * Managing Emails
 * and Usage Reports.
 
