@@ -12,10 +12,10 @@ If you are an Admin, you might want to read more about:
 * [Managing Categories, Equipment Models and Equipment Items](/reservations/user-doc/managing-equipment/)
 * Managing Requirements
 * [Managing Users](/reservations/user-doc/managing-users/)
-* Managing Announcements
 * [Managing Blackouts](/reservations/user-doc/blackouts/)
 * [Managing Emails](/reservations/user-doc/emails/)
 * [Usage Reports](/reservations/user-doc/reports/)
+* [Managing Announcements](/reservations/user-doc/announcements/)
 
 If you're an employee that oversees Reservation checkins and checkouts, you're a Checkout Person. You might want to read more about:
 
