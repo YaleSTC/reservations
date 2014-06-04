@@ -5,6 +5,8 @@ permalink: /user-doc/
 ---
 What you want on this page depends on your role within the *Reservations* application.
 
+## Admin
+
 If you are an Admin, you might want to read more about:
 
 * Setting up the *Reservations* application
@@ -17,6 +19,8 @@ If you are an Admin, you might want to read more about:
 * [Usage Reports](/reservations/user-doc/reports/)
 * [Managing Announcements](/reservations/user-doc/announcements/)
 
+## Checkout Person
+
 If you're an employee that oversees Reservation checkins and checkouts, you're a Checkout Person. You might want to read more about:
 
 <ul>
@@ -26,6 +30,8 @@ If you're an employee that oversees Reservation checkins and checkouts, you're a
   {% endif %}
 {% endfor %}
 </ul>
+
+## Patron
 
 If you're using Reservations to occasionally check items out, you're a Patron. You might want to read more about:
 
