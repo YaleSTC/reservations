@@ -36,3 +36,5 @@ If you're using Reservations to occasionally check items out, you're a Patron. Y
   {% endif %}
 {% endfor %}
 </ul>
+
+If you can't find an answer to your question in this documentation, please [report the issue](https://docs.google.com/a/yale.edu/spreadsheet/viewform?formkey=dE8zTFprNVB4RTAwdURhWEVTTlpDQVE6MQ#gid=0) to us!
