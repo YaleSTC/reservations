@@ -17,10 +17,10 @@ Some equipment offices are not open on certain days; your administrator may have
 
 ![Search]({{ site.url }}/reservations/images/dayerror.png)
 
-This is another known issue; fortunately, people with checkout-person privileges will be able to override this notification.
+This is another known issue. Depending on the settings your adminstrator provided, people with checkout-person privileges may be able to override this notification.
 
 * I can't reserve more than X items of Y type?? Or for Z days??
 
 ![Search]({{ site.url }}/reservations/images/error1.png)
 
-Your administrator may also have set limits on the range of equipment you may be able to check out. You may be able to find a willing checkout-person to override these restrictions. Contact your administrator for proper procedure.
+Your administrator may also have set limits on the range of equipment you may be able to check out.  Depending on the settings your adminstrator provided, you may be able to find a willing checkout-person to override these restrictions. Contact your administrator for proper procedure.
