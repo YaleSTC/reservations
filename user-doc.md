@@ -15,7 +15,7 @@ If you are an Admin, you might want to read more about:
 * Managing Announcements
 * [Managing Blackouts](/reservations/user-doc/blackouts/)
 * [Managing Emails](/reservations/user-doc/emails/)
-* and Usage Reports.
+* [Usage Reports](/reservations/user-doc/reports/)
 
 If you're an employee that oversees Reservation checkins and checkouts, you're a Checkout Person. You might want to read more about:
 
