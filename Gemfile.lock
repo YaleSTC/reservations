@@ -5,6 +5,15 @@ GIT
     font-awesome-rails (0.2.1)
       railties (~> 3.1)
 
+GIT
+  remote: https://github.com/airblade/paper_trail.git
+  revision: aac282c4a3b9773740621b282324f523ee5f4775
+  branch: 2.7-stable
+  specs:
+    paper_trail (2.7.2)
+      activerecord (~> 3.0)
+      railties (~> 3.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -336,6 +345,7 @@ DEPENDENCIES
   mysql2
   net-ldap
   nilify_blanks
+  paper_trail!
   paperclip
   permanent_records
   pry

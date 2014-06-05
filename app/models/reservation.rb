@@ -2,6 +2,8 @@ class Reservation < ActiveRecord::Base
   include ReservationsBase
   include ReservationValidations
 
+  has_paper_trail
+
   belongs_to :equipment_object
   belongs_to :checkout_handler, class_name: 'User'
   belongs_to :checkin_handler, class_name: 'User'
