@@ -27,6 +27,7 @@ class AnnouncementsController < ApplicationController
 
 
   def create
+    #parse_time
     @announcement = Announcement.new(params[:announcement])
     if @announcement.save
       redirect_to(announcements_url, :notice => 'Announcement was successfully created.')
@@ -52,10 +53,10 @@ class AnnouncementsController < ApplicationController
     redirect_to(announcements_url)
   end
 
-  private
+  #private
 
-  def parse_time
-    params[:announcement][:starts_at] = DateTime.strptime(params[:announcement][:starts_at], "%m/%d/%Y %l:%M:%S %p")
-    params[:announcement][:ends_at] = DateTime.strptime(params[:announcement][:ends_at], "%m/%d/%Y %l:%M:%S %p")
-  end
+  #def parse_time
+   # params[:announcement][:starts_at] = DateTime.strptime(params[:announcement][:starts_at], "%m/%d/%Y %l:%M:%S %p")
+    #params[:announcement][:ends_at] = DateTime.strptime(params[:announcement][:ends_at], "%m/%d/%Y %l:%M:%S %p")
+  #end
 end
