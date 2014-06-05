@@ -1,33 +1,16 @@
 <%= simple_form_for @announcement , html: { multipart: true}  do |f| %>
   <%= f.error_notification %>
 
+  <%= f.label "Starts At" %>
+  <%= f.datepicker :starts_at %>
+ 
+  <%= f.label "Ends At" %>
+  <%= f.datepicker :ends_at %>
+  
+  <%#= f.label "Visible To" %>
+  <%#= select_tag(:visible_to, options_for_select([['Everyone','everyone'],['Only Admin','admin'],['Only Checkout','checkout']]) %>
 
-  <%= f.label :starts_at%>
-    <div id="datetimepicker2" class="input-append">
-    <input data-format="MM/dd/yyyy HH:mm:ss PP" type="text" name="announcement[starts_at]"  ></input>
-    <span class="add-on">
-      <i data-time-icon="icon-time" data-date-icon="icon-calendar">
-      </i>
-    </span>
-  </div>
-  <%#= f.datepicker :starts_at %>
-  <%#= f.input :starts_at, as: :time  %>
-  <%= f.label :ends_at%>
-    <div id="datetimepicker3" class="input-append">
-    <input data-format="MM/dd/yyyy HH:mm:ss PP" type="text" name="announcement[ends_at]"></input>
-    <span class="add-on">
-      <i data-time-icon="icon-time" data-date-icon="icon-calendar">
-      </i>
-    </span>
-  </div>
+  <%= f.input :message %>
 
-
-  <%#= f.datepicker :ends_at %>
-  <%#= f.input  :ends_at, as: :time  %>
-
-  <%= f.input :message%>
-
-<!--   <%#=f.input :starts_at%>
-  <%#=f.input :ends_at%> -->
   <%=f.submit  class: "btn btn-primary"%>
   <% end %>

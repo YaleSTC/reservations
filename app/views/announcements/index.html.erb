@@ -14,8 +14,8 @@
   <%  @announcements.each do |announcement| %>
   <tr>
     <td><%= announcement.message %></td>
-    <td><%= announcement.starts_at.strftime('%M/%d/%Y %l:%M:%S %p') %></td> 
-    <td><%= announcement.ends_at.strftime('%m/%d/%Y %l:%M:%S %p') %></td>
+    <td><%= announcement.starts_at.strftime('%m/%d/%Y') %></td> 
+    <td><%= announcement.ends_at.strftime('%m/%d/%Y') %></td>
     <td><%= link_to "Edit", edit_announcement_path(announcement), :class => "btn"  %></td>
     <td><%= link_to 'Delete', announcement, method: :delete, data: { confirm: 'Are you sure?' },  :class => "btn btn-danger"  %></td>
   </tr>

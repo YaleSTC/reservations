@@ -22,12 +22,11 @@ class AnnouncementsController < ApplicationController
   end
 
   def new
-    @announcement = Announcement.new
+    @announcement = Announcement.new({:message => "", :starts_at => Date::today, :ends_at => Date::today})
   end
 
 
   def create
-    parse_time
     @announcement = Announcement.new(params[:announcement])
     if @announcement.save
       redirect_to(announcements_url, :notice => 'Announcement was successfully created.')
@@ -40,7 +39,7 @@ class AnnouncementsController < ApplicationController
   end
 
   def update
-    parse_time
+    #parse_time
     if  @announcement.update_attributes(params[:announcement])
       redirect_to(announcements_url, :notice => 'Announcement was successfully updated.')
     else
