@@ -7,6 +7,7 @@ Reservations::Application.routes.draw do
   resources :documents,
             :equipment_objects,
             :requirements
+            :announcements
 
   resources :categories do
     resources :equipment_models
