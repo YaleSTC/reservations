@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130815225046) do
+ActiveRecord::Schema.define(:version => 20140605230158) do
 
   create_table "announcements", :force => true do |t|
     t.text     "message"
@@ -43,9 +43,8 @@ ActiveRecord::Schema.define(:version => 20130815225046) do
     t.text     "deleted_missed_reservation_email_body"
     t.boolean  "send_notifications_for_deleted_missed_reservations", :default => true
     t.boolean  "checkout_persons_can_edit",                          :default => false
-    t.boolean  "require_phone",                                      :default => false
-    t.boolean  "viewed",                                             :default => true
     t.boolean  "require_phone",                                      :default => true
+    t.boolean  "viewed",                                             :default => true
     t.boolean  "override_on_create",                                 :default => false
     t.boolean  "override_at_checkout",                               :default => false
   end
@@ -217,5 +216,16 @@ ActiveRecord::Schema.define(:version => 20130815225046) do
     t.integer "user_id"
     t.integer "requirement_id"
   end
+
+  create_table "versions", :force => true do |t|
+    t.string   "item_type",  :null => false
+    t.integer  "item_id",    :null => false
+    t.string   "event",      :null => false
+    t.string   "whodunnit"
+    t.text     "object"
+    t.datetime "created_at"
+  end
+
+  add_index "versions", ["item_type", "item_id"], :name => "index_versions_on_item_type_and_item_id"
 
 end
