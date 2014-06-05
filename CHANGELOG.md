@@ -9,6 +9,12 @@ Change Log
 * Any problems should be reported via the "report an issue" link in the footer of the application instance
 
 
+###v3.2.0
+####Bug Fixes
+
+* Disabled cart during update and added JS spinner/success flash message to prevent cart changes from not being saved ([#528](https://github.com/YaleSTC/reservations/issues/528))
+
+
 ###v3.1.0.alpha10
 ####Bug Fixes
 

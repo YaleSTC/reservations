@@ -4,6 +4,7 @@
 //= require jquery.ui.autocomplete
 //= require jquery.sticky
 //= require jquery.dotdotdot-1.5.1
+//= require jquery.spin
 //= require cocoon
 //= require autocomplete-rails
 //= require dataTables/jquery.dataTables
@@ -282,8 +283,36 @@ $.datepicker.setDefaults({
    minDate: new Date()
 });
 
+// function to hold cart during update
+function pause_cart () {
+  // disable the cart form (using `readonly` to avoid breaking the session)
+  $('#fake_reserver_id').prop('readonly', true);
+  $('#modal').addClass('disabled');
+  $('#cart_start_date_cart').prop('readonly', true);
+  $('#cart_due_date_cart').prop('readonly', true);
+  $('#cart_buttons').children('a').addClass("disabled"); // disable cart buttons
+  $('.add_to_cart_box').children('#add_to_cart').addClass("disabled"); // disable add to cart buttons
+  $('#cartSpinner').spin("large"); // toggle cart spinner
+}
+
+// function to unlock cart after update
+function resume_cart () {
+  // enable the cart form
+  $('#fake_reserver_id').prop('readonly', false);
+  $('#modal').removeClass('disabled');
+  $('#cart_start_date_cart').prop('readonly', false);
+  $('#cart_due_date_cart').prop('readonly', false);
+  $('#cart_buttons').children('a').removeClass("disabled"); // disable cart buttons
+  $('.add_to_cart_box').children('#add_to_cart').removeClass("disabled"); // enable add to cart buttons
+  $('#cartSpinner').spin(false); // turn off cart spinner
+}
+
 // general submit on change class
 $(document).on('change', '.autosubmitme', function() {
+  // test for cart date fields to toggle cart spinner
+  if ( $(this).parents('div:first').is("#cart_dates") ) {
+    pause_cart();
+  }
   $(this).parents('form:first').submit();
 });
 
@@ -291,7 +320,18 @@ $(document).on('change', '.autosubmitme', function() {
 //  $.ajax("update_dates");
 //});
 
+// click add to cart button
+$(document).on('click', '#add_to_cart', function () {
+  pause_cart();
+});
+
+// click remove from cart button
+$(document).on('click', '#remove_button > a', function () {
+  pause_cart();
+});
+
 $(document).on('railsAutocomplete.select', '#fake_reserver_id', function(event, data){
-    $("#reserver_id").val(data.item.id); // updating reserver_id here to make sure that it is done before it submits
-    $(this).parents('form').submit();
+  pause_cart();
+  $("#reserver_id").val(data.item.id); // updating reserver_id here to make sure that it is done before it submits
+  $(this).parents('form').submit();
 });
