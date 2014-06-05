@@ -17,6 +17,7 @@ class ApplicationController < ActionController::Base
     c.before_filter :cart
     c.before_filter :fix_cart_date
     c.before_filter :set_view_mode
+    c.before_filter :check_view_mode
     c.before_filter :check_if_is_admin,  only: [:activate, :deactivate]
   end
 
@@ -40,8 +41,8 @@ class ApplicationController < ActionController::Base
 
   def seen_app_configs
     if AppConfig.first.viewed == false
-      flash[:notice] = "Since this is your first time viewing the application configurations, we recoomend\
-      that you take some time to read each option and make sure that the settings are appropriate for your needs."
+      flash[:notice] = "Since this is your first time viewing the application configurations, we recommend\
+       that you take some time to read each option and make sure that the settings are appropriate for your needs."
       redirect_to edit_app_configs_path
     end
   end
@@ -87,6 +88,17 @@ class ApplicationController < ActionController::Base
       flash[:notice] = "Only administrators can do that!"
       redirect_to request.referer
     end
+  end
+  
+  def check_view_mode
+	if current_user.role == 'admin' && current_user.view_mode != 'admin'
+		flash[:persistent] = "Hey there, admin! It looks like you have the " + 
+							 current_user.view_mode + 
+							 " view of Reservations turned on. If you want to switch back to Administrator \
+							 view, you can do this at the footer of this page, where it says 'View As:' \
+							 For more information, check out the \
+							 <a href='https://yalestc.github.io/reservations/'>Reservations Documentation</a>."
+	end
   end
 
   def fix_cart_date
