@@ -2,10 +2,10 @@
   <%= f.error_notification %>
 
   <%= f.label "Starts At" %>
-  <%= f.datepicker :starts_at %>
+  <%= f.datepicker :starts_at, :dateFormat => "yy-mm-dd" %>
  
   <%= f.label "Ends At" %>
-  <%= f.datepicker :ends_at %>
+  <%= f.datepicker :ends_at, :dateFormat => "yy-mm-dd" %>
   
   <%#= f.label "Visible To" %>
   <%#= select_tag(:visible_to, options_for_select([['Everyone','everyone'],['Only Admin','admin'],['Only Checkout','checkout']]) %>
