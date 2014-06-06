@@ -1,5 +1,7 @@
 Reservations::Application.routes.draw do
 
+  get "log/index"
+
   get "status/index"
 
   root :to => 'catalog#index'
