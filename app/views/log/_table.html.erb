@@ -12,6 +12,8 @@
   <% for version in versions %>
     <% user = User.find(version.whodunnit.to_i) %>
     <% object_type = Kernel.const_get(version.item_type) %>
+    <%# That's a semi-ugly hack to get access to whatever Model is mentioned,
+    as per http://infovore.org/archives/2006/08/02/getting-a-class-object-in-ruby-from-a-string-containing-that-classes-name/ %>
     <tr>
     <td><%= link_to user.first_name, user %></td>
     <td><%= version.event %></td>
