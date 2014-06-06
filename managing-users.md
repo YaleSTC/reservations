@@ -6,17 +6,17 @@ permalink: /user-doc/managing-users/
 
 ## Preliminaries
 
-Currently, Reservations only supports [CAS](http://www.jasig.org/cas/) for user authentication. Support for built-in authentication and OmniAuth is underway.
+Currently, *Reservations* only supports [CAS](http://www.jasig.org/cas/) for user authentication. Support for built-in authentication and OmniAuth is under development.
 
 *Reservations* maintains a strict separation of user roles. There are three types of users:
 
 * **Normal users**, who can browse the catalog and create reservations for themselves.
 * **Checkout Persons** who can do all of the above, plus create reservations for other people and check equipment in and out.
-* **Admins**, who can do all of the above. In addition, the can change settings, update equipment, and add/remove users.
+* **Admins**, who can do all of the above. In addition, they can change settings, update equipment, and add/remove users.
 
 ## User Creation
 
-When a new user logs in for the first time, an account will automatically be created for them (if using CAS), or they will have to register (when built-in authentication is enabled). As an admin, you can also manually create users.
+When a new user logs in for the first time, an account will automatically be created for them (if using CAS), or they will have to register (when built-in authentication is enabled). As an Admin or Checkout Person, you can also manually create users.
 
 ## User Management
 

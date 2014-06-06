@@ -7,7 +7,7 @@ Blackouts are periods of time when your users cannot check their reserved equipm
 
 *Reservations* implements two kinds of blackouts: **one-off** and **recurring**. You would use one-off blackouts for Independence Day, and recurring blackouts for weekends.
 
-It allows either kind of blackout to be *notice-only*. This means that when a user attempts to create a reservation that either begins or ends on one a day of notice-only blackout, they are served a notice. This is useful, for example, if your office closes earlier than usual on some day.
+It allows either kind of blackout to be *notice-only*. This means that when a user attempts to create a reservation that either begins or ends on a day of notice-only blackout, they are served a notice. This is useful, for example, if your office closes earlier than usual on some day.
 
 ## Managing Blackouts
 

@@ -21,7 +21,7 @@ If you are an Admin, you might want to read more about:
 
 ## Checkout Person
 
-If you're an employee that oversees Reservation checkins and checkouts, you're a Checkout Person. You might want to read more about:
+If you're an employee who oversees Reservation checkins and checkouts, you're a Checkout Person. You might want to read more about:
 
 <ul>
 {% for page in site.pages %}

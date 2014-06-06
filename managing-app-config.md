@@ -20,6 +20,6 @@ The **Contact Email** is where messages submitted through the Contact Us form at
 
 The **Items Per Page** setting indicates how many items should be displayed on the catalog page before items spill onto secondary pages.
 
-It is possible to upload a **Custom [Favicon](http://en.wikipedia.org/wiki/Favicon)**. This is helpful for maintaining a consistent branding and identity across your organization's web domains.
+It is possible to upload a **[Custom Favicon](http://en.wikipedia.org/wiki/Favicon)**. This is helpful for maintaining a consistent branding and identity across your organization's web domains.
 
 When the **Terms of Service** change, the admin can force all patrons to accept the new terms of service before being eligible to check out new equipment by checking the **Force all patrons to accept the TOS again?** button near the bottom of the Settings page. Notifying users of changes in the Terms of Service may or may not be required by law in your jurisdiction; it's probably best to err on the side of caution and check *Yes* whenever the Terms of Service change.
