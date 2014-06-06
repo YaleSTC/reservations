@@ -9,10 +9,10 @@ What you want on this page depends on your role within the *Reservations* applic
 
 If you are an Admin, you might want to read more about:
 
-* Setting up the *Reservations* application
-* Managing App Configuration
+* [Setting up the *Reservations* application](/reservations/user-doc/setting-up-reservations/)
+* [Managing App Configuration](/reservations/user-doc/managing-app-config/)
 * [Managing Categories, Equipment Models and Equipment Items](/reservations/user-doc/managing-equipment/)
-* Managing Requirements
+* [Managing Requirements](reservations/user-doc/managing-requirements/)
 * [Managing Users](/reservations/user-doc/managing-users/)
 * [Managing Blackouts](/reservations/user-doc/blackouts/)
 * [Managing Emails](/reservations/user-doc/emails/)
