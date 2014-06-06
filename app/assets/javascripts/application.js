@@ -107,7 +107,17 @@
   };
 
 $(document).ready(function() {
-
+  
+  $('.checkin-click').click(function() {
+	var box = $(this).find(":checkbox");
+	box.prop("checked", !box.prop("checked"));
+	if ($(this).hasClass("selected")) {
+		$(this).removeClass("selected");
+	} else {
+		$(this).addClass("selected");
+	}	  
+  });
+  
   $('#checkout_button').click(function() {
     var flag = validate_checkout();
     confirm_checkinout(flag);

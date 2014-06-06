@@ -12,6 +12,26 @@
   }
 }
 
+.checkin-click:hover{
+  background-color: darken(desaturate($bodyBackground, 10%), 5%);
+}
+
+.selected{
+  background-color: adjust-hue(darken($bodyBackground, 5%), -15deg);
+}
+ 
+.hidden {
+	opacity:0;
+}
+
+.overdue {
+	float: right;
+}
+
+.title {
+	float: left;
+}
+	
 .checkin, .checkout {
   .rectangle-list {
     margin-bottom: 2em;
