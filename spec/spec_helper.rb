@@ -12,6 +12,7 @@ Spork.prefork do
   require File.expand_path("../../config/environment", __FILE__)
   require 'rspec/rails'
   require 'capybara/rspec'
+  require 'paper_trail/frameworks/rspec'
   # require 'rspec/autorun'
 
   # Requires supporting ruby files with custom matchers and macros, etc,
@@ -87,8 +88,3 @@ end
 #
 # These instructions should self-destruct in 10 seconds.  If they don't, feel
 # free to delete them.
-
-
-
-
-

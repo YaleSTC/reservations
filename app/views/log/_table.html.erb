@@ -1,0 +1,24 @@
+<table id="table_log" class="datatable-wide table table-striped table-bordered">
+  <thead>
+  <tr>
+    <th>User</th>
+    <th>Action</th>
+    <th>Type of object</th>
+    <th>Current object</th>
+    <th>Past version of object</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% for version in versions %>
+    <% user = User.find(version.whodunnit.to_i) %>
+    <% object_type = Kernel.const_get(version.item_type) %>
+    <tr>
+    <td><%= link_to user.first_name, user %></td>
+    <td><%= version.event %></td>
+    <td><%= version.item_type %></td>
+    <td><%= link_to version.item_id, object_type.find_by_id(version.item_id) if object_type.find_by_id(version.item_id) %></td>
+    <td><!-- link to Version --></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
