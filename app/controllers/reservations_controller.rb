@@ -112,6 +112,9 @@ class ReservationsController < ApplicationController
     end
 
     # update attributes
+    unless params[:reservation][:equipment_object] == ''
+		@reservation.equipment_object_id = params[:reservation][:equipment_object]
+	end
     @reservation.reserver_id = params[:reservation][:reserver_id]
     @reservation.start_date = start
     @reservation.due_date = due

@@ -1,8 +1,10 @@
 <%= simple_form_for @reservation, :html => { :class => "form-horizontal" } do |f| %>
   <%= f.error_notification %>
   <%= f.input :fake_reserver_id, :as => :autocomplete, :url => autocomplete_user_last_name_reservations_path,
-              :id_element => '#reservation_reserver_id', label: "Reserver", placeholder: "Start typing a name or login", input_html: {value: @reservation.reserver.name} %>
+              :id_element => '#reservation_reserver_id', 
+              label: "Reserver", placeholder: "Start typing a name or login", input_html: {value: @reservation.reserver.name} %>
   <%= f.input :reserver_id, as: :hidden %>
+  
   <div class='control-group'>
     <label class='control-label'>* Start date</label>
     <div class="controls">
@@ -15,6 +17,18 @@
       <%= datepicker_input "reservation", "due_date", :value => @reservation.due_date.strftime('%m/%d/%Y') %>
     </div>
   </div>
+  
+  <div class='control-group'>
+	<label class='control-label'>Item</label>
+	<div class = "controls">
+		<%= select_tag "reservation[equipment_object]",
+			  @reservation.equipment_model.available_object_select_options, 
+			  class: 'dropdown dropselect', placeholder: @reservation.equipment_object.name, 
+			  prompt: '', width: 80 %>
+	</div>
+  </div>
+          
+  
   <%= f.input :notes, :as => :text, :hint => "#{render :partial => 'shared/markdown_button'}" %>
   <%= f.button :wrapped, :cancel => reservations_path %>
 <% end %>
