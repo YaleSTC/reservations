@@ -7,13 +7,15 @@ Change Log
 * This file will be updated whenever new release put into production
 * The release version should be visible from within the application (coming soon)
 * Any problems should be reported via the "report an issue" link in the footer of the application instance
+###v3.3.0
+####Bug Fixes
+* Fixed catalog pagination not working correctly ([#533](https://github.com/YaleSTC/reservations/issues/533))
 
 
 ###v3.2.0
 ####Bug Fixes
 
 * Disabled cart during update and added JS spinner/success flash message to prevent cart changes from not being saved ([#528](https://github.com/YaleSTC/reservations/issues/528))
-* Fixed catalog pagination not working correctly ([#533](https://github.com/YaleSTC/reservations/issues/533))
 
 
 ###v3.1.0.alpha10
