@@ -10,9 +10,12 @@ Change Log
 
 
 ###v3.2.0
+####New Features
+* Added flash to notify admins/checkout-persons when viewing Reservations as a different user ([#542]((https://github.com/YaleSTC/reservations/issues/542))
+
 ####Bug Fixes
 
-* Disabled cart during update and added JS spinner/success flash message to prevent cart changes from not being saved ([#528](https://github.com/YaleSTC/reservations/issues/528))
+* Disabled cart during update and added JS spinner/success flash message to prevent cart changes from not being saved ([#528](c))
 
 
 ###v3.1.0.alpha10
