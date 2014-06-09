@@ -111,11 +111,19 @@ $(document).ready(function() {
   $('.checkin-click').click(function() {
 	var box = $(this).find(":checkbox");
 	box.prop("checked", !box.prop("checked"));
-	if ($(this).hasClass("selected")) {
-		$(this).removeClass("selected");
+	if ($(this).hasClass("overdue")) {
+		if ($(this).hasClass("selected-overdue")) {
+			$(this).removeClass("selected-overdue");
+		} else {
+			$(this).addClass("selected-overdue");
+		}	
 	} else {
-		$(this).addClass("selected");
-	}	  
+		if ($(this).hasClass("selected")) {
+			$(this).removeClass("selected");
+		} else {
+			$(this).addClass("selected");
+		}	  
+	}
   });
   
   $('#checkout_button').click(function() {
