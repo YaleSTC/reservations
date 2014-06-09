@@ -10,6 +10,10 @@ Change Log
 
 
 ###v3.2.0
+
+####New Features
+* Added flash for checkout persons when making a reservation for the current day ([#321](https://github.com/YaleSTC/reservations/issues/321))
+
 ####Bug Fixes
 
 * Disabled cart during update and added JS spinner/success flash message to prevent cart changes from not being saved ([#528](https://github.com/YaleSTC/reservations/issues/528))
