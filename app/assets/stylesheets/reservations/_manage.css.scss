@@ -13,18 +13,22 @@
 }
 
 .checkin-click:hover{
-  background-color: darken(desaturate($bodyBackground, 10%), 5%);
+  background-color: darken($bodyBackground, 5%);
 }
 
-.selected{
-  background-color: adjust-hue(darken($bodyBackground, 5%), -15deg);
+.selected {
+  background-color: adjust-hue(darken($bodyBackground, 5%), 45deg);
 }
- 
+
+.selected-overdue {
+  background-color: adjust-hue(darken($bodyBackground, 5%), -25deg);
+}
+
 .hidden {
 	opacity:0;
 }
 
-.overdue {
+.overdue-img {
 	float: right;
 }
 
