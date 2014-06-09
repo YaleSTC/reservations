@@ -13,6 +13,7 @@ Change Log
 ####Bug Fixes
 
 * Disabled cart during update and added JS spinner/success flash message to prevent cart changes from not being saved ([#528](https://github.com/YaleSTC/reservations/issues/528))
+* Fixed catalog pagination not working correctly ([#533](https://github.com/YaleSTC/reservations/issues/533))
 
 
 ###v3.1.0.alpha10
