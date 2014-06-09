@@ -79,10 +79,15 @@ class ReservationsController < ApplicationController
           if AppConfig.first.reservation_confirmation_email_active?
             #UserMailer.reservation_confirmation(complete_reservation).deliver
           end
+          flash[:notice] = "Reservation created successfully"
           if current_user.can_checkout?
+            if params[:reservation][:start_date].to_date === Date::today.to_date
+				flash[:notice] = "Are you simultaneously checking out equipment for someone? Note that\
+									only the reservation has been made. Don't forget to continue to checkout."
+			end
             redirect_to manage_reservations_for_user_path(params[:reservation][:reserver_id]) and return
           else
-            redirect_to catalog_path, flash: {notice: "Successfully created reservation. " } and return
+            redirect_to catalog_path and return
           end
         rescue Exception => e
           format.html {redirect_to catalog_path, flash: {error: "Oops, something went wrong with making your reservation.<br/> #{e.message}".html_safe} }
