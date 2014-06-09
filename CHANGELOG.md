@@ -13,7 +13,7 @@ Change Log
 
 ####New Features
 * Added flash for checkout persons when making a reservation for the current day ([#321](https://github.com/YaleSTC/reservations/issues/321))
-* Added admin interface for setting up site-wide announcements ([421](https://github.com/YaleSTC/reservations/issues/421))
+* Added admin interface for setting up site-wide announcements ([421](https://github.com/YaleSTC/reservations/issues/421), [447](https://github.com/YaleSTC/reservations/issues/447))
 
 ####Enhancements
 * Added [Guard](http://guardgem.org/) and [Spork](https://github.com/sporkrb/spork) for faster testing ([#490](https://github.com/YaleSTC/reservations/issues/490))
