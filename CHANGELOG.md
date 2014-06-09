@@ -8,10 +8,11 @@ Change Log
 * The release version should be visible from within the application (coming soon)
 * Any problems should be reported via the "report an issue" link in the footer of the application instance
 
-
-###v3.2.0
+###v3.3.0
 ####New Features
 * Added flash to notify admins/checkout-persons when viewing Reservations as a different user ([#542]((https://github.com/YaleSTC/reservations/issues/542))
+
+###v3.2.0
 
 ####Bug Fixes
 
