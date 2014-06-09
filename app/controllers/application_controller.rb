@@ -92,12 +92,9 @@ class ApplicationController < ActionController::Base
   
   def check_view_mode
 	if current_user.role == 'admin' && current_user.view_mode != 'admin'
-		flash[:persistent] = "Hey there, admin! It looks like you have the " + 
-							 current_user.view_mode + 
-							 " view of Reservations turned on. If you want to switch back to Administrator \
-							 view, you can do this at the footer of this page, where it says 'View As:' \
-							 For more information, check out the \
-							 <a href='https://yalestc.github.io/reservations/'>Reservations Documentation</a>."
+		flash[:persistent] = "Currently viewing as #{current_user.view_mode} user. You can switch back to your regular view \
+							  #{ActionController::Base.helpers.link_to('below','#view_as')} \
+							  (see #{ActionController::Base.helpers.link_to('here','https://yalestc.github.io/reservations/')} for details)."
 	end
   end
 
