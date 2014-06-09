@@ -21,9 +21,11 @@
   <div class='control-group'>
 	<label class='control-label'>Item</label>
 	<div class = "controls">
+		<% options_string = options_for_select([[@reservation.equipment_object.name,@reservation.equipment_object.id]]) %>
+		<% options_string << @reservation.equipment_model.available_object_select_options %>
 		<%= select_tag "reservation[equipment_object]",
-			  @reservation.equipment_model.available_object_select_options, 
-			  class: 'dropdown dropselect', placeholder: @reservation.equipment_object.name, 
+			  options_string, placeholder: @reservation.equipment_object.name,
+			  class: 'dropdown dropselect', 
 			  prompt: '', width: 80 %>
 	</div>
   </div>
