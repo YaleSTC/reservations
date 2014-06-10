@@ -21,7 +21,11 @@ module LogHelper
                 "checkout_handler_id" => Proc.new { |id| get_user_link(id) },
                 "checkin_handler_id" => Proc.new { |id| get_user_link(id) },
                 "equipment_model_id" => Proc.new { |id| get_model_link(id) },
-                "equipment_object_id" => Proc.new { |id| get_object_link(id) }
+                "equipment_object_id" => Proc.new { |id| get_object_link(id) },
+                "start_date" => Proc.new { |date| get_day(date) },
+                "due_date" => Proc.new { |date| get_day(date) },
+                "created_at" => Proc.new { |date| get_time(date) },
+                "updated_at" => Proc.new { |date| get_time(date) }
               }
 
     if arr[1].nil?
@@ -69,5 +73,17 @@ module LogHelper
     end
 
     return link_to user.name, user
+  end
+
+  def get_day(date)
+    unless date.nil?
+      return date.strftime("%B %d, %Y")
+    end
+  end
+
+  def get_time(date)
+    unless date.nil?
+      return date.strftime("%B %d, %Y, %H:%M:%S, %z")
+    end
   end
 end
