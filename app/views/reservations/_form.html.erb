@@ -1,5 +1,3 @@
-<p><%= @option_array.to_s %></p>
-
 <%= simple_form_for @reservation, :html => { :class => "form-horizontal" } do |f| %>
   <%= f.error_notification %>
   <%= f.input :fake_reserver_id, :as => :autocomplete, :url => autocomplete_user_last_name_reservations_path,

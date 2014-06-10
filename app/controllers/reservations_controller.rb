@@ -115,6 +115,13 @@ class ReservationsController < ApplicationController
 
     # update attributes
     unless params[:equipment_object] == ''
+		object = EquipmentObject.find(params[:equipment_object])
+		unless object.available?
+			r = object.current_reservation
+			r.equipment_object_id = @reservation.equipment_object_id
+			r.save
+		end
+		
 		@reservation.equipment_object_id = params[:equipment_object]
 	end
     @reservation.reserver_id = params[:reservation][:reserver_id]
