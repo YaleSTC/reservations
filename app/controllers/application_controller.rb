@@ -83,9 +83,16 @@ class ApplicationController < ActionController::Base
   end
 
   def check_if_is_admin
-    unless current_user.role == 'admin'
+    unless current_user.role == 'admin' || current_user.role == 'superuser'
       flash[:notice] = "Only administrators can do that!"
       redirect_to request.referer
+    end
+  end
+
+  def check_if_is_superuser
+    unless current_user.role == 'superuser'
+      flash[:notice] = "Only superusers can do that!"
+      redirect_to root_path
     end
   end
 

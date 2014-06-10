@@ -32,7 +32,7 @@ class User < ActiveRecord::Base
                           on: :create,
                           if: Proc.new { |u| !u.created_by_admin == "true" }
   validates :role,
-            :view_mode,   inclusion: { in: ['admin', 'normal', 'checkout', 'banned'] }
+            :view_mode,   inclusion: { in: ['admin', 'normal', 'checkout', 'superuser', 'banned'] }
 
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
   scope :active, where("#{table_name}.deleted_at is null")
@@ -68,7 +68,7 @@ class User < ActiveRecord::Base
   end
 
   def is_admin?(options = {})
-    if role == 'admin'
+    if role == 'admin' || role == 'superuser'
       if options.empty? || options[:as] == view_mode
         return true
       end

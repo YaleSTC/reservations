@@ -5,7 +5,7 @@
     <div class="well">
       <div class="row">
         <%# INFO SECTION %>
-        <% unless current_user && current_user.role == 'admin' %>
+        <% unless current_user && current_user.is_admin? %>
           <div class="span8">
         <% else %>
           <div class="span5">
@@ -33,7 +33,7 @@
 
         <%# VIEW AS DROPDOWN %>
         <div class="span3">
-          <% if current_user && current_user.role == 'admin' %>
+          <% if current_user && current_user.is_admin? %>
 
           <ul class="nav nav-list">
             <li class="nav-header">View As:</li>
