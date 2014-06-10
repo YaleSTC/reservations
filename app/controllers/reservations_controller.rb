@@ -113,6 +113,8 @@ class ReservationsController < ApplicationController
       redirect_to :back and return
     end
 
+	message = "Successfully edited reservation."
+	
     # update attributes
     unless params[:equipment_object] == ''
 		object = EquipmentObject.find(params[:equipment_object])
@@ -120,8 +122,10 @@ class ReservationsController < ApplicationController
 			r = object.current_reservation
 			r.equipment_object_id = @reservation.equipment_object_id
 			r.save
+			message << " Note equipment item #{r.equipment_object.name} is now assigned to \
+						#{ActionController::Base.helpers.link_to('reservation #' + r.id.to_s, reservation_path(r))} \
+						(#{r.reserver.render_name})"
 		end
-		
 		@reservation.equipment_object_id = params[:equipment_object]
 	end
     @reservation.reserver_id = params[:reservation][:reserver_id]
@@ -133,7 +137,7 @@ class ReservationsController < ApplicationController
     @reservation.save
 
     # flash success and exit
-    flash[:notice] = "Successfully edited reservation."
+    flash[:notice] = message
     redirect_to @reservation
   end
 

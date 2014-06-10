@@ -17,21 +17,23 @@
       <%= datepicker_input "reservation", "due_date", :value => @reservation.due_date.strftime('%m/%d/%Y') %>
     </div>
   </div>
+  <% message = '' %>
   <% if @reservation.equipment_object %>
-  <div class='control-group'>
-	<label class='control-label'>Item</label>
-	<div class = "controls">
-		<%# options_string = options_for_select([[@reservation.equipment_object.name,@reservation.equipment_object.id]]) %>
-		<%# options_string << @reservation.equipment_model.available_object_select_options %>
-		<%= select_tag :equipment_object,
-			  options_for_select(@option_array),
-			  placeholder: @reservation.equipment_object.name,
-			  class: 'dropdown dropselect', 
-			  prompt: '', width: 80 %>
-	</div>
-  </div>
+	  <% message = "Be aware that changing the reservation equipment item may have an effect on another reservation. \
+					If you set this reservation's equipment item to an item that has already been checked out, the \
+					reservations will be swapped." %>
+	  <div class='control-group'>
+		<label class='control-label'>Item</label>
+		<div class = "controls">
+			<%= select_tag :equipment_object,
+				  options_for_select(@option_array),
+				  placeholder: @reservation.equipment_object.name,
+				  class: 'dropdown dropselect', 
+				  prompt: '', width: 80 %>
+		</div>
+	  </div>
   <% end %>
   
   <%= f.input :notes, :as => :text, :hint => "#{render :partial => 'shared/markdown_button'}" %>
-  <%= f.button :wrapped, :cancel => reservations_path %>
+  <%= f.button :wrapped, :cancel => reservations_path, :confirm => message %>
 <% end %>
