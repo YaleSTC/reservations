@@ -23,7 +23,7 @@ class ReservationsController < ApplicationController
     reservations_source = current_user.can_checkout? ? Reservation : current_user.reservations
     default_filter = current_user.can_checkout? ? :upcoming : :reserved
 
-    filters = [:reserved, :checked_out, :overdue, :missed, :returned, :upcoming]
+    filters = [:reserved, :checked_out, :overdue, :missed, :returned, :upcoming, :requested, :approved_requests, :denied_requests]
     #if the filter is defined in the params, store those reservations
     filters.each do |filter|
       if params[filter]
@@ -46,12 +46,12 @@ class ReservationsController < ApplicationController
     else
       # error handling
       @errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
-
+      session[:errors] = @errors
       unless @errors.empty?
         if current_user.is_admin?(as: 'admin')
           flash[:error] = 'Are you sure you want to continue? Please review the errors below.'
         else
-          flash[:error] = 'Please review the errors below.'
+          flash[:error] = 'Please review the errors below. If uncorrected, your reservation will be filed as a request, and subject to administrator approval.'
         end
       end
 
@@ -69,13 +69,23 @@ class ReservationsController < ApplicationController
           cart.cart_reservations.each do |cart_res|
             @reservation = Reservation.new(params[:reservation])
             @reservation.equipment_model =  cart_res.equipment_model
-            # the attribute is called from_admin, but now that we can give checkout people this permission, the name doesn't quite make sense.
-            @reservation.from_admin = current_user.can_override_reservation_restrictions?
+            @errors = session[:errors]
+            binding.pry
+            if current_user.can_override_reservation_restrictions? or @errors.empty?
+              # If the reservation is a finalized reservation, save it as auto-approved ...
+              @reservation.approval_status = "auto"
+            else
+              # ... otherwise mark it as a Reservation Request.
+              @reservation.approval_status = "requested"
+            end
+            # always bypass validations, the finalized reservations are saved separate from the reservation requests.
+            @reservation.bypass_validations = true
             @reservation.save!
             successful_reservations << @reservation
           end
           cart.items.each { |item| CartReservation.delete(item) }
           session[:cart] = Cart.new
+          session[:errors] = []	
           if AppConfig.first.reservation_confirmation_email_active?
             #UserMailer.reservation_confirmation(complete_reservation).deliver
           end
@@ -97,7 +107,6 @@ class ReservationsController < ApplicationController
       end
     end
   end
-
 
   def edit
     set_reservation

@@ -43,7 +43,7 @@
     <% if @errors.empty? or current_user.can_override_reservation_restrictions? %>
       <%= f.button :submit, "Finalize Reservation" %>
     <% else %>
-      <%= button_tag "Finalize Reservation", class: "btn disabled btn-primary", disabled: true %>
+      <%= f.button :submit, "Submit Request" %>
     <% end %>
     <%= link_to "Return to Catalog", catalog_path, class: 'btn' %>
   </div>
