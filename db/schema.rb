@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140306014551) do
+ActiveRecord::Schema.define(:version => 20140610134345) do
 
   create_table "announcements", :force => true do |t|
     t.text     "message"
