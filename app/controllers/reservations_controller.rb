@@ -96,6 +96,8 @@ class ReservationsController < ApplicationController
 
   def edit
     set_reservation
+    @option_array = @reservation.equipment_model.equipment_objects.collect { |e|
+		[e.name, e.id] }
   end
 
   def update # for editing reservations; not for checkout or check-in
@@ -112,8 +114,8 @@ class ReservationsController < ApplicationController
     end
 
     # update attributes
-    unless params[:reservation][:equipment_object] == ''
-		@reservation.equipment_object_id = params[:reservation][:equipment_object]
+    unless params[:equipment_object] == ''
+		@reservation.equipment_object_id = params[:equipment_object]
 	end
     @reservation.reserver_id = params[:reservation][:reserver_id]
     @reservation.start_date = start
