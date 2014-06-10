@@ -1,4 +1,6 @@
 class LogController < ApplicationController
+  helper LogHelper
+  
   def index
     # Past paper_trail 2.7-stable, Version is namespaced as PaperTrail::Version
     # and so this line will break.
