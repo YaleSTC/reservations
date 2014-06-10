@@ -130,7 +130,7 @@ $(document).ready(function() {
         ]
   });
 
-  $('.datatable-wide').dataTable({
+  wideDataTables = $('.datatable-wide').dataTable({
     "sDom": "<'row'<'span5'l><'span7'f>r>t<'row'<'span5'i><'span7'p>>",
     "sPaginationType": "bootstrap",
     "sScrollX": "100%",
@@ -138,6 +138,11 @@ $(document).ready(function() {
           { "bSortable": false, "aTargets": [ "no_sort" ] }
         ]
   });
+
+  // Ugly hack to avoid reinitializing #table_log with the correct order
+  if (wideDataTables[0].id == "table_log") {
+    wideDataTables.fnSort([[0, "desc"]]);
+  }
 
   $('.history_table').dataTable({
     "sDom": "<'row'<l><f>r>t<'row'<'span3'i><p>>",
@@ -155,6 +160,7 @@ $(document).ready(function() {
     "aLengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
     "aoColumnDefs": [{ "bSortable": false, "aTargets": [ "no_sort" ] }]
   });
+
 // For fading out flash notices
   $(".alert .close").click( function() {
        $(this).parent().addClass("fade");
