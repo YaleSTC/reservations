@@ -16,7 +16,7 @@ class Reservation < ActiveRecord::Base
 
   # These can't be nested with the above block because with_options clobbers
   # nested options that are the same (i.e., :if and :if)
-  with_options if: Proc.new {|r| r.not_empty? && !r.from_admin} do |r|
+  with_options if: Proc.new {|r| r.not_empty? && !r.bypass_validations} do |r|
     r.with_options on: :create do |r|
       r.validate  :not_in_past?, :not_renewable?, :no_overdue_reservations?,
                   :duration_allowed?, :start_date_is_not_blackout?,
@@ -29,8 +29,8 @@ class Reservation < ActiveRecord::Base
 
   scope :recent, order('start_date, due_date, reserver_id')
   scope :user_sort, order('reserver_id')
-  scope :reserved, lambda { where("checked_out IS NULL and checked_in IS NULL and due_date >= ?", Time.now.midnight.utc).recent}
-  scope :checked_out, lambda { where("checked_out IS NOT NULL and checked_in IS NULL") }
+  scope :reserved, lambda { where("checked_out IS NULL and checked_in IS NULL and due_date >= ? and (approval_status = ? OR approval_status = ?)", Time.now.midnight.utc, 'auto', 'approved').recent}
+  scope :checked_out, lambda { where("checked_out IS NOT NULL and checked_in IS NULL").recent }
   scope :checked_out_today, lambda { where("checked_out >= ? and checked_in IS NULL", Time.now.midnight.utc).recent }
   scope :checked_out_previous, lambda { where("checked_out < ? and checked_in IS NULL and due_date <= ?", Time.now.midnight.utc, Date.tomorrow.midnight.utc).recent }
   scope :overdue, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc ).recent }
@@ -39,13 +39,16 @@ class Reservation < ActiveRecord::Base
   scope :returned_overdue, where("checked_in IS NOT NULL and checked_out IS NOT NULL and due_date < checked_in").recent
   scope :not_returned, where("checked_in IS NULL")
   scope :missed, lambda {where("checked_out IS NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc).recent}
-  scope :upcoming, lambda {where("checked_out IS NULL and checked_in IS NULL and start_date = ? and due_date > ?", Time.now.midnight.utc, Time.now.midnight.utc).user_sort }
+  scope :upcoming, lambda {where("checked_out IS NULL and checked_in IS NULL and start_date = ? and due_date > ? and (approval_status = ? or approval_status = ?)", Time.now.midnight.utc, Time.now.midnight.utc, 'auto', 'approved').user_sort }
   scope :reserver_is_in, lambda {|user_id_arr| where(reserver_id: user_id_arr)}
   scope :starts_on_days, lambda {|start_date, end_date|  where(start_date: start_date..end_date)}
   scope :reserved_on_date, lambda {|date|  where("start_date <= ? and due_date >= ?", date.to_time.utc, date.to_time.utc)}
   scope :for_eq_model, lambda { |eq_model| where(equipment_model_id: eq_model.id) }
-  scope :active, where("checked_in IS NULL") #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
+  scope :active, where("checked_in IS NULL and (approval_status = ? or approval_status = ? or approval_status = ?", 'auto', 'approved', 'requested') #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
   scope :notes_unsent, where(notes_unsent: true)
+  scope :requested, lambda {where("start_date <= ? and approval_status = ?", Time.now.midnight.utc, 'requested')}
+  scope :approved_requests, lambda {where("approval_status = ?", 'approved')}
+  scope :denied_requests, lambda {where("approval_status = ?", 'denied')}
 
   #TODO: Why the duplication in checkout_handler and checkout_handler_id (etc)?
   attr_accessible :checkout_handler, :checkout_handler_id,
@@ -53,7 +56,7 @@ class Reservation < ActiveRecord::Base
                   :checked_out, :checked_in, :equipment_object,
                   :equipment_object_id, :notes, :notes_unsent, :times_renewed
 
-  attr_accessor :from_admin
+  attr_accessor :bypass_validations
 
   def reserver
     User.find(self.reserver_id)

@@ -9,6 +9,8 @@
       <%= link_to "Reserved (#{@reservations_source.reserved.size})", reservations_path,
         :class => @default ? "btn disabled" : "btn" %>
     <% end %>
+    <%= link_to "Requested (#{@reservations_source.requested.size})", reservations_path(:requested => true),
+        class: (params[:requested] ? "btn disabled" : "btn") %>
     <%= link_to "Checked out (#{@reservations_source.checked_out.size})", reservations_path(:checked_out => true),
 			:class => (params[:checked_out] ? "btn disabled" : "btn") %>
     <%= link_to "Overdue (#{@reservations_source.overdue.size})", reservations_path(:overdue => true),
@@ -17,5 +19,9 @@
 			:class => (params[:missed] ? "btn disabled" : "btn") %>
    	<%= link_to "Returned (#{@reservations_source.returned.size})", reservations_path(:returned => true),
 			:class => (params[:returned] ? "btn disabled" : "btn") %>
+    <%= link_to "Approved (#{@reservations_source.approved_requests.size})", reservations_path(:approved_requests => true),
+        class: (params[:approved_requests] ? "btn disabled" : "btn") %>
+    <%= link_to "Requested (#{@reservations_source.denied_requests.size})", reservations_path(:denied_requests => true),
+        class: (params[:denied_requests] ? "btn disabled" : "btn") %>
   </div>
 </div>
