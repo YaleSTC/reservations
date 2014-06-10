@@ -2,7 +2,7 @@ module LogHelper
   # Expects an array where `arr[0]` is hash key and `arr[1]` the hash value
   # -- in other words, an element of an array returned by `object.attributes`.
 
-  # Returns a sanitized two-item array, or false if the row should be omitted.
+  # Returns a sanitized two-item array.
   def transform_attributes(arr)
     key_dict = {"id" => "Reservation ID",
                 "reserver_id" => "Patron",
@@ -16,6 +16,11 @@ module LogHelper
       key = key_dict[arr[0]]
     end
 
+    # Explanation: The hash below has a procedure for some attributes. Some of
+    # the procedures create links (if the key represents an association), others
+    # enhance readability. If a key is contained in the hash, the procedure
+    # associated with it is called on the value to transform it.
+    
     val_dict = {"id" => Proc.new { |id| get_reservation_link(id) },
                 "reserver_id" => Proc.new { |id| get_user_link(id) },
                 "checkout_handler_id" => Proc.new { |id| get_user_link(id) },
@@ -24,6 +29,8 @@ module LogHelper
                 "equipment_object_id" => Proc.new { |id| get_object_link(id) },
                 "start_date" => Proc.new { |date| get_day(date) },
                 "due_date" => Proc.new { |date| get_day(date) },
+                "checked_out" => Proc.new { |date| get_time(date) },
+                "checked_in" => Proc.new { |date| get_time(date) },
                 "created_at" => Proc.new { |date| get_time(date) },
                 "updated_at" => Proc.new { |date| get_time(date) }
               }
@@ -38,6 +45,8 @@ module LogHelper
 
     return [key, val]
   end
+
+private
 
   def get_reservation_link(res_id)
     res = Reservation.find_by_id(res_id)
