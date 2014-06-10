@@ -165,7 +165,7 @@ describe Cart do
       it "does not affect due date when due date does not precede start date" do
         dates = [[1.week.ago, 2.days.ago],
                  [1.day.ago, DateTime.now],
-                 [DateTime.now, DateTime.tomorrow],
+                 [DateTime.now, DateTime.now.tomorrow],
                  [1.week.from_now, 1.month.from_now]] # past, current, future dates
         dates.each do |start, due|
           @cart.start_date = start

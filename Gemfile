@@ -30,6 +30,7 @@ gem 'jquery-datatables-rails'
 gem 'rails3-jquery-autocomplete'
 gem 'select2-rails'
 gem 'kaminari'
+gem 'spinjs-rails'
 
 #forms / formatting
 gem 'dynamic_form'
@@ -42,6 +43,10 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'shoulda-matchers'
   gem 'capybara', '~> 2.0.0'
+  gem 'guard-rspec'
+  gem 'spork-rails'
+  gem 'guard-spork'
+  gem 'fuubar'
   gem 'guard-livereload'
   gem 'yajl-ruby'
   gem 'ffaker'

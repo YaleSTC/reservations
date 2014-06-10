@@ -59,6 +59,7 @@ class CatalogController < ApplicationController
 
       errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
       flash[:error] = errors.to_sentence
+      flash[:notice] = "Cart updated."
 
       respond_to do |format|
         format.html{redirect_to root_path}

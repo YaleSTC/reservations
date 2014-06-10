@@ -1,4 +1,5 @@
 <div id="cart" class="well">
+  <div id="cartSpinner"></div>
   <% unless current_user && current_user.can_checkout? %>
     <h2>My Cart</h2><br />
   <% else %>
@@ -11,7 +12,7 @@
   <%= render :partial => 'reservations/list_items_in_cart' %>
   <hr />
   <div class="row">
-    <div class="span3">
+    <div class="span3" id="cart_buttons">
     <%= link_to "Empty cart".titleize, empty_cart_path, :method => :delete, :class => "btn", :id => 'empty_cart_btn' %>
     <%# print Make reservation button %>
     <%= link_to sanitize("#{content_tag :i, nil, class: "icon-shopping-cart"} #{"Make reservation".titleize}"), new_reservation_path, :class => "btn btn-success" %>

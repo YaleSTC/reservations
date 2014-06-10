@@ -3,7 +3,9 @@ module BlackoutsHelper
     start_blackouts = Blackout.blackouts_on_date(cart.start_date)
     end_blackouts = Blackout.blackouts_on_date(cart.due_date)
 
-    messages = [messages_for_blackouts(start_blackouts, "start") + messages_for_blackouts(end_blackouts, "end")].uniq.join("\n")
+    messages = (blackout_error_messages(start_blackouts, "START") +
+                blackout_error_messages(end_blackouts, "END")).uniq.join("\n")
+
     if messages.present?
       if flash[:error]
         flash[:error] += messages
@@ -13,11 +15,19 @@ module BlackoutsHelper
     end
   end
 
-  def messages_for_blackouts(blackouts, date_type)
+  # creates an array of all blackout messages from BLACKOUTS, and adds
+  # a message about choosing a different TYPE date if a given blackout is
+  # hard.
+  def blackout_error_messages(blackouts, type)
     messages = []
+
     blackouts.each do |bo|
-      messages << bo.notice + ((bo.blackout_type == "hard") ? " Please choose a different #{date_type} date in your Cart." : "")
+      messages << bo.notice
+      if bo.blackout_type == "hard"
+        messages << "Please choose a different #{type} DATE in your Cart."
+      end
     end
+
     return messages
   end
 end
