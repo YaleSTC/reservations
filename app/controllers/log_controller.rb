@@ -1,6 +1,4 @@
 class LogController < ApplicationController
-  helper ReservationsHelper
-
   def index
     # Past paper_trail 2.7-stable, Version is namespaced as PaperTrail::Version
     # and so this line will break.
@@ -19,11 +17,4 @@ class LogController < ApplicationController
     @next = @version.next
     @next_user = User.find(@next.whodunnit.to_i) if @next
   end
-
-  # def show
-  #   id = params[:version_id]
-  #   @reservation = Version.find(id).reify
-  #   @view_only = true
-  #   render "reservations/show"
-  # end
 end
