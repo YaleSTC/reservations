@@ -2,6 +2,7 @@ Reservations::Application.routes.draw do
 
   get "log/index"
   get "log/version/:id" => "log#version", as: :version_view
+  get "log/history/:id" => "log#history", as: :history
 
   get "status/index"
 
