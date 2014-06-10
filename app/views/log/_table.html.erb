@@ -1,25 +1,39 @@
 <table id="table_log" class="datatable-wide table table-striped table-bordered">
   <thead>
   <tr>
-    <th>User</th>
+    <th>Time</th>
+    <th>Previous version by</th>
+    <th>Change by</th>
     <th>Action</th>
     <th>Type of object</th>
     <th>Current object</th>
-    <th>Past version of object</th>
+    <th>Version properties</th>
   </tr>
   </thead>
   <tbody>
   <% for version in versions %>
+    <% previous_user = User.find_by_id(version.originator.to_i) %>
     <% user = User.find(version.whodunnit.to_i) %>
     <% object_type = Kernel.const_get(version.item_type) %>
+    <% reified = version.reify %>
     <%# That's a semi-ugly hack to get access to whatever Model is mentioned,
     as per http://infovore.org/archives/2006/08/02/getting-a-class-object-in-ruby-from-a-string-containing-that-classes-name/ %>
     <tr>
-    <td><%= link_to user.first_name, user %></td>
+    <td><%= version.created_at %></td>
+    <td><%= link_to previous_user.render_name, previous_user if previous_user %></td>
+    <td><%= link_to user.render_name, user %></td>
     <td><%= version.event %></td>
     <td><%= version.item_type %></td>
-    <td><%= link_to version.item_id, object_type.find_by_id(version.item_id) if object_type.find_by_id(version.item_id) %></td>
-    <td><!-- link to Version --></td>
+    <td>
+      <% if object_type.find_by_id(version.item_id) %>
+        <%= link_to version.item_type + " " + version.item_id.to_s, object_type.find_by_id(version.item_id) %>
+      <% else %>
+        <em>doesn't exist</em>
+      <% end %>
+    </td>
+    <td>
+      <%= link_to "See details", version_view_path(version.id) %>
+    </td>
     </tr>
   <% end %>
   </tbody>
