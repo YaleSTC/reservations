@@ -1,11 +1,12 @@
 class LogController < ApplicationController
   helper LogHelper
-  
+
   def index
     # Past paper_trail 2.7-stable, Version is namespaced as PaperTrail::Version
     # and so this line will break.
-    @all_versions = Version.order("id desc").all
+    @versions = Version.order("id desc").all
     # render layout: 'application_with_sidebar'
+    @title = "to all Reservations"
   end
 
   def version
@@ -18,5 +19,12 @@ class LogController < ApplicationController
 
     @next = @version.next
     @next_user = User.find(@next.whodunnit.to_i) if @next
+  end
+
+  def history
+    @versions = Version.where(item_type: "Reservation", item_id: params[:id])
+    @title = "to Reservation #{params[:id]}"
+    @specific = true
+    render "index"
   end
 end

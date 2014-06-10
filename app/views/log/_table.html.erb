@@ -8,6 +8,7 @@
     <th>Type of object</th>
     <th>Current object</th>
     <th>Version properties</th>
+    <% unless @specific %><th></th><% end %>
   </tr>
   </thead>
   <tbody>
@@ -20,7 +21,12 @@
     as per http://infovore.org/archives/2006/08/02/getting-a-class-object-in-ruby-from-a-string-containing-that-classes-name/ %>
     <tr>
     <td><%= version.created_at %></td>
-    <td><%= link_to previous_user.render_name, previous_user if previous_user %></td>
+    <td><% if previous_user %>
+      <%= link_to previous_user.render_name, previous_user %>
+    <% else %>
+      <em>N/A</em>
+    <% end %>
+    </td>
     <td><%= link_to user.render_name, user %></td>
     <td><%= version.event %></td>
     <td><%= version.item_type %></td>
@@ -34,6 +40,11 @@
     <td>
       <%= link_to "See details", version_view_path(version.id) %>
     </td>
+    <% unless @specific %>
+    <td>
+      <%= link_to "See history", history_path(version.item_id) %>
+    </td>
+    <% end %>
     </tr>
   <% end %>
   </tbody>
