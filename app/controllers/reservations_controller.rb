@@ -20,8 +20,8 @@ class ReservationsController < ApplicationController
 
   def index
     #define our source of reservations depending on user status
-    reservations_source = current_user.can_checkout? ? Reservation : current_user.reservations
-    default_filter = current_user.can_checkout? ? :upcoming : :reserved
+    reservations_source = (can? :manage, Reservation) ? Reservation : current_user.reservations
+    default_filter = can? (:manage, Reservation) ? :upcoming : :reserved
 
     filters = [:reserved, :checked_out, :overdue, :missed, :returned, :upcoming]
     #if the filter is defined in the params, store those reservations
@@ -48,7 +48,7 @@ class ReservationsController < ApplicationController
       @errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
 
       unless @errors.empty?
-        if current_user.is_admin?(as: 'admin')
+        if can? :override, :reservation_errors
           flash[:error] = 'Are you sure you want to continue? Please review the errors below.'
         else
           flash[:error] = 'Please review the errors below.'
@@ -70,7 +70,7 @@ class ReservationsController < ApplicationController
             @reservation = Reservation.new(params[:reservation])
             @reservation.equipment_model =  cart_res.equipment_model
             # the attribute is called from_admin, but now that we can give checkout people this permission, the name doesn't quite make sense.
-            @reservation.from_admin = current_user.can_override_reservation_restrictions?
+            @reservation.from_admin = (can? :override, :reservation_errors)
             @reservation.save!
             successful_reservations << @reservation
           end
@@ -80,7 +80,7 @@ class ReservationsController < ApplicationController
             #UserMailer.reservation_confirmation(complete_reservation).deliver
           end
           flash[:notice] = "Reservation created successfully"
-          if current_user.can_checkout?
+          if can? :manage, Reservation
             if params[:reservation][:start_date].to_date === Date::today.to_date
 				flash[:notice] = "Are you simultaneously checking out equipment for someone? Note that\
 									only the reservation has been made. Don't forget to continue to checkout."
@@ -197,7 +197,7 @@ class ReservationsController < ApplicationController
 
       # act on the errors
       if !error_msgs.empty? # If any requirements are not met...
-        if current_user.can_override_checkout_restrictions? # Admins can ignore them
+        if can? :override, :checkout_errors # Admins can ignore them
           error_msgs = " Admin Override: Equipment has been successfully checked out even though " + error_msgs
         else # everyone else is redirected
           flash[:error] = error_msgs

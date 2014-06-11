@@ -16,10 +16,10 @@ class Ability
 			can :read, EquipmentObject
 			can :read, EquipmentModel
 			if AppConfig.first.override_on_create
-				can :override_reservation_restrictions
+				can :override, :reservation_errors
 			end
 			if AppConfig.first.override_at_checkout
-				can :override_checkout_restrictions
+				can :override, :checkout_errors
 			end
 		when 'normal' || 'checkout'
 			can :read, User, :id => user.id
