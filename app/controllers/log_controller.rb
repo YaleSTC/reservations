@@ -6,7 +6,7 @@ class LogController < ApplicationController
     # and so this line will break.
     @versions = Version.order("id desc").all
     # render layout: 'application_with_sidebar'
-    @title = "to all Reservations"
+    @title = "to all Items"
   end
 
   def version
@@ -27,13 +27,13 @@ class LogController < ApplicationController
   end
 
   def history
-    @versions = Version.where(item_type: "Reservation", item_id: params[:id])
+    @versions = Version.where(item_type: params[:object_type].capitalize, item_id: params[:id])
 
     unless @versions.exists?
       redirect_to action: 'index', notice: "There is no changelog for this item." and return
     end
 
-    @title = "to Reservation #{params[:id]}"
+    @title = "to #{params[:object_type].capitalize} #{params[:id]}"
     @specific = true
     render "index"
   end
