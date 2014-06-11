@@ -115,8 +115,7 @@ class ReservationsController < ApplicationController
 
     # save changes to database
     Reservation.update(@reservation, res)
-    #@reservation.update(res)
-
+    
     # flash success and exit
     flash[:notice] = "Successfully edited reservation."
     redirect_to @reservation
