@@ -1,6 +1,8 @@
 class LogController < ApplicationController
   helper LogHelper
 
+  before_filter :require_admin
+
   def index
     # Past paper_trail 2.7-stable, Version is namespaced as PaperTrail::Version
     # and so this line will break.
@@ -28,7 +30,6 @@ class LogController < ApplicationController
 
   def history
     @versions = Version.where(item_type: params[:object_type].capitalize, item_id: params[:id])
-    # This is safe as long as we only version non-private items.
 
     unless @versions.exists?
       redirect_to action: 'index', notice: "There is no changelog for this item." and return
