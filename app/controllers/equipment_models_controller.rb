@@ -1,9 +1,7 @@
 class EquipmentModelsController < ApplicationController
   layout 'application_with_sidebar', only: :show
-
-  before_filter :require_admin
+  load_and_authorize_resource
   before_filter :set_equipment_model, only: [:show, :edit, :update, :destroy]
-  skip_before_filter :require_admin, only: [:index, :show]
   before_filter :set_category_if_possible, only: [:index, :new]
 
   include ActivationHelper

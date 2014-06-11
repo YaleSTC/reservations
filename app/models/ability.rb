@@ -10,6 +10,11 @@ class Ability
 			can :manage, :all
 		when 'checkout'
 			can :manage, Reservation
+			can :read, User
+			can :create, User
+			can :read, Category
+			can :read, EquipmentObject
+			can :read, EquipmentModel
 			if AppConfig.first.override_on_create
 				can :override_reservation_restrictions
 			end
@@ -17,7 +22,7 @@ class Ability
 				can :override_checkout_restrictions
 			end
 		when 'normal' || 'checkout'
-			
+			can :read, User, :id => user.id
 		when 'banned'
 			cannot :create, :reservation
 	end

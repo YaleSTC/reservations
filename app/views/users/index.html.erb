@@ -5,7 +5,7 @@
 <hr />
 <p> 
   <%= link_to "New User", new_user_path, :class => "btn btn-primary" %>
-  <% if current_user.can_checkout? %>
+  <% if can? :create, User %>
     <%= link_to "Import Users", csv_import_page_path, :class => "btn" %>
   <% end %>
   <% if params[:show_deleted] %>

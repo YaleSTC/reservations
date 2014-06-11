@@ -1,6 +1,5 @@
 class EquipmentObjectsController < ApplicationController
-  before_filter :require_admin, except: :index
-  before_filter :require_checkout_person, only: :index
+  load_and_authorize_resource
   before_filter :set_current_equipment_object, only: [:show, :edit, :update, :destroy]
   before_filter :set_equipment_model_if_possible, only: [:index, :new]
 

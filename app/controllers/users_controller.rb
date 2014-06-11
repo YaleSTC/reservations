@@ -1,9 +1,10 @@
 class UsersController < ApplicationController
+  load_and_authorize_resource
   layout 'application_with_sidebar', only: [:show, :edit]
 
   skip_filter :cart, only: [:new, :create]
   skip_filter :first_time_user, only: [:new, :create]
-  before_filter :require_checkout_person, only: :index
+  #before_filter :require_checkout_person, only: :index
   before_filter :set_user, only: [:show, :edit, :update, :destroy, :deactivate, :activate]
 
   include ActivationHelper
@@ -27,7 +28,7 @@ class UsersController < ApplicationController
   end
 
   def show
-    require_user_or_checkout_person(@user)
+   # require_user_or_checkout_person(@user)
     @user_reservations = @user.reservations
     @all_equipment = Reservation.active_user_reservations(@user)
     @show_equipment = { checked_out:  @user.reservations.
