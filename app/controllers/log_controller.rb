@@ -10,7 +10,12 @@ class LogController < ApplicationController
   end
 
   def version
-    @version = Version.find(params[:id])
+    @version = Version.find_by_id(params[:id])
+
+    if @version.nil?
+      redirect_to action: 'index', notice: "There is no changelog for this item." and return
+    end
+
     @date = @version.created_at
     @user = User.find(@version.whodunnit.to_i)
 
@@ -23,6 +28,11 @@ class LogController < ApplicationController
 
   def history
     @versions = Version.where(item_type: "Reservation", item_id: params[:id])
+
+    unless @versions.exists?
+      redirect_to action: 'index', notice: "There is no changelog for this item." and return
+    end
+
     @title = "to Reservation #{params[:id]}"
     @specific = true
     render "index"
