@@ -64,7 +64,11 @@ private
 
   def get_model_link(em_id)
     model = EquipmentModel.find_by_id(em_id)
-    return link_to model.name, model
+    if model
+      return link_to model.name, model
+    else
+      return "Model ID #{em_id} (deleted)"
+    end
   end
 
   def get_object_link(obj_id)
