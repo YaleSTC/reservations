@@ -4,7 +4,7 @@ module LogHelper
 
   # Returns a sanitized two-item array.
   def transform_attributes(arr)
-    key_dict = {"id" => "Reservation ID",
+    key_dict = {#"id" => "Reservation ID",
                 "reserver_id" => "Patron",
                 "checkout_handler_id" => "Checkout Person",
                 "checkin_handler_id" => "Checkin Person",
@@ -20,8 +20,8 @@ module LogHelper
     # the procedures create links (if the key represents an association), others
     # enhance readability. If a key is contained in the hash, the procedure
     # associated with it is called on the value to transform it.
-    
-    val_dict = {"id" => Proc.new { |id| get_reservation_link(id) },
+
+    val_dict = {#"id" => Proc.new { |id| get_reservation_link(id) },
                 "reserver_id" => Proc.new { |id| get_user_link(id) },
                 "checkout_handler_id" => Proc.new { |id| get_user_link(id) },
                 "checkin_handler_id" => Proc.new { |id| get_user_link(id) },
