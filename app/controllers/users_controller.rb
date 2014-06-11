@@ -44,7 +44,7 @@ class UsersController < ApplicationController
   end
 
   def new
-    if current_user and current_user.can_checkout?
+    if can? :manage, Reservation
       if params[:possible_netid]
         @user = User.new(User.search_ldap(params[:possible_netid]))
       else

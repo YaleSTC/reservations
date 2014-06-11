@@ -5,11 +5,11 @@ class Ability
     # Define abilities for the passed in user here. For example:
     #
     #   user ||= User.new # guest user (not logged in)
-    case user.role
+    case user.view_mode
 		when 'admin'
 			can :manage, :all
 		when 'checkout'
-			can :checkout
+			can :manage, Reservation
 			if AppConfig.first.override_on_create
 				can :override_reservation_restrictions
 			end
