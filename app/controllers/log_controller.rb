@@ -28,12 +28,13 @@ class LogController < ApplicationController
 
   def history
     @versions = Version.where(item_type: params[:object_type].capitalize, item_id: params[:id])
+    # This is safe as long as we only version non-private items.
 
     unless @versions.exists?
       redirect_to action: 'index', notice: "There is no changelog for this item." and return
     end
 
-    @title = "to #{params[:object_type].capitalize} #{params[:id]}"
+    @title = "to " + "#{params[:object_type].tableize.humanize.singularize} #{params[:id]}".split.map( &:capitalize ).join(" ")
     @specific = true
     render "index"
   end

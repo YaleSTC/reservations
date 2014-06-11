@@ -2,8 +2,13 @@ module LogHelper
   # Expects an array where `arr[0]` is hash key and `arr[1]` the hash value
   # -- in other words, an element of an array returned by `object.attributes`.
 
-  # Returns a sanitized two-item array.
+  # Returns a sanitized two-item array, or false if the row should not display.
   def transform_attributes(arr)
+    remove_keys = ["id"]
+    if remove_keys.include? arr[0]
+      return false
+    end
+
     key_dict = {#"id" => "Reservation ID",
                 "reserver_id" => "Patron",
                 "checkout_handler_id" => "Checkout Person",
