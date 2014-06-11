@@ -13,6 +13,8 @@ gem 'rubycas-client', '2.2.1'
 #scheduling
 gem 'whenever'
 
+gem 'activeadmin'
+
 #ldap integration
 gem 'net-ldap'
 

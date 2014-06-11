@@ -1,8 +1,9 @@
 Reservations::Application.routes.draw do
+  root :to => 'catalog#index'
+  
+  ActiveAdmin.routes(self)
 
   get "status/index"
-
-  root :to => 'catalog#index'
 
   resources :documents,
             :equipment_objects,
