@@ -15,10 +15,8 @@
   <% for version in versions %>
     <% previous_user = User.find_by_id(version.originator.to_i) %>
     <% user = User.find(version.whodunnit.to_i) %>
-    <% object_type = Kernel.const_get(version.item_type) %>
+    <% object_type = Kernel.const_get(version.item_type) # converts string to object %>
     <% reified = version.reify %>
-    <%# That's a semi-ugly hack to get access to whatever Model is mentioned,
-    as per http://infovore.org/archives/2006/08/02/getting-a-class-object-in-ruby-from-a-string-containing-that-classes-name/ %>
     <tr>
     <td><%= version.created_at %></td>
     <td><% if previous_user %>
@@ -42,7 +40,7 @@
     </td>
     <% unless @specific %>
     <td>
-      <%= link_to "See history", history_path(version.item_id) %>
+      <%= link_to "See history", history_path(version.item_type, version.item_id) %>
     </td>
     <% end %>
     </tr>
