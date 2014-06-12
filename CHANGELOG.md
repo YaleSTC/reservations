@@ -7,6 +7,7 @@ Change Log
 * This file will be updated whenever new release put into production
 * The release version should be visible from within the application (coming soon)
 * Any problems should be reported via the "report an issue" link in the footer of the application instance
+
 ###v3.3.0
 ####Bug Fixes
 * Fixed catalog pagination not working correctly ([#533](https://github.com/YaleSTC/reservations/issues/533))
