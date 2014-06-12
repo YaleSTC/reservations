@@ -7,8 +7,10 @@ class Ability
 		when 'admin'
 			can :manage, :all
 		when 'checkout'
-			can :checkout, Reservation
 			can :manage, Reservation
+			unless AppConfig.first.checkout_persons_can_edit
+				cannot :update, Reservation
+			end
 			can :read, User
 			can :update, User
 			can :create, User
