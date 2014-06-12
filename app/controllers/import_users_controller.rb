@@ -1,7 +1,7 @@
 class ImportUsersController < ApplicationController
   include CsvImport
 
-  before_filter :require_admin
+  authorize_resource :class => false
 
   # functions like the RESTful create action by submitting a POST request to create/update a bunch
   # of users, and it renders the 'imported' page.
