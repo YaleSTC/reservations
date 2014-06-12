@@ -48,6 +48,7 @@
     <% else %>
       <div class="add_to_cart_box">
         <%#= button_tag "Add to Cart", :class => "btn disabled", :id => 'add_to_cart' %>
+        <%# this line is commented out to remove the button when no equipment is available, see issue 555 %>
       </div>
     <% end %>
 </div>
