@@ -138,13 +138,13 @@ class ApplicationController < ActionController::Base
     RubyCAS::Filter.logout(self)
   end
 
-  def require_admin(new_path=root_path)
-    restricted_redirect_to(new_path) unless current_user.is_admin?(as: 'admin')
-  end
+ # def require_admin(new_path=root_path)
+  #  restricted_redirect_to(new_path) unless current_user.is_admin?(as: 'admin')
+  #end
 
-  def require_checkout_person(new_path=root_path)
-    restricted_redirect_to(new_path) unless current_user.can_checkout?
-  end
+  #def require_checkout_person(new_path=root_path)
+  #  restricted_redirect_to(new_path) unless current_user.can_checkout?
+  #end
 
   def require_login
     if current_user.nil?
@@ -153,18 +153,18 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def require_user(user, new_path=root_path)
-    restricted_redirect_to(new_path) unless current_user == user or current_user.is_admin?(as: 'admin')
-  end
+  #def require_user(user, new_path=root_path)
+  #  restricted_redirect_to(new_path) unless current_user == user or current_user.is_admin?(as: 'admin')
+  #end
 
-  def require_user_or_checkout_person(user, new_path=root_path)
-    restricted_redirect_to(new_path) unless current_user == user or current_user.can_checkout?
-  end
+  #def require_user_or_checkout_person(user, new_path=root_path)
+  #  restricted_redirect_to(new_path) unless current_user == user or current_user.can_checkout?
+  #end
 
-  def restricted_redirect_to(new_path=root_path)
-    flash[:error] = "Sorry, that action or page is restricted."
-    redirect_to new_path
-  end
+  #def restricted_redirect_to(new_path=root_path)
+  #  flash[:error] = "Sorry, that action or page is restricted."
+  #  redirect_to new_path
+  #end
 
   def terms_of_service
     @tos = @app_configs.terms_of_service

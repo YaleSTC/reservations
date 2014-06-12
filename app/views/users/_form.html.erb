@@ -1,7 +1,7 @@
 <%= simple_form_for @user, :html => { :class => "form-horizontal" }, :remote => true do |f| %>
   <%= f.error_notification %>
 
-  <% if current_user and ( current_user.is_admin?(:as => 'admin') or (current_user.can_checkout? and @user.id == NIL) ) %>
+  <% if can? :create, @user %>
     <%= f.input :login %>
   <% else %>
       <%= f.input :login, :readonly => true, :input_html => {:value => @user.login}%>
@@ -22,7 +22,7 @@
 
   <%= render partial: 'terms_of_service/user_accepted', locals: {f: f}%>
 
-  <% if current_user && current_user.is_admin?(:as => 'admin') %>
+  <% if can? :manage, @user %>
       <%# TODO: Make this a fancy box %>
       <%= f.association :requirements, :collection => Requirement.all.map{|req| [req.description,req.id]}, :label => "Requirements user has satisfied"%>
       <%= f.input :role, collection: ['normal', 'checkout', 'admin', 'banned'], placeholder: 'normal' %>

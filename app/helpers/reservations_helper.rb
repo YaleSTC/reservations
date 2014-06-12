@@ -29,7 +29,7 @@ module ReservationsHelper
   end
 
   def manage_reservations_btn
-    if current_user.can_checkout?
+    if can? :manage Reservation
       if @reservation.status == 'reserved'
         link_to 'Check-Out', manage_reservations_for_user_path(@reservation.reserver.id,
           anchor: 'check_out_row'), class: 'btn btn-inverse'

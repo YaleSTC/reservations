@@ -11,6 +11,7 @@ class Ability
 		when 'checkout'
 			can :manage, Reservation
 			can :read, User
+			can :update, User
 			can :create, User
 			can :read, Category
 			can :read, EquipmentObject
@@ -23,6 +24,7 @@ class Ability
 			end
 		when 'normal' || 'checkout'
 			can :read, User, :id => user.id
+			can :read, Reservation, :reserver_id => user.id
 			can :create, Reservation, :reserver_id => user.id
 			can :destroy, Reservation, :reserver_id => user.id
 			can :read, Reservation, :reserver_id => user.id

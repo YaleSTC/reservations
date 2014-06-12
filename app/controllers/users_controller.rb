@@ -4,7 +4,6 @@ class UsersController < ApplicationController
 
   skip_filter :cart, only: [:new, :create]
   skip_filter :first_time_user, only: [:new, :create]
-  #before_filter :require_checkout_person, only: :index
   before_filter :set_user, only: [:show, :edit, :update, :destroy, :deactivate, :activate]
 
   include ActivationHelper
@@ -28,7 +27,6 @@ class UsersController < ApplicationController
   end
 
   def show
-   # require_user_or_checkout_person(@user)
     @user_reservations = @user.reservations
     @all_equipment = Reservation.active_user_reservations(@user)
     @show_equipment = { checked_out:  @user.reservations.
@@ -60,7 +58,7 @@ class UsersController < ApplicationController
   def create
     @user = User.new(params[:user])
     # this line is what allows checkoutpeople to create users
-    @user.login = session[:cas_user] unless current_user and current_user.can_checkout?
+    @user.login = session[:cas_user] unless current_user and can? :manage, Reservation
     if @user.save
       respond_to do |format|
         flash[:notice] = "Successfully created user."
@@ -79,7 +77,7 @@ class UsersController < ApplicationController
 
   def update
     require_user(@user)
-    params[:user].delete(:login) unless current_user.is_admin?(as: 'admin') #no changing login unless you're an admin
+    params[:user].delete(:login) unless can? :manage, users #no changing login unless you're an admin
     if @user.update_attributes(params[:user])
       respond_to do |format|
         flash[:notice] = "Successfully updated user."

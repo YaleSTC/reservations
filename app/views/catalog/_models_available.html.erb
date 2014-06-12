@@ -2,7 +2,7 @@
 <% prepare_pagination %>
 <% blackout_errors %>
 
-<% if @equipment_models_by_category.empty? && current_user.is_admin?(:as => 'admin') %>
+<% if @equipment_models_by_category.empty? && can? :manage, EquipmentModel %>
   <p><h3>No equipment found. Try creating some
       <%= link_to "Equipment Models", new_equipment_model_path %>
       first!</h3>
