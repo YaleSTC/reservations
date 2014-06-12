@@ -12,6 +12,8 @@ Change Log
 ####Bug Fixes
 * Fixed catalog pagination not working correctly ([#533](https://github.com/YaleSTC/reservations/issues/533))
 
+####New Features
+* Added flash to notify admins/checkout-persons when viewing Reservations as a different user ([#542]((https://github.com/YaleSTC/reservations/issues/542))
 
 ###v3.2.0
 
