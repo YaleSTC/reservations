@@ -8,8 +8,6 @@ Change Log
 * The release version should be visible from within the application (coming soon)
 * Any problems should be reported via the "report an issue" link in the footer of the application instance
 
-###v3.3.0
-####New Features
 
 * Revamped the check-in UX ([#172](https://github.com/YaleSTC/reservations/issues/172))
 	* Added ability to click div to select the checkbox
