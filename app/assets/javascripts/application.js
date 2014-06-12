@@ -108,7 +108,7 @@
 
 $(document).ready(function() {
   
-  $('.checkin-click').click( function(e) {
+  $('.checkin-click').click( function() {
 	var box = $(this).find(":checkbox");
 	box.prop("checked", !box.prop("checked"))
 	if ($(this).hasClass("overdue")) {
