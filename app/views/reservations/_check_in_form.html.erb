@@ -1,13 +1,22 @@
+<div class="span4 checkin">
 <% if reservation.due_date.to_date < Date.today %>
-  <div class="span4 warning checkin"> <%# also change color %>
+  <div class="well checkin-click overdue">
 <% else %>
-  <div class="span4 checkin">
+  <div class="well checkin-click">
 <% end %>
-  <div class="well">
     <header>
-      <h3><%= link_to "Reservation ##{reservation.id}", reservation, target:
-      '_blank' %></h3>
-    </header>
+      <div class="title">
+        <h3><%= link_to "Reservation ##{reservation.id}", reservation, target:
+		'_blank' %></h3>
+	  </div>
+      <div class="overdue-img">
+	  <% if reservation.due_date.to_date < Date.today %>
+	    <%= image_tag("excl.png") %>
+      <% else %>
+        <%= image_tag("excl.png", class: "hidden") %>
+      <% end %>
+      </div>
+    </header><br>
 
     <hr>
       <div class="well well-em-manage">

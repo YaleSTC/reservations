@@ -15,6 +15,11 @@ Change Log
 ####New Features
 * Added flash to notify admins/checkout-persons when viewing Reservations as a different user ([#542]((https://github.com/YaleSTC/reservations/issues/542))
 
+* Revamped the check-in UX ([#172](https://github.com/YaleSTC/reservations/issues/172))
+	* Added ability to click div to select the checkbox
+	* Added color cues to indicate selection and overdue status
+	* Added overdue glyph
+	
 ###v3.2.0
 
 ####New Features
