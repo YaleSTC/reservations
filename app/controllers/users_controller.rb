@@ -43,7 +43,7 @@ class UsersController < ApplicationController
   end
 
   def new
-    if can? :manage, Reservation
+    if can? :manage, User
       if params[:possible_netid]
         @user = User.new(User.search_ldap(params[:possible_netid]))
       else
@@ -75,7 +75,7 @@ class UsersController < ApplicationController
   end
 
   def update
-    params[:user].delete(:login) unless can? :manage, users #no changing login unless you're an admin
+    params[:user].delete(:login) unless can? :change_login, User #no changing login unless you're an admin
     if @user.update_attributes(params[:user])
       respond_to do |format|
         flash[:notice] = "Successfully updated user."

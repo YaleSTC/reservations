@@ -4,8 +4,12 @@ class Ability
   def initialize(user)
    
     case user.view_mode
+		#when 'superuser'
+			#can :manage, :all
 		when 'admin'
 			can :manage, :all
+			#cannot :appoint, :superuser
+			#cannot :manage, Admin
 		when 'checkout'
 			can :manage, Reservation
 			unless AppConfig.first.checkout_persons_can_edit
@@ -25,12 +29,13 @@ class Ability
 			end
 		when 'normal' || 'checkout'
 			can :read, User, :id => user.id
+			can :create, User, :id => user.id
 			can :read, Reservation, :reserver_id => user.id
 			can :create, Reservation, :reserver_id => user.id
 			can :destroy, Reservation, :reserver_id => user.id, :checked_out => nil
 			can :read, Reservation, :reserver_id => user.id
 		when 'banned'
-			cannot :create, :reservation
+			cannot :create, Reservation
 	end
     
   end
