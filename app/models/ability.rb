@@ -23,6 +23,9 @@ class Ability
 			end
 		when 'normal' || 'checkout'
 			can :read, User, :id => user.id
+			can :create, Reservation, :reserver_id => user.id
+			can :destroy, Reservation, :reserver_id => user.id
+			can :read, Reservation, :reserver_id => user.id
 		when 'banned'
 			cannot :create, :reservation
 	end

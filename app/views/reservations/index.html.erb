@@ -1,4 +1,4 @@
-<% title (current_user.can_checkout? ? "" : "My ")+"Reservations" %>
+<% title ((can? :manage, Reservation) ? "" : "My ")+"Reservations" %>
 
 <%= render :partial => "main_page_nav_buttons" %>
 

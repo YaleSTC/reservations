@@ -1,4 +1,6 @@
 class ReservationsController < ApplicationController
+
+  load_and_authorize_resource
   include Autocomplete
   # this is a call to the gem method 'autocomplete' of the rails3-jquery-autocomplete gem
   # it sets up what table and attributes will be used to display autocomplete information when searched
@@ -20,19 +22,19 @@ class ReservationsController < ApplicationController
 
   def index
     #define our source of reservations depending on user status
-    reservations_source = (can? :manage, Reservation) ? Reservation : current_user.reservations
-    default_filter = can? (:manage, Reservation) ? :upcoming : :reserved
+    @reservations_source = (can? :manage, Reservation) ? Reservation : current_user.reservations
+    default_filter = (can? :manage, Reservation) ? :upcoming : :reserved
 
     filters = [:reserved, :checked_out, :overdue, :missed, :returned, :upcoming]
     #if the filter is defined in the params, store those reservations
     filters.each do |filter|
       if params[filter]
-        @reservations_set = [reservations_source.send(filter)].delete_if{|a| a.empty?}
+        @reservations_set = [@reservations_source.send(filter)].delete_if{|a| a.empty?}
       end
     end
 
     #if no filter is defined
-    @reservations_set ||= [reservations_source.send(default_filter)].delete_if{|a| a.empty?}
+    @reservations_set ||= [@reservations_source.send(default_filter)].delete_if{|a| a.empty?}
   end
 
   def show
