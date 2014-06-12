@@ -7,6 +7,7 @@ class Ability
 		when 'admin'
 			can :manage, :all
 		when 'checkout'
+			can :checkout, Reservation
 			can :manage, Reservation
 			can :read, User
 			can :update, User

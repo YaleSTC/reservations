@@ -10,7 +10,6 @@ class ReservationsController < ApplicationController
   layout 'application_with_sidebar'
 
   before_filter :require_login, only: [:index, :show]
-  before_filter :permissions_check, only: [:check_out, :check_in, :edit, :update]
 
   def set_user
     @user = User.find(params[:user_id])
@@ -290,7 +289,6 @@ class ReservationsController < ApplicationController
 
   def destroy
     set_reservation
-    require_user_or_checkout_person(@reservation.reserver)
     @reservation.destroy
     flash[:notice] = "Successfully destroyed reservation."
     redirect_to reservations_url
@@ -357,19 +355,5 @@ class ReservationsController < ApplicationController
       format.js{render action: "renew_box"}
     end
   end
-
-  private
-  def permissions_check
-    if params[:action] == 'checkout' || params[:action] == 'checkin'
-      require_checkout_person
-    elsif params[:action] == 'edit' || params[:action] == 'update'
-      if @app_configs.checkout_persons_can_edit == true
-        require_checkout_person
-      else
-        require_admin
-      end
-    end
-  end
-
 
 end

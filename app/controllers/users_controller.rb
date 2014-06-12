@@ -72,11 +72,9 @@ class UsersController < ApplicationController
   end
 
   def edit
-    require_user(@user)
   end
 
   def update
-    require_user(@user)
     params[:user].delete(:login) unless can? :manage, users #no changing login unless you're an admin
     if @user.update_attributes(params[:user])
       respond_to do |format|
@@ -107,7 +105,6 @@ class UsersController < ApplicationController
       users = get_autocomplete_items(term: params[:fake_searched_id])
       if !users.blank?
         @user = users.first
-        require_user_or_checkout_person(@user)
         redirect_to manage_reservations_for_user_path(@user.id) and return
       else
         flash[:alert] = "Please select a valid user"
@@ -115,7 +112,6 @@ class UsersController < ApplicationController
       end
     else
       @user = User.find(params[:searched_id])
-      require_user_or_checkout_person(@user)
       redirect_to manage_reservations_for_user_path(@user.id) and return
     end
   end
