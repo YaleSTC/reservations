@@ -1,0 +1,28 @@
+<% title "Announcements" %>
+
+<table id="" class="datatable-wide table table-striped table-bordered">
+  <thead>
+  <tr>
+    <th>Message</th>
+    <th>Start Time</th>
+    <th>End Time</th>
+    <th></th>
+    <th></th>
+  </tr>
+  </thead>
+  <tbody>
+  <%  @announcements.each do |announcement| %>
+  <tr>
+    <td><%= announcement.message %></td>
+    <td><%= announcement.starts_at.strftime('%m/%d/%Y') %></td> 
+    <td><%= announcement.ends_at.strftime('%m/%d/%Y') %></td>
+    <td><%= link_to "Edit", edit_announcement_path(announcement), :class => "btn"  %></td>
+    <td><%= link_to 'Delete', announcement, method: :delete, data: { confirm: 'Are you sure?' },  :class => "btn btn-danger"  %></td>
+  </tr>
+  <% end %>
+  </tbody>
+</table>
+<div class="form-actions">
+      <%= link_to "New Announcement", new_announcement_path, :class => "btn btn-primary" %>
+
+</div>
