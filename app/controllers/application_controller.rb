@@ -88,7 +88,15 @@ class ApplicationController < ActionController::Base
       redirect_to request.referer
     end
   end
-
+  
+  def check_view_mode
+	if current_user.role == 'admin' && current_user.view_mode != 'admin'
+		flash[:persistent] = "Currently viewing as #{current_user.view_mode} user. You can switch back to your regular view \
+							  #{ActionController::Base.helpers.link_to('below','#view_as')} \
+							  (see #{ActionController::Base.helpers.link_to('here','https://yalestc.github.io/reservations/')} for details)."
+	end
+  end
+  
   def fix_cart_date
     cart.set_start_date(Date.today) if cart.start_date < Date.today
   end
@@ -112,6 +120,7 @@ class ApplicationController < ActionController::Base
     errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
     # don't over-write flash if invalid date was set above
     flash[:error] ||= errors.to_sentence
+    flash[:notice] = "Cart updated."
 
     # reload appropriate divs / exit
     respond_to do |format|
