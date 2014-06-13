@@ -8,6 +8,7 @@ module UserMailerHelper
     body.gsub!("@return_date@", @reservation.due_date.to_date.to_s(:long))
     body.gsub!("@start_date@", @reservation.start_date.to_date.to_s(:long))
     body.gsub!("@late_fee@", number_to_currency(@reservation.late_fee))
+    body.gsub!("@replacement_fee@", number_to_currency(@reservation.equipment_model.replacement_fee))
     return body
   end
 end
