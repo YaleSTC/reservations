@@ -1,10 +1,13 @@
 
-<p>This is a notification for a late equipment checkin. </p>
+<p>This is a notification for a late equipment checkin by user <%= link_to @overdue_checked_in.reserver.name.html_safe, user_path(@overdue_checked_in.reserver) %>. </p>
 
 <p>Equipment picked up: <%= @overdue_checked_in.equipment_model.name%> (<%= @overdue_checked_in.equipment_object.name %>)</p>
-<p>Checkout date: <%= @overdue_checked_in.checked_out.strftime(" %B %e, %Y at %l:%M%P") %></p>
+<p>Reservation created at <%= @overdue_checked_in.created_at.strftime("%B %e, %Y") %> by </p>
+<p>Checked out on <%= @overdue_checked_in.checked_out.strftime(" %B %e, %Y at %l:%M%P") %> by <%= @overdue_checked_in.checkout_handler.name %>.</p>
+<p>Checked in on <%= @overdue_checked_in.checked_in.strftime(" %B %e, %Y at %l:%M%P") %> by <%= @overdue_checked_in.checkin_handler.name %>.</p>
+
 <p>Due date: <%= @overdue_checked_in.due_date.strftime("%B %e, %Y") %></p>
-<% unless @overdue_checked_in.notes.nil? %> 
+<% unless @overdue_checked_in.notes.nil? %>
   Notes: <%= @overdue_checked_in.notes %>
 <% end %>
 
