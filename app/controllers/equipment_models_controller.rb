@@ -89,7 +89,6 @@ class EquipmentModelsController < ApplicationController
     def delete_procedures(params, phase)
       # phase needs to be equal to either "checkout" or "checkin"
       phase_params = params[:equipment_model][:"#{phase}_procedures_attributes"]
-binding.pry
       unless phase_params.nil?
         phase_params.each do |k, v|
           if v["id"] and v["_destroy"] != "false"
