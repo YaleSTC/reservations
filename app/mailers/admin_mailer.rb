@@ -8,5 +8,9 @@ class AdminMailer < ActionMailer::Base
     mail(to: @app_configs.admin_email, subject: "[Reservation] Notes for " + (Date.yesterday.midnight).strftime('%m/%d/%y'))
   end
 
-
+  def overdue_checked_in_fine_admin(overdue_checked_in)
+    @app_configs = AppConfig.first
+    @overdue_checked_in = overdue_checked_in
+    mail(to: @app_configs.admin_email, subject: "[Reservation] Overdue equipment fine")
+  end
 end
