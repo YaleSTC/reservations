@@ -15,7 +15,7 @@ task :send_upcoming_checkin_reminder => :environment do
     end
     puts "Done!"
   else
-    puts "Upcoming check in emails are not sent by admin.\
+    puts "Upcoming check in emails are not sent by admin.
           Please change the application settings if you wish to send them."
   end
 end
@@ -65,7 +65,7 @@ end
 desc "Send email to user on overdue reservations checked in with fine"
 task :send_overdue_checked_in_fine => :environment do
   overdue_checked_in = Reservation.where("checked_out IS NOT NULL and\
-                                          checked_in IS NOT NULL and\
+                                          checked_in.to_date === Date.today and\
                                           due_date < checked_in")
   puts "Found #{overdue_checked_in.size} overdue reservations checked in.\
         Sending notification emails..."
@@ -78,7 +78,7 @@ end
 desc "Send email to admin on overdue reservations checked in with fine"
 task :send_overdue_checked_in_fine_admin => :environment do
   overdue_checked_in = Reservation.where("checked_out IS NOT NULL and\
-                                          checked_in IS NOT NULL and\
+                                          checked_in.to_date === Date.today and\
                                           due_date < checked_in")
   puts "Found #{overdue_checked_in.size} overdue reservations checked in.\
         Sending notification emails..."
