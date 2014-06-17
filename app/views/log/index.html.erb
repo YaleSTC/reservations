@@ -1,7 +1,7 @@
 <% if @specific %>
 <p><%= link_to "Back to all changes", log_index_path %></p>
 <% end %>
-
+<%= render :partial => 'layouts/flash' %>
 <h1>Overview of Changes <%= @title %></h1>
 
 <%= render :partial => 'table', :locals => {:versions => @versions} %>
