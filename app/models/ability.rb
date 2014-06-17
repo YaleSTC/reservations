@@ -21,9 +21,8 @@ class Ability
 			  can :read, User
 			  can :update, User
 			  can :create, User
-			  can :read, Category
 			  can :read, EquipmentObject
-			  can :read, EquipmentModel
+			  can :show, EquipmentModel
 		  	if AppConfig.first.override_on_create
 	  			can :override, :reservation_errors
   			end
