@@ -25,10 +25,13 @@ class ApplicationController < ActionController::Base
 
   rescue_from CanCan::AccessDenied do |exception|
     flash[:error] = "Sorry, that action or page is restricted."
+    if current_user.view_mode == 'banned'
+      flash[:error] = "It looks like you're a banned user. Sucks! Talk to your administrator, maybe he'll be willing to lift your restriction."
+    end
     #redirect_to request.referer ? request.referer : main_app.root_url
     redirect_to main_app.root_url
   end
-  
+
   # -------- before_filter methods -------- #
 
   def app_setup_check
@@ -94,7 +97,7 @@ class ApplicationController < ActionController::Base
     #in other words, what this really does is check if the
     #current user has access to all resources
   end
-  
+
   def check_view_mode
 	if current_user.role == 'admin' && current_user.view_mode != 'admin'
 		flash[:persistent] = "Currently viewing as #{current_user.view_mode} user. You can switch back to your regular view \
