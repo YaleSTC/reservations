@@ -1,7 +1,7 @@
 <% title @user.first_name + " " + (!@user.nickname.blank? ? "(#{@user.nickname}) " : "") + @user.last_name %>
 <% subtitle @user.login %>
 
-<% if can? :read, @user %>
+<% if can? :read, User %>
   <div class="row">
     <div class="span9">
       <%= render :partial => 'reservations/top_buttons', :locals => {:reserver => @user} %>
