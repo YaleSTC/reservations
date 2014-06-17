@@ -113,9 +113,10 @@ $(document).ready(function() {
 	box.prop("checked", !box.prop("checked"));
 	if ($(this).hasClass("overdue")) {
 		$(this).toggleClass("selected-overdue",box.prop("checked"));
-	} else {
+  } else {
 		$(this).toggleClass("selected",box.prop("checked"));
-	}
+  }
+  $(this).find('.check').toggleClass("hidden",!box.prop("checked"));
   });
   
   $('#checkout_button').click(function() {
