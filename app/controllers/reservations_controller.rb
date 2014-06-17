@@ -32,8 +32,12 @@ class ReservationsController < ApplicationController
       end
     end
 
+    @default = false
     #if no filter is defined
-    @reservations_set ||= [@reservations_source.send(default_filter)].delete_if{|a| a.empty?}
+    if @reservations_set.nil?
+      @default = true
+      @reservations_set = [@reservations_source.send(default_filter)].delete_if{|a| a.empty?}
+    end
   end
 
   def show
