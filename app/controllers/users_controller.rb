@@ -53,6 +53,7 @@ class UsersController < ApplicationController
       @user = User.new(User.search_ldap(session[:cas_user]))
       @user.login = session[:cas_user] #default to current login
     end
+    @can_edit_login = (can? :create, User)
   end
 
   def create
@@ -72,6 +73,7 @@ class UsersController < ApplicationController
   end
 
   def edit
+    @can_edit_login = can? :edit_login, User
   end
 
   def update

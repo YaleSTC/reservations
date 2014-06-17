@@ -1,7 +1,7 @@
 <%= simple_form_for @user, :html => { :class => "form-horizontal" }, :remote => true do |f| %>
   <%= f.error_notification %>
 
-  <% if can? :create, @user %>
+  <% if @can_edit_login %>
     <%= f.input :login %>
   <% else %>
       <%= f.input :login, :readonly => true, :input_html => {:value => @user.login}%>

@@ -31,8 +31,7 @@ class Ability
 		  		can :override, :checkout_errors
 	  		end
   		when 'normal' || 'checkout'
-			  can :read, User, :id => user.id
-			  can :create, User, :id => user.id
+			  can :manage, User, :id => user.id
 			  can :read, Reservation, :reserver_id => user.id
 			  can :create, Reservation, :reserver_id => user.id
 		  	can :destroy, Reservation, :reserver_id => user.id, :checked_out => nil
