@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
   rescue_from CanCan::AccessDenied do |exception|
     flash[:error] = "Sorry, that action or page is restricted."
     if current_user.view_mode == 'banned'
-      flash[:error] = "That action is restricted; it looks like you're a banned user! Talk to your administrator, maybe he'll be willing to lift your restriction."
+      flash[:error] = "That action is restricted; it looks like you're a banned user! Talk to your administrator, maybe they'll be willing to lift your restriction."
     end
     #redirect_to request.referer ? request.referer : main_app.root_url
     redirect_to main_app.root_url
