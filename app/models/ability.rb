@@ -18,9 +18,7 @@ class Ability
 			  unless AppConfig.first.checkout_persons_can_edit
 		  		cannot :update, Reservation
 		  	end
-			  can :read, User
-			  can :update, User
-			  can :create, User
+			  can [:read,:update,:create], User
 			  can :read, EquipmentObject
 			  can :read, EquipmentModel
 		  	if AppConfig.first.override_on_create
@@ -38,6 +36,6 @@ class Ability
   		when 'banned'
 			  #cannot :create, Reservation
 	    end
-    end  
+    end
   end
 end

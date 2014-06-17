@@ -87,12 +87,7 @@
 
 <div class="row">
   <div class="span9">
-    <h2>
-      History
-      <% if cannot? :create, User %>
-        <%= link_to 'Current Reservations', current_reservations_for_user_path(@user.id), :id => 'current_activity', :class => 'btn btn-inverse' %>
-      <% end %>
-    </h2>
+    <h2>History</h2>
   </div>
 </div>
 <hr />

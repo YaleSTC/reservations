@@ -22,7 +22,7 @@
 
   <%= render partial: 'terms_of_service/user_accepted', locals: {f: f}%>
 
-  <% if can? :manage, @user %>
+  <% if can? :manage, User %>
       <%# TODO: Make this a fancy box %>
       <%= f.association :requirements, :collection => Requirement.all.map{|req| [req.description,req.id]}, :label => "Requirements user has satisfied"%>
       <%= f.input :role, collection: ['normal', 'checkout', 'admin', 'banned'], placeholder: 'normal' %>
