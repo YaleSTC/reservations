@@ -1,5 +1,5 @@
 class AnnouncementsController < ApplicationController
-  before_filter :require_admin
+  load_and_authorize_resource
   before_filter :set_current_announcement, :only => [:edit, :update, :destroy]
 
   # ------------- before filter methods ------------- #

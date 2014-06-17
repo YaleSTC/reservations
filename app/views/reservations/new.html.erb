@@ -2,7 +2,7 @@
 
 <% unless @errors.empty? %>
   <p>
-    <% if current_user.is_admin?(:as => 'admin') %>
+    <% if can? :override, :reservation_errors %>
       <h3><i class="icon-warning-sign warning-icon"></i> Please be aware of the following errors:</h3>
     <% else %>
       <h3><i class="icon-warning-sign warning-icon"></i> Please <%= link_to "return to the Catalog", catalog_path %> and resolve the following errors:</h3>
@@ -40,7 +40,7 @@
     </ul>
   </p>
   <div class="form-actions">
-    <% if @errors.empty? or current_user.can_override_reservation_restrictions? %>
+    <% if @errors.empty? or (can? :override, :reservation_errors) %>
       <%= f.button :submit, "Finalize Reservation" %>
     <% else %>
       <%= button_tag "Finalize Reservation", class: "btn disabled btn-primary", disabled: true %>

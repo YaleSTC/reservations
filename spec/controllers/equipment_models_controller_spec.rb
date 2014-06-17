@@ -68,10 +68,10 @@ describe EquipmentModelsController do
     end
     context 'with non-admin user' do
       before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
-      describe 'should function normally' do
+      describe 'should redirect to root' do
         before { get :index }
-        it { should respond_with(:success) }
-        it { should render_template(:index) }
+        it { should redirect_to(root_url) }
+        it { should set_the_flash }
       end
     end
   end
@@ -110,10 +110,10 @@ describe EquipmentModelsController do
     end
     context 'with non-admin user' do
       before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
-      describe 'should funciton normally' do
+      describe 'should redirect to root' do
         before { get :show, id: model }
-        it { should respond_with(:success) }
-        it { should render_template(:show) }
+        it { should redirect_to(root_url) }
+        it { should set_the_flash }
       end
     end
   end

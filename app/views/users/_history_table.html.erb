@@ -18,7 +18,7 @@
       <% unless key == (:current_reservations || :missed_reservations) %>
         <td>
           <% if !reservation.equipment_object.nil? %>
-            <%= link_to_if current_user.can_checkout?, reservation.equipment_object.name %>
+            <%= link_to_if (can? :manage, Reservation), reservation.equipment_object.name %>
           <% end %>
         </td>
       <% end %>

@@ -1,9 +1,9 @@
 class UsersController < ApplicationController
+  load_and_authorize_resource
   layout 'application_with_sidebar', only: [:show, :edit]
 
   skip_filter :cart, only: [:new, :create]
   skip_filter :first_time_user, only: [:new, :create]
-  before_filter :require_checkout_person, only: :index
   before_filter :set_user, only: [:show, :edit, :update, :destroy, :deactivate, :activate]
 
   include ActivationHelper
@@ -27,7 +27,6 @@ class UsersController < ApplicationController
   end
 
   def show
-    require_user_or_checkout_person(@user)
     @user_reservations = @user.reservations
     @all_equipment = Reservation.active_user_reservations(@user)
     @show_equipment = { checked_out:  @user.reservations.
@@ -44,7 +43,7 @@ class UsersController < ApplicationController
   end
 
   def new
-    if current_user and current_user.can_checkout?
+    if can? :create, User
       if params[:possible_netid]
         @user = User.new(User.search_ldap(params[:possible_netid]))
       else
@@ -54,12 +53,14 @@ class UsersController < ApplicationController
       @user = User.new(User.search_ldap(session[:cas_user]))
       @user.login = session[:cas_user] #default to current login
     end
+    @can_edit_login = (can? :create, User)
   end
 
   def create
     @user = User.new(params[:user])
+    @user.view_mode = @user.role
     # this line is what allows checkoutpeople to create users
-    @user.login = session[:cas_user] unless current_user and current_user.can_checkout?
+    @user.login = session[:cas_user] unless current_user and can? :manage, Reservation
     if @user.save
       respond_to do |format|
         flash[:notice] = "Successfully created user."
@@ -73,12 +74,12 @@ class UsersController < ApplicationController
   end
 
   def edit
-    require_user(@user)
+    @can_edit_login = can? :edit_login, User
   end
 
   def update
-    require_user(@user)
-    params[:user].delete(:login) unless current_user.is_admin?(as: 'admin') #no changing login unless you're an admin
+    params[:user].delete(:login) unless can? :change_login, User #no changing login unless you're an admin
+    params[:user][:view_mode] = params[:user][:role]
     if @user.update_attributes(params[:user])
       respond_to do |format|
         flash[:notice] = "Successfully updated user."
@@ -108,7 +109,6 @@ class UsersController < ApplicationController
       users = get_autocomplete_items(term: params[:fake_searched_id])
       if !users.blank?
         @user = users.first
-        require_user_or_checkout_person(@user)
         redirect_to manage_reservations_for_user_path(@user.id) and return
       else
         flash[:alert] = "Please select a valid user"
@@ -116,7 +116,6 @@ class UsersController < ApplicationController
       end
     else
       @user = User.find(params[:searched_id])
-      require_user_or_checkout_person(@user)
       redirect_to manage_reservations_for_user_path(@user.id) and return
     end
   end

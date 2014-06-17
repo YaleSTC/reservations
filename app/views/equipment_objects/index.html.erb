@@ -8,7 +8,7 @@
     <th>Serial (optional)</th>
     <th>Status</th>
 <%# these blank TH's necessary for the sort function %>
-  <% if current_user.is_admin?(:as => 'admin') %>
+  <% if can? :manage, EquipmentObject %>
     <th class="no_sort"> </th>
     <th class="no_sort"> </th>
   <% end %>
@@ -18,7 +18,7 @@
   <% for equipment_object in @equipment_objects %>
     <tr>
       <td><%= link_to equipment_object.equipment_model.name, equipment_object.equipment_model %></td>
-       <% if current_user.is_admin?(:as => 'admin') %>
+       <% if can? :manage, EquipmentObject %>
          <td><%= link_to equipment_object.name, equipment_object %></td>
        <% else %>
          <td> <%=equipment_object.name%> </td>
@@ -28,7 +28,7 @@
       <% current_res = equipment_object.current_reservation %>
       <td><%= link_to_if current_res, equipment_object.status, current_res %></td>
 
-      <% if current_user.is_admin?(:as => 'admin') %>
+      <% if can? :manage, EquipmentObject %>
         <td><%= link_to "Edit", edit_equipment_object_path(equipment_object), :class => "btn" %></td>
         <td>
           <% if equipment_object.deleted_at %>
@@ -44,7 +44,7 @@
 </table>
 <hr />
 
-<% if current_user.is_admin?(:as => 'admin') %>
+<% if can? :manage, EquipmentObject %>
 
   <div class="form-actions">
     <% if @equipment_model %>
