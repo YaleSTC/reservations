@@ -194,9 +194,11 @@
   <%# end %>
   <% if can? :manage, Reservation %>
     <%= link_to "Edit", edit_reservation_path(@reservation), class: 'btn' %>
-    <%= link_to "Cancel Reservation", @reservation, confirm:
-    'This will permanently delete the reservation. Are you sure?', method: :delete,
-    class: 'btn btn-danger' %>
+    <% if can? :destroy, @reservation %>
+      <%= link_to "Cancel Reservation", @reservation, confirm:
+      'This will permanently delete the reservation. Are you sure?', method: :delete,
+      class: 'btn btn-danger' %>
+    <% end %>
   <% end %>
   </div>
 

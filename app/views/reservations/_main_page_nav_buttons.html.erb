@@ -3,7 +3,7 @@
     <%# if can? :manage, Reservation %>
         <%= link_to "Today (#{@reservations_source.upcoming.size})", reservations_path, :class =>
 			((params[:reserved] or params[:checked_out] or params[:overdue] or params[:missed] or params[:returned]) ? "btn" : "btn disabled") %>
-        <%= link_to "Reserved (#{@reservations.reserved.size})", reservations_path(:reserved => true), 
+        <%= link_to "Reserved (#{@reservations_source.reserved.size})", reservations_path(:reserved => true), 
 			:class => (params[:reserved] ? "btn disabled" : "btn") %>
         <%= link_to "Checked out (#{@reservations_source.checked_out.size})", reservations_path(:checked_out => true), 
 			:class => (params[:checked_out] ? "btn disabled" : "btn") %>
