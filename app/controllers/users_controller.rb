@@ -58,6 +58,7 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(params[:user])
+    @user.view_mode = @user.role
     # this line is what allows checkoutpeople to create users
     @user.login = session[:cas_user] unless current_user and can? :manage, Reservation
     if @user.save
@@ -78,6 +79,7 @@ class UsersController < ApplicationController
 
   def update
     params[:user].delete(:login) unless can? :change_login, User #no changing login unless you're an admin
+    params[:user][:view_mode] = params[:user][:role]
     if @user.update_attributes(params[:user])
       respond_to do |format|
         flash[:notice] = "Successfully updated user."
