@@ -22,7 +22,7 @@ class Ability
 			  can :update, User
 			  can :create, User
 			  can :read, EquipmentObject
-			  can :show, EquipmentModel
+			  can :read, EquipmentModel
 		  	if AppConfig.first.override_on_create
 	  			can :override, :reservation_errors
   			end
@@ -31,12 +31,12 @@ class Ability
 	  		end
   		when 'normal' || 'checkout'
 			  can :manage, User, :id => user.id
+        can :read, EquipmentModel
 			  can :read, Reservation, :reserver_id => user.id
 			  can :create, Reservation, :reserver_id => user.id
 		  	can :destroy, Reservation, :reserver_id => user.id, :checked_out => nil
-	  		can :read, Reservation, :reserver_id => user.id
   		when 'banned'
-			  cannot :create, Reservation
+			  #cannot :create, Reservation
 	    end
     end  
   end
