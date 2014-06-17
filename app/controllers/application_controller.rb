@@ -25,7 +25,8 @@ class ApplicationController < ActionController::Base
 
   rescue_from CanCan::AccessDenied do |exception|
     flash[:error] = "Sorry, that action or page is restricted."
-    redirect_to request.referer ? request.referer : main_app.root_url
+    #redirect_to request.referer ? request.referer : main_app.root_url
+    redirect_to main_app.root_url
   end
   
   # -------- before_filter methods -------- #
