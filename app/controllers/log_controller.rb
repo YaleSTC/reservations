@@ -15,7 +15,8 @@ class LogController < ApplicationController
     @version = Version.find_by_id(params[:id])
 
     if @version.nil?
-      redirect_to action: 'index', notice: "There is no changelog for this item." and return
+      flash[:notice] = "There is no changelog for this item."
+      redirect_to action: 'index' and return
     end
 
     @date = @version.created_at
@@ -32,7 +33,8 @@ class LogController < ApplicationController
     @versions = Version.where(item_type: params[:object_type].capitalize, item_id: params[:id])
 
     unless @versions.exists?
-      redirect_to action: 'index', notice: "There is no changelog for this item." and return
+      flash[:notice] = "There is no changelog for this item."
+      redirect_to action: 'index' and return
     end
 
     @title = "to " + "#{params[:object_type].tableize.humanize.singularize} #{params[:id]}".split.map( &:capitalize ).join(" ")
