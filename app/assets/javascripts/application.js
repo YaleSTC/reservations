@@ -107,18 +107,18 @@
   };
 
 $(document).ready(function() {
-  
+
   $('.checkin-click').click( function() {
-	var box = $(this).find(":checkbox");
-	box.prop("checked", !box.prop("checked"));
-	if ($(this).hasClass("overdue")) {
-		$(this).toggleClass("selected-overdue",box.prop("checked"));
-  } else {
-		$(this).toggleClass("selected",box.prop("checked"));
-  }
-  $(this).find('.check').toggleClass("hidden",!box.prop("checked"));
+	  var box = $(":checkbox:eq(0)", this);
+	  box.prop("checked", !box.prop("checked"));
+	  if ($(this).hasClass("overdue")) {
+	  	$(this).toggleClass("selected-overdue",box.prop("checked"));
+    } else {
+  		$(this).toggleClass("selected",box.prop("checked"));
+    }
+    $(this).find('.check').toggleClass("hidden",!box.prop("checked"));
   });
-  
+
   $('#checkout_button').click(function() {
     var flag = validate_checkout();
     confirm_checkinout(flag);
