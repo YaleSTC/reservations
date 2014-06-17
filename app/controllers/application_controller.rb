@@ -89,10 +89,10 @@ class ApplicationController < ActionController::Base
   end
 
   def check_if_is_admin
-    unless current_user.role == 'admin'
-      flash[:notice] = "Only administrators can do that!"
-      redirect_to request.referer
-    end
+    can? :be, :admin
+    #since admins 'can :manage, :all' this will pass.
+    #in other words, what this really does is check if the
+    #current user has access to all resources
   end
   
   def check_view_mode
