@@ -12,6 +12,9 @@ class Ability
 			#cannot :manage, Admin
 		when 'checkout'
 			can :manage, Reservation
+      cannot [:destroy, :edit], Reservation do |r|
+         r.checked_out != nil
+      end
 			unless AppConfig.first.checkout_persons_can_edit
 				cannot :update, Reservation
 			end

@@ -43,7 +43,7 @@ class UsersController < ApplicationController
   end
 
   def new
-    if can? :manage, User
+    if can? :create, User
       if params[:possible_netid]
         @user = User.new(User.search_ldap(params[:possible_netid]))
       else
