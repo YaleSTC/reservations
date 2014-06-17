@@ -4,7 +4,7 @@ class Ability
   def initialize(user)
     if user
       case user.view_mode
-	    	#when 'superuser'
+	    #when 'superuser'
 		  	#can :manage, :all
 	  	when 'admin'
 		  	can :manage, :all
@@ -30,7 +30,7 @@ class Ability
 		  		can :override, :checkout_errors
 	  		end
   		when 'normal' || 'checkout'
-			  can [:create,:update,:read], User, :id => user.id
+			  can [:create,:update,:show], User, :id => user.id
         can :read, EquipmentModel
 			  can :read, Reservation, :reserver_id => user.id
 			  can :create, Reservation, :reserver_id => user.id
