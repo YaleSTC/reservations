@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
   rescue_from CanCan::AccessDenied do |exception|
     flash[:error] = "Sorry, that action or page is restricted."
     if current_user.view_mode == 'banned'
-      flash[:error] = "That action is restricted; it looks like you're a banned user! Talk to your administrator, maybe they'll be willing to lift your restriction."
+      flash[:error] = "That action is restricted; it looks like you're a banned user! Talk to your administrators,# maybe they'll be willing to lift your restriction."
     end
     #redirect_to request.referer ? request.referer : main_app.root_url
     redirect_to main_app.root_url
@@ -72,13 +72,16 @@ class ApplicationController < ActionController::Base
   end
 
   def set_view_mode
-    if current_user && current_user.role == 'admin' && params[:view_mode]
+    if (can? :change, :views) && params[:view_mode]
       # gives a more user friendly notice when changing view modes
       messages_hash = { 'admin' => 'Admin',
                         'banned' => 'Banned User',
                         'checkout' => 'Checkout Person',
+                        'superuser' => 'Superuser',
                         'normal' => 'Patron'}
-
+      if (params[:view_mode] == 'superuser')
+        authorize! :view_as, :superuser
+      end
       current_user.view_mode = params[:view_mode]
       current_user.save!
       flash[:notice] = "Viewing as #{messages_hash[current_user.view_mode]}."
@@ -96,6 +99,10 @@ class ApplicationController < ActionController::Base
     #since admins 'can :manage, :all' this will pass.
     #in other words, what this really does is check if the
     #current user has access to all resources
+  end
+
+  def check_active_admin_permission
+    can? :access, :active_admin
   end
 
   def check_view_mode

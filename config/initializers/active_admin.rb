@@ -124,7 +124,7 @@ ActiveAdmin.setup do |config|
   # Active Admin resources and pages from here.
   #
   # config.before_filter :do_something_awesome
-  config.before_filter :check_if_is_superuser
+  config.before_filter :check_active_admin_permission
 
   # == Register Stylesheets & Javascripts
   #
