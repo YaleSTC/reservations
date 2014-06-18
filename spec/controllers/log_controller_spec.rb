@@ -14,8 +14,6 @@ describe LogController, versioning: true do
       # Necessary because for some reason, user ID that is responsible for
       # changes is deleted between tests
     @reservation = FactoryGirl.create(:reservation)
-    @reservation.update_attributes(start_date: 1.day.ago)
-    @reservation.save
     PaperTrail.enabled = false
   end
 
@@ -44,7 +42,7 @@ describe LogController, versioning: true do
     end
 
     it "redirects to index if :id doesn't exist" do
-      get 'version', id: 99999
+      get 'version', id: 0
       response.should redirect_to('/log/index')
     end
   end
@@ -56,7 +54,7 @@ describe LogController, versioning: true do
     end
 
     it "redirects to index if Reservation :id doesn't exist" do
-      get 'history', id: 99999, object_type: :reservation
+      get 'history', id: 0, object_type: :reservation
       response.should be_redirect
     end
   end
