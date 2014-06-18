@@ -102,7 +102,9 @@ class ApplicationController < ActionController::Base
   end
 
   def check_active_admin_permission
-    can? :access, :active_admin
+    if cannot? :access, :active_admin
+      raise CanCan::AccessDenied.new()
+    end
   end
 
   def check_view_mode

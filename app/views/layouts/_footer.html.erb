@@ -46,7 +46,7 @@
                   <% if current_user.view_mode == 'superuser' %>
                     <li class="active">Superuser</li>
                   <% else %>
-                    <li><%= link_to 'Superuse', {:view_mode => 'superuser'}%></li>
+                    <li><%= link_to 'Superuser', {:view_mode => 'superuser'}%></li>
                   <% end %>
                 <% end %>
                 <% if current_user.view_mode == 'admin' %>
