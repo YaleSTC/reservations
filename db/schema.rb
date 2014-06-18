@@ -149,7 +149,7 @@ ActiveRecord::Schema.define(:version => 20140618173229) do
     t.datetime "created_at",                             :null => false
     t.datetime "updated_at",                             :null => false
     t.datetime "deleted_at"
-    t.boolean  "deactivated?",        :default => false
+    t.boolean  "deactivated",         :default => false
     t.string   "deactivation_reason"
   end
 
@@ -202,7 +202,7 @@ ActiveRecord::Schema.define(:version => 20140618173229) do
     t.string   "login"
     t.string   "first_name"
     t.string   "last_name"
-    t.string   "nickname",                  :default => "",       :null => false
+    t.string   "nickname"
     t.string   "phone"
     t.string   "email"
     t.string   "affiliation"

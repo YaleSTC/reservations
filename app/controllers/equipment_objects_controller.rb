@@ -66,8 +66,8 @@ class EquipmentObjectsController < ApplicationController
   end
 
   def deactivate
-    if @equipment_object.update_attributes(deactivated?: true, deactivation_message: params[:deactivation_message])
-      flash[:notice] = "Successfully deactivated equipment object with reason: #{params[:deactivation_message]}."
+    if @equipment_object.update_attributes(deactivated: true, deactivation_reason: params[:deactivation_reason])
+      flash[:notice] = "Successfully deactivated equipment object with reason: #{params[:deactivation_reason]}."
     else
       flash[:error] = "Deactivation of equipment object failed."
     end
@@ -75,7 +75,7 @@ class EquipmentObjectsController < ApplicationController
   end
 
   def reactivate
-    if @equipment_object.update_attributes(deactivated?: false, deactivation_message: nil)
+    if @equipment_object.update_attributes(deactivated: false, deactivation_reason: nil)
       flash[:notice] = "Successfully reactivated equipment object."
     else
       flash[:error] = "Reactivation of equipment object failed."
