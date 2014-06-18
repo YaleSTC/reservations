@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe LogController, versioning: true do
+  render_views
+
   before(:all) do
     @app_config = FactoryGirl.create(:app_config)
   end
@@ -26,9 +28,12 @@ describe LogController, versioning: true do
       response.should be_success
     end
 
-    it "contains all versions, regardless of object type"
-    it "contains links to individual-version view"
-    it "contains links to individual-item version overview"
+    it "contains links to all individual-version views, regardless of object type" do
+      get :index
+      Version.last(20).each do |v|
+        expect(response.body).to include version_view_path(v.id)
+      end
+    end
   end
 
   describe "GET 'version/:id'" do
@@ -44,7 +49,7 @@ describe LogController, versioning: true do
     end
   end
 
-  describe "GET 'history/:id'" do
+  describe "GET 'history/:object_type/:id'" do
     it "returns http success if Reservation :id exists" do
       get 'history', id: @reservation.id, object_type: :reservation
       response.should be_success
