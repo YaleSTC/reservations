@@ -1,6 +1,6 @@
 <div id="cart" class="well">
   <div id="cartSpinner"></div>
-  <% unless current_user && current_user.can_checkout? %>
+  <% if cannot? :manage, Reservation %>
     <h2>My Cart</h2><br />
   <% else %>
     <h2>Cart</h2><br />

@@ -23,6 +23,15 @@ class ApplicationController < ActionController::Base
   helper_method :current_user
   helper_method :cart
 
+  rescue_from CanCan::AccessDenied do |exception|
+    flash[:error] = "Sorry, that action or page is restricted."
+    if current_user.view_mode == 'banned'
+      flash[:error] = "That action is restricted; it looks like you're a banned user! Talk to your administrator, maybe they'll be willing to lift your restriction."
+    end
+    #redirect_to request.referer ? request.referer : main_app.root_url
+    redirect_to main_app.root_url
+  end
+
   # -------- before_filter methods -------- #
 
   def app_setup_check
@@ -83,6 +92,7 @@ class ApplicationController < ActionController::Base
   end
 
   def check_if_is_admin
+<<<<<<< HEAD
     unless current_user.role == 'admin' || current_user.role == 'superuser'
       flash[:notice] = "Only administrators can do that!"
       redirect_to request.referer
@@ -96,6 +106,22 @@ class ApplicationController < ActionController::Base
     end
   end
 
+=======
+    can? :be, :admin
+    #since admins 'can :manage, :all' this will pass.
+    #in other words, what this really does is check if the
+    #current user has access to all resources
+  end
+
+  def check_view_mode
+	if current_user.role == 'admin' && current_user.view_mode != 'admin'
+		flash[:persistent] = "Currently viewing as #{current_user.view_mode} user. You can switch back to your regular view \
+							  #{ActionController::Base.helpers.link_to('below','#view_as')} \
+							  (see #{ActionController::Base.helpers.link_to('here','https://yalestc.github.io/reservations/')} for details)."
+	end
+  end
+  
+>>>>>>> development
   def fix_cart_date
     cart.set_start_date(Date.today) if cart.start_date < Date.today
   end
@@ -145,32 +171,11 @@ class ApplicationController < ActionController::Base
     RubyCAS::Filter.logout(self)
   end
 
-  def require_admin(new_path=root_path)
-    restricted_redirect_to(new_path) unless current_user.is_admin?(as: 'admin')
-  end
-
-  def require_checkout_person(new_path=root_path)
-    restricted_redirect_to(new_path) unless current_user.can_checkout?
-  end
-
   def require_login
     if current_user.nil?
       flash[:error] = "Sorry, that action requires you to log in."
       redirect_to root_path
     end
-  end
-
-  def require_user(user, new_path=root_path)
-    restricted_redirect_to(new_path) unless current_user == user or current_user.is_admin?(as: 'admin')
-  end
-
-  def require_user_or_checkout_person(user, new_path=root_path)
-    restricted_redirect_to(new_path) unless current_user == user or current_user.can_checkout?
-  end
-
-  def restricted_redirect_to(new_path=root_path)
-    flash[:error] = "Sorry, that action or page is restricted."
-    redirect_to new_path
   end
 
   def terms_of_service

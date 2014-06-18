@@ -9,6 +9,7 @@ gem 'rdoc'
 #authentication
 gem 'rubycas-client-rails'
 gem 'rubycas-client', '2.2.1'
+gem 'cancan'
 
 #scheduling
 gem 'whenever'

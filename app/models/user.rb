@@ -54,6 +54,7 @@ class User < ActiveRecord::Base
     [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name].join(" ")
   end
 
+<<<<<<< HEAD
   def can_checkout?
     role == 'checkout' || self.is_admin?(as: 'admin') || self.is_admin?(as: 'checkout')
   end
@@ -76,6 +77,8 @@ class User < ActiveRecord::Base
     return false
   end
 
+=======
+>>>>>>> development
   def equipment_objects
     self.reservations.collect{ |r| r.equipment_object }.flatten
   end

@@ -1,4 +1,3 @@
-<% if current_user.can_checkout? || current_user == @reservation.reserver %>
   <% title "Reservation ##{@reservation.id}" %>
   <% subtitle @reservation.reserver.first_name + " " +
   (!@reservation.reserver.nickname.blank? ? "(#{@reservation.reserver.nickname}) " : "") +
@@ -193,13 +192,13 @@
 	<%# elsif @reservation.status.include?("returned") %>
     <%#= link_to "Email return receipt", {:controller => :reservations, :action => "checkin_email", :id => @reservation}, :method => "get", :class => 'btn' %>
   <%# end %>
-  <% if current_user.can_checkout? %>
+  <% if can? :edit, @reservation %>
     <%= link_to "Edit", edit_reservation_path(@reservation), class: 'btn' %>
   <% end %>
-  <% if @reservation.status == "reserved" or current_user.is_admin?(:as => 'admin') %>
+  <% if can? :destroy, @reservation %>
     <%= link_to "Cancel Reservation", @reservation, confirm:
     'This will permanently delete the reservation. Are you sure?', method: :delete,
     class: 'btn btn-danger' %>
   <% end %>
-  </div>
-<% end %>
+</div>
+

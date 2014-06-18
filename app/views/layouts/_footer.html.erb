@@ -32,14 +32,13 @@
         </div>
 
         <%# VIEW AS DROPDOWN %>
-        <div class="span3">
-          <% if current_user && current_user.is_admin? %>
-
+        <div class="span3" id = "view_as">
+          <% if can? :change, :views %>
           <ul class="nav nav-list">
             <li class="nav-header">View As:</li>
             <div class="btn-group dropup">
               <a class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#">
-                <%= view_as_selected %>
+              <%= view_as_selected %>
                 <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
