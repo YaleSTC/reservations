@@ -14,7 +14,7 @@
   <tbody>
   <% for version in versions %>
     <% previous_user = User.find_by_id(version.originator.to_i) %>
-    <% user = User.find(version.whodunnit.to_i) %>
+    <% user = User.find_by_id(version.whodunnit.to_i) %>
     <% object_type = Kernel.const_get(version.item_type) # converts string to object %>
     <% reified = version.reify %>
     <tr>
@@ -25,7 +25,9 @@
       <em>N/A</em>
     <% end %>
     </td>
-    <td><%= link_to user.render_name, user %></td>
+    <td><% if user %>
+      <%= link_to user.render_name, user %>
+    <% end %></td>
     <td><%= version.event %></td>
     <td><%= version.item_type %></td>
     <td>
