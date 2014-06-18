@@ -16,5 +16,5 @@
     </div>
   </div>
   <%= f.input :notes, :as => :text, :hint => "#{render :partial => 'shared/markdown_button'}" %>
-  <%= f.button :wrapped, :cancel => reservations_path %>
+  <%= f.button :wrapped, :cancel => reservation_path(@reservation) %>
 <% end %>
