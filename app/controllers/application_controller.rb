@@ -92,21 +92,6 @@ class ApplicationController < ActionController::Base
   end
 
   def check_if_is_admin
-<<<<<<< HEAD
-    unless current_user.role == 'admin' || current_user.role == 'superuser'
-      flash[:notice] = "Only administrators can do that!"
-      redirect_to request.referer
-    end
-  end
-
-  def check_if_is_superuser
-    unless current_user.role == 'superuser'
-      flash[:notice] = "Only superusers can do that!"
-      redirect_to root_path
-    end
-  end
-
-=======
     can? :be, :admin
     #since admins 'can :manage, :all' this will pass.
     #in other words, what this really does is check if the
@@ -121,7 +106,6 @@ class ApplicationController < ActionController::Base
 	end
   end
   
->>>>>>> development
   def fix_cart_date
     cart.set_start_date(Date.today) if cart.start_date < Date.today
   end
