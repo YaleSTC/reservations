@@ -43,7 +43,15 @@ describe "transform_attributes" do
       end
     end
 
-    pending "converts existing reservation ID into proper link"
+    it "converts existing reservation ID into proper link" do
+      res = FactoryGirl.create(:reservation)
+      transform_attributes( ['reservation_id', res.id] )[1].should == link_to("#{res.id} (see current)", Reservation.find(res.id))
+    end
+
+    it "doesn't convert defunct reservation ID into proper link" do
+      transform_attributes( ['reservation_id', 0] )[1].should == "0 (deleted)"
+    end
+
     pending "converts existing equipment model ID into proper link"
     pending "converts existing equipment item ID into proper link"
     pending "converts start date and due date to readable form (Mon DD, YYYY)"

@@ -26,7 +26,7 @@ module LogHelper
     # enhance readability. If a key is contained in the hash, the procedure
     # associated with it is called on the value to transform it.
 
-    val_dict = {#"id" => Proc.new { |id| get_reservation_link(id) },
+    val_dict = {"reservation_id" => Proc.new { |id| get_reservation_link(id) },
                 "reserver_id" => Proc.new { |id| get_user_link(id) },
                 "checkout_handler_id" => Proc.new { |id| get_user_link(id) },
                 "checkin_handler_id" => Proc.new { |id| get_user_link(id) },
