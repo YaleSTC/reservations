@@ -30,12 +30,19 @@ describe "transform_attributes" do
   end
 
   context "with recognized key" do
-    it "converts existing reserver ID into proper link" do
-      user = FactoryGirl.create(:user, id: 1)
-      transform_attributes( ['reserver_id', 1] ).should == ['Patron', link_to(user.name, User.find(1))]
+    it "converts existing reserver/check-in handler/check-out handler ID into proper link" do
+      user = FactoryGirl.create(:user)
+      %w(reserver_id checkin_handler_id checkout_handler_id).each do |k|
+        transform_attributes( [k, user.id] )[1].should == link_to(user.name, User.find(user.id))
+      end
     end
-    pending "converts existing check-out handler ID into proper link"
-    pending "converts existing check-in handler ID into proper link"
+
+    it "converts non-existent reserver ID into N/A" do
+      %w(reserver_id checkin_handler_id checkout_handler_id).each do |k|
+        transform_attributes( [k, nil] )[1].should == 'N/A'
+      end
+    end
+
     pending "converts existing reservation ID into proper link"
     pending "converts existing equipment model ID into proper link"
     pending "converts existing equipment item ID into proper link"
