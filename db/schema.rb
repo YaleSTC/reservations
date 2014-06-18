@@ -11,9 +11,8 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+ActiveRecord::Schema.define(:version => 20140617164155) do
 
-ActiveRecord::Schema.define(:version => 20140605230158) do
-  
   create_table "announcements", :force => true do |t|
     t.text     "message"
     t.datetime "starts_at"
@@ -201,7 +200,7 @@ ActiveRecord::Schema.define(:version => 20140605230158) do
     t.string   "login"
     t.string   "first_name"
     t.string   "last_name"
-    t.string   "nickname",                  :default => "",       :null => false
+    t.string   "nickname"
     t.string   "phone"
     t.string   "email"
     t.string   "affiliation"
