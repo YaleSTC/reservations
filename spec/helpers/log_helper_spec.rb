@@ -1,5 +1,9 @@
 require 'spec_helper.rb'
 
+# Note: Using `expect{}.to` notation for transform_attributes() runs into
+# difficulties -- rather than accessing the value returned by function, it
+# sees the intermediary Proc. Therefore, the trusty `should` is used instead.
+
 describe "transform_attributes" do
   include LogHelper
 
@@ -14,20 +18,21 @@ describe "transform_attributes" do
     end
 
     context "during value transformation" do
-      xit "transforms nil to N/A" do
-        expect { transform_attributes(['not_an_attribute', nil])[1] }.to eq("N/A")
+      it "transforms nil to N/A" do
+        transform_attributes(['not_an_attribute', nil])[1].should == "N/A"
       end
-      xit "doesn't transform constant values" do
+      it "doesn't transform constant values" do
         [1, true, 'true'].each do |x|
-          expect { transform_attributes(['not_an_attribute', x])[1] }.to eq(x)
+          transform_attributes(['not_an_attribute', x])[1].should == x
         end
       end
     end
   end
 
   context "with recognized key" do
-    xit "converts existing reserver ID into proper link" do
-      expect { transform_attributes( ['reserver_id', 1] ) }.to eq( ['Reserver ID', link_to('S P', User.find(1))])
+    it "converts existing reserver ID into proper link" do
+      user = FactoryGirl.create(:user, id: 1)
+      transform_attributes( ['reserver_id', 1] ).should == ['Patron', link_to(user.name, User.find(1))]
     end
     pending "converts existing check-out handler ID into proper link"
     pending "converts existing check-in handler ID into proper link"
