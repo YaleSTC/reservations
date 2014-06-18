@@ -1,6 +1,6 @@
 class EquipmentObjectsController < ApplicationController
   load_and_authorize_resource
-  before_filter :set_current_equipment_object, only: [:show, :edit, :update, :destroy]
+  before_filter :set_current_equipment_object, only: [:show, :edit, :update, :destroy, :deactivate, :reactivate]
   before_filter :set_equipment_model_if_possible, only: [:index, :new]
 
   include ActivationHelper
@@ -63,5 +63,23 @@ class EquipmentObjectsController < ApplicationController
     @equipment_object.destroy(:force)
     flash[:notice] = "Successfully destroyed equipment object."
     redirect_to @equipment_model
+  end
+
+  def deactivate
+    if @equipment_object.update_attributes(deactivated?: true, deactivation_message: params[:deactivation_message])
+      flash[:notice] = "Successfully deactivated equipment object with reason: #{params[:deactivation_message]}."
+    else
+      flash[:error] = "Deactivation of equipment object failed."
+    end
+    redirect_to @equipment_object.equipment_model
+  end
+
+  def reactivate
+    if @equipment_object.update_attributes(deactivated?: false, deactivation_message: nil)
+      flash[:notice] = "Successfully reactivated equipment object."
+    else
+      flash[:error] = "Reactivation of equipment object failed."
+    end
+    redirect_to @equipment_object.equipment_model
   end
 end
