@@ -200,7 +200,7 @@ ActiveRecord::Schema.define(:version => 20140617164155) do
     t.string   "login"
     t.string   "first_name"
     t.string   "last_name"
-    t.string   "nickname"
+    t.string   "nickname",                  :default => "",       :null => false
     t.string   "phone"
     t.string   "email"
     t.string   "affiliation"
