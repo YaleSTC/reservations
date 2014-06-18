@@ -10,6 +10,7 @@ class Ability
           can :manage, :all
           cannot :appoint, :superuser
           cannot :access, :active_admin
+          cannot [:destroy,:update], User, :role => 'superuser'
         when 'checkout'
           can :manage, Reservation
           cannot :destroy, Reservation do |r|
