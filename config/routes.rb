@@ -17,8 +17,8 @@ Reservations::Application.routes.draw do
     resources :equipment_objects
   end
 
-  post '/equipment_objects/:id/deactivate' => "equipment_objects#deactivate"
-  get '/equipment_objects/:id/reactivate' => "equipment_objects#reactivate"
+  put '/equipment_objects/:id/deactivate' => "equipment_objects#deactivate"
+  put '/equipment_objects/:id/reactivate' => "equipment_objects#reactivate"
 
   get '/import_users/import' => 'import_users#import_page', :as => :csv_import_page
   post '/import_users/imported' => 'import_users#import', :as => :csv_imported
