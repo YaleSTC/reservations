@@ -86,7 +86,7 @@ namespace :app do
       "Because you have missed a scheduled equipment checkout, your reservation (number @reservation_id@) has been cancelled. If you believe this is in error, please contact an administrator.\n\n"\
       "@equipment_list@\n\n"\
       "Thank you,\n"\
-      "@department_name@ "
+      "@department_name@"
 
     # Create initial application configs.
 
