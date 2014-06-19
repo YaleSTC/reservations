@@ -23,8 +23,6 @@ every 1.day, :at => '5:00 am' do
   rake "send_upcoming_checkin_reminder"
   rake "send_overdue_checkin_reminder"
   rake "delete_missed_reservations"
-  rake "send_overdue_checked_in_fine"
-  rake "send_overdue_checked_in_fine_admin"
 end
 
 every 1.hour do

@@ -61,29 +61,3 @@ task :send_reservation_notes => :environment do
 
   puts "Done!"
 end
-
-desc "Send email to user on overdue reservations checked in with fine"
-task :send_overdue_checked_in_fine => :environment do
-  overdue_checked_in = Reservation.where("checked_out IS NOT NULL and\
-                                          checked_in.to_date === Date.yesterday and\
-                                          due_date < checked_in")
-  puts "Found #{overdue_checked_in.size} overdue reservations checked in.\
-        Sending notification emails..."
-  overdue_checked_in.each do |overdue_checked_in|
-    UserMailer.overdue_checked_in_fine(overdue_checked_in).deliver
-  end
-  puts "Done!"
-end
-
-desc "Send email to admin on overdue reservations checked in with fine"
-task :send_overdue_checked_in_fine_admin => :environment do
-  overdue_checked_in = Reservation.where("checked_out IS NOT NULL and\
-                                          checked_in.to_date === Date.yesterday and\
-                                          due_date < checked_in")
-  puts "Found #{overdue_checked_in.size} overdue reservations checked in.\
-        Sending notification emails..."
-  overdue_checked_in.each do |overdue_checked_in|
-    AdminMailer.overdue_checked_in_fine_admin(overdue_checked_in).deliver
-  end
-  puts "Done!"
-end

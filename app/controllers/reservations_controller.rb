@@ -261,6 +261,11 @@ class ReservationsController < ApplicationController
         end
         r.notes.strip! if r.notes?
 
+        # if equipment was overdue, send an email confirmation
+        if r.status == 'returned overdue'
+          AdminMailer.overdue_checked_in_fine_admin(r)
+        end
+
         # put the data into the container we defined at the beginning of this action
         reservations_to_be_checked_in << r
       end
