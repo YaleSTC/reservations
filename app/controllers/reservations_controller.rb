@@ -10,6 +10,7 @@ class ReservationsController < ApplicationController
   layout 'application_with_sidebar'
 
   before_filter :require_login, only: [:index, :show]
+  before_filter :permissions_check, only: [:check_out, :check_in, :edit, :update]
 
   def set_user
     @user = User.find(params[:user_id])
@@ -51,7 +52,7 @@ class ReservationsController < ApplicationController
     else
       # error handling
       @errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
-
+      session[:errors] = @errors
       unless @errors.empty?
         if can? :override, :reservation_errors
           flash[:error] = 'Are you sure you want to continue? Please review the errors below.'
@@ -90,6 +91,7 @@ class ReservationsController < ApplicationController
           end
           cart.items.each { |item| CartReservation.delete(item) }
           session[:cart] = Cart.new
+          session[:errors] = []	
           if AppConfig.first.reservation_confirmation_email_active?
             #UserMailer.reservation_confirmation(complete_reservation).deliver
           end
