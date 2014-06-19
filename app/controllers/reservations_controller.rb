@@ -83,7 +83,7 @@ class ReservationsController < ApplicationController
               @reservation.approval_status = "requested"
             end
             # always bypass validations, the finalized reservations are saved separate from the reservation requests.
-            # this is probably not the best or safest way to do it
+            # TODO: is this line needed? it's ugly. we should refactor if it's necessary.
             @reservation.bypass_validations = true
             @reservation.save!
             successful_reservations << @reservation
