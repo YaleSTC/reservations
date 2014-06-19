@@ -1,0 +1,20 @@
+<div class="calendar">
+
+<% for d in @beginning...(@beginning+7.day) %>
+  <div class = "day">
+    <%= d.day %>
+    <% @model_reservations.each do |r| %>
+      <% if r.start_date.to_date == d %>
+        <div class = "reservation" >
+          <% if r.equipment_object %>
+            <% label = r.equipment_object.name %>
+          <% else %>
+            <% label = 'Reserved' %>
+          <% end %>
+          <%= label %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+</div>

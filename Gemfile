@@ -32,6 +32,7 @@ gem 'rails3-jquery-autocomplete'
 gem 'select2-rails'
 gem 'kaminari'
 gem 'spinjs-rails'
+gem "watu_table_builder", :require => "table_builder"
 
 #forms / formatting
 gem 'dynamic_form'

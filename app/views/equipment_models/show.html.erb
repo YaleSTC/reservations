@@ -2,6 +2,8 @@
 <% subtitle Category.find(@equipment_model.category_id).name %>
 
 
+  <%= render :partial => 'calendar' %>
+
 <!-- EQUIPMENT MODEL INFO BOX -->
 <div class="row em_info">
   <div class="span3">
@@ -25,6 +27,8 @@
       <%= image_tag "no-image-260.gif" %>
   <% end %>
   </div>
+
+
   <div class="span6">
     <div class="row">
       <div class="span4">
