@@ -89,8 +89,12 @@ class Reservation < ActiveRecord::Base
   def self.validate_set(user, res_array = [])
     all_res_array = res_array + user.reservations
     errors = []
-    all_res_array.each do |res|
+    #User reservation validations
+    user.reservations.checked_out.each do |res|
       errors << user.name + " has overdue reservations that prevent new ones from being created" unless res.no_overdue_reservations?
+
+    end
+    all_res_array.each do |res|
       errors << "Reservation cannot be made in the past" unless res.not_in_past? if self.class == CartReservation
       errors << "Reservation start date must be before due date" unless res.start_date_before_due_date?
       errors << "Reservation must be for a piece of equipment" unless res.not_empty?
