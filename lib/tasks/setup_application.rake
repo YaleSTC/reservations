@@ -69,7 +69,7 @@ namespace :app do
       "Log in to Reservations to see if any of your items are eligible for renewal. If you have further questions feel free to contact an employee of @department_name@.\n\n"\
       "Your reservation number is @reservation_id@.\n\n"\
       "Thank you,\n"\
-      "@department_name@"
+      "@department_name@\n\n"\
 
     deleted_missed_reservation_email_body =
       "Dear @user@,\n\n"\
