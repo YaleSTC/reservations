@@ -1,6 +1,6 @@
 class RequirementsController < ApplicationController
 
-  before_filter :require_admin
+  authorize_resource :class => false
   before_filter :set_current_requirement, only: [:show, :edit, :update, :destroy]
 
   # ------------- before filter methods ------------- #

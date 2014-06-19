@@ -1,7 +1,7 @@
 <div id="sidebar-right" class="span3">
   <div id="sidebarbottom">
 
-    <% if current_user && current_user.can_checkout? %>
+    <% if can? :manage, Reservation %>
         <%= render :partial => 'users/find_user' %>
     <% end %>
 
