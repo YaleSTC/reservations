@@ -87,22 +87,23 @@ class Reservation < ActiveRecord::Base
   # the array of reservations passed in (use with cart.cart_reservations)
   # Returns an array of error messages or [] if reservations are all valid
   def self.validate_set(user, res_array = [])
+    all_res_array = res_array + user.reservations.active
     errors = []
     #User reservation validations
-    errors << user.name + " has overdue reservations that prevent new ones from being created. " unless user.reservations.overdue.empty?
+    errors << user.name + " has overdue reservations that prevent new ones from being created" unless user.reservations.overdue.empty?
 
     res_array.each do |res|
-      errors << "Reservation cannot be made in the past. " unless res.not_in_past? if self.class == CartReservation
-      errors << "Reservation start date must be before due date. " unless res.start_date_before_due_date?
-      errors << "Reservation must be for a piece of equipment. " unless res.not_empty?
-      errors << "#{res.equipment_object.name} must be of type #{res.equipment_model.name}. " unless res.matched_object_and_model?
-      errors << "#{res.equipment_model.name} should be renewed instead of re-checked out. " unless res.not_renewable? if self.class == CartReservation
-      errors << "#{res.equipment_model.name} cannot be reserved for more than #{res.equipment_model.category.maximum_checkout_length.to_s} days at a time. " unless res.duration_allowed?
-      errors << "#{res.equipment_model.name} is not available for the full time period requested. " unless res.available?(res_array)
-      errors << "A reservation cannot start on #{res.start_date.strftime('%m/%d')} because equipment cannot be picked up on that date. " unless res.start_date_is_not_blackout?
-      errors << "A reservation cannot end on #{res.due_date.strftime('%m/%d')} because equipment cannot be returned on that date. " unless res.due_date_is_not_blackout?
-      errors << "Cannot reserve more than #{res.equipment_model.maximum_per_user.to_s} #{res.equipment_model.name.pluralize}. " unless res.quantity_eq_model_allowed?
-      errors << "Cannot reserve more than #{res.equipment_model.category.maximum_per_user.to_s} #{res.equipment_model.category.name.pluralize}. " unless res.quantity_cat_allowed?
+      errors << "Reservation cannot be made in the past" unless res.not_in_past? if self.class == CartReservation
+      errors << "Reservation start date must be before due date" unless res.start_date_before_due_date?
+      errors << "Reservation must be for a piece of equipment" unless res.not_empty?
+      errors << res.equipment_object.name + " must be of type " + res.equipment_model.name unless res.matched_object_and_model?
+      errors << res.equipment_model.name + " should be renewed instead of re-checked out" unless res.not_renewable? if self.class == CartReservation
+      errors << res.equipment_model.name + "cannot be reserved for more than " + res.equipment_model.category.maximum_checkout_length.to_s + " days at a time." unless res.duration_allowed?
+      errors << res.equipment_model.name + " is not available for the full time period requested" unless res.available?(res_array)
+      errors << "A reservation cannot start on " + res.start_date.strftime('%m/%d') + " because equipment cannot be picked up on that date" unless res.start_date_is_not_blackout?
+      errors << "A reservation cannot end on " + res.due_date.strftime('%m/%d') + " because equipment cannot be returned on that date" unless res.due_date_is_not_blackout?
+      errors << "Cannot reserve more than " + res.equipment_model.maximum_per_user.to_s + " " + res.equipment_model.name.pluralize unless res.quantity_eq_model_allowed?
+      errors << "Cannot reserve more than " + res.equipment_model.category.maximum_per_user.to_s + " " + res.equipment_model.category.name.pluralize unless res.quantity_cat_allowed?(all_res_array)
     end
     errors.uniq
   end
