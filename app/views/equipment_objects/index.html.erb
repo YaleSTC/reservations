@@ -28,7 +28,6 @@
       <% current_res = equipment_object.current_reservation %>
       <td>
         <%= link_to_if current_res, equipment_object.status, current_res %>
-        <% if equipment_object.deactivation_reason %>(<%= equipment_object.deactivation_reason %>)<% end %>
       </td>
 
       <% if can? :manage, EquipmentObject %>

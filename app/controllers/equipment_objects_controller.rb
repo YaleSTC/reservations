@@ -1,6 +1,6 @@
 class EquipmentObjectsController < ApplicationController
   load_and_authorize_resource
-  before_filter :set_current_equipment_object, only: [:show, :edit, :update, :destroy, :deactivate, :reactivate]
+  before_filter :set_current_equipment_object, only: [:show, :edit, :update, :destroy, :deactivate, :activate]
   before_filter :set_equipment_model_if_possible, only: [:index, :new]
 
   include ActivationHelper
@@ -50,6 +50,11 @@ class EquipmentObjectsController < ApplicationController
   end
 
   def update
+    if params[:equipment_object][:deleted_at].blank?
+      # Delete deactivation reason when "Disabled?" is toggled
+      params[:equipment_object][:deactivation_reason] = ""
+    end
+
     if @equipment_object.update_attributes(params[:equipment_object])
       flash[:notice] = "Successfully updated equipment object."
       redirect_to @equipment_object.equipment_model

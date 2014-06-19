@@ -20,7 +20,9 @@ class EquipmentObject < ActiveRecord::Base
   searchable_on(:name, :serial)
 
   def status
-    if self.deleted?
+    if self.deleted? and self.deactivation_reason
+      "Deactivated (#{self.deactivation_reason})"
+    elsif self.deleted?
       "Deactivated"
     elsif r = self.current_reservation
       "checked out by #{r.reserver.name} through #{r.due_date.strftime("%b %d")}"
