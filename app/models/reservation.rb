@@ -83,7 +83,7 @@ class Reservation < ActiveRecord::Base
   end
 
   ## Set validation
-  # Checks all validations for all saved reservations and the reservations in
+  # Checks all validations for
   # the array of reservations passed in (use with cart.cart_reservations)
   # Returns an array of error messages or [] if reservations are all valid
   def self.validate_set(user, res_array = [])
@@ -102,7 +102,7 @@ class Reservation < ActiveRecord::Base
       errors << res.equipment_model.name + " is not available for the full time period requested" unless res.available?(res_array)
       errors << "A reservation cannot start on " + res.start_date.strftime('%m/%d') + " because equipment cannot be picked up on that date" unless res.start_date_is_not_blackout?
       errors << "A reservation cannot end on " + res.due_date.strftime('%m/%d') + " because equipment cannot be returned on that date" unless res.due_date_is_not_blackout?
-      errors << "Cannot reserve more than " + res.equipment_model.maximum_per_user.to_s + " " + res.equipment_model.name.pluralize unless res.quantity_eq_model_allowed?(all_res_array)
+      errors << "Cannot reserve more than " + res.equipment_model.maximum_per_user.to_s + " " + res.equipment_model.name.pluralize unless res.quantity_eq_model_allowed?
       errors << "Cannot reserve more than " + res.equipment_model.category.maximum_per_user.to_s + " " + res.equipment_model.category.name.pluralize unless res.quantity_cat_allowed?(all_res_array)
     end
     errors.uniq
