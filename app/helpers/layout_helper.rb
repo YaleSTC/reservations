@@ -53,8 +53,8 @@ module LayoutHelper
     end
   end
 
-  def view_as_selected
-    case current_user.view_mode
+  def get_role_name role
+    case role
       when 'superuser'
         'Superuser'
       when 'admin'

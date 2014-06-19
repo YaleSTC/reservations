@@ -38,36 +38,24 @@
             <li class="nav-header">View As:</li>
             <div class="btn-group dropup">
               <a class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#">
-              <%= view_as_selected %>
+              <%= get_role_name current_user.view_mode %>
                 <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
+                <% viewmode_array = ['admin','checkout','normal','banned'] %>
                 <% if can? :view_as, :superuser %>
-                  <% if current_user.view_mode == 'superuser' %>
-                    <li class="active">Superuser</li>
+                  <%  viewmode_array << 'superuser' %>
+                <% end %>
+                <% viewmode_array.each do |role| %>
+                  <% if current_user.view_mode == role %>
+                    <li class = "active">
+                      <%= get_role_name role %>
+                    </li>
                   <% else %>
-                    <li><%= link_to 'Superuser', {:view_mode => 'superuser'}%></li>
+                    <li>
+                      <%= link_to get_role_name(role), {:view_mode => role}%>
+                    </li>
                   <% end %>
-                <% end %>
-                <% if current_user.view_mode == 'admin' %>
-                  <li class="active">Admin</li>
-                <% else %>
-                  <li><%= link_to 'Admin', {:view_mode => 'admin'}%></li>
-                <% end %>
-                <% if current_user.view_mode == 'checkout' %>
-                  <li class="active">Checkout Person</li>
-                <% else %>
-                  <li><%= link_to 'Checkout Person', {:view_mode => 'checkout'}%></li>
-                <% end %>
-                <% if current_user.view_mode == 'normal' %>
-                  <li class="active">Patron</li>
-                <% else %>
-                  <li><%= link_to 'Patron', {:view_mode => 'normal'}%></li>
-                <% end %>
-                <% if current_user.view_mode == 'banned' %>
-                  <li class="active">Banned User</li>
-                <% else %>
-                  <li><%= link_to 'Banned User', {:view_mode => 'banned'}%></li>
                 <% end %>
               </ul>
             </div>
