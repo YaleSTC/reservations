@@ -1,4 +1,4 @@
-require 'spec_helper'
+trequire 'spec_helper'
 
 describe EquipmentObjectsController do
 	before(:all) { @app_config = FactoryGirl.create(:app_config) }
@@ -272,12 +272,13 @@ describe EquipmentObjectsController do
       end
       subject { object }
       its(:deactivation_reason) { should == "Because I can" }
-      its(:deactivated) { should == true }
       it { should redirect_to(object.equipment_model) }
     end
 
     context 'with non-admin user' do
-      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
+      before do
+        @controller.stub(:current_user).and_return(FactoryGirl.create(:user))
+      end
       it 'should redirect to root' do
         put :deactivate, id: object, deactivation_reason: "Because I can't"
         response.should redirect_to(root_url)
@@ -285,16 +286,15 @@ describe EquipmentObjectsController do
     end
 	end
 
-	describe 'PUT reactivate' do
+	describe 'PUT activate' do
     context 'with admin user' do
       before do
         @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
-        put :reactivate, id: deactivated_object
+        put :activate, id: deactivated_object
         deactivated_object.reload
       end
       subject { deactivated_object }
       its(:deactivation_reason) { should == nil }
-      its(:deactivated) { should == false }
       it { should redirect_to(deactivated_object.equipment_model) }
     end
 
@@ -304,7 +304,7 @@ describe EquipmentObjectsController do
       end
 
       it 'should redirect to root' do
-        put :reactivate, id: object
+        put :activate, id: object
         response.should redirect_to(root_url)
       end
     end

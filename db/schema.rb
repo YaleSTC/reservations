@@ -146,10 +146,9 @@ ActiveRecord::Schema.define(:version => 20140618173229) do
     t.string   "serial"
     t.boolean  "active",              :default => true
     t.integer  "equipment_model_id"
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
     t.datetime "deleted_at"
-    t.boolean  "deactivated",         :default => false
     t.string   "deactivation_reason"
   end
 

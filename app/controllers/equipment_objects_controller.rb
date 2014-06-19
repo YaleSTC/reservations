@@ -65,21 +65,14 @@ class EquipmentObjectsController < ApplicationController
     redirect_to @equipment_model
   end
 
+  # Deactivate and activate extend controller methods in ApplicationController
   def deactivate
-    if @equipment_object.update_attributes(deactivated: true, deactivation_reason: params[:deactivation_reason])
-      flash[:notice] = "Successfully deactivated equipment object with reason: #{params[:deactivation_reason]}."
-    else
-      flash[:error] = "Deactivation of equipment object failed."
-    end
-    redirect_to @equipment_object.equipment_model
+    # Process and add deactivation reason
+    super
   end
 
-  def reactivate
-    if @equipment_object.update_attributes(deactivated: false, deactivation_reason: nil)
-      flash[:notice] = "Successfully reactivated equipment object."
-    else
-      flash[:error] = "Reactivation of equipment object failed."
-    end
-    redirect_to @equipment_object.equipment_model
+  def activate
+    super
+    # Remove deactivation reason
   end
 end
