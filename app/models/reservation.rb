@@ -30,7 +30,7 @@ class Reservation < ActiveRecord::Base
   scope :recent, order('start_date, due_date, reserver_id')
   scope :user_sort, order('reserver_id')
   scope :reserved, lambda { where("checked_out IS NULL and checked_in IS NULL and due_date >= ?", Time.now.midnight.utc).recent}
-  scope :checked_out, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date >=  ?", Time.now.midnight.utc).recent }
+  scope :checked_out, lambda { where("checked_out IS NOT NULL and checked_in IS NULL") }
   scope :checked_out_today, lambda { where("checked_out >= ? and checked_in IS NULL", Time.now.midnight.utc).recent }
   scope :checked_out_previous, lambda { where("checked_out < ? and checked_in IS NULL and due_date <= ?", Time.now.midnight.utc, Date.tomorrow.midnight.utc).recent }
   scope :overdue, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc ).recent }
@@ -87,14 +87,12 @@ class Reservation < ActiveRecord::Base
   # the array of reservations passed in (use with cart.cart_reservations)
   # Returns an array of error messages or [] if reservations are all valid
   def self.validate_set(user, res_array = [])
-    all_res_array = res_array + user.reservations
+    all_res_array = res_array + user.reservations.active
     errors = []
     #User reservation validations
-    user.reservations.checked_out.each do |res|
-      errors << user.name + " has overdue reservations that prevent new ones from being created" unless res.no_overdue_reservations?
+    errors << user.name + " has overdue reservations that prevent new ones from being created" unless user.reservations.overdue.empty?
 
-    end
-    all_res_array.each do |res|
+    res_array.each do |res|
       errors << "Reservation cannot be made in the past" unless res.not_in_past? if self.class == CartReservation
       errors << "Reservation start date must be before due date" unless res.start_date_before_due_date?
       errors << "Reservation must be for a piece of equipment" unless res.not_empty?
@@ -104,8 +102,8 @@ class Reservation < ActiveRecord::Base
       errors << res.equipment_model.name + " is not available for the full time period requested" unless res.available?(res_array)
       errors << "A reservation cannot start on " + res.start_date.strftime('%m/%d') + " because equipment cannot be picked up on that date" unless res.start_date_is_not_blackout?
       errors << "A reservation cannot end on " + res.due_date.strftime('%m/%d') + " because equipment cannot be returned on that date" unless res.due_date_is_not_blackout?
-      errors << "Cannot reserve more than " + res.equipment_model.maximum_per_user.to_s + " " + res.equipment_model.name.pluralize unless res.quantity_eq_model_allowed?(res_array)
-      errors << "Cannot reserve more than " + res.equipment_model.category.maximum_per_user.to_s + " " + res.equipment_model.category.name.pluralize unless res.quantity_cat_allowed?(res_array)
+      errors << "Cannot reserve more than " + res.equipment_model.maximum_per_user.to_s + " " + res.equipment_model.name.pluralize unless res.quantity_eq_model_allowed?(all_res_array)
+      errors << "Cannot reserve more than " + res.equipment_model.category.maximum_per_user.to_s + " " + res.equipment_model.category.name.pluralize unless res.quantity_cat_allowed?(all_res_array)
     end
     errors.uniq
   end
