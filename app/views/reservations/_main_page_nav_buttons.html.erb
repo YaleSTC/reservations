@@ -21,7 +21,7 @@
 			:class => (params[:returned] ? "btn disabled" : "btn") %>
     <%= link_to "Approved (#{@reservations_source.approved_requests.size})", reservations_path(:approved_requests => true),
         class: (params[:approved_requests] ? "btn disabled" : "btn") %>
-    <%= link_to "Requested (#{@reservations_source.denied_requests.size})", reservations_path(:denied_requests => true),
+    <%= link_to "Denied (#{@reservations_source.denied_requests.size})", reservations_path(:denied_requests => true),
         class: (params[:denied_requests] ? "btn disabled" : "btn") %>
   </div>
 </div>

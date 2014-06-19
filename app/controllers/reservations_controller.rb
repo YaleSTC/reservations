@@ -56,7 +56,7 @@ class ReservationsController < ApplicationController
         if can? :override, :reservation_errors
           flash[:error] = 'Are you sure you want to continue? Please review the errors below.'
         else
-          flash[:error] = 'Please review the errors below.'
+          flash[:error] = 'Please review the errors below. If uncorrected, your reservation will be filed as a request, and subject to administrator approval.'
         end
       end
 
@@ -74,8 +74,7 @@ class ReservationsController < ApplicationController
           cart.cart_reservations.each do |cart_res|
             @reservation = Reservation.new(params[:reservation])
             @reservation.equipment_model =  cart_res.equipment_model
-         
-            binding.pry
+
             if (can? :override, :reservation_errors) or @errors.empty?
               # If the reservation is a finalized reservation, save it as auto-approved ...
               @reservation.approval_status = "auto"
@@ -84,6 +83,7 @@ class ReservationsController < ApplicationController
               @reservation.approval_status = "requested"
             end
             # always bypass validations, the finalized reservations are saved separate from the reservation requests.
+            # this is probably not the best or safest way to do it
             @reservation.bypass_validations = true
             @reservation.save!
             successful_reservations << @reservation

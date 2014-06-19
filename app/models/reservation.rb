@@ -30,7 +30,7 @@ class Reservation < ActiveRecord::Base
   scope :recent, order('start_date, due_date, reserver_id')
   scope :user_sort, order('reserver_id')
   scope :reserved, lambda { where("checked_out IS NULL and checked_in IS NULL and due_date >= ? and (approval_status = ? OR approval_status = ?)", Time.now.midnight.utc, 'auto', 'approved').recent}
-  scope :checked_out, lambda { where("checked_out IS NOT NULL and checked_in IS NULL").recent }
+  scope :checked_out, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date >=  ?", Time.now.midnight.utc).recent }
   scope :checked_out_today, lambda { where("checked_out >= ? and checked_in IS NULL", Time.now.midnight.utc).recent }
   scope :checked_out_previous, lambda { where("checked_out < ? and checked_in IS NULL and due_date <= ?", Time.now.midnight.utc, Date.tomorrow.midnight.utc).recent }
   scope :overdue, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc ).recent }
@@ -44,11 +44,12 @@ class Reservation < ActiveRecord::Base
   scope :starts_on_days, lambda {|start_date, end_date|  where(start_date: start_date..end_date)}
   scope :reserved_on_date, lambda {|date|  where("start_date <= ? and due_date >= ?", date.to_time.utc, date.to_time.utc)}
   scope :for_eq_model, lambda { |eq_model| where(equipment_model_id: eq_model.id) }
-  scope :active, where("checked_in IS NULL and (approval_status = ? or approval_status = ? or approval_status = ?", 'auto', 'approved', 'requested') #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
+  scope :active, where("checked_in IS NULL and (approval_status = ? OR approval_status = ?)", 'auto', 'approved') # anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
   scope :notes_unsent, where(notes_unsent: true)
   scope :requested, lambda {where("start_date <= ? and approval_status = ?", Time.now.midnight.utc, 'requested')}
   scope :approved_requests, lambda {where("approval_status = ?", 'approved')}
   scope :denied_requests, lambda {where("approval_status = ?", 'denied')}
+  scope :missed_requests, lambda {where("approval_status = ? and start_date < ?", 'requested', Time.now.midnight.utc)}
 
   #TODO: Why the duplication in checkout_handler and checkout_handler_id (etc)?
   attr_accessible :checkout_handler, :checkout_handler_id,
