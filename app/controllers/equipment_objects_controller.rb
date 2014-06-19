@@ -67,12 +67,12 @@ class EquipmentObjectsController < ApplicationController
 
   # Deactivate and activate extend controller methods in ApplicationController
   def deactivate
-    # Process and add deactivation reason
+    @equipment_object.update_attributes(deactivation_reason: params[:deactivation_reason])
     super
   end
 
   def activate
     super
-    # Remove deactivation reason
+    @equipment_object.update_attributes(deactivation_reason: nil)
   end
 end
