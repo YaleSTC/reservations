@@ -17,6 +17,7 @@
 <p>
   <strong>Status:</strong>
   <%= @equipment_object.status %>
+  <% if equipment_object.deactivation_reason %>(<%= equipment_object.deactivation_reason %>)<% end %>
 </p>
 <div class="form-actions">
   <%= link_to "Edit", edit_equipment_object_path(@equipment_object), class: 'btn' %>
