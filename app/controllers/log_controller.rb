@@ -1,11 +1,7 @@
 class LogController < ApplicationController
   helper LogHelper
 
-  before_filter do
-    if cannot? :manage, :all
-      redirect_to root_path, notice: "You cannot view logs as a non-admin."
-    end
-  end
+  authorize_resource, :class => false
 
   def index
     # Past paper_trail 2.7-stable, Version is namespaced as PaperTrail::Version
