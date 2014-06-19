@@ -70,7 +70,6 @@ class ReservationsController < ApplicationController
             @reservation = Reservation.new(params[:reservation])
             @reservation.equipment_model =  cart_res.equipment_model
             @errors = session[:errors]
-            binding.pry
             if current_user.can_override_reservation_restrictions? or @errors.empty?
               # If the reservation is a finalized reservation, save it as auto-approved ...
               @reservation.approval_status = "auto"
@@ -79,6 +78,7 @@ class ReservationsController < ApplicationController
               @reservation.approval_status = "requested"
             end
             # always bypass validations, the finalized reservations are saved separate from the reservation requests.
+            # this is probably not the best or safest way to do it
             @reservation.bypass_validations = true
             @reservation.save!
             successful_reservations << @reservation
@@ -378,5 +378,30 @@ class ReservationsController < ApplicationController
     end
   end
 
+  def approve_request
+    set_reservation
+    
+    @reservation.approval_status = 'approved'
+    if @reservation.save
+      redirect_to @reservation
+      flash[:notice] = "Successfully approved request."
+    else
+      redirect_to @reservation
+      flash[:error] = "Unable to approve request. Please double-check that there is equipment available for check-out during the given period."
+    end
+  end
+
+  def deny_request
+    set_reservation
+    
+    @reservation.approval_status = 'denied'
+    if @reservation.save
+      redirect_to @reservation
+      flash[:notice] = "Successfully denied request."
+    else
+      redirect_to @reservation
+      flash[:error] = "Unable to deny request. Please contact your system administrator for assistance."
+    end
+  end
 
 end

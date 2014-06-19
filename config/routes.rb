@@ -55,6 +55,8 @@ Reservations::Application.routes.draw do
   get '/reservations/manage/:user_id' => 'reservations#manage', :as => :manage_reservations_for_user
   get '/reservations/current/:user_id' => 'reservations#current', :as => :current_reservations_for_user
 
+  put '/reservations/approve/:id' => 'reservations#approve_request', :as => :approve_request
+  put '/reservations/deny/:id' => 'reservations#deny_request', :as => :deny_request
 
   # reservation checkout / check-in actions
   put '/reservations/checkout/:user_id' => 'reservations#checkout', :as => :checkout

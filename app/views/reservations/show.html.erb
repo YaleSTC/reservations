@@ -11,6 +11,9 @@
       <%= "<span class=\"user_label label-warning\">Returned Overdue</span>".html_safe if @reservation.status == 'returned overdue' %>
       <%= "<span class=\"user_label label-info\">Checked Out</span>".html_safe if @reservation.status == 'checked out' %>
       <%= "<span class=\"user_label\">Missed</span>".html_safe if @reservation.status == 'missed' %>
+      <%= "<span class=\"user_label label-important\">Requested</span>".html_safe if @reservation.approval_status == 'requested' %>
+      <%= "<span class=\"user_label label-success\">Approved</span>".html_safe if @reservation.approval_status == 'approved' %>
+      <%= "<span class=\"user_label label-warning\">Denied</span>".html_safe if @reservation.approval_status == 'denied' %>
       <% unless @reservation.status == 'reserved' %>
         <hr>
       <% end %>
@@ -195,6 +198,10 @@
   <%# end %>
   <% if current_user.can_checkout? %>
     <%= link_to "Edit", edit_reservation_path(@reservation), class: 'btn' %>
+  <% end %>
+  <% if (current_user.is_admin?(as: 'admin')) and (@reservation.approval_status == 'requested') %>
+    <%= link_to "Approve", approve_request_path(@reservation), class: 'btn btn-success' %>
+    <%= link_to "Deny", deny_request_path(@reservation), class: 'btn btn-danger' %>
   <% end %>
   <% if @reservation.status == "reserved" or current_user.is_admin?(:as => 'admin') %>
     <%= link_to "Cancel Reservation", @reservation, confirm:

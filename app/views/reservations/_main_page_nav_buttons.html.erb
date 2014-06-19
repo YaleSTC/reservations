@@ -9,7 +9,7 @@
           <%= link_to "Requests (#{Reservation.requested.size})", reservations_path(:requested => true), :class => "btn" %>
         <% end %>
       <% end %>
-      <% unless params[:reserved] or params[:checked_out] or params[:overdue] or params[:missed] or params[:returned] or params[:requested] %>
+      <% unless params[:reserved] or params[:checked_out] or params[:overdue] or params[:missed] or params[:returned] or params[:requested] or params[:approved_requests] or params[:denied_requests] %>
         <%= link_to "Today (#{Reservation.upcoming.size})", reservations_path, :class => "btn disabled" %>
       <% else %>
         <%= link_to "Today (#{Reservation.upcoming.size})", reservations_path, :class => "btn" %>
@@ -55,7 +55,7 @@
       <% else %>
         <%= link_to "Requests (#{current_user.reservations.requested.size})", reservations_path(:requested => true), :class => "btn" %>
       <% end %>
-      <% unless params[:checked_out] or params[:overdue] or params[:missed] or params[:returned] %>
+      <% unless params[:checked_out] or params[:overdue] or params[:missed] or params[:returned] or params[:requested] or params[:approved_requests] or params[:denied_requests] %>
         <%= link_to "Reserved (#{current_user.reservations.reserved.size})", reservations_path, :class => "btn disabled" %>
       <% else %>
         <%= link_to "Reserved (#{current_user.reservations.reserved.size})", reservations_path, :class => "btn" %>
