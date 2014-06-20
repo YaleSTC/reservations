@@ -1,4 +1,4 @@
-<% if @errors.empty? or can? :override, :reservation_errors %>
+<% if @errors.empty? or (can? :override, :reservation_errors) %>
   <%= render :partial => "new_reservation" %>
 <% else %>
   <%= render :partial => "new_request" %>

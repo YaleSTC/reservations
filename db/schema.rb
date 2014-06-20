@@ -46,6 +46,7 @@ ActiveRecord::Schema.define(:version => 20140610134345) do
     t.boolean  "require_phone",                                      :default => false
     t.boolean  "viewed",                                             :default => true
     t.boolean  "require_phone",                                      :default => true
+    t.boolean  "viewed",                                             :default => true
     t.boolean  "override_on_create",                                 :default => false
     t.boolean  "override_at_checkout",                               :default => false
   end
@@ -185,6 +186,7 @@ ActiveRecord::Schema.define(:version => 20140610134345) do
     t.text     "notes"
     t.boolean  "notes_unsent",        :default => true
     t.integer  "times_renewed"
+    t.text     "approval_status"
   end
 
   create_table "sessions", :force => true do |t|
@@ -201,7 +203,7 @@ ActiveRecord::Schema.define(:version => 20140610134345) do
     t.string   "login"
     t.string   "first_name"
     t.string   "last_name"
-    t.string   "nickname"
+    t.string   "nickname",                  :default => "",       :null => false
     t.string   "phone"
     t.string   "email"
     t.string   "affiliation"

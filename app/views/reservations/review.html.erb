@@ -1,0 +1,50 @@
+<% title "Review Requested Reservation" %>
+
+<p>
+  <h3>Details of the request</h3>
+</p>
+<p>
+  <ul>
+    <li><strong>Reserver:</strong> <%= link_to @reservation.reserver.name, @reservation.reserver %></li>
+    <li><strong>Equipment:</strong> <%= link_to @reservation.equipment_model.name, @reservation.equipment_model %></li>
+    <li><strong>Start Date:</strong> <%= @reservation.start_date.to_date.to_s(:long) %></li>
+    <li><strong>End Date:</strong> <%= @reservation.due_date.to_date.to_s(:long) %></li>
+  </ul>
+</p>
+
+<% unless @errors.empty? %>
+  <p>
+    <h4>This request currently does not pass the following reservation parameters:</h4>
+  </p>
+  <p>
+    <% @errors.each do |msg| %>
+      <ul>
+        <li><%= msg %></li>
+      </ul>
+    <% end %>
+  </p>
+<% else %>
+  <p>
+    <h3>This request may be safely approved.</h3>
+  </p>
+  <p>
+    Whatever was wrong with the reservation request at the time it was requested, appears to have been resolved.
+  </p>
+<% end %>
+<% unless @all_current_requests_by_user.empty? %>
+  <p>
+    <h4>Please note that <%= link_to @all_current_requests_by_user.first.reserver.name, @all_current_requests_by_user.first.reserver %> is also requesting the following equipment at this time:</h4>
+  </p>
+  <p>
+    <% @all_current_requests_by_user.each do |request| %>
+      <ul>
+        <li><%= request.equipment_model.name + " from " + request.start_date.to_date.to_s(:long) + " to " + request.due_date.to_date.to_s(:long) + "." %></li>
+      </ul>
+    <% end %>
+  </p>
+<% end %>
+<div class="form-actions">
+  <%= link_to "Edit Request", edit_reservation_path(@reservation), class: 'btn' %>
+  <%= link_to "Deny", deny_request_path, :method => "put", :class => 'btn btn-danger' %>
+  <%= link_to "Approve", approve_request_path, :method => "put", :class => 'btn btn-success' %>
+</div>

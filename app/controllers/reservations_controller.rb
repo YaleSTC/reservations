@@ -96,9 +96,9 @@ class ReservationsController < ApplicationController
           flash[:notice] = "Reservation created successfully"
           if can? :manage, Reservation
             if params[:reservation][:start_date].to_date === Date::today.to_date
-				flash[:notice] = "Are you simultaneously checking out equipment for someone? Note that\
-									only the reservation has been made. Don't forget to continue to checkout."
-			end
+              flash[:notice] = "Are you simultaneously checking out equipment for someone? Note that\
+                               only the reservation has been made. Don't forget to continue to checkout."
+            end
             redirect_to manage_reservations_for_user_path(params[:reservation][:reserver_id]) and return
           else
             redirect_to catalog_path and return
@@ -164,7 +164,7 @@ class ReservationsController < ApplicationController
     reservations_to_be_checked_out = []
     set_user
     if !@user.terms_of_service_accepted && !params[:terms_of_service_accepted]
-      flash[:error] = "You must confirm that the user accepts the Terms of Service"
+      flash[:error] = "You must confirm that the user accepts the Terms of Service."
       redirect_to :back and return
     elsif !@user.terms_of_service_accepted && params[:terms_of_service_accepted]
       @user.terms_of_service_accepted = true
@@ -173,7 +173,7 @@ class ReservationsController < ApplicationController
 
     # throw all the reservations that are being checked out into an array
     params[:reservations].each do |reservation_id, reservation_hash|
-        if reservation_hash[:equipment_object_id] != ('' or nil) then #update attributes for all equipment that is checked off
+        if reservation_hash[:equipment_object_id] != ('' or nil) then # update attributes for all equipment that is checked off
           r = Reservation.find(reservation_id)
           r.checkout_handler = current_user
           r.checked_out = Time.now
@@ -188,7 +188,6 @@ class ReservationsController < ApplicationController
               procedures_not_done += "* " + check.step + "\n"
             end
           end
-
 
           # add procedures_not_done to r.notes so admin gets the errors
           # if no notes and some procedures not done
@@ -210,11 +209,11 @@ class ReservationsController < ApplicationController
 
       # done with throwing things into the array
       #All-encompassing checks, only need to be done once
-      if reservations_to_be_checked_out.first.nil? #Prevents the nil error from not selecting any reservations
+      if reservations_to_be_checked_out.first.nil? # Prevents the nil error from not selecting any reservations
         flash[:error] = "No reservation selected."
         redirect_to :back and return
       # move method to user model TODO
-      elsif Reservation.overdue_reservations?(reservations_to_be_checked_out.first.reserver) #Checks for any overdue equipment
+      elsif Reservation.overdue_reservations?(reservations_to_be_checked_out.first.reserver) # Checks for any overdue equipment
         error_msgs += "User has overdue equipment."
       end
 
@@ -342,7 +341,7 @@ class ReservationsController < ApplicationController
     render 'current_reservations'
   end
 
-  #two paths to create receipt emails for checking in and checking out items.
+  # two paths to create receipt emails for checking in and checking out items.
   def checkout_email
     set_reservation
     if UserMailer.checkout_receipt(@reservation).deliver
@@ -384,4 +383,35 @@ class ReservationsController < ApplicationController
     end
   end
 
+  def review
+    set_reservation
+    array_for_validation = []
+    array_for_validation << @reservation
+    @all_current_requests_by_user = @reservation.reserver.reservations.requested
+    @errors = Reservation.validate_set(@reservation.reserver, array_for_validation)
+  end
+  
+  def approve_request
+    set_reservation
+    @reservation.approval_status = "approved"
+    if @reservation.save
+      flash[:notice] = "Request successfully approved"
+      redirect_to reservations_path(:requested => true)
+    else
+      flash[:error] = "Oops! Something went wrong. Unable to approve reservation."
+      redirect_to @reservation
+    end
+  end
+  
+  def deny_request
+    set_reservation
+    @reservation.approval_status = "denied"
+    if @reservation.save
+      flash[:notice] = "Request successfully denied"
+      redirect_to reservations_path(:requested => true)
+    else
+      flash[:error] = "Oops! Something went wrong. Unable to deny reservation. We're not sure what that's all about."
+      redirect_to @reservation
+    end
+  end
 end

@@ -55,6 +55,7 @@ Reservations::Application.routes.draw do
   get '/reservations/manage/:user_id' => 'reservations#manage', :as => :manage_reservations_for_user
   get '/reservations/current/:user_id' => 'reservations#current', :as => :current_reservations_for_user
 
+  get '/reservations/review/:id' => 'reservations#review', :as => :review_request
   put '/reservations/approve/:id' => 'reservations#approve_request', :as => :approve_request
   put '/reservations/deny/:id' => 'reservations#deny_request', :as => :deny_request
 
