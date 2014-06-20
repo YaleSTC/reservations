@@ -1,10 +1,11 @@
 <div class="span6">
-  <div class="calendar">
+  <div class id="reservation-calendar">
   <ul>
     <% for d in @beginning...(@beginning+7.day) %>
       <li class = "day calendar_cell">
       <%= d.day %>
-      <ul>
+      <div class = "res_div">
+      <ul class="res">
         <% @model_reservations.each do |r| %>
           <% if r.start_date.to_date == d %>
             <% if r.equipment_object %>
@@ -15,7 +16,7 @@
             <li class = "reservation"><%= label %></li>
           <% end %>
         <% end %>
-      </ul>
+    </ul></div>
     <% end %>
   </ul>
 </div>

@@ -106,8 +106,22 @@
     }
   };
 
+function equalHeight(elements,res_div) {
+   base_height = elements.height();
+   max_height = 0;
+   res_div.each(function() {
+      thisHeight = $(this).height();
+      if(thisHeight > max_height) {
+         max_height = thisHeight;
+      }
+   });
+   elements.height(max_height+base_height);
+}
+
 $(document).ready(function() {
   
+  equalHeight($('.calendar_cell'),$('.res_div'));
+
   $('.checkin-click').click( function() {
 	var box = $(this).find(":checkbox");
 	box.prop("checked", !box.prop("checked"));
