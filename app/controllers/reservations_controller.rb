@@ -11,6 +11,8 @@ class ReservationsController < ApplicationController
 
   before_filter :require_login, only: [:index, :show]
 
+  private
+
   def set_user
     @user = User.find(params[:user_id])
   end
@@ -18,6 +20,8 @@ class ReservationsController < ApplicationController
   def set_reservation
     @reservation = Reservation.find(params[:id])
   end
+
+  public
 
   def index
     #define our source of reservations depending on user status
