@@ -119,8 +119,34 @@ function equalHeight(elements,res_div) {
 }
 
 $(document).ready(function() {
-  
+  //$('#reservation-calendar').ready(function() {
+    var reservations = $('#res-data').data('url');
+    var week_start = new Date($('#res-data').data('day'));
+    console.log(week_start);
+    for(var d = 0; d < reservations.length; d++) {
+      var end = new Date (reservations[d].end);
+      var start = new Date (reservations[d].start);
+      var week_end = new Date();
+      week_end.setDate(week_start.getDate() + 7);
+      if ((start < week_end) && (end >= week_start)) {
+        //draw shit
+        var begin_date = ((week_start > start) ? week_start : start)
+        var end_date = ((week_end < end) ? week_end : end);
+        var ul = $('.'+begin_date.toISOString().substring(0,10)).children().children();
+        var length = (end_date.getTime() - begin_date.getTime())/86400000;
+        console.log("start date"  + begin_date);
+        console.log("end date: " + end_date);
+        console.log(length);
+        ul.append("<li class='reservation'>"+reservations[d].name+"</li>");
+
+
+      }
+    }
+
   equalHeight($('.calendar_cell'),$('.res_div'));
+
+  //});
+  
 
   $('.checkin-click').click( function() {
 	var box = $(this).find(":checkbox");

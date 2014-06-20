@@ -27,9 +27,16 @@ class EquipmentModelsController < ApplicationController
   def show
     @associated_equipment_models = @equipment_model.associated_equipment_models.sample(6)
     @model_reservations = Reservation.active.for_eq_model @equipment_model
-    @date = Date.today
-    @beginning = Date.today.beginning_of_week(:sunday)
-    #binding.pry
+    @reservation_data = []
+    @model_reservations.each do |r|
+      @reservation_data << {
+        name: (r.equipment_object ? r.equipment_object.name : "Reserved"),
+        start: r.start_date, end: r.due_date,
+        path: reservation_path(r)}
+    end
+    @date = Time.current.to_date
+    @beginning = @date.beginning_of_week(:sunday)
+    binding.pry
   end
 
 
