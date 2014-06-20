@@ -1,4 +1,4 @@
-<% if @errors.empty? or current_user.can_override_reservation_restrictions? %>
+<% if @errors.empty? or (can? :override, :reservation_errors) %>
   <%= render :partial => "new_reservation" %>
 <% else %>
   <%= render :partial => "new_request" %>
