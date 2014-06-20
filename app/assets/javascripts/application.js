@@ -24,6 +24,7 @@
 //= require variables.js
 //= require select2
 //= require_self
+//= require calendar.js
 
   function truncate() {
     if ($(".caption_cat").length) {
@@ -107,34 +108,7 @@
   };
 
 $(document).ready(function() {
-  $('#reservation-calendar').ready(function() {
-    var reservations = $('#res-data').data('url');
-    var week_start = new Date($('#res-data').data('day'));
-    var max = $('#res-data').data('max');
-    for(var d = 0; d < reservations.length; d++) {
-      var end = new Date (reservations[d].end);
-      var start = new Date (reservations[d].start);
-      var week_end = new Date();
-      week_end.setDate(week_start.getDate() + 7);
-      if ((start < week_end) && (end >= week_start)) {
-        //draw shit
-        var begin_date = ((week_start > start) ? week_start : start)
-        var end_date = ((week_end < end) ? week_end : end);
-        for (var date = begin_date; date <= end_date; date.setDate(date.getDate()+1)) {
-          var cell = $('.'+date.toISOString().substring(0,10));
-          var val = parseInt(cell.children('.num').children()[0].innerHTML) - 1;
-          var red = (255 - val*255/max).toString();
-          var green = (val*255/max).toString();
-          console.log(red + " green " + green);
-          cell.css('background-color','rgba('+red+','+green+',0,0.25)');
-          console.log(cell.css('background-color'));
-          cell.children('.num').children()[0].innerHTML = val;
-        }
-      }
-    }
-
-  });
-
+ 
   $('.checkin-click').click( function() {
 	var box = $(this).find(":checkbox");
 	box.prop("checked", !box.prop("checked"));

@@ -5,10 +5,13 @@
   <ul>
     <% for d in @date...(@date+7.day) %>
       <li class = "<%= d.to_date %> calendar_cell">
-      <%= "#{d.day} - #{d.to_time.strftime('%a')}" %>
+      <div class = "head">
+        <%= "#{d.day} - #{d.to_time.strftime('%a')}" %>
+      </div> 
       <div class = "num">
         <h2><%= @max %></h2>
       </div>
+
 
     <% end %>
   </ul>
