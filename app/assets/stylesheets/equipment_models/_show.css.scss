@@ -1,32 +1,18 @@
 
 $border-att: 1px solid darken($bodyBackground, 20%);
 
-#calendar_table {
-  width: 100%;
-  table-layout:fixed;
-}
+.reservation{
+  white-space:nowrap;
+  display: block;
+  }
 
-.item_reservation {
-  overflow: hidden;
-  z-index: 100;
-  background-color: red;
-}
-
-td.calendar_cell {
-  border-left: $border-att;
-  border-right: $border-att;
-  width: 14%;
-}
-
-td.day {
-  border-radius:3px;
-  border-top: $border-att;
+.calendar_cell {
+  border: $border-att;
+  width: 13%;
+  display: inline-block;
+  vertical-align:top;
  }
 
-
-td.reservation {
-  border-bottom: $border-att;
-}
 
 .progress {
 	margin-bottom: 0;

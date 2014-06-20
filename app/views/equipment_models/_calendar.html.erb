@@ -1,38 +1,22 @@
 <div class="span6">
-  <table id="calendar_table">
-    <tr>
-      <th>Sun</th>
-      <th>Mon</th>
-      <th>Tue</th>
-      <th>Wed</th>
-      <th>Thu</th>
-      <th>Fri</th>
-      <th>Sat</th>
-    </tr>
-    <tr>
-      <% for d in @beginning...(@beginning+7.day) %>
-        <td class = "day calendar_cell">
-          <%= d.day %>
-        </td>
-      <% end %>
-    </tr>
-    <tr>
-      <% for d in @beginning...(@beginning+7.day) %>
-        <td class="reservation calendar_cell">
+  <div class="calendar">
+  <ul>
+    <% for d in @beginning...(@beginning+7.day) %>
+      <li class = "day calendar_cell">
+      <%= d.day %>
+      <ul>
         <% @model_reservations.each do |r| %>
-          <span class = "item_reservation">
           <% if r.start_date.to_date == d %>
             <% if r.equipment_object %>
-                <% label = r.equipment_object.name %>
-             <% else %>
-                <% label = 'Reserveddddddddddddddddddddd' %>
-             <% end %>
-             <%= label %>
-           <% end %>
-         </span>
+              <% label = r.equipment_object.name %>
+            <% else %>
+               <% label = 'Reserveddddddd' %>
+            <% end %>
+            <li class = "reservation"><%= label %></li>
+          <% end %>
         <% end %>
-      </td>
+      </ul>
     <% end %>
-  </tr>
-</table>
+  </ul>
+</div>
 </div>
