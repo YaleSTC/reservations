@@ -29,8 +29,7 @@ class EquipmentModelsController < ApplicationController
     @model_reservations = Reservation.active.for_eq_model @equipment_model
     @date = Date.today
     @beginning = Date.today.beginning_of_week(:sunday)
-    binding.pry
-    render 'calendar'
+    #binding.pry
   end
 
 
