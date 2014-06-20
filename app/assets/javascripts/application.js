@@ -106,23 +106,11 @@
     }
   };
 
-function equalHeight(elements,res_div) {
-   base_height = elements.height();
-   max_height = 0;
-   res_div.each(function() {
-      thisHeight = $(this).height();
-      if(thisHeight > max_height) {
-         max_height = thisHeight;
-      }
-   });
-   elements.height(max_height+base_height);
-}
-
 $(document).ready(function() {
-  //$('#reservation-calendar').ready(function() {
+  $('#reservation-calendar').ready(function() {
     var reservations = $('#res-data').data('url');
     var week_start = new Date($('#res-data').data('day'));
-    var width = $('.calendar_cell').width();
+    var max = $('#res-data').data('max');
     for(var d = 0; d < reservations.length; d++) {
       var end = new Date (reservations[d].end);
       var start = new Date (reservations[d].start);
@@ -132,20 +120,20 @@ $(document).ready(function() {
         //draw shit
         var begin_date = ((week_start > start) ? week_start : start)
         var end_date = ((week_end < end) ? week_end : end);
-        var ul = $('.'+begin_date.toISOString().substring(0,10)).children().children();
-        var length = (end_date.getTime() - begin_date.getTime())/86400000;
-        var new_block = $("<li class='reservation'>"+reservations[d].name+"</li>");
-        new_block.width((length + 1)* width);
-        ul.append(new_block);
-
-
+        for (var date = begin_date; date <= end_date; date.setDate(date.getDate()+1)) {
+          var cell = $('.'+date.toISOString().substring(0,10));
+          var val = parseInt(cell.children('.num').children()[0].innerHTML) - 1;
+          var red = (255 - val*255/max).toString();
+          var green = (val*255/max).toString();
+          console.log(red + " green " + green);
+          cell.css('background-color','rgba('+red+','+green+',0,0.25)');
+          console.log(cell.css('background-color'));
+          cell.children('.num').children()[0].innerHTML = val;
+        }
       }
     }
 
-  equalHeight($('.calendar_cell'),$('.res_div'));
-
-  //});
-  
+  });
 
   $('.checkin-click').click( function() {
 	var box = $(this).find(":checkbox");

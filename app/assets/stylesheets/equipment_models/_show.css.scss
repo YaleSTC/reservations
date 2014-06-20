@@ -1,21 +1,9 @@
 
 $border-att: 1px solid darken($bodyBackground, 20%);
 
-.reservation{
-  white-space:nowrap;
-  display: block;
-  background-color:red;
-  width: 200px;
-  z-index: 100;
-  }
+.num {
+  text-align:center;
 
-ul.res{
-  margin-left: 1px;
-}
-
-.res_div{
-  position:absolute;
-  z-index:3;
 }
 
 .calendar_cell {
@@ -23,6 +11,7 @@ ul.res{
   width: 13%;
   display: inline-block;
   vertical-align:top;
+  background-color: rgba(0,255,0,0.25); 
  }
 
 

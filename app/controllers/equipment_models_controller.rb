@@ -35,7 +35,7 @@ class EquipmentModelsController < ApplicationController
         path: reservation_path(r)}
     end
     @date = Time.current.to_date
-    @beginning = @date.beginning_of_week(:sunday)
+    @max = @equipment_model.equipment_objects.count
     #binding.pry
   end
 

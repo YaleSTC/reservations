@@ -1,15 +1,15 @@
 <div class="span6">
   <div id="reservation-calendar">
-    <%= content_tag "div", id: "res-data", data:{url:@reservation_data, day:(@beginning.to_date)} do %>
+    <%= content_tag "div", id: "res-data", data:{url:@reservation_data, day:(@date.to_date), max:@max} do %>
     <% end %>
   <ul>
-    <% for d in @beginning...(@beginning+7.day) %>
+    <% for d in @date...(@date+7.day) %>
       <li class = "<%= d.to_date %> calendar_cell">
-      <%= d.day %>
-      <div class = "res_div">
-        <ul class="res">
-        </ul>
+      <%= "#{d.day} - #{d.to_time.strftime('%a')}" %>
+      <div class = "num">
+        <h2><%= @max %></h2>
       </div>
+
     <% end %>
   </ul>
 </div>
