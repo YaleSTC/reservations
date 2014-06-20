@@ -36,7 +36,7 @@ class EquipmentModelsController < ApplicationController
     end
     @date = Time.current.to_date
     @beginning = @date.beginning_of_week(:sunday)
-    binding.pry
+    #binding.pry
   end
 
 

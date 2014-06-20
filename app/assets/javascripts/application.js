@@ -122,7 +122,7 @@ $(document).ready(function() {
   //$('#reservation-calendar').ready(function() {
     var reservations = $('#res-data').data('url');
     var week_start = new Date($('#res-data').data('day'));
-    console.log(week_start);
+    var width = $('.calendar_cell').width();
     for(var d = 0; d < reservations.length; d++) {
       var end = new Date (reservations[d].end);
       var start = new Date (reservations[d].start);
@@ -134,10 +134,9 @@ $(document).ready(function() {
         var end_date = ((week_end < end) ? week_end : end);
         var ul = $('.'+begin_date.toISOString().substring(0,10)).children().children();
         var length = (end_date.getTime() - begin_date.getTime())/86400000;
-        console.log("start date"  + begin_date);
-        console.log("end date: " + end_date);
-        console.log(length);
-        ul.append("<li class='reservation'>"+reservations[d].name+"</li>");
+        var new_block = $("<li class='reservation'>"+reservations[d].name+"</li>");
+        new_block.width((length + 1)* width);
+        ul.append(new_block);
 
 
       }
