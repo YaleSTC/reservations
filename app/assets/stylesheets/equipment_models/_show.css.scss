@@ -19,6 +19,14 @@ $border-att: 1px solid darken($bodyBackground, 20%);
   opacity:  1.0;
 }
 
+.c-left {
+  float: left;
+}
+
+.c-right {
+  float: right;
+}
+
 .progress {
 	margin-bottom: 0;
 }

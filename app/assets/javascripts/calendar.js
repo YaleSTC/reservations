@@ -22,6 +22,11 @@ function renderCalendar(reservations, week_start, max) {
     $(this).attr('id',dateToRubyString(date));
     date.setDate(date.getDate()+1);
   });
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  $('.month').children()[0].innerHTML = "Availability: " + months[date.getMonth()] + " " + date.getFullYear().toString();
+
+
   //set cell values based on reservations
   for(var d = 0; d < reservations.length; d++) {
       var end = new Date (reservations[d].end);
@@ -54,8 +59,19 @@ function renderCalendar(reservations, week_start, max) {
 function shiftCalendar(offset) {
   var reservations = $('#res-data').data('url');
   var week_start = new Date($('.calendar_cell').first().attr('id'));
+  var today = new Date();
+  today.setHours(0,0,0,0);
   var max = $('#res-data').data('max');
+
+  console.log(week_start + " " + today);
   week_start.setDate(week_start.getDate() + offset);
+
+  console.log(week_start + " " + today);
+  if (week_start < today) {
+    week_start.setTime(today.getTime());
+  }
+
+  console.log(week_start + " " + today);
   renderCalendar(reservations,week_start,max);
 };
 
@@ -68,10 +84,21 @@ $('#reservation-calendar').ready(function() {
     //set cart dates to day clicked
   });
 
-  $('.forward1').click(function() {
+  $('.f_day').click(function() {
     shiftCalendar(1);
   });
 
+  $('.b_day').click(function() {
+    shiftCalendar(-1);
+  });
+
+  $('.f_week').click(function() {
+    shiftCalendar(7);
+  });
+
+  $('.b_week').click(function() {
+    shiftCalendar(-7);
+  });
 
 
 });
