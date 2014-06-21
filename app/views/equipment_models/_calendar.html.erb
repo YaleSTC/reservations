@@ -2,18 +2,18 @@
   <div id="reservation-calendar">
     <%= content_tag "div", id: "res-data", data:{url:@reservation_data, day:(@date.to_date), max:@max} do %>
     <% end %>
-  <ul>
-    <% for d in @date...(@date+7.day) %>
-        <li class = "calendar_cell">
-          <div class = "head">
-            <h4></h4>
-          </div>
-          <div class = "num">
-            <h2></h2>
-          </div>
-        </li>
-    <% end %>
-  </ul>
+    <ul>
+      <li class = "calendar_cell" id ="<%= @date.to_date %>">
+        <% for d in 0...6 %>
+        <div class = "head"><h4></h4></div>
+        <div class = "num"><h2></h2></div>
+      </li>
+      <li class = "calendar_cell">
+      <% end %>
+        <div class = "head"><h4></h4></div>
+        <div class = "num"><h2></h2></div>
+      </li>
+    </ul>
   <div class="forward1">forward1</div>
 </div>
 </div>

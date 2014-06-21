@@ -51,27 +51,27 @@ function renderCalendar(reservations, week_start, max) {
 
 };
 
+function shiftCalendar(offset) {
+  var reservations = $('#res-data').data('url');
+  var week_start = new Date($('.calendar_cell').first().attr('id'));
+  var max = $('#res-data').data('max');
+  week_start.setDate(week_start.getDate() + offset);
+  renderCalendar(reservations,week_start,max);
+};
+
+
 $('#reservation-calendar').ready(function() {
-    var reservations = $('#res-data').data('url');
-    var week_start = new Date($('#res-data').data('day'));
-    var max = $('#res-data').data('max');
-    renderCalendar(reservations,week_start,max);
 
-$('.calendar_cell').click(function() {
-  //set cart dates to day clicked
+  shiftCalendar(0);
 
-});
-
-$('.forward1').click(function() {
-  console.log('clicked!');
-   var reservations = $('#res-data').data('url');
-   var week_start = new Date($('.calendar_cell').first().attr('id'));
-   var max = $('#res-data').data('max')
-   week_start.setDate(week_start.getDate() + 1);
-   renderCalendar(reservations,week_start,max);
-
-
-});
-
-
+  $('.calendar_cell').click(function() {
+    //set cart dates to day clicked
   });
+
+  $('.forward1').click(function() {
+    shiftCalendar(1);
+  });
+
+
+
+});
