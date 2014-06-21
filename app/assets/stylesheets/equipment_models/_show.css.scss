@@ -11,12 +11,12 @@ $border-att: 1px solid darken($bodyBackground, 20%);
   width: 13%;
   display: inline-block;
   vertical-align:top;
-  background-color: rgba(0,255,0,0.25);
+  background-color: rgba(0,255,0,0.5);
+  opacity: 0.8
  }
 
 .calendar_cell:hover{
-  background-color: red !important;
-
+  opacity:  1.0;
 }
 
 .progress {

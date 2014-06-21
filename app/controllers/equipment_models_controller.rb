@@ -30,9 +30,7 @@ class EquipmentModelsController < ApplicationController
     @reservation_data = []
     @model_reservations.each do |r|
       @reservation_data << {
-        name: (r.equipment_object ? r.equipment_object.name : "Reserved"),
-        start: r.start_date, end: r.due_date,
-        path: reservation_path(r)}
+        start: r.start_date, end: r.due_date}
     end
     @date = Time.current.to_date
     @max = @equipment_model.equipment_objects.count

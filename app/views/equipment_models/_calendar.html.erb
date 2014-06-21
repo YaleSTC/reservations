@@ -4,16 +4,16 @@
     <% end %>
   <ul>
     <% for d in @date...(@date+7.day) %>
-      <li class = "<%= d.to_date %> calendar_cell">
-      <div class = "head">
-        <%= "#{d.day} - #{d.to_time.strftime('%a')}" %>
-      </div> 
-      <div class = "num">
-        <h2><%= @max %></h2>
-      </div>
-
-
+        <li class = "calendar_cell">
+          <div class = "head">
+            <h4></h4>
+          </div>
+          <div class = "num">
+            <h2></h2>
+          </div>
+        </li>
     <% end %>
   </ul>
+  <div class="forward1">forward1</div>
 </div>
 </div>
