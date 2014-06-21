@@ -59,8 +59,7 @@ function renderCalendar(reservations, week_start, max) {
 function shiftCalendar(offset) {
   var reservations = $('#res-data').data('url');
   var week_start = new Date($('.calendar_cell').first().attr('id'));
-  var today = new Date();
-  today.setHours(0,0,0,0);
+  var today = new Date($('#res-data').data('today'));
   var max = $('#res-data').data('max');
 
   console.log(week_start + " " + today);

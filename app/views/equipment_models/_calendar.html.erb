@@ -1,6 +1,6 @@
 <div class="span6">
   <div id="reservation-calendar">
-    <%= content_tag "div", id: "res-data", data:{url:@reservation_data, today:@date, max:@max} do %>
+    <%= content_tag "div", id: "res-data", data:{url:@reservation_data, today:@date.to_s, max:@max} do %>
     <% end %>
 
     <div class = "month"><h3></h3></div>
