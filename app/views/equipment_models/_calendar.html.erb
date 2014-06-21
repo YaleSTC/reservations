@@ -1,19 +1,18 @@
-<div class="span6">
   <div id="reservation-calendar">
     <%= content_tag "div", id: "res-data", data:{url:@reservation_data, today:@date.to_s, max:@max} do %>
     <% end %>
 
     <div class = "month"><h3></h3></div>
 
-    <ul>
+    <ul id = "calendar-ul">
       <li class = "calendar_cell" id ="<%= @date.to_date %>">
         <% for d in 0...6 %>
-        <div class = "head"><h4></h4></div>
+        <div class = "head"><h5></h5></div>
         <div class = "num"><h2></h2></div>
       </li>
       <li class = "calendar_cell">
       <% end %>
-        <div class = "head"><h4></h4></div>
+        <div class = "head"><h5></h5></div>
         <div class = "num"><h2></h2></div>
       </li>
     </ul>
@@ -27,5 +26,4 @@
       <i class="f_day icon-angle-right">forward 1 day</i>
       <i class="f_week icon-double-angle-right">forward 1 week</i>
     </div>
-</div>
 </div>

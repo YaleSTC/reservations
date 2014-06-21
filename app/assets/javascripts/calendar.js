@@ -9,8 +9,8 @@ function dateToRubyString(date) {
 
 function dateToHeading(date) {
   var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  var day = days[date.getDay()];
-  return date.getDate().toString() + " - " + day;
+  var day = days[date.getUTCDay()];
+  return date.getUTCDate().toString() + " - " + day;
 };
 
 function renderCalendar(reservations, week_start, max) {
@@ -24,7 +24,7 @@ function renderCalendar(reservations, week_start, max) {
   });
   var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-  $('.month').children()[0].innerHTML = "Availability: " + months[date.getMonth()] + " " + date.getFullYear().toString();
+  $('.month').children()[0].innerHTML = "Availability: " + months[week_start.getMonth()] + " " + date.getFullYear().toString();
 
 
   //set cell values based on reservations
@@ -52,6 +52,11 @@ function renderCalendar(reservations, week_start, max) {
     var green = Math.min(Math.floor(val*510/max),255).toString();
     var color = 'rgba(' + red + ',' + green + ',0,0.5)';
     $(this).css("background-color",color);
+
+    if ($(this).attr('id') == $('#res-data').data('today')) {
+      $(this).addClass('today');
+    }
+
   });
 
 };
@@ -61,16 +66,11 @@ function shiftCalendar(offset) {
   var week_start = new Date($('.calendar_cell').first().attr('id'));
   var today = new Date($('#res-data').data('today'));
   var max = $('#res-data').data('max');
-
-  console.log(week_start + " " + today);
   week_start.setDate(week_start.getDate() + offset);
-
-  console.log(week_start + " " + today);
   if (week_start < today) {
     week_start.setTime(today.getTime());
   }
 
-  console.log(week_start + " " + today);
   renderCalendar(reservations,week_start,max);
 };
 

@@ -1,0 +1,33 @@
+  <% if @restricted || @blacked_out_start || @blacked_out_end %>
+    <%= link_to "#qualifications_modal",
+      class: 'not-qualified-icon-em',
+      rel: "tooltip",
+      title: 'Not ' + (@restricted ? "Qualified" : "Available") +" (click for more info)",
+      :"data-toggle" => 'modal' do %>
+        <i class="icon-warning-sign"></i>
+     <% end %>
+     <%= button_tag "Add to Cart", remote: true, class: 'btn btn-primary btn-large disabled' %>
+     <div id="qualifications_modal" class="modal hide fade">
+       <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">×</button>
+          <h3><%= @restricted ? "Qualification Required" : "Not Available" %></h3>
+       </div>
+       <div class="modal-body">
+         <p>
+           <% if @restricted %>
+             <%= Requirement.list_requirement_admins(current_user, @equipment_model)%>
+           <% elsif @blacked_out_start %>
+             This model is not available on the dates you requested. This is because the start date of your reservation, <%= cart.start_date %>, falls on a day for which the administrator has disabled reservations.
+           <% elsif @blacked_out_end %>
+             This model is not available on the dates you requested. This is because the end date of your reservation, <%= cart.due_date %>, falls on a day for which the administrator has disabled reservations.
+           <% end %>
+         </p>
+      </div>
+    </div>
+   <% else %>
+
+     <%= link_to "Add to Cart", {:url => add_to_cart_path(@equipment_model)},
+                                 :href => add_to_cart_path(@equipment_model),
+                                 :method => :put, :remote => true, :class => 'btn btn-primary btn-large' %>
+   <% end %>
+

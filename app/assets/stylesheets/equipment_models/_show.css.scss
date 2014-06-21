@@ -3,17 +3,27 @@ $border-att: 1px solid darken($bodyBackground, 20%);
 
 .num,.head {
   text-align:center;
+}
 
+#calendar-ul {
+  margin: 0px;
 }
 
 .calendar_cell {
   border: $border-att;
+  border-radius: 3px;
   width: 13%;
   display: inline-block;
   vertical-align:top;
   background-color: rgba(0,255,0,0.5);
-  opacity: 0.8
+  opacity: 0.8;
+  padding-top: 3px;
+  padding-bottom: 5px;
  }
+
+.today {
+  border: 2px solid darken($bodyBackground, 30%);
+}
 
 .calendar_cell:hover{
   opacity:  1.0;
@@ -27,9 +37,6 @@ $border-att: 1px solid darken($bodyBackground, 20%);
   float: right;
 }
 
-.progress {
-	margin-bottom: 0;
-}
 .btn-large {
 	float: right;
 }

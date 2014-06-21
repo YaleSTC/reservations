@@ -34,6 +34,11 @@ class EquipmentModelsController < ApplicationController
     end
     @date = Time.current.to_date
     @max = @equipment_model.equipment_objects.count
+
+    @restricted = @equipment_model.model_restricted?(cart.reserver_id)
+    @blacked_out_start = Blackout.hard_blackout_exists_on_date(cart.start_date)
+    @blacked_out_end = Blackout.hard_blackout_exists_on_date(cart.due_date)
+
     #binding.pry
   end
 
