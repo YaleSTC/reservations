@@ -21,8 +21,8 @@ $border-att: 1px solid darken($bodyBackground, 20%);
   padding-bottom: 5px;
  }
 
-.today {
-  border: 1px solid darken($bodyBackground, 30%);
+.month-link {
+  float: right;
 }
 
 .calendar_cell:hover{

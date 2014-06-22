@@ -25,7 +25,7 @@ function renderCalendar(reservations, week_start, max) {
   });
   var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-  $('.month').children()[0].innerHTML = "Availability: " + months[week_start.getMonth()] + " " + date.getFullYear().toString();
+  $('.month').children()[0].innerHTML = months[week_start.getMonth()] + " " + date.getFullYear().toString();
 
 
   //set cell values based on reservations
@@ -53,10 +53,6 @@ function renderCalendar(reservations, week_start, max) {
     var green = Math.min(Math.floor(val*510/max),255).toString();
     var color = 'rgba(' + red + ',' + green + ',0,0.5)';
     $(this).css("background-color",color);
-
-    if ($(this).attr('id') == $('#res-data').data('today')) {
-      $(this).addClass('today');
-    }
 
   });
 
