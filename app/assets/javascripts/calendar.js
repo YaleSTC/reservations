@@ -97,6 +97,7 @@ $('#reservation-calendar').ready(function() {
   });
 
   $('#cart_start_date_cart').change(function() {
+    console.log('changed!');
     var reservations = $('#res-data').data('url');
     var week_start = new Date($(this).attr('value'));
 
