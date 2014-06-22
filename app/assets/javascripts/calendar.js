@@ -10,14 +10,15 @@ function dateToRubyString(date) {
 function dateToHeading(date) {
   var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   var day = days[date.getUTCDay()];
-  return date.getUTCDate().toString() + " - " + day;
+  return ' ' + day;
 };
 
 function renderCalendar(reservations, week_start, max) {
   //set initial values and date ids
   var date = new Date(week_start.getTime());
   $('.calendar_cell').each(function() {
-    $(this).children('.head').children()[0].innerHTML = dateToHeading(date);
+    $(this).children('.head').children()[0].innerHTML = date.getUTCDate().toString();
+    $(this).children('.head').children()[1].innerHTML = dateToHeading(date);
     $(this).children('.num').children()[0].innerHTML = max.toString();
     $(this).attr('id',dateToRubyString(date));
     date.setDate(date.getDate()+1);
