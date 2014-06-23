@@ -70,7 +70,11 @@ describe ReservationsController do
   #    (destroy if it hasn't been checked out), renew own
   #    (if it's checked out and not yet checked in)
   # -> Checkout Persons can:
-  #     ?
+  #     do everything Patrons can do
+  #     read, create... but not destroy Reservation
+  #         (unless it hasn't been checked out yet)
+  #     update reservation, override reservation errors and checkout errors
+  #     if respective AppConfig settings allow it
   # => Admins can:
   #     do everything
 
