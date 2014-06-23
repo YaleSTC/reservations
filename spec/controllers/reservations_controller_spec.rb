@@ -15,6 +15,7 @@ describe ReservationsController do
   after(:all) do
     User.delete_all
     AppConfig.delete_all
+    Reservation.delete_all
   end
 
   before(:each) do
@@ -24,62 +25,25 @@ describe ReservationsController do
     @controller.stub(:current_user).and_return(@user)
   end
 
-  ##### From routes.rb
-  # # Reservation views
-  # get '/reservations/manage/:user_id' => 'reservations#manage', :as => :manage_reservations_for_user
-  # get '/reservations/current/:user_id' => 'reservations#current', :as => :current_reservations_for_user
-  #
-  #
-  # # Reservation checkout / check-in actions
-  # put '/reservations/checkout/:user_id' => 'reservations#checkout', :as => :checkout
-  # put '/reservations/check-in/:user_id' => 'reservations#checkin', :as => :checkin
-  #
-  # # General Reservation resource routes
-  # resources :reservations do
-  #   member do
-  #     get :checkout_email
-  #     get :checkin_email
-  #     put :renew
-  #   end
-  #   get :autocomplete_user_last_name, :on => :collection
-  # end
+  ##### Public methods of ReservationsController with routes
 
-  ##### Public methods of ReservationsController
   ## Standard
-  # index (GET index / ), show (GET /:id), new (GET /new), create (POST /create), edit (GET /:id/edit), update (PUT /:id), destroy (DELETE /:id)
+  # index (GET index / ), show (GET /:id), new (GET /new),
+  # create (POST /create), edit (GET /:id/edit), update (PUT /:id),
+  # destroy (DELETE /:id)
+
   ## Custom
   # manage (GET /manage/:user_id), current (GET /current/:user_id)
-  # checkout, checkin, checkout_email, checkin_email, renew
+  # checkout (PUT '/reservations/checkout/:user_id'),
+  # checkin (PUT '/reservations/check-in/:user_id'),
+  # checkout_email (GET 'reservations/checkout_email'),
+  # checkin_email (GET 'reservations/checkin_email'),
+  # renew (PUT '/reservations/renew')
+
   ## ?
-  # upcoming
+  # upcoming, autocomplete_user_last_name
 
-  ##### Relevant lines from ability.rb
-  ### Admin
-  # can :manage, :all
-  ### Checkout
-  # can :manage, Reservation
-  # cannot :destroy, Reservation do |r|
-  #    r.checked_out != nil
-  # end
-  # unless AppConfig.first.checkout_persons_can_edit
-  #   cannot :update, Reservation
-  # end
-  # if AppConfig.first.override_on_create
-  #   can :override, :reservation_errors
-  # end
-  # if AppConfig.first.override_at_checkout
-  #   can :override, :checkout_errors
-  # end
-  ### Normal (and Checkout)
-  # can [:read,:create], Reservation, :reserver_id => user.id
-  # can :destroy, Reservation, :reserver_id => user.id, :checked_out => nil
-  # can :renew, Reservation do |r|
-  #   r.reserver_id == user.id
-  #   r.checked_in ==  nil
-  #   r.checked_out != nil
-  # end
-
-  ### Summary
+  ##### CanCan authentication summary
   # -> banned users can't do anything
   # -> Patrons can show and new/create/destroy their own reservation
   #    (destroy if it hasn't been checked out), renew own
@@ -128,10 +92,10 @@ describe ReservationsController do
     context 'when accessed by a banned user' do
       before(:each) do
         @controller.stub(:current_user).and_return(@banned)
+        get :index
       end
-      subject { get :index }
-      xit { should set_the_flash }
-      it { should be_redirect }
+      it { should set_the_flash }
+      it { response.should be_redirect }
     end
   end
 
