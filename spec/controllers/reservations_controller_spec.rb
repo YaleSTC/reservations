@@ -11,7 +11,7 @@ describe ReservationsController do
     @checkout_person = FactoryGirl.create(:checkout_person)
     @admin = FactoryGirl.create(:admin)
 
-    @reservation = FactoryGirl.create(:reservation, reserver: @user)
+    @reservation = FactoryGirl.build_stubbed(:reservation, reserver: @user)
   end
 
   after(:all) do
@@ -103,7 +103,7 @@ describe ReservationsController do
   end
 
   describe '#show GET /reservations/:id' do
-    context 'when accessed by a non-banned user' do=
+    context 'when accessed by a non-banned user' do
       context 'who is an admin' do
         it 'should display own reservation'
         it 'should display anybody\'s reservation'
