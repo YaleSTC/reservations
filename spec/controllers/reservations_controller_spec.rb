@@ -1,12 +1,14 @@
 require 'spec_helper'
 
 describe ReservationsController do
-  before(:all) do
+  render_views
+  before(:each) do
     @app_config = FactoryGirl.create(:app_config)
     @user = FactoryGirl.create(:user)
     @cart = FactoryGirl.build(:cart, reserver_id: @user.id)
-    @controller.stub(:current_user).and_return(@user)
+
     @controller.stub(:first_time_user).and_return(nil)
+    @controller.stub(:current_user).and_return(@user)
   end
 
   ##### From routes.rb
@@ -81,6 +83,35 @@ describe ReservationsController do
 
 
   describe '#index GET /reservations/' do
+    # check params[:filter]
+    # depending on admin status, default_filter changes
+    # depending on admin status, source of reservations (all v. own) changes
+    context 'when accessed by non-banned user' do
+      subject { get :index }
+      it { should be_success }
+      it { should render_template(:index) }
+      it 'populates @reservations_set with reservations with respect to params[filter]'
+      it 'passes @default as false if valid params[filter] is provided'
+      it 'passes @default as true if params[filter] is not provided'
+      it 'passes @default as true if invalid params[filter] is provided'
+
+      context 'who is an admin' do
+        it 'uses :upcoming as default filter'
+        it 'takes all Reservations as source'
+      end
+
+      context 'who is not an admin' do
+        it 'uses :reserved as the default filter'
+        it 'uses only reservations belonging to current user as source'
+      end
+    end
+
+    context 'when accessed by a banned user' do
+      before(:each)
+      subject { get :index }
+      it { should raise_error }
+      it { should be_redirect }
+    end
   end
 
   describe '#show GET /reservations/:id' do
