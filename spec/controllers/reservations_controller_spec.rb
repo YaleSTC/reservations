@@ -30,12 +30,39 @@ describe ReservationsController do
   # end
 
   ##### Public methods of ReservationsController
-  # index (GET index / ), show (GET /:id), new (GET /new), create (POST /create), edit (GET /:id/edit), update (PUT /:id)
-  # checkout, checkin, destroy, upcoming, manage (GET /manage/:user_id), current (GET /current/:user_id), checkout_email, checkin_email, renew
+  ## Standard
+  # index (GET index / ), show (GET /:id), new (GET /new), create (POST /create), edit (GET /:id/edit), update (PUT /:id), destroy (DELETE /:id)
+  ## Custom
+  # manage (GET /manage/:user_id), current (GET /current/:user_id)
+  # checkout, checkin, checkout_email, checkin_email, renew
+  ## ?
+  # upcoming
 
-  describe 'GET /reservations/manage/:user_id' do
+
+  describe '#index GET /reservations/' do
   end
 
-  describe 'GET /reservations/current/:user_id' do
+  describe '#show GET /reservations/:id' do
+  end
+
+  describe '#new GET /reservations/new' do
+  end
+
+  describe '#create POST /reservations/create' do
+  end
+
+  describe '#edit GET /reservations/:id/edit' do
+  end
+
+  describe '#update PUT /reservations/:id' do
+  end
+
+  describe '#destroy DELETE /reservations/:id' do
+  end
+
+  describe '#manage GET /reservations/manage/:user_id' do
+  end
+
+  describe '#current GET /reservations/current/:user_id' do
   end
 end
