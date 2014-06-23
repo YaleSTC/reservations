@@ -106,6 +106,8 @@ class ReservationsController < ApplicationController
 
   def edit
     set_reservation
+    @option_array = @reservation.equipment_model.equipment_objects.collect { |e|
+		[e.name, e.id] }
   end
 
   def update # for editing reservations; not for checkout or check-in
@@ -121,7 +123,21 @@ class ReservationsController < ApplicationController
       redirect_to :back and return
     end
 
+	message = "Successfully edited reservation."
+	
     # update attributes
+    unless params[:equipment_object] == ''
+		object = EquipmentObject.find(params[:equipment_object])
+		unless object.available?
+			r = object.current_reservation
+			r.equipment_object_id = @reservation.equipment_object_id
+			r.save
+			message << " Note equipment item #{r.equipment_object.name} is now assigned to \
+						#{ActionController::Base.helpers.link_to('reservation #' + r.id.to_s, reservation_path(r))} \
+						(#{r.reserver.render_name})"
+		end
+		@reservation.equipment_object_id = params[:equipment_object]
+	end
     @reservation.reserver_id = params[:reservation][:reserver_id]
     @reservation.start_date = start
     @reservation.due_date = due
@@ -131,7 +147,7 @@ class ReservationsController < ApplicationController
     @reservation.save
 
     # flash success and exit
-    flash[:notice] = "Successfully edited reservation."
+    flash[:notice] = message
     redirect_to @reservation
   end
 
