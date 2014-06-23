@@ -3,14 +3,19 @@ function decCellValue(cell) {
   obj.innerHTML = parseInt(obj.innerHTML) - 1;
 };
 
+function parseDate(dateString){
+//why the fck cant we have normal datestrings
+  var d = new Date(dateString);
+  var string = d.toISOString();
+  return string.substring(5,7) + "/" + string.substring(8,10) + '/' + string.substring(0,4);
+}
 function dateToRubyString(date) {
   return date.toISOString().substring(0,10);
 };
 
 function dateToHeading(date) {
   var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  var day = days[date.getUTCDay()];
-  return ' ' + day;
+  return ' ' + days[date.getUTCDay()];
 };
 
 function renderCalendar(reservations, week_start, max) {
@@ -26,7 +31,6 @@ function renderCalendar(reservations, week_start, max) {
   var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
   $('.month').children()[0].innerHTML = months[week_start.getMonth()] + " " + date.getFullYear().toString();
-
 
   //set cell values based on reservations
   for(var d = 0; d < reservations.length; d++) {
@@ -67,7 +71,6 @@ function shiftCalendar(offset) {
   if (week_start < today) {
     week_start.setTime(today.getTime());
   }
-
   renderCalendar(reservations,week_start,max);
 };
 
@@ -78,6 +81,7 @@ $('#reservation-calendar').ready(function() {
 
   $('.calendar_cell').click(function() {
     //set cart dates to day clicked
+    $('#cart_start_date_cart').attr('value', parseDate($(this).attr('id'))).trigger('change');
   });
 
   $('.control').click(function() {
