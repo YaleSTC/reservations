@@ -10,6 +10,8 @@ describe ReservationsController do
     @banned = FactoryGirl.create(:banned)
     @checkout_person = FactoryGirl.create(:checkout_person)
     @admin = FactoryGirl.create(:admin)
+
+    @reservation = FactoryGirl.create(:reservation, reserver: @user)
   end
 
   after(:all) do
@@ -67,6 +69,7 @@ describe ReservationsController do
       subject { get :index }
       it { should be_success }
       it { should render_template(:index) }
+
       it 'populates @reservations_set with reservations with respect to params[filter]'
       it 'passes @default as false if valid params[filter] is provided'
       it 'passes @default as true if params[filter] is not provided'
@@ -100,6 +103,27 @@ describe ReservationsController do
   end
 
   describe '#show GET /reservations/:id' do
+    context 'when accessed by a non-banned user' do=
+      context 'who is an admin' do
+        it 'should display own reservation'
+        it 'should display anybody\'s reservation'
+      end
+
+      context 'who is not an admin' do
+        it 'should display own reservation'
+        it 'should not display someone else\'s reservation'
+      end
+    end
+
+    context 'when accessed by a banned user' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@banned)
+        Reservation.stub(:find).and_return(@reservation)
+        get :show, id: 1
+      end
+      it { should set_the_flash }
+      it { response.should be_redirect }
+    end
   end
 
   describe '#new GET /reservations/new' do
