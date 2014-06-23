@@ -23,7 +23,7 @@
     </div>
     <% if equipment_model.model_restricted?(cart.reserver_id) %>
       <div class="add_to_cart_box">
-        <%= button_tag "Add to Cart", :class => "btn disabled", :id => 'add_to_cart' %>
+        <%= button_tag "Add to Cart", :class => "btn disabled add_to_cart_disabled"%>
         <%= link_to "#qualifications_modal", class: 'not-qualified-icon', rel: "tooltip", title: "Not Qualified (click for more info)", :"data-toggle" => 'modal' do %>
           <i class="icon-warning-sign"></i>
         <% end %>
@@ -43,11 +43,11 @@
 
     <% elsif equipment_model.num_available(cart.start_date, cart.due_date) > 0 %>
       <div class="add_to_cart_box">
-        <%= link_to "Add to Cart", add_to_cart_path(equipment_model), :method => :put, :remote => true, :class => "btn", :id => "add_to_cart" %>
+        <%= link_to "Add to Cart", add_to_cart_path(equipment_model), :method => :put, :remote => true, :class => "btn add_to_cart" %>
       </div>
     <% else %>
       <div class="add_to_cart_box">
-        <%#= button_tag "Add to Cart", :class => "btn disabled", :id => 'add_to_cart' %>
+        <%= button_tag "Add to Cart", :class => "btn disabled add_to_cart_disabled"%>
         <%# this line is commented out to remove the button when no equipment is available, see issue 555 %>
       </div>
     <% end %>

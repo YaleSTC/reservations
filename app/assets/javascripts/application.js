@@ -321,7 +321,7 @@ $(document).on('change', '.autosubmitme', function() {
 //});
 
 // click add to cart button
-$(document).on('click', '#add_to_cart', function () {
+$(document).on('click', '.add_to_cart', function () {
   pause_cart();
 });
 
