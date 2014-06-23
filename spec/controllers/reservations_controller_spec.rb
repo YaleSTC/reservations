@@ -38,6 +38,43 @@ describe ReservationsController do
   ## ?
   # upcoming
 
+  ##### Relevant lines from ability.rb
+  ### Admin
+  # can :manage, :all
+  ### Checkout
+  # can :manage, Reservation
+  # cannot :destroy, Reservation do |r|
+  #    r.checked_out != nil
+  # end
+  # unless AppConfig.first.checkout_persons_can_edit
+  #   cannot :update, Reservation
+  # end
+  # if AppConfig.first.override_on_create
+  #   can :override, :reservation_errors
+  # end
+  # if AppConfig.first.override_at_checkout
+  #   can :override, :checkout_errors
+  # end
+  ### Normal (and Checkout)
+  # can [:read,:create], Reservation, :reserver_id => user.id
+  # can :destroy, Reservation, :reserver_id => user.id, :checked_out => nil
+  # can :renew, Reservation do |r|
+  #   r.reserver_id == user.id
+  #   r.checked_in ==  nil
+  #   r.checked_out != nil
+  # end
+
+  ### Summary
+  # -> banned users can't do anything
+  # -> Patrons can show and new/create/destroy their own reservation
+  #    (destroy if it hasn't been checked out), renew own
+  #    (if it's checked out and not yet checked in)
+  # -> Checkout Persons can:
+  #     ?
+  # => Admins can:
+  #     do everything
+
+
 
   describe '#index GET /reservations/' do
   end
