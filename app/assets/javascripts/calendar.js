@@ -80,21 +80,8 @@ $('#reservation-calendar').ready(function() {
     //set cart dates to day clicked
   });
 
-  $('.f_day').click(function() {
-    shiftCalendar(1);
+  $('.control').click(function() {
+    shiftCalendar(parseInt($(this).attr('change')));
   });
-
-  $('.b_day').click(function() {
-    shiftCalendar(-1);
-  });
-
-  $('.f_week').click(function() {
-    shiftCalendar(7);
-  });
-
-  $('.b_week').click(function() {
-    shiftCalendar(-7);
-  });
-
 
 });
