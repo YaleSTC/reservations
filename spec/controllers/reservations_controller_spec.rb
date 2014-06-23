@@ -2,9 +2,22 @@ require 'spec_helper'
 
 describe ReservationsController do
   render_views
-  before(:each) do
+
+  before(:all) do
     @app_config = FactoryGirl.create(:app_config)
+
     @user = FactoryGirl.create(:user)
+    @banned = FactoryGirl.create(:banned)
+    @checkout_person = FactoryGirl.create(:checkout_person)
+    @admin = FactoryGirl.create(:admin)
+  end
+
+  after(:all) do
+    User.delete_all
+    AppConfig.delete_all
+  end
+
+  before(:each) do
     @cart = FactoryGirl.build(:cart, reserver_id: @user.id)
 
     @controller.stub(:first_time_user).and_return(nil)
@@ -96,20 +109,28 @@ describe ReservationsController do
       it 'passes @default as true if invalid params[filter] is provided'
 
       context 'who is an admin' do
+        before(:each) do
+          @controller.stub(:current_user).and_return(@admin)
+        end
         it 'uses :upcoming as default filter'
         it 'takes all Reservations as source'
       end
 
       context 'who is not an admin' do
+        before(:each) do
+          @controller.stub(:current_user).and_return(@user)
+        end
         it 'uses :reserved as the default filter'
         it 'uses only reservations belonging to current user as source'
       end
     end
 
     context 'when accessed by a banned user' do
-      before(:each)
+      before(:each) do
+        @controller.stub(:current_user).and_return(@banned)
+      end
       subject { get :index }
-      it { should raise_error }
+      xit { should set_the_flash }
       it { should be_redirect }
     end
   end
