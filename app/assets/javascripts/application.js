@@ -107,7 +107,7 @@
   };
 
 $(document).ready(function() {
-  
+
   $('.checkin-click').click( function() {
 	var box = $(this).find(":checkbox");
 	box.prop("checked", !box.prop("checked"));
@@ -117,7 +117,7 @@ $(document).ready(function() {
 		$(this).toggleClass("selected",box.prop("checked"));
 	}
   });
-  
+
   $('#checkout_button').click(function() {
     var flag = validate_checkout();
     confirm_checkinout(flag);
@@ -150,9 +150,11 @@ $(document).ready(function() {
   });
 
   // Ugly hack to avoid reinitializing #table_log with the correct order
-  if (wideDataTables[0].id == "table_log") {
-    wideDataTables.fnSort([[0, "desc"]]);
-  }
+  try {
+    if (wideDataTables[0].id == "table_log") {
+      wideDataTables.fnSort([[0, "desc"]]);
+    }
+  } catch (TypeError) {}
 
   $('.history_table').dataTable({
     "sDom": "<'row'<l><f>r>t<'row'<'span3'i><p>>",
