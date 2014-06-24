@@ -107,7 +107,7 @@
   };
 
 $(document).ready(function() {
-  
+
   $('.checkin-click').click( function() {
 	var box = $(this).find(":checkbox");
 	box.prop("checked", !box.prop("checked"));
@@ -117,7 +117,7 @@ $(document).ready(function() {
 		$(this).toggleClass("selected",box.prop("checked"));
 	}
   });
-  
+
   $('#checkout_button').click(function() {
     var flag = validate_checkout();
     confirm_checkinout(flag);
@@ -345,3 +345,8 @@ $(document).on('railsAutocomplete.select', '#fake_reserver_id', function(event, 
   $("#reserver_id").val(data.item.id); // updating reserver_id here to make sure that it is done before it submits
   $(this).parents('form').submit();
 });
+
+function getDeactivationReason(e) {
+  var p = prompt("Write down the reason for deactivation of this equipment object.")
+  e.href += "?deactivation_reason=" + encodeURIComponent(p)
+}
