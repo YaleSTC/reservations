@@ -106,16 +106,16 @@ class ReservationsController < ApplicationController
   def update # for editing reservations; not for checkout or check-in
     set_reservation
 
-	#make copy of params
-	res = params[:reservation].clone
-	
+  	#make copy of params
+  	res = params[:reservation].clone
+
     # adjust dates to match intended input of Month / Day / Year
     res[:start_date] = Date.strptime(params[:reservation][:start_date],'%m/%d/%Y')
     res[:due_date] = Date.strptime(params[:reservation][:due_date],'%m/%d/%Y')
 
     # save changes to database
     Reservation.update(@reservation, res)
-    
+
     # flash success and exit
     flash[:notice] = "Successfully edited reservation."
     redirect_to @reservation
