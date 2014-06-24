@@ -1,7 +1,7 @@
 class LogController < ApplicationController
   helper LogHelper
 
-  authorize_resource, :class => false
+  authorize_resource class: false
 
   def index
     # Past paper_trail 2.7-stable, Version is namespaced as PaperTrail::Version
