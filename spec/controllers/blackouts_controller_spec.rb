@@ -55,7 +55,7 @@ describe BlackoutsController do
         get :new
       end
       it_behaves_like 'page success'
-      it { should render_template(:show) }
+      it { should render_template(:new) }
     end
     context 'GET new_recurring' do
       before do
@@ -66,22 +66,30 @@ describe BlackoutsController do
     end
     context 'GET edit' do
       before do
-        get :edit
+        get :edit, id: object
       end
       it_behaves_like 'page success'
       it { should render_template(:edit) }
     end
     context 'POST create_recurring' do
-      before do
-        post :create_recurring
+      context 'with correct params' do
+        before do
+          param_hash = FactoryGirl.attributes_for(:blackout_in_set)
+          param_hash[:start_date] = '06/06/2014'
+          param_hash[:end_date] = '06/07/2014'
+          post :create_recurring, blackout: param_hash
+        end
       end
+
       it { should redirect_to(:index) }
     end
     context 'POST create' do
-      before do
-        post :create
+      context 'with correct params' do
+        before do
+          post :create, blackout: FactoryGirl.attributes_for(:blackout)
+        end
+        it { should redirect_to(:index) }
       end
-      it { should redirect_to(:index) }
     end
     context 'PUT update' do
       before do
