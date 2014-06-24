@@ -27,6 +27,7 @@ class AnnouncementsController < ApplicationController
 
 
   def create
+    binding.pry
     parse_time
     @announcement = Announcement.new(params[:announcement])
     if @announcement.save

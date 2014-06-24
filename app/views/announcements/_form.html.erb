@@ -1,11 +1,13 @@
 <%= simple_form_for @announcement , html: { multipart: true}  do |f| %>
   <%= f.error_notification %>
 
-  <%= f.label "Starts At" %>
-  <%= f.datepicker :starts_at, :value => @announcement.starts_at.strftime('%m/%d/%Y'), class: "date_start" %>
- 
-  <%= f.label "Ends At" %>
-  <%= f.datepicker :ends_at, :value => @announcement.ends_at.strftime('%m/%d/%Y'), class: "date_end" %>
+  <%= f.label "Starts At:" %>
+  <%= f.datepicker :starts_at, value: @announcement.starts_at.strftime('%m/%d/%y'), class: 'date_start'%>
+  <%= f.input :starts_at, as: :hidden, input_html: {id: 'date_start_alt'} %>
+
+  <%= f.label "Ends At:" %>
+  <%= f.datepicker :ends_at, value: @announcement.ends_at.strftime('%m/%d/%y'), class: 'date_end', altField: '#date_end_alt', altFormat: 'yy-mm-dd' %>
+  <%= f.input :ends_at, as: :hidden, input_html: {id: 'date_end_alt'} %>
   
   <%#= f.label "Visible To" %>
   <%#= select_tag(:visible_to, options_for_select([['Everyone','everyone'],['Only Admin','admin'],['Only Checkout','checkout']]) %>
