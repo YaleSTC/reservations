@@ -104,6 +104,14 @@ describe ReservationsController do
 
   describe '#show GET /reservations/:id' do
     context 'when accessed by a non-banned user' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@user)
+        Reservation.stub(:find).and_return(@reservation)
+        get :show, id: 1
+      end
+      it { response.should be_success }
+      it { should render_template(:show) }
+
       context 'who is an admin' do
         it 'should display own reservation'
         it 'should display anybody\'s reservation'
@@ -121,8 +129,8 @@ describe ReservationsController do
         Reservation.stub(:find).and_return(@reservation)
         get :show, id: 1
       end
-      it { should set_the_flash }
       it { response.should be_redirect }
+      it { should set_the_flash }
     end
   end
 
