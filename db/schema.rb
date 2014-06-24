@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140306014551) do
+ActiveRecord::Schema.define(:version => 20140617164155) do
 
   create_table "announcements", :force => true do |t|
     t.text     "message"
@@ -43,7 +43,7 @@ ActiveRecord::Schema.define(:version => 20140306014551) do
     t.text     "deleted_missed_reservation_email_body"
     t.boolean  "send_notifications_for_deleted_missed_reservations", :default => true
     t.boolean  "checkout_persons_can_edit",                          :default => false
-    t.boolean  "require_phone",                                      :default => true
+    t.boolean  "require_phone",                                      :default => false
     t.boolean  "viewed",                                             :default => true
     t.boolean  "override_on_create",                                 :default => false
     t.boolean  "override_at_checkout",                               :default => false
@@ -133,14 +133,6 @@ ActiveRecord::Schema.define(:version => 20140306014551) do
     t.integer "equipment_model_id", :null => false
   end
 
-  create_table "equipment_models_reservations", :force => true do |t|
-    t.integer  "equipment_model_id"
-    t.integer  "reservation_id"
-    t.integer  "quantity"
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
-  end
-
   create_table "equipment_objects", :force => true do |t|
     t.string   "name"
     t.string   "serial"
@@ -149,13 +141,6 @@ ActiveRecord::Schema.define(:version => 20140306014551) do
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
     t.datetime "deleted_at"
-  end
-
-  create_table "equipment_objects_reservations", :force => true do |t|
-    t.integer  "equipment_object_id"
-    t.integer  "reservation_id"
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
   end
 
   create_table "requirements", :force => true do |t|
