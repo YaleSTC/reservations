@@ -211,7 +211,7 @@ ActiveRecord::Schema.define(:version => 20140610134345) do
     t.datetime "updated_at",                                      :null => false
     t.datetime "deleted_at"
     t.boolean  "terms_of_service_accepted"
-    t.string   "view_mode",                 :default => "admin"
+    t.string   "view_mode"
     t.string   "role",                      :default => "normal"
   end
 

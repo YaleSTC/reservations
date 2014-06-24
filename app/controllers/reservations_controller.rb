@@ -90,10 +90,16 @@ class ReservationsController < ApplicationController
           end
           cart.items.each { |item| CartReservation.delete(item) }
           session[:cart] = Cart.new
-          if AppConfig.first.reservation_confirmation_email_active?
-            #UserMailer.reservation_confirmation(complete_reservation).deliver
+
+          # emails are probably failing---this code was already commented out 2014.06.19, and we don't know why.
+          #if AppConfig.first.reservation_confirmation_email_active?
+          #  #UserMailer.reservation_confirmation(complete_reservation).deliver
+          #end
+          if @reservation.approval_status == "auto"
+            flash[:notice] = "Reservation created successfully"
+          else
+            flash[:notice] = "Reservation successfully requested"
           end
-          flash[:notice] = "Reservation created successfully"
           if can? :manage, Reservation
             if params[:reservation][:start_date].to_date === Date::today.to_date
               flash[:notice] = "Are you simultaneously checking out equipment for someone? Note that\
