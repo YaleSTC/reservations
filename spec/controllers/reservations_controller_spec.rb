@@ -1,5 +1,18 @@
 require 'spec_helper'
 
+shared_context 'banned user' do
+  before(:each) do
+    @controller.stub(:current_user).and_return(FactoryGirl.create(:banned))
+    Reservation.stub(:find).and_return(FactoryGirl.build_stubbed(:reservation, reserver: @user))
+  end
+end
+
+shared_examples 'cannot access page' do
+  it { response.should be_redirect }
+  it { should set_the_flash }
+end
+
+
 describe ReservationsController do
   render_views
 
@@ -93,12 +106,9 @@ describe ReservationsController do
     end
 
     context 'when accessed by a banned user' do
-      before(:each) do
-        @controller.stub(:current_user).and_return(@banned)
-        get :index
-      end
-      it { should set_the_flash }
-      it { response.should be_redirect }
+      include_context 'banned user'
+      before(:each) { get :index }
+      it_behaves_like 'cannot access page'
     end
   end
 
@@ -135,6 +145,33 @@ describe ReservationsController do
   end
 
   describe '#new GET /reservations/new' do
+    # unhappy paths: banned user, there is no reservation in the cart
+    context 'when accessed by a banned user with non-empty cart' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@banned)
+        @cart.items.stub(:empty?).and_return(false)
+        get :new
+      end
+      it { response.should be_redirect }
+      it { should set_the_flash }
+    end
+
+    context 'when accessed by a non-banned user' do
+      context 'with an empty cart' do
+        before(:each) do
+          @controller.stub(:current_user).and_return(@user)
+          @cart.items.stub(:empty?).and_return(true)
+          get :new
+        end
+        it { response.should be_redirect }
+        it { should set_the_flash }
+      end
+    end
+    context 'when accessed by banned user' do
+      include_context 'banned user'
+      before(:each) { get :new }
+      it_behaves_like 'cannot access page'
+    end
   end
 
   describe '#create POST /reservations/create' do
