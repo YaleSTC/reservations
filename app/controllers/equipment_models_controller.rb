@@ -1,9 +1,7 @@
 class EquipmentModelsController < ApplicationController
   layout 'application_with_sidebar', only: :show
-
-  before_filter :require_admin
+  load_and_authorize_resource
   before_filter :set_equipment_model, only: [:show, :edit, :update, :destroy]
-  skip_before_filter :require_admin, only: [:index, :show]
   before_filter :set_category_if_possible, only: [:index, :new]
 
   include ActivationHelper
@@ -89,9 +87,11 @@ class EquipmentModelsController < ApplicationController
     def delete_procedures(params, phase)
       # phase needs to be equal to either "checkout" or "checkin"
       phase_params = params[:equipment_model][:"#{phase}_procedures_attributes"]
-      phase_params.each do |k, v|
-        if v["id"] and v["_destroy"] != "false"
-          @equipment_model.send(:"#{phase}_procedures")[k.to_i].destroy(:force)
+      unless phase_params.nil?
+        phase_params.each do |k, v|
+          if v["id"] and v["_destroy"] != "false"
+            @equipment_model.send(:"#{phase}_procedures")[k.to_i].destroy(:force)
+          end
         end
       end
     end

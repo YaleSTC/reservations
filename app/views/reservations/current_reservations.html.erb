@@ -24,7 +24,7 @@
 <% end %>
 
 <% if @user_overdue_reservations_set.empty? and @user_checked_out_today_reservations_set.empty? and @user_checked_out_previous_reservations_set.empty? and @user_reserved_reservations_set.empty? %>
-  <% if current_user.can_checkout? %>
+  <% if can? :manage, Reservation %>
     <h3>There are no current or upcoming reservations associated with this user.</h3>
   <% else %>
     <h3>There are no current or upcoming reservations associated with your account.</h3>

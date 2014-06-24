@@ -4,7 +4,7 @@
     $(window.location.reload());
 <% elsif params[:action] == "update" %>
   $(window.location.replace("<%= user_path(@user) %>"));
-<% elsif current_user.can_checkout? %>
+<% elsif can? :create, User %>
   $(window.location.replace("<%= user_path(@user) %>"));
 <% else %>
     $(window.location.replace("<%= root_path %>"));

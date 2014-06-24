@@ -1,5 +1,5 @@
 class ReportsController < ApplicationController
-  before_filter :require_admin
+  authorize_resource :class => false
   ResRelation = Struct.new(:name, :relation, :params) # relations to build data columns ()
   StatRow = Struct.new(:name, :data, :link_path) # output structure (name = string, data = array, link_path = link for first element in row)
   ResSetInfo = Struct.new(:name, :id_type, :ids, :link_path) #info for a reservation set (building rows of data).

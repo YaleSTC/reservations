@@ -2,7 +2,7 @@
   <thead>
   <tr>
     <th>#</th>
-    <% if current_user.can_checkout? %>
+    <% if can? :manage, Reservation %>
       <th>Reserver</th>
     <% end %>
     <th>Equipment</th>
@@ -16,11 +16,11 @@
   <% for reservation in reservations_list %>
     <tr>
       <td><%= link_to reservation.id, reservation %></td>
-      <% if current_user.can_checkout? %>
+      <% if can? :manage, Reservation %>
         <td>
         <div class="dropdown">
             <%= link_to reservation.reserver.name, '#', :"data-toggle" => 'dropdown' %>
-            <% if current_user.can_checkout? && reservation.reserver.id %>
+            <% if can? :manage, Reservation && reservation.reserver.id %>
               <ul class="dropdown-menu">
                 <li><%= link_to 'Profile', reservation.reserver %></li>
                 <li><%= link_to "Manage reservations", manage_reservations_for_user_path(reservation.reserver.id) %></li>

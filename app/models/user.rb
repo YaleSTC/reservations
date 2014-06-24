@@ -54,28 +54,6 @@ class User < ActiveRecord::Base
     [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name].join(" ")
   end
 
-  def can_checkout?
-    role == 'checkout' || self.is_admin?(as: 'admin') || self.is_admin?(as: 'checkout')
-  end
-
-  # if specified in appconfigs, these two methods will return true for checkout people. It will always return true for admins in admin mode
-  def can_override_reservation_restrictions?
-    return true if ( self.can_checkout? && AppConfig.first.override_on_create == true) or self.is_admin?(as: 'admin')
-  end
-
-  def can_override_checkout_restrictions?
-    return true if ( self.can_checkout? && AppConfig.first.override_at_checkout == true ) or self.is_admin?(as: 'admin')
-  end
-
-  def is_admin?(options = {})
-    if role == 'admin'
-      if options.empty? || options[:as] == view_mode
-        return true
-      end
-    end
-    return false
-  end
-
   def equipment_objects
     self.reservations.collect{ |r| r.equipment_object }.flatten
   end

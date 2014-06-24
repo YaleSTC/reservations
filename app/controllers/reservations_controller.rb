@@ -1,4 +1,6 @@
 class ReservationsController < ApplicationController
+
+  load_and_authorize_resource
   include Autocomplete
   # this is a call to the gem method 'autocomplete' of the rails3-jquery-autocomplete gem
   # it sets up what table and attributes will be used to display autocomplete information when searched
@@ -8,8 +10,7 @@ class ReservationsController < ApplicationController
   layout 'application_with_sidebar'
 
   before_filter :require_login, only: [:index, :show]
-  before_filter :permissions_check, only: [:check_out, :check_in, :edit, :update]
-
+  before_filter :set_reservation, only: [:show,:edit,:update,:destroy,:checkout_email,:checkin_email,:renew]
   def set_user
     @user = User.find(params[:user_id])
   end
@@ -20,23 +21,26 @@ class ReservationsController < ApplicationController
 
   def index
     #define our source of reservations depending on user status
-    reservations_source = current_user.can_checkout? ? Reservation : current_user.reservations
-    default_filter = current_user.can_checkout? ? :upcoming : :reserved
+    @reservations_source = (can? :manage, Reservation) ? Reservation : current_user.reservations
+    default_filter = (can? :manage, Reservation) ? :upcoming : :reserved
 
     filters = [:reserved, :checked_out, :overdue, :missed, :returned, :upcoming]
     #if the filter is defined in the params, store those reservations
     filters.each do |filter|
       if params[filter]
-        @reservations_set = [reservations_source.send(filter)].delete_if{|a| a.empty?}
+        @reservations_set = [@reservations_source.send(filter)].delete_if{|a| a.empty?}
       end
     end
 
+    @default = false
     #if no filter is defined
-    @reservations_set ||= [reservations_source.send(default_filter)].delete_if{|a| a.empty?}
+    if @reservations_set.nil?
+      @default = true
+      @reservations_set = [@reservations_source.send(default_filter)].delete_if{|a| a.empty?}
+    end
   end
 
   def show
-    set_reservation
   end
 
   def new
@@ -48,7 +52,7 @@ class ReservationsController < ApplicationController
       @errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
 
       unless @errors.empty?
-        if current_user.is_admin?(as: 'admin')
+        if can? :override, :reservation_errors
           flash[:error] = 'Are you sure you want to continue? Please review the errors below.'
         else
           flash[:error] = 'Please review the errors below.'
@@ -70,7 +74,7 @@ class ReservationsController < ApplicationController
             @reservation = Reservation.new(params[:reservation])
             @reservation.equipment_model =  cart_res.equipment_model
             # the attribute is called from_admin, but now that we can give checkout people this permission, the name doesn't quite make sense.
-            @reservation.from_admin = current_user.can_override_reservation_restrictions?
+            @reservation.from_admin = (can? :override, :reservation_errors)
             @reservation.save!
             successful_reservations << @reservation
           end
@@ -80,7 +84,7 @@ class ReservationsController < ApplicationController
             #UserMailer.reservation_confirmation(complete_reservation).deliver
           end
           flash[:notice] = "Reservation created successfully"
-          if current_user.can_checkout?
+          if can? :manage, Reservation
             if params[:reservation][:start_date].to_date === Date::today.to_date
 				flash[:notice] = "Are you simultaneously checking out equipment for someone? Note that\
 									only the reservation has been made. Don't forget to continue to checkout."
@@ -100,12 +104,11 @@ class ReservationsController < ApplicationController
 
 
   def edit
-    set_reservation
+    @option_array = @reservation.equipment_model.equipment_objects.collect { |e|
+		[e.name, e.id] }
   end
 
   def update # for editing reservations; not for checkout or check-in
-    set_reservation
-
   	#make copy of params
   	res = params[:reservation].clone
 
@@ -113,11 +116,26 @@ class ReservationsController < ApplicationController
     res[:start_date] = Date.strptime(params[:reservation][:start_date],'%m/%d/%Y')
     res[:due_date] = Date.strptime(params[:reservation][:due_date],'%m/%d/%Y')
 
+    message = "Successfully edited reservation."
+    # update attributes
+    unless params[:equipment_object] == ''
+  		object = EquipmentObject.find(params[:equipment_object])
+	  	unless object.available?
+		  	r = object.current_reservation
+			  r.equipment_object_id = @reservation.equipment_object_id
+  			r.save
+	  		message << " Note equipment item #{r.equipment_object.name} is now assigned to \
+						#{ActionController::Base.helpers.link_to('reservation #' + r.id.to_s, reservation_path(r))} \
+						(#{r.reserver.render_name})"
+		  end
+		  res << {equipment_object_id: params[:equipment_object]}
+	  end
+
     # save changes to database
     Reservation.update(@reservation, res)
 
     # flash success and exit
-    flash[:notice] = "Successfully edited reservation."
+    flash[:notice] = message
     redirect_to @reservation
   end
 
@@ -188,7 +206,7 @@ class ReservationsController < ApplicationController
 
       # act on the errors
       if !error_msgs.empty? # If any requirements are not met...
-        if current_user.can_override_checkout_restrictions? # Admins can ignore them
+        if can? :override, :checkout_errors # Admins can ignore them
           error_msgs = " Admin Override: Equipment has been successfully checked out even though " + error_msgs
         else # everyone else is redirected
           flash[:error] = error_msgs
@@ -279,7 +297,6 @@ class ReservationsController < ApplicationController
 
   def destroy
     set_reservation
-    require_user_or_checkout_person(@reservation.reserver)
     @reservation.destroy
     flash[:notice] = "Successfully destroyed reservation."
     redirect_to reservations_url
@@ -307,7 +324,6 @@ class ReservationsController < ApplicationController
 
   #two paths to create receipt emails for checking in and checking out items.
   def checkout_email
-    set_reservation
     if UserMailer.checkout_receipt(@reservation).deliver
       redirect_to :back
       flash[:notice] = "Successfully delivered receipt email."
@@ -318,7 +334,6 @@ class ReservationsController < ApplicationController
   end
 
   def checkin_email
-    set_reservation
     if UserMailer.checkin_receipt(@reservation).deliver
       redirect_to :back
       flash[:notice] = "Successfully delivered receipt email."
@@ -329,7 +344,6 @@ class ReservationsController < ApplicationController
   end
 
   def renew
-    set_reservation
     @reservation.due_date += @reservation.max_renewal_length_available.days
     if @reservation.times_renewed == NIL # this check can be removed? just run the else now?
       @reservation.times_renewed = 1
@@ -346,19 +360,5 @@ class ReservationsController < ApplicationController
       format.js{render action: "renew_box"}
     end
   end
-
-  private
-  def permissions_check
-    if params[:action] == 'checkout' || params[:action] == 'checkin'
-      require_checkout_person
-    elsif params[:action] == 'edit' || params[:action] == 'update'
-      if @app_configs.checkout_persons_can_edit == true
-        require_checkout_person
-      else
-        require_admin
-      end
-    end
-  end
-
 
 end
