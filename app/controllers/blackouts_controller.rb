@@ -9,10 +9,6 @@ class BlackoutsController < ApplicationController
   # ---------- before filter methods ------------ #
 
   def set_params_for_create_and_update
-    # correct for date formatting
-    params[:blackout][:start_date] = Date.strptime(params[:blackout][:start_date],'%m/%d/%Y')
-    params[:blackout][:end_date] = Date.strptime(params[:blackout][:end_date],'%m/%d/%Y')
-
     params[:blackout][:created_by] = current_user[:id] # Last-edited-by is automatically set
     params[:blackout][:equipment_model_id] = 0 # If per-equipment_model blackouts are implemented, delete this line.
   end

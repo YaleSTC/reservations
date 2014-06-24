@@ -27,8 +27,6 @@ class AnnouncementsController < ApplicationController
 
 
   def create
-    binding.pry
-    parse_time
     @announcement = Announcement.new(params[:announcement])
     if @announcement.save
       redirect_to(announcements_url, :notice => 'Announcement was successfully created.')
@@ -41,7 +39,6 @@ class AnnouncementsController < ApplicationController
   end
 
   def update
-    parse_time
     if  @announcement.update_attributes(params[:announcement])
       redirect_to(announcements_url, :notice => 'Announcement was successfully updated.')
     else
@@ -54,9 +51,4 @@ class AnnouncementsController < ApplicationController
     redirect_to(announcements_url)
   end
 
-  private
-  def parse_time
-    params[:announcement][:starts_at] = Date.strptime(params[:announcement][:starts_at],'%m/%d/%Y')
-    params[:announcement][:ends_at] = Date.strptime(params[:announcement][:ends_at],'%m/%d/%Y')
-  end
 end

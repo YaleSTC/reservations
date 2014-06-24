@@ -1,9 +1,0 @@
-<%= @f.label "Starts At:" %>
-<%= @f.datepicker :starts_at, value: @object.starts_at.strftime('%m/%d/%Y'), class: 'date_start', altField: '#date_start_alt', altFormat: 'yy-mm-dd' %>
-<%= @f.input :starts_at, as: :hidden, input_html: {id: 'date_start_alt'} %>
-
-<%= @f.label "Ends At:" %>
-<%= @f.datepicker :ends_at, value: @object.ends_at.strftime('%m/%d/%Y'), class: 'date_end', altField: '#date_end_alt', altFormat: 'yy-mm-dd' %>
-<%= @f.input :ends_at, as: :hidden, input_html: {id: 'date_end_alt'} %>
-
-
