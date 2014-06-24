@@ -134,43 +134,39 @@ describe ReservationsController do
     end
 
     context 'when accessed by a banned user' do
-      before(:each) do
-        @controller.stub(:current_user).and_return(@banned)
-        Reservation.stub(:find).and_return(@reservation)
-        get :show, id: 1
-      end
-      it { response.should be_redirect }
-      it { should set_the_flash }
+      include_context 'banned user'
+      before(:each) { get :show, id: 1 }
+      it_behaves_like 'cannot access page'
     end
   end
 
   describe '#new GET /reservations/new' do
     # unhappy paths: banned user, there is no reservation in the cart
-    context 'when accessed by a banned user with non-empty cart' do
-      before(:each) do
-        @controller.stub(:current_user).and_return(@banned)
-        @cart.items.stub(:empty?).and_return(false)
-        get :new
-      end
-      it { response.should be_redirect }
-      it { should set_the_flash }
+    context 'when accessed by banned user' do
+      include_context 'banned user'
+      before(:each) { get :new }
+      it_behaves_like 'cannot access page'
     end
 
     context 'when accessed by a non-banned user' do
+      before(:each) { @controller.stub(:current_user).and_return(@user) }
+
       context 'with an empty cart' do
         before(:each) do
-          @controller.stub(:current_user).and_return(@user)
-          @cart.items.stub(:empty?).and_return(true)
           get :new
         end
         it { response.should be_redirect }
         it { should set_the_flash }
       end
-    end
-    context 'when accessed by banned user' do
-      include_context 'banned user'
-      before(:each) { get :new }
-      it_behaves_like 'cannot access page'
+
+      context 'with a non-empty cart' do
+        before(:each) do
+          get :new, nil, { cart: FactoryGirl.build(:cart_with_items, reserver_id: 1) }
+        end
+
+        it 'should display errors'
+        it { should render_template(:new) }
+      end
     end
   end
 
