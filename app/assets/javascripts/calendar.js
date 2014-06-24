@@ -42,7 +42,7 @@ function renderCalendar(reservations, week_start, max) {
         //for each reservation, decrement availability per day
         var begin_date = ((week_start > start) ? week_start : start);
         var end_date = ((week_end < end) ? week_end : end);
-        for (var date = begin_date;
+        for (var date = new Date(begin_date.getTime());
              date <= end_date;
              date.setDate(date.getDate()+1)) {
           decCellValue($('#'+dateToRubyString(date)));
