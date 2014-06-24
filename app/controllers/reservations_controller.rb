@@ -122,7 +122,7 @@ class ReservationsController < ApplicationController
   		object = EquipmentObject.find(params[:equipment_object])
 	  	unless object.available?
 		  	r = object.current_reservation
-			  r.equipment_object_id = @reservation.equipment_object_id
+        r.equipment_object_id = @reservation.equipment_object_id
   			r.save
 	  		message << " Note equipment item #{r.equipment_object.name} is now assigned to \
 						#{ActionController::Base.helpers.link_to('reservation #' + r.id.to_s, reservation_path(r))} \
