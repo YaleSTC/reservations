@@ -29,7 +29,7 @@ Reservations::Application.configure do
 
   #Rails 3 assets
   config.assets.compile = true
-  config.assets.compress = true
+  config.assets.compress = false
   config.assets.js_compressor = :uglifier
   config.assets.debug = false
   config.assets.digest = false
