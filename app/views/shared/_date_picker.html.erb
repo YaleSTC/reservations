@@ -1,24 +1,9 @@
-<%#
+<%= @f.label "Starts At:" %>
+<%= @f.datepicker :starts_at, value: @object.starts_at.strftime('%m/%d/%Y'), class: 'date_start', altField: '#date_start_alt', altFormat: 'yy-mm-dd' %>
+<%= @f.input :starts_at, as: :hidden, input_html: {id: 'date_start_alt'} %>
 
-This is the Javascript necessary for the _date_picker partial, loaded via application.js
+<%= @f.label "Ends At:" %>
+<%= @f.datepicker :ends_at, value: @object.ends_at.strftime('%m/%d/%Y'), class: 'date_end', altField: '#date_end_alt', altFormat: 'yy-mm-dd' %>
+<%= @f.input :ends_at, as: :hidden, input_html: {id: 'date_end_alt'} %>
 
-  $('.date_start').datepicker({
-    onClose: function(dateText, inst) {
-      var start_date = $('.date_start').datepicker("getDate");
-      var end_date = $('.date_end').datepicker("getDate");
-      if (start_date > end_date){
-        $('.date_end').datepicker("setDate", start_date)
-      }
-      $('.date_end').datepicker( "option" , "minDate" , start_date);
-    }
-  });
 
-%>
-
-<div id ="blackout_dates">
-<%= label_tag :start_date, 'Start of Blackout' %>
-      <%= datepicker_input object.class.name.underscore, "start_date", :class => 'date_start span2', :value => object[:start_date].strftime('%m/%d/%Y') %>
-
-    <%= label_tag :end_date, 'End of Blackout' %>
-      <%= datepicker_input object.class.name.underscore, "end_date", :class => 'date_end span2', :value => object[:end_date].strftime('%m/%d/%Y') %>
-</div>
