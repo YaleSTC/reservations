@@ -47,6 +47,7 @@ describe BlackoutsController do
         #it 'should display a set' do
         #  assigns(:blackout_set).include?(obj_in_set).should be_true
         #end
+        # the above code doesn't work; i'm too much of an rspec newbie
       end
     end
   end
