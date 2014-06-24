@@ -5,6 +5,6 @@
 #version-overview td, th {padding: .5em; }
 #version-overview {margin: 1em auto; text-align: left !important;}
 
-.other-version { width: 40%; padding: 1em; border: 1px solid black; }
+.other-version { width: 40%; padding: 1em; /* border: 1px solid black; */ }
 .prev { float: left; }
 .next { float: right; text-align: right; }
