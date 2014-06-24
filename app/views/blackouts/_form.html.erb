@@ -1,5 +1,4 @@
-<%= simple_form_for @blackout, html: { multipart: true } do |f| %>
-  <%= f.error_notification %>
+
   <%= f.input :blackout_type, label: 'Blackout Type', collection: [['Blackout',"hard"],['Notice Only',"soft"]] %>
 
   <%= f.input :equipment_model_id, :value => 0, :as => :hidden %>
@@ -10,5 +9,5 @@
   <%= f.datepicker :end_date, :class => 'date_end span2', :value => @blackout[:end_date].strftime('%m/%d/%Y'), altField: '#date_end_alt', altFormat:'yy-mm-dd' %>
 
   <%= f.input :notice, hint: 'This message will be displayed to users if they attempt to make a reservation on a blackout date' %>
+</div>
   <%= f.button :wrapped, cancel: blackouts_path %>
-<% end %>
