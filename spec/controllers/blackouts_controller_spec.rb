@@ -50,8 +50,54 @@ describe BlackoutsController do
         # the above code doesn't work; i'm too much of an rspec newbie
       end
     end
+    context 'GET new' do
+      before do
+        get :new
+      end
+      it_behaves_like 'page success'
+      it { should render_template(:show) }
+    end
+    context 'GET new_recurring' do
+      before do
+        get :new_recurring
+      end
+      it_behaves_like 'page success'
+      it { should render_template(:new_recurring) }
+    end
+    context 'GET edit' do
+      before do
+        get :edit
+      end
+      it_behaves_like 'page success'
+      it { should render_template(:edit) }
+    end
+    context 'POST create_recurring' do
+      before do
+        post :create_recurring
+      end
+      it { should redirect_to(:index) }
+    end
+    context 'POST create' do
+      before do
+        post :create
+      end
+      it { should redirect_to(:index) }
+    end
+    context 'PUT update' do
+      before do
+        put :update
+      end
+    end
+    context 'DELETE destroy' do
+
+    end
+    context 'DELETE destroy recurring' do
+
+    end
   end
+  context 'is not admin' do
+    context 'GET index' do
+    end
 
-
-
+  end
 end
