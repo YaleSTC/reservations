@@ -73,31 +73,45 @@ class ReservationsController < ApplicationController
     #using http://stackoverflow.com/questions/7233859/ruby-on-rails-updating-multiple-models-from-the-one-controller as inspiration
     Reservation.transaction do
       begin
+        # Save all the reservations at once
         cart.cart_reservations.each do |cart_res|
           @reservation = Reservation.new(params[:reservation])
           @reservation.equipment_model =  cart_res.equipment_model
           @reservation.from_admin = (can? :override, :reservation_errors)
+
+          # save! raises RecordInvalid if validations fail,
+          # RecordNotSaved if before_* callbacks fail; dealt with in rescue
           @reservation.save!
         end
+
+        # Empty the cart
         cart.items.each { |item| CartReservation.delete(item) }
         session[:cart] = Cart.new
+
+        # Send a reservation confirmation if so configured
         if AppConfig.first.reservation_confirmation_email_active?
           #UserMailer.reservation_confirmation(complete_reservation).deliver
         end
-        flash[:notice] = "Reservation created successfully"
+
+        # Set the flash and handle redirects
+        flash[:notice] = "Reservation created successfully."
         unless can? :manage, Reservation
           redirect_to catalog_path and return
         else
           if params[:reservation][:start_date].to_date == Date::today.to_date
-            flash[:notice] = "Are you simultaneously checking out equipment
+            flash[:notice] << " Are you simultaneously checking out equipment
             for someone? Note that only the reservation has been made. Don't
             forget to continue to checkout."
           end
           redirect_to manage_reservations_for_user_path(params[:reservation][:reserver_id]) and return
         end
-      rescue ActiveRecord::RecordNotSaved => e
+
+      # Handle possible exceptions from the earlier save!
+      rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid => e
         raise ActiveRecord::Rollback
-        redirect_to catalog_path, flash: {error: "Oops, something went wrong with making your reservation.<br/> #{e.message}".html_safe}
+        flash[:error] = "Oops, something went wrong with making your
+        reservation.<br/> #{e.message}".html_safe
+        redirect_to catalog_path
       end
     end
   end
