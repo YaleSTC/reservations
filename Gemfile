@@ -14,6 +14,8 @@ gem 'cancan'
 #scheduling
 gem 'whenever'
 
+gem 'activeadmin'
+
 #ldap integration
 gem 'net-ldap'
 
