@@ -171,10 +171,34 @@ describe ReservationsController do
   end
 
   describe '#create POST /reservations/create' do
-    # All paths are redirects. Happy paths end with flash[:notice] that differ
-    # based on different settings, unhappy paths end with flash[:error] because
-    # a record didn't save.
-    # Secondary responsibility: cleaning out the cart.
+    context 'when accessed by banned user' do
+      include_context 'banned user'
+      before(:each) { post :create }
+      it_behaves_like 'cannot access page'
+    end
+
+    context 'when accessed by non-banned user' do
+      context 'with validation-failing items in Cart' do
+        it 'does not affect database'
+        it 'sets flash[:error]'
+        it 'redirects to catalog_path'
+      end
+
+      context 'with validation-passing items in Cart' do
+        it 'saves items into database'
+        it 'empties the Cart'
+        it 'sets flash[:notice]'
+        it 'is a redirect'
+
+        context 'and user can override errors' do
+          it 'redirects to manage_reservations_for_user_path'
+        end
+
+        context 'and user cannot override errors' do
+          it 'redirects to catalog_path'
+        end
+      end
+    end
   end
 
   describe '#edit GET /reservations/:id/edit' do
