@@ -3,7 +3,7 @@ require 'spec_helper'
 shared_context 'banned user' do
   before(:each) do
     @controller.stub(:current_user).and_return(FactoryGirl.create(:banned))
-    Reservation.stub(:find).and_return(FactoryGirl.build_stubbed(:reservation, reserver: @user))
+    Reservation.stub(:find).and_return(FactoryGirl.build_stubbed(:reservation, reserver: @banned))
   end
 end
 
@@ -161,7 +161,7 @@ describe ReservationsController do
 
       context 'with a non-empty cart' do
         before(:each) do
-          get :new, nil, { cart: FactoryGirl.build(:cart_with_items, reserver_id: 1) }
+          get :new, nil, { cart: FactoryGirl.build(:cart_with_items, reserver_id: @user.id) }
         end
 
         it 'should display errors'
