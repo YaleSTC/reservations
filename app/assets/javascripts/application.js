@@ -340,7 +340,7 @@ $(document).on('change', '.autosubmitme', function() {
 //});
 
 // click add to cart button
-$(document).on('click', '#add_to_cart', function () {
+$(document).on('click', '.add_to_cart', function () {
   pause_cart();
 });
 
@@ -358,4 +358,6 @@ $(document).on('railsAutocomplete.select', '#fake_reserver_id', function(event, 
 function getDeactivationReason(e) {
   var p = prompt("Write down the reason for deactivation of this equipment object.")
   e.href += "?deactivation_reason=" + encodeURIComponent(p)
-}
+};
+
+
