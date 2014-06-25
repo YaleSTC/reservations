@@ -202,6 +202,24 @@ describe ReservationsController do
   end
 
   describe '#edit GET /reservations/:id/edit' do
+    context 'when accessed by banned user' do
+      include_context 'banned user'
+      before(:each) { get :edit }
+      it_behaves_like 'cannot access page'
+    end
+
+    context 'when accessed by non-banned user' do
+      context 'who owns the reservation / has permissions to alter others' do
+        it 'assigns @reservation'
+        it 'assigns @option_array'
+        it 'renders template `edit`'
+      end
+
+      context 'who does not own the reservation and lacks credentials' do
+        before(:each) { get 'edit' }
+        it_behaves_like 'cannot access page'
+      end
+    end
   end
 
   describe '#update PUT /reservations/:id' do
