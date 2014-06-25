@@ -393,7 +393,8 @@ class ReservationsController < ApplicationController
     set_reservation
     array_for_validation = []
     array_for_validation << @reservation
-    @all_current_requests_by_user = @reservation.reserver.reservations.requested
+    @all_current_requests_by_user = @reservation.reserver.reservations.requested.delete_if{|res| res.id == @reservation.id}
+    #all_current_requests_by_user.delete_if{|res| res.id == @reservation.id}
     @errors = Reservation.validate_set(@reservation.reserver, array_for_validation)
   end
   
