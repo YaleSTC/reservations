@@ -353,3 +353,8 @@ $(document).on('railsAutocomplete.select', '#fake_reserver_id', function(event, 
   $("#reserver_id").val(data.item.id); // updating reserver_id here to make sure that it is done before it submits
   $(this).parents('form').submit();
 });
+
+function getDeactivationReason(e) {
+  var p = prompt("Write down the reason for deactivation of this equipment object.")
+  e.href += "?deactivation_reason=" + encodeURIComponent(p)
+}

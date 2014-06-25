@@ -159,11 +159,12 @@ ActiveRecord::Schema.define(:version => 20140617164155) do
   create_table "equipment_objects", :force => true do |t|
     t.string   "name"
     t.string   "serial"
-    t.boolean  "active",             :default => true
+    t.boolean  "active",              :default => true
     t.integer  "equipment_model_id"
-    t.datetime "created_at",                           :null => false
-    t.datetime "updated_at",                           :null => false
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
     t.datetime "deleted_at"
+    t.string   "deactivation_reason"
   end
 
   create_table "equipment_objects_reservations", :force => true do |t|
@@ -215,7 +216,7 @@ ActiveRecord::Schema.define(:version => 20140617164155) do
     t.string   "login"
     t.string   "first_name"
     t.string   "last_name"
-    t.string   "nickname",                  :default => "",       :null => false
+    t.string   "nickname"
     t.string   "phone"
     t.string   "email"
     t.string   "affiliation"
