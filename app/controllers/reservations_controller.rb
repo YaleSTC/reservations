@@ -76,7 +76,6 @@ class ReservationsController < ApplicationController
         cart.cart_reservations.each do |cart_res|
           @reservation = Reservation.new(params[:reservation])
           @reservation.equipment_model =  cart_res.equipment_model
-          # the attribute is called from_admin, but now that we can give checkout people this permission, the name doesn't quite make sense.
           @reservation.from_admin = (can? :override, :reservation_errors)
           @reservation.save!
         end

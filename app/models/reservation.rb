@@ -55,6 +55,8 @@ class Reservation < ActiveRecord::Base
                   :checked_out, :checked_in, :equipment_object,
                   :equipment_object_id, :notes, :notes_unsent, :times_renewed
 
+  # TODO: the attribute is called from_admin, but checkout people can now gain
+  # this permission, so the name doesn't quite make sense.
   attr_accessor :from_admin
 
   def reserver
