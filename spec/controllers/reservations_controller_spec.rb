@@ -171,6 +171,10 @@ describe ReservationsController do
   end
 
   describe '#create POST /reservations/create' do
+    # All paths are redirects. Happy paths end with flash[:notice] that differ
+    # based on different settings, unhappy paths end with flash[:error] because
+    # a record didn't save.
+    # Secondary responsibility: cleaning out the cart.
   end
 
   describe '#edit GET /reservations/:id/edit' do
