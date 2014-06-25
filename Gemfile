@@ -74,6 +74,7 @@ group :development do
 	gem 'thin'
   gem 'pry'
   gem 'pry-rails'
+#  gem 'debugger', '~> 1.6.6'
   gem 'pry-debugger'
   gem 'pry-stack_explorer'
   gem 'pry-remote'
