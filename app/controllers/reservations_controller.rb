@@ -118,7 +118,7 @@ class ReservationsController < ApplicationController
 
     message = "Successfully edited reservation."
     # update attributes
-    unless params[:equipment_object] == ''
+    if params[:equipment_object] && params[:equipment_object] != ''
   		object = EquipmentObject.find(params[:equipment_object])
 	  	unless object.available?
 		  	r = object.current_reservation
@@ -128,7 +128,7 @@ class ReservationsController < ApplicationController
 						#{ActionController::Base.helpers.link_to('reservation #' + r.id.to_s, reservation_path(r))} \
 						(#{r.reserver.render_name})"
 		  end
-		  res << {equipment_object_id: params[:equipment_object]}
+		  res[:equipment_object_id] = params[:equipment_object]
 	  end
 
     # save changes to database
