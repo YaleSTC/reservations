@@ -103,6 +103,7 @@ module ReservationValidations
   ## For single or multiple reservations
   # Checks that the equipment model is available from start date to due date
   # Not called on overdue, missed, checked out, or checked in Reservations
+  # because this would double count the reservations. all_res is only cart
   # reservations but if there are too many reserved reservations, it will still
   # return false because available? will return less than 0
   def available?(reservations = [])
@@ -120,7 +121,7 @@ module ReservationValidations
 
   # Checks that the number of equipment models that a user has reserved
   # is less than the equipment model maximum
-  def quantity_eq_model_allowed? res_array
+  def quantity_eq_model_allowed?(res_array = [])
     max = equipment_model.maximum_per_user
     return true if max == "unrestricted"
     # count number of models for given reservation
@@ -137,7 +138,7 @@ module ReservationValidations
 
   # Checks that the number of categories that a user has reserved
   # is less than the max
-  def quantity_cat_allowed? res_array
+  def quantity_cat_allowed?(res_array = [])
     max = equipment_model.category.maximum_per_user
     return true if max == "unrestricted"
     # count number of categories for given reservation
