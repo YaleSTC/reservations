@@ -49,6 +49,7 @@ describe AppConfigsController do
   describe 'POST update' do
     context 'app config already exists' do
       before(:each) do
+        AppConfig.destroy_all
         @app_config = FactoryGirl.create(:app_config)
       end
       context 'user is admin' do
@@ -79,11 +80,11 @@ describe AppConfigsController do
             @user = FactoryGirl.create(:user)
             @params = @params.merge({reset_tos_for_users: 0})
             Rails.logger.debug @params
-            post :update, app_config: @params 
+            post :update, app_config: @params
             @user.reload
             expect(@user.terms_of_service_accepted).to be_true
           end
-          
+
           it 'restores favicon when appropriate'
           # it { should respond_with(:success) }
           # it { should redirect_to(catalog_path) }
@@ -108,6 +109,9 @@ describe AppConfigsController do
       end
     end
     context 'app_config does not exist yet' do
+      before(:all) do
+        AppConfig.destroy_all
+      end
       before(:each) do
         post :update
       end

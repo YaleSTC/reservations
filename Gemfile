@@ -39,6 +39,10 @@ gem 'simple_form'
 gem 'cocoon'
 gem 'redcarpet'
 
+
+# auditting / logging
+gem 'paper_trail', git: "https://github.com/airblade/paper_trail.git", branch: "2.7-stable"
+
 group :development, :test do
   gem 'factory_girl_rails'
   gem 'rspec-rails'

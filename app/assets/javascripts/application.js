@@ -107,7 +107,7 @@
   };
 
 $(document).ready(function() {
-  
+
   $('.checkin-click').click( function() {
 	var box = $(this).find(":checkbox");
 	box.prop("checked", !box.prop("checked"));
@@ -117,7 +117,7 @@ $(document).ready(function() {
 		$(this).toggleClass("selected",box.prop("checked"));
 	}
   });
-  
+
   $('#checkout_button').click(function() {
     var flag = validate_checkout();
     confirm_checkinout(flag);
@@ -140,7 +140,7 @@ $(document).ready(function() {
         ]
   });
 
-  $('.datatable-wide').dataTable({
+  wideDataTables = $('.datatable-wide').dataTable({
     "sDom": "<'row'<'span5'l><'span7'f>r>t<'row'<'span5'i><'span7'p>>",
     "sPaginationType": "bootstrap",
     "sScrollX": "100%",
@@ -148,6 +148,13 @@ $(document).ready(function() {
           { "bSortable": false, "aTargets": [ "no_sort" ] }
         ]
   });
+
+  // Ugly hack to avoid reinitializing #table_log with the correct order
+  try {
+    if (wideDataTables[0].id == "table_log") {
+      wideDataTables.fnSort([[0, "desc"]]);
+    }
+  } catch (TypeError) {}
 
   $('.history_table').dataTable({
     "sDom": "<'row'<l><f>r>t<'row'<'span3'i><p>>",
@@ -165,6 +172,7 @@ $(document).ready(function() {
     "aLengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
     "aoColumnDefs": [{ "bSortable": false, "aTargets": [ "no_sort" ] }]
   });
+
 // For fading out flash notices
   $(".alert .close").click( function() {
        $(this).parent().addClass("fade");

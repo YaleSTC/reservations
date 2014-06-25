@@ -1,0 +1,41 @@
+<p><%= link_to "Back to overview", log_index_path %></p>
+<% if Kernel.const_get(@version.item_type).find_by_id(@version.item_id)
+  headline = link_to @version.item_type + ' ' + @version.item_id.to_s, Kernel.const_get(@version.item_type).find_by_id(@version.item_id)
+else
+  headline = @version.item_type + ' ' + @version.item_id.to_s
+end
+  %>
+<h1><%= @version.event.capitalize %> of <%= headline %></h1>
+<h2>By <%= link_to @user.name, @user %> at <%= @date %></h2>
+<% object = @version.reify %>
+<% if object %>
+<table id="version-overview">
+  <tr>
+    <th>Attribute</th>
+    <th>Value</th>
+  </tr>
+  <% object.attributes.each do |a| %>
+    <% a = transform_attributes(a) %>
+    <% if a %>
+  <tr>
+    <td><%= a[0] %></td>
+    <td><%= a[1] %></td>
+  </tr>
+    <% end %>
+  <% end %>
+</table>
+<% else %>
+<p>Since the object was created, there is no previous state of the object.</p>
+<% end %>
+
+<% if @previous %>
+<div class="other-version prev">
+  <%= link_to ("&laquo; Previous version by " + @previous_user.name).html_safe, version_view_path(@previous.id) if @previous %>
+</div>
+<% end %>
+
+<% if @next %>
+<div class="other-version next">
+  <%= link_to ("Next version by " + @next_user.name + " &raquo;").html_safe, version_view_path(@next.id) if @next %>
+</div>
+<% end %>
