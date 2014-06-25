@@ -119,6 +119,7 @@ class ReservationsController < ApplicationController
 
   def edit
     set_reservation
+    # For switching which specific EquipmentObject is reserved (see #536)
     @option_array = @reservation.equipment_model.equipment_objects.collect { |e|
 		[e.name, e.id] }
   end
