@@ -85,7 +85,6 @@ class BlackoutsController < ApplicationController
         format.js { render action: "create_success" }
       end
     end
-
   end
 
   def create

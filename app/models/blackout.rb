@@ -42,7 +42,7 @@ class Blackout < ActiveRecord::Base
 
     # create an array of individual black out dates to include in set
     individual_dates = []
-    date_range = params_hash[:start_date]..params_hash[:end_date]
+    date_range = params_hash[:start_date].to_date..params_hash[:end_date].to_date
     date_range.each do |date|
       if params_hash[:days].include?(date.wday.to_s) # because it's passed as a string
         individual_dates << date
