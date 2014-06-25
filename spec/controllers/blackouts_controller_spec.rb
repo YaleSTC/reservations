@@ -12,9 +12,6 @@ describe BlackoutsController do
   before {
     @controller.stub(:first_time_user).and_return(:nil)
   }
-  let!(:object) {
-    FactoryGirl.create(:blackout)
-  }
 
   describe 'with admin' do
     before do
@@ -27,12 +24,12 @@ describe BlackoutsController do
       it_behaves_like 'page success'
       it { should render_template(:index) }
       it 'should assign @blackouts to all blackouts' do
-        assigns(:blackouts).include?(object).should be_true
+        expect(assigns(:blackouts)).to eq(Blackout.all)
       end
     end
     context 'GET show' do
       before do
-        get :show, id: object
+        get :show, id: FactoryGirl.create(:blackout)
       end
       it_behaves_like 'page success'
       it { should render_template(:show) }
@@ -41,12 +38,18 @@ describe BlackoutsController do
           expect(assigns(:blackout_set) == nil)
         end
       end
+    end
+    context 'GET show' do
+      before do
+        @blackout = FactoryGirl.create(:blackout, set_id: 1)
+        @blackout_set = Blackout.where(set_id: 1)
+        get :show, id: @blackout
+      end
+      it_behaves_like 'page success'
       context 'recurring blackout' do
-        let!(:obj_in_set) { FactoryGirl.create(:blackout_in_set) }
-        #get :show, id: obj_in_set
-        #it 'should display a set' do
-        #  assigns(:blackout_set).include?(obj_in_set).should be_true
-        #end
+        it 'should display the correct set' do
+          assigns(:blackout_set).uniq.sort.should eq(@blackout_set.uniq.sort)
+        end
         # the above code doesn't work; i'm too much of an rspec newbie
       end
     end
@@ -66,7 +69,7 @@ describe BlackoutsController do
     end
     context 'GET edit' do
       before do
-        get :edit, id: object
+        get :edit, id: FactoryGirl.create(:blackout)
       end
       it_behaves_like 'page success'
       it { should render_template(:edit) }
@@ -74,21 +77,33 @@ describe BlackoutsController do
     context 'POST create_recurring' do
       context 'with correct params' do
         before do
-          param_hash = FactoryGirl.attributes_for(:blackout_in_set)
-          param_hash[:start_date] = '06/06/2014'
-          param_hash[:end_date] = '06/07/2014'
-          post :create_recurring, blackout: param_hash
+          @attributes = FactoryGirl.attributes_for(:blackout)
+          @attributes[:set_id] = 1
+          @attributes[:days] = ["1",""]
+          post :create_recurring, blackout: @attributes
         end
+        it 'should create a set'
+        it { should redirect_to(blackouts_path) }
+        it { should set_the_flash }
       end
-
-      it { should redirect_to(:index) }
     end
     context 'POST create' do
       context 'with correct params' do
         before do
-          post :create, blackout: FactoryGirl.attributes_for(:blackout)
+          @attributes = FactoryGirl.attributes_for(:blackout)
+          post :create, blackout: @attributes
         end
-        it { should redirect_to(:index) }
+        it 'should create the new blackout' do
+          assigns(:blackout).nil?.should eq(false)
+        end
+        it 'should pass the correct params' do
+          assigns(:blackout)[:notice].should eq(@attributes[:notice])
+          assigns(:blackout)[:start_date].should eq(@attributes[:start_date])
+          assigns(:blackout)[:end_date].should eq(@attributes[:end_date])
+          assigns(:blackout)[:blackout_type].should eq(@attributes[:blackout_type])
+        end
+        it { should redirect_to(blackout_path(assigns(:blackout))) }
+        it { should set_the_flash }
       end
     end
     context 'PUT update' do
