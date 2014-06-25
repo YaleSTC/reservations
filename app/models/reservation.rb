@@ -44,10 +44,10 @@ class Reservation < ActiveRecord::Base
   scope :starts_on_days, lambda {|start_date, end_date|  where(start_date: start_date..end_date)}
   scope :reserved_on_date, lambda {|date|  where("start_date <= ? and due_date >= ? and (approval_status = ? or approval_status = ?)", date.to_time.utc, date.to_time.utc, 'auto', 'approved')}
   scope :for_eq_model, lambda { |eq_model| where(equipment_model_id: eq_model.id) }
-  scope :active, where("checked_in IS NULL and (approval_status = ? OR approval_status = ?) and due_date >= ?", 'auto', 'approved', Time.now.midnight.utc) # anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
-  scope :active_or_requested, lambda {where("checked_in IS NULL and (approval_status = ? OR approval_status = ? OR approval_status = ?) and due_date >= ?", 'auto', 'approved', 'requested', Time.now.midnight.utc)}
+  scope :active, where("checked_in IS NULL and (approval_status = ? OR approval_status = ?)", 'auto', 'approved') # anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
+  scope :active_or_requested, lambda {where("checked_in IS NULL and approval_status != ?", 'denied')}
   scope :notes_unsent, where(notes_unsent: true)
-  scope :requested, lambda {where("start_date <= ? and approval_status = ?", Time.now.midnight.utc, 'requested')}
+  scope :requested, lambda {where("start_date >= ? and approval_status = ?", Time.now.midnight.utc, 'requested')}
   scope :approved_requests, lambda {where("approval_status = ?", 'approved')}
   scope :denied_requests, lambda {where("approval_status = ?", 'denied')}
   scope :missed_requests, lambda {where("approval_status = ? and start_date < ?", 'requested', Time.now.midnight.utc)}

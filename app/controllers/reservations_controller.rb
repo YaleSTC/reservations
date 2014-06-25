@@ -10,7 +10,6 @@ class ReservationsController < ApplicationController
   layout 'application_with_sidebar'
 
   before_filter :require_login, only: [:index, :show]
-  before_filter :permissions_check, only: [:check_out, :check_in, :edit, :update]
 
   def set_user
     @user = User.find(params[:user_id])
@@ -71,6 +70,7 @@ class ReservationsController < ApplicationController
     respond_to do |format|
       Reservation.transaction do
         begin
+          @errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
           cart.cart_reservations.each do |cart_res|
             @reservation = Reservation.new(params[:reservation])
             @reservation.equipment_model =  cart_res.equipment_model
