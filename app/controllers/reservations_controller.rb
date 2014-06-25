@@ -70,39 +70,35 @@ class ReservationsController < ApplicationController
   end
 
   def create
-    successful_reservations = []
     #using http://stackoverflow.com/questions/7233859/ruby-on-rails-updating-multiple-models-from-the-one-controller as inspiration
-    respond_to do |format|
-      Reservation.transaction do
-        begin
-          cart.cart_reservations.each do |cart_res|
-            @reservation = Reservation.new(params[:reservation])
-            @reservation.equipment_model =  cart_res.equipment_model
-            # the attribute is called from_admin, but now that we can give checkout people this permission, the name doesn't quite make sense.
-            @reservation.from_admin = (can? :override, :reservation_errors)
-            @reservation.save!
-            successful_reservations << @reservation
-          end
-          cart.items.each { |item| CartReservation.delete(item) }
-          session[:cart] = Cart.new
-          if AppConfig.first.reservation_confirmation_email_active?
-            #UserMailer.reservation_confirmation(complete_reservation).deliver
-          end
-          flash[:notice] = "Reservation created successfully"
-          if can? :manage, Reservation
-            if params[:reservation][:start_date].to_date === Date::today.to_date
-				flash[:notice] = "Are you simultaneously checking out equipment for someone? Note that\
-									only the reservation has been made. Don't forget to continue to checkout."
-			end
-            redirect_to manage_reservations_for_user_path(params[:reservation][:reserver_id]) and return
-          else
-            redirect_to catalog_path and return
-          end
-        rescue Exception => e
-          format.html {redirect_to catalog_path, flash: {error: "Oops, something went wrong with making your reservation.<br/> #{e.message}".html_safe} }
-
-          raise ActiveRecord::Rollback
+    Reservation.transaction do
+      begin
+        cart.cart_reservations.each do |cart_res|
+          @reservation = Reservation.new(params[:reservation])
+          @reservation.equipment_model =  cart_res.equipment_model
+          # the attribute is called from_admin, but now that we can give checkout people this permission, the name doesn't quite make sense.
+          @reservation.from_admin = (can? :override, :reservation_errors)
+          @reservation.save!
         end
+        cart.items.each { |item| CartReservation.delete(item) }
+        session[:cart] = Cart.new
+        if AppConfig.first.reservation_confirmation_email_active?
+          #UserMailer.reservation_confirmation(complete_reservation).deliver
+        end
+        flash[:notice] = "Reservation created successfully"
+        unless can? :manage, Reservation
+          redirect_to catalog_path and return
+        else
+          if params[:reservation][:start_date].to_date == Date::today.to_date
+            flash[:notice] = "Are you simultaneously checking out equipment
+            for someone? Note that only the reservation has been made. Don't
+            forget to continue to checkout."
+          end
+          redirect_to manage_reservations_for_user_path(params[:reservation][:reserver_id]) and return
+        end
+      rescue ActiveRecord::RecordNotSaved => e
+        raise ActiveRecord::Rollback
+        redirect_to catalog_path, flash: {error: "Oops, something went wrong with making your reservation.<br/> #{e.message}".html_safe}
       end
     end
   end
@@ -128,7 +124,7 @@ class ReservationsController < ApplicationController
     end
 
 	message = "Successfully edited reservation."
-	
+
     # update attributes
     unless params[:equipment_object] == ''
 		object = EquipmentObject.find(params[:equipment_object])
