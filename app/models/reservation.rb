@@ -103,8 +103,8 @@ class Reservation < ActiveRecord::Base
       errors << "#{res.equipment_model.name} is not available for the full time period requested. " unless res.available?(res_array)
       errors << "A reservation cannot start on #{res.start_date.strftime('%m/%d')} because equipment cannot be picked up on that date. " unless res.start_date_is_not_blackout?
       errors << "A reservation cannot end on #{res.due_date.strftime('%m/%d')} because equipment cannot be returned on that date. " unless res.due_date_is_not_blackout?
-      errors << "Cannot reserve more than #{res.equipment_model.maximum_per_user.to_s} #{res.equipment_model.name.pluralize}. " unless res.quantity_eq_model_allowed?
-      errors << "Cannot reserve more than #{res.equipment_model.category.maximum_per_user.to_s} #{res.equipment_model.category.name.pluralize}. " unless res.quantity_cat_allowed?
+      errors << "Cannot reserve more than #{res.equipment_model.maximum_per_user.to_s} #{res.equipment_model.name.pluralize}. " unless res.quantity_eq_model_allowed? res_array
+      errors << "Cannot reserve more than #{res.equipment_model.category.maximum_per_user.to_s} #{res.equipment_model.category.name.pluralize}. " unless res.quantity_cat_allowed? res_array
     end
     errors.uniq
   end
