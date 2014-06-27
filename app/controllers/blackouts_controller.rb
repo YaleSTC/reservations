@@ -105,15 +105,7 @@ class BlackoutsController < ApplicationController
 
   def update
     unless @blackout.set_id.nil?
-      @blackout_set = Blackout.where("set_id = ?", @blackout.set_id)
-      if @blackout_set.size <= 2
-        @blackout_set.each do |b|
-          b.set_id = NIL
-          b.save
-        end
-      else # individual edited reservations no longer belong to the set (so won't be mass-deleted in delete_recurring)
-        @blackout.set_id = NIL
-      end
+      @blackout.set_id = NIL
     end
 
     respond_to do |format|

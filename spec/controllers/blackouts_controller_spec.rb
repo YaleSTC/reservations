@@ -78,7 +78,6 @@ describe BlackoutsController do
       context 'with correct params' do
         before do
           @attributes = FactoryGirl.attributes_for(:blackout, set_id: 1, days: ["1",""])
-          puts @attributes
           post :create_recurring, blackout: @attributes
         end
         it 'should create a set'
@@ -106,8 +105,28 @@ describe BlackoutsController do
       end
     end
     context 'PUT update' do
-      before do
-        put :update
+      context 'single blackout' do
+        before do
+          @new_attributes = FactoryGirl.attributes_for(:blackout)
+          @new_attributes[:notice] = "New Message!!"
+          put :update, id: FactoryGirl.create(:blackout), blackout: @new_attributes
+        end
+        it 'updates the blackout' do
+          assigns(:blackout)[:notice].should eq(@new_attributes[:notice])
+        end
+      end
+      context 'recurring blackout' do
+        before do
+          @new_attributes = FactoryGirl.attributes_for(:blackout)
+          @new_attributes[:notice] = "New Message!!"
+          put :update, id: FactoryGirl.create(:blackout, set_id: 1), blackout: @new_attributes
+        end
+        it 'updates the blackout' do
+          assigns(:blackout)[:notice].should eq(@new_attributes[:notice])
+        end
+        it 'sets the set_id to nil' do
+          assigns(:blackout)[:set_id].should be_nil
+        end
       end
     end
     context 'DELETE destroy' do
