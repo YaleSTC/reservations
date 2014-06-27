@@ -13,21 +13,6 @@
 
 ActiveRecord::Schema.define(:version => 20140617164155) do
 
-  create_table "active_admin_comments", :force => true do |t|
-    t.string   "resource_id",   :null => false
-    t.string   "resource_type", :null => false
-    t.integer  "author_id"
-    t.string   "author_type"
-    t.text     "body"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
-    t.string   "namespace"
-  end
-
-  add_index "active_admin_comments", ["author_type", "author_id"], :name => "index_active_admin_comments_on_author_type_and_author_id"
-  add_index "active_admin_comments", ["namespace"], :name => "index_active_admin_comments_on_namespace"
-  add_index "active_admin_comments", ["resource_type", "resource_id"], :name => "index_admin_notes_on_resource_type_and_resource_id"
-
   create_table "announcements", :force => true do |t|
     t.text     "message"
     t.datetime "starts_at"
@@ -58,7 +43,7 @@ ActiveRecord::Schema.define(:version => 20140617164155) do
     t.text     "deleted_missed_reservation_email_body"
     t.boolean  "send_notifications_for_deleted_missed_reservations", :default => true
     t.boolean  "checkout_persons_can_edit",                          :default => false
-    t.boolean  "require_phone",                                      :default => true
+    t.boolean  "require_phone",                                      :default => false
     t.boolean  "viewed",                                             :default => true
     t.boolean  "override_on_create",                                 :default => false
     t.boolean  "override_at_checkout",                               :default => false
@@ -148,14 +133,6 @@ ActiveRecord::Schema.define(:version => 20140617164155) do
     t.integer "equipment_model_id", :null => false
   end
 
-  create_table "equipment_models_reservations", :force => true do |t|
-    t.integer  "equipment_model_id"
-    t.integer  "reservation_id"
-    t.integer  "quantity"
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
-  end
-
   create_table "equipment_objects", :force => true do |t|
     t.string   "name"
     t.string   "serial"
@@ -165,13 +142,6 @@ ActiveRecord::Schema.define(:version => 20140617164155) do
     t.datetime "updated_at",                            :null => false
     t.datetime "deleted_at"
     t.string   "deactivation_reason"
-  end
-
-  create_table "equipment_objects_reservations", :force => true do |t|
-    t.integer  "equipment_object_id"
-    t.integer  "reservation_id"
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
   end
 
   create_table "requirements", :force => true do |t|

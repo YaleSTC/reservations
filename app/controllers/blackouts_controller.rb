@@ -74,7 +74,6 @@ class BlackoutsController < ApplicationController
     # this class method will parse the params hash and create separate blackouts on each appropriate date
     # method will return an error message if save is not successful
     flash[:error] = Blackout.create_blackout_set(params[:blackout])
-
     respond_to do |format|
       # if there is an error, show it and redirect :back
       if flash[:error]

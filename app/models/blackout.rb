@@ -57,6 +57,7 @@ class Blackout < ActiveRecord::Base
       successful_save = false
       individual_dates.each do |date|
         # create and save
+        puts params_hash
         @blackout = Blackout.new(params_hash)
         @blackout.start_date = date
         @blackout.end_date = date
