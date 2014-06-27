@@ -3,7 +3,6 @@ class BlackoutsController < ApplicationController
   load_and_authorize_resource
   before_filter :set_params_for_create_and_update, only: [:create, :create_recurring, :update]
   before_filter :set_current_blackout, only: [:edit, :show, :update, :destroy, :destroy_recurring]
-  before_filter :validate_recurring_date_params, only: [:create_recurring]
 
 
   # ---------- before filter methods ------------ #
@@ -17,17 +16,6 @@ class BlackoutsController < ApplicationController
     @blackout = Blackout.find(params[:id])
   end
 
-  #validates that date selection was done correctly when the form calls the create method
-  def validate_recurring_date_params
-    set_flash_errors
-    if flash[:error]
-      # exit
-      respond_to do |format|
-        format.html {redirect_to :back and return}
-        format.js {render action: 'load_custom_errors' and return}
-      end
-    end
-  end
 
   # ---------- end before filter methods ------------ #
 
@@ -72,9 +60,17 @@ class BlackoutsController < ApplicationController
   #called when a recurring blackout is needed
   def create_recurring
     # this class method will parse the params hash and create separate blackouts on each appropriate date
+    set_flash_errors
+    if flash[:error]
+      # exit
+      respond_to do |format|
+        format.html {redirect_to :back and return}
+        format.js {render action: 'load_custom_errors' and return}
+      end
+    end
+
     # method will return an error message if save is not successful
     flash[:error] = Blackout.create_blackout_set(params[:blackout])
-
     respond_to do |format|
       # if there is an error, show it and redirect :back
       if flash[:error]

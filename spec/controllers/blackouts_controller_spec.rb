@@ -5,6 +5,11 @@ shared_examples_for 'page success' do
   it { should_not set_the_flash }
 end
 
+shared_examples_for 'access denied' do
+  it { should redirect_to(root_url) }
+  it { should set_the_flash }
+end
+
 describe BlackoutsController do
   before(:all) {
     @app_config = FactoryGirl.create(:app_config)
@@ -77,12 +82,24 @@ describe BlackoutsController do
     context 'POST create_recurring' do
       context 'with correct params' do
         before do
-          @attributes = FactoryGirl.attributes_for(:blackout, set_id: 1, days: ["1",""])
+          @new_set_id = Blackout.last ? Blackout.last.id + 1 : 0
+          @attributes = FactoryGirl.attributes_for(:blackout, days: ["1",""])
           post :create_recurring, blackout: @attributes
         end
-        it 'should create a set'
+        it 'should create a set' do
+          Blackout.where(set_id: @new_set_id).should_not be_empty
+        end
         it { should redirect_to(blackouts_path) }
         it { should set_the_flash }
+      end
+      context 'with incorrect params' do
+        before do
+          request.env["HTTP_REFERER"] = "where_i_came_from"
+          @attributes = FactoryGirl.attributes_for(:blackout, days: [""])
+          post :create_recurring, blackout: @attributes
+        end
+        it { should set_the_flash }
+        it { should redirect_to("where_i_came_from") }
       end
     end
     context 'POST create' do
@@ -92,7 +109,7 @@ describe BlackoutsController do
           post :create, blackout: @attributes
         end
         it 'should create the new blackout' do
-          assigns(:blackout).nil?.should eq(false)
+          Blackout.find(assigns(:blackout)).should_not be_nil
         end
         it 'should pass the correct params' do
           assigns(:blackout)[:notice].should eq(@attributes[:notice])
@@ -102,6 +119,14 @@ describe BlackoutsController do
         end
         it { should redirect_to(blackout_path(assigns(:blackout))) }
         it { should set_the_flash }
+      end
+      context 'with incorrect params' do
+        before do
+          @attributes = FactoryGirl.attributes_for(:blackout)
+          @attributes[:end_date] = Date.yesterday
+          post :create, blackout: @attributes
+        end
+        it { should render_template(:new) }
       end
     end
     context 'PUT update' do
@@ -130,23 +155,76 @@ describe BlackoutsController do
       end
     end
     context 'DELETE destroy' do
-
+      before do
+        delete :destroy, id: FactoryGirl.create(:blackout)
+      end
+      it 'should delete the blackout' do
+        Blackout.where(id:  assigns(:blackout)[:id]).should be_empty
+      end
+      it { should redirect_to(blackouts_path) }
     end
     context 'DELETE destroy recurring' do
-
+      before do
+        #create an extra instance to test that the whole set was deleted
+        @extra = FactoryGirl.create(:blackout, set_id: 1)
+        delete :destroy_recurring, id: FactoryGirl.create(:blackout, set_id: 1)
+      end
+      it 'should delete the whole set' do
+        Blackout.where(set_id: @extra[:set_id]).should be_empty
+      end
+      it { should set_the_flash }
+      it { should redirect_to(blackouts_path) }
     end
   end
   context 'is not admin' do
+    before do
+      @controller.stub(:current_user).and_return(FactoryGirl.create(:user))
+      @blackout = FactoryGirl.create(:blackout)
+      @attributes = FactoryGirl.attributes_for(:blackout)
+    end
+
     context 'GET index' do
+      before do
+        get :index
+      end 
+      it_behaves_like 'access denied'
     end
     context 'GET show' do
+      before do
+        get :show, id: @blackout
+      end
+      it_behaves_like 'access denied'
     end
     context 'POST create' do
+      before do
+        post :create, blackout: @attributes
+      end
+      it_behaves_like 'access denied'
     end
-    context 'PUT update'
-    context 'POST create recurring'
-    context 'DELETE destroy'
-    context 'DELETE destroy recurring'
+    context 'PUT update' do
+      before do
+        put :update, id: @blackout
+      end
+      it_behaves_like 'access denied'
+    end
+    context 'POST create recurring' do
+      before do
+        post :create_recurring, blackout: @attributes
+      end
+      it_behaves_like 'access denied'
+    end
+    context 'DELETE destroy' do
+      before do
+        delete :destroy, id: @blackout
+      end
+      it_behaves_like 'access denied'
+    end
+    context 'DELETE destroy recurring' do
+      before do
+        delete :destroy_recurring, id: @blackout
+      end
+      it_behaves_like 'access denied'
+    end
 
   end
 end
