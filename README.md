@@ -19,6 +19,7 @@ You'll need the following to run Reservations:
 * [Ruby 1.9](http://www.ruby-lang.org/) and [Rails 3.2](http://rubyonrails.org/)
 * a database server ([Sqlite](http://www.sqlite.org/), [MySQL](http://www.mysql.com/) or any database supported by Rails)
 * [ImageMagick](http://www.imagemagick.org/script/index.php)
+* a [CAS](http://www.jasig.org/cas) authentication system
 
 ### Installation 
 First, checkout a copy of Reservations using git:
@@ -61,6 +62,23 @@ Reservations is built using [Ruby on Rails](http://rubyonrails.org/), and can be
 * Rails application server (usually [Passenger Phusion](http://www.modrails.com/) aka mod_rails)
 
 For a general guide to setting up your web and application servers, including hosting providers, see the [Rails Deployment Guide](http://rubyonrails.org/deploy/).
+
+### Config
+
+Reservations is built using the CAS authentication system, using the gem [Ruby-Cas Client](https://github.com/rubycas/rubycas-client).
+
+> To point the gem to the correct CAS server, add the following to your app's `config/environment.rb` (make sure that you put it at the bottom of the file, after the Rails Initializer):
+```
+CASClient::Frameworks::Rails::Filter.configure(
+  :cas_base_url => "https://cas.example.foo/"
+)
+```
+(Change the :cas_base_url value to your CAS server's base URL; also note that many CAS servers are configured with a base URL that looks more like “cas.example.foo/cas”.)
+
+Reservations ships with the default config time set to Eastern Time (US and Canada). To change the time, edit `config/application.rb` 
+`config.time_zone = 'Eastern Time (US & Canada)'`
+
+
 
 Further Documentation
 ==================
