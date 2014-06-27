@@ -218,14 +218,26 @@ describe ReservationsController do
   end
 
   describe '#update PUT /reservations/:id' do
+    it_behaves_like 'inaccessible by banned user' do
+      before { put :update }
+    end
   end
 
   describe '#destroy DELETE /reservations/:id' do
+    it_behaves_like 'inaccessible by banned user' do
+      before { delete :destroy }
+    end
   end
 
   describe '#manage GET /reservations/manage/:user_id' do
+    it_behaves_like 'inaccessible by banned user' do
+      before { get :manage }
+    end
   end
 
   describe '#current GET /reservations/current/:user_id' do
+    it_behaves_like 'inaccessible by banned user' do
+      before { get :current, user_id: @banned.id }
+    end
   end
 end
