@@ -1,19 +1,8 @@
 require 'spec_helper'
 
-shared_context 'banned user' do
-  before(:each) do
-    @controller.stub(:current_user).and_return(FactoryGirl.create(:banned))
-    Reservation.stub(:find).and_return(FactoryGirl.build_stubbed(:reservation, reserver: @banned))
-  end
-end
-
-shared_examples 'cannot access page' do
-  it { response.should be_redirect }
-  it { should set_the_flash }
-end
-
-
 describe ReservationsController do
+
+  ## Common setup
   render_views
 
   before(:all) do
@@ -38,6 +27,29 @@ describe ReservationsController do
 
     @controller.stub(:first_time_user).and_return(nil)
     @controller.stub(:current_user).and_return(@user)
+  end
+
+  ## Shared examples
+  shared_context 'banned user' do
+    before(:each) do
+      @controller.stub(:current_user).and_return(FactoryGirl.create(:banned))
+      Reservation.stub(:find).and_return(FactoryGirl.build_stubbed(:reservation, reserver: @banned))
+    end
+  end
+
+  shared_examples 'cannot access page' do
+    it { response.should be_redirect }
+    it { should set_the_flash }
+  end
+
+  shared_examples 'banned user cannot access page (exp)' do
+    before(:each) do
+      @controller.stub(:current_user).and_return(FactoryGirl.create(:banned))
+      Reservation.stub(:find).and_return(FactoryGirl.build_stubbed(:reservation, reserver: @banned))
+      yield
+    end
+    it { response.should be_redirect }
+    it { should set_the_flash }
   end
 
   ##### Public methods of ReservationsController with routes
@@ -78,6 +90,10 @@ describe ReservationsController do
     # check params[:filter]
     # depending on admin status, default_filter changes
     # depending on admin status, source of reservations (all v. own) changes
+    include_examples 'banned user cannot access page 2' do
+      get :index
+    end
+
     context 'when accessed by non-banned user' do
       subject { get :index }
       it { should be_success }
