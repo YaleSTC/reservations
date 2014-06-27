@@ -156,7 +156,6 @@ if User.all.empty?
   end
 end
 
-
 # User generation
 # ============================================================================
 
@@ -185,11 +184,61 @@ unless entered_num == 0
 
     end
     user[0].role ='checkout' # hack to ensure at least one checkout person is created every time
-    puts "\n#{entered_num} records successfully created!"
+    puts "\n#{entered_num} user records successfully created!"
   else
     puts "\nPlease enter a whole number"
     entered_num = STDIN.gets.chomp.to_i
   end
+else
+  user << User.first
+  puts "\n***Any reservation records you create will
+   be assigned to the first user, #{user.first.name}.
+   If this is not your intent, please exit now (Ctrl+C)
+   or remember to enter zero for reservations later on.***\n\n"
+end
+
+# Terms of Service generation
+# ============================================================================
+
+if AppConfig.all.empty?
+
+# TODO: Validate user input
+  if ENV["minimal"]
+    admin_email = "admin@admin.com"
+    department_name = "Department"
+    contact_link_location = "wtf"
+    home_link_text = "home_link"
+    home_link_location = "Canada"
+  else
+    puts "We need to setup application settings:"
+    puts "Admin Email Address:"
+    admin_email = STDIN.gets.chomp
+    puts "Department Name:"
+    department_name = STDIN.gets.chomp
+    puts "Contact Link location:"
+    contact_link_location = STDIN.gets.chomp
+    puts "Home Link Text:"
+    home_link_text = STDIN.gets.chomp
+    puts "Home Link location:"
+    home_link_location = STDIN.gets.chomp
+  end
+  AppConfig.create! do |ac|
+    ac.terms_of_service = terms_of_service_text
+    ac.upcoming_checkin_email_active = false
+    ac.reservation_confirmation_email_active = false
+    ac.overdue_checkin_email_active = false
+    ac.site_title = "Reservations"
+    ac.admin_email = admin_email
+    ac.department_name = department_name
+    ac.contact_link_location = contact_link_location
+    ac.home_link_text = home_link_text
+    ac.home_link_location = home_link_location
+    ac.default_per_cat_page = 10
+  end
+else
+  ac = AppConfig.first
+  ac.terms_of_service = terms_of_service_text
+  ac.save!
 end
 
 # Category generation
@@ -227,11 +276,16 @@ unless entered_num == 0
         c.renewal_days_before_due = r.rand(0..9001)
       end
     end
-    puts "\n#{entered_num} records successfully created!"
+    puts "\n#{entered_num} category records successfully created!"
   else
     puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
   end
+else
+  puts "\n***To seed equipment models, objects, blackout dates,
+   requirements, reservations, etc, you must create
+   at least one category. Exiting seed script........***\n\n"
+  exit
 end
 
 # EquipmentModel generation
@@ -265,42 +319,21 @@ unless entered_num == 0
         em.associated_equipment_models = EquipmentModel.all.sample(6)
       end
     end
-    puts "\n#{entered_num} records successfully created!"
+    puts "\n#{entered_num} equipment model records successfully created!"
   else
     puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
   end
-end
-
-# EquipmentObject generation
-# ============================================================================
-if ENV["minimal"]
-  entered_num= 50 
 else
-  entered_num = ask_for_records("EquipmentObject")
-end
-
-if entered_num == 0
-  if entered_num.integer? && entered_num > 0
-    progress = ProgressBar.create(format: progress_str, total: entered_num)
-    equipment_object = entered_num.times.map do
-      progress.increment
-      EquipmentObject.create! do |eo|
-        eo.name = "Number #{(0...3).map{65.+(rand(25)).chr}.join}" + r.rand(1..9001).to_s
-        eo.serial = (0...8).map{65.+(rand(25)).chr}.join
-        eo.active = true
-        eo.equipment_model_id = equipment_model.flatten.sample.id
-      end
-    end
-    puts "\n#{entered_num} records successfully created!"
-  else
-    puts "\nPlease enter a whole number greater than 0."
-    entered_num = STDIN.gets.chomp.to_i
-  end
+  puts "\n***To seed equipment objects, blackout dates,
+   requirements, reservations, etc, you must create
+   at least one equipment model. Exiting seed script...***\n\n"
+  exit
 end
 
 # Requirement generation
 # ============================================================================
+
 if ENV["minimal"]
   entered_num = 0
 else
@@ -320,7 +353,7 @@ unless entered_num == 0
         req.description = Faker::HipsterIpsum.sentence
       end
     end
-    puts "\n#{entered_num} records successfully created!"
+    puts "\n#{entered_num} requirement records successfully created!"
   else
     puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
@@ -329,6 +362,7 @@ end
 
 # CheckinProcedure generation
 # ============================================================================
+
 if ENV["minimal"]
   entered_num = 0
 else
@@ -345,7 +379,7 @@ unless entered_num == 0
         chi.equipment_model_id = equipment_model.flatten.sample.id
       end
     end
-    puts "\n#{entered_num} records successfully created!"
+    puts "\n#{entered_num} check-in procedures successfully created!"
   else
     puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
@@ -354,13 +388,14 @@ end
 
 # CheckoutProcedure generation
 # ============================================================================
+
 if ENV["minimal"]
   entered_num = 0
 else
   entered_num = ask_for_records("CheckoutProcedure")
 end
 
-unless enetered_num == 0
+unless entered_num == 0
   if entered_num.integer? && entered_num > 0 
     progress = ProgressBar.create(format: progress_str, total: entered_num)
     checkout_procedure = entered_num.times.map do
@@ -370,60 +405,16 @@ unless enetered_num == 0
         cho.equipment_model_id = equipment_model.flatten.sample.id
       end
     end
-    puts "\n#{entered_num} records successfully created!"
+    puts "\n#{entered_num} checkout procedures successfully created!"
   else
     puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
   end
 end
 
-# Terms of Service generation
-# ============================================================================
-
-if AppConfig.all.empty?
-
-# TODO: Validate user input
-  if ENV["minimal"]
-    admin_email = "admin@admin.com"
-    department_name = "Department"
-    contact_link_location = "wtf"
-    home_link_text = "home_link"
-    home_link_location = "canada"
-  else
-    puts "We need to setup application settings:"
-    puts "Admin Email Address:"
-    admin_email = STDIN.gets.chomp
-    puts "Department Name:"
-    department_name = STDIN.gets.chomp
-    puts "Contact Link location:"
-    contact_link_location = STDIN.gets.chomp
-    puts "Home Link Text:"
-    home_link_text = STDIN.gets.chomp
-    puts "Home Link location:"
-    home_link_location = STDIN.gets.chomp
-  end
-  AppConfig.create! do |ac|
-    ac.terms_of_service = terms_of_service_text
-    ac.upcoming_checkin_email_active = false
-    ac.reservation_confirmation_email_active = false
-    ac.overdue_checkin_email_active = false
-    ac.site_title = "Reservations"
-    ac.admin_email = admin_email
-    ac.department_name = department_name
-    ac.contact_link_location = contact_link_location
-    ac.home_link_text = home_link_text
-    ac.home_link_location = home_link_location
-    ac.default_per_cat_page = 10
-  end
-else
-  ac = AppConfig.first
-  ac.terms_of_service = terms_of_service_text
-  ac.save!
-end
-
-
 # Blackout Date generation
 # ============================================================================
+
 if ENV["minimal"]
   entered_num = 0
 else
@@ -448,15 +439,49 @@ unless entered_num == 0
         blk.equipment_model_id = 0
       end
     end
-    puts "\n#{entered_num} records successfully created!"
+    puts "\n#{entered_num} blackout date records successfully created!"
   else
     puts "\nPlease enter a whole number greater than 0."
     entered_num = STDIN.gets.chomp.to_i
   end
 end
 
+# EquipmentObject generation
+# ============================================================================
+
+if ENV["minimal"]
+  entered_num= 50
+else
+  entered_num = ask_for_records("EquipmentObject")
+end
+
+unless entered_num == 0
+  if entered_num.integer? && entered_num > 0
+    progress = ProgressBar.create(format: progress_str, total: entered_num)
+    equipment_object = entered_num.times.map do
+      progress.increment
+      EquipmentObject.create! do |eo|
+        eo.name = "Number #{(0...3).map{65.+(rand(25)).chr}.join}" + r.rand(1..9001).to_s
+        eo.serial = (0...8).map{65.+(rand(25)).chr}.join
+        eo.active = true
+        eo.equipment_model_id = equipment_model.flatten.sample.id
+      end
+    end
+    puts "\n#{entered_num} equipment object records successfully created!"
+  else
+    puts "\nPlease enter a whole number greater than 0."
+    entered_num = STDIN.gets.chomp.to_i
+  end
+else
+  puts "\n***To seed reservation records, you must create at least
+   one equipment object. If this was your intent, you're
+   good to go. Exiting seed script......................***\n\n"
+  exit
+end
+
 # Reservation generation
 # ============================================================================
+
 if ENV["minimal"]
   entered_num = 0
 else
@@ -496,9 +521,11 @@ unless entered_num == 0
       res.update_attribute(:checked_out, res.checked_in.nil? ? [nil, random_time_in_past.to_datetime].sample : random_time_in_past.to_datetime)
     end
 
-    puts "\n#{entered_num} records successfully created!"
+    puts "\n#{entered_num} reservation records successfully created!"
     else
       puts "\nPlease enter a whole number greater than 0."
       entered_num = STDIN.gets.chomp.to_i
     end
 end
+
+puts "\n***Successfully seeded all records!***\n\n"
