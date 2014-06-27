@@ -12,7 +12,7 @@ Reservations::Application.routes.draw do
   resources :documents,
             :equipment_objects,
             :requirements,
-            :announcements
+            :announcements, except: [:show]
 
   resources :categories do
     resources :equipment_models
