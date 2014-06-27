@@ -30,26 +30,18 @@ describe ReservationsController do
   end
 
   ## Shared examples
-  shared_context 'banned user' do
-    before(:each) do
-      @controller.stub(:current_user).and_return(FactoryGirl.create(:banned))
-      Reservation.stub(:find).and_return(FactoryGirl.build_stubbed(:reservation, reserver: @banned))
-    end
-  end
-
   shared_examples 'cannot access page' do
     it { response.should be_redirect }
     it { should set_the_flash }
   end
 
-  shared_examples 'banned user cannot access page (exp)' do
+  shared_examples 'inaccessible by banned user' do
     before(:each) do
-      @controller.stub(:current_user).and_return(FactoryGirl.create(:banned))
-      Reservation.stub(:find).and_return(FactoryGirl.build_stubbed(:reservation, reserver: @banned))
-      yield
+      banned = FactoryGirl.build(:banned)
+      @controller.stub(:current_user).and_return(banned)
+      Reservation.stub(:find).and_return(FactoryGirl.build_stubbed(:reservation, reserver: banned))
     end
-    it { response.should be_redirect }
-    it { should set_the_flash }
+    include_examples 'cannot access page'
   end
 
   ##### Public methods of ReservationsController with routes
@@ -90,9 +82,6 @@ describe ReservationsController do
     # check params[:filter]
     # depending on admin status, default_filter changes
     # depending on admin status, source of reservations (all v. own) changes
-    include_examples 'banned user cannot access page 2' do
-      get :index
-    end
 
     context 'when accessed by non-banned user' do
       subject { get :index }
@@ -121,10 +110,8 @@ describe ReservationsController do
       end
     end
 
-    context 'when accessed by a banned user' do
-      include_context 'banned user'
-      before(:each) { get :index }
-      it_behaves_like 'cannot access page'
+    it_behaves_like 'inaccessible by banned user' do
+      before { get :index }
     end
   end
 
@@ -149,19 +136,15 @@ describe ReservationsController do
       end
     end
 
-    context 'when accessed by a banned user' do
-      include_context 'banned user'
-      before(:each) { get :show, id: 1 }
-      it_behaves_like 'cannot access page'
+    it_behaves_like 'inaccessible by banned user' do
+      before { get :show, id: 1 }
     end
   end
 
   describe '#new GET /reservations/new' do
     # unhappy paths: banned user, there is no reservation in the cart
-    context 'when accessed by banned user' do
-      include_context 'banned user'
-      before(:each) { get :new }
-      it_behaves_like 'cannot access page'
+    it_behaves_like 'inaccessible by banned user' do
+      before { get :new }
     end
 
     context 'when accessed by a non-banned user' do
@@ -187,10 +170,8 @@ describe ReservationsController do
   end
 
   describe '#create POST /reservations/create' do
-    context 'when accessed by banned user' do
-      include_context 'banned user'
-      before(:each) { post :create }
-      it_behaves_like 'cannot access page'
+    it_behaves_like 'inaccessible by banned user' do
+      before { post :create }
     end
 
     context 'when accessed by non-banned user' do
@@ -218,10 +199,8 @@ describe ReservationsController do
   end
 
   describe '#edit GET /reservations/:id/edit' do
-    context 'when accessed by banned user' do
-      include_context 'banned user'
-      before(:each) { get :edit }
-      it_behaves_like 'cannot access page'
+    it_behaves_like 'inaccessible by banned user' do
+      before { get :edit }
     end
 
     context 'when accessed by non-banned user' do
