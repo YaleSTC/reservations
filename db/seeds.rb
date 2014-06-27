@@ -9,6 +9,10 @@
 #
 # Order matters!! The script will fail if certain records (Catgeories,
 # EquipmentModels) aren't generated first and in the order listed.
+#
+# Note that the "minimal" seed script (uses sane defaults instead of prompting
+# for every value) is run by:
+# ```bundle exec rake db:seed minimal=true```
 
 require 'ffaker'
 require 'ruby-progressbar'
