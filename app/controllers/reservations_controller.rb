@@ -71,14 +71,18 @@ class ReservationsController < ApplicationController
       Reservation.transaction do
         begin
           @errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
-          if (can? :override, :reservation_errors) or @errors.empty?
+          if @errors.empty?
             # If the reservation is a finalized reservation, save it as auto-approved ...
             params[:reservation][:approval_status] = "auto"
-            success_message = "Reservation created successfully" # errors are caught in the rollback
+            success_message = "Reservation created successfully." # errors are caught in the rollback
+          elsif can? :override, :reservation_errors
+            # display a different flash notice for privileged persons
+            params[:reservation][:approval_status] = "auto"
+            success_message = "Reservation created successfully, despite the aforementioned errors."
           else
             # ... otherwise mark it as a Reservation Request.
             params[:reservation][:approval_status] = "requested"
-            success_message = "Reservation successfully requested"
+            success_message = "This request has been successfully submitted, and is now subject to approval by an administrator."
           end
           
           cart.cart_reservations.each do |cart_res|

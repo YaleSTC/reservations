@@ -4,9 +4,6 @@
   <p>
     <h3><i class="icon-warning-sign warning-icon"></i> Would you like to <%= link_to "return to the Catalog", catalog_path %> to resolve the following error(s)?</h3>
   </p>
-  <p>
-    If uncorrected, your reservation will need to be manually approved by an administrator.
-  </p>
   <% @errors.each do |msg| %>
     <ul>
       <li><%= msg %></li>
@@ -39,7 +36,7 @@
     </ul>
   </p>
   <div class="form-actions">
-    <%= f.button :submit, "Submit Request" %>
+    <%= f.button :submit, "Submit Request", confirm: "Are you sure? This request is not finalized and will be subject to approval by an administrator. It will not be available for checkout until and unless approved, and the request may be denied for any reason at the sole discretion of the administrator." %>
     <%= link_to "Return to Catalog", catalog_path, class: 'btn' %>
   </div>
 <% end %>
