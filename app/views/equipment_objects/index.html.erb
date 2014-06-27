@@ -26,7 +26,9 @@
       <td><%= equipment_object.serial %></td>
 
       <% current_res = equipment_object.current_reservation %>
-      <td><%= link_to_if current_res, equipment_object.status, current_res %></td>
+      <td>
+        <%= link_to_if current_res, equipment_object.status, current_res %>
+      </td>
 
       <% if can? :manage, EquipmentObject %>
         <td><%= link_to "Edit", edit_equipment_object_path(equipment_object), :class => "btn" %></td>

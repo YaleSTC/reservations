@@ -32,7 +32,7 @@ Reservations::Application.configure do
 
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
-  
+
   #Rails 3 assets
   config.assets.compile = true
   config.assets.compress = false
@@ -42,4 +42,7 @@ Reservations::Application.configure do
   # Raise exception on mass assignment protection for Active Record models
   config.active_record.mass_assignment_sanitizer = :strict
 
+  config.after_initialize do
+    PaperTrail.enabled = false
+  end
 end

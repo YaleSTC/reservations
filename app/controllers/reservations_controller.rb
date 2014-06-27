@@ -10,7 +10,7 @@ class ReservationsController < ApplicationController
   layout 'application_with_sidebar'
 
   before_filter :require_login, only: [:index, :show]
-
+  before_filter :set_reservation, only: [:show,:edit,:update,:destroy,:checkout_email,:checkin_email,:renew]
   def set_user
     @user = User.find(params[:user_id])
   end
@@ -41,7 +41,6 @@ class ReservationsController < ApplicationController
   end
 
   def show
-    set_reservation
   end
 
   def new
@@ -105,33 +104,38 @@ class ReservationsController < ApplicationController
 
 
   def edit
-    set_reservation
+    @option_array = @reservation.equipment_model.equipment_objects.collect { |e|
+		[e.name, e.id] }
   end
 
   def update # for editing reservations; not for checkout or check-in
-    set_reservation
+  	#make copy of params
+  	res = params[:reservation].clone
 
     # adjust dates to match intended input of Month / Day / Year
-    start = Date.strptime(params[:reservation][:start_date],'%m/%d/%Y')
-    due = Date.strptime(params[:reservation][:due_date],'%m/%d/%Y')
+    res[:start_date] = Date.strptime(params[:reservation][:start_date],'%m/%d/%Y')
+    res[:due_date] = Date.strptime(params[:reservation][:due_date],'%m/%d/%Y')
 
-    # make sure dates are valid
-    if due < start
-      flash[:error] = 'Due date must be after the start date.'
-      redirect_to :back and return
-    end
-
+    message = "Successfully edited reservation."
     # update attributes
-    @reservation.reserver_id = params[:reservation][:reserver_id]
-    @reservation.start_date = start
-    @reservation.due_date = due
-    @reservation.notes = params[:reservation][:notes]
+    if params[:equipment_object] && params[:equipment_object] != ''
+  		object = EquipmentObject.find(params[:equipment_object])
+	  	unless object.available?
+		  	r = object.current_reservation
+        r.equipment_object_id = @reservation.equipment_object_id
+  			r.save
+	  		message << " Note equipment item #{r.equipment_object.name} is now assigned to \
+						#{ActionController::Base.helpers.link_to('reservation #' + r.id.to_s, reservation_path(r))} \
+						(#{r.reserver.render_name})"
+		  end
+		  res[:equipment_object_id] = params[:equipment_object]
+	  end
 
     # save changes to database
-    @reservation.save
+    Reservation.update(@reservation, res)
 
     # flash success and exit
-    flash[:notice] = "Successfully edited reservation."
+    flash[:notice] = message
     redirect_to @reservation
   end
 
@@ -320,7 +324,6 @@ class ReservationsController < ApplicationController
 
   #two paths to create receipt emails for checking in and checking out items.
   def checkout_email
-    set_reservation
     if UserMailer.checkout_receipt(@reservation).deliver
       redirect_to :back
       flash[:notice] = "Successfully delivered receipt email."
@@ -331,7 +334,6 @@ class ReservationsController < ApplicationController
   end
 
   def checkin_email
-    set_reservation
     if UserMailer.checkin_receipt(@reservation).deliver
       redirect_to :back
       flash[:notice] = "Successfully delivered receipt email."
@@ -342,7 +344,6 @@ class ReservationsController < ApplicationController
   end
 
   def renew
-    set_reservation
     @reservation.due_date += @reservation.max_renewal_length_available.days
     if @reservation.times_renewed == NIL # this check can be removed? just run the else now?
       @reservation.times_renewed = 1
