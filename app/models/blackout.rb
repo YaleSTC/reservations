@@ -38,8 +38,8 @@ class Blackout < ActiveRecord::Base
 
   def self.create_blackout_set(params_hash)
     #generate a unique id for this blackout date set, make sure that nil reads as 0 for the first blackout
-
-    params_hash[:set_id] = Blackout.last.id.to_i + 1
+    last_blackout = Blackout.last
+    params_hash[:set_id] = last_blackout ? (last_blackout.id.to_i + 1) : 0
 
     # create an array of individual black out dates to include in set
     individual_dates = []
