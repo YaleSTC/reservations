@@ -93,6 +93,14 @@ function shiftCalendar(offset) {
 
 
 $('#reservation-calendar').ready(function() {
+
+  //quit if no reservation calendar present
+  //there's probably a better way to do this?
+
+  if ($('#reservation-calendar').size() == 0) {
+    return false;
+  }
+
   shiftCalendar(0);
 
   $('.calendar_cell').click(function() {
