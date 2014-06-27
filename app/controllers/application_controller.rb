@@ -17,7 +17,6 @@ class ApplicationController < ActionController::Base
     c.before_filter :cart
     c.before_filter :fix_cart_date
     c.before_filter :set_view_mode
-    c.before_filter :check_if_is_admin,  only: [:activate, :deactivate]
   end
 
   helper_method :current_user
@@ -92,13 +91,6 @@ class ApplicationController < ActionController::Base
 
   def current_user
     @current_user ||= User.find_by_login(session[:cas_user])
-  end
-
-  def check_if_is_admin
-    can? :be, :admin
-    #since admins 'can :manage, :all' this will pass.
-    #in other words, what this really does is check if the
-    #current user has access to all resources
   end
 
   def check_active_admin_permission
@@ -178,6 +170,7 @@ class ApplicationController < ActionController::Base
 
   # activate and deactivate are overridden in the users controller because users are activated and deactivated differently
   def deactivate
+    authorize! :be, :admin
     @objects_class2 = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (EM, EO, Category)
     @objects_class2.destroy #Deactivate the model you had originally intended to deactivate
     flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + ". Any related equipment has been deactivated as well. Any related reservations have been perminently deleted."
@@ -185,6 +178,8 @@ class ApplicationController < ActionController::Base
   end
 
   def activate
+    puts "#{can? :be, :admin}"
+    authorize! :be, :admin
     @model_to_activate = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (EM, EO, Category)
     activate_parents(@model_to_activate)
     @model_to_activate.revive
