@@ -1,6 +1,6 @@
   <h3>Availability</h3>
   <div id="reservation-calendar">
-    <%= content_tag "div", id: "res-data", data:{url:@reservation_data, today:@date.to_s, max:@max} do %>
+    <%= content_tag "div", id: "res-data", data:{url:@reservation_data, blackouts:@blackouts, today:@date.to_s, max:@max, date_max: @date_max.to_s} do %>
     <% end %>
     <div class = "month"><h4></h4></div>
 

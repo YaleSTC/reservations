@@ -32,9 +32,15 @@ class EquipmentModelsController < ApplicationController
       @reservation_data << {
         start: r.start_date, end: r.due_date}
     end
+    @blackouts = []
+    Blackout.active.each do |b|
+      @blackouts << {
+        start: b.start_date, end: b.end_date}
+    end
     @date = Time.current.to_date
+    @date_max = @date + 1.month - 1.week
     @max = @equipment_model.equipment_objects.count
-
+    
     @restricted = @equipment_model.model_restricted?(cart.reserver_id)
     @blacked_out_start = Blackout.hard_blackout_exists_on_date(cart.start_date)
     @blacked_out_end = Blackout.hard_blackout_exists_on_date(cart.due_date)

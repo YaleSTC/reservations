@@ -18,7 +18,7 @@ function dateToHeading(date) {
   return ' ' + days[date.getUTCDay()];
 };
 
-function renderCalendar(reservations, week_start, max) {
+function renderCalendar(reservations, week_start, max, blackouts) {
   //set initial values and date ids
   var date = new Date(week_start.getTime());
   $('.calendar_cell').each(function() {
@@ -52,10 +52,22 @@ function renderCalendar(reservations, week_start, max) {
 
   //color cells appropriately
   $('.calendar_cell').each(function() {
-    var val = parseInt($(this).children('.num').children()[0].innerHTML);
-    var red = Math.min(Math.floor(510 - val*510/max),255).toString();
-    var green = Math.min(Math.floor(val*510/max),255).toString();
-    var color = 'rgba(' + red + ',' + green + ',0,0.5)';
+    var blacked = false;
+    for(var b = 0; b < blackouts.length; b++) {
+      date = new Date($(this).attr('id'));
+      if ((new Date(blackouts[b].start) <= date) && (new Date(blackouts[b].end) >= date)) {
+        blacked = true;
+        break;
+      }
+    }
+    if (blacked) {
+      var color = '#999999';
+    } else {
+      var val = parseInt($(this).children('.num').children()[0].innerHTML);
+      var red = Math.min(Math.floor(510 - val*510/max),255).toString();
+      var green = Math.min(Math.floor(val*510/max),255).toString();
+      var color = 'rgba(' + red + ',' + green + ',0,0.5)';
+    }
     $(this).css("background-color",color);
 
   });
@@ -64,19 +76,23 @@ function renderCalendar(reservations, week_start, max) {
 
 function shiftCalendar(offset) {
   var reservations = $('#res-data').data('url');
+  var blackouts = $('#res-data').data('blackouts');
   var week_start = new Date($('.calendar_cell').first().attr('id'));
   var today = new Date($('#res-data').data('today'));
+  var date_max = new Date($('#res-data').data('dateMax'));
   var max = $('#res-data').data('max');
   week_start.setDate(week_start.getDate() + offset);
   if (week_start < today) {
     week_start.setTime(today.getTime());
   }
-  renderCalendar(reservations,week_start,max);
+  if (week_start > date_max) {
+    week_start.setTime(date_max.getTime());
+  }
+  renderCalendar(reservations,week_start,max,blackouts);
 };
 
 
 $('#reservation-calendar').ready(function() {
-
   shiftCalendar(0);
 
   $('.calendar_cell').click(function() {
