@@ -48,7 +48,6 @@ describe TestController do
     controller.stub(:fix_cart_date)
     controller.stub(:set_view_mode)
     controller.stub(:current_user)
-    controller.stub(:check_if_is_admin)
   end
 
   describe 'app_setup_check' do
@@ -211,35 +210,6 @@ describe TestController do
     end
   end
 
-  describe 'check_if_is_admin' do
-    before(:each) do
-      controller.unstub(:check_if_is_admin)
-    end
-    context 'user is an admin' do
-      before(:each) do
-        @admin = FactoryGirl.create(:admin)
-        controller.stub(:current_user).and_return(@admin)
-        get :activate
-        get :deactivate
-      end
-      it { should_not set_the_flash }
-      it 'should not redirect' do
-        response.should_not be_redirect
-      end
-    end
-    context 'user is not an admin' do
-      before(:each) do
-        @user = FactoryGirl.create(:user)
-        controller.stub(:current_user).and_return(@user)
-        request.env["HTTP_REFERER"] = "where_i_came_from"
-        get :deactivate
-        get :activate
-      end
-      it { should set_the_flash }
-      it { should redirect_to(request.referer) }
-    end
-  end
-
   describe 'fix_cart_date' do
     before(:each) do
       controller.unstub(:fix_cart_date)
@@ -273,7 +243,6 @@ describe ApplicationController do
     controller.stub(:fix_cart_date)
     controller.stub(:set_view_mode)
     controller.stub(:current_user)
-    controller.stub(:check_if_is_admin)
   end
 
   #TODO - This may involve rewriting the method somewhat
@@ -298,7 +267,7 @@ describe ApplicationController do
         put :update_cart, cart: {start_date_cart: new_start.strftime('%m/%d/%Y'), due_date_cart: new_end.strftime('%m/%d/%Y')}, reserver_id: @new_reserver.id
         
         session[:cart].start_date.should eq(new_start.to_time)
-        session[:cart].due_date.should eq(new_end)
+        session[:cart].due_date.should eq(new_end.to_time)
         session[:cart].reserver_id.should eq(@new_reserver.id.to_s)
       end
 
