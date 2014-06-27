@@ -71,18 +71,20 @@ class ReservationsController < ApplicationController
       Reservation.transaction do
         begin
           @errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
+          if (can? :override, :reservation_errors) or @errors.empty?
+            # If the reservation is a finalized reservation, save it as auto-approved ...
+            params[:reservation][:approval_status] = "auto"
+            success_message = "Reservation created successfully" # errors are caught in the rollback
+          else
+            # ... otherwise mark it as a Reservation Request.
+            params[:reservation][:approval_status] = "requested"
+            success_message = "Reservation successfully requested"
+          end
+          
           cart.cart_reservations.each do |cart_res|
             @reservation = Reservation.new(params[:reservation])
             @reservation.equipment_model =  cart_res.equipment_model
 
-            if (can? :override, :reservation_errors) or @errors.empty?
-              # If the reservation is a finalized reservation, save it as auto-approved ...
-              @reservation.approval_status = "auto"
-            else
-              # ... otherwise mark it as a Reservation Request.
-              @reservation.approval_status = "requested"
-            end
-            # always bypass validations, the finalized reservations are saved separate from the reservation requests.
             # TODO: is this line needed? it's ugly. we should refactor if it's necessary.
             @reservation.bypass_validations = true
             @reservation.save!
@@ -95,11 +97,6 @@ class ReservationsController < ApplicationController
           #if AppConfig.first.reservation_confirmation_email_active?
           #  #UserMailer.reservation_confirmation(complete_reservation).deliver
           #end
-          if @reservation.approval_status == "auto"
-            flash[:notice] = "Reservation created successfully"
-          else
-            flash[:notice] = "Reservation successfully requested"
-          end
           if can? :manage, Reservation
             if params[:reservation][:start_date].to_date === Date::today.to_date
               flash[:notice] = "Are you simultaneously checking out equipment for someone? Note that\
@@ -107,6 +104,7 @@ class ReservationsController < ApplicationController
             end
             redirect_to manage_reservations_for_user_path(params[:reservation][:reserver_id]) and return
           else
+            flash[:notice] = success_message
             redirect_to catalog_path and return
           end
         rescue Exception => e
@@ -394,7 +392,6 @@ class ReservationsController < ApplicationController
     array_for_validation = []
     array_for_validation << @reservation
     @all_current_requests_by_user = @reservation.reserver.reservations.requested.delete_if{|res| res.id == @reservation.id}
-    #all_current_requests_by_user.delete_if{|res| res.id == @reservation.id}
     @errors = Reservation.validate_set(@reservation.reserver, array_for_validation)
   end
   
