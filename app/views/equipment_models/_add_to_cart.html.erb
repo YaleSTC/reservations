@@ -1,8 +1,8 @@
-  <% if @restricted || @blacked_out_start || @blacked_out_end %>
+  <% if @restricted %>
     <%= link_to "#qualifications_modal",
       class: 'not-qualified-icon-em',
       rel: "tooltip",
-      title: 'Not ' + (@restricted ? "Qualified" : "Available") +" (click for more info)",
+      title: 'Not Qualified (click for more info)',
       :"data-toggle" => 'modal' do %>
         <i class="icon-warning-sign"></i>
      <% end %>
@@ -10,17 +10,11 @@
      <div id="qualifications_modal" class="modal hide fade">
        <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">×</button>
-          <h3><%= @restricted ? "Qualification Required" : "Not Available" %></h3>
+          <h3><%= "Qualification Required" %></h3>
        </div>
        <div class="modal-body">
          <p>
-           <% if @restricted %>
-             <%= Requirement.list_requirement_admins(current_user, @equipment_model)%>
-           <% elsif @blacked_out_start %>
-             This model is not available on the dates you requested. This is because the start date of your reservation, <%= cart.start_date %>, falls on a day for which the administrator has disabled reservations.
-           <% elsif @blacked_out_end %>
-             This model is not available on the dates you requested. This is because the end date of your reservation, <%= cart.due_date %>, falls on a day for which the administrator has disabled reservations.
-           <% end %>
+           <%= Requirement.list_requirement_admins(current_user, @equipment_model)%>
          </p>
       </div>
     </div>
