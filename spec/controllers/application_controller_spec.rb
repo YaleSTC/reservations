@@ -249,7 +249,7 @@ describe TestController do
     it 'changes cart.start_date to today if date is in the past' do
       session[:cart].start_date = Date.yesterday
       get :index
-      session[:cart].start_date.should eq(Date.today)
+      session[:cart].start_date.should eq(Date.today.to_time)
     end
     it 'does not change the start_date if date is in the future' do
       session[:cart].start_date = Date.tomorrow
@@ -259,22 +259,6 @@ describe TestController do
     end
   end
 
-  # it may be better to test these methods within the controllers that call them, because the
-  # restrictions that they enforce need to be tested anyway for those actions.
-  describe 'require_admin' do
-    context 'admin user' do
-      it 'does nothing if admin in admin mode'
-    end
-    context 'not an admin' do
-      it 'redirects to root url if not an admin and no parameter passed'
-      it 'redirects to new_path if not an admin and new_path passed'
-      it 'redirects to new path admin not in admin mode'
-    end
-  end
-  describe 'require_checkout_person'
-  describe 'require_login'
-  describe 'require_user'
-  describe 'require_user_or_checkout_person'
 end
 
 describe ApplicationController do
@@ -313,7 +297,7 @@ describe ApplicationController do
         
         put :update_cart, cart: {start_date_cart: new_start.strftime('%m/%d/%Y'), due_date_cart: new_end.strftime('%m/%d/%Y')}, reserver_id: @new_reserver.id
         
-        session[:cart].start_date.should eq(new_start)
+        session[:cart].start_date.should eq(new_start.to_time)
         session[:cart].due_date.should eq(new_end)
         session[:cart].reserver_id.should eq(@new_reserver.id.to_s)
       end
