@@ -13,13 +13,16 @@ describe ReservationsController do
     @checkout_person = FactoryGirl.create(:checkout_person)
     @admin = FactoryGirl.create(:admin)
 
-    @reservation = FactoryGirl.build_stubbed(:reservation, reserver: @user)
+    @reservation = FactoryGirl.create(:valid_reservation, reserver: @user)
   end
 
   after(:all) do
     User.delete_all
     AppConfig.delete_all
     Reservation.delete_all
+    Category.delete_all
+    EquipmentModel.delete_all
+    EquipmentObject.delete_all
   end
 
   before(:each) do
@@ -88,17 +91,47 @@ describe ReservationsController do
       it { should be_success }
       it { should render_template(:index) }
 
-      it 'populates @reservations_set with reservations with respect to params[filter]'
-      it 'passes @default as false if valid params[filter] is provided'
-      it 'passes @default as true if params[filter] is not provided'
-      it 'passes @default as true if invalid params[filter] is provided'
+      it 'populates @reservations_set with reservations with respect to params[filter]' do
+        # Setup
+        @filters = [:reserved, :checked_out, :overdue, :missed,
+          :returned, :upcoming]
+        @setup_res = []
+        @filters.each do |f|
+          res = FactoryGirl.build(:valid_reservation, f, reserver: @user)
+          res.save(validate: false)
+          @setup_res << res
+        end
+
+        # Assertion and expectation
+        @filters.each do |f|
+          get :index, f => true
+          assigns(:reservations_set).uniq.sort.should eq([Reservation.send(f).uniq.sort])
+        end
+      end
+
+      it 'passes @default as false if valid params[filter] is provided' do
+        get :index, reserved: true
+        expect(assigns(:default)).to eq(false)
+      end
+
+      it 'passes @default as true if valid params[filter] is not provided' do
+        get :index
+        expect(assigns(:default)).to eq(true)
+      end
+
+      it 'passes @default as true if invalid params[filter] is provided' do
+        get :index, absurd_and_nonexistent: true
+        expect(assigns(:default)).to eq(true)
+      end
 
       context 'who is an admin' do
         before(:each) do
           @controller.stub(:current_user).and_return(@admin)
         end
         it 'uses :upcoming as default filter'
-        it 'takes all Reservations as source'
+        xit 'takes all Reservations as source' do
+          expect(assigns(:reservations_source)).to eq(Reservation)
+        end
       end
 
       context 'who is not an admin' do
@@ -106,7 +139,9 @@ describe ReservationsController do
           @controller.stub(:current_user).and_return(@user)
         end
         it 'uses :reserved as the default filter'
-        it 'uses only reservations belonging to current user as source'
+        xit 'uses only reservations belonging to current user as source' do
+          expect(assigns(:reservations_source)).to eq(@controller.current_user.reservations)
+        end
       end
     end
 
