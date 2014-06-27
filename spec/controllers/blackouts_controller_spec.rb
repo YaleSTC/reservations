@@ -77,9 +77,8 @@ describe BlackoutsController do
     context 'POST create_recurring' do
       context 'with correct params' do
         before do
-          @attributes = FactoryGirl.attributes_for(:blackout)
-          @attributes[:set_id] = 1
-          @attributes[:days] = ["1",""]
+          @attributes = FactoryGirl.attributes_for(:blackout, set_id: 1, days: ["1",""])
+          puts @attributes
           post :create_recurring, blackout: @attributes
         end
         it 'should create a set'
@@ -121,6 +120,14 @@ describe BlackoutsController do
   context 'is not admin' do
     context 'GET index' do
     end
+    context 'GET show' do
+    end
+    context 'POST create' do
+    end
+    context 'PUT update'
+    context 'POST create recurring'
+    context 'DELETE destroy'
+    context 'DELETE destroy recurring'
 
   end
 end

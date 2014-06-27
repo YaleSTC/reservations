@@ -6,7 +6,7 @@ FactoryGirl.define do
     equipment_model_id 0
     blackout_type 'hard'
     start_date Date.today
-    end_date Date.tomorrow
+    end_date (Date.today + 7.day)
   end
 
 end
