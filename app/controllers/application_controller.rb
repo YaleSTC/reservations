@@ -106,7 +106,7 @@ class ApplicationController < ActionController::Base
 							  (see #{ActionController::Base.helpers.link_to('here','https://yalestc.github.io/reservations/')} for details)."
 	end
   end
-  
+
   def fix_cart_date
     cart.set_start_date(Date.today) if cart.start_date < Date.today
   end
@@ -178,7 +178,6 @@ class ApplicationController < ActionController::Base
   end
 
   def activate
-    puts "#{can? :be, :admin}"
     authorize! :be, :admin
     @model_to_activate = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (EM, EO, Category)
     activate_parents(@model_to_activate)
