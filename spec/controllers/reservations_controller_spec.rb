@@ -234,25 +234,71 @@ describe ReservationsController do
     end
 
     context 'when accessed by non-banned user' do
+      before(:each) { @controller.stub(:current_user).and_return(@user) }
+
       context 'with validation-failing items in Cart' do
-        it 'does not affect database'
-        it 'sets flash[:error]'
-        it 'redirects to catalog_path'
+        before(:each) do
+          @invalid_cart = FactoryGirl.build(:invalid_cart)
+          @req = Proc.new do
+            post :create,
+              {reservation: {start_date: Date.today, due_date: Date.tomorrow,
+                            reserver_id: @user.id}},
+              {cart: @invalid_cart}
+          end
+        end
+
+
+        context 'and user can override errors' do
+          before(:each) do
+            AppConfig.first.update_attributes(override_on_create: true)
+            @controller.stub(:current_user).and_return(@checkout_person)
+          end
+
+          it 'affects the database' do
+            expect { @req.call }.to change { Reservation.count }
+          end
+
+          it 'should redirect' do
+            @req.call
+            response.should redirect_to(manage_reservations_for_user_path(@user.id))
+          end
+
+          it 'sets the flash' do
+            @req.call
+            flash[:notice].should_not be_nil
+          end
+        end
+
+        # expected to fail until ReservationController is fixed from #583
+        context 'and user cannot override errors' do
+          before(:each) do
+            AppConfig.first.update_attributes(override_on_create: false)
+            @controller.stub(:current_user).and_return(@checkout_person)
+          end
+          it 'does not affect database' do
+            expect { @req.call }.to_not change { Reservation.count }
+          end
+          it 'redirects to catalog_path' do
+            @req.call
+            response.should redirect_to(catalog_path)
+          end
+          it 'sets the flash' do
+            @req.call
+            flash[:error].should_not be_nil
+          end
+        end
       end
 
       context 'with validation-passing items in Cart' do
+        before(:each) do
+          valid_cr = FactoryGirl.create(:valid_cart_reservation)
+          @valid_cart = FactoryGirl.build(:cart, items: [valid_cr.id])
+        end
+
         it 'saves items into database'
         it 'empties the Cart'
         it 'sets flash[:notice]'
         it 'is a redirect'
-
-        context 'and user can override errors' do
-          it 'redirects to manage_reservations_for_user_path'
-        end
-
-        context 'and user cannot override errors' do
-          it 'redirects to catalog_path'
-        end
       end
     end
   end
