@@ -86,6 +86,11 @@ describe ReservationsController do
     # depending on admin status, default_filter changes
     # depending on admin status, source of reservations (all v. own) changes
 
+    before(:all) do
+      @filters = [:reserved, :checked_out, :overdue, :missed,
+                  :returned, :upcoming]
+    end
+
     context 'when accessed by non-banned user' do
       subject { get :index }
       it { should be_success }
@@ -93,20 +98,16 @@ describe ReservationsController do
 
       it 'populates @reservations_set with respect to params[filter]' do
         # Setup
-        @filters = [:reserved, :checked_out, :overdue, :missed,
-                    :returned, :upcoming]
-        @setup_res = []
-        @filters.each do |f|
-          res = FactoryGirl.build(:valid_reservation, f, reserver: @user)
+        @filters.each do |trait|
+          res = FactoryGirl.build(:valid_reservation, trait, reserver: @user)
           res.save(validate: false)
-          @setup_res << res
         end
 
         # Assertion and expectation
         @filters.each do |f|
           get :index, f => true
-          assigns(:reservations_set).sort.should \
-           eq([Reservation.send(f).sort])
+          expect(assigns(:reservations_set).uniq.sort).to \
+           eq([Reservation.send(f).uniq.sort])
         end
       end
 
@@ -128,8 +129,20 @@ describe ReservationsController do
       context 'who is an admin' do
         before(:each) do
           @controller.stub(:current_user).and_return(@admin)
+          @filters.each do |trait|
+            res = FactoryGirl.build(:valid_reservation, trait,
+                                    reserver: [@user, @admin].sample)
+            res.save(validate: false)
+          end
         end
-        it 'uses :upcoming as default filter'
+        it 'uses :upcoming as default filter' do
+          get :index
+          # Cannot compare objects in nested arrays directly
+          assigns(:reservations_set)[0].each do |r|
+            expect(Reservation.upcoming.all.map(&:id)).to include(r.id)
+          end
+        end
+
         xit 'takes all Reservations as source' do
           expect(assigns(:reservations_source)).to eq(Reservation)
         end
@@ -138,11 +151,19 @@ describe ReservationsController do
       context 'who is not an admin' do
         before(:each) do
           @controller.stub(:current_user).and_return(@user)
+          @filters.each do |trait|
+            res = FactoryGirl.build(:valid_reservation, trait,
+                                    reserver: [@user, @admin].sample)
+            res.save(validate: false)
+          end
         end
-        it 'uses :reserved as the default filter'
-        xit 'uses only reservations belonging to current user as source' do
-          expect(assigns(:reservations_source)).to \
-           eq(@controller.current_user.reservations)
+
+        it 'uses :reserved as the default filter' do
+          get :index
+          # Cannot compare objects in nested arrays directly
+          assigns(:reservations_set)[0].each do |r|
+            expect(@controller.current_user.reservations.upcoming.map(&:id)).to include(r.id)
+         end
         end
       end
     end
