@@ -50,10 +50,15 @@ describe UsersController do
     describe 'GET new' do
       before { get :new }
       context 'possible netid not provided' do
-        it 'should assign @user to a new user'
+        it 'should assign @user to a new user' do
+          expect(assigns(:user).attributes).to eq(User.new.attributes)
+        end
       end
       context 'possible netid provided' do
-        it 'should assign @user to the possible netid'
+        before { get :new, possible_netid: 'csw3' }
+        it 'should assign @user to the possible netid' do
+          expect(assigns(:user).attributes).to eq(User.new(User.search_ldap('csw3')).attributes)
+        end
       end
       it 'should assign @can_edit_login to true' do
         expect(assigns(:can_edit_login)).to be_true
@@ -67,16 +72,18 @@ describe UsersController do
           @user_attributes = FactoryGirl.attributes_for(:user)
           post :create, user: @user_attributes
         end
-        it 'should save the user'
-        describe 'the user'
-          it 'should match the params'
+        it 'should save the user' do
+          User.find(assigns(:user)).should_not be_nil
+        end
       end
       context 'with incorrect params' do
         before do
           @bad_attributes = FactoryGirl.attributes_for(:user, first_name: "")
           post :create, user: @bad_attributes
         end
-        it 'should not save the user'
+        it 'should not save the user' do
+          expect(assigns(:user).save).to be_false
+        end
       end
 
     end
@@ -91,31 +98,31 @@ describe UsersController do
     describe 'PUT update' do
       context 'with nice params' do
         before do
-          @new_attributes = FactoryGirl.attributes_for(:user)
-          @user = FactoryGirl.create(:user)
-          put :update, user: @new_attributes, id: @user
+          @new_attributes = FactoryGirl.attributes_for(:user, first_name: "Lolita")
+          put :update, user: @new_attributes, id: user
         end
-        it 'should not remove login from params'
-        it 'should update the user'
-        describe 'the new user' do
-          it 'should have the correct params'
+        it 'should update the user' do
+          User.find(user)[:first_name].should eq("Lolita")
         end
         it { should set_the_flash }
       end
       context 'without nice params' do
         before do
-          @bad_attributes = FactoryGirl.attributes_for(:user)
-          put :update, user: @bad_attributes
+          @bad_attributes = FactoryGirl.attributes_for(:user, first_name: "Lolita", last_name: "")
+          put :update, user: @bad_attributes, id: user
         end
-        it 'should not save'
-        it 'should show errors'
+        it 'should not save' do
+          User.find(user)[:first_name].should_not eq("Lolita")
+        end
       end
     end
     describe 'DELETE destroy' do
       before do
         delete :destroy, id: FactoryGirl.create(:user)
       end
-      it 'should destroy the user'
+      it 'should destroy the user' do
+        User.where(id: assigns(:user)).should be_empty
+      end
       it { should set_the_flash }
       it { should redirect_to(users_url) }
     end
