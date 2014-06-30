@@ -6,6 +6,7 @@
 .vagrant
 *.orig
 db/*.sqlite3
+db/*.sqlite3-journal
 log/*.log
 tmp/
 config/database.yml
