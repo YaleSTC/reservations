@@ -91,10 +91,10 @@ describe ReservationsController do
       it { should be_success }
       it { should render_template(:index) }
 
-      it 'populates @reservations_set with reservations with respect to params[filter]' do
+      it 'populates @reservations_set with respect to params[filter]' do
         # Setup
         @filters = [:reserved, :checked_out, :overdue, :missed,
-          :returned, :upcoming]
+                    :returned, :upcoming]
         @setup_res = []
         @filters.each do |f|
           res = FactoryGirl.build(:valid_reservation, f, reserver: @user)
@@ -105,7 +105,8 @@ describe ReservationsController do
         # Assertion and expectation
         @filters.each do |f|
           get :index, f => true
-          assigns(:reservations_set).uniq.sort.should eq([Reservation.send(f).uniq.sort])
+          assigns(:reservations_set).sort.should \
+           eq([Reservation.send(f).sort])
         end
       end
 
@@ -140,7 +141,8 @@ describe ReservationsController do
         end
         it 'uses :reserved as the default filter'
         xit 'uses only reservations belonging to current user as source' do
-          expect(assigns(:reservations_source)).to eq(@controller.current_user.reservations)
+          expect(assigns(:reservations_source)).to \
+           eq(@controller.current_user.reservations)
         end
       end
     end
@@ -195,7 +197,8 @@ describe ReservationsController do
 
       context 'with a non-empty cart' do
         before(:each) do
-          get :new, nil, { cart: FactoryGirl.build(:cart_with_items, reserver_id: @user.id) }
+          cart = FactoryGirl.build(:cart_with_items, reserver_id: @user.id)
+          get :new, nil, cart: cart
         end
 
         it 'should display errors'
