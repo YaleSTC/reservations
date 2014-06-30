@@ -4,7 +4,7 @@ FactoryGirl.define do
   # Sequences defined in _sequences.rb
 
   factory :equipment_object do
-    name
+    name "name"
     serial
     equipment_model factory: :equipment_model
 
