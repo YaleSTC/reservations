@@ -8,5 +8,10 @@ FactoryGirl.define do
     factory :cart_with_items do
       items { [ FactoryGirl.create(:cart_reservation).id ]}
     end
+
+    factory :invalid_cart do
+      items { [ FactoryGirl.create(:invalid_cart_reservation).id,
+                FactoryGirl.create(:invalid_cart_reservation).id ]}
+    end
   end
 end
