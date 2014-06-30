@@ -22,7 +22,7 @@ class AnnouncementsController < ApplicationController
   end
 
   def new
-    @announcement = Announcement.new({:starts_at => Date::today, :ends_at => Date::today})
+    @announcement = Announcement.new({:starts_at => Date::today, :ends_at => Date::tomorrow})
   end
 
 
