@@ -38,9 +38,6 @@ describe UsersController do
       before { get :show, id: FactoryGirl.create(:user) }
       it_behaves_like "page success"
       it { should render_template(:show) }
-      it 'should assign @user_reservations to the users reservations'
-      it 'should assign @all_equipment to the users active reservations'
-      it 'should assign @show_equipment to a hash of a load of shit'
     end
     describe 'GET new' do
       before { get :new }
@@ -65,8 +62,8 @@ describe UsersController do
       end
       context 'with incorrect params' do
         before do
-          @user_attributes = FactoryGirl.attributes_for(:user)
-          post :create, user: @user_attributes
+          @bad_attributes = FactoryGirl.attributes_for(:user, first_name: "")
+          post :create, user: @bad_attributes
         end
         it 'should not save the user'
         it 'should show errors'
@@ -83,15 +80,15 @@ describe UsersController do
       context 'with nice params' do
         before do
           @new_attributes = FactoryGirl.attributes_for(:user)
-          put :update, user: @new_attributes
+          @user = FactoryGirl.create(:user)
+          put :update, user: @new_attributes, id: @user
         end
         it 'should not remove login from params'
         it 'should update the user'
         describe 'the new user' do
           it 'should have the correct params'
         end
-        it_behaves_like 'page success'
-        it { should render_template(:create_success) }
+        it { should set_the_flash }
       end
       context 'without nice params' do
         before do
