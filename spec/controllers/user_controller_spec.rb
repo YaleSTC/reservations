@@ -17,36 +17,47 @@ describe UsersController do
   before {
     @controller.stub(:first_time_user).and_return(:nil)
   }
+  let!(:user) { FactoryGirl.create(:user) }
 
   context 'with admin user' do
     before do
       @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
     end
     describe 'GET index' do
+      let!(:inactive_user) { FactoryGirl.create(:user, deleted_at: Date.today) }
+      let!(:other_user) { FactoryGirl.create(:user) }
       before { get :index }
       it_behaves_like "page success"
       it { should render_template(:index) }
       context 'without show deleted' do
-        it 'should assign users to all active users'
+        it 'should assign users to all active users' do
+          assigns(:users).include?(other_user).should be_true
+          assigns(:users).include?(inactive_user).should be_false
+        end
       end
       context 'with show deleted' do
         before { get :index, show_deleted: true }
-        it 'should assign users to all users'
+        it 'should assign users to all users' do
+          assigns(:users).include?(inactive_user).should be_true
+        end
       end
     end
     describe 'GET show' do
-      before { get :show, id: FactoryGirl.create(:user) }
+      before { get :show, id: user }
       it_behaves_like "page success"
       it { should render_template(:show) }
     end
     describe 'GET new' do
       before { get :new }
-      context 'possible netid not provided'
+      context 'possible netid not provided' do
         it 'should assign @user to a new user'
+      end
       context 'possible netid provided' do
         it 'should assign @user to the possible netid'
       end
-      it 'should assign @can_edit_login to true'
+      it 'should assign @can_edit_login to true' do
+        expect(assigns(:can_edit_login)).to be_true
+      end
       it_behaves_like 'page success'
       it { should render_template(:new) }
     end
@@ -66,13 +77,14 @@ describe UsersController do
           post :create, user: @bad_attributes
         end
         it 'should not save the user'
-        it 'should show errors'
       end
 
     end
     describe 'GET edit' do
       before { get :edit, id: FactoryGirl.create(:user) }
-      it 'should set @can_edit_login to true'
+      it 'should set @can_edit_login to true' do
+        expect(assigns(:can_edit_login)).to be_true
+      end
       it_behaves_like 'page success'
       it { should render_template(:edit) }
     end
