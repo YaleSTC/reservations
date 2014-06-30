@@ -127,7 +127,45 @@ describe UsersController do
       it { should redirect_to(users_url) }
     end
     describe 'PUT find' do
-      # wtf
+      context 'fake searched id is blank' do
+        before do
+          request.env["HTTP_REFERER"] = "where_i_came_from"
+          put :find, fake_searched_id: ""
+        end
+        it { should set_the_flash }
+        it { should redirect_to("where_i_came_from") }
+      end
+      context 'searched id is blank' do
+        context 'valid id' do
+          before do
+            FactoryGirl.create(:user, login: "csw3")
+            put :find, fake_searched_id: "csw3", searched_id: ""
+          end
+          it 'should assign user correctly' do
+            expect(assigns(:user)).to eq(User.where(login: 'csw3').first)
+          end
+          it { should redirect_to(manage_reservations_for_user_path(assigns(:user))) }
+        end
+        context 'invalid id' do
+          before do
+            request.env["HTTP_REFERER"] = "where_i_came_from"
+            put :find, fake_searched_id: "not_a_real_id3", searched_id: ""
+          end
+          it { should set_the_flash }
+          it { should redirect_to("where_i_came_from") }
+        end
+      end
+      context 'searched id is not blank' do
+        before do
+          put :find, searched_id: user.id, fake_searched_id: "csw3"
+        end
+        it 'should assign user' do
+          expect(assigns(:user)).to eq(user)
+        end
+        it { should redirect_to(manage_reservations_for_user_path(assigns(:user)))}
+
+
+      end
     end
     describe 'PUT deactivate' do
       #
