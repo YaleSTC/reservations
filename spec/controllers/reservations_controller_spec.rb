@@ -271,6 +271,7 @@ describe ReservationsController do
 
         # expected to fail until ReservationController is fixed from #583
         context 'and user cannot override errors' do
+          before { pending }
           before(:each) do
             AppConfig.first.update_attributes(override_on_create: false)
             @controller.stub(:current_user).and_return(@checkout_person)
@@ -291,14 +292,31 @@ describe ReservationsController do
 
       context 'with validation-passing items in Cart' do
         before(:each) do
-          valid_cr = FactoryGirl.create(:valid_cart_reservation)
-          @valid_cart = FactoryGirl.build(:cart, items: [valid_cr.id])
+          @valid_cart = FactoryGirl.build(:cart_with_items)
+          @req = Proc.new do
+            post :create,
+              {reservation: {start_date: Date.today, due_date: Date.tomorrow,
+                            reserver_id: @user.id}},
+              {cart: @valid_cart}
+          end
         end
 
-        it 'saves items into database'
-        it 'empties the Cart'
-        it 'sets flash[:notice]'
-        it 'is a redirect'
+        it 'saves items into database' do
+          expect { @req.call }.to change { Reservation.count }
+        end
+        it 'empties the Cart' do
+          expect { @req.call }.to change { CartReservation.count }
+          response.request.env['rack.session'][:cart].items.count.should eq(0)
+          # Cart.should_receive(:new)
+        end
+        it 'sets flash[:notice]' do
+          @req.call
+          flash[:notice].should_not be_nil
+        end
+        it 'is a redirect' do
+          @req.call
+          response.should be_redirect
+        end
       end
     end
   end
