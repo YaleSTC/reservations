@@ -92,7 +92,6 @@ class ReservationsController < ApplicationController
         if AppConfig.first.reservation_confirmation_email_active?
           #UserMailer.reservation_confirmation(complete_reservation).deliver
         end
-
         # Set the flash and handle redirects
         flash[:notice] = "Reservation created successfully."
         unless can? :manage, Reservation
@@ -108,10 +107,10 @@ class ReservationsController < ApplicationController
 
       # Handle possible exceptions from the earlier save!
       rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid => e
-        raise ActiveRecord::Rollback
         flash[:error] = "Oops, something went wrong with making your
         reservation.<br/> #{e.message}".html_safe
         redirect_to catalog_path
+        raise ActiveRecord::Rollback
       end
     end
   end
