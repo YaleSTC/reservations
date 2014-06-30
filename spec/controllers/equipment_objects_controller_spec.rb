@@ -62,7 +62,7 @@ describe EquipmentObjectsController do
             assigns(:equipment_objects).include?(object).should be_true
             assigns(:equipment_objects).include?(obj_other_cat_active).should be_true
             assigns(:equipment_objects).include?(obj_other_cat_inactive).should be_true
-            expect(assigns(:equipment_objects).size).to eq(3)
+            expect(assigns(:equipment_objects).size).to eq(4)
           end
         end
       end
