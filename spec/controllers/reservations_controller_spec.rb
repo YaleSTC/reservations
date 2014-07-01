@@ -386,6 +386,10 @@ describe ReservationsController do
     # - affect the current reservation (@reservation)
     # - set flash notice
     # - redirect to @reservation
+    # Expects in params:
+    # - params[:equipment_object] = id of equipment object or nil
+    # - params[:reservation] with :start_date, :due_date, :reserver_id, :notes
+    
     it_behaves_like 'inaccessible by banned user' do
       before { put :update }
     end
