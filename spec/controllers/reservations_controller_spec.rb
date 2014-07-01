@@ -271,7 +271,7 @@ describe ReservationsController do
 
         # expected to fail until ReservationController is fixed from #583
         context 'and user cannot override errors' do
-          before { pending }
+          before { pending } # FIXME: Remove
           before(:each) do
             AppConfig.first.update_attributes(override_on_create: false)
             @controller.stub(:current_user).and_return(@checkout_person)
