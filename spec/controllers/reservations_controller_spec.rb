@@ -12,8 +12,6 @@ describe ReservationsController do
     @banned = FactoryGirl.create(:banned)
     @checkout_person = FactoryGirl.create(:checkout_person)
     @admin = FactoryGirl.create(:admin)
-
-    @reservation = FactoryGirl.create(:valid_reservation, reserver: @user)
   end
 
   after(:all) do
@@ -30,6 +28,8 @@ describe ReservationsController do
 
     @controller.stub(:first_time_user).and_return(nil)
     @controller.stub(:current_user).and_return(@user)
+
+    @reservation = FactoryGirl.create(:valid_reservation, reserver: @user)
   end
 
   ## Shared examples
@@ -389,9 +389,91 @@ describe ReservationsController do
     # Expects in params:
     # - params[:equipment_object] = id of equipment object or nil
     # - params[:reservation] with :start_date, :due_date, :reserver_id, :notes
-    
+
+    ## Unhappy paths due to authorization
     it_behaves_like 'inaccessible by banned user' do
       before { put :update }
+    end
+
+    context 'when accessed by patron' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@user)
+        put 'update', id: @reservation.id
+      end
+      include_examples 'cannot access page'
+    end
+
+    context 'when accessed by checkout person disallowed by settings' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@checkout_person)
+        AppConfig.first.update_attributes(checkout_persons_can_edit: false)
+        put 'update', {id: @reservation.id, reservation: FactoryGirl.attributes_for(:reservation)}
+      end
+      include_examples 'cannot access page'
+    end
+
+    ## Happy paths due to authorization
+    shared_examples 'can access update page' do
+      # Happy paths
+      describe 'and provides valid params[:reservation]' do
+        before(:each) do
+          put :update, { id: @reservation.id,
+            reservation: FactoryGirl.attributes_for(:reservation,
+              start_date: Date.today.strftime('%m/%d/%Y'),
+              due_date: (Date.tomorrow + 3.days).strftime('%m/%d/%Y')),
+            equipment_object: ''}
+        end
+        it 'should update the reservation details' do
+          @reservation.reload
+          expect(@reservation.start_date).to eq(Date.today.to_time)
+          expect(@reservation.due_date).to eq((Date.tomorrow + 3.days).to_time)
+        end
+        it { should redirect_to(@reservation) }
+      end
+
+      describe 'and provides valid params[:equipment_object]' do
+        before(:each) do
+          @new_equipment_object = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
+          put :update, { id: @reservation.id,
+            reservation: FactoryGirl.attributes_for(:reservation,
+              start_date: Date.today.strftime('%m/%d/%Y'),
+              due_date: Date.tomorrow.strftime('%m/%d/%Y')),
+            equipment_object: @new_equipment_object.id }
+        end
+        it 'should update the object on current reservation' do
+          expect{ @reservation.reload }.to change{@reservation.equipment_object}
+        end
+        it { should redirect_to(@reservation) }
+      end
+
+      # Unhappy path
+      describe 'and provides invalid params[:reservation]' do
+        before(:each) do
+          request.env["HTTP_REFERER"] = reservation_path(@reservation)
+          put :update, { id: @reservation.id,
+            reservation: FactoryGirl.attributes_for(:reservation,
+              start_date: Date.today.strftime('%m/%d/%Y'),
+              due_date: Date.yesterday.strftime('%m/%d/%Y')),
+            equipment_object: ''}
+        end
+        include_examples 'cannot access page'
+      end
+    end
+
+    context 'when accessed by checkout person allowed by settings' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@checkout_person)
+        AppConfig.first.update_attributes(checkout_persons_can_edit: true)
+      end
+      include_examples 'can access update page'
+    end
+
+    context 'when accessed by admin' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@admin)
+        AppConfig.first.update_attributes(checkout_persons_can_edit: false)
+      end
+      include_examples 'can access update page'
     end
   end
 
