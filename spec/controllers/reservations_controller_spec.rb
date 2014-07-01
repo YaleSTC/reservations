@@ -487,6 +487,19 @@ describe ReservationsController do
     it_behaves_like 'inaccessible by banned user' do
       before { delete :destroy }
     end
+
+    context 'with reservation that is not checked out' do
+      it 'is accessible by checkout persons'
+      it 'is accessible by patrons if their own'
+      it 'is unaccessible by patrons if it is not their own'
+      it 'is accessible by admins'
+    end
+
+    context 'with reservation that has been checked out' do
+      it 'is unaccessible by checkout persons'
+      it 'is unaccessible by patrons'
+      it 'is accessible by admins'
+    end
   end
 
   describe '#manage GET /reservations/manage/:user_id' do
