@@ -11,7 +11,7 @@ class Cart
 
   def initialize
     @errors = ActiveModel::Errors.new(self)
-    @items = []
+    @items = {}
     @start_date = Date.today
     @due_date = Date.tomorrow
     @reserver_id = nil
@@ -37,66 +37,27 @@ class Cart
 
   ## Item methods
 
-  # Adds CartReservation to database; saves ID into items array
+  # Adds equipment model id to items hash
   def add_item(equipment_model)
-    current_item = CartReservation.new(start_date: @start_date,
-      due_date: @due_date, reserver: self.reserver)
-    current_item.equipment_model = equipment_model
-    if current_item.save
-      @items << current_item.id
+    if items[equipment_model.id]
+      items[equipment_model.id] += 1
+    else
+      items[equipment_model.id] = 1
     end
   end
 
-  # Removes CartReservation from database and ID from items array
+  # Remove equipment model id from items hash, or decrement its count
   def remove_item(equipment_model)
-    to_be_deleted = nil
-    @items.each { |item| to_be_deleted = item if CartReservation.find(item).equipment_model == equipment_model }
-    CartReservation.delete(to_be_deleted)
-    @items.delete(to_be_deleted)
-  end
-
-  # Returns CartReservations that correspond to the IDs in the items array
-  def cart_reservations
-    CartReservation.where(id: @items)
-  end
-
-  # Returns a hash of the equipment models in the cart with their quantities
-  def models_with_quantities
-    models = Hash.new
-    cart_reservations.each { |res| models[res.equipment_model.id] = res.same_model_count(cart_reservations) }
-    models
+    if items[equipment_model.id]
+      items[equipment_model.id] -= 1
+      if items[equipment_model.id] == 0
+        items = items.except(equipment_model.id)
+      end
+    end
   end
 
   def empty?
     @items.empty?
-  end
-
-  ## Date methods
-
-  # Sets start date and updates all CartReservations to match
-  def set_start_date(date)
-    date = date.to_time.in_time_zone
-    if date >= Date.today
-      @start_date = date
-      fix_due_date
-      cart_reservations.update_all({start_date: @start_date, due_date: @due_date})
-    end
-  end
-
-  # Sets due date and updates all CartReservations to match
-  def set_due_date(date)
-    date = date.to_time.in_time_zone
-    @due_date = date
-    fix_due_date
-    cart_reservations.update_all({start_date: @start_date, due_date: @due_date})
-  end
-
-  # If the dates were illogical, sets due date to day after start date
-  def fix_due_date
-    if @start_date.to_time.in_time_zone > @due_date
-      #TODO: allow admin to set default reservation length and respect that length here
-      @due_date = @start_date + 1.day
-    end
   end
 
   #Create an array of all the reservations that should be renewed instead of having a new reservation
