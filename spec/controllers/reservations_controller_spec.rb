@@ -378,6 +378,14 @@ describe ReservationsController do
   end
 
   describe '#update PUT /reservations/:id' do
+    # Access: everyone who can access GET edit
+    # Functionality:
+    # - assign @reservation
+    # - check due_date > start_date from params; if not, flash error and redirect back
+    # - if params[:equipment_object] is defined, swap the object from the current reservation
+    # - affect the current reservation (@reservation)
+    # - set flash notice
+    # - redirect to @reservation
     it_behaves_like 'inaccessible by banned user' do
       before { put :update }
     end
