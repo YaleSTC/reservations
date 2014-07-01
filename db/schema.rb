@@ -162,14 +162,14 @@ ActiveRecord::Schema.define(:version => 20140617164155) do
     t.datetime "due_date"
     t.datetime "checked_out"
     t.datetime "checked_in"
-    t.datetime "created_at",                            :null => false
-    t.datetime "updated_at",                            :null => false
+    t.datetime "created_at",                              :null => false
+    t.datetime "updated_at",                              :null => false
     t.integer  "equipment_model_id"
     t.integer  "equipment_object_id"
     t.text     "notes"
     t.boolean  "notes_unsent",        :default => true
     t.integer  "times_renewed"
-    t.text     "approval_status"
+    t.string   "approval_status",     :default => "auto"
   end
 
   create_table "sessions", :force => true do |t|

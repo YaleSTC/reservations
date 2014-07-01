@@ -54,7 +54,7 @@ class Reservation < ActiveRecord::Base
 
   #TODO: Why the duplication in checkout_handler and checkout_handler_id (etc)?
   attr_accessible :checkout_handler, :checkout_handler_id,
-                  :checkin_handler, :checkin_handler_id,
+                  :checkin_handler, :checkin_handler_id, :approval_status,
                   :checked_out, :checked_in, :equipment_object,
                   :equipment_object_id, :notes, :notes_unsent, :times_renewed
 
