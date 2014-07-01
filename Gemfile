@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 ruby '2.1.1'
 
 #standard gems
-gem 'rails', '3.2.13'
+gem 'rails', '3.2.14'
 gem 'mysql2'
 gem 'rake'
 gem 'rdoc'
