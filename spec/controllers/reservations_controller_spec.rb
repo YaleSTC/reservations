@@ -45,6 +45,7 @@ describe ReservationsController do
       Reservation.stub(:find).and_return(FactoryGirl.build_stubbed(:reservation, reserver: banned))
     end
     include_examples 'cannot access page'
+    it { should redirect_to(root_path) }
   end
 
   ##### Public methods of ReservationsController with routes
@@ -478,6 +479,11 @@ describe ReservationsController do
   end
 
   describe '#destroy DELETE /reservations/:id' do
+    # Special access:
+    # - checkout persons, if checked_out is nil
+    # - users, if checked_out is nil and it's their reservation
+    # Functionality:
+    # - destroy reservation, set flash[:notice], redirect to reservations_url
     it_behaves_like 'inaccessible by banned user' do
       before { delete :destroy }
     end
