@@ -349,8 +349,13 @@ describe ReservationsController do
       it 'assigns @reservation' do
         expect(assigns(:reservation)).to eq(@reservation)
       end
+      it 'assigns @option_array as Array' do
+        expect(assigns(:option_array)).to be_an Array
+      end
+      it 'assigns @option_array with the correct contents' do
+        expect(assigns(:option_array)).to eq @reservation.equipment_model.equipment_objects.collect { |e| [e.name, e.id] }
+      end
       it { should render_template(:edit) }
-      it 'assigns @option_array'
     end
 
     context 'when accessed by checkout person allowed by settings' do
