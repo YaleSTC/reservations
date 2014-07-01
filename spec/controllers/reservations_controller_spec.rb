@@ -322,21 +322,53 @@ describe ReservationsController do
   end
 
   describe '#edit GET /reservations/:id/edit' do
+    ## Unhappy paths
     it_behaves_like 'inaccessible by banned user' do
-      before { get :edit }
+      before { get 'edit', id: @reservation.id }
     end
 
-    context 'when accessed by non-banned user' do
-      context 'who owns the reservation / has permissions to alter others' do
-        it 'assigns @reservation'
-        it 'assigns @option_array'
-        it 'renders template `edit`'
+    context 'when accessed by patron' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@user)
+        get 'edit', id: @reservation.id
       end
+      include_examples 'cannot access page'
+    end
 
-      context 'who does not own the reservation and lacks credentials' do
-        before(:each) { get 'edit' }
-        it_behaves_like 'cannot access page'
+    context 'when accessed by checkout person disallowed by settings' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@checkout_person)
+        AppConfig.first.update_attributes(checkout_persons_can_edit: false)
+        get 'edit', id: @reservation.id
       end
+      include_examples 'cannot access page'
+    end
+
+    ## Happy paths
+    shared_examples 'can access edit page' do
+      it 'assigns @reservation' do
+        expect(assigns(:reservation)).to eq(@reservation)
+      end
+      it { should render_template(:edit) }
+      it 'assigns @option_array'
+    end
+
+    context 'when accessed by checkout person allowed by settings' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@checkout_person)
+        AppConfig.first.update_attributes(checkout_persons_can_edit: true)
+        get :edit, id: @reservation.id
+      end
+      include_examples 'can access edit page'
+    end
+
+    context 'when accessed by admin' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@admin)
+        AppConfig.first.update_attributes(checkout_persons_can_edit: false)
+        get :edit, id: @reservation.id
+      end
+      include_examples 'can access edit page'
     end
   end
 
