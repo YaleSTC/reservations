@@ -535,23 +535,57 @@ describe ReservationsController do
     end
   end
 
-  describe '#manage (GET /reservations/manage/:user_id)' do
+  describe '#manage (GET /reservations/manage/:user_id)', focus: true do
     # Access: admins and checkout persons
     # Functionality:
     # - assigns @user, @check_out_set and @check_in_set
     # - renders :manage
 
     shared_examples 'can access #manage' do
-      before { get :manage, user_id: @user.id }
-      it { should be_success }
+      before(:each) { get :manage, user_id: @user.id }
+      it { response.should be_success }
       it { should render_template(:manage) }
-      it { should assign(:user) }
-      it { should assign(:check_out_set) }
-      it { should assign(:check_in_set) }
+
+      it 'assigns @user correctly' do
+        expect(assigns(:user)).to eq(@user)
+      end
+
+      it 'assigns @check_out_set correctly' do
+        expect(assigns(:check_out_set)).to eq(Reservation.due_for_checkout(@user))
+      end
+
+      it 'assigns @check_in_set correctly' do
+        expect(assigns(:check_in_set)).to eq(Reservation.due_for_checkin(@user))
+      end
+    end
+
+    context 'when accessed by admin' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@admin)
+      end
+
+      include_examples 'can access #manage'
+    end
+
+    context 'when accessed by checkout person' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@checkout_person)
+      end
+
+      include_examples 'can access #manage'
+    end
+
+    context 'when accessed by patron' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@user)
+        get :manage, user_id: @user.id
+      end
+
+      include_examples 'cannot access page'
     end
 
     it_behaves_like 'inaccessible by banned user' do
-      before { get :manage }
+      before { get :manage, user_id: @banned.id }
     end
   end
 
