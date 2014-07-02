@@ -3,7 +3,9 @@ $('#cart_dates').replaceWith('<%= escape_javascript(render :partial => 'reservat
   $('#models_available').replaceWith('<%= escape_javascript(render :partial => 'catalog/models_available' ) %>');
   truncate();
 <% end %>
-resume_cart();
+//resume_cart();
+time2 = new Date().getTime();
+console.log("ms passed: " + (time2 - time));
 
 <% if (flash[:error].blank? && flash[:notice].blank? && flash[:alert].blank?) %>
   $('#flashes').replaceWith('<div id="flashes"></div>');
