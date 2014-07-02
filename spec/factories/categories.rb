@@ -4,5 +4,6 @@ FactoryGirl.define do
   factory :category do
     name
     sort_order
+    max_per_user 5
   end
 end

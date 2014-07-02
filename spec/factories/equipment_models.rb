@@ -13,7 +13,13 @@ FactoryGirl.define do
     max_renewal_times 10
     max_renewal_length 10
     renewal_days_before_due 10
-    
+
+    factory :restricted_equipment_model do
+      category { FactoryGirl.create(:category, max_per_user: 1) }
+    end
+
+
+
     factory :equipment_model_with_object do
       after(:create) do |model|
         FactoryGirl.create(:equipment_object, equipment_model: model)

@@ -82,7 +82,7 @@ class ReservationsController < ApplicationController
           params[:reservation][:approval_status] = "requested"
           success_message = "This request has been successfully submitted, and is now subject to approval by an administrator."
         end
-          
+
         cart.cart_reservations.each do |cart_res|
           @reservation = Reservation.new(params[:reservation])
           @reservation.equipment_model =  cart_res.equipment_model
@@ -118,12 +118,12 @@ class ReservationsController < ApplicationController
 
   def edit
     @option_array = @reservation.equipment_model.equipment_objects.collect { |e|
-		[e.name, e.id] }
+    [e.name, e.id] }
   end
 
   def update # for editing reservations; not for checkout or check-in
-  	#make copy of params
-  	res = params[:reservation].clone
+    #make copy of params
+    res = params[:reservation].clone
 
     # adjust dates to match intended input of Month / Day / Year
     res[:start_date] = Date.strptime(params[:reservation][:start_date],'%m/%d/%Y')
@@ -380,7 +380,7 @@ class ReservationsController < ApplicationController
     @all_current_requests_by_user = @reservation.reserver.reservations.requested.delete_if{|res| res.id == @reservation.id}
     @errors = Reservation.validate_set(@reservation.reserver, array_for_validation)
   end
-  
+
   def approve_request
     set_reservation
     @reservation.approval_status = "approved"
@@ -392,7 +392,7 @@ class ReservationsController < ApplicationController
       redirect_to @reservation
     end
   end
-  
+
   def deny_request
     set_reservation
     @reservation.approval_status = "denied"
