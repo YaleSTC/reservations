@@ -736,7 +736,7 @@ describe ReservationsController do
     end
   end
 
-  describe '#checkin (PUT /reservations/check-in/:user_id)', focus: true do
+  describe '#checkin (PUT /reservations/check-in/:user_id)' do
     # Access: Admins, checkout persons.
     # Functionality: very complicated (almost 80 lines)
     # - params[:reservations] contains a hash of
@@ -781,7 +781,7 @@ describe ReservationsController do
         @controller.stub(:current_user).and_return(@admin)
       end
 
-      include_examples 'has successful checkout'
+      include_examples 'has successful checkin'
     end
 
     context 'when accessed by checkout person' do
@@ -789,7 +789,7 @@ describe ReservationsController do
         @controller.stub(:current_user).and_return(@checkout_person)
       end
 
-      include_examples 'has successful checkout'
+      include_examples 'has successful checkin'
     end
 
     context 'when accessed by patron' do
@@ -815,6 +815,52 @@ describe ReservationsController do
     # - redirects to @reservation if you can't save
     # - redirects to root_path if you can save
     #     (is saving determined by equipment_model.max_renewal_times / max_renewal_length?)
+
+    # TODO: Test circumstances under which renewal doesn't/shouldn't work
+
+    shared_examples 'can renew reservation' do
+      before(:each) do
+        @reservation = FactoryGirl.create(:checked_out_reservation, reserver: @user)
+        put :renew, id: @reservation.id
+      end
+
+      it { should redirect_to(root_path) }
+
+      it 'should extend due_date' do
+        expect { @reservation.reload }.to change { @reservation.due_date }
+      end
+    end
+
+    context 'when accessed by admin' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@admin)
+      end
+
+      include_examples 'can renew reservation'
+    end
+
+    context 'when accessed by checkout person' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@checkout_person)
+      end
+
+      include_examples 'can renew reservation'
+    end
+
+    context 'when accessed by patron' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@user)
+      end
+
+      include_examples 'can renew reservation'
+
+      pending 'cannot renew someone else\'s reservation'
+      pending 'cannot renew a reservation that was checked in'
+    end
+
+    it_behaves_like 'inaccessible by banned user' do
+      before { put :renew, id: @reservation.id }
+    end
   end
 
   describe '#checkout_email (GET reservations/checkout_email)' do
