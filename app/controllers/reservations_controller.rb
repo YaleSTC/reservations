@@ -82,9 +82,9 @@ class ReservationsController < ApplicationController
           flash[:notice] = "Reservation created successfully"
           if current_user.can_checkout?
             if params[:reservation][:start_date].to_date === Date::today.to_date
-				flash[:notice] = "Are you simultaneously checking out equipment for someone? Note that\
-									only the reservation has been made. Don't forget to continue to checkout."
-			end
+        flash[:notice] = "Are you simultaneously checking out equipment for someone? Note that\
+                  only the reservation has been made. Don't forget to continue to checkout."
+            end
             redirect_to manage_reservations_for_user_path(params[:reservation][:reserver_id]) and return
           else
             redirect_to catalog_path and return
@@ -263,8 +263,8 @@ class ReservationsController < ApplicationController
 
         # if equipment was overdue, send an email confirmation
         if r.status == 'returned overdue'
-          AdminMailer.overdue_checked_in_fine_admin(r)
-          UserMailer.overdue_checked_in_fine(r)
+          AdminMailer.overdue_checked_in_fine_admin(r).deliver
+          UserMailer.overdue_checked_in_fine(r).deliver
         end
 
         # put the data into the container we defined at the beginning of this action
