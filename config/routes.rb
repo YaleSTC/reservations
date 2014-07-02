@@ -1,4 +1,7 @@
 Reservations::Application.routes.draw do
+  root :to => 'catalog#index'
+  
+  ActiveAdmin.routes(self)
 
   get "log/index"
   get "log/version/:id" => "log#version", as: :version_view
@@ -6,12 +9,10 @@ Reservations::Application.routes.draw do
 
   get "status/index"
 
-  root :to => 'catalog#index'
-
   resources :documents,
             :equipment_objects,
             :requirements,
-            :announcements
+            :announcements, except: [:show]
 
   resources :categories do
     resources :equipment_models
@@ -59,6 +60,9 @@ Reservations::Application.routes.draw do
   get '/reservations/manage/:user_id' => 'reservations#manage', :as => :manage_reservations_for_user
   get '/reservations/current/:user_id' => 'reservations#current', :as => :current_reservations_for_user
 
+  get '/reservations/review/:id' => 'reservations#review', :as => :review_request
+  put '/reservations/approve/:id' => 'reservations#approve_request', :as => :approve_request
+  put '/reservations/deny/:id' => 'reservations#deny_request', :as => :deny_request
 
   # reservation checkout / check-in actions
   put '/reservations/checkout/:user_id' => 'reservations#checkout', :as => :checkout

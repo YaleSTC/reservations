@@ -121,13 +121,13 @@ module ReservationValidations
 
   # Checks that the number of equipment models that a user has reserved
   # is less than the equipment model maximum
-  def quantity_eq_model_allowed?
+  def quantity_eq_model_allowed?(res_array = [])
     max = equipment_model.maximum_per_user
     return true if max == "unrestricted"
     # count number of models for given reservation
     # and reserver's active reservations,
     # excluding those that don't overlap
-    reservations = reserver.reservations.active << self
+    reservations = reserver.reservations.active + res_array
     if same_model_count(get_overlapping_reservations(reservations)) > max
       errors.add(:base, "Cannot reserve more than " + equipment_model.maximum_per_user.to_s + " " + equipment_model.name.pluralize + ".\n")
       return false
@@ -138,13 +138,13 @@ module ReservationValidations
 
   # Checks that the number of categories that a user has reserved
   # is less than the max
-  def quantity_cat_allowed?
+  def quantity_cat_allowed?(res_array = [])
     max = equipment_model.category.maximum_per_user
     return true if max == "unrestricted"
     # count number of categories for given reservation
     # and reserver's active reservations
     # excluding those that don't overlap
-    reservations = reserver.reservations.active << self
+    reservations = reserver.reservations.active + res_array
     if same_category_count(get_overlapping_reservations(reservations)) > max
       errors.add(:base, "Cannot reserve more than " + equipment_model.category.maximum_per_user.to_s + " " + equipment_model.category.name.pluralize + ".\n")
       return false

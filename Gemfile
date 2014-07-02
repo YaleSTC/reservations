@@ -1,8 +1,10 @@
 source 'https://rubygems.org'
 
+ruby '2.1.1'
+
 #standard gems
-gem 'rails', '3.2.11'
-gem 'mysql2'
+gem 'rails', '3.2.14'
+gem 'mysql2', '0.3.16'
 gem 'rake'
 gem 'rdoc'
 
@@ -13,6 +15,8 @@ gem 'cancan'
 
 #scheduling
 gem 'whenever'
+
+gem 'activeadmin'
 
 #ldap integration
 gem 'net-ldap'
@@ -75,7 +79,7 @@ group :development do
 	gem 'thin'
   gem 'pry'
   gem 'pry-rails'
-  gem 'pry-debugger'
+  gem 'pry-byebug'
   gem 'pry-stack_explorer'
   gem 'pry-remote'
   gem 'letter_opener'

@@ -109,13 +109,14 @@
 $(document).ready(function() {
 
   $('.checkin-click').click( function() {
-	var box = $(this).find(":checkbox");
-	box.prop("checked", !box.prop("checked"));
-	if ($(this).hasClass("overdue")) {
-		$(this).toggleClass("selected-overdue",box.prop("checked"));
-	} else {
-		$(this).toggleClass("selected",box.prop("checked"));
-	}
+	  var box = $(":checkbox:eq(0)", this);
+	  box.prop("checked", !box.prop("checked"));
+	  if ($(this).hasClass("overdue")) {
+	  	$(this).toggleClass("selected-overdue",box.prop("checked"));
+    } else {
+  		$(this).toggleClass("selected",box.prop("checked"));
+    }
+    $(this).find('.check').toggleClass("hidden",!box.prop("checked"));
   });
 
   $('#checkout_button').click(function() {
@@ -277,6 +278,8 @@ if ($(window).width() > 767) {
   });
 
   $('.date_start').datepicker({
+    altField: '#date_start_alt',
+    altFormat: 'yy-mm-dd',
     onClose: function(dateText, inst) {
       var start_date = $('.date_start').datepicker("getDate");
       var end_date = $('.date_end').datepicker("getDate");
@@ -286,6 +289,7 @@ if ($(window).width() > 767) {
       $('.date_end').datepicker( "option" , "minDate" , start_date);
     }
   });
+
 
   // Select2 - fancy select lists
   $('select#equipment_model_category_id').select2();
@@ -339,7 +343,7 @@ $(document).on('change', '.autosubmitme', function() {
 //});
 
 // click add to cart button
-$(document).on('click', '#add_to_cart', function () {
+$(document).on('click', '.add_to_cart', function () {
   pause_cart();
 });
 
@@ -357,4 +361,6 @@ $(document).on('railsAutocomplete.select', '#fake_reserver_id', function(event, 
 function getDeactivationReason(e) {
   var p = prompt("Write down the reason for deactivation of this equipment object.")
   e.href += "?deactivation_reason=" + encodeURIComponent(p)
-}
+};
+
+
