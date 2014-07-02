@@ -165,7 +165,6 @@ class ReservationsController < ApplicationController
   end
 
   def checkout
-    binding.pry
     error_msgs = ""
     reservations_to_be_checked_out = []
     set_user
