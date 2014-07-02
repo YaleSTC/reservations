@@ -8,32 +8,32 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    actionmailer (3.2.13)
-      actionpack (= 3.2.13)
-      mail (~> 2.5.3)
-    actionpack (3.2.13)
-      activemodel (= 3.2.13)
-      activesupport (= 3.2.13)
+    actionmailer (3.2.11)
+      actionpack (= 3.2.11)
+      mail (~> 2.4.4)
+    actionpack (3.2.11)
+      activemodel (= 3.2.11)
+      activesupport (= 3.2.11)
       builder (~> 3.0.0)
       erubis (~> 2.7.0)
       journey (~> 1.0.4)
-      rack (~> 1.4.5)
+      rack (~> 1.4.0)
       rack-cache (~> 1.2)
       rack-test (~> 0.6.1)
       sprockets (~> 2.2.1)
-    activemodel (3.2.13)
-      activesupport (= 3.2.13)
+    activemodel (3.2.11)
+      activesupport (= 3.2.11)
       builder (~> 3.0.0)
-    activerecord (3.2.13)
-      activemodel (= 3.2.13)
-      activesupport (= 3.2.13)
+    activerecord (3.2.11)
+      activemodel (= 3.2.11)
+      activesupport (= 3.2.11)
       arel (~> 3.0.2)
       tzinfo (~> 0.3.29)
-    activeresource (3.2.13)
-      activemodel (= 3.2.13)
-      activesupport (= 3.2.13)
-    activesupport (3.2.13)
-      i18n (= 0.6.1)
+    activeresource (3.2.11)
+      activemodel (= 3.2.11)
+      activesupport (= 3.2.11)
+    activesupport (3.2.11)
+      i18n (~> 0.6)
       multi_json (~> 1.0)
     addressable (2.3.5)
     airbrake (3.1.14)
@@ -45,9 +45,6 @@ GEM
       debug_inspector (>= 0.0.1)
     bootstrap-sass (2.0.4.2)
     builder (3.0.4)
-    byebug (2.7.0)
-      columnize (~> 0.3)
-      debugger-linecache (~> 1.2)
     cancan (1.6.10)
     capistrano (2.15.5)
       highline
@@ -81,7 +78,12 @@ GEM
     columnize (0.8.9)
     daemons (1.1.9)
     debug_inspector (0.0.2)
+    debugger (1.6.8)
+      columnize (>= 0.3.1)
+      debugger-linecache (~> 1.2.0)
+      debugger-ruby_core_source (~> 1.3.5)
     debugger-linecache (1.2.0)
+    debugger-ruby_core_source (1.3.5)
     diff-lcs (1.2.4)
     dynamic_form (1.1.4)
     em-websocket (0.5.0)
@@ -122,7 +124,7 @@ GEM
     highline (1.6.19)
     hike (1.2.3)
     http_parser.rb (0.5.3)
-    i18n (0.6.1)
+    i18n (0.6.9)
     journey (1.0.4)
     jquery-datatables-rails (1.11.2)
       jquery-rails
@@ -149,13 +151,15 @@ GEM
       rb-inotify (>= 0.9)
       rb-kqueue (>= 0.2)
     lumberjack (1.0.4)
-    mail (2.5.4)
+    mail (2.4.4)
+      i18n (>= 0.4.0)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     method_source (0.8.2)
     mime-types (1.25.1)
     mini_portile (0.5.1)
     multi_json (1.10.1)
+    mysql2 (0.3.16)
     net-ldap (0.3.1)
     net-scp (1.1.2)
       net-ssh (>= 2.6.5)
@@ -181,9 +185,9 @@ GEM
       coderay (~> 1.0.5)
       method_source (~> 0.8)
       slop (~> 3.4)
-    pry-byebug (1.3.2)
-      byebug (~> 2.7)
-      pry (~> 0.9.12)
+    pry-debugger (0.2.2)
+      debugger (~> 1.3)
+      pry (~> 0.9.10)
     pry-rails (0.3.2)
       pry (>= 0.9.10)
     pry-remote (0.1.7)
@@ -199,19 +203,19 @@ GEM
       rack
     rack-test (0.6.2)
       rack (>= 1.0)
-    rails (3.2.13)
-      actionmailer (= 3.2.13)
-      actionpack (= 3.2.13)
-      activerecord (= 3.2.13)
-      activeresource (= 3.2.13)
-      activesupport (= 3.2.13)
+    rails (3.2.11)
+      actionmailer (= 3.2.11)
+      actionpack (= 3.2.11)
+      activerecord (= 3.2.11)
+      activeresource (= 3.2.11)
+      activesupport (= 3.2.11)
       bundler (~> 1.0)
-      railties (= 3.2.13)
+      railties (= 3.2.11)
     rails3-jquery-autocomplete (1.0.11)
       rails (~> 3.0)
-    railties (3.2.13)
-      actionpack (= 3.2.13)
-      activesupport (= 3.2.13)
+    railties (3.2.11)
+      actionpack (= 3.2.11)
+      activesupport (= 3.2.11)
       rack-ssl (~> 1.3.2)
       rake (>= 0.8.7)
       rdoc (~> 3.4)
@@ -278,7 +282,6 @@ GEM
       multi_json (~> 1.0)
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
-    sqlite3 (1.3.9)
     therubyracer (0.12.0)
       libv8 (~> 3.16.14.0)
       ref
@@ -330,16 +333,17 @@ DEPENDENCIES
   kaminari
   letter_opener
   letter_opener_web (~> 1.1.0)
+  mysql2
   net-ldap
   nilify_blanks
   paperclip
   permanent_records
   pry
-  pry-byebug
+  pry-debugger
   pry-rails
   pry-remote
   pry-stack_explorer
-  rails (= 3.2.13)
+  rails (= 3.2.11)
   rails3-jquery-autocomplete
   rake
   rdoc
@@ -354,7 +358,6 @@ DEPENDENCIES
   simple_form
   spinjs-rails
   spork-rails
-  sqlite3
   therubyracer
   thin
   uglifier
