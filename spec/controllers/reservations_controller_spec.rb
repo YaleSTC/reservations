@@ -48,40 +48,7 @@ describe ReservationsController do
     it { should redirect_to(root_path) }
   end
 
-  ##### Public methods of ReservationsController with routes
-
-  ## Standard
-  # index (GET index / ), show (GET /:id), new (GET /new),
-  # create (POST /create), edit (GET /:id/edit), update (PUT /:id),
-  # destroy (DELETE /:id)
-
-  ## Custom
-  # manage (GET /manage/:user_id), current (GET /current/:user_id)
-  # checkout (PUT '/reservations/checkout/:user_id'),
-  # checkin (PUT '/reservations/check-in/:user_id'),
-  # checkout_email (GET 'reservations/checkout_email'),
-  # checkin_email (GET 'reservations/checkin_email'),
-  # renew (PUT '/reservations/renew')
-
-  ## ?
-  # upcoming, autocomplete_user_last_name
-
-  ##### CanCan authentication summary
-  # -> banned users can't do anything
-  # -> Patrons can show and new/create/destroy their own reservation
-  #    (destroy if it hasn't been checked out), renew own
-  #    (if it's checked out and not yet checked in)
-  # -> Checkout Persons can:
-  #     do everything Patrons can do
-  #     read, create... but not destroy Reservation
-  #         (unless it hasn't been checked out yet)
-  #     update reservation, override reservation errors and checkout errors
-  #     if respective AppConfig settings allow it
-  # => Admins can:
-  #     do everything
-
-
-
+  ## Controller method tests
   describe '#index GET /reservations/' do
     # check params[:filter]
     # depending on admin status, default_filter changes
@@ -583,13 +550,28 @@ describe ReservationsController do
     # Access: admins and checkout persons
     # Functionality:
     # - assigns @user, @user_overdue_reservations_set,
-    # => @user_checked_out_today_reservations_set,
-    # => @user_checked_out_previous_reservations_set,
-    # => @user_reserved_reservations_set
+    #    @user_checked_out_today_reservations_set,
+    #    @user_checked_out_previous_reservations_set,
+    #    @user_reserved_reservations_set
     # - renders :current_reservations
 
     it_behaves_like 'inaccessible by banned user' do
       before { get :current, user_id: @banned.id }
     end
+  end
+
+  describe '#checkout PUT /reservations/checkout/:user_id' do
+  end
+
+  describe '#checkin (PUT /reservations/check-in/:user_id)' do
+  end
+
+  describe '#checkout_email (GET reservations/checkout_email)' do
+  end
+
+  describe '#checkin_email (GET reservations/checkin_email)' do
+  end
+
+  describe '#renew (PUT /reservations/renew)' do
   end
 end
