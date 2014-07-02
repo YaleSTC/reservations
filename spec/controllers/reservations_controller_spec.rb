@@ -806,7 +806,15 @@ describe ReservationsController do
     end
   end
 
-  describe '#renew (PUT /reservations/renew)' do
+  describe '#renew (PUT /reservations/:id/renew)' do
+    # Access: Admins, checkout persons, users if it's their own reservation
+    # Functionality:
+    # - sets @reservation
+    # - add @reservation.max_renewal_length_available.days to due_date
+    # - add 1 to @reservation.times_renewed
+    # - redirects to @reservation if you can't save
+    # - redirects to root_path if you can save
+    #     (is saving determined by equipment_model.max_renewal_times / max_renewal_length?)
   end
 
   describe '#checkout_email (GET reservations/checkout_email)' do
