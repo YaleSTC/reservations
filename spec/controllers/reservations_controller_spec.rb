@@ -485,24 +485,26 @@ describe ReservationsController do
     # Functionality:
     # - destroy reservation, set flash[:notice], redirect to reservations_url
 
-    shared_examples 'can destroy reservation' do |res|
+    # Requires a block to be passed which defines let!(:reservation)
+    shared_examples 'can destroy reservation' do
       it 'deletes the reservation' do
-        expect { delete :destroy, id: res.id }.to change { Reservation.count }
+        expect { delete :destroy, id: reservation.id }.to change { Reservation.count }
       end
 
       it 'redirects to reservations_url' do
-        delete :destroy, id: res.id
+        delete :destroy, id: reservation.id
         response.should redirect_to(reservations_url)
       end
 
       it 'sets the flash' do
-        delete :destroy, id: res.id
+        delete :destroy, id: reservation.id
         flash[:notice].should_not be_nil
       end
     end
 
-    shared_examples 'cannot destroy reservation' do |res|
-      before(:each) { delete :destroy, id: res.id }
+    # Requires a block to be passed which defines let(:reservation)
+    shared_examples 'cannot destroy reservation' do
+      before(:each) { delete :destroy, id: reservation.id }
       include_examples 'cannot access page'
     end
 
@@ -510,7 +512,10 @@ describe ReservationsController do
       before(:each) do
         @controller.stub(:current_user).and_return(@admin)
       end
-      include_examples 'can destroy reservation', FactoryGirl.create(:reservation, reserver: @user)
+
+      include_examples 'can destroy reservation' do
+        let!(:reservation) { FactoryGirl.create(:reservation, reserver: @user) }
+      end
     end
 
     context 'when accessed by checkout person' do
@@ -519,11 +524,15 @@ describe ReservationsController do
       end
 
       context 'and the reservation is checked out' do
-        include_examples 'cannot destroy reservation', FactoryGirl.create(:checked_out_reservation, reserver: @user)
+        include_examples 'cannot destroy reservation' do
+          let(:reservation) { FactoryGirl.create(:checked_out_reservation, reserver: @user) }
+        end
       end
 
       context 'and the reservation is not checked out' do
-        include_examples 'can destroy reservation', FactoryGirl.create(:reservation, reserver: @user)
+        include_examples 'can destroy reservation' do
+          let!(:reservation) { FactoryGirl.create(:reservation, reserver: @user) }
+        end
       end
     end
 
@@ -534,16 +543,23 @@ describe ReservationsController do
 
       context 'and the reservation is their own' do
         context 'and it is checked out' do
-          include_examples 'cannot destroy reservation',  FactoryGirl.create(:checked_out_reservation, reserver: @user)
+          include_examples 'cannot destroy reservation' do
+            let(:reservation) { FactoryGirl.create(:checked_out_reservation, reserver: @user) }
+          end
+
         end
 
-        context 'and it is not checked out', focus: true do
-          include_examples 'can destroy reservation', FactoryGirl.create(:valid_reservation, reserver: @user)
+        context 'and it is not checked out' do
+          include_examples 'can destroy reservation' do
+            let!(:reservation) { FactoryGirl.create(:valid_reservation, reserver: @user) }
+          end
         end
       end
 
       context 'and the reservation is not their own' do
-        include_examples 'cannot destroy reservation',  FactoryGirl.create(:reservation, reserver: @checkout_person)
+        include_examples 'cannot destroy reservation' do
+          let(:reservation) { FactoryGirl.create(:reservation, reserver: @checkout_person) }
+        end
       end
     end
 
