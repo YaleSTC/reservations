@@ -655,6 +655,15 @@ describe ReservationsController do
   end
 
   describe '#checkout (PUT /reservations/checkout/:user_id)' do
+    # Access: Admins, checkout persons.
+    # Functionality: very complicated (almost 100 lines)
+    # - pass TOS (if not, redirect)
+    # - params[:reservations] contains hash of {reservation_id => {equipment_object_id: int, checkout_precedures: ?, notes: str}}
+    # - processes all reservations in params[:reservations] -- adds checkout_handler, checked_out (time), equipment_object; updates notes
+    # - stops checkout if user has overdue reservations
+    # - stops checkout if no reservations are selected
+    # - overrides errors if you can
+    # - sets empty @check_in_set, populates @check_out_set with the reservations
   end
 
   describe '#checkin (PUT /reservations/check-in/:user_id)' do
