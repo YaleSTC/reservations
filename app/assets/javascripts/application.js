@@ -220,23 +220,6 @@ if ($(window).width() > 767) {
   $(".not-qualified-icon").tooltip();
   $(".not-qualified-icon-em").tooltip();
 
-  // Equipment Model - show - progress bar
-
-  $('.progress .bar').each(function() {
-      var me = $(this);
-      var perc = me.attr("data-percentage");
-      var current_perc = 0;
-
-      var progress = setInterval(function() {
-          if (current_perc>=perc) {
-              clearInterval(progress);
-          } else {
-              current_perc = perc;
-              me.css('width', (current_perc)+'%');
-          }
-      }, 100);
-  });
-
   $('.associated_em_box img').popover({ placement: 'bottom' });
   $("#my_reservations .dropdown-menu a").popover({ placement: 'bottom' });
   $("#my_equipment .dropdown-menu a").popover({ placement: 'bottom' });
