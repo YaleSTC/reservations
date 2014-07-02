@@ -38,9 +38,10 @@ class Ability
             r.checked_in ==  nil
             r.checked_out != nil
           end
+          can :update_cart, :all
         when 'banned'
           #cannot :create, Reservation
-	    end
+      end
       case user.role
         when 'superuser'
           can :change, :views
