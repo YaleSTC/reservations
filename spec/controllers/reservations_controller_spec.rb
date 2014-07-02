@@ -661,12 +661,78 @@ describe ReservationsController do
     # - params[:reservations] contains hash of
     #    {reservation_id => {equipment_object_id: int, notes: str,
     #      checkout_precedures: {checkout_procedure_id => int}}}
-    # - processes all reservations in params[:reservations] -- adds checkout_handler, checked_out (time), equipment_object; updates notes
     # - stops checkout if user has overdue reservations
     # - stops checkout if no reservations are selected
     # - overrides errors if you can and if there are some, otherwise redirects away
+
+    # Effects if successful:
     # - sets empty @check_in_set, populates @check_out_set with the reservations
+    # - processes all reservations in params[:reservations] -- adds checkout_handler, checked_out (time), equipment_object; updates notes
     # - renders :receipt template
+
+    # TODO: Test cases for (non-)filled-in checkout procedures
+    # TODO: Test cases for different override-errors privileges
+    # TODO: Test cases for different TOS statuses
+    # TODO: Test cases for when a user has overdue reservations
+    # TODO: Test cases for when no reservations are selected
+
+    shared_examples 'has successful checkout' do
+      before(:each) do
+        @obj = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
+        reservations_params = {@reservation.id.to_s => {notes: "", equipment_object_id: @obj.id}}
+        put :checkout, user_id: @user.id, reservations: reservations_params
+      end
+
+      it { response.should be_success }
+      it { should render_template(:receipt) }
+
+      it 'assigns empty @check_in_set' do
+        expect(assigns(:check_in_set)).to be_empty
+      end
+
+      it 'populates @check_out_set' do
+        expect(assigns(:check_out_set)).to eq [@reservation]
+      end
+
+      it 'updates the reservation' do
+        expect(@reservation.checkout_handler).to be_nil
+        expect(@reservation.checked_out).to be_nil
+        expect(@reservation.equipment_object).to be_nil
+        @reservation.reload
+        expect(@reservation.checkout_handler).to be_a(User)
+        expect(@reservation.checked_out).to_not be_nil
+        expect(@reservation.equipment_object).to eq @obj
+      end
+    end
+
+    context 'when accessed by admin' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@admin)
+      end
+
+      include_examples 'has successful checkout'
+    end
+
+    context 'when accessed by checkout person' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@checkout_person)
+      end
+
+      include_examples 'has successful checkout'
+    end
+
+    context 'when accessed by patron' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@user)
+        put :checkout, user_id: @user.id
+      end
+
+      include_examples 'cannot access page'
+    end
+
+    it_behaves_like 'inaccessible by banned user' do
+      before { put :checkout, user_id: @banned.id }
+    end
   end
 
   describe '#checkin (PUT /reservations/check-in/:user_id)' do
