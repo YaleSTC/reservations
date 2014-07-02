@@ -675,6 +675,7 @@ describe ReservationsController do
     # TODO: Test cases for different TOS statuses
     # TODO: Test cases for when a user has overdue reservations
     # TODO: Test cases for when no reservations are selected
+    # Note: Many of these can be cross-applied to #checkin as well
 
     shared_examples 'has successful checkout' do
       before(:each) do
@@ -735,7 +736,7 @@ describe ReservationsController do
     end
   end
 
-  describe '#checkin (PUT /reservations/check-in/:user_id)' do
+  describe '#checkin (PUT /reservations/check-in/:user_id)', focus: true do
     # Access: Admins, checkout persons.
     # Functionality: very complicated (almost 80 lines)
     # - params[:reservations] contains a hash of
@@ -745,6 +746,64 @@ describe ReservationsController do
     # - stops checkin if no reservations are selected
     # - overrides errors if you can and if there are some, otherwise redirects away
     # - renders :receipt template
+
+    # TODO: See todo's on #checkout
+
+    shared_examples 'has successful checkin' do
+      before(:each) do
+        @reservation = FactoryGirl.create(:checked_out_reservation, reserver: @user)
+        reservations_params = {@reservation.id.to_s => {notes: "", checkin?: "1"}}
+        put :checkin, user_id: @user.id, reservations: reservations_params
+      end
+
+      it { response.should be_success }
+      it { should render_template(:receipt) }
+
+      it 'assigns empty @check_out_set' do
+        expect(assigns(:check_out_set)).to be_empty
+      end
+
+      it 'populates @check_in_set' do
+        expect(assigns(:check_in_set)).to eq [@reservation]
+      end
+
+      it 'updates the reservation' do
+        expect(@reservation.checkin_handler).to be_nil
+        expect(@reservation.checked_in).to be_nil
+        @reservation.reload
+        expect(@reservation.checkin_handler).to be_a(User)
+        expect(@reservation.checked_in).to_not be_nil
+      end
+    end
+
+    context 'when accessed by admin' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@admin)
+      end
+
+      include_examples 'has successful checkout'
+    end
+
+    context 'when accessed by checkout person' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@checkout_person)
+      end
+
+      include_examples 'has successful checkout'
+    end
+
+    context 'when accessed by patron' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@user)
+        put :checkin, user_id: @user.id
+      end
+
+      include_examples 'cannot access page'
+    end
+
+    it_behaves_like 'inaccessible by banned user' do
+      before { put :checkin, user_id: @banned.id }
+    end
   end
 
   describe '#renew (PUT /reservations/renew)' do
