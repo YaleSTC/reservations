@@ -110,10 +110,6 @@ describe ReservationsController do
             expect(Reservation.upcoming.all.map(&:id)).to include(r.id)
           end
         end
-
-        xit 'takes all Reservations as source' do
-          expect(assigns(:reservations_source)).to eq(Reservation)
-        end
       end
 
       context 'who is not an admin' do
@@ -142,28 +138,58 @@ describe ReservationsController do
   end
 
   describe '#show (GET /reservations/:id)' do
-    context 'when accessed by a non-banned user' do
+    before(:each) do
+      @admin_res = FactoryGirl.create(:reservation, reserver: @admin)
+    end
+
+    shared_examples 'can view reservation by patron' do
+      before(:each) { get :show, id: @reservation.id }
+      it { should render_template(:show) }
+      it { response.should be_success }
+      it { expect(assigns(:reservation)).to eq @reservation }
+    end
+
+    shared_examples 'can view reservation by admin' do
+      before(:each) { get :show, id: @admin_res.id }
+      it { should render_template(:show) }
+      it { response.should be_success }
+      it { expect(assigns(:reservation)).to eq @admin_res }
+    end
+
+    shared_examples 'cannot view reservation by admin' do
+      before(:each) { get :show, id: @admin_res.id }
+      include_examples 'cannot access page'
+    end
+
+    context 'when accessed by admin' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@admin)
+      end
+
+      it_behaves_like 'can view reservation by patron'
+      it_behaves_like 'can view reservation by admin'
+    end
+
+    context 'when accessed by checkout person' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@checkout_person)
+      end
+
+      it_behaves_like 'can view reservation by patron'
+      it_behaves_like 'can view reservation by admin'
+    end
+
+    context 'when accessed by patron' do
       before(:each) do
         @controller.stub(:current_user).and_return(@user)
-        Reservation.stub(:find).and_return(@reservation)
-        get :show, id: 1
-      end
-      it { response.should be_success }
-      it { should render_template(:show) }
-
-      context 'who is an admin' do
-        it 'should display own reservation'
-        it 'should display anybody\'s reservation'
       end
 
-      context 'who is not an admin' do
-        it 'should display own reservation'
-        it 'should not display someone else\'s reservation'
-      end
+      it_behaves_like 'can view reservation by patron'
+      it_behaves_like 'cannot view reservation by admin'
     end
 
     it_behaves_like 'inaccessible by banned user' do
-      before { get :show, id: 1 }
+      before { get :show, id: @reservation.id }
     end
   end
 
