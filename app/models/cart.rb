@@ -11,7 +11,7 @@ class Cart
 
   def initialize
     @errors = ActiveModel::Errors.new(self)
-    @items = {}
+    @items = Hash.new()
     @start_date = Date.today
     @due_date = Date.tomorrow
     @reserver_id = nil
@@ -40,22 +40,16 @@ class Cart
   # Adds equipment model id to items hash
   def add_item(equipment_model)
     return if equipment_model.nil?
-    if @items[equipment_model.id]
-      @items[equipment_model.id] += 1
-    else
-      @items[equipment_model.id] = 1
-    end
+    key = equipment_model.id.to_s
+    self.items[key] = self.items[key] ? self.items[key] + 1 : 1
   end
 
   # Remove equipment model id from items hash, or decrement its count
   def remove_item(equipment_model)
     return if equipment_model.nil?
-    if @items[equipment_model.id]
-      @items[equipment_model.id] -= 1
-      if @items[equipment_model.id] == 0
-        @items = @items.except(equipment_model.id)
-      end
-    end
+    key = equipment_model.id.to_s
+    self.items[key] = self.items[key] ? self.items[key] - 1 : 0
+    self.items = self.items.except(key) if self.items[key] == 0
   end
 
   def empty?
