@@ -484,21 +484,71 @@ describe ReservationsController do
     # - users, if checked_out is nil and it's their reservation
     # Functionality:
     # - destroy reservation, set flash[:notice], redirect to reservations_url
+
+    shared_examples 'can destroy reservation' do |res|
+      it 'deletes the reservation' do
+        expect { delete :destroy, id: res.id }.to change { Reservation.count }
+      end
+
+      it 'redirects to reservations_url' do
+        delete :destroy, id: res.id
+        response.should redirect_to(reservations_url)
+      end
+
+      it 'sets the flash' do
+        delete :destroy, id: res.id
+        flash[:notice].should_not be_nil
+      end
+    end
+
+    shared_examples 'cannot destroy reservation' do |res|
+      before(:each) { delete :destroy, id: res.id }
+      include_examples 'cannot access page'
+    end
+
+    context 'when accessed by admin' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@admin)
+      end
+      include_examples 'can destroy reservation', FactoryGirl.create(:reservation, reserver: @user)
+    end
+
+    context 'when accessed by checkout person' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@checkout_person)
+      end
+
+      context 'and the reservation is checked out' do
+        include_examples 'cannot destroy reservation', FactoryGirl.create(:checked_out_reservation, reserver: @user)
+      end
+
+      context 'and the reservation is not checked out' do
+        include_examples 'can destroy reservation', FactoryGirl.create(:reservation, reserver: @user)
+      end
+    end
+
+    context 'when accessed by patron' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@user)
+      end
+
+      context 'and the reservation is their own' do
+        context 'and it is checked out' do
+          include_examples 'cannot destroy reservation',  FactoryGirl.create(:checked_out_reservation, reserver: @user)
+        end
+
+        context 'and it is not checked out', focus: true do
+          include_examples 'can destroy reservation', FactoryGirl.create(:valid_reservation, reserver: @user)
+        end
+      end
+
+      context 'and the reservation is not their own' do
+        include_examples 'cannot destroy reservation',  FactoryGirl.create(:reservation, reserver: @checkout_person)
+      end
+    end
+
     it_behaves_like 'inaccessible by banned user' do
-      before { delete :destroy }
-    end
-
-    context 'with reservation that is not checked out' do
-      it 'is accessible by checkout persons'
-      it 'is accessible by patrons if their own'
-      it 'is unaccessible by patrons if it is not their own'
-      it 'is accessible by admins'
-    end
-
-    context 'with reservation that has been checked out' do
-      it 'is unaccessible by checkout persons'
-      it 'is unaccessible by patrons'
-      it 'is accessible by admins'
+      before { delete :destroy, id: @reservation.id }
     end
   end
 
