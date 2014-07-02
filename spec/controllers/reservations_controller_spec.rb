@@ -569,12 +569,25 @@ describe ReservationsController do
   end
 
   describe '#manage GET /reservations/manage/:user_id' do
+    # Access: admins and checkout persons
+    # Functionality:
+    # - assigns @user, @check_out_set and @check_in_set
+    # - renders :manage
+
     it_behaves_like 'inaccessible by banned user' do
       before { get :manage }
     end
   end
 
   describe '#current GET /reservations/current/:user_id' do
+    # Access: admins and checkout persons
+    # Functionality:
+    # - assigns @user, @user_overdue_reservations_set,
+    # => @user_checked_out_today_reservations_set,
+    # => @user_checked_out_previous_reservations_set,
+    # => @user_reserved_reservations_set
+    # - renders :current_reservations
+
     it_behaves_like 'inaccessible by banned user' do
       before { get :current, user_id: @banned.id }
     end
