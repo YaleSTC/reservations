@@ -7,8 +7,10 @@ FactoryGirl.define do
     name "name"
     serial
     equipment_model factory: :equipment_model
+    deactivation_reason nil
 
     factory :deactivated do
+      deactivation_reason "Because I can"
       deleted_at "2013-01-01 00:00:00"
     end
   end

@@ -11,7 +11,22 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130815225046) do
+ActiveRecord::Schema.define(:version => 20140618173229) do
+
+  create_table "active_admin_comments", :force => true do |t|
+    t.string   "resource_id",   :null => false
+    t.string   "resource_type", :null => false
+    t.integer  "author_id"
+    t.string   "author_type"
+    t.text     "body"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+    t.string   "namespace"
+  end
+
+  add_index "active_admin_comments", ["author_type", "author_id"], :name => "index_active_admin_comments_on_author_type_and_author_id"
+  add_index "active_admin_comments", ["namespace"], :name => "index_active_admin_comments_on_namespace"
+  add_index "active_admin_comments", ["resource_type", "resource_id"], :name => "index_admin_notes_on_resource_type_and_resource_id"
 
   create_table "announcements", :force => true do |t|
     t.text     "message"
@@ -45,7 +60,6 @@ ActiveRecord::Schema.define(:version => 20130815225046) do
     t.boolean  "checkout_persons_can_edit",                          :default => false
     t.boolean  "require_phone",                                      :default => false
     t.boolean  "viewed",                                             :default => true
-    t.boolean  "require_phone",                                      :default => true
     t.boolean  "override_on_create",                                 :default => false
     t.boolean  "override_at_checkout",                               :default => false
   end
@@ -75,10 +89,10 @@ ActiveRecord::Schema.define(:version => 20130815225046) do
     t.string   "name"
     t.integer  "max_per_user"
     t.integer  "max_checkout_length"
-    t.datetime "created_at",              :null => false
-    t.datetime "updated_at",              :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
     t.integer  "sort_order"
-    t.datetime "deleted_at"
+    t.datetime "deleted_at",              :limit => 255
     t.integer  "max_renewal_times"
     t.integer  "max_renewal_length"
     t.integer  "renewal_days_before_due"
@@ -103,14 +117,14 @@ ActiveRecord::Schema.define(:version => 20130815225046) do
   create_table "equipment_models", :force => true do |t|
     t.string   "name"
     t.text     "description"
-    t.decimal  "late_fee",                   :precision => 10, :scale => 2
-    t.decimal  "replacement_fee",            :precision => 10, :scale => 2
+    t.decimal  "late_fee",                                  :precision => 10, :scale => 2
+    t.decimal  "replacement_fee",                           :precision => 10, :scale => 2
     t.integer  "max_per_user"
-    t.boolean  "active",                                                    :default => true
+    t.boolean  "active",                                                                   :default => true
     t.integer  "category_id"
-    t.datetime "created_at",                                                                  :null => false
-    t.datetime "updated_at",                                                                  :null => false
-    t.datetime "deleted_at"
+    t.datetime "created_at",                                                                                 :null => false
+    t.datetime "updated_at",                                                                                 :null => false
+    t.datetime "deleted_at",                 :limit => 255
     t.string   "photo_file_name"
     t.string   "photo_content_type"
     t.integer  "photo_file_size"
@@ -134,29 +148,15 @@ ActiveRecord::Schema.define(:version => 20130815225046) do
     t.integer "equipment_model_id", :null => false
   end
 
-  create_table "equipment_models_reservations", :force => true do |t|
-    t.integer  "equipment_model_id"
-    t.integer  "reservation_id"
-    t.integer  "quantity"
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
-  end
-
   create_table "equipment_objects", :force => true do |t|
     t.string   "name"
     t.string   "serial"
-    t.boolean  "active",             :default => true
+    t.boolean  "active",                             :default => true
     t.integer  "equipment_model_id"
-    t.datetime "created_at",                           :null => false
-    t.datetime "updated_at",                           :null => false
-    t.datetime "deleted_at"
-  end
-
-  create_table "equipment_objects_reservations", :force => true do |t|
-    t.integer  "equipment_object_id"
-    t.integer  "reservation_id"
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
+    t.datetime "created_at",                                           :null => false
+    t.datetime "updated_at",                                           :null => false
+    t.datetime "deleted_at",          :limit => 255
+    t.string   "deactivation_reason"
   end
 
   create_table "requirements", :force => true do |t|
@@ -178,13 +178,14 @@ ActiveRecord::Schema.define(:version => 20130815225046) do
     t.datetime "due_date"
     t.datetime "checked_out"
     t.datetime "checked_in"
-    t.datetime "created_at",                            :null => false
-    t.datetime "updated_at",                            :null => false
+    t.datetime "created_at",                              :null => false
+    t.datetime "updated_at",                              :null => false
     t.integer  "equipment_model_id"
     t.integer  "equipment_object_id"
     t.text     "notes"
     t.boolean  "notes_unsent",        :default => true
     t.integer  "times_renewed"
+    t.string   "approval_status",     :default => "auto"
   end
 
   create_table "sessions", :force => true do |t|
@@ -201,21 +202,32 @@ ActiveRecord::Schema.define(:version => 20130815225046) do
     t.string   "login"
     t.string   "first_name"
     t.string   "last_name"
-    t.string   "nickname"
+    t.string   "nickname",                                 :default => "",       :null => false
     t.string   "phone"
     t.string   "email"
     t.string   "affiliation"
-    t.datetime "created_at",                                      :null => false
-    t.datetime "updated_at",                                      :null => false
-    t.datetime "deleted_at"
+    t.datetime "created_at",                                                     :null => false
+    t.datetime "updated_at",                                                     :null => false
+    t.datetime "deleted_at",                :limit => 255
     t.boolean  "terms_of_service_accepted"
-    t.string   "view_mode",                 :default => "admin"
-    t.string   "role",                      :default => "normal"
+    t.string   "view_mode",                                :default => "admin"
+    t.string   "role",                                     :default => "normal"
   end
 
   create_table "users_requirements", :id => false, :force => true do |t|
     t.integer "user_id"
     t.integer "requirement_id"
   end
+
+  create_table "versions", :force => true do |t|
+    t.string   "item_type",  :null => false
+    t.integer  "item_id",    :null => false
+    t.string   "event",      :null => false
+    t.string   "whodunnit"
+    t.text     "object"
+    t.datetime "created_at"
+  end
+
+  add_index "versions", ["item_type", "item_id"], :name => "index_versions_on_item_type_and_item_id"
 
 end

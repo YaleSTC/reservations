@@ -17,11 +17,19 @@ class ApplicationController < ActionController::Base
     c.before_filter :cart
     c.before_filter :fix_cart_date
     c.before_filter :set_view_mode
-    c.before_filter :check_if_is_admin,  only: [:activate, :deactivate]
   end
 
   helper_method :current_user
   helper_method :cart
+
+  rescue_from CanCan::AccessDenied do |exception|
+    flash[:error] = "Sorry, that action or page is restricted."
+    if current_user && current_user.view_mode == 'banned'
+      flash[:error] = "That action is restricted; it looks like you're a banned user! Talk to your administrator, maybe they'll be willing to lift your restriction."
+    end
+    #redirect_to request.referer ? request.referer : main_app.root_url
+    redirect_to main_app.root_url
+  end
 
   # -------- before_filter methods -------- #
 
@@ -63,13 +71,16 @@ class ApplicationController < ActionController::Base
   end
 
   def set_view_mode
-    if current_user && current_user.role == 'admin' && params[:view_mode]
+    if (can? :change, :views) && params[:view_mode]
       # gives a more user friendly notice when changing view modes
       messages_hash = { 'admin' => 'Admin',
                         'banned' => 'Banned User',
                         'checkout' => 'Checkout Person',
+                        'superuser' => 'Superuser',
                         'normal' => 'Patron'}
-
+      if (params[:view_mode] == 'superuser')
+        authorize! :view_as, :superuser
+      end
       current_user.view_mode = params[:view_mode]
       current_user.save!
       flash[:notice] = "Viewing as #{messages_hash[current_user.view_mode]}."
@@ -82,13 +93,12 @@ class ApplicationController < ActionController::Base
     @current_user ||= User.find_by_login(session[:cas_user])
   end
 
-  def check_if_is_admin
-    unless current_user.role == 'admin'
-      flash[:notice] = "Only administrators can do that!"
-      redirect_to request.referer
+  def check_active_admin_permission
+    if cannot? :access, :active_admin
+      raise CanCan::AccessDenied.new()
     end
   end
-  
+
   def check_view_mode
 	if current_user.role == 'admin' && current_user.view_mode != 'admin'
 		flash[:persistent] = "Currently viewing as #{current_user.view_mode} user. You can switch back to your regular view \
@@ -96,7 +106,7 @@ class ApplicationController < ActionController::Base
 							  (see #{ActionController::Base.helpers.link_to('here','https://yalestc.github.io/reservations/')} for details)."
 	end
   end
-  
+
   def fix_cart_date
     cart.set_start_date(Date.today) if cart.start_date < Date.today
   end
@@ -146,32 +156,11 @@ class ApplicationController < ActionController::Base
     RubyCAS::Filter.logout(self)
   end
 
-  def require_admin(new_path=root_path)
-    restricted_redirect_to(new_path) unless current_user.is_admin?(as: 'admin')
-  end
-
-  def require_checkout_person(new_path=root_path)
-    restricted_redirect_to(new_path) unless current_user.can_checkout?
-  end
-
   def require_login
     if current_user.nil?
       flash[:error] = "Sorry, that action requires you to log in."
       redirect_to root_path
     end
-  end
-
-  def require_user(user, new_path=root_path)
-    restricted_redirect_to(new_path) unless current_user == user or current_user.is_admin?(as: 'admin')
-  end
-
-  def require_user_or_checkout_person(user, new_path=root_path)
-    restricted_redirect_to(new_path) unless current_user == user or current_user.can_checkout?
-  end
-
-  def restricted_redirect_to(new_path=root_path)
-    flash[:error] = "Sorry, that action or page is restricted."
-    redirect_to new_path
   end
 
   def terms_of_service
@@ -181,6 +170,7 @@ class ApplicationController < ActionController::Base
 
   # activate and deactivate are overridden in the users controller because users are activated and deactivated differently
   def deactivate
+    authorize! :be, :admin
     @objects_class2 = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (EM, EO, Category)
     @objects_class2.destroy #Deactivate the model you had originally intended to deactivate
     flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + ". Any related equipment has been deactivated as well. Any related reservations have been perminently deleted."
@@ -188,6 +178,7 @@ class ApplicationController < ActionController::Base
   end
 
   def activate
+    authorize! :be, :admin
     @model_to_activate = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (EM, EO, Category)
     activate_parents(@model_to_activate)
     @model_to_activate.revive

@@ -1,18 +1,13 @@
 class BlackoutsController < ApplicationController
 
-  before_filter :require_admin
+  load_and_authorize_resource
   before_filter :set_params_for_create_and_update, only: [:create, :create_recurring, :update]
   before_filter :set_current_blackout, only: [:edit, :show, :update, :destroy, :destroy_recurring]
-  before_filter :validate_recurring_date_params, only: [:create_recurring]
 
 
   # ---------- before filter methods ------------ #
 
   def set_params_for_create_and_update
-    # correct for date formatting
-    params[:blackout][:start_date] = Date.strptime(params[:blackout][:start_date],'%m/%d/%Y')
-    params[:blackout][:end_date] = Date.strptime(params[:blackout][:end_date],'%m/%d/%Y')
-
     params[:blackout][:created_by] = current_user[:id] # Last-edited-by is automatically set
     params[:blackout][:equipment_model_id] = 0 # If per-equipment_model blackouts are implemented, delete this line.
   end
@@ -21,17 +16,6 @@ class BlackoutsController < ApplicationController
     @blackout = Blackout.find(params[:id])
   end
 
-  #validates that date selection was done correctly when the form calls the create method
-  def validate_recurring_date_params
-    set_flash_errors
-    if flash[:error]
-      # exit
-      respond_to do |format|
-        format.html {redirect_to :back and return}
-        format.js {render action: 'load_custom_errors' and return}
-      end
-    end
-  end
 
   # ---------- end before filter methods ------------ #
 
@@ -76,9 +60,17 @@ class BlackoutsController < ApplicationController
   #called when a recurring blackout is needed
   def create_recurring
     # this class method will parse the params hash and create separate blackouts on each appropriate date
+    set_flash_errors
+    if flash[:error]
+      # exit
+      respond_to do |format|
+        format.html {redirect_to :back and return}
+        format.js {render action: 'load_custom_errors' and return}
+      end
+    end
+
     # method will return an error message if save is not successful
     flash[:error] = Blackout.create_blackout_set(params[:blackout])
-
     respond_to do |format|
       # if there is an error, show it and redirect :back
       if flash[:error]
@@ -89,7 +81,6 @@ class BlackoutsController < ApplicationController
         format.js { render action: "create_success" }
       end
     end
-
   end
 
   def create
@@ -110,15 +101,7 @@ class BlackoutsController < ApplicationController
 
   def update
     unless @blackout.set_id.nil?
-      @blackout_set = Blackout.where("set_id = ?", @blackout.set_id)
-      if @blackout_set.size <= 2
-        @blackout_set.each do |b|
-          b.set_id = NIL
-          b.save
-        end
-      else # individual edited reservations no longer belong to the set (so won't be mass-deleted in delete_recurring)
-        @blackout.set_id = NIL
-      end
+      @blackout.set_id = NIL
     end
 
     respond_to do |format|

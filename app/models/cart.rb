@@ -75,7 +75,8 @@ class Cart
 
   # Sets start date and updates all CartReservations to match
   def set_start_date(date)
-    if date >= Date.today 
+    date = date.to_time.in_time_zone
+    if date >= Date.today
       @start_date = date
       fix_due_date
       cart_reservations.update_all({start_date: @start_date, due_date: @due_date})
@@ -84,6 +85,7 @@ class Cart
 
   # Sets due date and updates all CartReservations to match
   def set_due_date(date)
+    date = date.to_time.in_time_zone
     @due_date = date
     fix_due_date
     cart_reservations.update_all({start_date: @start_date, due_date: @due_date})
@@ -91,7 +93,7 @@ class Cart
 
   # If the dates were illogical, sets due date to day after start date
   def fix_due_date
-    if @start_date > @due_date
+    if @start_date.to_time.in_time_zone > @due_date
       #TODO: allow admin to set default reservation length and respect that length here
       @due_date = @start_date + 1.day
     end

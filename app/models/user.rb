@@ -32,7 +32,7 @@ class User < ActiveRecord::Base
                           on: :create,
                           if: Proc.new { |u| !u.created_by_admin == "true" }
   validates :role,
-            :view_mode,   inclusion: { in: ['admin', 'normal', 'checkout', 'banned'] }
+            :view_mode,   inclusion: { in: ['admin', 'normal', 'checkout', 'superuser', 'banned'] }
 
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
   scope :active, where("#{table_name}.deleted_at is null")
@@ -52,28 +52,6 @@ class User < ActiveRecord::Base
 
   def name
     [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name].join(" ")
-  end
-
-  def can_checkout?
-    role == 'checkout' || self.is_admin?(as: 'admin') || self.is_admin?(as: 'checkout')
-  end
-
-  # if specified in appconfigs, these two methods will return true for checkout people. It will always return true for admins in admin mode
-  def can_override_reservation_restrictions?
-    return true if ( self.can_checkout? && AppConfig.first.override_on_create == true) or self.is_admin?(as: 'admin')
-  end
-
-  def can_override_checkout_restrictions?
-    return true if ( self.can_checkout? && AppConfig.first.override_at_checkout == true ) or self.is_admin?(as: 'admin')
-  end
-
-  def is_admin?(options = {})
-    if role == 'admin'
-      if options.empty? || options[:as] == view_mode
-        return true
-      end
-    end
-    return false
   end
 
   def equipment_objects

@@ -7,10 +7,12 @@
     <% else %>
       <%= link_to "#{reserver.first_name}'s Profile", reserver, :class => 'btn btn-inverse' %>  
     <% end %>
-    <% if current_user.can_checkout? && (url == manage_reservations_for_user_path(reserver)) %>
-      <%= link_to "Check in/out", manage_reservations_for_user_path(reserver), :class => 'btn btn-inverse disabled' %>
-    <% elsif current_user.can_checkout? %>
-      <%= link_to "Check in/out", manage_reservations_for_user_path(reserver), :class => 'btn btn-inverse' %>
+    <% if can? :manage, Reservation %>
+      <% if url == manage_reservations_for_user_path(reserver) %>
+        <%= link_to "Check in/out", manage_reservations_for_user_path(reserver), :class => 'btn btn-inverse disabled' %>
+      <% else %>
+        <%= link_to "Check in/out", manage_reservations_for_user_path(reserver), :class => 'btn btn-inverse' %>
+      <% end %>
     <% end %>
     
     <% if url == current_reservations_for_user_path(reserver) %>

@@ -1,4 +1,3 @@
-<% if current_user.can_checkout? || current_user == @reservation.reserver %>
   <% title "Reservation ##{@reservation.id}" %>
   <% subtitle @reservation.reserver.first_name + " " +
   (!@reservation.reserver.nickname.blank? ? "(#{@reservation.reserver.nickname}) " : "") +
@@ -11,6 +10,9 @@
       <%= "<span class=\"user_label label-warning\">Returned Overdue</span>".html_safe if @reservation.status == 'returned overdue' %>
       <%= "<span class=\"user_label label-info\">Checked Out</span>".html_safe if @reservation.status == 'checked out' %>
       <%= "<span class=\"user_label\">Missed</span>".html_safe if @reservation.status == 'missed' %>
+      <%= "<span class=\"user_label label-important\">Requested</span>".html_safe if @reservation.approval_status == 'requested' %>
+      <%= "<span class=\"user_label label-success\">Approved</span>".html_safe if @reservation.approval_status == 'approved' %>
+      <%= "<span class=\"user_label label-warning\">Denied</span>".html_safe if @reservation.approval_status == 'denied' %>
       <% unless @reservation.status == 'reserved' %>
         <hr>
       <% end %>
@@ -83,8 +85,8 @@
                       <%# TODO: extract to a helper method? %>
                       <% unless reservation_length > 31 %>
                         <ul class="bar-dividers">
-                          <% reservation_length.times do %>
-                            <%= content_tag :li, nil, style: "width: #{100.0 / reservation_length.to_f}%" %>
+                          <% (reservation_length + 1).times do %>
+                            <%= content_tag :li, nil, style: "width: #{100.0 / (reservation_length.to_f + 1)}%" %>
                           <% end %>
                         </ul>
                       <% end %>
@@ -193,13 +195,13 @@
 	<%# elsif @reservation.status.include?("returned") %>
     <%#= link_to "Email return receipt", {:controller => :reservations, :action => "checkin_email", :id => @reservation}, :method => "get", :class => 'btn' %>
   <%# end %>
-  <% if current_user.can_checkout? %>
+  <% if can? :edit, @reservation %>
     <%= link_to "Edit", edit_reservation_path(@reservation), class: 'btn' %>
   <% end %>
-  <% if @reservation.status == "reserved" or current_user.is_admin?(:as => 'admin') %>
+  <% if can? :destroy, @reservation %>
     <%= link_to "Cancel Reservation", @reservation, confirm:
     'This will permanently delete the reservation. Are you sure?', method: :delete,
     class: 'btn btn-danger' %>
   <% end %>
-  </div>
-<% end %>
+</div>
+

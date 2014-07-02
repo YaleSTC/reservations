@@ -1,7 +1,7 @@
 <% title @user.first_name + " " + (!@user.nickname.blank? ? "(#{@user.nickname}) " : "") + @user.last_name %>
 <% subtitle @user.login %>
 
-<% if current_user.can_checkout? %>
+<% if can? :read, User %>
   <div class="row">
     <div class="span9">
       <%= render :partial => 'reservations/top_buttons', :locals => {:reserver => @user} %>
@@ -12,10 +12,11 @@
 
 <div class="row">
   <div id="bool_labels" class="span9">
-    <% if current_user.is_admin?(:as => 'admin') %>
+    <% if can? :manage, User %>
       <%= "<span class=\"user_label label-important\">Banned</span>".html_safe if @user.role == 'banned' %>
       <%= "<span class=\"user_label label-warning\">Deactivated</span>".html_safe if @user.deleted_at %>
       <%= "<span class=\"user_label label-success\">Admin</span>".html_safe if @user.role == 'admin' %>
+      <%= "<span class=\"user_label label-success\">Super User</span>".html_safe if @user.role == 'superuser' %>
       <%= "<span class=\"user_label\">Checkout Person</span>".html_safe if @user.role == 'checkout' %>
     <% end %>
   </div>
@@ -87,12 +88,7 @@
 
 <div class="row">
   <div class="span9">
-    <h2>
-      History
-      <% if !current_user.can_checkout? %>
-        <%= link_to 'Current Reservations', current_reservations_for_user_path(@user.id), :id => 'current_activity', :class => 'btn btn-inverse' %>
-      <% end %>
-    </h2>
+    <h2>History</h2>
   </div>
 </div>
 <hr />
@@ -131,7 +127,7 @@
 
 <div class="form-actions">
   <%= link_to "Edit Information", edit_user_path(@user), :class => 'btn' %>
-  <% if current_user.is_admin?(:as => 'admin') %>
+  <% if can? :manage, User %>
     <% if @user.deleted_at %>
       <%= link_to "Activate User", activate_path(:users,@user.id), :class => "btn btn-success", :method => :put %>
     <% else %>

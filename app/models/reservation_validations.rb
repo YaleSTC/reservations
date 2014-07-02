@@ -119,13 +119,15 @@ module ReservationValidations
     return true
   end
 
-  # Checks that the number of equipment models that a user has reserved and in
-  # the array of reservations is less than the equipment model maximum
-  #TODO: admin override
-  def quantity_eq_model_allowed?(reservations = [])
+  # Checks that the number of equipment models that a user has reserved
+  # is less than the equipment model maximum
+  def quantity_eq_model_allowed?(res_array = [])
     max = equipment_model.maximum_per_user
     return true if max == "unrestricted"
-    #count number of model for given and reserver's reservations, excluding those that don't overlap
+    # count number of models for given reservation
+    # and reserver's active reservations,
+    # excluding those that don't overlap
+    reservations = reserver.reservations.active + res_array
     if same_model_count(get_overlapping_reservations(reservations)) > max
       errors.add(:base, "Cannot reserve more than " + equipment_model.maximum_per_user.to_s + " " + equipment_model.name.pluralize + ".\n")
       return false
@@ -133,14 +135,16 @@ module ReservationValidations
     return true
   end
 
-  # Checks that the number of items that the user has reserved and in the
-  # array of reservations does not exceed the maximum in the category of the
-  # reservation it is called on
-  #TODO: admin override
-  def quantity_cat_allowed?(reservations = [])
+
+  # Checks that the number of categories that a user has reserved
+  # is less than the max
+  def quantity_cat_allowed?(res_array = [])
     max = equipment_model.category.maximum_per_user
     return true if max == "unrestricted"
-    #count number in category for given and reserver's reservations, excluding those that don't overlap
+    # count number of categories for given reservation
+    # and reserver's active reservations
+    # excluding those that don't overlap
+    reservations = reserver.reservations.active + res_array
     if same_category_count(get_overlapping_reservations(reservations)) > max
       errors.add(:base, "Cannot reserve more than " + equipment_model.category.maximum_per_user.to_s + " " + equipment_model.category.name.pluralize + ".\n")
       return false

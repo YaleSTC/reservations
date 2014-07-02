@@ -107,17 +107,18 @@
   };
 
 $(document).ready(function() {
-  
+
   $('.checkin-click').click( function() {
-	var box = $(this).find(":checkbox");
-	box.prop("checked", !box.prop("checked"));
-	if ($(this).hasClass("overdue")) {
-		$(this).toggleClass("selected-overdue",box.prop("checked"));
-	} else {
-		$(this).toggleClass("selected",box.prop("checked"));
-	}
+	  var box = $(":checkbox:eq(0)", this);
+	  box.prop("checked", !box.prop("checked"));
+	  if ($(this).hasClass("overdue")) {
+	  	$(this).toggleClass("selected-overdue",box.prop("checked"));
+    } else {
+  		$(this).toggleClass("selected",box.prop("checked"));
+    }
+    $(this).find('.check').toggleClass("hidden",!box.prop("checked"));
   });
-  
+
   $('#checkout_button').click(function() {
     var flag = validate_checkout();
     confirm_checkinout(flag);
@@ -140,7 +141,7 @@ $(document).ready(function() {
         ]
   });
 
-  $('.datatable-wide').dataTable({
+  wideDataTables = $('.datatable-wide').dataTable({
     "sDom": "<'row'<'span5'l><'span7'f>r>t<'row'<'span5'i><'span7'p>>",
     "sPaginationType": "bootstrap",
     "sScrollX": "100%",
@@ -148,6 +149,13 @@ $(document).ready(function() {
           { "bSortable": false, "aTargets": [ "no_sort" ] }
         ]
   });
+
+  // Ugly hack to avoid reinitializing #table_log with the correct order
+  try {
+    if (wideDataTables[0].id == "table_log") {
+      wideDataTables.fnSort([[0, "desc"]]);
+    }
+  } catch (TypeError) {}
 
   $('.history_table').dataTable({
     "sDom": "<'row'<l><f>r>t<'row'<'span3'i><p>>",
@@ -165,6 +173,7 @@ $(document).ready(function() {
     "aLengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
     "aoColumnDefs": [{ "bSortable": false, "aTargets": [ "no_sort" ] }]
   });
+
 // For fading out flash notices
   $(".alert .close").click( function() {
        $(this).parent().addClass("fade");
@@ -269,6 +278,8 @@ if ($(window).width() > 767) {
   });
 
   $('.date_start').datepicker({
+    altField: '#date_start_alt',
+    altFormat: 'yy-mm-dd',
     onClose: function(dateText, inst) {
       var start_date = $('.date_start').datepicker("getDate");
       var end_date = $('.date_end').datepicker("getDate");
@@ -278,6 +289,7 @@ if ($(window).width() > 767) {
       $('.date_end').datepicker( "option" , "minDate" , start_date);
     }
   });
+
 
   // Select2 - fancy select lists
   $('select#equipment_model_category_id').select2();
@@ -331,7 +343,7 @@ $(document).on('change', '.autosubmitme', function() {
 //});
 
 // click add to cart button
-$(document).on('click', '#add_to_cart', function () {
+$(document).on('click', '.add_to_cart', function () {
   pause_cart();
 });
 
@@ -345,3 +357,10 @@ $(document).on('railsAutocomplete.select', '#fake_reserver_id', function(event, 
   $("#reserver_id").val(data.item.id); // updating reserver_id here to make sure that it is done before it submits
   $(this).parents('form').submit();
 });
+
+function getDeactivationReason(e) {
+  var p = prompt("Write down the reason for deactivation of this equipment object.")
+  e.href += "?deactivation_reason=" + encodeURIComponent(p)
+};
+
+
