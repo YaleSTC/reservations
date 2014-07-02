@@ -118,18 +118,18 @@ class ApplicationController < ActionController::Base
     cart = session[:cart]
     flash.clear
     begin
-      cart.set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
-      cart.set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
-      cart.set_reserver_id(params[:reserver_id])
-    rescue ArgumentError => e
+      cart.start_date = Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y')
+      cart.due_date = Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y')
+      cart.reserver_id = params[:reserver_id]
+    rescue ArgumentError
       cart.set_start_date(Date.today)
       flash[:error] = "Please enter a valid start or due date."
     end
 
     # validate
-    errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
+   # errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
     # don't over-write flash if invalid date was set above
-    flash[:error] ||= errors.to_sentence
+    #flash[:error] ||= errors.to_sentence
     flash[:notice] = "Cart updated."
 
     # reload appropriate divs / exit
