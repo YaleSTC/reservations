@@ -566,12 +566,14 @@ describe ReservationsController do
   describe '#checkin (PUT /reservations/check-in/:user_id)' do
   end
 
+  describe '#renew (PUT /reservations/renew)' do
+  end
+
   describe '#checkout_email (GET reservations/checkout_email)' do
+    pending 'E-mails get sent'
   end
 
   describe '#checkin_email (GET reservations/checkin_email)' do
-  end
-
-  describe '#renew (PUT /reservations/renew)' do
+    pending 'E-mails get sent'
   end
 end
