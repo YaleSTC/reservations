@@ -658,15 +658,27 @@ describe ReservationsController do
     # Access: Admins, checkout persons.
     # Functionality: very complicated (almost 100 lines)
     # - pass TOS (if not, redirect)
-    # - params[:reservations] contains hash of {reservation_id => {equipment_object_id: int, checkout_precedures: ?, notes: str}}
+    # - params[:reservations] contains hash of
+    #    {reservation_id => {equipment_object_id: int, notes: str,
+    #      checkout_precedures: {checkout_procedure_id => int}}}
     # - processes all reservations in params[:reservations] -- adds checkout_handler, checked_out (time), equipment_object; updates notes
     # - stops checkout if user has overdue reservations
     # - stops checkout if no reservations are selected
-    # - overrides errors if you can
+    # - overrides errors if you can and if there are some, otherwise redirects away
     # - sets empty @check_in_set, populates @check_out_set with the reservations
+    # - renders :receipt template
   end
 
   describe '#checkin (PUT /reservations/check-in/:user_id)' do
+    # Access: Admins, checkout persons.
+    # Functionality: very complicated (almost 80 lines)
+    # - params[:reservations] contains a hash of
+    #    {reservation_id => {checkin?: int, notes: str,
+    #      (nil?) checkin_procedures: {checkin_procedure_id => int}}}
+    # - processes all reservations in params[:reservations] -- adds checkin_handler, checked_in (time); updates notes
+    # - stops checkin if no reservations are selected
+    # - overrides errors if you can and if there are some, otherwise redirects away
+    # - renders :receipt template
   end
 
   describe '#renew (PUT /reservations/renew)' do
