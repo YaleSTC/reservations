@@ -38,36 +38,25 @@ class Blackout < ActiveRecord::Base
 
   def self.create_blackout_set(params_hash)
     #generate a unique id for this blackout date set, make sure that nil reads as 0 for the first blackout
-    params_hash[:set_id] = Blackout.last.id.to_i + 1
+    last_blackout = Blackout.last
+    params_hash[:set_id] = last_blackout ? (last_blackout.id.to_i + 1) : 0
 
-    # create an array of individual black out dates to include in set
-    individual_dates = []
-    date_range = params_hash[:start_date]..params_hash[:end_date]
+    successful_save = nil
+    date_range = params_hash[:start_date].to_date..params_hash[:end_date].to_date
     date_range.each do |date|
       if params_hash[:days].include?(date.wday.to_s) # because it's passed as a string
-        individual_dates << date
-      end
-    end
-    # save an individual blackout on each date
-    return create_individual_blackouts_for_set(individual_dates, params_hash)
-  end
-
-  private
-    def self.create_individual_blackouts_for_set(individual_dates, params_hash)
-      successful_save = false
-      individual_dates.each do |date|
-        # create and save
-        @blackout = Blackout.new(params_hash)
+        @blackout = Blackout.new(params_hash.except(:days))
         @blackout.start_date = date
         @blackout.end_date = date
         successful_save = @blackout.save
       end
-
-      # return the error message unless a successful save was achieved
-      unless successful_save
-        return 'The combination of days and dates chosen did not produce any valid blackout dates. Please change your selection and try again.'
-      end
     end
+    unless successful_save
+      return 'The combination of days and dates chosen did not produce any valid blackout dates. Please change your selection and try again.'
+    end
+  end
+
+  private
 
     def validate_end_date_before_start_date
       if end_date && start_date

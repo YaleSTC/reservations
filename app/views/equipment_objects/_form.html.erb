@@ -4,5 +4,6 @@
   <%=f.input :name%>
   <%=f.input :serial%>
   <%=f.input :deleted_at, :as => :deleted, label: "Disabled"%>
-  <%= f.button :wrapped, :cancel => equipment_objects_path %> 
+  <%=f.input :deactivation_reason, label: "Reason for deactivation?"%>
+  <%= f.button :wrapped, :cancel => equipment_objects_path %>
 <% end %>

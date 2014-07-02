@@ -1,0 +1,51 @@
+<table id="table_log" class="datatable-wide table table-striped table-bordered">
+  <thead>
+  <tr>
+    <th>Time</th>
+    <th>Previous version by</th>
+    <th>Change by</th>
+    <th>Action</th>
+    <th>Type of object</th>
+    <th>Current object</th>
+    <th class="no_sort">Version properties</th>
+    <% unless @specific %><th class="no_sort"></th><% end %>
+  </tr>
+  </thead>
+  <tbody>
+  <% for version in versions %>
+    <% previous_user = User.find_by_id(version.originator.to_i) %>
+    <% user = User.find_by_id(version.whodunnit.to_i) %>
+    <% object_type = Kernel.const_get(version.item_type) # converts string to object %>
+    <% reified = version.reify %>
+    <tr>
+    <td><%= version.created_at %></td>
+    <td><% if previous_user %>
+      <%= link_to previous_user.render_name, previous_user %>
+    <% else %>
+      <em>N/A</em>
+    <% end %>
+    </td>
+    <td><% if user %>
+      <%= link_to user.render_name, user %>
+    <% end %></td>
+    <td><%= version.event %></td>
+    <td><%= version.item_type %></td>
+    <td>
+      <% if object_type.find_by_id(version.item_id) %>
+        <%= link_to version.item_type + " " + version.item_id.to_s, object_type.find_by_id(version.item_id) %>
+      <% else %>
+        <em>doesn't exist</em>
+      <% end %>
+    </td>
+    <td>
+      <%= link_to "See details", version_view_path(version.id) %>
+    </td>
+    <% unless @specific %>
+    <td>
+      <%= link_to "See history", history_path(version.item_type, version.item_id) %>
+    </td>
+    <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

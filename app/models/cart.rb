@@ -93,7 +93,7 @@ class Cart
 
   # If the dates were illogical, sets due date to day after start date
   def fix_due_date
-    if @start_date > @due_date
+    if @start_date.to_time.in_time_zone > @due_date
       #TODO: allow admin to set default reservation length and respect that length here
       @due_date = @start_date + 1.day
     end

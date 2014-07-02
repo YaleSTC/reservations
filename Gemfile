@@ -14,6 +14,8 @@ gem 'cancan'
 #scheduling
 gem 'whenever'
 
+gem 'activeadmin'
+
 #ldap integration
 gem 'net-ldap'
 
@@ -38,6 +40,10 @@ gem 'dynamic_form'
 gem 'simple_form'
 gem 'cocoon'
 gem 'redcarpet'
+
+
+# auditting / logging
+gem 'paper_trail', git: "https://github.com/airblade/paper_trail.git", branch: "2.7-stable"
 
 group :development, :test do
   gem 'factory_girl_rails'

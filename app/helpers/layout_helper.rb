@@ -54,15 +54,18 @@ module LayoutHelper
     end
   end
 
-  def view_as_selected
-    if current_user && current_user.view_mode == 'admin'
-      'Admin'
-    elsif current_user && current_user.view_mode == 'checkout'
-      'Checkout Person'
-    elsif current_user && current_user.view_mode == 'normal'
-      'Patron'
-    elsif current_user && current_user.view_mode == 'banned'
-      'Banned User'
+  def get_role_name role
+    case role
+      when 'superuser'
+        'Superuser'
+      when 'admin'
+        'Admin'
+      when 'checkout'
+        'Checkout Person'
+      when 'normal'
+        'Patron'
+      when 'banned'
+        'Banned'
     end
   end
 end
