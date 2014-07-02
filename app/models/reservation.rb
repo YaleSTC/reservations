@@ -18,7 +18,7 @@ class Reservation < ActiveRecord::Base
 
   # These can't be nested with the above block because with_options clobbers
   # nested options that are the same (i.e., :if and :if)
-  with_options if: Proc.new {|r| r.not_empty? && !r.from_admin} do |r|
+  with_options if: Proc.new {|r| r.not_empty? && !r.bypass_validations} do |r|
     r.with_options on: :create do |r|
       r.validate  :not_in_past?, :not_renewable?, :no_overdue_reservations?,
                   :duration_allowed?, :start_date_is_not_blackout?,
@@ -31,31 +31,36 @@ class Reservation < ActiveRecord::Base
 
   scope :recent, order('start_date, due_date, reserver_id')
   scope :user_sort, order('reserver_id')
-  scope :reserved, lambda { where("checked_out IS NULL and checked_in IS NULL and due_date >= ?", Time.now.midnight.utc).recent}
-  scope :checked_out, lambda { where("checked_out IS NOT NULL and checked_in IS NULL") }
-  scope :checked_out_today, lambda { where("checked_out >= ? and checked_in IS NULL", Time.now.midnight.utc).recent }
+  scope :reserved, lambda { where("checked_out IS NULL and checked_in IS NULL and due_date >= ? and (approval_status = ? or approval_status = ?)", Time.now.midnight.utc, 'auto', 'approved').recent}
+  scope :checked_out, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date >=  ?", Time.now.midnight.utc).recent }
+  scope :checked_out_today, lambda { where("checked_out >= ? and checked_in IS NULL", Time.now.midnight.utc).recent } # shouldn't this just check checked_out = today?
   scope :checked_out_previous, lambda { where("checked_out < ? and checked_in IS NULL and due_date <= ?", Time.now.midnight.utc, Date.tomorrow.midnight.utc).recent }
   scope :overdue, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc ).recent }
   scope :returned, where("checked_in IS NOT NULL and checked_out IS NOT NULL")
   scope :returned_on_time, where("checked_in IS NOT NULL and checked_out IS NOT NULL and due_date >= checked_in").recent
   scope :returned_overdue, where("checked_in IS NOT NULL and checked_out IS NOT NULL and due_date < checked_in").recent
-  scope :not_returned, where("checked_in IS NULL")
-  scope :missed, lambda {where("checked_out IS NULL and checked_in IS NULL and due_date < ?", Time.now.midnight.utc).recent}
-  scope :upcoming, lambda {where("checked_out IS NULL and checked_in IS NULL and start_date = ? and due_date > ?", Time.now.midnight.utc, Time.now.midnight.utc).user_sort }
-  scope :reserver_is_in, lambda {|user_id_arr| where(reserver_id: user_id_arr)}
+  scope :not_returned, where("checked_in IS NULL and (approval_status = ? or approval_status = ?)", 'auto', 'approved').recent # called in the equipment_model model
+  scope :missed, lambda {where("checked_out IS NULL and checked_in IS NULL and due_date < ? and (approval_status = ? OR approval_status = ?)", Time.now.midnight.utc, 'auto', 'approved').recent}
+  scope :upcoming, lambda {where("checked_out IS NULL and checked_in IS NULL and start_date = ? and due_date > ? and (approval_status = ? or approval_status = ?)", Time.now.midnight.utc, Time.now.midnight.utc, 'auto', 'approved').user_sort }
+  scope :reserver_is_in, lambda {|user_id| where("reserver_id = ? and (approval_status = ? or approval_status = ?)", user_id, 'auto', 'approved')} # does not include non-approved requests
   scope :starts_on_days, lambda {|start_date, end_date|  where(start_date: start_date..end_date)}
-  scope :reserved_on_date, lambda {|date|  where("start_date <= ? and due_date >= ?", date.to_time.utc, date.to_time.utc)}
-  scope :for_eq_model, lambda { |eq_model| where(equipment_model_id: eq_model.id) }
-  scope :active, where("checked_in IS NULL") #anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
+  scope :reserved_on_date, lambda {|date|  where("start_date <= ? and due_date >= ? and (approval_status = ? or approval_status = ?)", date.to_time.utc, date.to_time.utc, 'auto', 'approved')}
+  scope :for_eq_model, lambda { |eq_model| where(equipment_model_id: eq_model.id) } # by default includes all reservations ever. limit e.g. checked_out via other scopes
+  scope :active, where("checked_in IS NULL and (approval_status = ? OR approval_status = ?)", 'auto', 'approved') # anything that's been reserved but not returned (i.e. pending, checked out, or overdue)
+  scope :active_or_requested, lambda {where("checked_in IS NULL and approval_status != ?", 'denied')}
   scope :notes_unsent, where(notes_unsent: true)
+  scope :requested, lambda {where("start_date >= ? and approval_status = ?", Time.now.midnight.utc, 'requested')}
+  scope :approved_requests, lambda {where("approval_status = ?", 'approved')}
+  scope :denied_requests, lambda {where("approval_status = ?", 'denied')}
+  scope :missed_requests, lambda {where("approval_status = ? and start_date < ?", 'requested', Time.now.midnight.utc)}
 
   #TODO: Why the duplication in checkout_handler and checkout_handler_id (etc)?
   attr_accessible :checkout_handler, :checkout_handler_id,
-                  :checkin_handler, :checkin_handler_id,
+                  :checkin_handler, :checkin_handler_id, :approval_status,
                   :checked_out, :checked_in, :equipment_object,
                   :equipment_object_id, :notes, :notes_unsent, :times_renewed
 
-  attr_accessor :from_admin
+  attr_accessor :bypass_validations
 
   def reserver
     User.find(self.reserver_id)
@@ -72,10 +77,13 @@ class Reservation < ActiveRecord::Base
 
   def status
     if checked_out.nil?
-      if checked_in.nil?
+      # TODO: This needs to take into account requests.
+      if checked_in.nil? && (approval_status == 'auto' or approval_status == 'approved')
         due_date >= Date.today ? "reserved" : "missed"
+      elsif !approval_status.nil?
+        approval_status
       else
-        "?"
+        "?" # ... is this just in case an admin does something absurd in the database?
       end
     elsif checked_in.nil?
       due_date < Date.today ? "overdue" : "checked out"
@@ -115,11 +123,12 @@ class Reservation < ActiveRecord::Base
   end
 
   def self.due_for_checkout(user)
-    Reservation.where("checked_out IS NULL and checked_in IS NULL and start_date <= ? and due_date >= ? and reserver_id =?", Time.now.midnight.utc, Time.now.midnight.utc, user.id).order('start_date ASC')
+    user.reservations.upcoming
   end
 
   def self.overdue_reservations?(user)
     Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ? and due_date < ?", user.id, Time.now.midnight.utc,).order('start_date ASC').count >= 1 #FIXME: does this need the order?
+    # can't we just use user.reservations.overdue >= 1 (?)
   end
 
   def checkout_object_uniqueness(reservations)
@@ -136,6 +145,7 @@ class Reservation < ActiveRecord::Base
 
 
   def self.active_user_reservations(user)
+    #TODO: can we use already-defined scopes, here?
     prelim = Reservation.where("checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
     final = [] # initialize
     prelim.collect do |r|
@@ -181,16 +191,17 @@ class Reservation < ActiveRecord::Base
   def fake_reserver_id # this is necessary for autocomplete! delete me not!
   end
 
-  def equipment_list  # delete?
-    raw_text = ""
-    #Reservation.where("reserver_id = ?", @user.id).each do |reservation|
-    #if reservation.equipment_model
-    #  raw_text += "1 x #{reservation.equipment_model.name}\r\n"
-    #else
-    #  raw_text += "1 x *equipment deleted*\r\n"
-    #end
-    raw_text
-  end
+#  commented out on 2014.06.19. if no problems arise, it may be safely deleted.
+#  def equipment_list  # delete?
+#    raw_text = ""
+#    #Reservation.where("reserver_id = ?", @user.id).each do |reservation|
+#    #if reservation.equipment_model
+#    #  raw_text += "1 x #{reservation.equipment_model.name}\r\n"
+#    #else
+#    #  raw_text += "1 x *equipment deleted*\r\n"
+#    #end
+#    raw_text
+#  end
 
   def max_renewal_length_available
   # available_period is what is returned by the function
