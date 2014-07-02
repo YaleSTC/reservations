@@ -8,7 +8,7 @@
       <%= hidden_field_tag "recurring", true %>
       <%= f.input :days, collection: days_of_the_week_short_with_index,
         value_method: :first, label_method: :last, as: :check_boxes,
-        item_wrapper_class: 'inline' %>
+        item_wrapper_class: 'inline', required: true %>
 
       <%= render partial: 'form', locals: {f: f} %>
 

@@ -49,5 +49,7 @@ class Ability
           cannot :view_as, :superuser
       end
     end
+  else
+    can :create, User
   end
 end
