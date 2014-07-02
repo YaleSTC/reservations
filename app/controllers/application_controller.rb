@@ -65,7 +65,7 @@ class ApplicationController < ActionController::Base
   def cart
     session[:cart] ||= Cart.new
     if session[:cart].reserver_id.nil?
-      session[:cart].set_reserver_id(current_user.id) if current_user
+      session[:cart].reserver_id = current_user.id if current_user
     end
     session[:cart]
   end
@@ -100,11 +100,11 @@ class ApplicationController < ActionController::Base
   end
 
   def check_view_mode
-	if current_user.role == 'admin' && current_user.view_mode != 'admin'
-		flash[:persistent] = "Currently viewing as #{current_user.view_mode} user. You can switch back to your regular view \
-							  #{ActionController::Base.helpers.link_to('below','#view_as')} \
-							  (see #{ActionController::Base.helpers.link_to('here','https://yalestc.github.io/reservations/')} for details)."
-	end
+  if current_user.role == 'admin' && current_user.view_mode != 'admin'
+    flash[:persistent] = "Currently viewing as #{current_user.view_mode} user. You can switch back to your regular view \
+                #{ActionController::Base.helpers.link_to('below','#view_as')} \
+                (see #{ActionController::Base.helpers.link_to('here','https://yalestc.github.io/reservations/')} for details)."
+  end
   end
 
   def fix_cart_date
