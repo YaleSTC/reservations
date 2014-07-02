@@ -4,7 +4,7 @@ ruby '2.1.1'
 
 #standard gems
 gem 'rails', '3.2.14'
-gem 'mysql2'
+gem 'mysql2', '0.3.16'
 gem 'rake'
 gem 'rdoc'
 
