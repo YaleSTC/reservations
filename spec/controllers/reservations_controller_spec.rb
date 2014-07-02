@@ -535,7 +535,7 @@ describe ReservationsController do
     end
   end
 
-  describe '#manage (GET /reservations/manage/:user_id)', focus: true do
+  describe '#manage (GET /reservations/manage/:user_id)' do
     # Access: admins and checkout persons
     # Functionality:
     # - assigns @user, @check_out_set and @check_in_set
@@ -600,13 +600,53 @@ describe ReservationsController do
 
     shared_examples 'can access #current' do
       before { get :current, user_id: @user.id }
-      it { should be_success }
+      it { response.should be_success }
       it { should render_template(:current_reservations) }
-      it { should assign(:user) }
-      it { should assign(:user_overdue_reservations_set) }
-      it { should assign(:user_checked_out_today_reservations_set) }
-      it { should assign(:user_checked_out_previous_reservations_set) }
-      it { should assign(:user_reserved_reservations_set) }
+
+      it 'assigns @user correctly' do
+        expect(assigns(:user)).to eq(@user)
+      end
+
+      it 'assigns @user_overdue_reservations_set correctly' do
+        expect(assigns(:user_overdue_reservations_set)).to eq [Reservation.overdue_user_reservations(@user)].delete_if{|a| a.empty?}
+      end
+
+      it 'assigns @user_checked_out_today_reservations_set correctly' do
+        expect(assigns(:user_checked_out_today_reservations_set)).to eq [Reservation.checked_out_today_user_reservations(@user)].delete_if{|a| a.empty?}
+      end
+
+      it 'assigns @user_checked_out_previous_reservations_set correctly' do
+        expect(assigns(:user_checked_out_previous_reservations_set)).to eq [Reservation.checked_out_previous_user_reservations(@user)].delete_if{|a| a.empty?}
+      end
+
+      it 'assigns @user_reserved_reservations_set correctly' do
+        expect(assigns(:user_reserved_reservations_set)).to eq [Reservation.reserved_user_reservations(@user)].delete_if{|a| a.empty?}
+      end
+    end
+
+    context 'when accessed by admin' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@admin)
+      end
+
+      include_examples 'can access #current'
+    end
+
+    context 'when accessed by checkout person' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@checkout_person)
+      end
+
+      include_examples 'can access #current'
+    end
+
+    context 'when accessed by patron' do
+      before(:each) do
+        @controller.stub(:current_user).and_return(@user)
+        get :current, user_id: @user.id
+      end
+
+      include_examples 'cannot access page'
     end
 
     it_behaves_like 'inaccessible by banned user' do
