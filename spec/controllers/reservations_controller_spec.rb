@@ -49,7 +49,7 @@ describe ReservationsController do
   end
 
   ## Controller method tests
-  describe '#index GET /reservations/' do
+  describe '#index (GET /reservations/)' do
     # check params[:filter]
     # depending on admin status, default_filter changes
     # depending on admin status, source of reservations (all v. own) changes
@@ -141,7 +141,7 @@ describe ReservationsController do
     end
   end
 
-  describe '#show GET /reservations/:id' do
+  describe '#show (GET /reservations/:id)' do
     context 'when accessed by a non-banned user' do
       before(:each) do
         @controller.stub(:current_user).and_return(@user)
@@ -167,7 +167,7 @@ describe ReservationsController do
     end
   end
 
-  describe '#new GET /reservations/new' do
+  describe '#new (GET /reservations/new)' do
     # unhappy paths: banned user, there is no reservation in the cart
     it_behaves_like 'inaccessible by banned user' do
       before { get :new }
@@ -196,7 +196,7 @@ describe ReservationsController do
     end
   end
 
-  describe '#create POST /reservations/create' do
+  describe '#create (POST /reservations/create)' do
     it_behaves_like 'inaccessible by banned user' do
       before { post :create }
     end
@@ -289,7 +289,7 @@ describe ReservationsController do
     end
   end
 
-  describe '#edit GET /reservations/:id/edit' do
+  describe '#edit (GET /reservations/:id/edit)' do
     ## Unhappy paths
     it_behaves_like 'inaccessible by banned user' do
       before { get 'edit', id: @reservation.id }
@@ -345,7 +345,7 @@ describe ReservationsController do
     end
   end
 
-  describe '#update PUT /reservations/:id' do
+  describe '#update (PUT /reservations/:id)' do
     # Access: everyone who can access GET edit
     # Functionality:
     # - assign @reservation
@@ -445,7 +445,7 @@ describe ReservationsController do
     end
   end
 
-  describe '#destroy DELETE /reservations/:id' do
+  describe '#destroy (DELETE /reservations/:id)' do
     # Special access:
     # - checkout persons, if checked_out is nil
     # - users, if checked_out is nil and it's their reservation
@@ -535,7 +535,7 @@ describe ReservationsController do
     end
   end
 
-  describe '#manage GET /reservations/manage/:user_id' do
+  describe '#manage (GET /reservations/manage/:user_id)' do
     # Access: admins and checkout persons
     # Functionality:
     # - assigns @user, @check_out_set and @check_in_set
@@ -546,7 +546,7 @@ describe ReservationsController do
     end
   end
 
-  describe '#current GET /reservations/current/:user_id' do
+  describe '#current (GET /reservations/current/:user_id)' do
     # Access: admins and checkout persons
     # Functionality:
     # - assigns @user, @user_overdue_reservations_set,
@@ -560,7 +560,7 @@ describe ReservationsController do
     end
   end
 
-  describe '#checkout PUT /reservations/checkout/:user_id' do
+  describe '#checkout (PUT /reservations/checkout/:user_id)' do
   end
 
   describe '#checkin (PUT /reservations/check-in/:user_id)' do
