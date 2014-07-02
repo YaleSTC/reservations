@@ -541,6 +541,15 @@ describe ReservationsController do
     # - assigns @user, @check_out_set and @check_in_set
     # - renders :manage
 
+    shared_examples 'can access #manage' do
+      before { get :manage, user_id: @user.id }
+      it { should be_success }
+      it { should render_template(:manage) }
+      it { should assign(:user) }
+      it { should assign(:check_out_set) }
+      it { should assign(:check_in_set) }
+    end
+
     it_behaves_like 'inaccessible by banned user' do
       before { get :manage }
     end
@@ -554,6 +563,17 @@ describe ReservationsController do
     #    @user_checked_out_previous_reservations_set,
     #    @user_reserved_reservations_set
     # - renders :current_reservations
+
+    shared_examples 'can access #current' do
+      before { get :current, user_id: @user.id }
+      it { should be_success }
+      it { should render_template(:current_reservations) }
+      it { should assign(:user) }
+      it { should assign(:user_overdue_reservations_set) }
+      it { should assign(:user_checked_out_today_reservations_set) }
+      it { should assign(:user_checked_out_previous_reservations_set) }
+      it { should assign(:user_reserved_reservations_set) }
+    end
 
     it_behaves_like 'inaccessible by banned user' do
       before { get :current, user_id: @banned.id }
