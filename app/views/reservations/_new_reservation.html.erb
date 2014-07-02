@@ -1,0 +1,42 @@
+<% title "Create Reservation" %>
+<% unless @errors.empty? %>
+  <p>
+    <h3><i class="icon-warning-sign warning-icon"></i> Please be aware of the following errors:</h3>
+  </p>
+  <% @errors.each do |msg| %>
+    <ul>
+      <li><%= msg %></li>
+    </ul>
+  <% end %>
+<% end %>
+
+<p>
+  <h3>Equipment being reserved:</h3>
+</p>
+
+<%= simple_form_for @reservation do |f| %>
+  <%= f.error_messages %>
+  <p>
+    The following equipment will be reserved by
+    <%= User.find(cart.reserver_id).name %>
+    from
+    <%= cart.start_date.to_s(:long) %> to
+    <%= cart.due_date.to_s(:long) %>:
+
+    <%# hidden fields needed for data submission %>
+    <%= f.input :reserver_id, :as => :hidden, :value => cart.reserver_id %>
+    <%= f.input :start_date, :as => :hidden, :value => cart.start_date %>
+    <%= f.input :due_date, :as => :hidden, :value => cart.due_date %>
+  </p>
+  <p>
+    <ul class="rounded-list">
+      <% cart.models_with_quantities.each_pair do |model_id, quantity| %>
+        <li data-value="<%= quantity %>"><%= link_to EquipmentModel.find(model_id).name, EquipmentModel.find(model_id) %></li>
+      <% end %>
+    </ul>
+  </p>
+  <div class="form-actions">
+    <%= f.button :submit, "Finalize Reservation" %>
+    <%= link_to "Return to Catalog", catalog_path, class: 'btn' %>
+  </div>
+<% end %>
