@@ -20,8 +20,8 @@
     The following equipment will be reserved by
     <%= User.find(cart.reserver_id).name %>
     from
-    <%= cart.start_date.to_s(:long) %> to
-    <%= cart.due_date.to_s(:long) %>:
+    <%= cart.start_date.to_date.to_s(:long) %> to
+    <%= cart.due_date.to_date.to_s(:long) %>:
 
     <%# hidden fields needed for data submission %>
     <%= f.input :reserver_id, :as => :hidden, :value => cart.reserver_id %>
