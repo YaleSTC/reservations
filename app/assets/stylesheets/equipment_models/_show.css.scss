@@ -128,9 +128,9 @@ section {
 
 a.not-qualified-icon-em {
 	position: absolute;
-	top: 6px;
+	top: 3px;
 	right: 120px;
-	font-size: $baseFontSize * 3.6;
+	font-size: $baseFontSize * 3;
 	color: $btnWarningBackgroundHighlight;
 	@include warning-icon-drop-shadow;
 
