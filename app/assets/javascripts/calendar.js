@@ -82,18 +82,17 @@ function shiftCalendar(offset) {
   var date_max = new Date($('#res-data').data('dateMax'));
   var max = $('#res-data').data('max');
   week_start.setDate(week_start.getDate() + offset);
-  block_left = week_start <= today
+  block_left = week_start <= today;
   if (block_left) {
     week_start.setTime(today.getTime());
   }
-  $('.c-left').css('opacity',block_left? 0.2 : 1.0)
-              .css('cursor',block_left? 'default' : 'pointer');
-  block_right = week_start >= date_max
+  $('.c-left').children().toggleClass('disabled-control',block_left);
+  
+  block_right = week_start >= date_max;
   if (block_right) {
     week_start.setTime(date_max.getTime());
   }
-  $('.c-right').css('opacity',block_right? 0.2 : 1.0)
-               .css('cursor', block_right? 'default' : 'pointer');
+  $('.c-right').children().toggleClass('disabled-control',block_right);
   renderCalendar(reservations,week_start,max,blackouts);
 };
 
