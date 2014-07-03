@@ -43,7 +43,7 @@ Change Log
   administration capabilities
   ([#546](https://github.com/YaleSTC/reservations/issues/546))
 * Added overdue-checkin emails to both patron and admin, noting total
-  fees. ([#317](https://github.com/YaleSTC/reservations/issues/317)
+  fees. ([#317](https://github.com/YaleSTC/reservations/issues/317))
 * Reservation Requests, for patrons who would like to request extended
   reservations (or other reservations that otherwise would not be valid)
 ([#206](https://github.com/YaleSTC/reservations/issues/206))
