@@ -1,6 +1,6 @@
 Reservations::Application.routes.draw do
   root :to => 'catalog#index'
-  
+
   ActiveAdmin.routes(self)
 
   get "log/index"
@@ -11,8 +11,9 @@ Reservations::Application.routes.draw do
 
   resources :documents,
             :equipment_objects,
-            :requirements,
-            :announcements, except: [:show]
+            :requirements
+
+  resources :announcements, except: [:show]
 
   resources :categories do
     resources :equipment_models
