@@ -30,9 +30,9 @@ Change Log
 
 ####New Features
 * Added flash to notify admins/checkout-persons when viewing Reservations 
-  as a different user ([#542]((https://github.com/YaleSTC/reservations/issues/542))
+  as a different user ([#542](https://github.com/YaleSTC/reservations/issues/542))
 * Added ability to swap equipment objects for checked out reservations
-  ([#582](https://github.com/YaleSTC/reservations/issues/582)
+  ([#582](https://github.com/YaleSTC/reservations/issues/582))
 * Revamped the check-in UX ([#172](https://github.com/YaleSTC/reservations/issues/172),[#568](https://github.com/YaleSTC/reservations/issues/568))
 	* Added ability to click div to select the checkbox
 	* Added color cues to indicate selection and overdue status
@@ -52,21 +52,21 @@ Change Log
   fees. ([#317](https://github.com/YaleSTC/reservations/issues/317))
 * Reservation Requests, for patrons who would like to request extended
   reservations (or other reservations that otherwise would not be valid)
-([#206](https://github.com/YaleSTC/reservations/issues/317)
+([#206](https://github.com/YaleSTC/reservations/issues/206))
 
 ####Enhancements
 * Removed test/unit ([#612](https://github.com/YaleSTC/reservations/issues/612)) 
   in favor of marked improvement of Rspec coverage 
   ([#403](https://github.com/YaleSTC/reservations/issues/403),
   [#404](https://github.com/YaleSTC/reservations/issues/404),
-  [#584](https://github.com/YaleSTC/reservations/issues/584),
+  [#584](https://github.com/YaleSTC/reservations/issues/584))
 
 * Revamped authentication system with CanCan gem
   ([#419](https://github.com/YaleSTC/reservations/issues/535))
-* Upgraded to Ruby v2.1.1 and Rails v3.2.14 ([#535](https://github.com/YaleSTC/reservations/issues/535)
+* Upgraded to Ruby v2.1.1 and Rails v3.2.14 ([#535](https://github.com/YaleSTC/reservations/issues/535))
 * Added hidden field to datepickers for blackouts and announcements to
   remove unnecessary date parsing
-([#580](https://github.com/YaleSTC/reservations/issues/535),
+([#580](https://github.com/YaleSTC/reservations/issues/535))
 * Improved seed script, adding minimal mode and reducing inconvenience
   ([#578](https://github.com/YaleSTC/reducing/issues/578))
 * Updated developer wiki and launched [companion documentation
