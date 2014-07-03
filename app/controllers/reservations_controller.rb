@@ -206,7 +206,7 @@ class ReservationsController < ApplicationController
         flash[:error] = "No reservation selected."
         redirect_to :back and return
       # move method to user model TODO
-      elsif Reservation.overdue_reservations?(reservations_to_be_checked_out.first.reserver) # Checks for any overdue equipment
+      elsif reservations_to_be_checked_out.first.reserver.overdue_reservations?
         error_msgs += "User has overdue equipment."
       end
 
@@ -326,8 +326,8 @@ class ReservationsController < ApplicationController
 
   def manage # initializer
     set_user
-    @check_out_set = Reservation.due_for_checkout(@user)
-    @check_in_set = Reservation.due_for_checkin(@user)
+    @check_out_set = @user.due_for_checkout
+    @check_in_set = @user.due_for_checkin
   end
 
   def current

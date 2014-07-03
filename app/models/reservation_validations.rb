@@ -7,7 +7,7 @@ module ReservationValidations
   # Same for CartReservations and Reservations
   #TODO: admin override
   def no_overdue_reservations?
-    if Reservation.overdue_reservations?(reserver)
+    if reserver.overdue_reservations?
       errors.add(:base, reserver.name + " has overdue reservations that prevent new ones from being created.\n")
       return false
     end

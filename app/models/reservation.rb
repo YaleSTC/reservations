@@ -120,41 +120,14 @@ class Reservation < ActiveRecord::Base
   end
 
 
-  def self.due_for_checkin(user)
-    Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", user.id).order('due_date ASC') # put most-due ones first
-  end
-
-  def self.due_for_checkout(user)
-    user.reservations.upcoming
-  end
-
-  def self.overdue_reservations?(user)
-    Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ? and due_date < ?", user.id, Time.now.midnight.utc,).order('start_date ASC').count >= 1 #FIXME: does this need the order?
-    # can't we just use user.reservations.overdue >= 1 (?)
-  end
-
   def checkout_object_uniqueness(reservations)
     object_ids_taken = []
     reservations.each do |r|
-      if !object_ids_taken.include?(r.equipment_object_id) # check to see if we've already taken that one
-        object_ids_taken << r.equipment_object_id
-      else
-        return false # return false if not unique
-      end
+      return false if object_ids_taken.include?(r.equipment_object_id)
+      object_ids_taken << r.equipment_object_id
     end
     return true # return true if unique
   end
-
-
- # def self.active_user_reservations(user)
-
-  #def self.checked_out_today_user_reservations(user)
-
-  #def self.checked_out_previous_user_reservations(user)
-
-  #def self.reserved_user_reservations(user)
-
-  #def self.overdue_user_reservations(user)
 
   def late_fee
     self.equipment_model.late_fee.to_f
@@ -162,19 +135,6 @@ class Reservation < ActiveRecord::Base
 
   def fake_reserver_id # this is necessary for autocomplete! delete me not!
   end
-
-#  commented out on 2014.06.19. if no problems arise, it may be safely deleted.
-  #  comment on 2014.07.03 this could be related to email?
-#  def equipment_list  # delete?
-#    raw_text = ""
-#    #Reservation.where("reserver_id = ?", @user.id).each do |reservation|
-#    #if reservation.equipment_model
-#    #  raw_text += "1 x #{reservation.equipment_model.name}\r\n"
-#    #else
-#    #  raw_text += "1 x *equipment deleted*\r\n"
-#    #end
-#    raw_text
-#  end
 
   def max_renewal_length_available
     # determine the max renewal length for a given reservation

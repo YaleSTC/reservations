@@ -577,11 +577,11 @@ describe ReservationsController do
       end
 
       it 'assigns @check_out_set correctly' do
-        expect(assigns(:check_out_set)).to eq(Reservation.due_for_checkout(@user))
+        expect(assigns(:check_out_set)).to eq(@user.due_for_checkout)
       end
 
       it 'assigns @check_in_set correctly' do
-        expect(assigns(:check_in_set)).to eq(Reservation.due_for_checkin(@user))
+        expect(assigns(:check_in_set)).to eq(@user.due_for_checkin)
       end
     end
 
