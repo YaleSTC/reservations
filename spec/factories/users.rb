@@ -30,5 +30,10 @@ FactoryGirl.define do
       role 'checkout'
       view_mode 'checkout'
     end
+
+    factory :banned do
+      role 'banned'
+      view_mode 'banned'
+    end
   end
 end
