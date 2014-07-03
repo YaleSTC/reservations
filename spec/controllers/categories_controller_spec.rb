@@ -167,7 +167,7 @@ describe CategoriesController do
         it 'should not update attributes of @category in the database' do
           @category.reload
           @category.name.should_not be_nil
-          @category.max_per_user.should be_nil
+          @category.max_per_user.should_not eq(10)
         end
         it { should render_template(:edit) }
         it { should_not set_the_flash }
