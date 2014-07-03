@@ -79,10 +79,9 @@ class Reservation < ActiveRecord::Base
 
   def status
     if checked_out.nil?
-      # TODO: This needs to take into account requests.
-      if checked_in.nil? && (approval_status == 'auto' or approval_status == 'approved')
+      if approval_status == 'auto' or approval_status == 'approved'
         due_date >= Date.today ? "reserved" : "missed"
-      elsif !approval_status.nil?
+      elsif approval_status
         approval_status
       else
         "?" # ... is this just in case an admin does something absurd in the database?
