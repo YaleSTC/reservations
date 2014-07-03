@@ -27,6 +27,7 @@ Change Log
   ([#525](https://github.com/reservations/issues/525))
 * Pointed reservation edit cancel to correct view
   ([#316](https://github.com/YaleSTC/reservation/issues/316))
+
 ####New Features
 * Added flash to notify admins/checkout-persons when viewing Reservations 
   as a different user ([#542]((https://github.com/YaleSTC/reservations/issues/542))
@@ -52,6 +53,7 @@ Change Log
 * Reservation Requests, for patrons who would like to request extended
   reservations (or other reservations that otherwise would not be valid)
 ([#206](https://github.com/YaleSTC/reservations/issues/317)
+
 ####Enhancements
 * Removed test/unit ([#612](https://github.com/YaleSTC/reservations/issues/612)) 
   in favor of marked improvement of Rspec coverage 
