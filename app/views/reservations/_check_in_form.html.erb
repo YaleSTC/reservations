@@ -1,5 +1,5 @@
 <div class="span4 checkin">
-  <div class="well checkin-click <%= reservation.status %>  title="Click to select me for checkin">
+  <div class="well checkin-click <%= reservation.status %>" title="Click to select me for checkin">
     <header>
       <span class="title">
         <h3><%= link_to "Reservation ##{reservation.id}", reservation, target:
@@ -8,9 +8,9 @@
       <span class="icons">
         <h3>
 	  <% if reservation.status == "overdue" %>
-      <i class="fa fa-exclamation-triangle"></i>
+      <i class="fa fa-exclamation-circle fa-lg overdue-icon"></i>
     <% end %>
-    <i class="fa fa-check hidden check"></i>
+    <i class="fa fa-check hidden check fa-lg"></i>
 </h3>
 </span>
     </header><br>
