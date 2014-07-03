@@ -102,11 +102,11 @@ class Reservation < ActiveRecord::Base
     errors << user.name + " has overdue reservations that prevent new ones from being created. " unless user.reservations.overdue.empty?
 
     res_array.each do |res|
-      errors << "Reservation cannot be made in the past. " unless res.not_in_past? if self.class == CartReservation
+      errors << "Reservation cannot be made in the past. " unless res.not_in_past?
       errors << "Reservation start date must be before due date. " unless res.start_date_before_due_date?
       errors << "Reservation must be for a piece of equipment. " unless res.not_empty?
       errors << "#{res.equipment_object.name} must be of type #{res.equipment_model.name}. " unless res.matched_object_and_model?
-      errors << "#{res.equipment_model.name} should be renewed instead of re-checked out. " unless res.not_renewable? if self.class == CartReservation
+      errors << "#{res.equipment_model.name} should be renewed instead of re-checked out. " unless res.not_renewable?
       errors << "#{res.equipment_model.name} cannot be reserved for more than #{res.equipment_model.category.maximum_checkout_length.to_s} days at a time. " unless res.duration_allowed?
       errors << "#{res.equipment_model.name} is not available for the full time period requested. " unless res.available?(res_array)
       errors << "A reservation cannot start on #{res.start_date.strftime('%m/%d')} because equipment cannot be picked up on that date. " unless res.start_date_is_not_blackout?
@@ -229,32 +229,17 @@ class Reservation < ActiveRecord::Base
     # determines if a reservation is eligible for renewal, based on how many days before the due
     # date it is and the max number of times one is allowed to renew
     #
-    # we need to test if any of the variables are set to NIL, because in that case comparision
-    # is undefined; that's also why we can't set variables to these function values before
-    # the if statements
-    if self.times_renewed == NIL
-      self.times_renewed = 0
-    end
+    self.times_renewed ||= 0
 
     # you can't renew a checked in reservation
-    if self.checked_in
-      return false
-    end
+    return false if self.checked_in
 
-    if self.equipment_model.maximum_renewal_times == "unrestricted"
-      if self.equipment_model.maximum_renewal_days_before_due == "unrestricted"
-        # if they're both NIL
-        return true
-      else
-        # due_date has a time zone, eradicate with to_date; use to_i to change to integer;
-        # are we within the date range for which the button should appear?
-        return ((self.due_date.to_date - Date.today).to_i < self.equipment_model.maximum_renewal_days_before_due)
-      end
-    elsif (self.equipment_model.maximum_renewal_days_before_due == "unrestricted")
-      return (self.times_renewed < self.equipment_model.maximum_renewal_times)
-    else
-      # if neither is NIL, check both
-      return (((self.due_date.to_date - Date.today).to_i < self.equipment_model.maximum_renewal_days_before_due) and (self.times_renewed < self.equipment_model.maximum_renewal_times))
-    end
+    max_renewal_times = self.equipment_model.maximum_renewal_times
+    max_renewal_times = Float::INFINITY if max_renewal_times == 'unrestricted'
+
+    max_renewal_days = self.equipment_model.maximum_renewal_days_before_due
+    max_renewal_days = Float::INFINITY if maximum_renewal_days_before_due == 'unrestricted'
+
+    return ((self.due_date.to_date - Date.today).to_i < max_renewal_days ) && (self.times_renewed < max_renewal_times)
   end
 end
