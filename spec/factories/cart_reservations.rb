@@ -7,6 +7,12 @@ FactoryGirl.define do
     reserver
     equipment_model
 
+    trait :invalid do
+      equipment_model { FactoryGirl.create(:restricted_equipment_model) }
+    end
+
+    factory :invalid_cart_reservation, traits: [:invalid]
+
     factory :valid_cart_reservation do
       after(:build) do |cart_res|
         if cart_res.equipment_model.equipment_objects.empty?
