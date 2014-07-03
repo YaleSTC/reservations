@@ -78,7 +78,7 @@
     <div id="qualif_box" class="span9">
       <ul id="qualifications">
         <% @user.requirements.each do |req| %>
-          <li><i class="icon-ok"></i><%= link_to req.description, req %></li>
+          <li><i class="fa fa-check"></i><%= link_to req.description, req %></li>
         <% end %>
       </ul>
     </div>

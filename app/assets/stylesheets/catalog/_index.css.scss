@@ -44,7 +44,7 @@ a.not-qualified-icon {
 	position: absolute;
 	bottom: 13px;
 	left: 110px;
-	font-size: $baseFontSize * 2.6;
+	font-size: $baseFontSize * 2;
 	color: $btnWarningBackgroundHighlight;
   @include warning-icon-drop-shadow;
 

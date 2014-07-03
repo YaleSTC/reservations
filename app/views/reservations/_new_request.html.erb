@@ -2,7 +2,7 @@
 
 <% unless @errors.empty? %>
   <p>
-    <h3><i class="icon-warning-sign warning-icon"></i> Would you like to <%= link_to "return to the Catalog", catalog_path %> to resolve the following error(s)?</h3>
+    <h3><i class="fa fa-exclamation-triangle warning-icon"></i> Would you like to <%= link_to "return to the Catalog", catalog_path %> to resolve the following error(s)?</h3>
   </p>
   <% @errors.each do |msg| %>
     <ul>

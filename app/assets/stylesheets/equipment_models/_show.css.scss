@@ -45,8 +45,9 @@ $border-att: 1px solid darken($bodyBackground, 20%);
 }
 
 .control {
-  font-size:20px;
-  margin:3px;
+  margin-left:3px;
+  margin-right: 3px;
+  text-shadow: 2px;
   opacity: 0.8;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -127,9 +128,9 @@ section {
 
 a.not-qualified-icon-em {
 	position: absolute;
-	top: 6px;
+	top: 3px;
 	right: 120px;
-	font-size: $baseFontSize * 3.6;
+	font-size: $baseFontSize * 3;
 	color: $btnWarningBackgroundHighlight;
 	@include warning-icon-drop-shadow;
 

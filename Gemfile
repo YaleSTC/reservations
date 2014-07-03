@@ -72,7 +72,7 @@ group :assets do
   gem 'coffee-rails'
   gem 'uglifier'
   gem 'bootstrap-sass', '~> 2.0.3'
-  gem 'font-awesome-rails', git: 'git://github.com/mrnugget/font-awesome-rails.git'
+  gem 'font-awesome-rails', '~> 4.1.0'
 end
 
 group :development do
