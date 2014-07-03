@@ -229,32 +229,16 @@ class Reservation < ActiveRecord::Base
     # determines if a reservation is eligible for renewal, based on how many days before the due
     # date it is and the max number of times one is allowed to renew
     #
-    # we need to test if any of the variables are set to NIL, because in that case comparision
-    # is undefined; that's also why we can't set variables to these function values before
-    # the if statements
-    if self.times_renewed == NIL
-      self.times_renewed = 0
-    end
+    self.times_renewed ||= 0
 
     # you can't renew a checked in reservation
-    if self.checked_in
-      return false
-    end
+    return false if self.checked_in
 
-    if self.equipment_model.maximum_renewal_times == "unrestricted"
-      if self.equipment_model.maximum_renewal_days_before_due == "unrestricted"
-        # if they're both NIL
-        return true
-      else
-        # due_date has a time zone, eradicate with to_date; use to_i to change to integer;
-        # are we within the date range for which the button should appear?
-        return ((self.due_date.to_date - Date.today).to_i < self.equipment_model.maximum_renewal_days_before_due)
-      end
-    elsif (self.equipment_model.maximum_renewal_days_before_due == "unrestricted")
-      return (self.times_renewed < self.equipment_model.maximum_renewal_times)
-    else
-      # if neither is NIL, check both
-      return (((self.due_date.to_date - Date.today).to_i < self.equipment_model.maximum_renewal_days_before_due) and (self.times_renewed < self.equipment_model.maximum_renewal_times))
-    end
-  end
+    max_renewal_times = self.equipment_model.maximum_renewal_times
+    max_renewal_times = Float::INFINITY if max_renewal_times == 'unrestricted'
+
+    max_renewal_days = self.equipment_model.maximum_renewal_days_before_due
+    max_renewal_days = Float::INFINITY if maximum_renewal_days_before_due == 'unrestricted'
+
+    return ((self.due_date.to_date - Date.today).to_i < max_renewal_days ) && (self.times_renewed < max_renewal_times)
 end
