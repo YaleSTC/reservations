@@ -157,7 +157,7 @@ class Reservation < ActiveRecord::Base
     max_renewal_times = Float::INFINITY if max_renewal_times == 'unrestricted'
 
     max_renewal_days = self.equipment_model.maximum_renewal_days_before_due
-    max_renewal_days = Float::INFINITY if maximum_renewal_days_before_due == 'unrestricted'
+    max_renewal_days = Float::INFINITY if max_renewal_days == 'unrestricted'
 
     return ((self.due_date.to_date - Date.today).to_i < max_renewal_days ) &&
       (self.times_renewed < max_renewal_times)
