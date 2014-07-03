@@ -66,7 +66,7 @@
           <li id="my_equipment" class="dropdown">
             <%= link_to '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' do %>
               <% if cannot? :manage, Reservation %>
-                <%= sanitize("My Equipment &nbsp;<span class="\"badge\"">#{equipment_count}</span> <b class=\"caret\"></b>") %>
+                <%= sanitize("My Equipment &nbsp;<span class=\"badge\">#{equipment_count}</span> <b class=\"caret\"></b>") %>
               <% end %>
             <% end %>
             <% equipment_count %>
