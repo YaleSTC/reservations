@@ -132,17 +132,17 @@ class ReservationsController < ApplicationController
     message = "Successfully edited reservation."
     # update attributes
     if params[:equipment_object] && params[:equipment_object] != ''
-  		object = EquipmentObject.find(params[:equipment_object])
-	  	unless object.available?
-		  	r = object.current_reservation
+      object = EquipmentObject.find(params[:equipment_object])
+      unless object.available?
+        r = object.current_reservation
         r.equipment_object_id = @reservation.equipment_object_id
-  			r.save
-	  		message << " Note equipment item #{r.equipment_object.name} is now assigned to \
-						#{ActionController::Base.helpers.link_to('reservation #' + r.id.to_s, reservation_path(r))} \
-						(#{r.reserver.render_name})"
-		  end
-		  res[:equipment_object_id] = params[:equipment_object]
-	  end
+        r.save
+        message << " Note equipment item #{r.equipment_object.name} is now assigned to \
+            #{ActionController::Base.helpers.link_to('reservation #' + r.id.to_s, reservation_path(r))} \
+            (#{r.reserver.render_name})"
+      end
+      res[:equipment_object_id] = params[:equipment_object]
+    end
 
     # save changes to database
     Reservation.update(@reservation, res)
@@ -281,6 +281,12 @@ class ReservationsController < ApplicationController
           r.notes = previous_notes
         end
         r.notes.strip! if r.notes?
+
+        # if equipment was overdue, send an email confirmation
+        if r.status == 'returned overdue'
+          AdminMailer.overdue_checked_in_fine_admin(r).deliver
+          UserMailer.overdue_checked_in_fine(r).deliver
+        end
 
         # put the data into the container we defined at the beginning of this action
         reservations_to_be_checked_in << r

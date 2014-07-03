@@ -1,6 +1,9 @@
-Reservation: <%= reservation_note.id %><br />
-Equipment: <%= reservation_note.equipment_model.name %> (<%= reservation_note.equipment_object.name %>)<br />
-Reserver: <%= reservation_note.reserver.name.html_safe %><br />
+<%= link_to 'Reservation ##{reservation_note.id}', reservation_path(reservation) %><br />
+Equipment: <%= link_to reservation_note.equipment_model.name, equipment_model_path(reservation_note.equipment_model) %>
+(<%= reservation_note.equipment_object.name %>)<br />
+Reserver: <%= link_to reservation_note.reserver.name.html_safe, user_path(reservation.reserver) %><br />
+Check-in Handler: <%= link_to reservation_note.checkin_handler.name.html_safe, user_path(reservation_note.checkin_handler) %> <br />
+Check-out Handler: <%= link_to reservation_note.checkout_handler.name.html_safe, user_path(reservation_note.checkout_handler) %> <br />
 Due Date: <%= reservation_note.due_date.strftime(" %B %e, %Y")  %><br />
 Notes: <%= reservation_note.notes %> <%# TODO: add markdown? %><br />
 ---------<br /><br />
