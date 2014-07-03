@@ -4,7 +4,7 @@
     <% end %>
     <div class = "month"><h4></h4></div>
 
-    <ul id = "calendar-ul">
+    <ul id="calendar-ul">
       <li class = "calendar_cell" id ="<%= cart.start_date %>">
         <% for d in 0...6 %>
           <div class = "head"><strong></strong><i></i></div>
@@ -18,11 +18,11 @@
     </ul>
 
     <div class = "controls c-left">
-      <i class="control icon-backward" change="-7" title="Move back a week"></i>
-      <i class="control lite icon-chevron-left" change="-1" title="Move back a day"></i>
+      <i class="fa control fa-backward" change="-7" title="Move back a week"></i>
+      <i class="fa control lite fa-chevron-left" change="-1" title="Move back a day"></i>
     </div>
     <div class = "controls c-right">
-      <i class="control lite icon-chevron-right" change="1" title="Move forward a day"></i>
-      <i class="control icon-forward" change="7" title="Move forward a week"></i>
+      <i class="fa control lite fa-chevron-right" change="1" title="Move forward a day"></i>
+      <i class="fa control fa-forward" change="7" title="Move forward a week"></i>
     </div>
 </div>

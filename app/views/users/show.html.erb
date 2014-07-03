@@ -13,11 +13,11 @@
 <div class="row">
   <div id="bool_labels" class="span9">
     <% if can? :manage, User %>
-      <%= "<span class=\"user_label label-important\">Banned</span>".html_safe if @user.role == 'banned' %>
-      <%= "<span class=\"user_label label-warning\">Deactivated</span>".html_safe if @user.deleted_at %>
-      <%= "<span class=\"user_label label-success\">Admin</span>".html_safe if @user.role == 'admin' %>
-      <%= "<span class=\"user_label label-success\">Super User</span>".html_safe if @user.role == 'superuser' %>
-      <%= "<span class=\"user_label\">Checkout Person</span>".html_safe if @user.role == 'checkout' %>
+      <%= "<span class="\"user_label" label-important\"="None">Banned</span>".html_safe if @user.role == 'banned' %>
+      <%= "<span class="\"user_label" label-warning\"="None">Deactivated</span>".html_safe if @user.deleted_at %>
+      <%= "<span class="\"user_label" label-success\"="None">Admin</span>".html_safe if @user.role == 'admin' %>
+      <%= "<span class="\"user_label" label-success\"="None">Super User</span>".html_safe if @user.role == 'superuser' %>
+      <%= "<span class="\"user_label\"">Checkout Person</span>".html_safe if @user.role == 'checkout' %>
     <% end %>
   </div>
 </div>
@@ -78,7 +78,7 @@
     <div id="qualif_box" class="span9">
       <ul id="qualifications">
         <% @user.requirements.each do |req| %>
-          <li><i class="icon-ok"></i><%= link_to req.description, req %></li>
+          <li><i class="fa fa-check"></i><%= link_to req.description, req %></li>
         <% end %>
       </ul>
     </div>

@@ -5,14 +5,14 @@
 
   <div class="row">
     <div id="bool_labels" class="span9">
-      <%= "<span class=\"user_label label-success\">Returned</span>".html_safe if @reservation.status == 'returned on time' %>
-      <%= "<span class=\"user_label label-important\">Overdue</span>".html_safe if @reservation.status == 'overdue' %>
-      <%= "<span class=\"user_label label-warning\">Returned Overdue</span>".html_safe if @reservation.status == 'returned overdue' %>
-      <%= "<span class=\"user_label label-info\">Checked Out</span>".html_safe if @reservation.status == 'checked out' %>
-      <%= "<span class=\"user_label\">Missed</span>".html_safe if @reservation.status == 'missed' %>
-      <%= "<span class=\"user_label label-important\">Requested</span>".html_safe if @reservation.approval_status == 'requested' %>
-      <%= "<span class=\"user_label label-success\">Approved</span>".html_safe if @reservation.approval_status == 'approved' %>
-      <%= "<span class=\"user_label label-warning\">Denied</span>".html_safe if @reservation.approval_status == 'denied' %>
+      <%= "<span class="\"user_label" label-success\"="None">Returned</span>".html_safe if @reservation.status == 'returned on time' %>
+      <%= "<span class="\"user_label" label-important\"="None">Overdue</span>".html_safe if @reservation.status == 'overdue' %>
+      <%= "<span class="\"user_label" label-warning\"="None">Returned Overdue</span>".html_safe if @reservation.status == 'returned overdue' %>
+      <%= "<span class="\"user_label" label-info\"="None">Checked Out</span>".html_safe if @reservation.status == 'checked out' %>
+      <%= "<span class="\"user_label\"">Missed</span>".html_safe if @reservation.status == 'missed' %>
+      <%= "<span class="\"user_label" label-important\"="None">Requested</span>".html_safe if @reservation.approval_status == 'requested' %>
+      <%= "<span class="\"user_label" label-success\"="None">Approved</span>".html_safe if @reservation.approval_status == 'approved' %>
+      <%= "<span class="\"user_label" label-warning\"="None">Denied</span>".html_safe if @reservation.approval_status == 'denied' %>
       <% unless @reservation.status == 'reserved' %>
         <hr>
       <% end %>
@@ -129,7 +129,7 @@
             </header>
             <hr>
             <%= link_to @reservation.reserver do %>
-              <i class="icon-user"></i>
+              <i class="fa fa-user"></i>
             <% end %>
             <p><h4>by <%= link_to @reservation.reserver.name, @reservation.reserver %></h4></p>
             <hr>

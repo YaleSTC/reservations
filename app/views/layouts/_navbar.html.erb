@@ -2,12 +2,12 @@
   <div class="navbar-inner">
     <div class="container">
 		<% unless @app_configs.nil? || @app_configs.site_title.nil? %>
-      <%= link_to sanitize("<i class=\"icon-th-list\"></i> #{site_title}"), root_path, :class => 'brand' %>
+      <%= link_to sanitize("<i class="\"icon-th-list\""></i> #{site_title}"), root_path, :class => 'brand' %>
 		<% end %>
       <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
+        <span class="fa-bar"></span>
+        <span class="fa-bar"></span>
+        <span class="fa-bar"></span>
       </a>
       <div class="nav-collapse">
 
@@ -40,7 +40,7 @@
             <% if can? :manage, Reservation %>
               <%= link_to "Reservations", reservations_path %>
             <% else %>
-              <%= link_to sanitize("My Reservations &nbsp;<span class=\"badge\">#{reservations_count}</span> <b class=\"caret\"></b>"), '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' %>
+              <%= link_to sanitize("My Reservations &nbsp;<span class="\"badge\"">#{reservations_count}</span> <b class=\"caret\"></b>"), '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' %>
               <ul class="dropdown-menu">
                 <li class="nav-header"><h3>My Current Reservations</h3></li>
                 <% unless @current_reservations.blank? %>
@@ -66,7 +66,7 @@
           <li id="my_equipment" class="dropdown">
             <%= link_to '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' do %>
               <% if cannot? :manage, Reservation %>
-                <%= sanitize("My Equipment &nbsp;<span class=\"badge\">#{equipment_count}</span> <b class=\"caret\"></b>") %>
+                <%= sanitize("My Equipment &nbsp;<span class="\"badge\"">#{equipment_count}</span> <b class=\"caret\"></b>") %>
               <% end %>
             <% end %>
             <% equipment_count %>
@@ -117,7 +117,7 @@
       <% if current_user.nil? %>
         <li><%= link_to "Sign In" %></li>
       <% elsif current_user %>
-      	<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user"></i>
+      	<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i>
         	<%= current_user.name %>
       	  <b class="caret"></b></a>
         	<ul class="dropdown-menu">
