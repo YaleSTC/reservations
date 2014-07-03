@@ -65,23 +65,23 @@ namespace :app do
       "Dear @user@,\n\n"\
       "Hey there, you have equipment due! Please return the following items before 4pm on @return_date@.\n\n"\
       "@equipment_list@\n\n"\
-      "If you fail to return your equipment on time the curse of @department_name@ will be placed upon you and your kin for 7 generations. Also, you will have to pay a late fee of @late_fee@ per day. If you have lost the item you may have to pay a replacement fee and/or sacrifice your first born child.\n"\
+      "If you fail to return your equipment on time you will be subject to a late fee of @late_fee@ per day. If you have lost the item you may additioally have to pay a replacement fee of @replacement_fee@.\n"\
       "Log in to Reservations to see if any of your items are eligible for renewal. If you have further questions feel free to contact an employee of @department_name@.\n\n"\
       "Your reservation number is @reservation_id@.\n\n"\
       "Thank you,\n"\
       "@department_name@\n\n"\
 
-    deleted_missed_reservation_email_body =
+    overdue_checkin_email_body =
       "Dear @user@,\n\n"\
-      "You're in for it now! The darkness of @department_name@ is now upon you and your kin for the next 8 generations!\n\n"\
+      "It looks like you have overdue equipment!\n\n"\
       "Please return the following equipment to us as soon as possible. Until then you will be charged a daily late fee of @late_fee@.\n\n"\
       "@equipment_list@\n\n"\
-      "Failure to return equipment will result in the levying of replacement fees, revocation of borrowing privileges, and mandatory sacrificing of your first born child.\n\n"\
+      "Failure to return equipment will result in the levying of replacement fees, and potential revocation of borrowing privileges.\n\n"\
       "Your reservation number is @reservation_id@.\n\n"\
       "Thank you,\n"\
       "@department_name@"
 
-    overdue_checkin_email_body =
+    deleted_missed_reservation_email_body =
       "Dear @user@,\n\n"\
       "Because you have missed a scheduled equipment checkout, your reservation (number @reservation_id@) has been cancelled. If you believe this is in error, please contact an administrator.\n\n"\
       "@equipment_list@\n\n"\
