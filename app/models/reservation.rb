@@ -192,6 +192,7 @@ class Reservation < ActiveRecord::Base
   end
 
 #  commented out on 2014.06.19. if no problems arise, it may be safely deleted.
+  #  comment on 2014.07.03 this could be related to email?
 #  def equipment_list  # delete?
 #    raw_text = ""
 #    #Reservation.where("reserver_id = ?", @user.id).each do |reservation|
@@ -204,25 +205,12 @@ class Reservation < ActiveRecord::Base
 #  end
 
   def max_renewal_length_available
-  # available_period is what is returned by the function
-  # initialize to NIL because once it's set we escape the while loop below
-    available_period = NIL
-    renewal_length = self.equipment_model.maximum_renewal_length || 0 # the 'or 0' is to ensure renewal_length never == NIL; effectively
-    while (renewal_length > 0) and (available_period == NIL)
-      # the available? method cannot accept dates with time zones, and due_date has a time zone
-      possible_start = (self.due_date + 1.day).to_date
-      possible_due = (self.due_date+(renewal_length.days)).to_date
-      if (self.equipment_model.num_available(possible_start, possible_due) > 0)
-        # if it's available for the period, set available_period and escape loop
-        available_period = renewal_length
-      else
-        # otherwise shorten reservation renewal period by one day and try again
-        renewal_length -= 1
-      end
+    # determine the max renewal length for a given reservation
+    eq_model = self.equipment_model
+    for renewal_length in 1...eq_model.maximum_renewal_length do
+      break if eq_model.available_count(self.due_date + renewal.length.day) == 0
     end
-    # need this case to account for when renewal_length == 0 and it escapes the while loop
-    # before available_period is set
-    return available_period = renewal_length
+    renewal_length - 1
   end
 
   def is_eligible_for_renew?
@@ -232,7 +220,7 @@ class Reservation < ActiveRecord::Base
     self.times_renewed ||= 0
 
     # you can't renew a checked in reservation
-    return false if self.checked_in
+    return false if self.checked_in || self.equipment_object.nil?
 
     max_renewal_times = self.equipment_model.maximum_renewal_times
     max_renewal_times = Float::INFINITY if max_renewal_times == 'unrestricted'
