@@ -1,0 +1,28 @@
+  <h3>Availability</h3>
+  <div id="reservation-calendar">
+    <%= content_tag "div", id: "res-data", data:{url:@reservation_data, blackouts:@blackouts, today:@date.to_s, max:@max, date_max: @date_max.to_s} do %>
+    <% end %>
+    <div class = "month"><h4></h4></div>
+
+    <ul id = "calendar-ul">
+      <li class = "calendar_cell" id ="<%= cart.start_date %>">
+        <% for d in 0...6 %>
+          <div class = "head"><strong></strong><i></i></div>
+        <div class = "num"><h2></h2></div>
+      </li>
+      <li class = "calendar_cell">
+      <% end %>
+      <div class = "head"><strong></strong><i></i></div>
+        <div class = "num"><h2></h2></div>
+      </li>
+    </ul>
+
+    <div class = "controls c-left">
+      <i class="control icon-backward" change="-7" title="Move back a week"></i>
+      <i class="control lite icon-chevron-left" change="-1" title="Move back a day"></i>
+    </div>
+    <div class = "controls c-right">
+      <i class="control lite icon-chevron-right" change="1" title="Move forward a day"></i>
+      <i class="control icon-forward" change="7" title="Move forward a week"></i>
+    </div>
+</div>

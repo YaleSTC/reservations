@@ -25,77 +25,18 @@
       <%= image_tag "no-image-260.gif" %>
   <% end %>
   </div>
+
+
   <div class="span6">
     <div class="row">
       <div class="span4">
-        <h3 class="availability">
-          <%= @equipment_model.num_available(cart.start_date, cart.due_date) || "0"%> available of <%= @equipment_model.equipment_objects.size %>
-        </h3>
-        <p>
-          <%= content_tag :div, class: "progress #{progress_color}" do %>
-            <%= content_tag :div, nil, class: 'bar', style: "width: 0%;", :"data-percentage" => bar_progress.chop %>
-          <% end %>
-        </p>
-        <h3 class="availability">from <%= cart.start_date.strftime("%b %d, %Y") %> – <%= cart.due_date.strftime("%b %d, %Y") %></h3>
+        <%= render :partial => 'calendar' %>
       </div>
 
-
-      <div class="span2"> <%# TODO: Not super DRY right now, will refactor in the future %>
-            <% if @equipment_model.model_restricted?(cart.reserver_id) %>
-              <%= link_to "#qualifications_modal", class: 'not-qualified-icon-em', rel: "tooltip", title: "Not Qualified (click for more info)", :"data-toggle" => 'modal' do %>
-                <i class="icon-warning-sign"></i>
-            <% end %>
-
-            <%= button_tag "Add to Cart", remote: true, class: 'btn btn-primary btn-large disabled' %>
-            <div id="qualifications_modal" class="modal hide fade">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">×</button>
-                <h3>Qualification Required</h3>
-              </div>
-              <div class="modal-body">
-            <%# TODO: Eventually requirements will be handled with special Requests, similar to how extended reservations are handled. %>
-            <p> <%= Requirement.list_requirement_admins(current_user, @equipment_model)%> </p>
-              </div>
-            </div>
-
-            <% elsif Blackout.hard_blackout_exists_on_date(cart.start_date) %>
-              <%= link_to "#qualifications_modal", class: 'not-qualified-icon-em', rel: "tooltip", title: "Not Available (click for more info)", :"data-toggle" => 'modal' do %>
-                <i class="icon-warning-sign"></i>
-            <% end %>
-
-            <%= button_tag "Add to Cart", remote: true, class: 'btn btn-primary btn-large disabled' %>
-            <div id="qualifications_modal" class="modal hide fade">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">×</button>
-                <h3>Not Available</h3>
-              </div>
-              <div class="modal-body">
-                <p>
-                  This model is not available on the dates you requested. This is because the start date of your reservation, <%= cart.start_date %>, falls on a day for which the administrator has disabled reservations.
-                </p>
-              </div>
-            </div>
-            <% elsif Blackout.hard_blackout_exists_on_date(cart.due_date) %>
-              <div id="qualifications_modal" class="modal hide fade">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal">×</button>
-                  <h3>Not Available</h3>
-                </div>
-                <div class="modal-body">
-                  <p>
-                    This model is not available on the dates you requested. This is because the end date of your reservation, <%= cart.due_date %>, falls on a day for which the administrator has disabled reservations.
-                  </p>
-                </div>
-              </div>
-            <% else %>
-
-                   <%= link_to "Add to Cart", {:url => add_to_cart_path(@equipment_model)},
-                                      :href => add_to_cart_path(@equipment_model),
-                                      :method => :put, :remote => true, :class => 'btn btn-primary btn-large' %>
-          <% end %>
+      <div class="span2">
+        <%= render :partial => 'add_to_cart' %>
       </div>
     </div>
-
     <div class="associated_em_box">
       <div class="row">
           <div class="span6">
@@ -117,6 +58,8 @@
     </div>
 
   </div>
+
+
 
 </div>
 

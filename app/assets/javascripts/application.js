@@ -24,6 +24,7 @@
 //= require variables.js
 //= require select2
 //= require_self
+//= require calendar.js
 
   function truncate() {
     if ($(".caption_cat").length) {
@@ -218,23 +219,6 @@ if ($(window).width() > 767) {
   $(".btn#modal").tooltip();
   $(".not-qualified-icon").tooltip();
   $(".not-qualified-icon-em").tooltip();
-
-  // Equipment Model - show - progress bar
-
-  $('.progress .bar').each(function() {
-      var me = $(this);
-      var perc = me.attr("data-percentage");
-      var current_perc = 0;
-
-      var progress = setInterval(function() {
-          if (current_perc>=perc) {
-              clearInterval(progress);
-          } else {
-              current_perc = perc;
-              me.css('width', (current_perc)+'%');
-          }
-      }, 100);
-  });
 
   $('.associated_em_box img').popover({ placement: 'bottom' });
   $("#my_reservations .dropdown-menu a").popover({ placement: 'bottom' });
