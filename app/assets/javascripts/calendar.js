@@ -61,7 +61,7 @@ function renderCalendar(reservations, week_start, max, blackouts) {
       }
     }
     if (blacked) {
-      var color = '#999999';
+      var color = '#aaaaaa';
     } else {
       var val = parseInt($(this).children('.num').children()[0].innerHTML);
       var red = Math.min(Math.floor(510 - val*510/max),255).toString();
@@ -82,12 +82,18 @@ function shiftCalendar(offset) {
   var date_max = new Date($('#res-data').data('dateMax'));
   var max = $('#res-data').data('max');
   week_start.setDate(week_start.getDate() + offset);
-  if (week_start < today) {
+  block_left = week_start <= today
+  if (block_left) {
     week_start.setTime(today.getTime());
   }
-  if (week_start > date_max) {
+  $('.c-left').css('opacity',block_left? 0.2 : 1.0)
+              .css('cursor',block_left? 'default' : 'pointer');
+  block_right = week_start >= date_max
+  if (block_right) {
     week_start.setTime(date_max.getTime());
   }
+  $('.c-right').css('opacity',block_right? 0.2 : 1.0)
+               .css('cursor', block_right? 'default' : 'pointer');
   renderCalendar(reservations,week_start,max,blackouts);
 };
 

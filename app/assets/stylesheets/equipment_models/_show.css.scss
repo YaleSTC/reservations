@@ -38,10 +38,12 @@ $border-att: 1px solid darken($bodyBackground, 20%);
 
 .c-left {
   float: left;
+  cursor: pointer;
 }
 
 .c-right {
   float: right;
+  cursor: pointer;
 }
 
 .control {
@@ -57,7 +59,6 @@ $border-att: 1px solid darken($bodyBackground, 20%);
 }
 
 .control:hover{
-  cursor:pointer;
   opacity: 1.0;
 }
 
