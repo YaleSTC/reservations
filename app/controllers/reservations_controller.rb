@@ -68,7 +68,8 @@ class ReservationsController < ApplicationController
     #using http://stackoverflow.com/questions/7233859/ruby-on-rails-updating-multiple-models-from-the-one-controller as inspiration
     Reservation.transaction do
       begin
-        @errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
+        cart_reservations = cart.prepare_all
+        @errors = Reservation.validate_set(cart.reserver, cart_reservations)
         if @errors.empty?
           # If the reservation is a finalized reservation, save it as auto-approved ...
           params[:reservation][:approval_status] = "auto"
@@ -83,7 +84,7 @@ class ReservationsController < ApplicationController
           success_message = "This request has been successfully submitted, and is now subject to approval by an administrator."
         end
 
-        cart.cart_reservations.each do |cart_res|
+        cart_reservations.each do |cart_res|
           @reservation = Reservation.new(params[:reservation])
           @reservation.equipment_model =  cart_res.equipment_model
           # TODO: is this line needed? it's ugly. we should refactor if it's necessary.
