@@ -30,7 +30,7 @@
   </p>
   <p>
     <ul class="rounded-list">
-      <% cart.models_with_quantities.each_pair do |model_id, quantity| %>
+      <% cart.items.each do |model_id, quantity| %>
         <li data-value="<%= quantity %>"><%= link_to EquipmentModel.find(model_id).name, EquipmentModel.find(model_id) %></li>
       <% end %>
     </ul>

@@ -49,7 +49,7 @@ class ReservationsController < ApplicationController
       redirect_to catalog_path
     else
       # error handling
-      @errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
+      @errors = Reservation.validate_set(cart.reserver, cart.prepare_all)
       unless @errors.empty?
         if can? :override, :reservation_errors
           flash[:error] = 'Are you sure you want to continue? Please review the errors below.'
@@ -132,17 +132,17 @@ class ReservationsController < ApplicationController
     message = "Successfully edited reservation."
     # update attributes
     if params[:equipment_object] && params[:equipment_object] != ''
-  		object = EquipmentObject.find(params[:equipment_object])
-	  	unless object.available?
-		  	r = object.current_reservation
+      object = EquipmentObject.find(params[:equipment_object])
+      unless object.available?
+        r = object.current_reservation
         r.equipment_object_id = @reservation.equipment_object_id
-  			r.save
-	  		message << " Note equipment item #{r.equipment_object.name} is now assigned to \
-						#{ActionController::Base.helpers.link_to('reservation #' + r.id.to_s, reservation_path(r))} \
-						(#{r.reserver.render_name})"
-		  end
-		  res[:equipment_object_id] = params[:equipment_object]
-	  end
+        r.save
+        message << " Note equipment item #{r.equipment_object.name} is now assigned to \
+            #{ActionController::Base.helpers.link_to('reservation #' + r.id.to_s, reservation_path(r))} \
+            (#{r.reserver.render_name})"
+      end
+      res[:equipment_object_id] = params[:equipment_object]
+    end
 
     # save changes to database
     Reservation.update(@reservation, res)

@@ -58,7 +58,6 @@ module ReservationValidations
   # Checks that the reservation is not renewable
   #TODO: allow admin override
   def not_renewable?
-    return true unless self.class == CartReservation || self.status == "reserved"
     reserver.reservations.each do |res|
       if res.equipment_model == self.equipment_model && res.due_date.to_date == self.start_date.to_date && res.is_eligible_for_renew?
         errors.add(:base, res.equipment_model.name + " should be renewed instead of re-checked out.\n")
@@ -184,7 +183,7 @@ module ReservationValidations
     #include all reservations made by user
     reservations.concat(reserver.reservations)
     reservations.uniq!
-    reservations.select{ |res| res.overlaps_with?(self) && (res.class == CartReservation || res.checked_in == nil) }
+    reservations.select{ |res| res.overlaps_with?(self) && (res.checked_in == nil) }
   end
 
 
