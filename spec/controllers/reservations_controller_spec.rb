@@ -634,19 +634,19 @@ describe ReservationsController do
       end
 
       it 'assigns @user_overdue_reservations_set correctly' do
-        expect(assigns(:user_overdue_reservations_set)).to eq [Reservation.overdue_user_reservations(@user)].delete_if{|a| a.empty?}
+        expect(assigns(:user_overdue_reservations_set)).to eq [Reservation.overdue.for_reserver(@user)].delete_if{|a| a.empty?}
       end
 
       it 'assigns @user_checked_out_today_reservations_set correctly' do
-        expect(assigns(:user_checked_out_today_reservations_set)).to eq [Reservation.checked_out_today_user_reservations(@user)].delete_if{|a| a.empty?}
+        expect(assigns(:user_checked_out_today_reservations_set)).to eq [Reservation.checked_out_today.for_reserver(@user)].delete_if{|a| a.empty?}
       end
 
       it 'assigns @user_checked_out_previous_reservations_set correctly' do
-        expect(assigns(:user_checked_out_previous_reservations_set)).to eq [Reservation.checked_out_previous_user_reservations(@user)].delete_if{|a| a.empty?}
+        expect(assigns(:user_checked_out_previous_reservations_set)).to eq [Reservation.checked_out_previous.for_reserver(@user)].delete_if{|a| a.empty?}
       end
 
       it 'assigns @user_reserved_reservations_set correctly' do
-        expect(assigns(:user_reserved_reservations_set)).to eq [Reservation.reserved_user_reservations(@user)].delete_if{|a| a.empty?}
+        expect(assigns(:user_reserved_reservations_set)).to eq [Reservation.reserved.for_reserver(@user)].delete_if{|a| a.empty?}
       end
     end
 

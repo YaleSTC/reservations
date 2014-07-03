@@ -54,6 +54,8 @@ class Reservation < ActiveRecord::Base
   scope :denied_requests, lambda {where("approval_status = ?", 'denied')}
   scope :missed_requests, lambda {where("approval_status = ? and start_date < ?", 'requested', Time.now.midnight.utc)}
 
+  scope :for_reserver, lambda { |reserver| where(reserver_id: reserver) }
+
   #TODO: Why the duplication in checkout_handler and checkout_handler_id (etc)?
   attr_accessible :checkout_handler, :checkout_handler_id,
                   :checkin_handler, :checkin_handler_id, :approval_status,
@@ -144,45 +146,15 @@ class Reservation < ActiveRecord::Base
   end
 
 
-  def self.active_user_reservations(user)
-    #TODO: can we use already-defined scopes, here?
-    prelim = Reservation.where("checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
-    final = [] # initialize
-    prelim.collect do |r|
-      if r.status != "missed" # missed reservations are not actually active
-        final << r
-      end
-    end
-    final
-  end
+ # def self.active_user_reservations(user)
 
-  def self.checked_out_today_user_reservations(user)
-    Reservation.where("checked_out >= ? and checked_in IS NULL and reserver_id = ?", Time.now.midnight.utc, user.id)
-  end
+  #def self.checked_out_today_user_reservations(user)
 
-  def self.checked_out_previous_user_reservations(user)
-    Reservation.where("checked_out < ? and checked_in IS NULL and reserver_id = ? and due_date >= ?", Time.now.midnight.utc, user.id, Time.now.midnight.utc)
-  end
+  #def self.checked_out_previous_user_reservations(user)
 
-  def self.reserved_user_reservations(user)
-    Reservation.where("checked_out IS NULL and checked_in IS NULL and due_date >= ? and reserver_id = ?", Time.now.midnight.utc, user.id)
-  end
+  #def self.reserved_user_reservations(user)
 
-  def self.overdue_user_reservations(user)
-    Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and due_date < ? and reserver_id = ?", Time.now.midnight.utc, user.id )
-  end
-
-  def self.check_out_procedures_exist?(reservation)
-    !reservation.equipment_model.checkout_procedures.nil?
-  end
-
-  def self.check_in_procedures_exist?(reservation)
-    !reservation.equipment_model.checkin_procedures.nil?
-  end
-
-  def self.empty_reservation?(reservation)
-    reservation.equipment_object.nil?
-  end
+  #def self.overdue_user_reservations(user)
 
   def late_fee
     self.equipment_model.late_fee.to_f
@@ -208,7 +180,7 @@ class Reservation < ActiveRecord::Base
     # determine the max renewal length for a given reservation
     eq_model = self.equipment_model
     for renewal_length in 1...eq_model.maximum_renewal_length do
-      break if eq_model.available_count(self.due_date + renewal.length.day) == 0
+      break if eq_model.available_count(self.due_date + renewal_length.day) == 0
     end
     renewal_length - 1
   end
@@ -219,7 +191,7 @@ class Reservation < ActiveRecord::Base
     #
     self.times_renewed ||= 0
 
-    # you can't renew a checked in reservation
+    # you can't renew a checked in reservation, or one without an equipment model
     return false if self.checked_in || self.equipment_object.nil?
 
     max_renewal_times = self.equipment_model.maximum_renewal_times
@@ -228,6 +200,7 @@ class Reservation < ActiveRecord::Base
     max_renewal_days = self.equipment_model.maximum_renewal_days_before_due
     max_renewal_days = Float::INFINITY if maximum_renewal_days_before_due == 'unrestricted'
 
-    return ((self.due_date.to_date - Date.today).to_i < max_renewal_days ) && (self.times_renewed < max_renewal_times)
+    return ((self.due_date.to_date - Date.today).to_i < max_renewal_days ) &&
+      (self.times_renewed < max_renewal_times)
   end
 end
