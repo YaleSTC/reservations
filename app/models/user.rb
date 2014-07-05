@@ -103,4 +103,19 @@ class User < ActiveRecord::Base
     [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name, login].join(" ")
   end
 
+
+  # ---- Reservation methods ---- #
+
+  def overdue_reservations?
+    self.reservations.overdue.count > 0
+  end
+
+  def due_for_checkout
+    self.reservations.upcoming
+  end
+
+  def due_for_checkin
+    self.reservations.checked_out.order('due_date ASC')
+  end
+
 end

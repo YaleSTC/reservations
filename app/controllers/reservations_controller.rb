@@ -206,7 +206,7 @@ class ReservationsController < ApplicationController
         flash[:error] = "No reservation selected."
         redirect_to :back and return
       # move method to user model TODO
-      elsif Reservation.overdue_reservations?(reservations_to_be_checked_out.first.reserver) # Checks for any overdue equipment
+      elsif reservations_to_be_checked_out.first.reserver.overdue_reservations?
         error_msgs += "User has overdue equipment."
       end
 
@@ -326,16 +326,16 @@ class ReservationsController < ApplicationController
 
   def manage # initializer
     set_user
-    @check_out_set = Reservation.due_for_checkout(@user)
-    @check_in_set = Reservation.due_for_checkin(@user)
+    @check_out_set = @user.due_for_checkout
+    @check_in_set = @user.due_for_checkin
   end
 
   def current
     set_user
-    @user_overdue_reservations_set = [Reservation.overdue_user_reservations(@user)].delete_if{|a| a.empty?}
-    @user_checked_out_today_reservations_set = [Reservation.checked_out_today_user_reservations(@user)].delete_if{|a| a.empty?}
-    @user_checked_out_previous_reservations_set = [Reservation.checked_out_previous_user_reservations(@user)].delete_if{|a| a.empty?}
-    @user_reserved_reservations_set = [Reservation.reserved_user_reservations(@user)].delete_if{|a| a.empty?}
+    @user_overdue_reservations_set = [Reservation.overdue.for_reserver(@user)].delete_if{|a| a.empty?}
+    @user_checked_out_today_reservations_set = [Reservation.checked_out_today.for_reserver(@user)].delete_if{|a| a.empty?}
+    @user_checked_out_previous_reservations_set = [Reservation.checked_out_previous.for_reserver(@user)].delete_if{|a| a.empty?}
+    @user_reserved_reservations_set = [Reservation.reserved.for_reserver(@user)].delete_if{|a| a.empty?}
 
     render 'current_reservations'
   end

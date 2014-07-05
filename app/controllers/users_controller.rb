@@ -28,7 +28,7 @@ class UsersController < ApplicationController
 
   def show
     @user_reservations = @user.reservations
-    @all_equipment = Reservation.active_user_reservations(@user)
+    @all_equipment = Reservation.active.for_reserver(@user)
     @show_equipment = { checked_out:  @user.reservations.
                                             select {|r| \
                                               (r.status == "checked out") || \
