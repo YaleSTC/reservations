@@ -145,17 +145,15 @@ class EquipmentModel < ActiveRecord::Base
     end
   end
 
-  def num_available(start_date, due_date)
+  def num_available_from_source(start_date, due_date, source_reservations)
     # get the number available in the given date range
-    # O(1) database queries
+    # take an activerecord relation instead of using a database call
+    # for database query optimization purposes
     # O(n) comparisons
-    relevant_reservations = Reservation.for_eq_model(self).
-      reserved_in_date_range(start_date.to_datetime, due_date.to_datetime).
-      not_returned;
     max_num = self.equipment_objects.active.count - number_overdue
     min_available = Float::INFINITY
     start_date.to_date.upto(due_date.to_date) do |d|
-      available = max_num - relevant_reservations.reserved_on_date(d).count
+      available = max_num - source_reservations.reserved_on_date(d).count
       return 0 if min_available <= 0
       if min_available > available
         min_available = available
@@ -164,6 +162,13 @@ class EquipmentModel < ActiveRecord::Base
     return min_available
   end
 
+  def num_available(start_date, due_date)
+    # for if you just want the number available
+    relevant_reservations = Reservation.for_eq_model(self).
+      reserved_in_date_range(start_date.to_datetime, due_date.to_datetime).
+      not_returned;
+    num_available_from_source(start_date, due_date, relevant_reservations)
+  end
   # Returns true if the reserver is ineligible to checkout the model.
   def model_restricted?(reserver_id)
     reserver = User.find(reserver_id)
