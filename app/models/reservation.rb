@@ -55,6 +55,8 @@ class Reservation < ActiveRecord::Base
   scope :missed_requests, lambda {where("approval_status = ? and start_date < ?", 'requested', Time.now.midnight.utc)}
 
   scope :for_reserver, lambda { |reserver| where(reserver_id: reserver) }
+  scope :reserved_in_date_range, lambda { |start_date, end_date|
+    where("start_date < ? and due_date > ? and (approval_status = ? or approval_status = ?)", end_date, start_date, 'auto', 'approved') }
 
   #TODO: Why the duplication in checkout_handler and checkout_handler_id (etc)?
   attr_accessible :checkout_handler, :checkout_handler_id,
@@ -137,6 +139,8 @@ class Reservation < ActiveRecord::Base
 
   def max_renewal_length_available
     # determine the max renewal length for a given reservation
+    # O(n) queries
+
     eq_model = self.equipment_model
     for renewal_length in 1...eq_model.maximum_renewal_length do
       break if eq_model.available_count(self.due_date + renewal_length.day) == 0
