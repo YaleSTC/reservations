@@ -145,11 +145,13 @@ class EquipmentModel < ActiveRecord::Base
     end
   end
 
-  def num_available(start_date, due_date)
+  def num_available(start_date, due_date, relevant_reservations)
     # get the number available in the given date range
+    # allow an active record object of reservations to be passed in
+    # if none passed in use a default set
     # O(1) database queries
     # O(n) comparisons
-    relevant_reservations = Reservation.for_eq_model(self).
+    relevant_reservations ||= Reservation.for_eq_model(self).
       reserved_in_date_range(start_date.to_datetime, due_date.to_datetime).
       not_returned;
     max_num = self.equipment_objects.active.count - number_overdue

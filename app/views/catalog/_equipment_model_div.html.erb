@@ -8,7 +8,8 @@
   <div class="caption_cat">
     <hr class ="special-hr"/>
     <span class="giant-numbers span1">
-      <%= equipment_model.num_available(cart.start_date, cart.due_date) %>
+      <% @available = equipment_model.num_available(cart.start_date, cart.due_date, nil) %>
+      <%= @available %>
     </span>
     <p class="model_availability">
       available from <%= cart.start_date.strftime("%b %d, %Y") %>
@@ -28,7 +29,7 @@
       <%= link_to "#qualifications_modal", class: 'not-qualified-icon', rel: "tooltip", title: "Not Qualified (click for more info)", :"data-toggle" => 'modal' do %>
         <i class="fa fa-exclamation-triangle"></i>
       <% end %>
-    <% elsif equipment_model.num_available(cart.start_date, cart.due_date) > 0 %>
+    <% elsif @available > 0 %>
       <%= link_to "Add to Cart", add_to_cart_path(equipment_model), :method => :put, :remote => true, :class => "btn add_to_cart" %>
     <% else %>
       <%= button_tag "Add to Cart", :class => "btn disabled add_to_cart_disabled"%>
@@ -45,6 +46,7 @@
       <p><%= Requirement.list_requirement_admins(User.find(cart.reserver_id), equipment_model) %></p>:w
     </div>
   </div>
+  <% end %>
 
 
 </div>
