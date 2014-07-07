@@ -38,18 +38,16 @@ $border-att: 1px solid darken($bodyBackground, 20%);
 
 .c-left {
   float: left;
-  cursor: pointer;
 }
 
 .c-right {
   float: right;
-  cursor: pointer;
 }
 
 .control {
+  cursor:pointer;
   margin-left:3px;
   margin-right: 3px;
-  text-shadow: 2px;
   opacity: 0.8;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -59,7 +57,7 @@ $border-att: 1px solid darken($bodyBackground, 20%);
   user-select: none;
 }
 
-.control:hover{
+.control:not(.disabled-control):hover{
   opacity: 1.0;
 }
 
@@ -69,6 +67,11 @@ $border-att: 1px solid darken($bodyBackground, 20%);
 
 .lite {
   opacity: 0.7;
+}
+
+.disabled-control {
+  opacity:0.2;
+  cursor:default;
 }
 
 .btn-large {

@@ -25,14 +25,12 @@
   background-color: adjust-hue(darken($bodyBackground, 7%), -25deg);
 }
 
-.icon-ok {
+.check {
   color: green;
-  font-size: 30px;
 }
 
-.icon-warning-sign {
+.overdue-icon {
   color: #AD0000;
-  font-size: 30px;
 }
 
 .hidden {
