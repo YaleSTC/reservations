@@ -84,6 +84,7 @@ group :development do
   gem 'pry-remote'
   gem 'letter_opener'
   gem 'letter_opener_web', '~> 1.1.0'
+  gem 'rack-mini-profiler'
 end
 
 group :production, :staging do
