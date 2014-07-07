@@ -110,7 +110,7 @@ class ApplicationController < ActionController::Base
   end
 
   def fix_cart_date
-    cart.set_start_date(Date.today) if cart.start_date < Date.today
+    cart.start_date = (Date.today) if cart.start_date < Date.today
   end
 
   #-------- end before_filter methods --------#

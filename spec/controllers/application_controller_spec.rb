@@ -219,7 +219,7 @@ describe TestController do
     it 'changes cart.start_date to today if date is in the past' do
       session[:cart].start_date = Date.yesterday
       get :index
-      session[:cart].start_date.should eq(Date.today.to_time)
+      session[:cart].start_date.should eq(Date.today)
     end
     it 'does not change the start_date if date is in the future' do
       session[:cart].start_date = Date.tomorrow
@@ -266,8 +266,8 @@ describe ApplicationController do
 
         put :update_cart, cart: {start_date_cart: new_start.strftime('%m/%d/%Y'), due_date_cart: new_end.strftime('%m/%d/%Y')}, reserver_id: @new_reserver.id
 
-        session[:cart].start_date.should eq(new_start.to_time)
-        session[:cart].due_date.should eq(new_end.to_time)
+        session[:cart].start_date.should eq(new_start)
+        session[:cart].due_date.should eq(new_end)
         session[:cart].reserver_id.should eq(@new_reserver.id.to_s)
       end
 
