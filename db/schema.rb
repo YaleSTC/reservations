@@ -89,10 +89,10 @@ ActiveRecord::Schema.define(:version => 20140618173229) do
     t.string   "name"
     t.integer  "max_per_user"
     t.integer  "max_checkout_length"
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
+    t.datetime "created_at",              :null => false
+    t.datetime "updated_at",              :null => false
     t.integer  "sort_order"
-    t.datetime "deleted_at",              :limit => 255
+    t.datetime "deleted_at"
     t.integer  "max_renewal_times"
     t.integer  "max_renewal_length"
     t.integer  "renewal_days_before_due"
@@ -117,14 +117,14 @@ ActiveRecord::Schema.define(:version => 20140618173229) do
   create_table "equipment_models", :force => true do |t|
     t.string   "name"
     t.text     "description"
-    t.decimal  "late_fee",                                  :precision => 10, :scale => 2
-    t.decimal  "replacement_fee",                           :precision => 10, :scale => 2
+    t.decimal  "late_fee",                   :precision => 10, :scale => 2
+    t.decimal  "replacement_fee",            :precision => 10, :scale => 2
     t.integer  "max_per_user"
-    t.boolean  "active",                                                                   :default => true
+    t.boolean  "active",                                                    :default => true
     t.integer  "category_id"
-    t.datetime "created_at",                                                                                 :null => false
-    t.datetime "updated_at",                                                                                 :null => false
-    t.datetime "deleted_at",                 :limit => 255
+    t.datetime "created_at",                                                                  :null => false
+    t.datetime "updated_at",                                                                  :null => false
+    t.datetime "deleted_at"
     t.string   "photo_file_name"
     t.string   "photo_content_type"
     t.integer  "photo_file_size"
@@ -151,11 +151,11 @@ ActiveRecord::Schema.define(:version => 20140618173229) do
   create_table "equipment_objects", :force => true do |t|
     t.string   "name"
     t.string   "serial"
-    t.boolean  "active",                             :default => true
+    t.boolean  "active",              :default => true
     t.integer  "equipment_model_id"
-    t.datetime "created_at",                                           :null => false
-    t.datetime "updated_at",                                           :null => false
-    t.datetime "deleted_at",          :limit => 255
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
+    t.datetime "deleted_at"
     t.string   "deactivation_reason"
   end
 
@@ -206,12 +206,12 @@ ActiveRecord::Schema.define(:version => 20140618173229) do
     t.string   "phone"
     t.string   "email"
     t.string   "affiliation"
-    t.datetime "created_at",                                                     :null => false
-    t.datetime "updated_at",                                                     :null => false
-    t.datetime "deleted_at",                :limit => 255
+    t.datetime "created_at",                                      :null => false
+    t.datetime "updated_at",                                      :null => false
+    t.datetime "deleted_at"
     t.boolean  "terms_of_service_accepted"
-    t.string   "view_mode",                                :default => "admin"
-    t.string   "role",                                     :default => "normal"
+    t.string   "view_mode",                 :default => "admin"
+    t.string   "role",                      :default => "normal"
   end
 
   create_table "users_requirements", :id => false, :force => true do |t|
