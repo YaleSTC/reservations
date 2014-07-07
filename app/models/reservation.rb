@@ -56,7 +56,7 @@ class Reservation < ActiveRecord::Base
 
   scope :for_reserver, lambda { |reserver| where(reserver_id: reserver) }
   scope :reserved_in_date_range, lambda { |start_date, end_date|
-    where("start_date < ? and end_date > ?",end_date, start_date) }
+    where("start_date < ? and due_date > ?",end_date, start_date) }
 
   #TODO: Why the duplication in checkout_handler and checkout_handler_id (etc)?
   attr_accessible :checkout_handler, :checkout_handler_id,
