@@ -317,8 +317,7 @@ function resume_cart () {
 $(document).on('change', '.autosubmitme', function() {
   // test for cart date fields to toggle cart spinner
   if ( $(this).parents('div:first').is("#cart_dates") ) {
-    //pause_cart();
-    time = new Date().getTime();
+    pause_cart();
   }
   $(this).parents('form:first').submit();
 });
