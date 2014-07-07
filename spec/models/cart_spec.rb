@@ -46,12 +46,12 @@ describe Cart do
     describe ".add_item" do
       it "adds an item" do
         @cart.add_item(@equipment_model)
-        expect(@cart.items).to include(@equipment_model.id)
+        expect(@cart.items).to include(@equipment_model.id.to_s)
       end
       it "increments if an item is already present" do
         @cart.add_item(@equipment_model)
         @cart.add_item(@equipment_model)
-        expect(@cart.items[@equipment_model.id]).to eq(2)
+        expect(@cart.items[@equipment_model.id.to_s]).to eq(2)
       end
     end
 
@@ -63,13 +63,13 @@ describe Cart do
 
       it "removes an item from cart" do
         @cart.remove_item(@equipment_model)
-        expect(@cart.items[@equipment_model.id]).to be_nil
+        expect(@cart.items[@equipment_model.id.to_s]).to be_nil
       end
 
       it "decrements if multiple items are in the cart" do
         @cart.add_item(@equipment_model)
         @cart.remove_item(@equipment_model)
-        expect(@cart.items[@equipment_model.id]).to eq(1)
+        expect(@cart.items[@equipment_model.id.to_s]).to eq(1)
       end
 
     end
@@ -108,9 +108,9 @@ describe Cart do
         end
         it "should have the correct equipment models" do
           array = @cart.prepare_all
-          expect(@cart.items).to include(array[1].equipment_model.id)
-          expect(@cart.items).to include(array[0].equipment_model.id)
-          expect(@cart.items).to include(array[2].equipment_model.id)
+          expect(@cart.items).to include(array[1].equipment_model.id.to_s)
+          expect(@cart.items).to include(array[0].equipment_model.id.to_s)
+          expect(@cart.items).to include(array[2].equipment_model.id.to_s)
         end
         it 'should have the correct reserver ids' do
           array = @cart.prepare_all

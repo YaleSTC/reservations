@@ -250,9 +250,9 @@ describe ApplicationController do
     before(:each) do
       session[:cart] = Cart.new
       session[:cart].reserver_id = @first_user.id
-      session[:cart].set_start_date(Date.today + 1.day)
-      session[:cart].set_due_date(Date.today + 2.days)
-      
+      session[:cart].start-date = (Date.today + 1.day)
+      session[:cart].due_date = (Date.today + 2.days)
+
 
       equipment_model = FactoryGirl.create(:equipment_model)
       session[:cart].add_item(equipment_model)
@@ -263,9 +263,9 @@ describe ApplicationController do
       it 'should update cart dates' do
         new_start = Date.today + 3.days
         new_end = Date.today + 4.days
-        
+
         put :update_cart, cart: {start_date_cart: new_start.strftime('%m/%d/%Y'), due_date_cart: new_end.strftime('%m/%d/%Y')}, reserver_id: @new_reserver.id
-        
+
         session[:cart].start_date.should eq(new_start.to_time)
         session[:cart].due_date.should eq(new_end.to_time)
         session[:cart].reserver_id.should eq(@new_reserver.id.to_s)
@@ -280,9 +280,9 @@ describe ApplicationController do
       it 'should set the flash' do
         new_start = Date.today - 300.days
         new_end = Date.today + 4000.days
-        
+
         put :update_cart, cart: {start_date_cart: new_start.strftime('%m/%d/%Y'), due_date_cart: new_end.strftime('%m/%d/%Y')}, reserver_id: @new_reserver.id
-        
+
         flash.should_not be_empty
      end
    end
@@ -292,11 +292,7 @@ describe ApplicationController do
     before(:each) do
       session[:cart] = Cart.new
       session[:cart].reserver_id = @first_user.id
-      @cart_reservation = FactoryGirl.create(:cart_reservation, reserver: @first_user)
       delete :empty_cart
-    end
-    it 'destroys cart reservations for the reserver associated with the current cart' do
-      CartReservation.find_by_reserver_id(@first_user.id).should be_nil
     end
     it 'sets the session[:cart] variable back to nil' do
       session[:cart].should be_nil

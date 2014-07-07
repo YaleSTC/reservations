@@ -30,10 +30,10 @@ describe CatalogController do
       it 'should call cart.add_item to add item to cart' do
         expect{
           put :add_to_cart, id: @equipment_model.id
-        }.to change{session[:cart].items.size}.by(1)
+        }.to change{session[:cart].items[@equipment_model.id.to_s]}.by(1)
       end
       it 'should set flash[:error] to the result of Reservation.validate_set if exists' do
-        Reservation.stub(:validate_set).with(session[:cart].reserver, session[:cart].cart_reservations).and_return("test")
+        Reservation.stub(:validate_set).with(session[:cart].reserver, session[:cart].prepare_all).and_return("test")
         flash[:error].should_not be_nil
       end
       it { should redirect_to(root_path) }
@@ -65,7 +65,7 @@ describe CatalogController do
         }.to change{session[:cart].items.size}.by(-1)
       end
       it 'should set flash[:error] to the result of Reservation.validate_set if exists' do
-        Reservation.stub(:validate_set).with(session[:cart].reserver, session[:cart].cart_reservations).and_return("test")
+        Reservation.stub(:validate_set).with(session[:cart].reserver, session[:cart].prepare_all).and_return("test")
         flash[:error].should_not be_nil
       end
       it { should redirect_to(root_path) }
