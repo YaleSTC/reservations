@@ -8,7 +8,7 @@
   <div class="caption_cat">
     <hr class ="special-hr"/>
     <span class="giant-numbers span1">
-      <% @available = equipment_model.num_available(cart.start_date, cart.due_date, relevant_reservations) %>
+      <% @available = equipment_model.num_available_from_source(cart.start_date, cart.due_date, relevant_reservations) %>
       <%= @available %>
     </span>
     <p class="model_availability">
