@@ -90,3 +90,7 @@ group :production, :staging do
   gem 'therubyracer', require: 'v8'
   gem 'airbrake'
 end
+
+group :test do
+  gem 'rake'
+end
