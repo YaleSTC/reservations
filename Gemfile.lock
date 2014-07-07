@@ -65,6 +65,9 @@ GEM
       sass (~> 3.2)
       thor
     builder (3.0.4)
+    bullet (4.11.3)
+      activesupport (>= 3.0.0)
+      uniform_notifier (>= 1.6.0)
     byebug (2.7.0)
       columnize (~> 0.3)
       debugger-linecache (~> 1.2)
@@ -346,6 +349,7 @@ GEM
     uglifier (2.2.1)
       execjs (>= 0.3.0)
       multi_json (~> 1.0, >= 1.0.2)
+    uniform_notifier (1.6.2)
     warden (1.2.3)
       rack (>= 1.0)
     websocket (1.0.7)
@@ -364,6 +368,7 @@ DEPENDENCIES
   airbrake
   awesome_print
   bootstrap-sass (~> 2.0.3)
+  bullet
   cancan
   capistrano
   capybara (~> 2.0.0)
