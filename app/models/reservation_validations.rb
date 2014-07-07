@@ -112,7 +112,7 @@ module ReservationValidations
     all_res << self if self.class != Reservation
     all_res.uniq!
     eq_objects_needed = same_model_count(all_res)
-    if equipment_model.num_available(start_date, due_date) < eq_objects_needed
+    if equipment_model.num_available(start_date, due_date,nil) < eq_objects_needed
       errors.add(:base, equipment_model.name + " is not available for the full time period requested.\n")
       return false
     end
