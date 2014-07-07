@@ -1,11 +1,4 @@
 GIT
-  remote: git://github.com/mrnugget/font-awesome-rails.git
-  revision: 6e0bde8b67560180fc7a0dda57a5330dfea7e8ea
-  specs:
-    font-awesome-rails (0.2.1)
-      railties (~> 3.1)
-
-GIT
   remote: https://github.com/airblade/paper_trail.git
   revision: aac282c4a3b9773740621b282324f523ee5f4775
   branch: 2.7-stable
@@ -131,6 +124,8 @@ GEM
     fastercsv (1.5.5)
     ffaker (1.19.0)
     ffi (1.9.0)
+    font-awesome-rails (4.1.0.0)
+      railties (>= 3.2, < 5.0)
     formatador (0.2.4)
     formtastic (2.2.1)
       actionpack (>= 3.0)
@@ -375,7 +370,7 @@ DEPENDENCIES
   dynamic_form
   factory_girl_rails
   ffaker
-  font-awesome-rails!
+  font-awesome-rails (~> 4.1.0)
   fuubar
   guard-livereload
   guard-rspec

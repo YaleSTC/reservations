@@ -26,7 +26,24 @@ class EquipmentModelsController < ApplicationController
 
   def show
     @associated_equipment_models = @equipment_model.associated_equipment_models.sample(6)
+    @model_reservations = Reservation.active.for_eq_model @equipment_model
+    @reservation_data = []
+    @model_reservations.each do |r|
+      @reservation_data << {
+        start: r.start_date, end: r.due_date}
+    end
+    @blackouts = []
+    Blackout.active.each do |b|
+      @blackouts << {
+        start: b.start_date, end: b.end_date}
+    end
+    @date = Time.current.to_date
+    @date_max = @date + 1.month - 1.week
+    @max = @equipment_model.equipment_objects.count
+    
+    @restricted = @equipment_model.model_restricted?(cart.reserver_id)
   end
+
 
   def new
     @equipment_model = EquipmentModel.new(category: @category)

@@ -145,12 +145,23 @@ class EquipmentModel < ActiveRecord::Base
     end
   end
 
-  #TODO: blackout vs validation
   def num_available(start_date, due_date)
-    availability = start_date.to_date.upto(due_date.to_date).map do |date|
-       available_count(date)
+    # get the number available in the given date range
+    # O(1) database queries
+    # O(n) comparisons
+    relevant_reservations = Reservation.for_eq_model(self).
+      reserved_in_date_range(start_date.to_datetime, due_date.to_datetime).
+      not_returned;
+    max_num = self.equipment_objects.active.count - number_overdue
+    min_available = Float::INFINITY
+    start_date.to_date.upto(due_date.to_date) do |d|
+      available = max_num - relevant_reservations.reserved_on_date(d).count
+      return 0 if min_available <= 0
+      if min_available > available
+        min_available = available
+      end
     end
-    availability.min > 0 ? availability.min : 0
+    return min_available
   end
 
   # Returns true if the reserver is ineligible to checkout the model.
@@ -164,13 +175,6 @@ class EquipmentModel < ActiveRecord::Base
     return false
   end
 
-
-  # Returns the number of reserved objects for a particular model,
-  # as long as they have not been checked in
-  def number_reserved_on_date(date)
-    Reservation.reserved_on_date(date).not_returned.for_eq_model(self).size
-  end
-
   # Returns the number of overdue objects for a given model,
   # as long as they have been checked out.
   def number_overdue
@@ -182,7 +186,8 @@ class EquipmentModel < ActiveRecord::Base
     # get the total number of objects of this kind
     # then subtract the total quantity currently reserved, checked-out, and overdue
     total = equipment_objects.active.count
-    (total - number_reserved_on_date(date)) - number_overdue
+    reserved = Reservation.reserved_on_date(date).not_returned.for_eq_model(self).count
+    total - reserved - number_overdue
   end
 
   def available_object_select_options

@@ -1,6 +1,79 @@
-.progress {
-	margin-bottom: 0;
+
+$border-att: 1px solid darken($bodyBackground, 20%);
+
+.num,.head {
+  text-align:center;
 }
+
+.reservation_calendar {
+  overflow: hidden;
+}
+
+#calendar-ul {
+  margin-left: 0px;
+  margin-bottom: 3px;
+  margin-top: 3px;
+}
+
+.calendar_cell {
+  border: $border-att;
+  border-radius: 3px;
+  width: 13%;
+  display: inline-block;
+  vertical-align:top;
+  background-color: rgba(0,255,0,0.5);
+  opacity: 0.9;
+  padding-top: 3px;
+  padding-bottom: 5px;
+ }
+
+.month {
+  margin-top:3px;
+}
+
+.calendar_cell:hover{
+  opacity:  1.0;
+  cursor: pointer;
+}
+
+.c-left {
+  float: left;
+}
+
+.c-right {
+  float: right;
+}
+
+.control {
+  cursor:pointer;
+  margin-left:3px;
+  margin-right: 3px;
+  opacity: 0.8;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.control:not(.disabled-control):hover{
+  opacity: 1.0;
+}
+
+.control:active{
+  color: black;
+}
+
+.lite {
+  opacity: 0.7;
+}
+
+.disabled-control {
+  opacity:0.2;
+  cursor:default;
+}
+
 .btn-large {
 	float: right;
 }
@@ -59,9 +132,9 @@ section {
 
 a.not-qualified-icon-em {
 	position: absolute;
-	top: 6px;
+	top: 3px;
 	right: 120px;
-	font-size: $baseFontSize * 3.6;
+	font-size: $baseFontSize * 3;
 	color: $btnWarningBackgroundHighlight;
 	@include warning-icon-drop-shadow;
 

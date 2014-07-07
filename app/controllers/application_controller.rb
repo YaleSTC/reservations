@@ -17,6 +17,7 @@ class ApplicationController < ActionController::Base
     c.before_filter :cart
     c.before_filter :fix_cart_date
     c.before_filter :set_view_mode
+    c.before_filter :check_view_mode
   end
 
   helper_method :current_user
@@ -100,11 +101,12 @@ class ApplicationController < ActionController::Base
   end
 
   def check_view_mode
-  if current_user.role == 'admin' && current_user.view_mode != 'admin'
-    flash[:persistent] = "Currently viewing as #{current_user.view_mode} user. You can switch back to your regular view \
-                #{ActionController::Base.helpers.link_to('below','#view_as')} \
-                (see #{ActionController::Base.helpers.link_to('here','https://yalestc.github.io/reservations/')} for details)."
-  end
+    return unless current_user
+    if current_user.role == 'admin' && current_user.view_mode != 'admin'
+      flash[:persistent] = "Currently viewing as #{current_user.view_mode} user. You can switch back to your regular view \
+                  #{ActionController::Base.helpers.link_to('below','#view_as')} \
+                  (see #{ActionController::Base.helpers.link_to('here','https://yalestc.github.io/reservations/')} for details)."
+    end
   end
 
   def fix_cart_date

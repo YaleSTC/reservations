@@ -68,18 +68,30 @@ namespace :app do
 
     # app config default variables
     terms_of_service_text =  %q{ No terms of service document has been uploaded yet. Please navigate to http://sitelocation/app_configs to add a ToS and edit other application configurations.}
-    upcoming_checkin_email_body = "Dear @user@,\n\n"\
-      "Please remember to return the equipment you borrowed from us:\n\n"\
+    upcoming_checkin_email_body =
+      "Dear @user@,\n\n"\
+      "Hey there, you have equipment due! Please return the following items before 4pm on @return_date@.\n\n"\
       "@equipment_list@\n\n"\
-      "If the equipment is returned after 4 pm on @return_date@ you will be charged a late fee or replacement fee. Repeated late returns will result in the privilege to make further reservations for the rest of the term to be revoked.\n\n"\
+      "If you fail to return your equipment on time you will be subject to a late fee of @late_fee@ per day. If you have lost the item you may additioally have to pay a replacement fee of @replacement_fee@.\n"\
+      "Log in to Reservations to see if any of your items are eligible for renewal. If you have further questions feel free to contact an employee of @department_name@.\n\n"\
+      "Your reservation number is @reservation_id@.\n\n"\
+      "Thank you,\n"\
+      "@department_name@\n\n"\
+
+    overdue_checkin_email_body =
+      "Dear @user@,\n\n"\
+      "It looks like you have overdue equipment!\n\n"\
+      "Please return the following equipment to us as soon as possible. Until then you will be charged a daily late fee of @late_fee@.\n\n"\
+      "@equipment_list@\n\n"\
+      "Failure to return equipment will result in the levying of replacement fees, and potential revocation of borrowing privileges.\n\n"\
+      "Your reservation number is @reservation_id@.\n\n"\
       "Thank you,\n"\
       "@department_name@"
-    deleted_missed_reservation_email_body = "Dear @user@,\n\n"\
-      "Because you have missed a scheduled equipment checkout, your reservation has been cancelled. If you believe this is in error, please contact an administrator.\n\n"\
-      "Thank you,\n"\
-      "@department_name@"
-    overdue_checkin_email_body = "Dear @user@,\n\n"\
-      "You were supposed to return the equipment you borrowed from us on @return_date@ but because you have failed to do so, you will be charged @late_fee@ / day until the equipment is returned. Failure to return equipment will result in replacement fees and revocation of borrowing privileges.\n\n"\
+
+    deleted_missed_reservation_email_body =
+      "Dear @user@,\n\n"\
+      "Because you have missed a scheduled equipment checkout, your reservation (number @reservation_id@) has been cancelled. If you believe this is in error, please contact an administrator.\n\n"\
+      "@equipment_list@\n\n"\
       "Thank you,\n"\
       "@department_name@"
 

@@ -1,7 +1,7 @@
 Reservations::Application.routes.draw do
   root :to => 'catalog#index'
 
-  #ActiveAdmin.routes(self)
+  ActiveAdmin.routes(self) unless Rails.env.development?
 
   get "log/index"
   get "log/version/:id" => "log#version", as: :version_view
@@ -11,8 +11,9 @@ Reservations::Application.routes.draw do
 
   resources :documents,
             :equipment_objects,
-            :requirements,
-            :announcements, except: [:show]
+            :requirements
+
+  resources :announcements, except: [:show]
 
   resources :categories do
     resources :equipment_models
