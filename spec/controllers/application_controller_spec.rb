@@ -250,7 +250,7 @@ describe ApplicationController do
     before(:each) do
       session[:cart] = Cart.new
       session[:cart].reserver_id = @first_user.id
-      session[:cart].start-date = (Date.today + 1.day)
+      session[:cart].start_date = (Date.today + 1.day)
       session[:cart].due_date = (Date.today + 2.days)
 
 
