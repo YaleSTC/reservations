@@ -20,8 +20,10 @@
       <%= link_to "More Info", equipment_model, class: 'more_info' %>
     </p>
   </div>
+
   <div class = "add_to_cart_box">
-    <% if equipment_model.model_restricted?(cart.reserver_id) %>
+    <% @restricted = equipment_model.model_restricted?(cart.reserver_id) %>
+    <% if @restricted %>
       <%= button_tag "Add to Cart", class: "btn disabled add_to_cart_disabled"%>
       <%= link_to "#qualifications_modal", class: 'not-qualified-icon', rel: "tooltip", title: "Not Qualified (click for more info)", :"data-toggle" => 'modal' do %>
         <i class="fa fa-exclamation-triangle"></i>
@@ -33,6 +35,7 @@
     <% end %>
   </div>
 
+  <% if @restricted %>
   <div id="qualifications_modal" class="modal hide fade">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal">×</button>
