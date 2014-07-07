@@ -1,3 +1,6 @@
+require 'codeclimate-test-reporter'
+CodeClimate::TestReporter.start
+
 require 'rubygems'
 require 'spork'
 #uncomment the following line to use spork with the debugger
