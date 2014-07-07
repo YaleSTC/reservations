@@ -54,6 +54,8 @@ class Reservation < ActiveRecord::Base
   scope :denied_requests, lambda {where("approval_status = ?", 'denied')}
   scope :missed_requests, lambda {where("approval_status = ? and start_date < ?", 'requested', Time.now.midnight.utc)}
 
+  scope :for_reserver, lambda { |reserver| where(reserver_id: reserver) }
+
   #TODO: Why the duplication in checkout_handler and checkout_handler_id (etc)?
   attr_accessible :checkout_handler, :checkout_handler_id,
                   :checkin_handler, :checkin_handler_id, :approval_status,
@@ -77,10 +79,9 @@ class Reservation < ActiveRecord::Base
 
   def status
     if checked_out.nil?
-      # TODO: This needs to take into account requests.
-      if checked_in.nil? && (approval_status == 'auto' or approval_status == 'approved')
+      if approval_status == 'auto' or approval_status == 'approved'
         due_date >= Date.today ? "reserved" : "missed"
-      elsif !approval_status.nil?
+      elsif approval_status
         approval_status
       else
         "?" # ... is this just in case an admin does something absurd in the database?
@@ -118,70 +119,13 @@ class Reservation < ActiveRecord::Base
   end
 
 
-  def self.due_for_checkin(user)
-    Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ?", user.id).order('due_date ASC') # put most-due ones first
-  end
-
-  def self.due_for_checkout(user)
-    user.reservations.upcoming
-  end
-
-  def self.overdue_reservations?(user)
-    Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and reserver_id = ? and due_date < ?", user.id, Time.now.midnight.utc,).order('start_date ASC').count >= 1 #FIXME: does this need the order?
-    # can't we just use user.reservations.overdue >= 1 (?)
-  end
-
   def checkout_object_uniqueness(reservations)
     object_ids_taken = []
     reservations.each do |r|
-      if !object_ids_taken.include?(r.equipment_object_id) # check to see if we've already taken that one
-        object_ids_taken << r.equipment_object_id
-      else
-        return false # return false if not unique
-      end
+      return false if object_ids_taken.include?(r.equipment_object_id)
+      object_ids_taken << r.equipment_object_id
     end
     return true # return true if unique
-  end
-
-
-  def self.active_user_reservations(user)
-    #TODO: can we use already-defined scopes, here?
-    prelim = Reservation.where("checked_in IS NULL and reserver_id = ?", user.id).order('start_date ASC')
-    final = [] # initialize
-    prelim.collect do |r|
-      if r.status != "missed" # missed reservations are not actually active
-        final << r
-      end
-    end
-    final
-  end
-
-  def self.checked_out_today_user_reservations(user)
-    Reservation.where("checked_out >= ? and checked_in IS NULL and reserver_id = ?", Time.now.midnight.utc, user.id)
-  end
-
-  def self.checked_out_previous_user_reservations(user)
-    Reservation.where("checked_out < ? and checked_in IS NULL and reserver_id = ? and due_date >= ?", Time.now.midnight.utc, user.id, Time.now.midnight.utc)
-  end
-
-  def self.reserved_user_reservations(user)
-    Reservation.where("checked_out IS NULL and checked_in IS NULL and due_date >= ? and reserver_id = ?", Time.now.midnight.utc, user.id)
-  end
-
-  def self.overdue_user_reservations(user)
-    Reservation.where("checked_out IS NOT NULL and checked_in IS NULL and due_date < ? and reserver_id = ?", Time.now.midnight.utc, user.id )
-  end
-
-  def self.check_out_procedures_exist?(reservation)
-    !reservation.equipment_model.checkout_procedures.nil?
-  end
-
-  def self.check_in_procedures_exist?(reservation)
-    !reservation.equipment_model.checkin_procedures.nil?
-  end
-
-  def self.empty_reservation?(reservation)
-    reservation.equipment_object.nil?
   end
 
   def late_fee
@@ -191,70 +135,31 @@ class Reservation < ActiveRecord::Base
   def fake_reserver_id # this is necessary for autocomplete! delete me not!
   end
 
-#  commented out on 2014.06.19. if no problems arise, it may be safely deleted.
-#  def equipment_list  # delete?
-#    raw_text = ""
-#    #Reservation.where("reserver_id = ?", @user.id).each do |reservation|
-#    #if reservation.equipment_model
-#    #  raw_text += "1 x #{reservation.equipment_model.name}\r\n"
-#    #else
-#    #  raw_text += "1 x *equipment deleted*\r\n"
-#    #end
-#    raw_text
-#  end
-
   def max_renewal_length_available
-  # available_period is what is returned by the function
-  # initialize to NIL because once it's set we escape the while loop below
-    available_period = NIL
-    renewal_length = self.equipment_model.maximum_renewal_length || 0 # the 'or 0' is to ensure renewal_length never == NIL; effectively
-    while (renewal_length > 0) and (available_period == NIL)
-      # the available? method cannot accept dates with time zones, and due_date has a time zone
-      possible_start = (self.due_date + 1.day).to_date
-      possible_due = (self.due_date+(renewal_length.days)).to_date
-      if (self.equipment_model.num_available(possible_start, possible_due) > 0)
-        # if it's available for the period, set available_period and escape loop
-        available_period = renewal_length
-      else
-        # otherwise shorten reservation renewal period by one day and try again
-        renewal_length -= 1
-      end
+    # determine the max renewal length for a given reservation
+    eq_model = self.equipment_model
+    for renewal_length in 1...eq_model.maximum_renewal_length do
+      break if eq_model.available_count(self.due_date + renewal_length.day) == 0
     end
-    # need this case to account for when renewal_length == 0 and it escapes the while loop
-    # before available_period is set
-    return available_period = renewal_length
+    renewal_length - 1
   end
 
   def is_eligible_for_renew?
     # determines if a reservation is eligible for renewal, based on how many days before the due
     # date it is and the max number of times one is allowed to renew
     #
-    # we need to test if any of the variables are set to NIL, because in that case comparision
-    # is undefined; that's also why we can't set variables to these function values before
-    # the if statements
-    if self.times_renewed == NIL
-      self.times_renewed = 0
-    end
+    self.times_renewed ||= 0
 
-    # you can't renew a checked in reservation
-    if self.checked_in
-      return false
-    end
+    # you can't renew a checked in reservation, or one without an equipment model
+    return false if self.checked_in || self.equipment_object.nil?
 
-    if self.equipment_model.maximum_renewal_times == "unrestricted"
-      if self.equipment_model.maximum_renewal_days_before_due == "unrestricted"
-        # if they're both NIL
-        return true
-      else
-        # due_date has a time zone, eradicate with to_date; use to_i to change to integer;
-        # are we within the date range for which the button should appear?
-        return ((self.due_date.to_date - Date.today).to_i < self.equipment_model.maximum_renewal_days_before_due)
-      end
-    elsif (self.equipment_model.maximum_renewal_days_before_due == "unrestricted")
-      return (self.times_renewed < self.equipment_model.maximum_renewal_times)
-    else
-      # if neither is NIL, check both
-      return (((self.due_date.to_date - Date.today).to_i < self.equipment_model.maximum_renewal_days_before_due) and (self.times_renewed < self.equipment_model.maximum_renewal_times))
-    end
+    max_renewal_times = self.equipment_model.maximum_renewal_times
+    max_renewal_times = Float::INFINITY if max_renewal_times == 'unrestricted'
+
+    max_renewal_days = self.equipment_model.maximum_renewal_days_before_due
+    max_renewal_days = Float::INFINITY if max_renewal_days == 'unrestricted'
+
+    return ((self.due_date.to_date - Date.today).to_i < max_renewal_days ) &&
+      (self.times_renewed < max_renewal_times)
   end
 end
