@@ -93,7 +93,6 @@ class ReservationsController < ApplicationController
           successful_reservations << @reservation
         end
 
-        cart.items.each { |item| CartReservation.delete(item) }
         session[:cart] = Cart.new
 
         # emails are probably failing---this code was already commented out 2014.06.19, and we don't know why.

@@ -143,13 +143,8 @@ class ApplicationController < ActionController::Base
   end
 
   def empty_cart
-    #destroy old cart reservations
-    current_cart = session[:cart]
-    CartReservation.where(reserver_id: current_cart.reserver.id).destroy_all
-
     session[:cart] = nil
     flash[:notice] = "Cart emptied."
-
     redirect_to root_path
   end
 
