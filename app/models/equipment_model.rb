@@ -152,14 +152,7 @@ class EquipmentModel < ActiveRecord::Base
     relevant_reservations = Reservation.for_eq_model(self).
       reserved_in_date_range(start_date.to_datetime, due_date.to_datetime).
       not_returned;
-    max_num = self.equipment_objects.active.count
-    # do we need to filter out denied requests? ^
-    #
-    # for each date, check how many are available
-    # the minimum number is the final determiner
-    #
-    # TO DO : Refactor other methods available_count and related
-    # Remove/combine those that are unnecessary
+    max_num = self.equipment_objects.active.count - number_overdue
     min_available = Float::INFINITY
     start_date.to_date.upto(due_date.to_date) do |d|
       available = max_num - relevant_reservations.reserved_on_date(d).count
@@ -182,13 +175,6 @@ class EquipmentModel < ActiveRecord::Base
     return false
   end
 
-
-  # Returns the number of reserved objects for a particular model,
-  # as long as they have not been checked in
-  def number_reserved_on_date(date)
-    Reservation.reserved_on_date(date).not_returned.for_eq_model(self).size
-  end
-
   # Returns the number of overdue objects for a given model,
   # as long as they have been checked out.
   def number_overdue
@@ -200,7 +186,8 @@ class EquipmentModel < ActiveRecord::Base
     # get the total number of objects of this kind
     # then subtract the total quantity currently reserved, checked-out, and overdue
     total = equipment_objects.active.count
-    (total - number_reserved_on_date(date)) - number_overdue
+    reserved = Reservation.reserved_on_date(date).not_returned.for_eq_model(self).count
+    total - reserved - number_overdue
   end
 
   def available_object_select_options
