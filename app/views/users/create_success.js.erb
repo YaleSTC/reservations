@@ -1,5 +1,5 @@
 <% if params[:from_cart] == "true" %>
-    <% session[:cart].set_reserver_id(@user.id) %>
+    <% session[:cart].reserver_id = @user.id %>
     $('#userModal').modal('hide');
     $(window.location.reload());
 <% elsif params[:action] == "update" %>

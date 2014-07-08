@@ -1,5 +1,3 @@
-#TODO: change set_reserver_id, set_start_date, and set_due_date to use update_all
-
 class Cart
   include ActiveModel::Validations
   validates :reserver_id, :start_date, :due_date, presence: true
