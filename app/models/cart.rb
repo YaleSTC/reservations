@@ -18,26 +18,46 @@ class Cart
 
   ## --- Cart 'Validations'  --- ##
   # Admin Overrideable  #
+  # Return array of error messages
 
-  def dates_are_not_blackout?
-
+  def validate_dates
+    # run on date change
+    errors = []
+    # blackouts not on date
+    errors << "blackout exists on start date" if Blackout.hard_blackout_exists_on_date(@start_date)
+    errors << "blackout exists on end date" if Blackout.hard_blackout_exists_on_date(@due_date)
+    errors << self.validate_dates_and_items
+    return errors
   end
 
-  def under_max_model_count?
+  def validate_items
+    # run on item change
+    errors = []
+    relevant = Reservations.for_reserver(@reserver_id).active
+    @items.each do |em_id, quantity|
 
+    end
+    #under_max_model_count?
+
+    #under_max_category_count?
+    errors << validate_dates_and_items
+    return errors
   end
 
-  def under_max_category_count?
-
+  def validate_reserver
+    # run on reserver change
+    errors = []
+    errors << "overdue reservations" if Reservation.for_reserver(@reserver_id).overdue.count > 0
+    return errors
   end
 
-  def available?
-
+  def validate_dates_and_items
+    # validations that run on both item and date changes
+    # available
+    # duration
+    # not renewable
   end
 
-  def no_overdue_reservations?
-
-  end
 
 
 
