@@ -2,65 +2,44 @@ module ReservationValidations
 
   ## Validations ##
 
-  ## For individual reservations only
-  # Checks if the user has any overdue reservations
-  # Same for CartReservations and Reservations
-  #TODO: admin override
-  def no_overdue_reservations?
-    if reserver.overdue_reservations?
-      errors.add(:base, reserver.name + " has overdue reservations that prevent new ones from being created.\n")
-      return false
-    end
-    return true
-  end
+  # ------- Hard Validations (ActiveRecord) ------------#
+  # Adds an error if the validation fails
 
   # Checks that reservation start date is before end dates
-  # Same for CartReservations and Reservations
   def start_date_before_due_date?
     if due_date < start_date
       errors.add(:base, "Reservation start date must be before due date.\n")
-      return false
     end
-    return true
+  end
+
+  # Checks that the equipment_object is of type equipment_model
+  def matched_object_and_model?
+    if equipment_object
+      if equipment_object.equipment_model != equipment_model
+        errors.add(:base, equipment_object.name + " must be of type " + equipment_model.name + ".\n")
+      end
+    end
+  end
+
+  # ------ Soft Validations (Admin-overrideable) ------- #
+  # Returns a boolean value
+
+  ## For individual reservations only
+  def no_overdue_reservations?
+    !reserver.overdue_reservations?
   end
 
   # Checks that reservation is not in the past
   # Does not run on checked out, checked in, overdue, or missed Reservations
   def not_in_past?
-    #return true if self.class == Reservation && self.status != 'reserved'
-    if (start_date < Date.today) || (due_date < Date.today)
-      errors.add(:base, "Reservation cannot be made in the past.\n")
-      return false
-    end
-    return true
-  end
-
-  # Checks that the reservation has an equipment model
-  def not_empty?
-    if equipment_model.nil?
-      errors.add(:base, "Reservation must be for a piece of equipment.\n")
-      return false
-    end
-    return true
-  end
-
-  # Checks that the equipment_object is of type equipment_model
-  def matched_object_and_model?
-    if self.class == Reservation && self.equipment_model && self.equipment_object
-      if equipment_object.equipment_model != equipment_model
-        errors.add(:base, equipment_object.name + " must be of type " + equipment_model.name + ".\n")
-        return false
-      end
-    end
-    return true
+    due_date >= Date.today
   end
 
   # Checks that the reservation is not renewable
-  #TODO: allow admin override
   def not_renewable?
-    reserver.reservations.each do |res|
-      if res.equipment_model == self.equipment_model && res.due_date.to_date == self.start_date.to_date && res.is_eligible_for_renew?
-        errors.add(:base, res.equipment_model.name + " should be renewed instead of re-checked out.\n")
+    Reservation.for_reserver(reserver)
+      .checked_out.for_eq_model(self.equipment_model).each do |res|
+      if res.due_date.to_date == self.start_date.to_date && res.is_eligible_for_renew?
         return false
       end
     end
@@ -68,35 +47,20 @@ module ReservationValidations
   end
 
   # Checks that the reservation is not longer than the max checkout length
-  #TODO: admin override
   def duration_allowed?
     max_duration = equipment_model.category.maximum_checkout_length
-    if max_duration == "unrestricted" || (self.class == Reservation && self.checked_in)
-      return true
-    elsif self.duration > max_duration
-      errors.add(:base, equipment_model.name + "cannot be reserved for more than " + max_duration.to_s + " days at a time.\n")
-      return false
-    else
-      return true
-    end
+    return true if max_duration == "unrestricted" || (self.checked_in)
+    self.duration <= max_duration
   end
 
   # Checks that start date is not a black out date
   def start_date_is_not_blackout?
-    if Blackout.hard_blackout_exists_on_date(start_date)
-      errors.add(:base, "Reservation cannot start on " + start_date.strftime('%m/%d') + " because equipment cannot be picked up on that date.\n")
-      return false
-    end
-    return true
+    !Blackout.hard_blackout_exists_on_date(start_date)
   end
 
   # Checks that due date is not a black out date
   def due_date_is_not_blackout?
-    if Blackout.hard_blackout_exists_on_date(due_date)
-      errors.add(:base, "Reservation cannot end on " + due_date.strftime('%m/%d') + " because equipment cannot be returned on that date.\n")
-      return false
-    end
-    return true
+    !Blackout.hard_blackout_exists_on_date(due_date)
   end
 
   ## For single or multiple reservations
@@ -106,9 +70,9 @@ module ReservationValidations
   # reservations but if there are too many reserved reservations, it will still
   # return false because available? will return less than 0
   def available?(reservations = [])
-    return true if self.class == Reservation && self.status != 'reserved'
+    return true if self.status != 'reserved'
     all_res = reservations.dup
-    all_res << self if self.class != Reservation
+    all_res << self
     all_res.uniq!
     eq_objects_needed = same_model_count(all_res)
     if equipment_model.num_available(start_date, due_date) < eq_objects_needed
@@ -127,11 +91,7 @@ module ReservationValidations
     # and reserver's active reservations,
     # excluding those that don't overlap
     reservations = reserver.reservations.active + res_array
-    if same_model_count(get_overlapping_reservations(reservations)) > max
-      errors.add(:base, "Cannot reserve more than " + equipment_model.maximum_per_user.to_s + " " + equipment_model.name.pluralize + ".\n")
-      return false
-    end
-    return true
+    same_model_count(get_overlapping_reservations(reservations)) <= max
   end
 
 
@@ -144,11 +104,7 @@ module ReservationValidations
     # and reserver's active reservations
     # excluding those that don't overlap
     reservations = reserver.reservations.active + res_array
-    if same_category_count(get_overlapping_reservations(reservations)) > max
-      errors.add(:base, "Cannot reserve more than " + equipment_model.category.maximum_per_user.to_s + " " + equipment_model.category.name.pluralize + ".\n")
-      return false
-    end
-    return true
+    same_category_count(get_overlapping_reservations(reservations)) <= max
   end
 
 

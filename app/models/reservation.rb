@@ -16,17 +16,6 @@ class Reservation < ActiveRecord::Base
                 :available?
   end
 
-  # These can't be nested with the above block because with_options clobbers
-  # nested options that are the same (i.e., :if and :if)
-  with_options if: Proc.new {|r| r.not_empty? && !r.bypass_validations} do |r|
-    r.with_options on: :create do |r|
-      r.validate  :not_in_past?, :not_renewable?, :no_overdue_reservations?,
-                  :duration_allowed?, :start_date_is_not_blackout?,
-                  :due_date_is_not_blackout?, :quantity_eq_model_allowed?,
-                  :quantity_cat_allowed?
-    end
-  end
-
   nilify_blanks only: [:notes]
 
   scope :recent, order('start_date, due_date, reserver_id')
