@@ -381,10 +381,8 @@ class ReservationsController < ApplicationController
 
   def review
     set_reservation
-    array_for_validation = []
-    array_for_validation << @reservation
     @all_current_requests_by_user = @reservation.reserver.reservations.requested.delete_if{|res| res.id == @reservation.id}
-    @errors = Reservation.validate_set(@reservation.reserver, array_for_validation)
+    @errors = @reservation.validate
   end
 
   def approve_request

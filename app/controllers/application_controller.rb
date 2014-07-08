@@ -130,7 +130,7 @@ class ApplicationController < ActionController::Base
     end
 
     # validate
-    errors = cart.validate_dates
+    errors = cart.validate_dates.concat(cart.validate_dates_and_items)
     # don't over-write flash if invalid date was set above
     flash[:error] ||= errors.to_sentence
     flash[:notice] = "Cart updated."
