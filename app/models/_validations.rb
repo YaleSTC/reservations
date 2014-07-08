@@ -1,21 +1,46 @@
-class Cart
-  include ActiveModel::Validations
-  include ReservationCartValidations
-  validates :reserver_id, :start_date, :due_date, presence: true
-
-  attr_accessor :items, :start_date, :due_date, :reserver_id
-
-  def initialize
-    @errors = ActiveModel::Errors.new(self)
-    @items = Hash.new()
-    @start_date = Date.today
-    @due_date = Date.tomorrow
-    @reserver_id = nil
+  def validate_dates
+    # run on date change
+    errors = []
+    # blackouts not on date
+    errors << "blackout exists on start date" if Blackout.hard_blackout_exists_on_date(@start_date)
+    errors << "blackout exists on end date" if Blackout.hard_blackout_exists_on_date(@due_date)
+    errors << "overdue reservations" if Reservation.for_reserver(@reserver_id).overdue.count > 0
+    # for some reason reserver is submitted at the same time as dates
+    errors.concat(self.validate_dates_and_items.to_a)
+    return errors
   end
 
-  def persisted?
-    false
+  def validate_items
+    # run on item change
+    errors = []
+    relevant = Reservation.for_reserver(@reserver_id).active
+    @items.each do |em_id, quantity|
+
+    end
+    #under_max_model_count?
+
+    #under_max_category_count?
+    errors.concat(validate_dates_and_items.to_a)
+    errors << 'maybe you have an error with items? idk'
+    return errors
   end
+
+  def validate_dates_and_items
+    # validations that run on both item and date changes
+    # available
+    # duration
+    # not renewable
+  end
+
+  def validate_all
+    errors = validate_dates
+    errors.concat(validate_items.to_a)
+    return errors
+
+  end
+
+
+
 
   ## Item methods
 
