@@ -2,12 +2,9 @@
 
 class Cart
   include ActiveModel::Validations
-  extend ActiveModel::Naming
-
   validates :reserver_id, :start_date, :due_date, presence: true
 
   attr_accessor :items, :start_date, :due_date, :reserver_id
-  attr_reader   :errors
 
   def initialize
     @errors = ActiveModel::Errors.new(self)
@@ -19,20 +16,6 @@ class Cart
 
   def persisted?
     false
-  end
-
-  ## Functions for error handling
-
-  def read_attribute_for_validation(attr)
-    send(attr)
-  end
-
-  def Cart.human_attribute_name(attr, options = {})
-    attr
-  end
-
-  def Cart.lookup_ancestors
-    [self]
   end
 
   ## Item methods
