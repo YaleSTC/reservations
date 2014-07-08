@@ -20,3 +20,4 @@ diff.py
 Vagrantfile
 .ruby*
 *.sublime*
+coverage/
