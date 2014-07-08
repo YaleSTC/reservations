@@ -159,7 +159,6 @@ describe Reservation do
 	end
 
 	context 'with blacked out start date' do
-		before(:each) { FactoryGirl.create(:blackout, start_date: reservation.start_date, end_date: reservation.due_date) }
 		let!(:blackout) { FactoryGirl.create(:blackout, start_date: reservation.start_date, end_date: reservation.due_date) }
 
 		it { should_not be_valid }
