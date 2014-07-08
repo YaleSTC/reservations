@@ -49,7 +49,7 @@ class ReservationsController < ApplicationController
       redirect_to catalog_path
     else
       # error handling
-      @errors = Reservation.validate_set(cart.reserver, cart.prepare_all)
+      @errors = cart.validate_all
       unless @errors.empty?
         if can? :override, :reservation_errors
           flash[:error] = 'Are you sure you want to continue? Please review the errors below.'
@@ -69,7 +69,7 @@ class ReservationsController < ApplicationController
     Reservation.transaction do
       begin
         cart_reservations = cart.prepare_all
-        @errors = Reservation.validate_set(cart.reserver, cart_reservations)
+        @errors = cart.validate_all
         if @errors.empty?
           # If the reservation is a finalized reservation, save it as auto-approved ...
           params[:reservation][:approval_status] = "auto"

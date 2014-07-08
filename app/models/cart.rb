@@ -26,6 +26,8 @@ class Cart
     # blackouts not on date
     errors << "blackout exists on start date" if Blackout.hard_blackout_exists_on_date(@start_date)
     errors << "blackout exists on end date" if Blackout.hard_blackout_exists_on_date(@due_date)
+    errors << "overdue reservations" if Reservation.for_reserver(@reserver_id).overdue.count > 0
+    # for some reason reserver is submitted at the same time as dates
     errors << self.validate_dates_and_items
     return errors
   end
@@ -41,13 +43,7 @@ class Cart
 
     #under_max_category_count?
     errors << validate_dates_and_items
-    return errors
-  end
-
-  def validate_reserver
-    # run on reserver change
-    errors = []
-    errors << "overdue reservations" if Reservation.for_reserver(@reserver_id).overdue.count > 0
+    errors << 'maybe you have an error with items? idk'
     return errors
   end
 
@@ -56,6 +52,13 @@ class Cart
     # available
     # duration
     # not renewable
+  end
+
+  def validate_all
+    errors = []
+    errors << validate_dates
+    errors << validate_items
+    return errors
   end
 
 
