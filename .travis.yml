@@ -4,4 +4,4 @@ rvm:
   - 1.9.3
 before_script:
   - cp config/database.travis.yml config/database.yml
-  - rake db:setup
+  - bundle exec rake db:setup
