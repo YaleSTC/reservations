@@ -5,4 +5,6 @@ rvm:
 before_script:
   - cp config/database.travis.yml config/database.yml
   - CODECLIMATE_REPO_TOKEN=075afb721fe089e1b77ab194fcff1ac132765bbfd3f3777db52f7abaf9bf800d
-  - bundle exec rake db:setup
+  - bundle exec rake db:create
+  - bundle exec rake db:migrate
+  - bundle exec rake db:test:prepare
