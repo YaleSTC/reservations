@@ -30,7 +30,8 @@ class EquipmentModelsController < ApplicationController
     @reservation_data = []
     @model_reservations.each do |r|
       @reservation_data << {
-        start: r.start_date, end: r.due_date}
+        start: r.start_date,
+        end: (r.status == 'overdue' ? r.due_date + 1.month : r.due_date) }
     end
     @blackouts = []
     Blackout.active.each do |b|
@@ -40,7 +41,7 @@ class EquipmentModelsController < ApplicationController
     @date = Time.current.to_date
     @date_max = @date + 1.month - 1.week
     @max = @equipment_model.equipment_objects.count
-    
+
     @restricted = @equipment_model.model_restricted?(cart.reserver_id)
   end
 
