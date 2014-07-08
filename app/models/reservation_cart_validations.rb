@@ -9,24 +9,36 @@
     return errors
   end
 
-  def validate_items(res_array = [])
-    unless res_array.empty?
-      # reservation call
-      # convert res array to cart style items hash
-      # note this means that the cart dates are "locked down",
-      # as in it will be very difficult to create multiple reservations
-      # with different dates out of a single 'cart'
-    end
+  def validate_items
     errors = []
     relevant = Reservation.for_reserver(@reserver_id).active
+
+    category = Hash.new
+    # check if under max model count while simultaneously building a category hash
     @items.each do |em_id, quantity|
+      model = EquipmentModel.find(em_id)
+      max_models = model.maximum_per_user
+      errors << "over max model count" if relevant.for_eq_model(model).count + quantity > max_models
+
+      if category.includes?(model.category)
+        category[model.category] += quantity
+      else
+        category[model.category] = quantity
+      end
 
     end
-    #under_max_model_count?
 
-    #under_max_category_count?
-    errors << 'maybe you have an error with items? idk'
+    # check if under max category count
+    category.each do |cat, q|
+      max_cat = cat.maximum_per_user
+      count = 0
+      relevant.each do |r|
+        count += 1 if r.equipment_model.category == cat
+      end
+      errors << "over max category count" if count > max_cat
+    end
     return errors
+
   end
 
   def validate_dates_and_items
