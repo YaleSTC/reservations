@@ -125,7 +125,7 @@ class ApplicationController < ActionController::Base
       cart.fix_due_date
       cart.reserver_id = params[:reserver_id]
     rescue ArgumentError
-      cart.set_start_date(Date.today)
+      cart.start_date = Date.today
       flash[:error] = "Please enter a valid start or due date."
     end
 
