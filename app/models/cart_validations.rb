@@ -55,8 +55,15 @@ module CartValidations
     errors = []
     self.items.each do |item, quantity|
       model = EquipmentModel.find(item)
+
+      # check availability
       errors << "not available" if model.num_available(self.start_date, self.due_date) < quantity
-      errors << "too long checkout length" if self.duration > model.category.max_checkout_length
+
+      # check maximum checkout length
+      max_length = model.category.max_checkout_length
+      max_length = Float::INFINTIY if max_length == 'unrestricted'
+      errors << "too long checkout length" if self.duration > max_length
+
       user_reservations.for_eq_model(model).each do |r|
         errors << "renew, man"  if r.due_date == self.start_date && r.is_eligible_for_renew?
       end
