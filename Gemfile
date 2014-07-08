@@ -91,6 +91,6 @@ group :production, :staging do
   gem 'airbrake'
 end
 
-group :test do
-  gem 'rake'
-end
+# group :test do
+#   gem 'rake'
+# end
