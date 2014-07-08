@@ -261,10 +261,13 @@ describe Reservation do
   end
 
   context 'with duration problems' do
-    before do
-      reservation.equipment_model.category.max_checkout_length = 1
-      reservation.due_date = Date.tomorrow + 2
-    end
+    subject(:reservation) {
+      r = FactoryGirl.build(:valid_reservation)
+      r.equipment_model.category.max_checkout_length = 1
+      r.equipment_model.category.save
+      r.due_date = Date.tomorrow + 2
+      r
+    }
 
     it { should be_valid }
     it 'should save' do
@@ -276,7 +279,6 @@ describe Reservation do
       reservation.save.should be_true
     end
     it 'fails appropriate validations' do
-      binding.pry
       reservation.validate.should_not eq([])
     end
     it 'passes other custom validations' do
@@ -289,18 +291,22 @@ describe Reservation do
   end
 
   context 'with category quantity problems' do
-    before do
-      reservation.equipment_model.category.max_per_user = 1
-      reservation.equipment_model.max_per_user = 2
-      FactoryGirl.create(:equipment_object, equipment_model: reservation.equipment_model)
-      FactoryGirl.create(:reservation, equipment_model: reservation.equipment_model, reserver: reservation.reserver)
-    end
+    subject(:reservation) {
+      r = FactoryGirl.create(:valid_reservation)
+      r.equipment_model.category.max_per_user = 1
+      r.equipment_model.max_per_user = 2
+      r.equipment_model.save
+      r.equipment_model.category.save
+      FactoryGirl.create(:equipment_object, equipment_model: r.equipment_model)
+      FactoryGirl.create(:reservation, equipment_model: r.equipment_model, reserver: r.reserver)
+      r
+    }
+
 
     it { should be_valid }
     it 'should save' do
       reservation.save.should be_true
       Reservation.all.size.should == 2
-      Reservation.all.first.should_not == reservation
     end
     it 'can be updated' do
       reservation.start_date = Date.tomorrow
@@ -319,18 +325,21 @@ describe Reservation do
   end
 
   context 'with equipment model quantity problems' do
-    before do
-      reservation.equipment_model.category.max_per_user = 1
-      reservation.equipment_model.max_per_user = 1
-      FactoryGirl.create(:equipment_object, equipment_model: reservation.equipment_model)
-      FactoryGirl.create(:reservation, equipment_model: reservation.equipment_model, reserver: reservation.reserver)
-    end
+    subject(:reservation) {
+      r = FactoryGirl.create(:valid_reservation)
+      r.equipment_model.category.max_per_user = 1
+      r.equipment_model.max_per_user = 1
+      r.equipment_model.save
+      r.equipment_model.category.save
+      FactoryGirl.create(:equipment_object, equipment_model: r.equipment_model)
+      FactoryGirl.create(:reservation, equipment_model: r.equipment_model, reserver: r.reserver)
+      r
+    }
 
     it { should be_valid }
     it 'should save' do
       reservation.save.should be_true
       Reservation.all.size.should == 2
-      Reservation.all.first.should_not == reservation
     end
     it 'can be updated' do
       reservation.start_date = Date.tomorrow
