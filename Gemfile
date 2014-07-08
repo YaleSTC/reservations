@@ -48,7 +48,6 @@ gem 'redcarpet'
 gem 'paper_trail', git: "https://github.com/airblade/paper_trail.git", branch: "2.7-stable"
 
 group :development, :test do
-  gem 'sqlite3' # alternative db management for development
   gem 'factory_girl_rails'
   gem 'rspec-rails'
   gem 'shoulda-matchers'
