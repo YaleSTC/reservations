@@ -299,7 +299,7 @@ describe ReservationsController do
           expect { @req.call }.to change { Reservation.count }
         end
         it 'empties the Cart' do
-          expect { @req.call }.to change { CartReservation.count }
+          @req.call
           response.request.env['rack.session'][:cart].items.count.should eq(0)
           # Cart.should_receive(:new)
         end

@@ -63,6 +63,7 @@ group :development, :test do
   gem 'capistrano'
   gem 'awesome_print'
   gem 'ruby-progressbar'
+  gem 'codeclimate-test-reporter'
 end
 
 # Gems used only for assets and not required

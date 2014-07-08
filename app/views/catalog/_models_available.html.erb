@@ -2,20 +2,23 @@
 <% prepare_pagination %>
 <% blackout_errors %>
 
-<% if @equipment_models_by_category.empty? && (can? :manage, EquipmentModel) %>
-  <p><h3>No equipment found. Try creating some
+<% if @equipment_models_by_category.empty? %>
+  <p>
+    <h3>No equipment found.
+    <% if can? :manage, EquipmentModel %>
+      Try creating some
       <%= link_to "Equipment Models", new_equipment_model_path %>
-      first!</h3>
+      first!
+    <% end %>
+    </h3>
   </p>
-<% elsif @equipment_models_by_category.empty? %>
-  <p><h3>No equipment found.</h3></p>
 <% else %>
   <div id='models_available'>
     <% if @pagination_required %>
       <div class="row">
         <div id="pagination_line" class="span9">
           <%# for kaminari pagination %>
-          <%= paginate @paginated_equipment_models_by_category, :params => {:controller => 'catalog', :action => 'index' } %>
+          <%= paginate @paginated_equipment_models_by_category, params: {controller: 'catalog', action: 'index' } %>
           <%= form_tag update_user_per_cat_page_path, id: 'items_per_form', :class => "form-inline pull-right", :remote => true, :method=>'put' do %>
             <%= label_tag "Items per page:" %>
             <%= select_tag :user_cat_items_per_page, options_for_select(@user_per_page_opts, session[:user_per_cat_page]), :class => 'span1 autosubmitme' %>
@@ -24,6 +27,7 @@
       </div>
     <% end %>
 
+    <% relevant_reservations = Reservation.active.reserved_in_date_range(cart.start_date, cart.due_date).not_returned %>
     <% @equipment_models_by_category.each do |category, equipment_models| %>
       <h2 class="catalog">
         <%# print category name %>
@@ -33,7 +37,7 @@
         <ul class="thumbnails">
         <% equipment_models.each do |equipment_model| %>
           <li class="span3">
-            <%= render :partial => 'equipment_model_div', :locals => { :equipment_model => equipment_model } %>
+            <%= render partial: 'equipment_model_div', locals: { equipment_model: equipment_model, relevant_reservations: relevant_reservations } %>
           </li>
         <% end %>
         </ul>
