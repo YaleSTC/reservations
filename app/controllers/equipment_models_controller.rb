@@ -31,7 +31,7 @@ class EquipmentModelsController < ApplicationController
     @model_reservations.each do |r|
       @reservation_data << {
         start: r.start_date,
-        end: (r.status == 'overdue' ? r.due_date + 1.month : r.due_date) }
+        end: (r.status == 'overdue' ? Date.today + 1.month : r.due_date) }
     end
     @blackouts = []
     Blackout.active.each do |b|
