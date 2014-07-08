@@ -31,18 +31,12 @@ module ReservationValidations
     end
   end
 
-  # ------ Soft Validations (Admin-overrideable) ------- #
-  # Returns a boolean value
-
-  ## For individual reservations only
-  def no_overdue_reservations?
-    !reserver.overdue_reservations?
-  end
-
   # Checks that reservation is not in the past
   # Does not run on checked out, checked in, overdue, or missed Reservations
   def not_in_past?
-    due_date >= Date.today
+    unless due_date >= Date.today
+      errors.add(:base, "Cannot create reservation in the past")
+    end
   end
 
   # Checks that the reservation is not renewable

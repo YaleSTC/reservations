@@ -16,6 +16,31 @@ class Cart
     false
   end
 
+  ## --- Cart 'Validations'  --- ##
+  # Admin Overrideable  #
+
+  def dates_are_not_blackout?
+
+  end
+
+  def under_max_model_count?
+
+  end
+
+  def under_max_category_count?
+
+  end
+
+  def available?
+
+  end
+
+  def no_overdue_reservations?
+
+  end
+
+
+
   ## Item methods
 
   # Adds equipment model id to items hash
