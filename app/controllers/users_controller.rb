@@ -129,6 +129,6 @@ class UsersController < ApplicationController
   def activate
     @user.revive
     flash[:notice] = "Successfully reactivated user."
-    redirect_to users_path
+    redirect_to @user
   end
 end
