@@ -7,6 +7,7 @@ module ReservationValidations
 
   # Checks that reservation start date is before end dates
   def start_date_before_due_date?
+    return unless start_date && due_date
     if due_date < start_date
       errors.add(:base, "Reservation start date must be before due date.\n")
     end
@@ -14,10 +15,19 @@ module ReservationValidations
 
   # Checks that the equipment_object is of type equipment_model
   def matched_object_and_model?
-    if equipment_object
-      if equipment_object.equipment_model != equipment_model
-        errors.add(:base, equipment_object.name + " must be of type " + equipment_model.name + ".\n")
-      end
+    return unless equipment_object
+    return unless equipment_model
+    if equipment_object.equipment_model != equipment_model
+      errors.add(:base, equipment_object.name + " must be of type " + equipment_model.name + ".\n")
+    end
+  end
+
+  # Checks that the equipment model is available from start date to due date
+  def available?
+    return if self.status != 'reserved'
+    return unless equipment_model
+    if equipment_model.num_available(start_date, due_date) <= 0
+      errors.add(:base, equipment_model.name + " is not available for the full time period requested.\n")
     end
   end
 
@@ -64,23 +74,6 @@ module ReservationValidations
   end
 
   ## For single or multiple reservations
-  # Checks that the equipment model is available from start date to due date
-  # Not called on overdue, missed, checked out, or checked in Reservations
-  # because this would double count the reservations. all_res is only cart
-  # reservations but if there are too many reserved reservations, it will still
-  # return false because available? will return less than 0
-  def available?(reservations = [])
-    return true if self.status != 'reserved'
-    all_res = reservations.dup
-    all_res << self
-    all_res.uniq!
-    eq_objects_needed = same_model_count(all_res)
-    if equipment_model.num_available(start_date, due_date) < eq_objects_needed
-      errors.add(:base, equipment_model.name + " is not available for the full time period requested.\n")
-      return false
-    end
-    return true
-  end
 
   # Checks that the number of equipment models that a user has reserved
   # is less than the equipment model maximum

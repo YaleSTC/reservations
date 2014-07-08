@@ -8,13 +8,10 @@ class Reservation < ActiveRecord::Base
   belongs_to :checkout_handler, class_name: 'User'
   belongs_to :checkin_handler, class_name: 'User'
 
-  validates :equipment_model, presence: true
+  validates :equipment_model, :start_date, :due_date, presence: true
+  validate :start_date_before_due_date?
+  validate :available?
 
-  # If there is no equipment model, don't run the validations that would break
-  with_options if: :not_empty? do |r|
-    r.validate  :start_date_before_due_date?, :matched_object_and_model?,
-                :available?
-  end
 
   nilify_blanks only: [:notes]
 
@@ -48,8 +45,8 @@ class Reservation < ActiveRecord::Base
     where("start_date < ? and due_date > ? and (approval_status = ? or approval_status = ?)", end_date, start_date, 'auto', 'approved') }
 
   #TODO: Why the duplication in checkout_handler and checkout_handler_id (etc)?
-  attr_accessible :checkout_handler, :checkout_handler_id,
-                  :checkin_handler, :checkin_handler_id, :approval_status,
+  attr_accessible :checkout_handler_id,
+                  :checkin_handler_id, :approval_status,
                   :checked_out, :checked_in, :equipment_object,
                   :equipment_object_id, :notes, :notes_unsent, :times_renewed
 
