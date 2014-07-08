@@ -5,5 +5,6 @@ FactoryGirl.define do
     name
     sort_order
     max_per_user 5
+    max_checkout_length 10
   end
 end
