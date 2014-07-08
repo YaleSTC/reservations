@@ -70,8 +70,11 @@ class Reservation < ActiveRecord::Base
   def validate
     # Convert reservation to a cart object and run validations on it
     # For hard validations, use reservation.valid
-    temp_cart = Cart.new(start_date: @start_date, due_date: @due_date, reserver_id: @reserver_id)
-    temp_cart.items << { @equipment_model.id => 1 }
+    temp_cart = Cart.new
+    temp_cart.start_date = self.start_date
+    temp_cart.due_date = self.due_date
+    temp_cart.reserver_id = self.reserver_id
+    temp_cart.items = { self.equipment_model.id => 1 }
     temp_cart.validate_all
   end
 

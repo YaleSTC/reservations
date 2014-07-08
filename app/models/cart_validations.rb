@@ -19,7 +19,7 @@ module CartValidations
     self.items.each do |em_id, quantity|
       model = EquipmentModel.find(em_id)
       max_models = model.maximum_per_user
-      self.start_date.upto(self.due_date) do |d|
+      self.start_date.to_date.upto(self.due_date.to_date) do |d|
         errors << "over max model count" if relevant.overlaps_with_date(d).for_eq_model(model).count + quantity > max_models
         break
       end
@@ -35,7 +35,7 @@ module CartValidations
     # check if under max category count
     category.each do |cat, q|
       max_cat = cat.maximum_per_user
-      self.start_date.upto(due_date) do |d|
+      self.start_date.to_date.upto(due_date.to_date) do |d|
         count = 0
         relevant.overlaps_with_date(d).each do |r|
           count += 1 if r.equipment_model.category == cat
