@@ -380,6 +380,7 @@ class ReservationsController < ApplicationController
   end
 
   def review
+    temp_cart.items
     set_reservation
     @all_current_requests_by_user = @reservation.reserver.reservations.requested.delete_if{|res| res.id == @reservation.id}
     @errors = @reservation.validate
