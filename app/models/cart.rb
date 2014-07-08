@@ -49,7 +49,7 @@ class Cart
     return if equipment_model.nil?
     key = equipment_model.id.to_s
     self.items[key] = self.items[key] ? self.items[key] - 1 : 0
-    self.items = self.items.except(key) if self.items[key] == 0
+    self.items = self.items.except(key) if self.items[key] <= 0
   end
 
   def empty?
