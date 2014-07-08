@@ -1,6 +1,6 @@
 class Cart
   include ActiveModel::Validations
-  include ReservationCartValidations
+  include CartValidations
   validates :reserver_id, :start_date, :due_date, presence: true
 
   attr_accessor :items, :start_date, :due_date, :reserver_id

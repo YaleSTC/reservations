@@ -1,3 +1,4 @@
+module CartValidations
   def validate_dates
     # run on date change
     errors = []
@@ -68,4 +69,4 @@
     errors.concat(validate_items.to_a).concat(validate_dates_and_items.to_a)
     return errors
   end
-
+end
