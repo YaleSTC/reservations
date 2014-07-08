@@ -32,6 +32,8 @@ class EquipmentModelsController < ApplicationController
       @reservation_data << {
         start: r.start_date,
         end: (r.status == 'overdue' ? Date.today + 1.month : r.due_date) }
+      # the above code mimics the current available? setup to show overdue
+      # equipment as permanently 'out'.
     end
     @blackouts = []
     Blackout.active.each do |b|
