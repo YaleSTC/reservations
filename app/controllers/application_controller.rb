@@ -122,6 +122,7 @@ class ApplicationController < ActionController::Base
     begin
       cart.start_date = Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y')
       cart.due_date = Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y')
+      cart.fix_due_date
       cart.reserver_id = params[:reserver_id]
     rescue ArgumentError
       cart.set_start_date(Date.today)

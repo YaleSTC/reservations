@@ -84,4 +84,10 @@ class Cart
   def reserver
     User.find(@reserver_id)
   end
+
+  def fix_due_date
+    if @start_date > @due_date
+      @due_date = @start_date + 1.day
+    end
+  end
 end
