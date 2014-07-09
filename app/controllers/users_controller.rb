@@ -43,7 +43,7 @@ class UsersController < ApplicationController
   end
 
   def new
-    @can_edit_login = (can? :create, User) # used in view
+    @can_edit_login = current_user.present? && (can? :create, User) # used in view
 
     if current_user.nil?
       # This is a new user -> create an account for them
