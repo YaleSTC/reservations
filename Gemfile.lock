@@ -162,7 +162,7 @@ GEM
     highline (1.6.19)
     hike (1.2.3)
     http_parser.rb (0.5.3)
-    i18n (0.6.9)
+    i18n (0.6.11)
     inherited_resources (1.5.0)
       has_scope (~> 0.6.0.rc)
       responders (~> 1.0)
@@ -176,7 +176,7 @@ GEM
       railties (>= 3.1.0)
     jquery_datepicker (0.4)
     json (1.8.1)
-    kaminari (0.14.1)
+    kaminari (0.16.1)
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
     launchy (2.3.0)
@@ -395,7 +395,7 @@ DEPENDENCIES
   jquery-rails
   jquery-ui-rails
   jquery_datepicker
-  kaminari
+  kaminari (~> 0.16.1)
   letter_opener
   letter_opener_web (~> 1.1.0)
   mysql2 (= 0.3.16)
