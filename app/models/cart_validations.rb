@@ -1,23 +1,30 @@
 module CartValidations
   def validate_dates
-    # run on date change, 2 queries
+    # run on date change, 2 queries. return array of error messages
     errors = []
-    # blackouts not on date
-    relevant_blackouts = Blackout.hard.for_2dates(self.start_date,self.due_date)
-    errors << "A reservation cannot start on #{self.start_date.to_date}" if relevant_blackouts.for_date(self.start_date).count > 0
-    errors << "A reservation cannot end on #{self.due_date.to_date}" if relevant_blackouts.for_date(self.due_date).count > 0
+    # test that a hard blackout doesn't exist on the start nor end date
+    errors << "A reservation cannot start on #{self.start_date.to_date}" if Blackout.hard.for_date(self.start_date).count > 0
+    errors << "A reservation cannot end on #{self.due_date.to_date}" if Blackout.hard.for_date(self.due_date).count > 0
+
+    # test that the cart reserver has no overdue reservations
     errors << "This user has overdue reservations that prevent him/her from creating new ones" if Reservation.for_reserver(self.reserver_id).overdue.count > 0
-    # for some reason reserver is submitted at the same time as dates
     return errors
   end
 
   def validate_items
-    # run when items are added or removed, 1 query
+    # run when items are added or removed, 1 query. return array
+    # of error messages
+
     errors = []
     relevant = Reservation.for_reserver(self.reserver_id).not_returned
     category = Hash.new
+
+    # get hash of model objects and quantities
     models = self.get_items
-    # check if under max model count while simultaneously building a category hash
+
+    # check if the cart's items combined with the user's active reservations
+    # is under max model count on any given day
+    # while simultaneously building a hash of category => quantity
     models.each do |model, quantity|
       max_models = model.maximum_per_user
       self.start_date.to_date.upto(self.due_date.to_date) do |d|
@@ -35,7 +42,7 @@ module CartValidations
 
     end
 
-    # check if under max category count
+    # similarly check category maxes using a similar method
     category.each do |cat, q|
       max_cat = cat.maximum_per_user
       self.start_date.to_date.upto(self.due_date.to_date) do |d|
@@ -50,8 +57,8 @@ module CartValidations
         end
       end
     end
-    return errors
 
+    return errors
   end
 
   def validate_dates_and_items
