@@ -59,6 +59,7 @@ module CartValidations
     # 1 query
     user_reservations = Reservation.for_reserver(self.reserver_id).checked_out
     errors = []
+    models = self.get_items
     models.each do |model, quantity|
 
       # check availability
