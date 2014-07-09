@@ -4,9 +4,9 @@ module CartValidations
     errors = []
     # blackouts not on date
     relevant_blackouts = Blackout.hard.for_2dates(self.start_date,self.due_date)
-    errors << "blackout exists on start date" if relevant_blackouts.for_date(self.start_date).count > 0
-    errors << "blackout exists on end date" if relevant_blackouts.for_date(self.due_date)
-    errors << "overdue reservations" if Reservation.for_reserver(self.reserver_id).overdue.count > 0
+    errors << "A reservation cannot start on #{self.start_date}" if relevant_blackouts.for_date(self.start_date).count > 0
+    errors << "A reservation cannot start on #{self.due_date}" if relevant_blackouts.for_date(self.due_date)
+    errors << "This user has overdue reservations that prevent him/her from creating new ones" if Reservation.for_reserver(self.reserver_id).overdue.count > 0
     # for some reason reserver is submitted at the same time as dates
     return errors
   end
@@ -23,7 +23,7 @@ module CartValidations
       max_models = model.maximum_per_user
       self.start_date.to_date.upto(self.due_date.to_date) do |d|
         if relevant.overlaps_with_date(d).for_eq_model(model).count + quantity > max_models
-          errors << "over max model count"
+          errors << "Cannot reserve more than #{max_models} #{model.name.pluralize}"
           break
         end
       end
@@ -46,7 +46,7 @@ module CartValidations
           count += 1 if r.equipment_model.category == cat
         end
         if count + q > max_cat
-          errors << "over max category count"
+          errors << "Cannot reserve more than #{max_cat} #{cat.name.pluralize}"
           break
         end
       end
@@ -66,16 +66,16 @@ module CartValidations
       model = models.find(item)
 
       # check availability
-      errors << "not available" if model.num_available(self.start_date, self.due_date) < quantity
+      errors << "#{model.name.titleize} is not available for the given time range" if model.num_available(self.start_date, self.due_date) < quantity
 
       # check maximum checkout length
       max_length = model.category.max_checkout_length
       max_length = Float::INFINTIY if max_length == 'unrestricted'
-      errors << "too long checkout length" if self.duration > max_length
+      errors << "#{model.name.titleize} can only be reserved for #{max_length} days" if self.duration > max_length
 
       # if a reservation should be renewed instead of checked out
       user_reservations.for_eq_model(model).each do |r|
-        errors << "renew, man"  if r.due_date == self.start_date && r.is_eligible_for_renew?
+        errors << "#{model.name.titleize} should be renewed instead of re-checked out"  if r.due_date == self.start_date && r.is_eligible_for_renew?
       end
     end
     return errors
