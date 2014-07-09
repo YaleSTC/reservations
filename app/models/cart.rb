@@ -23,13 +23,7 @@ class Cart
     # Return ActiveRecord Relation of all equipment models in the cart
     # Used in cart_validations
     # uses 1 database call
-    query = ""
-    self.items.keys.each do |em|
-      query += "id = #{em.to_i}"
-      query += " or " unless em == self.items.keys.last
-    end
-
-    EquipmentModel.where(query)
+    EquipmentModel.where(id: self.items.keys)
   end
   # Adds equipment model id to items hash
   def add_item(equipment_model)
