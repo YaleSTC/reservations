@@ -173,6 +173,7 @@ class EquipmentModel < ActiveRecord::Base
   def model_restricted?(reserver_id)
     reserver = User.find(reserver_id)
     reqs = reserver.requirements
+    return false if self.requirements.blank?
     self.requirements.each do |em_req|
       return false if reqs.include?(em_req)
     end
