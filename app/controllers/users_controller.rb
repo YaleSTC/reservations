@@ -2,6 +2,8 @@ class UsersController < ApplicationController
   load_and_authorize_resource
   layout 'application_with_sidebar', only: [:show, :edit]
 
+  autocomplete :user, :last_name, extra_data: [:first_name, :login], display_value: :render_name
+
   skip_filter :cart, only: [:new, :create]
   skip_filter :first_time_user, only: [:new, :create]
   before_filter :set_user, only: [:show, :edit, :update, :destroy, :deactivate, :activate]

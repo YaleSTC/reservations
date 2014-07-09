@@ -283,6 +283,7 @@ if ($(window).width() > 767) {
   $('select#requirement_equipment_model').select2();
   $('select.dropdown.dropselect').select2();
 
+  
 });
 // to disable selection of dates in the past with datepicker
 $.datepicker.setDefaults({
@@ -338,9 +339,16 @@ $(document).on('click', '#remove_button > a', function () {
 
 $(document).on('railsAutocomplete.select', '#fake_reserver_id', function(event, data){
   pause_cart();
-  $("#reserver_id").val(data.item.id); // updating reserver_id here to make sure that it is done before it submits
   $(this).parents('form').submit();
 });
+
+$(document).on('change','#fake_reserver_id',function() {
+    $('#reserver_id').val('');
+    pause_cart();
+    $(this).parents('form').submit();
+
+  });
+
 
 function getDeactivationReason(e) {
   var p = prompt("Write down the reason for deactivation of this equipment object.")
