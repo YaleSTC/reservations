@@ -62,6 +62,7 @@ module CartValidations
     errors = []
     models = self.get_items
     self.items.each do |item, quantity|
+
       model = models.find(item)
 
       # check availability
