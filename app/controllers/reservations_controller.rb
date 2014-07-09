@@ -308,7 +308,6 @@ class ReservationsController < ApplicationController
     @check_out_set = []
     render 'receipt' and return
   rescue Exception => e
-    binding.pry
     redirect_to :back, flash: {error: "Oops, something went wrong checking in your reservation.<br/> #{e.message}".html_safe}
   end
 
