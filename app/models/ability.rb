@@ -49,8 +49,8 @@ class Ability
           can :change, :views
           cannot :view_as, :superuser
       end
+    else
+      can :create, User
     end
-  else
-    can :create, User
   end
 end
