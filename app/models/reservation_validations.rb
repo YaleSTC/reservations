@@ -38,7 +38,7 @@ module ReservationValidations
   # Checks that reservation is not in the past
   # Does not run on checked out, checked in, overdue, or missed Reservations
   def not_in_past
-    if due_date >= Date.today && start_date >= Date.today
+    if due_date <= Date.today
       errors.add(:base, "Cannot create reservation in the past\n")
     end
   end

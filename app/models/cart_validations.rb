@@ -4,8 +4,8 @@ module CartValidations
     errors = []
     # blackouts not on date
     relevant_blackouts = Blackout.hard.for_2dates(self.start_date,self.due_date)
-    errors << "A reservation cannot start on #{self.start_date}" if relevant_blackouts.for_date(self.start_date).count > 0
-    errors << "A reservation cannot start on #{self.due_date}" if relevant_blackouts.for_date(self.due_date)
+    errors << "A reservation cannot start on #{self.start_date.to_date}" if relevant_blackouts.for_date(self.start_date).count > 0
+    errors << "A reservation cannot end on #{self.due_date.to_date}" if relevant_blackouts.for_date(self.due_date).count > 0
     errors << "This user has overdue reservations that prevent him/her from creating new ones" if Reservation.for_reserver(self.reserver_id).overdue.count > 0
     # for some reason reserver is submitted at the same time as dates
     return errors
