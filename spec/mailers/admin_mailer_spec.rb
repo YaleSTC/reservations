@@ -27,8 +27,8 @@ describe AdminMailer do
 
   describe 'notes_reservation_notification' do
     before do
-      @res1 = FactoryGirl.create(:reservation)
-      @res2 = FactoryGirl.create(:reservation)
+      @res1 = FactoryGirl.create(:valid_reservation)
+      @res2 = FactoryGirl.create(:valid_reservation)
       @mail = AdminMailer.notes_reservation_notification(@res1,@res2).deliver
     end
     it 'renders the subject' do

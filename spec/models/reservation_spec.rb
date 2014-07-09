@@ -298,7 +298,7 @@ describe Reservation do
       r.equipment_model.save
       r.equipment_model.category.save
       FactoryGirl.create(:equipment_object, equipment_model: r.equipment_model)
-      FactoryGirl.create(:reservation, equipment_model: r.equipment_model, reserver: r.reserver)
+      FactoryGirl.create(:valid_reservation, equipment_model: r.equipment_model, reserver: r.reserver)
       r
     }
 
@@ -332,7 +332,7 @@ describe Reservation do
       r.equipment_model.save
       r.equipment_model.category.save
       FactoryGirl.create(:equipment_object, equipment_model: r.equipment_model)
-      FactoryGirl.create(:reservation, equipment_model: r.equipment_model, reserver: r.reserver)
+      FactoryGirl.create(:valid_reservation, equipment_model: r.equipment_model, reserver: r.reserver)
       r
     }
 
