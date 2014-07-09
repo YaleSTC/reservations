@@ -13,15 +13,16 @@ module CartValidations
   def validate_items
     errors = []
     relevant = Reservation.for_reserver(self.reserver_id).not_returned
-
     category = Hash.new
     # check if under max model count while simultaneously building a category hash
     self.items.each do |em_id, quantity|
       model = EquipmentModel.find(em_id)
       max_models = model.maximum_per_user
       self.start_date.to_date.upto(self.due_date.to_date) do |d|
-        errors << "over max model count" if relevant.overlaps_with_date(d).for_eq_model(model).count + quantity > max_models
-        break
+        if relevant.overlaps_with_date(d).for_eq_model(model).count + quantity > max_models
+          errors << "over max model count"
+          break
+        end
       end
 
       if category.include?(model.category)
@@ -35,13 +36,16 @@ module CartValidations
     # check if under max category count
     category.each do |cat, q|
       max_cat = cat.maximum_per_user
-      self.start_date.to_date.upto(due_date.to_date) do |d|
+      self.start_date.to_date.upto(self.due_date.to_date) do |d|
         count = 0
         relevant.overlaps_with_date(d).each do |r|
+
           count += 1 if r.equipment_model.category == cat
         end
-        errors << "over max category count" if count + q > max_cat
-        break
+        if count + q > max_cat
+          errors << "over max category count"
+          break
+        end
       end
     end
     return errors
