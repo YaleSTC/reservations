@@ -42,7 +42,6 @@ Reservations::Application.routes.draw do
       get :checkin_email
       put :renew
     end
-    get :autocomplete_user_last_name, :on => :collection
   end
 
   get '/blackouts/flash_message' => 'blackouts#flash_message', :as => :flash_message

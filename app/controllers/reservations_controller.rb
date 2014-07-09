@@ -1,11 +1,6 @@
 class ReservationsController < ApplicationController
 
   load_and_authorize_resource
-  include Autocomplete
-  # this is a call to the gem method 'autocomplete' of the rails3-jquery-autocomplete gem
-  # it sets up what table and attributes will be used to display autocomplete information when searched
-  # via this controller.
-  autocomplete :user, :last_name, extra_data: [:first_name, :login], display_value: :render_name
 
   layout 'application_with_sidebar'
 
