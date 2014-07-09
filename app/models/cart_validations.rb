@@ -1,20 +1,41 @@
 module CartValidations
+
+  # These validation methods each run several validations within them
+  # for the sake of speed and query-saving. They are separated in 3 methods
+  # so that the cart doesn't have to validate items when only the dates are
+  # changed and vice versa. Each method returns an array of error messages
+  #
+  #
+  # Validate Dates (when dates are changed)
+  # ## start, end not on a blackout date
+  # ## user has no overdue (reserver is included in the date form)
+  #
+  # Validate Items (when items are added/removed)
+  # ## user doesn't have too many of each equipment model
+  # ## or each category
+  #
+  # Validate Dates and Items
+  # ## items are all available for the date range
+  # ## the duration of the date range is short enough
+  # ## none of the items should be renewed instead of re-reserved
+  #
+  # Validate All
+  # ## just runs everything
+
+
   def validate_dates
-    # run on date change, 2 queries. return array of error messages
     errors = []
-    # test that a hard blackout doesn't exist on the start nor end date
+
+    # blackouts
     errors << "A reservation cannot start on #{self.start_date.to_date}" if Blackout.hard.for_date(self.start_date).count > 0
     errors << "A reservation cannot end on #{self.due_date.to_date}" if Blackout.hard.for_date(self.due_date).count > 0
 
-    # test that the cart reserver has no overdue reservations
+    # no overdue reservations
     errors << "This user has overdue reservations that prevent him/her from creating new ones" if Reservation.for_reserver(self.reserver_id).overdue.count > 0
     return errors
   end
 
   def validate_items
-    # run when items are added or removed, 1 query. return array
-    # of error messages
-
     errors = []
     relevant = Reservation.for_reserver(self.reserver_id).not_returned
     category = Hash.new
@@ -22,8 +43,7 @@ module CartValidations
     # get hash of model objects and quantities
     models = self.get_items
 
-    # check if the cart's items combined with the user's active reservations
-    # is under max model count on any given day
+    # check max model count for each day in the range
     # while simultaneously building a hash of category => quantity
     models.each do |model, quantity|
       max_models = model.maximum_per_user
@@ -62,8 +82,6 @@ module CartValidations
   end
 
   def validate_dates_and_items
-    # validations that run on both item and date changes
-    # 1 query
     user_reservations = Reservation.for_reserver(self.reserver_id).checked_out
     errors = []
     models = self.get_items
