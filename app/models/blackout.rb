@@ -16,6 +16,11 @@ class Blackout < ActiveRecord::Base
   # doesn't allow form submission of invalid dates
 
   scope :active, where("end_date >= ?", Date.today)
+  scope :for_date, lambda { |date| where("end_date >= ? and start_date <= ?", date, date) }
+  scope :for_2dates, lambda { |date1,date2| where("(end_date >= ? and start_date <=?) or (end_date >= ? and start_date <= ?)",date1,date1,date2,date2) }
+  scope :hard, where(blackout_type: 'hard')
+  scope :soft, where(blackout_type: 'notice only')
+
   def self.blackouts_on_date(date) # Returns the blackout object that blacks out the day if the day is blacked out. Otherwise, returns nil.
     blackouts = []
     Blackout.all.each do |blackout|

@@ -19,6 +19,12 @@ class Cart
 
   ## Item methods
 
+  def get_items
+    # Return ActiveRecord Relation of all equipment models in the cart
+    # Used in cart_validations
+    # uses 1 database call
+    EquipmentModel.find(self.items.keys)
+  end
   # Adds equipment model id to items hash
   def add_item(equipment_model)
     return if equipment_model.nil?
