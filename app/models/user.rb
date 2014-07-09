@@ -76,6 +76,8 @@ class User < ActiveRecord::Base
   end
 
   def self.search_ldap(login)
+    return nil if login.blank?
+
     ldap = Net::LDAP.new(host: "directory.yale.edu", port: 389)
     filter = Net::LDAP::Filter.eq("uid", login)
     attrs = ["givenname", "sn", "eduPersonNickname", "telephoneNumber", "uid",
