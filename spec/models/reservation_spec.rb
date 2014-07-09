@@ -315,7 +315,6 @@ describe Reservation do
       reservation.save.should be_true
     end
     it 'fails appropriate validations' do
-      binding.pry
       reservation.validate.should_not eq([])
     end
     it 'passes other custom validations' do
