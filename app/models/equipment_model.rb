@@ -166,18 +166,18 @@ class EquipmentModel < ActiveRecord::Base
     # for if you just want the number available
     relevant_reservations = Reservation.for_eq_model(self).
       reserved_in_date_range(start_date.to_datetime, due_date.to_datetime).
-      not_returned;
+      not_returned
     num_available_from_source(start_date, due_date, relevant_reservations)
   end
   # Returns true if the reserver is ineligible to checkout the model.
   def model_restricted?(reserver_id)
     reserver = User.find(reserver_id)
+    reqs = reserver.requirements
+    return false if self.requirements.blank?
     self.requirements.each do |em_req|
-      unless reserver.requirements.include?(em_req)
-        return true
-      end
+      return false if reqs.include?(em_req)
     end
-    return false
+    return true
   end
 
   # Returns the number of overdue objects for a given model,
