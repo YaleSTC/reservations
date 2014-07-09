@@ -87,8 +87,6 @@ class ReservationsController < ApplicationController
         cart_reservations.each do |cart_res|
           @reservation = Reservation.new(params[:reservation])
           @reservation.equipment_model =  cart_res.equipment_model
-          # TODO: is this line needed? it's ugly. we should refactor if it's necessary.
-          @reservation.bypass_validations = true
           @reservation.save!
           successful_reservations << @reservation
         end
@@ -310,6 +308,7 @@ class ReservationsController < ApplicationController
     @check_out_set = []
     render 'receipt' and return
   rescue Exception => e
+    binding.pry
     redirect_to :back, flash: {error: "Oops, something went wrong checking in your reservation.<br/> #{e.message}".html_safe}
   end
 
