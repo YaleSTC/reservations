@@ -108,7 +108,8 @@ describe Reservation do
     #   reservation.should be_quantity_cat_allowed #fails: tries to run validations on nil
     # end
     it 'updates with equipment model' do
-      reservation.equipment_model = FactoryGirl.build(:equipment_model)
+      reservation.equipment_model = FactoryGirl.create(:equipment_model)
+      FactoryGirl.create(:equipment_object, equipment_model: reservation.equipment_model)
       reservation.save.should be_true
       reservation.should be_valid
       Reservation.all.size.should == 1
@@ -298,7 +299,8 @@ describe Reservation do
       r.equipment_model.save
       r.equipment_model.category.save
       FactoryGirl.create(:equipment_object, equipment_model: r.equipment_model)
-      FactoryGirl.create(:valid_reservation, equipment_model: r.equipment_model, reserver: r.reserver)
+      FactoryGirl.create(:equipment_object, equipment_model: r.equipment_model)
+      FactoryGirl.create(:reservation, equipment_model: r.equipment_model, reserver: r.reserver)
       r
     }
 
@@ -313,6 +315,7 @@ describe Reservation do
       reservation.save.should be_true
     end
     it 'fails appropriate validations' do
+      binding.pry
       reservation.validate.should_not eq([])
     end
     it 'passes other custom validations' do
@@ -331,6 +334,7 @@ describe Reservation do
       r.equipment_model.max_per_user = 1
       r.equipment_model.save
       r.equipment_model.category.save
+      FactoryGirl.create(:equipment_object, equipment_model: r.equipment_model)
       FactoryGirl.create(:equipment_object, equipment_model: r.equipment_model)
       FactoryGirl.create(:valid_reservation, equipment_model: r.equipment_model, reserver: r.reserver)
       r

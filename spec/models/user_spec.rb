@@ -107,7 +107,7 @@ describe User do
       @model = FactoryGirl.create(:equipment_model)
       # make two reservations of the same equipment model, only one of which is checked out
       @reservation = FactoryGirl.create(:checked_out_reservation, reserver: @user, equipment_model: @model)
-      @another_reservation = FactoryGirl.create(:valid_reservation, reserver: @user, equipment_model: @model)
+      @another_reservation = FactoryGirl.create(:checked_in_reservation, reserver: @user, equipment_model: @model)
 
       @user.checked_out_models.should == {@model.id=>1}
     end

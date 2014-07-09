@@ -54,7 +54,6 @@ FactoryGirl.define do
       checked_out { Date.yesterday - 1 }
     end
 
-    factory :reservation, traits: [:valid]
     factory :valid_reservation, traits: [:valid]
     factory :checked_out_reservation, traits: [:valid, :checked_out]
     factory :checked_in_reservation, traits: [:valid, :checked_out, :returned]
