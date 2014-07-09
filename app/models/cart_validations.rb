@@ -18,8 +18,7 @@ module CartValidations
     category = Hash.new
     models = self.get_items
     # check if under max model count while simultaneously building a category hash
-    self.items.each do |em_id, quantity|
-      model = models.find(em_id)
+    models.each do |model, quantity|
       max_models = model.maximum_per_user
       self.start_date.to_date.upto(self.due_date.to_date) do |d|
         if relevant.overlaps_with_date(d).for_eq_model(model).count + quantity > max_models
@@ -60,17 +59,14 @@ module CartValidations
     # 1 query
     user_reservations = Reservation.for_reserver(self.reserver_id).checked_out
     errors = []
-    models = self.get_items
-    self.items.each do |item, quantity|
-
-      model = models.find(item)
+    models.each do |model, quantity|
 
       # check availability
       errors << "#{model.name.titleize} is not available for the given time range" if model.num_available(self.start_date, self.due_date) < quantity
 
       # check maximum checkout length
       max_length = model.category.max_checkout_length
-      max_length = Float::INFINTIY if max_length == 'unrestricted'
+      max_length = Float::INFINITY if max_length == 'unrestricted'
       errors << "#{model.name.titleize} can only be reserved for #{max_length} days" if self.duration > max_length
 
       # if a reservation should be renewed instead of checked out

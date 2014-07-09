@@ -20,10 +20,14 @@ class Cart
   ## Item methods
 
   def get_items
-    # Return ActiveRecord Relation of all equipment models in the cart
     # Used in cart_validations
+    # Return items where the key is the full equipment model object
     # uses 1 database call
-    EquipmentModel.where(id: self.items.keys)
+    full_hash = Hash.new
+    EquipmentModel.find(self.items.keys).each do |em|
+      full_hash[em] = self.items[em.id]
+    end
+    full_hash
   end
   # Adds equipment model id to items hash
   def add_item(equipment_model)
