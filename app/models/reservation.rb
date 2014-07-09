@@ -10,9 +10,8 @@ class Reservation < ActiveRecord::Base
 
   validates :equipment_model, :start_date, :due_date, presence: true
   validate :start_date_before_due_date
-  validate :available
   validate :matched_object_and_model
-  validate :not_in_past, on: :create
+  validate :not_in_past, :available, on: :create
 
 
   nilify_blanks only: [:notes]

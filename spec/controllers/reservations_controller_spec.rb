@@ -846,6 +846,7 @@ describe ReservationsController do
 
     shared_examples 'can renew reservation' do
       before(:each) do
+        Reservation.delete_all
         @reservation = FactoryGirl.create(:checked_out_reservation, reserver: @user)
         put :renew, id: @reservation.id
       end
