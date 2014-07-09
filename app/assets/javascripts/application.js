@@ -347,7 +347,11 @@ $(document).on('change','#fake_reserver_id',function() {
     pause_cart();
     $(this).parents('form').submit();
 
-  });
+});
+
+$(document).on('railsAutocomplete.select', '#fake_searched_id', function(){
+  $(this).parents('form').submit();
+});
 
 
 function getDeactivationReason(e) {
