@@ -25,10 +25,11 @@ module CartValidations
 
   def validate_dates
     errors = []
+strftime('%m/%d/%Y')
 
     # blackouts
-    errors << "A reservation cannot start on #{self.start_date.to_date}" if Blackout.hard.for_date(self.start_date).count > 0
-    errors << "A reservation cannot end on #{self.due_date.to_date}" if Blackout.hard.for_date(self.due_date).count > 0
+errors << "A reservation cannot start on #{self.start_date.to_date.strftime('%m/%d')}" if Blackout.hard.for_date(self.start_date).count > 0
+errors << "A reservation cannot end on #{self.due_date.to_date.strftime('%m/%d')}" if Blackout.hard.for_date(self.due_date).count > 0
 
     # no overdue reservations
     errors << "This user has overdue reservations that prevent him/her from creating new ones" if Reservation.for_reserver(self.reserver_id).overdue.count > 0
@@ -88,7 +89,7 @@ module CartValidations
     models.each do |model, quantity|
 
       # check availability
-      errors << "#{model.name.titleize} is not available for the given time range" if model.num_available(self.start_date, self.due_date) < quantity
+      errors << "That many #{model.name.titleize} is not available for the given time range" if model.num_available(self.start_date, self.due_date) < quantity
 
       # check maximum checkout length
       max_length = model.category.max_checkout_length
