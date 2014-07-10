@@ -20,26 +20,9 @@ class Blackout < ActiveRecord::Base
   scope :hard, where(blackout_type: 'hard')
   scope :soft, where(blackout_type: 'notice only')
 
-  def self.blackouts_on_date(date) # Returns the blackout object that blacks out the day if the day is blacked out. Otherwise, returns nil.
-    blackouts = []
-    Blackout.all.each do |blackout|
-      if ((blackout.start_date..blackout.end_date).cover?(date.to_date))
-        blackouts << blackout
-      end
-    end
-    blackouts
-  end
+  #def self.blackouts_on_date(date)
 
-  #TODO: fix typo here and everywhere that this method is called. While at it, put a space in blackout since that's
-  # it is everywhere else.
-  def self.hard_blackout_exists_on_date(date)
-    blackouts = self.blackouts_on_date(date)
-    if blackouts && blackouts.map(&:blackout_type).include?('hard')
-      return true
-    else
-      return false
-    end
-  end
+  #def self.hard_blackout_exists_on_date(date)
 
   def self.create_blackout_set(params_hash)
     #generate a unique id for this blackout date set, make sure that nil reads as 0 for the first blackout
