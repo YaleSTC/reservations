@@ -119,7 +119,7 @@ class ApplicationController < ActionController::Base
   # than a Hash (see #587), regenerate the Cart.
   # TODO: Remove in ~2015, when nobody could conceivably run the old app?
   def make_cart_compatible
-    if session[:cart].items.is_a? Array
+    unless session[:cart].items.is_a? Hash
       session[:cart] = Cart.new
     end
   end
