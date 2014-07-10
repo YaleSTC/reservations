@@ -139,7 +139,7 @@ describe ReservationsController do
 
   describe '#show (GET /reservations/:id)' do
     before(:each) do
-      @admin_res = FactoryGirl.create(:reservation, reserver: @admin)
+      @admin_res = FactoryGirl.create(:valid_reservation, reserver: @admin)
     end
 
     shared_examples 'can view reservation by patron' do
@@ -419,8 +419,8 @@ describe ReservationsController do
         end
         it 'should update the reservation details' do
           @reservation.reload
-          expect(@reservation.start_date).to eq(Date.today.to_time)
-          expect(@reservation.due_date).to eq((Date.tomorrow + 3.days).to_time)
+          expect(@reservation.start_date.to_time.utc).to eq(Date.today.to_time.utc)
+          expect(@reservation.due_date.to_time.utc).to eq((Date.tomorrow + 3.days).to_time.utc)
         end
         it { should redirect_to(@reservation) }
       end
@@ -507,7 +507,7 @@ describe ReservationsController do
       end
 
       include_examples 'can destroy reservation' do
-        let!(:reservation) { FactoryGirl.create(:reservation, reserver: @user) }
+        let!(:reservation) { FactoryGirl.create(:valid_reservation, reserver: @user) }
       end
     end
 
@@ -524,7 +524,7 @@ describe ReservationsController do
 
       context 'and the reservation is not checked out' do
         include_examples 'can destroy reservation' do
-          let!(:reservation) { FactoryGirl.create(:reservation, reserver: @user) }
+          let!(:reservation) { FactoryGirl.create(:valid_reservation, reserver: @user) }
         end
       end
     end
@@ -551,7 +551,7 @@ describe ReservationsController do
 
       context 'and the reservation is not their own' do
         include_examples 'cannot destroy reservation' do
-          let(:reservation) { FactoryGirl.create(:reservation, reserver: @checkout_person) }
+          let(:reservation) { FactoryGirl.create(:valid_reservation, reserver: @checkout_person) }
         end
       end
     end

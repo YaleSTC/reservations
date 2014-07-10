@@ -254,7 +254,7 @@ describe ApplicationController do
       session[:cart].due_date = (Date.today + 2.days)
 
 
-      equipment_model = FactoryGirl.create(:equipment_model)
+      equipment_model = FactoryGirl.create(:equipment_model, category: FactoryGirl.create(:category))
       session[:cart].add_item(equipment_model)
       @new_reserver = FactoryGirl.create(:user)
     end

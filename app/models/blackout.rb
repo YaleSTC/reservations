@@ -14,8 +14,12 @@ class Blackout < ActiveRecord::Base
   validate :validate_end_date_before_start_date
   # this only matters if a user tries to inject into params because the datepicker
   # doesn't allow form submission of invalid dates
-  
-  scope :active, where("end_date >= ?", Date.today) 
+
+  scope :active, where("end_date >= ?", Date.today)
+  scope :for_date, lambda { |date| where("end_date >= ? and start_date <= ?", date, date) }
+  scope :hard, where(blackout_type: 'hard')
+  scope :soft, where(blackout_type: 'notice only')
+
   def self.blackouts_on_date(date) # Returns the blackout object that blacks out the day if the day is blacked out. Otherwise, returns nil.
     blackouts = []
     Blackout.all.each do |blackout|

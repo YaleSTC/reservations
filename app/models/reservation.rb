@@ -8,24 +8,11 @@ class Reservation < ActiveRecord::Base
   belongs_to :checkout_handler, class_name: 'User'
   belongs_to :checkin_handler, class_name: 'User'
 
-  validates :equipment_model, presence: true
+  validates :equipment_model, :start_date, :due_date, presence: true
+  validate :start_date_before_due_date
+  validate :matched_object_and_model
+  validate :not_in_past, :available, on: :create
 
-  # If there is no equipment model, don't run the validations that would break
-  with_options if: :not_empty? do |r|
-    r.validate  :start_date_before_due_date?, :matched_object_and_model?,
-                :available?
-  end
-
-  # These can't be nested with the above block because with_options clobbers
-  # nested options that are the same (i.e., :if and :if)
-  with_options if: Proc.new {|r| r.not_empty? && !r.bypass_validations} do |r|
-    r.with_options on: :create do |r|
-      r.validate  :not_in_past?, :not_renewable?, :no_overdue_reservations?,
-                  :duration_allowed?, :start_date_is_not_blackout?,
-                  :due_date_is_not_blackout?, :quantity_eq_model_allowed?,
-                  :quantity_cat_allowed?
-    end
-  end
 
   nilify_blanks only: [:notes]
 
@@ -57,10 +44,11 @@ class Reservation < ActiveRecord::Base
   scope :for_reserver, lambda { |reserver| where(reserver_id: reserver) }
   scope :reserved_in_date_range, lambda { |start_date, end_date|
     where("start_date < ? and due_date > ? and (approval_status = ? or approval_status = ?)", end_date, start_date, 'auto', 'approved') }
+  scope :overlaps_with_date, lambda{ |date| where("start_date <= ? and due_date >= ?",date.to_datetime,date.to_datetime) }
 
   #TODO: Why the duplication in checkout_handler and checkout_handler_id (etc)?
-  attr_accessible :checkout_handler, :checkout_handler_id,
-                  :checkin_handler, :checkin_handler_id, :approval_status,
+  attr_accessible :checkout_handler_id,
+                  :checkin_handler_id, :approval_status,
                   :checked_out, :checked_in, :equipment_object,
                   :equipment_object_id, :notes, :notes_unsent, :times_renewed
 
@@ -79,6 +67,18 @@ class Reservation < ActiveRecord::Base
               affiliation: "Deleted")
   end
 
+  def validate
+    # Convert reservation to a cart object and run validations on it
+    # For hard validations, use reservation.valid
+    temp_cart = Cart.new
+    temp_cart.start_date = self.start_date
+    temp_cart.due_date = self.due_date
+    temp_cart.reserver_id = self.reserver_id
+    temp_cart.items = { self.equipment_model.id => 1 }
+    temp_cart.validate_all
+  end
+
+
   def status
     if checked_out.nil?
       if approval_status == 'auto' or approval_status == 'approved'
@@ -94,32 +94,6 @@ class Reservation < ActiveRecord::Base
       due_date < checked_in.to_date ? "returned overdue" : "returned on time"
     end
   end
-
-  ## Set validation
-  # Checks all validations for
-  # the array of reservations passed in (use with cart.cart_reservations)
-  # Returns an array of error messages or [] if reservations are all valid
-  def self.validate_set(user, res_array = [])
-    errors = []
-    #User reservation validations
-    errors << user.name + " has overdue reservations that prevent new ones from being created. " unless user.reservations.overdue.empty?
-
-    res_array.each do |res|
-      errors << "Reservation cannot be made in the past. " unless res.not_in_past?
-      errors << "Reservation start date must be before due date. " unless res.start_date_before_due_date?
-      errors << "Reservation must be for a piece of equipment. " unless res.not_empty?
-      errors << "#{res.equipment_object.name} must be of type #{res.equipment_model.name}. " unless res.matched_object_and_model?
-      errors << "#{res.equipment_model.name} should be renewed instead of re-checked out. " unless res.not_renewable?
-      errors << "#{res.equipment_model.name} cannot be reserved for more than #{res.equipment_model.category.maximum_checkout_length.to_s} days at a time. " unless res.duration_allowed?
-      errors << "#{res.equipment_model.name} is not available for the full time period requested. " unless res.available?(res_array)
-      errors << "A reservation cannot start on #{res.start_date.strftime('%m/%d')} because equipment cannot be picked up on that date. " unless res.start_date_is_not_blackout?
-      errors << "A reservation cannot end on #{res.due_date.strftime('%m/%d')} because equipment cannot be returned on that date. " unless res.due_date_is_not_blackout?
-      errors << "Cannot reserve more than #{res.equipment_model.maximum_per_user.to_s} #{res.equipment_model.name.pluralize}. " unless res.quantity_eq_model_allowed? res_array
-      errors << "Cannot reserve more than #{res.equipment_model.category.maximum_per_user.to_s} #{res.equipment_model.category.name.pluralize}. " unless res.quantity_cat_allowed? res_array
-    end
-    errors.uniq
-  end
-
 
   def checkout_object_uniqueness(reservations)
     object_ids_taken = []

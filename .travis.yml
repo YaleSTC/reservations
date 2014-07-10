@@ -1,10 +1,17 @@
 language: ruby
 rvm:
   - 2.1.1
-  - 1.9.3
+env:
+  global:
+    - RAILS_ENV=test
+    - CODECLIMATE_REPO_TOKEN=075afb721fe089e1b77ab194fcff1ac132765bbfd3f3777db52f7abaf9bf800d
+before_install:
+  - 'echo ''gem: --no-ri --no-rdoc'' > ~/.gemrc'
 before_script:
   - cp config/database.travis.yml config/database.yml
-  - CODECLIMATE_REPO_TOKEN=075afb721fe089e1b77ab194fcff1ac132765bbfd3f3777db52f7abaf9bf800d
   - bundle exec rake db:create
-  - bundle exec rake db:migrate
+  - bundle exec rake db:schema:load
   - bundle exec rake db:test:prepare
+# From Travis CI Support: This will route jobs to our beta build environment,
+# which has much faster boot times, making it easier to debug via Travis.
+sudo: false

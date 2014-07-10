@@ -169,15 +169,11 @@ class EquipmentModel < ActiveRecord::Base
       not_returned
     num_available_from_source(start_date, due_date, relevant_reservations)
   end
+
   # Returns true if the reserver is ineligible to checkout the model.
   def model_restricted?(reserver_id)
     reserver = User.find(reserver_id)
-    reqs = reserver.requirements
-    return false if self.requirements.blank?
-    self.requirements.each do |em_req|
-      return false if reqs.include?(em_req)
-    end
-    return true
+    !(self.requirements - reserver.requirements).empty?
   end
 
   # Returns the number of overdue objects for a given model,

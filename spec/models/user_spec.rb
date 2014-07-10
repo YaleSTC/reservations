@@ -92,24 +92,12 @@ describe User do
 
   describe ".equipment_objects" do
     it "has a working reservation factory" do
-      @reservation = FactoryGirl.create(:reservation)
+      @reservation = FactoryGirl.create(:valid_reservation)
     end
     it "should return all equipment_objects reserved by the user" do
       @user = FactoryGirl.create(:user)
-      @reservation = FactoryGirl.create(:reservation, reserver: @user)
+      @reservation = FactoryGirl.create(:valid_reservation, reserver: @user)
       @user.equipment_objects.should == [@reservation.equipment_object]
-    end
-  end
-
-  describe ".checked_out_models" do
-    it "should return a hash of checked out models and counts" do
-      @user = FactoryGirl.create(:user)
-      @model = FactoryGirl.create(:equipment_model)
-      # make two reservations of the same equipment model, only one of which is checked out
-      @reservation = FactoryGirl.create(:checked_out_reservation, reserver: @user, equipment_model: @model)
-      @another_reservation = FactoryGirl.create(:reservation, reserver: @user, equipment_model: @model)
-
-      @user.checked_out_models.should == {@model.id=>1}
     end
   end
 
