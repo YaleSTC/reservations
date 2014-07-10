@@ -48,6 +48,24 @@ describe TestController do
     controller.stub(:fix_cart_date)
     controller.stub(:set_view_mode)
     controller.stub(:current_user)
+    controller.stub(:make_cart_compatible)
+  end
+
+  describe 'make_cart_compatible' do
+    before(:each) do
+      controller.unstub(:make_cart_compatible)
+    end
+    it 'replaces the cart if items is an Array' do
+      session[:cart] = FactoryGirl.build(:cart, items: [1])
+      get :index
+      session[:cart].items.should be_a(Hash)
+      session[:cart].items.should be_empty
+      session[:cart].items.should_not be_a(Array)
+    end
+    it 'leaves the cart alone if items is a Hash' do
+      session[:cart] = FactoryGirl.build(:cart_with_items)
+      expect { get :index }.to_not change { session[:cart].items }
+    end
   end
 
   describe 'app_setup_check' do
@@ -243,6 +261,7 @@ describe ApplicationController do
     controller.stub(:fix_cart_date)
     controller.stub(:set_view_mode)
     controller.stub(:current_user)
+    controller.stub(:make_cart_compatible)
   end
 
   #TODO - This may involve rewriting the method somewhat
