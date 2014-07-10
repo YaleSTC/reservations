@@ -88,7 +88,7 @@ module CartValidations
     models.each do |model, quantity|
 
       # check availability
-      errors << "That many #{model.name.titleize} is not available for the given time range" if model.num_available(self.start_date, self.due_date) < quantity
+      errors << "That many #{model.name.pluralize} is not available for the given time range" if model.num_available(self.start_date, self.due_date) < quantity
 
       # check maximum checkout length
       max_length = model.category.max_checkout_length
