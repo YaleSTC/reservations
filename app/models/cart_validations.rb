@@ -37,7 +37,7 @@ module CartValidations
 
   def validate_items
     errors = []
-    relevant = Reservation.for_reserver(self.reserver_id).not_returned.all
+    relevant = Reservation.for_reserver(self.reserver_id).not_returned.includes(:equipment_model).all
     category = Hash.new
 
     # get hash of model objects and quantities
@@ -54,20 +54,18 @@ module CartValidations
           break
         end
       end
-
-      if category.include?(model.category_id)
-        category[model.category_id] += quantity
+      if category.include?(model.category)
+        category[model.category] += quantity
       else
-        category[model.category_id] = quantity
+        category[model.category] = quantity
       end
 
     end
-
     # similarly check category maxes using a similar method
-    category.each do |cat_id, q|
-      max_cat = Category.find(cat_id).maximum_per_user
+    category.each do |cat, q|
+      max_cat = cat.maximum_per_user
       self.start_date.to_date.upto(self.due_date.to_date) do |d|
-        if count_for_date_and_category(d,cat_id,relevant) + q > max_cat
+        if count_for_date_and_category(d,cat.id,relevant) + q > max_cat
           errors << "Cannot reserve more than #{max_cat} #{cat.name.pluralize}"
           break
         end

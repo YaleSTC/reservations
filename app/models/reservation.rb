@@ -70,12 +70,11 @@ class Reservation < ActiveRecord::Base
   def validate
     # Convert reservation to a cart object and run validations on it
     # For hard validations, use reservation.valid
-    temp_cart = Cart.new
-    temp_cart.start_date = self.start_date
-    temp_cart.due_date = self.due_date
-    temp_cart.reserver_id = self.reserver_id
-    temp_cart.items = { self.equipment_model.id => 1 }
-    temp_cart.validate_all
+    self.to_cart.validate_all
+  end
+
+  def validate_max_counts
+    self.to_cart.validate_items
   end
 
 
@@ -113,11 +112,15 @@ class Reservation < ActiveRecord::Base
 
   def max_renewal_length_available
     # determine the max renewal length for a given reservation
+    # make sure the reservation is available, does not end on a blackout date, and
+    # passes max_count validations
     # O(n) queries
 
     eq_model = self.equipment_model
-    for renewal_length in 1...eq_model.maximum_renewal_length do
-      break if eq_model.available_count(self.due_date + renewal_length.day) == 0
+    for renewal_length in eq_model.maximum_renewal_length...1 do
+      break if eq_model.available_count(self.due_date + renewal_length.day) > 0 &&
+         Blackout.hard.for_date(self.due_date + renewal_length.day).count > 0 &&
+         self.validate_max_counts.empty?
     end
     renewal_length - 1
   end
@@ -138,5 +141,14 @@ class Reservation < ActiveRecord::Base
     max_renewal_days = Float::INFINITY if max_renewal_days == 'unrestricted'
     return ((self.due_date.to_date - Date.today).to_i < max_renewal_days ) &&
       (self.times_renewed < max_renewal_times)
+  end
+
+  def to_cart
+    temp_cart = Cart.new
+    temp_cart.start_date = self.start_date
+    temp_cart.due_date = self.due_date
+    temp_cart.reserver_id = self.reserver_id
+    temp_cart.items = { self.equipment_model_id => 1 }
+    temp_cart
   end
 end
