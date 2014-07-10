@@ -43,17 +43,43 @@ class UsersController < ApplicationController
   end
 
   def new
-    if can? :create, User
-      if params[:possible_netid]
-        @user = User.new(User.search_ldap(params[:possible_netid]))
-      else
-        @user = User.new
-      end
-    else
+    @can_edit_login = current_user.present? && (can? :create, User) # used in view
+
+    if current_user.nil?
+      # This is a new user -> create an account for them
       @user = User.new(User.search_ldap(session[:cas_user]))
       @user.login = session[:cas_user] #default to current login
+
+      # TODO: What should it render?
+      @partial_to_render = 'form'
+    else
+      # Someone with permissions is creating a new user
+      ldap_result = User.search_ldap(params[:possible_netid])
+      @user = User.new(ldap_result)
+
+      # Does netID exist?
+      if ldap_result.nil?
+        @message = 'Sorry, the netID that you entered does not exist.
+        You cannot create a user profile without a valid netID.'
+        render :new and return
+      end
+
+      # Is there a user record already?
+      if User.exists?(login: params[:possible_netid])
+        @message = 'You cannot create a new user, as the netID you entered
+        is already associated with a user. If you would like to reserve for
+        them, please select their name from the drop-down options in the cart.'
+        render :new and return
+      end
+
+      # With existing netID and no user record, what's the context of creation?
+      # FIXME: can the check be replaced by params[:from_cart].present?
+      if params[:from_cart] == 'true'
+        @partial_to_render = 'short_form' # Display short_form
+      else
+        @partial_to_render = 'form' # Display (normal) form
+      end
     end
-    @can_edit_login = (can? :create, User)
   end
 
   def create
@@ -129,6 +155,6 @@ class UsersController < ApplicationController
   def activate
     @user.revive
     flash[:notice] = "Successfully reactivated user."
-    redirect_to users_path
+    redirect_to @user
   end
 end

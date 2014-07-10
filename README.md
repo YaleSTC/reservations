@@ -1,6 +1,6 @@
 # Welcome to Reservations 
 
-[![Code Climate](https://codeclimate.com/github/YaleSTC/reservations.png)](https://codeclimate.com/github/YaleSTC/reservations) [![Dependency Status](https://gemnasium.com/YaleSTC/reservations.svg)](https://gemnasium.com/YaleSTC/reservations)
+[![Build Status](https://travis-ci.org/YaleSTC/reservations.svg?branch=development)](https://travis-ci.org/YaleSTC/reservations) [![Code Climate](https://codeclimate.com/github/YaleSTC/reservations.png)](https://codeclimate.com/github/YaleSTC/reservations) [![Dependency Status](https://gemnasium.com/YaleSTC/reservations.svg)](https://gemnasium.com/YaleSTC/reservations)
 
 Reservations makes it easy to manage the checking in and out of equipment, much like a library! Here are some of the things Reservations can do:
 

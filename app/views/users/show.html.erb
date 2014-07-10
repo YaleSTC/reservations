@@ -53,12 +53,14 @@
 
   <div id="user_stats" class="span5">
 
-  <% @show_equipment.each do |key, value| %>
-    <%= content_tag :div, :id => "#{key}_count", :class => 'span2' do %>
-      <%= content_tag :h4, key.to_s.titleize %>
-      <%= content_tag :div, :class => "#{key}_num" do %>
-        <%= content_tag :i, nil, :class => stats_icons(key) %>
-        <%= value.size %>
+  <%# @show_equipment has reservation status (:overdue, ...) as key, full
+  reservations in question as value %>
+  <% @show_equipment.each do |status, reservations| %>
+    <%= content_tag :div, :id => "#{status}_count", :class => 'span2' do %>
+      <%= content_tag :h4, status.to_s.titleize %>
+      <%= content_tag :div, :class => "#{status}_num" do %>
+        <%= content_tag :i, nil, :class => stats_icons(status) %>
+        <%= reservations.size %>
       <% end %>
     <% end %>
   <% end %>
@@ -98,22 +100,22 @@
   <div class="tabbable tabs-left span9">
 
     <ul class="nav nav-tabs">
-      <% @show_equipment.each do |key, value| %>
-        <%= content_tag :li, :class => active_tab(key) do %>
-          <%= link_to "##{key.to_s}", :class => 'tab-text', :"data-toggle" => 'tab' do %>
-            <%= key.to_s.titleize %>
-            <%= content_tag :span, value.size, :class => 'badge tab-badge' %>
+      <% @show_equipment.each do |status, reservations| %>
+        <%= content_tag :li, :class => active_tab(status) do %>
+          <%= link_to "##{status.to_s}", :class => 'tab-text', :"data-toggle" => 'tab' do %>
+            <%= status.to_s.titleize %>
+            <%= content_tag :span, reservations.size, :class => 'badge tab-badge' %>
           <% end %>
         <% end %>
       <% end %>
     </ul>
 
     <div class="tab-content">
-      <% @show_equipment.each do |key, value| %>
+      <% @show_equipment.each do |status, reservations| %>
         <p>
-          <%= content_tag :div, {:class => "tab-pane #{active_tab(key)}", :id => key}, false do %>
-            <% unless value.empty? %>
-              <%= render partial: 'history_table', locals: { :key => key, :value => value } %>
+          <%= content_tag :div, {:class => "tab-pane #{active_tab(status)}", :id => status}, false do %>
+            <% unless reservations.empty? %>
+              <%= render partial: 'history_table', locals: { :key => status, :value => reservations } %>
             <% end %>
           <% end %>
         </p>
