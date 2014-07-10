@@ -25,7 +25,7 @@ class Cart
     # uses 1 database call
     full_hash = Hash.new
     EquipmentModel.find(self.items.keys).each do |em|
-      full_hash[em] = self.items[em.id]
+      full_hash[em] = self.items[em.id.to_s]
     end
     full_hash
   end
