@@ -1,7 +1,7 @@
 module BlackoutsHelper
   def blackout_errors
-    start_blackouts = Blackout.blackouts_on_date(cart.start_date)
-    end_blackouts = Blackout.blackouts_on_date(cart.due_date)
+    start_blackouts = Blackout.for_date(cart.start_date)
+    end_blackouts = Blackout.for_date(cart.due_date)
 
     messages = (blackout_error_messages(start_blackouts, "START") +
                 blackout_error_messages(end_blackouts, "END")).uniq.join("\n")
