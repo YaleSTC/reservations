@@ -328,6 +328,8 @@ class ReservationsController < ApplicationController
     set_user
     @check_out_set = @user.due_for_checkout
     @check_in_set = @user.due_for_checkin
+
+    render :manage, layout: 'application'
   end
 
   def current
