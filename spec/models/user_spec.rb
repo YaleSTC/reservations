@@ -101,18 +101,6 @@ describe User do
     end
   end
 
-  describe ".checked_out_models" do
-    it "should return a hash of checked out models and counts" do
-      @user = FactoryGirl.create(:user)
-      @model = FactoryGirl.create(:equipment_model)
-      # make two reservations of the same equipment model, only one of which is checked out
-      @reservation = FactoryGirl.create(:checked_out_reservation, reserver: @user, equipment_model: @model)
-      @another_reservation = FactoryGirl.create(:checked_in_reservation, reserver: @user, equipment_model: @model)
-
-      @user.checked_out_models.should == {@model.id=>1}
-    end
-  end
-
   #TODO: find a way to simulate an ldap database using a test fixture/factory of some kind
   describe "#search_ldap" do
     it "should return a hash of user attributes if the ldap database has the login associated with user"
