@@ -17,7 +17,6 @@ class Blackout < ActiveRecord::Base
 
   scope :active, where("end_date >= ?", Date.today)
   scope :for_date, lambda { |date| where("end_date >= ? and start_date <= ?", date, date) }
-  scope :for_2dates, lambda { |date1,date2| where("(end_date >= ? and start_date <=?) or (end_date >= ? and start_date <= ?)",date1,date1,date2,date2) }
   scope :hard, where(blackout_type: 'hard')
   scope :soft, where(blackout_type: 'notice only')
 
