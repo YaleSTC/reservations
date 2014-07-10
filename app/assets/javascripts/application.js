@@ -110,12 +110,12 @@
 $(document).ready(function() {
 
   $('.checkin-click').click( function() {
-	  var box = $(":checkbox:eq(0)", this);
-	  box.prop("checked", !box.prop("checked"));
-	  if ($(this).hasClass("overdue")) {
-	  	$(this).toggleClass("selected-overdue",box.prop("checked"));
+    var box = $(":checkbox:eq(0)", this);
+    box.prop("checked", !box.prop("checked"));
+    if ($(this).hasClass("overdue")) {
+      $(this).toggleClass("selected-overdue",box.prop("checked"));
     } else {
-  		$(this).toggleClass("selected",box.prop("checked"));
+      $(this).toggleClass("selected",box.prop("checked"));
     }
     $(this).find('.check').toggleClass("hidden",!box.prop("checked"));
   });
@@ -283,7 +283,7 @@ if ($(window).width() > 767) {
   $('select#requirement_equipment_model').select2();
   $('select.dropdown.dropselect').select2();
 
-  
+
 });
 // to disable selection of dates in the past with datepicker
 $.datepicker.setDefaults({
@@ -343,9 +343,11 @@ $(document).on('railsAutocomplete.select', '#fake_reserver_id', function(event, 
 });
 
 $(document).on('change','#fake_reserver_id',function() {
-    $('#reserver_id').val('');
-    pause_cart();
-    $(this).parents('form').submit();
+    if (!$('#fake_reserver_id').val()) {
+      $('#reserver_id').val('');
+      pause_cart();
+      $(this).parents('form').submit();
+    };
 
 });
 
