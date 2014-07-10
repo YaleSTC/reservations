@@ -25,21 +25,21 @@ class Cart
     # uses 1 database call
     full_hash = Hash.new
     EquipmentModel.find(self.items.keys).each do |em|
-      full_hash[em] = self.items[em.id.to_s]
+      full_hash[em] = self.items[em.id]
     end
     full_hash
   end
   # Adds equipment model id to items hash
   def add_item(equipment_model)
     return if equipment_model.nil?
-    key = equipment_model.id.to_s
+    key = equipment_model.id
     self.items[key] = self.items[key] ? self.items[key] + 1 : 1
   end
 
   # Remove equipment model id from items hash, or decrement its count
   def remove_item(equipment_model)
     return if equipment_model.nil?
-    key = equipment_model.id.to_s
+    key = equipment_model.id
     self.items[key] = self.items[key] ? self.items[key] - 1 : 0
     self.items = self.items.except(key) if self.items[key] <= 0
   end

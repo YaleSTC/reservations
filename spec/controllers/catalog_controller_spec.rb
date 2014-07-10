@@ -30,7 +30,7 @@ describe CatalogController do
       it 'should call cart.add_item to add item to cart' do
         expect{
           put :add_to_cart, id: @equipment_model.id
-        }.to change{session[:cart].items[@equipment_model.id.to_s]}.by(1)
+        }.to change{session[:cart].items[@equipment_model.id]}.by(1)
 
       end
       it 'should set flash[:error] if errors exist' do
