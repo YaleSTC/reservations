@@ -1,13 +1,11 @@
 class Blackout < ActiveRecord::Base
 
-  belongs_to :equipment_model
-  attr_accessible :start_date, :end_date, :notice, :equipment_model_id, :blackout_type, :created_by, :set_id
+  attr_accessible :start_date, :end_date, :notice, :blackout_type, :created_by, :set_id
 
   attr_accessor :days # needed for days of the week checkboxes in new_recurring
 
   validates :notice,
             :start_date,
-            :equipment_model_id,
             :blackout_type,
             :end_date, presence: true
 
@@ -19,10 +17,6 @@ class Blackout < ActiveRecord::Base
   scope :for_date, lambda { |date| where("end_date >= ? and start_date <= ?", date, date) }
   scope :hard, where(blackout_type: 'hard')
   scope :soft, where(blackout_type: 'notice only')
-
-  #def self.blackouts_on_date(date)
-
-  #def self.hard_blackout_exists_on_date(date)
 
   def self.create_blackout_set(params_hash)
     #generate a unique id for this blackout date set, make sure that nil reads as 0 for the first blackout
