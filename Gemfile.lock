@@ -224,6 +224,9 @@ GEM
       activesupport (>= 3.0.0)
       cocaine (~> 0.5.0)
       mime-types
+    parallel (1.0.0)
+    parallel_tests (1.0.0)
+      parallel
     permanent_records (3.1.6)
       activerecord (>= 3.0.0)
     polyamorous (0.5.0)
@@ -402,6 +405,7 @@ DEPENDENCIES
   nilify_blanks
   paper_trail!
   paperclip
+  parallel_tests
   permanent_records
   pry
   pry-byebug
