@@ -1,6 +1,6 @@
 <% title "New User" unless params[:from_cart] == "true" %>
 
-<% if flash[:notice].nil? && flash[:error].nil? %>
+<% unless @message %>
   <%= render :partial => @partial_to_render %>
   <%= content_tag(:p, link_to("Back to List", users_path)) if current_user && params[:from_cart] != "true" %>
 <% else %>
