@@ -30,7 +30,7 @@ module CartValidations
     # 1 query
     errors = []
     if Blackout.hard.for_date(self.start_date).count > 0
-      errors << "A reservation cannot start on #{self.start_date.to_date.strftime('%m/%d')}"
+      errors << "#{Blackout.get_notices_for_date(self.start_date,:hard)} (a reservation cannot start on #{self.start_date.to_date.strftime('%m/%d')})"
     end
     errors
   end
@@ -40,7 +40,7 @@ module CartValidations
     # 1 query
     errors = []
     if Blackout.hard.for_date(self.due_date).count > 1
-      errors << "A reservation cannot end on #{self.due_date.to_date.strftime('%m/%d')}"
+      errors << "#{Blackout.get_notices_for_date(self.due_date,:hard)} (a reservation cannot end on #{self.due_date.to_date.strftime('%m/%d')})"
     end
     errors
   end
