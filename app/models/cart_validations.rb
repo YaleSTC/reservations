@@ -39,7 +39,7 @@ module CartValidations
   def validate_items
     # 4 queries
     errors = []
-    relevant = Reservation.for_reserver(self.reserver_id).not_returned.includes(:equipment_model).all
+    relevant = Reservation.for_reserver(self.reserver_id).not_returned.all
     category = Hash.new
 
     # get hash of model objects and quantities
@@ -92,7 +92,7 @@ module CartValidations
     models.each do |model, quantity|
 
       # check availability, lots of queries from num_available
-      errors << "That many #{model.name.pluralize} is not available for the given time range" if model.num_available_from_source(self.start_date, self.due_date,source_res) < quantity
+      errors << "That many #{model.name.pluralize} are not available for the given time range" if model.num_available_from_source(self.start_date, self.due_date,source_res) < quantity
 
       # check maximum checkout length
       max_length = model.category.max_checkout_length
