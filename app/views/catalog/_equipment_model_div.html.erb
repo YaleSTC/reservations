@@ -1,4 +1,4 @@
-<div class="thumbnail">
+<div class="thumbnail" id="em_<%=equipment_model.id%>">
   <%= link_to equipment_model do %>
     <% image_tag (equipment_model.photo.exists? ? equipment_model.photo.url(:thumbnail) : "no-image.gif") %>
   <% end %>

@@ -1,21 +1,22 @@
 module CatalogHelper
   def prepare_pagination
-    @default_user_per = @app_configs.default_per_cat_page.to_i unless @app_configs.default_per_cat_page.blank?
-
-    session[:user_per_cat_page] ||= @default_user_per
-    session[:user_per_cat_page] = params[:user_cat_items_per_page] if !params[:user_cat_items_per_page].blank?
-
-    @paginated_equipment_models_by_category = EquipmentModel.active.order('categories.sort_order ASC, equipment_models.name ASC').includes(:category).page(params[:page]).per(session[:user_per_cat_page])
-    @equipment_models_by_category = @paginated_equipment_models_by_category.to_a.group_by(&:category)
-    @user_per_page_opts = [10, 20, 25, 30, 50].sort
-    @user_per_page_opts = @user_per_page_opts.unshift(@default_user_per).sort if !@default_user_per.blank? && !@user_per_page_opts.include?(@default_user_per)
-
-    # is pagination required?
-    if EquipmentModel.active.size > @user_per_page_opts.first
-      @pagination_required = true # enable pagination iff it makes sense
-    else
-      @pagination_required = false # disable pagination iff it would be pointless
-    end
+    array = []
+    array << params[:items_per_page]
+    array << session[:items_per_page]
+    array << @app_configs.default_per_cat_page
+    array << 10
+    items_per_page = array.reject{ |a| a.blank? || a == 0 }.first
+    # assign items per page to the passed params, the default or 10
+    # depending on if they exist or not
+    @page_eq_models_by_category = EquipmentModel.active.
+                              order('categories.sort_order ASC, equipment_models.name ASC').
+                              includes(:category).
+                              page(params[:page]).
+                              per(items_per_page)
+    @eq_models_by_category = @page_eq_models_by_category.to_a.group_by(&:category)
+    @per_page_opts = [10, 20, 25, 30, 50].unshift(items_per_page).uniq
+    @pagination_required = EquipmentModel.active.size > items_per_page
+    session[:items_per_page] = items_per_page
   end
 end
 
