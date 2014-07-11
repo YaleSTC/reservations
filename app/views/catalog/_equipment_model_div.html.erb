@@ -23,7 +23,7 @@
   </div>
 
   <div class = "add_to_cart_box">
-    <% @restricted = equipment_model.model_restricted?(cart.reserver_id) %>
+    <% @restricted = false#equipment_model.model_restricted?(cart.reserver_id) %>
     <% if @restricted %>
       <%= button_tag "Add to Cart", class: "btn disabled add_to_cart_disabled"%>
       <%= link_to "#qualifications_modal", class: 'not-qualified-icon', rel: "tooltip", title: "Not Qualified (click for more info)", :"data-toggle" => 'modal' do %>

@@ -2,7 +2,7 @@
 
 <div id = 'models_available'>
 <% if @eq_models_by_category.empty? %>
-  <%= render partial: no_equipment %>
+  <%= render partial: 'no_equipment' %>
   <% else %>
     <% if @pagination_required %>
       <div class="row">
