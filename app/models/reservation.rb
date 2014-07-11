@@ -112,15 +112,11 @@ class Reservation < ActiveRecord::Base
 
   def max_renewal_length_available
     # determine the max renewal length for a given reservation
-    # make sure the reservation is available, does not end on a blackout date, and
-    # passes max_count validations
     # O(n) queries
 
     eq_model = self.equipment_model
-    for renewal_length in eq_model.maximum_renewal_length...1 do
-      break if eq_model.available_count(self.due_date + renewal_length.day) > 0 &&
-         Blackout.hard.for_date(self.due_date + renewal_length.day).count > 0 &&
-         self.validate_max_counts.empty?
+    for renewal_length in 1...eq_model.maximum_renewal_length do
+      break if eq_model.available_count(self.due_date + renewal_length.day) == 0
     end
     renewal_length - 1
   end
