@@ -54,15 +54,15 @@ class Reservation < ActiveRecord::Base
 
   attr_accessor :bypass_validations
 
-  def self.number_on_date(date,source)
+  def self.number_for_model_on_date(date,model_id,source)
     # count the number of reservations that overlaps a date within
-    # a given array of source reservations
+    # a given array of source reservations and that matches
+    # a specific model id
     #
-    # this code is used in EquipmentModel.num_available
-    # to optimize out unnecessary db queries
+    # this code is used largely in validations
     count = 0
     source.each do |r|
-      count += 1 if r.start_date <= date && r.due_date >= date
+      count += 1 if r.start_date <= date && r.due_date >= date && r.equipment_model_id == model_id
     end
     count
   end

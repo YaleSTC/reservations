@@ -149,11 +149,11 @@ class EquipmentModel < ActiveRecord::Base
     # get the number available in the given date range
     # take an array of reservations instead of using a database call
     # for database query optimization purposes
-    # O(n) comparisons
+    # 2 queries to calculate max_num
     max_num = self.equipment_objects.active.count - number_overdue
     min_available = Float::INFINITY
     start_date.to_date.upto(due_date.to_date) do |d|
-      available = max_num - Reservation.number_on_date(d,source_reservations)
+      available = max_num - Reservation.number_for_model_on_date(d,self.id,source_reservations)
       return 0 if min_available <= 0
       if min_available > available
         min_available = available
@@ -163,7 +163,8 @@ class EquipmentModel < ActiveRecord::Base
   end
 
   def num_available(start_date, due_date)
-    # for if you just want the number available
+    # for if you just want the number available, 1 query to get
+    # relevant reservations
     relevant_reservations = Reservation.for_eq_model(self).
       reserved_in_date_range(start_date.to_datetime, due_date.to_datetime).
       not_returned.all

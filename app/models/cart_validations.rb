@@ -80,17 +80,19 @@ module CartValidations
   end
 
   def validate_dates_and_items
-    # lots of queries :(
-    #
-    user_reservations = Reservation.for_reserver(self.reserver_id).checked_out.all
-
+    # 2 queries for every equipment model in the cart because of num_available
+    # plus about 4 extra
+    user_reservations = Reservation.for_reserver(self.reserver_id).not_returned.all
     errors = []
+
     models = self.get_items
+
+    source_res = Reservation.not_returned.where(equipment_model_id: self.items.keys).all
 
     models.each do |model, quantity|
 
       # check availability, lots of queries from num_available
-      errors << "That many #{model.name.pluralize} is not available for the given time range" if model.num_available(self.start_date, self.due_date) < quantity
+      errors << "That many #{model.name.pluralize} is not available for the given time range" if model.num_available_from_source(self.start_date, self.due_date,source_res) < quantity
 
       # check maximum checkout length
       max_length = model.category.max_checkout_length
