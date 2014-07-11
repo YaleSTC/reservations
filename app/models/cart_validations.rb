@@ -24,7 +24,7 @@ module CartValidations
     end
     binding.pry
 
-    return errors.uniq!.reject{ |a| a.all?(&:blank?) }
+    return errors.uniq.reject{ |a| a.all?(&:blank?) }
   end
 
   def check_start_date_blackout
