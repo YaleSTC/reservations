@@ -18,6 +18,7 @@ class ApplicationController < ActionController::Base
     c.before_filter :fix_cart_date
     c.before_filter :set_view_mode
     c.before_filter :check_view_mode
+    c.before_filter :make_cart_compatible
   end
 
   helper_method :current_user
@@ -112,6 +113,15 @@ class ApplicationController < ActionController::Base
   def fix_cart_date
     cart.start_date = (Date.today) if cart.start_date < Date.today
     cart.fix_due_date
+  end
+
+  # If user's session has an old Cart object that stores items in Array rather
+  # than a Hash (see #587), regenerate the Cart.
+  # TODO: Remove in ~2015, when nobody could conceivably run the old app?
+  def make_cart_compatible
+    unless session[:cart].items.is_a? Hash
+      session[:cart] = Cart.new
+    end
   end
 
   #-------- end before_filter methods --------#
