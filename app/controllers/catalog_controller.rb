@@ -56,7 +56,7 @@ class CatalogController < ApplicationController
     # (or displays the appropriate errors)
     def change_cart(action, item)
       cart.send(action, item)
-      errors = cart.validate_all
+      errors = cart.validate_items.concat(cart.validate_dates_and_items)
       flash[:error] = errors.to_sentence
       flash[:notice] = "Cart updated."
 

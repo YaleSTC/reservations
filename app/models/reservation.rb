@@ -54,28 +54,6 @@ class Reservation < ActiveRecord::Base
 
   attr_accessor :bypass_validations
 
-  def self.number_for_model_on_date(date,model_id,source)
-    # count the number of reservations that overlaps a date within
-    # a given array of source reservations and that matches
-    # a specific model id
-    #
-    # this code is used largely in validations because it uses 0 queries
-    count = 0
-    source.each do |r|
-      count += 1 if r.start_date <= date && r.due_date >= date && r.equipment_model_id == model_id
-    end
-    count
-  end
-
-  def self.number_for_category_on_date(date,category_id,reservations)
-    count = 0
-    reservations.each do |r|
-      count += 1 if r.start_date <= date && r.due_date >= date && r.equipment_model.category_id == category_id
-    end
-    return count
-  end
-
-
   def reserver
     User.find(self.reserver_id)
   rescue
@@ -92,8 +70,14 @@ class Reservation < ActiveRecord::Base
   def validate
     # Convert reservation to a cart object and run validations on it
     # For hard validations, use reservation.valid
-    self.to_cart.validate_all
+    temp_cart = Cart.new
+    temp_cart.start_date = self.start_date
+    temp_cart.due_date = self.due_date
+    temp_cart.reserver_id = self.reserver_id
+    temp_cart.items = { self.equipment_model.id => 1 }
+    temp_cart.validate_all
   end
+
 
   def status
     if checked_out.nil?
@@ -154,14 +138,5 @@ class Reservation < ActiveRecord::Base
     max_renewal_days = Float::INFINITY if max_renewal_days == 'unrestricted'
     return ((self.due_date.to_date - Date.today).to_i < max_renewal_days ) &&
       (self.times_renewed < max_renewal_times)
-  end
-
-  def to_cart
-    temp_cart = Cart.new
-    temp_cart.start_date = self.start_date
-    temp_cart.due_date = self.due_date
-    temp_cart.reserver_id = self.reserver_id
-    temp_cart.items = { self.equipment_model_id => 1 }
-    temp_cart
   end
 end

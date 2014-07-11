@@ -22,9 +22,9 @@ class Cart
   def get_items
     # Used in cart_validations
     # Return items where the key is the full equipment model object
-    # uses 1 database call and eager loads the categories
+    # uses 1 database call
     full_hash = Hash.new
-    EquipmentModel.includes(:category).find(self.items.keys).each do |em|
+    EquipmentModel.find(self.items.keys).each do |em|
       full_hash[em] = self.items[em.id]
     end
     full_hash
