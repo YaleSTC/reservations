@@ -95,11 +95,6 @@ class Reservation < ActiveRecord::Base
     self.to_cart.validate_all
   end
 
-  def validate_max_counts
-    self.to_cart.validate_items
-  end
-
-
   def status
     if checked_out.nil?
       if approval_status == 'auto' or approval_status == 'approved'
