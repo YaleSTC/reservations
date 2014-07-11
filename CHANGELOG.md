@@ -7,6 +7,27 @@ Change Log
 * The release version should be visible from within the application (coming soon)
 * Any problems should be reported via the "report an issue" link in the footer of the application instance
 
+###v3.4.0
+####Bug Fixes
+* Fixed failing tests in `user_mailer_spec` ([#643](https://github.com/YaleSTC/reservations/pull/643))
+* Ensured that overdue equipment items could not be checked out ([#625](https://github.com/YaleSTC/reservations/pull/625))
+* Fixed typo in `ability.rb` ([#649](https://github.com/YaleSTC/reservations/pull/649))
+* Ensured that the new cart would not break the app for existing users ([#676](https://github.com/YaleSTC/reservations/pull/676))
+
+####New Features
+* Added benchmarking for speed-testing ([#574](https://github.com/YaleSTC/reservations/pull/574))
+* Added version number to footer and app settings page ([#560](https://github.com/YaleSTC/reservations/pull/560))
+* Added continuous integration testing w/ [TravisCI](https://travis-ci.org/) ([#641](https://github.com/YaleSTC/reservations/pull/641))
+* Added testing coverage w/ [CodeClimate](https://codeclimate.com/) ([#634](https://github.com/YaleSTC/reservations/pull/634))
+
+####Enhancements
+* Completely overhauled cart ([#587](https://github.com/YaleSTC/reservations/pull/587), [#])
+* Completely overhauled cart and reservation validations ([#644](https://github.com/YaleSTC/reservations/pull/644), [#343](https://github.com/YaleSTC/reservations/pull/343))
+* Refactored the Reservation model ([#614](https://github.com/YaleSTC/reservations/pull/614))
+* Greatly improved catalog render times ([#628](https://github.com/YaleSTC/reservations/pull/628))
+* Updated `kaminari` gem ([#657](https://github.com/YaleSTC/reservations/pull/657))
+* Refactored `UsersController#new` ([#660](https://github.com/YaleSTC/reservations/pull/660))
+
 ###v3.3.0
 ####Bug Fixes
 * Fixed catalog pagination not working correctly ([#533](https://github.com/YaleSTC/reservations/issues/533))
@@ -73,8 +94,8 @@ Change Log
 * Vastly-improved rspec testing coverage.
 
 ####Deprecations
-* Removed test/unit ([#612](https://github.com/YaleSTC/reservations/issues/612)) 
-  in favor of markèd improvement of rspec coverage 
+* Removed test/unit ([#612](https://github.com/YaleSTC/reservations/issues/612))
+  in favor of markèd improvement of rspec coverage
   ([#403](https://github.com/YaleSTC/reservations/issues/403),
   [#404](https://github.com/YaleSTC/reservations/issues/404))
 
