@@ -87,7 +87,7 @@ module CartValidations
 
     models = self.get_items
 
-    source_res = Reservation.not_returned.where(equipment_model_id: self.items.keys).all
+    source_res = Reservation.not_returned.where(equipment_model_id: self.items.keys).reserved_in_date_range(self.start_date,self.due_date).all
 
     models.each do |model, quantity|
 
