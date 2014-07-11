@@ -10,7 +10,10 @@ class ReservationsController < ApplicationController
   layout 'application_with_sidebar'
 
   before_filter :require_login, only: [:index, :show]
-  before_filter :set_reservation, only: [:show,:edit,:update,:destroy,:checkout_email,:checkin_email,:renew]
+  before_filter :set_reservation, only: [:show, :edit, :update, :destroy,
+     :checkout_email, :checkin_email, :renew]
+  before_filter :set_user, only: [:manage, :current, :checkout]
+
   def set_user
     @user = User.find(params[:user_id])
   end
@@ -153,7 +156,6 @@ class ReservationsController < ApplicationController
   def checkout
     error_msgs = ""
     reservations_to_be_checked_out = []
-    set_user
     if !@user.terms_of_service_accepted && !params[:terms_of_service_accepted]
       flash[:error] = "You must confirm that the user accepts the Terms of Service."
       redirect_to :back and return
@@ -323,7 +325,6 @@ class ReservationsController < ApplicationController
   end
 
   def manage # initializer
-    set_user
     @check_out_set = @user.due_for_checkout
     @check_in_set = @user.due_for_checkin
 
@@ -331,7 +332,6 @@ class ReservationsController < ApplicationController
   end
 
   def current
-    set_user
     @user_overdue_reservations_set = [Reservation.overdue.for_reserver(@user)].delete_if{|a| a.empty?}
     @user_checked_out_today_reservations_set = [Reservation.checked_out_today.for_reserver(@user)].delete_if{|a| a.empty?}
     @user_checked_out_previous_reservations_set = [Reservation.checked_out_previous.for_reserver(@user)].delete_if{|a| a.empty?}
