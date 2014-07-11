@@ -22,8 +22,6 @@ module CartValidations
       errors += check_duration(model)
       errors += check_should_be_renewed(user_reservations,model,self.start_date)
     end
-    binding.pry
-
     return errors.uniq.reject{ |a| a.all?(&:blank?) }
   end
 
