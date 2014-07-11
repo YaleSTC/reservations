@@ -167,39 +167,40 @@ class ReservationsController < ApplicationController
 
     # throw all the reservations that are being checked out into an array
     params[:reservations].each do |reservation_id, reservation_hash|
-        if reservation_hash[:equipment_object_id].present?
-          # update attributes for all equipment that is checked off
-          r = Reservation.find(reservation_id)
-          r.checkout_handler = current_user
-          r.checked_out = Time.now
-          r.equipment_object = EquipmentObject.find(reservation_hash[:equipment_object_id])
+      if reservation_hash[:equipment_object_id].present?
+        # update attributes for all equipment that is checked off
+        r = Reservation.find(reservation_id)
+        r.checkout_handler = current_user
+        r.checked_out = Time.now
+        r.equipment_object = EquipmentObject.find(reservation_hash[:equipment_object_id])
 
-          # deal with checkout procedures
-          procedures_not_done = "" # initialize
-          r.equipment_model.checkout_procedures.each do |check|
-            if reservation_hash[:checkout_procedures] == nil # if none were checked, note that
-              procedures_not_done += "* " + check.step + "\n"
-            elsif !reservation_hash[:checkout_procedures].keys.include?(check.id.to_s) # if you didn't check it of, add to string
-              procedures_not_done += "* " + check.step + "\n"
-            end
+        # deal with checkout procedures
+        procedures_not_done = "" # initialize
+        r.equipment_model.checkout_procedures.each do |check|
+          if reservation_hash[:checkout_procedures] == nil
+            # if none were checked, note that
+            procedures_not_done += "* " + check.step + "\n"
+          elsif !reservation_hash[:checkout_procedures].keys.include?(check.id.to_s)
+            # if you didn't check it of, add to string
+            procedures_not_done += "* " + check.step + "\n"
           end
-
-          # add procedures_not_done to r.notes so admin gets the errors
-          # if no notes and some procedures not done
-          if procedures_not_done.present?
-            modified_notes = reservation_hash[:notes].present? ? reservation_hash[:notes] + "\n\n" : ""
-            r.notes = modified_notes + "The following checkout procedures were not performed:\n" + procedures_not_done
-            r.notes_unsent = true
-          elsif reservation_hash[:notes].present? # if all procedures were done
-            r.notes = reservation_hash[:notes]
-            r.notes_unsent = true
-          end
-          r.notes.strip! if r.notes?
-
-          # put the data into the container we defined at the beginning of this action
-          reservations_to_be_checked_out << r
-
         end
+
+        # add procedures_not_done to r.notes so admin gets the errors
+        # if no notes and some procedures not done
+        if procedures_not_done.present?
+          modified_notes = reservation_hash[:notes].present? ? reservation_hash[:notes] + "\n\n" : ""
+          r.notes = modified_notes + "The following checkout procedures were not performed:\n" + procedures_not_done
+          r.notes_unsent = true
+        elsif reservation_hash[:notes].present? # if all procedures were done
+          r.notes = reservation_hash[:notes]
+          r.notes_unsent = true
+        end
+        r.notes.strip! if r.notes?
+
+        # put the data into the container we defined at the start of this action
+        reservations_to_be_checked_out << r
+      end
     end
 
       # done with throwing things into the array
