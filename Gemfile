@@ -63,6 +63,7 @@ group :development, :test do
   gem 'awesome_print'
   gem 'ruby-progressbar'
   gem 'codeclimate-test-reporter'
+  gem 'parallel_tests'
 end
 
 # Gems used only for assets and not required
@@ -76,7 +77,7 @@ group :assets do
 end
 
 group :development do
-	gem 'thin'
+  gem 'thin'
   gem 'pry'
   gem 'pry-rails'
   gem 'pry-byebug'
