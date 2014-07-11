@@ -162,7 +162,8 @@ class ReservationsController < ApplicationController
 
     # throw all the reservations that are being checked out into an array
     params[:reservations].each do |reservation_id, reservation_hash|
-        if reservation_hash[:equipment_object_id] != ('' or nil) then # update attributes for all equipment that is checked off
+        if reservation_hash[:equipment_object_id].present?
+          # update attributes for all equipment that is checked off
           r = Reservation.find(reservation_id)
           r.checkout_handler = current_user
           r.checked_out = Time.now
