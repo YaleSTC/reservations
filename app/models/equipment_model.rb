@@ -153,7 +153,7 @@ class EquipmentModel < ActiveRecord::Base
     max_num = self.equipment_objects.active.count - number_overdue
     min_available = Float::INFINITY
     start_date.to_date.upto(due_date.to_date) do |d|
-      available = max_num - Reservation.number_on_date(d,reservations)
+      available = max_num - Reservation.number_on_date(d,source_reservations)
       return 0 if min_available <= 0
       if min_available > available
         min_available = available
