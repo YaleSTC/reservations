@@ -141,14 +141,15 @@ class ApplicationController < ActionController::Base
     end
 
     # get soft blackout notices
-    errors = []
-    errors += Blackout.get_notices_for_date(cart.start_date,:soft)
-    errors += Blackout.get_notices_for_date(cart.due_date,:soft)
+    notices = []
+    notices << Blackout.get_notices_for_date(cart.start_date,:soft)
+    notices << Blackout.get_notices_for_date(cart.due_date,:soft)
+    notices = notices.reject{ |a| a.blank? }
 
     # validate
-    errors += cart.validate_dates.concat(cart.validate_dates_and_items)
+    errors = cart.validate_dates.concat(cart.validate_dates_and_items)
     # don't over-write flash if invalid date was set above
-    flash[:error] ||= errors.to_sentence
+    flash[:error] ||= notices.to_sentence + "\n" + errors.to_sentence
     flash[:notice] = "Cart updated."
 
     # reload appropriate divs / exit

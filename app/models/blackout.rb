@@ -22,15 +22,15 @@ class Blackout < ActiveRecord::Base
     # get a string of all notices for a given date
     # default to hard blackouts
     if type == :soft
-      blackouts = Blackouts.soft.for_date(date)
+      blackouts = Blackout.soft.for_date(date)
     elsif type == :hard
-      blackouts = Blackouts.hard.for_date(date)
+      blackouts = Blackout.hard.for_date(date)
     else
-      blackouts = Blackouts.for_date(date)
+      blackouts = Blackout.for_date(date)
     end
     messages = []
     blackouts.for_date(date).each do |b|
-      messages += b.notice
+      messages << b.notice
     end
     messages.to_sentence
   end
