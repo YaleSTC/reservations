@@ -64,6 +64,7 @@ group :development, :test do
   gem 'ruby-progressbar'
   gem 'codeclimate-test-reporter'
   gem 'parallel_tests'
+  gem 'database_cleaner'
 end
 
 # Gems used only for assets and not required
