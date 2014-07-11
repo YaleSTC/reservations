@@ -53,7 +53,7 @@ module CartValidations
       max_models = model.maximum_per_user
 
       self.start_date.to_date.upto(self.due_date.to_date) do |d|
-        if Reservation.number_model_on_date(d,model.id,relevant) + quantity > max_models
+        if Reservation.number_for_model_on_date(d,model.id,relevant) + quantity > max_models
           errors << "Cannot reserve more than #{max_models} #{model.name.pluralize}"
           break
         end
