@@ -48,7 +48,7 @@ module CartValidations
     models = self.get_items
 
     # check max model count for each day in the range
-    # while simultaneously building a hash of category_ids => quantity
+    # while simultaneously building a hash of category => quantity
     models.each do |model, quantity|
       max_models = model.maximum_per_user
 
