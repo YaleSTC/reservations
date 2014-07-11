@@ -16,7 +16,24 @@ class Blackout < ActiveRecord::Base
   scope :active, where("end_date >= ?", Date.today)
   scope :for_date, lambda { |date| where("end_date >= ? and start_date <= ?", date, date) }
   scope :hard, where(blackout_type: 'hard')
-  scope :soft, where(blackout_type: 'notice only')
+  scope :soft, where(blackout_type: 'soft')
+
+  def self.get_notices_for_date(date, type = :all)
+    # get a string of all notices for a given date
+    # default to hard blackouts
+    if type == :soft
+      blackouts = Blackouts.soft.for_date(date)
+    elsif type == :hard
+      blackouts = Blackouts.hard.for_date(date)
+    else
+      blackouts = Blackouts.for_date(date)
+    end
+    messages = []
+    blackouts.for_date(date).each do |b|
+      messages += b.notice
+    end
+    messages.to_sentence
+  end
 
   def self.create_blackout_set(params_hash)
     #generate a unique id for this blackout date set, make sure that nil reads as 0 for the first blackout
