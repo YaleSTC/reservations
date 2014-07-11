@@ -158,15 +158,12 @@ class ReservationsController < ApplicationController
   end
 
   def checkout
+    unless check_tos(@user)
+      redirect_to :back and return
+    end
+
     error_msgs = ""
     reservations_to_be_checked_out = []
-    if !@user.terms_of_service_accepted && !params[:terms_of_service_accepted]
-      flash[:error] = "You must confirm that the user accepts the Terms of Service."
-      redirect_to :back and return
-    elsif !@user.terms_of_service_accepted && params[:terms_of_service_accepted]
-      @user.terms_of_service_accepted = true
-      @user.save
-    end
 
     # throw all the reservations that are being checked out into an array
     params[:reservations].each do |reservation_id, reservation_hash|
