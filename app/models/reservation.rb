@@ -59,12 +59,20 @@ class Reservation < ActiveRecord::Base
     # a given array of source reservations and that matches
     # a specific model id
     #
-    # this code is used largely in validations
+    # this code is used largely in validations because it uses 0 queries
     count = 0
     source.each do |r|
       count += 1 if r.start_date <= date && r.due_date >= date && r.equipment_model_id == model_id
     end
     count
+  end
+
+  def self.number_for_category_on_date(date,category_id,reservations)
+    count = 0
+    reservations.each do |r|
+      count += 1 if r.start_date <= date && r.due_date >= date && r.equipment_model.category_id == category_id
+    end
+    return count
   end
 
 

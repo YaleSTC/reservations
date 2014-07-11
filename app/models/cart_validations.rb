@@ -53,7 +53,7 @@ module CartValidations
       max_models = model.maximum_per_user
 
       self.start_date.to_date.upto(self.due_date.to_date) do |d|
-        if count_for_date_and_model(d,model,relevant) + quantity > max_models
+        if Reservation.number_model_on_date(d,model.id,relevant) + quantity > max_models
           errors << "Cannot reserve more than #{max_models} #{model.name.pluralize}"
           break
         end
@@ -69,7 +69,7 @@ module CartValidations
     category.each do |cat, q|
       max_cat = cat.maximum_per_user
       self.start_date.to_date.upto(self.due_date.to_date) do |d|
-        if count_for_date_and_category(d,cat.id,relevant) + q > max_cat
+        if Reservation.number_for_category_on_date(d,cat.id,relevant) + q > max_cat
           errors << "Cannot reserve more than #{max_cat} #{cat.name.pluralize}"
           break
         end
@@ -129,41 +129,5 @@ module CartValidations
     return nil
 
   end
-
-  def count_for_date_and_model(date,model,reservations)
-    ## takes an array of reservations and returns the number on the
-    # given day that match the given model. Do not use scopes to replace
-    # this method because it is important that only one DB call is made
-    # at the beginning of validate_items to gather the appropriate
-    # reservations
-    #
-    # all arguments should be loaded into memory already. Do not call
-    # .id on reservations since that triggers another DB call
-    #
-    # 0 queries
-
-    count = 0
-    reservations.each do |r|
-      count += 1 if r.equipment_model_id == model.id && r.start_date <= date && r.due_date >= date
-    end
-    return count
-  end
-
-  def count_for_date_and_category(date,category_id,reservations)
-    # see comments for count_for_date_and_model method
-    # this is the same but for categories
-    # unfortunately extra DB calls are needed because categories are not
-    # directly stored in reservation objects :(
-    #
-    # O(N) queries, minimized by asking for dates first. In practice should not
-    # be very many unless the user has a ton of reservations
-
-    count = 0
-    reservations.each do |r|
-      count += 1 if r.start_date <= date && r.due_date >= date && r.equipment_model.category_id == category_id
-    end
-    return count
-  end
-
 
 end
