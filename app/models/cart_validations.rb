@@ -8,19 +8,19 @@ module CartValidations
     # 2 queries for every equipment model in the cart because of num_available
     # plus about 8 extra
     errors = []
-    errors << check_start_date_blackout
-    errors << check_due_date_blackout
-    errors << check_overdue_reservations
-    errors << check_max_items
+    errors += check_start_date_blackout
+    errors += check_due_date_blackout
+    errors += check_overdue_reservations
+    errors += check_max_items
 
     user_reservations = Reservation.for_reserver(self.reserver_id).not_returned.all
     models = self.get_items
     source_res = Reservation.not_returned.where(equipment_model_id: self.items.keys).reserved_in_date_range(self.start_date,self.due_date).all
 
     models.each do |model, quantity|
-      errors << check_availability(model,quantity,source_res)
-      errors << check_duration(model)
-      errors << check_should_be_renewed(user_reservations,model,self.start_date)
+      errors += check_availability(model,quantity,source_res)
+      errors += check_duration(model)
+      errors += check_should_be_renewed(user_reservations,model,self.start_date)
     end
 
     return errors.uniq!.reject{ |a| a.all?(&:blank?) }
