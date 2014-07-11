@@ -23,7 +23,7 @@ module CartValidations
       errors << check_should_be_renewed(user_reservations,model,self.start_date)
     end
 
-    return errors.uniq!.reject{ |a| a.all?(&:blank) }
+    return errors.uniq!.reject{ |a| a.all?(&:blank?) }
   end
 
   def check_start_date_blackout
