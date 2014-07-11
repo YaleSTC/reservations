@@ -22,6 +22,7 @@ module CartValidations
       errors += check_duration(model)
       errors += check_should_be_renewed(user_reservations,model,self.start_date)
     end
+    binding.pry
 
     return errors.uniq!.reject{ |a| a.all?(&:blank?) }
   end
@@ -64,7 +65,7 @@ module CartValidations
     #
     # 4 queries
     errors = []
-    relevant = Reservation.for_reserver(self.reserver_id).not_returned.all
+    relevant = Reservation.for_reserver(self.reserver_id).not_returned.includes(:equipment_model).all
     category = Hash.new
 
     # get hash of model objects and quantities
