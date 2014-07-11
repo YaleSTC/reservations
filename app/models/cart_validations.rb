@@ -24,6 +24,7 @@ module CartValidations
 
 
   def validate_dates
+    # 3 queries
     errors = []
 
     # blackouts
@@ -36,11 +37,14 @@ module CartValidations
   end
 
   def validate_items
+    # 4 queries
     errors = []
     relevant = Reservation.for_reserver(self.reserver_id).not_returned.includes(:equipment_model).all
     category = Hash.new
 
     # get hash of model objects and quantities
+    # remember that the get_items method eager loads
+    # the categories
     models = self.get_items
 
     # check max model count for each day in the range
@@ -78,8 +82,8 @@ module CartValidations
   def validate_dates_and_items
     # lots of queries :(
     #
-    puts 'begin validate dates and items!'
     user_reservations = Reservation.for_reserver(self.reserver_id).checked_out.all
+
     errors = []
     models = self.get_items
 
@@ -88,7 +92,7 @@ module CartValidations
       # check availability, lots of queries from num_available
       errors << "That many #{model.name.pluralize} is not available for the given time range" if model.num_available(self.start_date, self.due_date) < quantity
 
-      # check maximum checkout length: call to .category is 1 query
+      # check maximum checkout length
       max_length = model.category.max_checkout_length
       max_length = Float::INFINITY if max_length == 'unrestricted'
       errors << "#{model.name.titleize} can only be reserved for #{max_length} days" if self.duration > max_length
