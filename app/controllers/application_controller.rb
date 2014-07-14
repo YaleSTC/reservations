@@ -49,10 +49,14 @@ class ApplicationController < ActionController::Base
   end
 
   def seen_app_configs
-    if AppConfig.first.viewed == false
-      flash[:notice] = "Since this is your first time viewing the application configurations, we recoomend\
+    return if AppConfig.first.viewed
+    if can? :edit, :app_config
+      flash[:notice] = "Since this is your first time viewing the application configurations, we recommend\
       that you take some time to read each option and make sure that the settings are appropriate for your needs."
       redirect_to edit_app_configs_path
+    else
+      flash[:notice] = "It looks like this application has not yet been fully set up. Check back in a little while or contact your system administrator"
+      render file: 'application_setup/index', layout: 'application'
     end
   end
 
