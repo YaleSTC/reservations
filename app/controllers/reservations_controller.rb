@@ -19,6 +19,11 @@ class ReservationsController < ApplicationController
     @reservation = Reservation.find(params[:id])
   end
 
+  # returns a string where each item is begun with a '*'
+  def markdown_listify(items)
+    return '* ' + items.join("\n* ")
+  end
+
   public
 
   def index
@@ -170,28 +175,24 @@ class ReservationsController < ApplicationController
         r.equipment_object = EquipmentObject.find(reservation_hash[:equipment_object_id])
 
         # deal with checkout procedures
-        procedures_not_done = "" # initialize
+        incomplete_procedures = []
         r.equipment_model.checkout_procedures.each do |check|
-          if reservation_hash[:checkout_procedures] == nil
-            # if none were checked, note that
-            procedures_not_done += "* " + check.step + "\n"
-          elsif !reservation_hash[:checkout_procedures].keys.include?(check.id.to_s)
-            # if you didn't check it of, add to string
-            procedures_not_done += "* " + check.step + "\n"
+          if reservation_hash[:checkout_procedures].nil? \
+            || reservation_hash[:checkout_procedures].keys.exclude?(check.id.to_s)
+            incomplete_procedures << check.step
           end
         end
 
-        # add procedures_not_done to r.notes so admin gets the errors
-        # if no notes and some procedures not done
-        if procedures_not_done.present?
-          modified_notes = reservation_hash[:notes].present? ? reservation_hash[:notes] + "\n\n" : ""
-          r.notes = modified_notes + "The following checkout procedures were not performed:\n" + procedures_not_done
+        reservation_hash[:notes] ||= ''
+        r.notes = reservation_hash[:notes]
+        if incomplete_procedures.present?
+          r.notes += "\n\nThe following checkout procedures were not performed:"
+          r.notes += "\n" + markdown_listify(incomplete_procedures)
           r.notes_unsent = true
         elsif reservation_hash[:notes].present? # if all procedures were done
-          r.notes = reservation_hash[:notes]
           r.notes_unsent = true
         end
-        r.notes.strip! if r.notes?
+        r.notes.strip! if r.notes.present?
 
         # put the data into the container we defined at the start of this action
         reservations_to_be_checked_out << r
@@ -235,7 +236,7 @@ class ReservationsController < ApplicationController
       @check_in_set = []
       @check_out_set = reservations_to_be_checked_out
       render 'receipt' and return
-  rescue Exception => e
+  rescue ActiveRecord::RecordInvalid => e
     redirect_to manage_reservations_for_user_path(reservations_to_be_checked_out.first.reserver), flash: {error: "Oops, something went wrong checking out your reservation.<br/> #{e.message}".html_safe}
   end
 
