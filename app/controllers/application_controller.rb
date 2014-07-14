@@ -152,6 +152,7 @@ class ApplicationController < ActionController::Base
                               includes(:category).
                               page(params[:page]).
                               per(session[:items_per_page])
+    @eq_models_by_category = @page_eq_models_by_category.to_a.group_by(&:category)
       prepare_catalog_index_vars
     end
 
