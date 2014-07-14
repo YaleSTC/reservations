@@ -140,10 +140,16 @@ class ApplicationController < ActionController::Base
       flash[:error] = "Please enter a valid start or due date."
     end
 
+    # get soft blackout notices
+    notices = []
+    notices << Blackout.get_notices_for_date(cart.start_date,:soft)
+    notices << Blackout.get_notices_for_date(cart.due_date,:soft)
+    notices = notices.reject{ |a| a.blank? }
+
     # validate
     errors = cart.validate_all
     # don't over-write flash if invalid date was set above
-    flash[:error] ||= errors.to_sentence
+    flash[:error] ||= notices.to_sentence + "\n" + errors.to_sentence
     flash[:notice] = "Cart updated."
 
     # reload appropriate divs / exit
