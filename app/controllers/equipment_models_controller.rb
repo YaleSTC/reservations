@@ -26,21 +26,27 @@ class EquipmentModelsController < ApplicationController
 
   def show
     @associated_equipment_models = @equipment_model.associated_equipment_models.sample(6)
-    @model_reservations = Reservation.active.for_eq_model @equipment_model
+
+    calendar_length = 1.month
+
     @reservation_data = []
-    @model_reservations.each do |r|
+    Reservation.active.for_eq_model(@equipment_model).each do |r|
       @reservation_data << {
-        start: r.start_date, end: r.due_date}
+        start: r.start_date,
+        end: (r.status == 'overdue' ? Date.today + calendar_length : r.due_date) }
+      # the above code mimics the current available? setup to show overdue
+      # equipment as permanently 'out'.
     end
+
     @blackouts = []
     Blackout.active.each do |b|
       @blackouts << {
         start: b.start_date, end: b.end_date}
     end
     @date = Time.current.to_date
-    @date_max = @date + 1.month - 1.week
-    @max = @equipment_model.equipment_objects.count
-    
+    @date_max = @date + calendar_length - 1.week
+    @max = @equipment_model.equipment_objects.active.count
+
     @restricted = @equipment_model.model_restricted?(cart.reserver_id)
   end
 
