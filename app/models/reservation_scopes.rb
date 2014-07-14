@@ -1,4 +1,5 @@
-scope :recent, order('start_date, due_date, reserver_id')
+module ReservationScopes
+  scope :recent, order('start_date, due_date, reserver_id')
   scope :user_sort, order('reserver_id')
   scope :reserved, lambda { where("checked_out IS NULL and checked_in IS NULL and due_date >= ? and (approval_status = ? or approval_status = ?)", Time.now.midnight.utc, 'auto', 'approved').recent}
   scope :checked_out, lambda { where("checked_out IS NOT NULL and checked_in IS NULL and due_date >=  ?", Time.now.midnight.utc).recent }
@@ -26,5 +27,6 @@ scope :recent, order('start_date, due_date, reserver_id')
   scope :reserved_in_date_range, lambda { |start_date, end_date|
     where("start_date < ? and due_date > ? and (approval_status = ? or approval_status = ?)", end_date, start_date, 'auto', 'approved') }
   scope :overlaps_with_date, lambda{ |date| where("start_date <= ? and due_date >= ?",date.to_datetime,date.to_datetime) }
+end
 
 
