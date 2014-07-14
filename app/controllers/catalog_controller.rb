@@ -63,7 +63,7 @@ class CatalogController < ApplicationController
 
       respond_to do |format|
         format.html{redirect_to root_path}
-        format.js{render action: "update_cart"}
+        format.js{render template: "cart_js/update_cart"}
       end
     end
 
