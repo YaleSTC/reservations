@@ -248,75 +248,88 @@ class ReservationsController < ApplicationController
   end
 
   def checkin
-    reservations_to_be_checked_in = []
+    reservations_to_check_in = []
 
     params[:reservations].each do |reservation_id, reservation_hash|
-      if reservation_hash[:checkin?] == "1" then # update attributes for all equipment that is checked off
-        r = Reservation.find(reservation_id)
-
-        if r.checked_in
-          flash[:error] = "One or more items you were trying to checkout has already been checked in."
-          redirect_to :back
-          return
-        end
-
-        r.checkin_handler = current_user
-        r.checked_in = Time.now
-
-        # deal with checkout procedures
-        procedures_not_done = "" # initialize
-        r.equipment_model.checkin_procedures.each do |check|
-          if reservation_hash[:checkin_procedures] == NIL # if none were checked, note that
-            procedures_not_done += "* " + check.step + "\n"
-          elsif !reservation_hash[:checkin_procedures].keys.include?(check.id.to_s) # if you didn"t check it of, add to string
-            procedures_not_done += "* " + check.step + "\n"
-          end
-        end
-
-        # add procedures_not_done to r.notes so admin gets the errors
-        previous_notes = r.notes.present? ? "Checkout Notes:\n" + r.notes + "\n\n" : ""
-        new_notes = reservation_hash[:notes].present? ? "Checkin Notes:\n" + reservation_hash[:notes] : ""
-
-        if procedures_not_done.present?
-          r.notes = previous_notes + new_notes + "\n\nThe following check-in procedures were not performed:\n" + procedures_not_done
-          r.notes_unsent = true
-        elsif new_notes.present? # if all procedures were done
-          r.notes = previous_notes + new_notes # add blankline because there may well have been previous notes
-          r.notes_unsent = true
-        else
-          r.notes = previous_notes
-        end
-        r.notes.strip! if r.notes?
-
-        # if equipment was overdue, send an email confirmation
-        if r.status == 'returned overdue'
-          AdminMailer.overdue_checked_in_fine_admin(r).deliver
-          UserMailer.overdue_checked_in_fine(r).deliver
-        end
-
-        # put the data into the container we defined at the beginning of this action
-        reservations_to_be_checked_in << r
+      # only update attributes for all equipment that is checked off
+      unless reservation_hash[:checkin?] == "1"
+        next
       end
+
+      r = Reservation.find(reservation_id)
+
+      if r.checked_in
+        flash[:error] = 'One of the items you tried to check in has already been
+        checked in.'
+        redirect_to :back and return
+      end
+
+      r.checkin_handler = current_user
+      r.checked_in = Time.now
+
+      # Check that check-in procedures have been performed
+      incomplete_procedures = []
+      r.equipment_model.checkin_procedures.each do |check|
+        if reservation_hash[:checkin_procedures].nil? \
+          || reservation_hash[:checkin_procedures].keys.exclude?(check.id.to_s)
+          incomplete_procedures << check.step
+        end
+      end
+
+      # add procedures_not_done to r.notes so admin gets the errors
+      previous_notes = r.notes.present? \
+        ? "Checkout Notes:\n" + r.notes + "\n\n" \
+        : ''
+      new_notes = reservation_hash[:notes].present? \
+        ? "Checkin Notes:\n" + reservation_hash[:notes] \
+        : ''
+
+      r.notes = previous_notes + new_notes
+
+      if incomplete_procedures.present?
+        r.notes += "\n\nThe following check-in procedures were not performed:\n"
+        r.notes += markdown_listify(incomplete_procedures)
+        r.notes_unsent = true
+      elsif new_notes.present? # if all procedures were done
+        r.notes_unsent = true
+      end
+      r.notes.strip! if r.notes.present?
+
+      # if equipment was overdue, send an email confirmation
+      if r.status == 'returned overdue'
+        AdminMailer.overdue_checked_in_fine_admin(r).deliver
+        UserMailer.overdue_checked_in_fine(r).deliver
+      end
+
+      # put the data into the container we defined at the beginning of this action
+      reservations_to_check_in << r
     end
 
     # flash errors
-    if reservations_to_be_checked_in.empty?
+    if reservations_to_check_in.empty?
       flash[:error] = "No reservation selected!"
       redirect_to :back and return
     end
 
     # save the reservations
-    reservations_to_be_checked_in.each do |reservation|
-      reservation.save!
+    ## Save reservations
+    Reservation.transaction do
+      begin
+        reservations_to_check_in.each do |reservation|
+          reservation.save!
+        end
+      rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid => e
+        flash[:error] = "Checking in your reservation failed: #{e.message}"
+        redirect_to :back
+        raise ActiveRecord::Rollback
+      end
     end
 
     # prep for receipt page and exit
-    @user = reservations_to_be_checked_in.first.reserver
-    @check_in_set = reservations_to_be_checked_in
+    @user = reservations_to_check_in.first.reserver
+    @check_in_set = reservations_to_check_in
     @check_out_set = []
     render 'receipt' and return
-  rescue Exception => e
-    redirect_to :back, flash: {error: "Oops, something went wrong checking in your reservation.<br/> #{e.message}".html_safe}
   end
 
   def destroy
