@@ -30,8 +30,8 @@ class CatalogController < ApplicationController
     change_cart(:remove_item, @equipment_model)
   end
 
-  def update_user_per_cat_page
-    session[:user_per_cat_page] = params[:user_cat_items_per_page] if !params[:user_cat_items_per_page].blank?
+  def update_items_per_page
+    session[:items_per_page] = params[:items_per_page] if !params[:items_per_page].blank?
     respond_to do |format|
       format.html{redirect_to root_path}
       format.js{render action: "cat_pagination"}
