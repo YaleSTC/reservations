@@ -147,14 +147,27 @@ class ApplicationController < ActionController::Base
     flash[:notice] = "Cart updated."
 
     # reload appropriate divs / exit
-    @available_string = "available from #{cart.start_date.strftime("%b %d, %Y")} to #{cart.due_date.strftime("%b %d, %Y")}"
-
-    @availability_hash = Hash.new
-    @page_eq_models_by_category = EquipmentModel.active.
+    if params[:controller] == 'catalog'
+     @page_eq_models_by_category = EquipmentModel.active.
                               order('categories.sort_order ASC, equipment_models.name ASC').
                               includes(:category).
                               page(params[:page]).
                               per(session[:items_per_page])
+      prepare_catalog_index_vars
+    end
+
+    respond_to do |format|
+      format.js{render template: "reservations/cart_dates_reload"}
+        # guys i really don't like how this is rendering a template for js, but :action doesn't work at all
+      format.html{render partial: "reservations/cart_dates"}
+    end
+  end
+
+  def prepare_catalog_index_vars
+    # prepare the catalog
+    @available_string = "available from #{cart.start_date.strftime("%b %d, %Y")} to #{cart.due_date.strftime("%b %d, %Y")}"
+
+    @availability_hash = Hash.new
     id_array = []
     @page_eq_models_by_category.each do |em|
       id_array << em.id
@@ -163,12 +176,6 @@ class ApplicationController < ActionController::Base
     source_reservations = Reservation.not_returned.reserved_in_date_range(cart.start_date,cart.due_date).all
     @page_eq_models_by_category.each do |em|
       @availability_hash[em.id] = EquipmentObject.for_eq_model(em.id,eq_objects) - Reservation.number_overdue_for_eq_model(em.id,source_reservations) - em.num_reserved(cart.start_date,cart.due_date,source_reservations)
-    end
-
-    respond_to do |format|
-      format.js{render template: "reservations/cart_dates_reload"}
-        # guys i really don't like how this is rendering a template for js, but :action doesn't work at all
-      format.html{render partial: "reservations/cart_dates"}
     end
   end
 

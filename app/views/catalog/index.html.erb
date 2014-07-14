@@ -30,7 +30,9 @@
         <ul class="thumbnails">
         <% equipment_models.each do |equipment_model| %>
           <li class="span3">
-            <%= render partial: 'equipment_model_div', locals: { equipment_model: equipment_model, relevant_reservations: @relevant_reservations } %>
+          <%= render partial: 'equipment_model_div', locals: { equipment_model: equipment_model,
+                                                               availability_hash: @availability_hash,
+                                                               available_string: @available_string } %>
           </li>
         <% end %>
         </ul>

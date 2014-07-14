@@ -19,7 +19,7 @@ class CatalogController < ApplicationController
   def index
     @reserver_id = session[:cart].reserver_id
     prepare_pagination
-    @relevant_reservations = Reservation.active.reserved_in_date_range(cart.start_date, cart.due_date).not_returned.all
+    prepare_refresh_vars
   end
 
   def add_to_cart
@@ -86,5 +86,6 @@ class CatalogController < ApplicationController
     @pagination_required = EquipmentModel.active.size > items_per_page
     session[:items_per_page] = items_per_page
   end
+
 
 end
