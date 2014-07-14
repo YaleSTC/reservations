@@ -1,10 +1,8 @@
-
-$('#cart_dates').replaceWith('<%= escape_javascript(render :partial => 'reservations/cart_dates') %>');
 <% if params[:controller] == "catalog" %>
-    //refresh catalog
   $('.model_availability').html("<%= @available_string %>");
   <% @availability_hash.each do |em_id, q_available| %>
     $("#availability_<%= em_id %>").html("<%= q_available %>");
+
   <% end %>
 <% end %>
 resume_cart();

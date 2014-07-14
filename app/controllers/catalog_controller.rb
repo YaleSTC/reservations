@@ -19,7 +19,7 @@ class CatalogController < ApplicationController
   def index
     @reserver_id = session[:cart].reserver_id
     prepare_pagination
-    prepare_refresh_vars
+    prepare_catalog_index_vars
   end
 
   def add_to_cart

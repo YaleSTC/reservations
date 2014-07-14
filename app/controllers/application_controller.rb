@@ -127,7 +127,6 @@ class ApplicationController < ActionController::Base
   #-------- end before_filter methods --------#
 
   def update_cart
-    # set dates
     cart = session[:cart]
     flash.clear
     begin
@@ -180,7 +179,7 @@ class ApplicationController < ActionController::Base
   end
 
   def empty_cart
-    session[:cart] = nil
+    cart.purge_all
     flash[:notice] = "Cart emptied."
     redirect_to root_path
   end
