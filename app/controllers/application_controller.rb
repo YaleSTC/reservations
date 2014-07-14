@@ -166,16 +166,27 @@ class ApplicationController < ActionController::Base
     # prepare the catalog
     @available_string = "available from #{cart.start_date.strftime("%b %d, %Y")} to #{cart.due_date.strftime("%b %d, %Y")}"
 
+    # create an hash of em id's as keys and their availability as the value
     @availability_hash = Hash.new
+
+    # first get an array of all the paginated ids
     id_array = []
     @page_eq_models_by_category.each do |em|
       id_array << em.id
     end
+
+    # 1 query to grab all the active related equipment objects
     eq_objects = EquipmentObject.active.where(equipment_model_id: id_array).all
-    source_reservations = Reservation.not_returned.reserved_in_date_range(cart.start_date,cart.due_date).all
+
+    # 1 query to grab all the related reservations
+    source_reservations = Reservation.not_returned.where(equipment_model_id: id_array).reserved_in_date_range(cart.start_date,cart.due_date).all
+
+    # build the hash using class methods that use 0 queries
     @page_eq_models_by_category.each do |em|
       @availability_hash[em.id] = EquipmentObject.for_eq_model(em.id,eq_objects) - Reservation.number_overdue_for_eq_model(em.id,source_reservations) - em.num_reserved(cart.start_date,cart.due_date,source_reservations)
     end
+
+
   end
 
   def empty_cart
