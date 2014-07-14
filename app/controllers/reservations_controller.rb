@@ -169,27 +169,11 @@ class ReservationsController < ApplicationController
         r.equipment_object = EquipmentObject.find(reservation_hash[:equipment_object_id])
 
         # Check that checkout procedures have been performed
-        # check_procedures(reservation, reservation_hash, procedure_kind)
-        incomplete_procedures = []
-        r.equipment_model.checkout_procedures.each do |check|
-          if reservation_hash[:checkout_procedures].nil? \
-            || reservation_hash[:checkout_procedures].keys.exclude?(check.id.to_s)
-            incomplete_procedures << check.step
-          end
-        end
+        incomplete_procedures = check_procedures(r, reservation_hash, :checkout)
 
         # Update notes if any checkout procedures have not been performed
-        # make_notes(old_notes, new_notes, procedure_kind, procedures)
-        reservation_hash[:notes] ||= ''
-        r.notes = reservation_hash[:notes]
-        if incomplete_procedures.present?
-          r.notes += "\n\nThe following checkout procedures were not performed:"
-          r.notes += "\n" + markdown_listify(incomplete_procedures)
-          r.notes_unsent = true
-        elsif reservation_hash[:notes].present? # if all procedures were done
-          r.notes_unsent = true
-        end
-        r.notes.strip! if r.notes.present?
+        r.notes = make_notes(r.notes, reservation_hash[:notes], \
+                             :checkout, incomplete_procedures)
 
         # Put the data into the container defined at the start of this action
         reservations_to_check_out << r
@@ -265,34 +249,11 @@ class ReservationsController < ApplicationController
       r.checked_in = Time.now
 
       # Check that check-in procedures have been performed
-      # check_procedures(reservation, reservation_hash, procedure_kind)
-      incomplete_procedures = []
-      r.equipment_model.checkin_procedures.each do |check|
-        if reservation_hash[:checkin_procedures].nil? \
-          || reservation_hash[:checkin_procedures].keys.exclude?(check.id.to_s)
-          incomplete_procedures << check.step
-        end
-      end
+      incomplete_procedures = check_procedures(r, reservation_hash, :checkin)
 
       # add incomplete_procedures to r.notes so admin gets the errors
-      # make_notes(old_notes, new_notes, procedure_kind, procedures)
-      previous_notes = r.notes.present? \
-        ? "Checkout Notes:\n" + r.notes + "\n\n" \
-        : ''
-      new_notes = reservation_hash[:notes].present? \
-        ? "Checkin Notes:\n" + reservation_hash[:notes] \
-        : ''
-
-      r.notes = previous_notes + new_notes
-
-      if incomplete_procedures.present?
-        r.notes += "\n\nThe following check-in procedures were not performed:\n"
-        r.notes += markdown_listify(incomplete_procedures)
-        r.notes_unsent = true
-      elsif new_notes.present? # if all procedures were done
-        r.notes_unsent = true
-      end
-      r.notes.strip! if r.notes.present?
+      r.notes = make_notes(r.notes, reservation_hash[:notes], \
+                           :checkin, incomplete_procedures)
 
       # if equipment was overdue, send an email confirmation
       if r.status == 'returned overdue'
@@ -300,7 +261,7 @@ class ReservationsController < ApplicationController
         UserMailer.overdue_checked_in_fine(r).deliver
       end
 
-      # put the data into the container we defined at the beginning of this action
+      # put the data into the container defined at the beginning of this action
       reservations_to_check_in << r
     end
 
@@ -468,7 +429,7 @@ class ReservationsController < ApplicationController
     end
 
     if procedures.present?
-      notes += "The following #{procedure_kind} procedures were not"
+      notes += "The following #{procedure_kind} procedures were not" \
       "performed:\n" + markdown_listify(procedures)
     end
 
