@@ -6,8 +6,9 @@ rvm:
 env:
   global:
     - RAILS_ENV=test
-    # Code Climate Integration
-    secure: "IHUYMK2spxorl9lUeAbAfT6btuP2qRT615bUnEuUDgYrXf9y1CdQprYWJaygou/+6aWmLL0NnxYSpOxi40bHgMKeUQnTjXVbkkqQ1Tml3cMSsjkBrx7CNUygHvDDzCQCEC6m9uZjUKMZAVzVSWlOQhSMKR7MtdsSvMCrKIgA2pM="
+    -
+      # Code Climate Integration
+      secure: IHUYMK2spxorl9lUeAbAfT6btuP2qRT615bUnEuUDgYrXf9y1CdQprYWJaygou/+6aWmLL0NnxYSpOxi40bHgMKeUQnTjXVbkkqQ1Tml3cMSsjkBrx7CNUygHvDDzCQCEC6m9uZjUKMZAVzVSWlOQhSMKR7MtdsSvMCrKIgA2pM=
 
 before_install:
   - 'echo ''gem: --no-ri --no-rdoc'' > ~/.gemrc'
