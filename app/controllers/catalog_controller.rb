@@ -30,7 +30,7 @@ class CatalogController < ApplicationController
     change_cart(:remove_item, @equipment_model)
   end
 
-  def update_items_per_page
+  def update_user_per_cat_page
     session[:items_per_page] = params[:items_per_page] if !params[:items_per_page].blank?
     respond_to do |format|
       format.html{redirect_to root_path}
@@ -69,8 +69,8 @@ class CatalogController < ApplicationController
 
   def prepare_pagination
     array = []
-    array << params[:items_per_page]
-    array << session[:items_per_page]
+    array << params[:items_per_page].to_i
+    array << session[:items_per_page].to_i
     array << @app_configs.default_per_cat_page
     array << 10
     items_per_page = array.reject{ |a| a.blank? || a == 0 }.first
