@@ -21,7 +21,7 @@ class Reservation < ActiveRecord::Base
                   :checkin_handler_id, :approval_status,
                   :checked_out, :checked_in, :equipment_object,
                   :equipment_object_id, :notes, :notes_unsent, :times_renewed,
-                  :reserver_id, :start_date, :due_date,
+                  :reserver_id, :reserver, :start_date, :due_date,
                   :equipment_model_id
 
   def duration
