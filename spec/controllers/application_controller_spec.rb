@@ -102,6 +102,8 @@ describe TestController do
     before(:each) do
       controller.stub(:load_configs).and_return(@app_config)
       controller.unstub(:seen_app_configs)
+      @admin = FactoryGirl.create(:admin)
+      controller.stub(:current_user).and_return(@admin)
     end
     context 'app configs have not been viewed' do
       before(:each) do
