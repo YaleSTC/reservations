@@ -2,12 +2,21 @@
   <%= form_tag url_for(:action => :update_cart), :remote => true, :class => "form-vertical", :id => "cart_form" do %>
 
     <%= hidden_field_tag 'page', params[:page] %>
+    <%# to preserve pagination %>
+    <%# todo: make it so changing dates don't need to reset pagination %>
+    
     <% if can? :manage, Reservation %>
       <%= label_tag :reserver_id, 'Reserving For' %>
       <div class="input-append">
         <%# This must all be one one line for the button to display properly, sorry it's so ugly! %>
         <%= hidden_field_tag 'reserver_id', cart.reserver_id %>
-				<%= autocomplete_field_tag 'fake_reserver_id', User.find(cart.reserver_id)  == current_user ? '' : User.find(cart.reserver_id).render_name, autocomplete_user_last_name_reservations_path, :size => 30, :placeholder => current_user.render_name, :class => 'submittable span2' %><%= link_to sanitize("<i class=\"fa fa-plus\"></i>"), '#userModal', :class => 'btn', :id => 'modal', :rel => 'tooltip', :title => 'New Reserver', :"data-toggle" => 'modal' %>
+        <%= autocomplete_field_tag 'fake_reserver_id',
+          cart.reserver_id == current_user.id ? '' : User.find(cart.reserver_id).render_name,
+          autocomplete_user_last_name_users_path,
+          size: 30,
+          placeholder: current_user.render_name,
+          id_element: "#reserver_id",
+          class: 'submittable span2' %><%= link_to sanitize("<i class=\"fa fa-plus\"></i>"), '#userModal', :class => 'btn', :id => 'modal', :rel => 'tooltip', :title => 'New Reserver', :"data-toggle" => 'modal' %>
       </div>
 
     <% elsif !current_user %>

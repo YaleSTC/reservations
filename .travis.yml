@@ -6,7 +6,8 @@ rvm:
 env:
   global:
     - RAILS_ENV=test
-    - CODECLIMATE_REPO_TOKEN=075afb721fe089e1b77ab194fcff1ac132765bbfd3f3777db52f7abaf9bf800d
+    # Code Climate Integration
+    secure: "IHUYMK2spxorl9lUeAbAfT6btuP2qRT615bUnEuUDgYrXf9y1CdQprYWJaygou/+6aWmLL0NnxYSpOxi40bHgMKeUQnTjXVbkkqQ1Tml3cMSsjkBrx7CNUygHvDDzCQCEC6m9uZjUKMZAVzVSWlOQhSMKR7MtdsSvMCrKIgA2pM="
 
 before_install:
   - 'echo ''gem: --no-ri --no-rdoc'' > ~/.gemrc'
@@ -23,3 +24,9 @@ sudo: false
 
 # the new build env has caching enabled
 cache: bundler
+
+# Notifications settings
+notifications:
+  email: false
+  slack:
+    secure: IB5Uyt+TxPkNvddnWAOIYtfjMFCpFHVG3hPLpo5c0SzOUgk80JDlDaXQLyZGv6H9uaEqh+IZIZyvoJpdFgARmMv7+y7Fj8cXQ9zYN3EcmIRUomrDq9u2yjVcmOmGMW9o9e/cBISj0Lw/zc+7W0YZxzIT04NzCUwg0cQxfbE1X3M=

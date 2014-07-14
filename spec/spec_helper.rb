@@ -1,6 +1,7 @@
 require 'codeclimate-test-reporter'
 CodeClimate::TestReporter.start
-# Run RSpec with `CODECLIMATE_REPO_TOKEN=075afb721fe089e1b77ab194fcff1ac132765bbfd3f3777db52f7abaf9bf800d rspec` command to submit the result to CodeClimate
+# Rspec should submit the result to CodeClimate automatically with each Travis
+# CI build (repo token is encrypted in .travis.yml)
 
 require 'rubygems'
 require 'spork'

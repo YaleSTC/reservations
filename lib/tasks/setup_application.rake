@@ -135,6 +135,7 @@ namespace :app do
               ac.home_link_location = home_link_location
               ac.default_per_cat_page = 20
               ac.viewed = false
+              ac.blackout_exp_time = 30
             end
           rescue Exception => e
             ActiveRecord::Rollback
