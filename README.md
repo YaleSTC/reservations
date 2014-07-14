@@ -1,7 +1,7 @@
 # Welcome to Reservations 
 
 [![Build Status](https://travis-ci.org/YaleSTC/reservations.svg?branch=development)](https://travis-ci.org/YaleSTC/reservations) 
-[![Code Climate](https://codeclimate.com/github/YaleSTC/reservations.png)](https://codeclimate.com/github/YaleSTC/reservations) 
+[![Code Climate](https://img.shields.io/codeclimate/github/YaleSTC/reservations.svg)](https://codeclimate.com/github/YaleSTC/reservations) 
 [![Dependency Status](https://gemnasium.com/YaleSTC/reservations.svg)](https://gemnasium.com/YaleSTC/reservations)
 [![Inline docs](http://inch-ci.org/github/yalestc/reservations.svg?branch=development)](http://inch-ci.org/github/yalestc/reservations)
 
