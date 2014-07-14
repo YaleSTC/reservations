@@ -19,11 +19,6 @@ class ReservationsController < ApplicationController
     @reservation = Reservation.find(params[:id])
   end
 
-  # returns a string where each item is begun with a '*'
-  def markdown_listify(items)
-    return '* ' + items.join("\n* ")
-  end
-
   public
 
   def index
@@ -174,6 +169,7 @@ class ReservationsController < ApplicationController
         r.equipment_object = EquipmentObject.find(reservation_hash[:equipment_object_id])
 
         # Check that checkout procedures have been performed
+        # check_procedures(reservation, reservation_hash, procedure_kind)
         incomplete_procedures = []
         r.equipment_model.checkout_procedures.each do |check|
           if reservation_hash[:checkout_procedures].nil? \
@@ -183,6 +179,7 @@ class ReservationsController < ApplicationController
         end
 
         # Update notes if any checkout procedures have not been performed
+        # make_notes(old_notes, new_notes, procedure_kind, procedures)
         reservation_hash[:notes] ||= ''
         r.notes = reservation_hash[:notes]
         if incomplete_procedures.present?
@@ -201,7 +198,7 @@ class ReservationsController < ApplicationController
 
     ## Basic-logic checks, only need to be done once
     # Prevent the nil error from not selecting any reservations
-    if reservations_to_check_out.first.nil?
+    if reservations_to_check_out.empty?
       flash[:error] = "No reservation selected."
       redirect_to :back and return
     end
@@ -268,6 +265,7 @@ class ReservationsController < ApplicationController
       r.checked_in = Time.now
 
       # Check that check-in procedures have been performed
+      # check_procedures(reservation, reservation_hash, procedure_kind)
       incomplete_procedures = []
       r.equipment_model.checkin_procedures.each do |check|
         if reservation_hash[:checkin_procedures].nil? \
@@ -276,7 +274,8 @@ class ReservationsController < ApplicationController
         end
       end
 
-      # add procedures_not_done to r.notes so admin gets the errors
+      # add incomplete_procedures to r.notes so admin gets the errors
+      # make_notes(old_notes, new_notes, procedure_kind, procedures)
       previous_notes = r.notes.present? \
         ? "Checkout Notes:\n" + r.notes + "\n\n" \
         : ''
@@ -426,5 +425,53 @@ class ReservationsController < ApplicationController
       flash[:error] = "Oops! Something went wrong. Unable to deny reservation. We're not sure what that's all about."
       redirect_to @reservation
     end
+  end
+
+  private
+
+  # returns a string where each item is begun with a '*'
+  def markdown_listify(items)
+    return '* ' + items.join("\n* ")
+  end
+
+  # Takes Reservation object, reservation_hash (item from params[:reservations])
+  # and a symbol of either :checkin or :checkout as procedure_kind
+  def check_procedures(reservation, reservation_hash, procedure_kind)
+    r = reservation
+    procedure_kind = (procedure_kind.to_s + "_procedures").to_sym
+    incomplete_procedures = []
+    r.equipment_model.send(procedure_kind).each do |check|
+      if reservation_hash[procedure_kind].nil? \
+        || reservation_hash[procedure_kind].keys.exclude?(check.id.to_s)
+        incomplete_procedures << check.step
+      end
+    end
+
+    return incomplete_procedures
+  end
+
+  # Takes old_notes (presumably those already existing on the reservation)
+  # new_notes (from the form), procedure_kind (:checkin or :checkout) and array
+  # of string steps of procedures that were not followed for procedure_kind.
+  def make_notes(old_notes, new_notes, procedure_kind, procedures)
+    notes = ''
+    procedure_kind = procedure_kind.to_s
+
+    if old_notes
+      notes += "== Notes previous to #{procedure_kind}\n" \
+      + old_notes + "\n\n"
+    end
+
+    if new_notes || procedures.present?
+      notes += "== Notes from #{procedure_kind}\n"
+      notes += new_notes + "\n\n" if new_notes
+    end
+
+    if procedures.present?
+      notes += "The following #{procedure_kind} procedures were not"
+      "performed:\n" + markdown_listify(procedures)
+    end
+
+    return notes.strip
   end
 end
