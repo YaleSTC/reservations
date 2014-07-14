@@ -1,18 +1,12 @@
-console.log('ts');
 
 $('#cart_dates').replaceWith('<%= escape_javascript(render :partial => 'reservations/cart_dates') %>');
 <% if params[:controller] == "catalog" %>
     //refresh catalog
-  <% models = EquipmentModel.active.order('categories.sort_order ASC, equipment_models.name ASC').includes(:category).page(params[:page]).per(session[:items_per_page]) %>
-  <% relevant_reservations = Reservation.active.reserved_in_date_range(cart.start_date, cart.due_date).not_returned.all %>
-
-  <% models.each do |em| %>
-    console.log('lol');
-    $('#em_<%= em.id %>').html(<%= render partial: "equipment_model_div", locals: {equipment_model: em, relevant_reservations:  relevant_reservations} %>);
+  $('.model_availability').html("<%= @available_string %>");
+  <% @availability_hash.each do |em_id, q_available| %>
+    $("#availability_<%= em_id %>").html("<%= q_available %>");
   <% end %>
-  truncate();
 <% end %>
-console.log('test');
 resume_cart();
 
 <% if (flash[:error].blank? && flash[:notice].blank? && flash[:alert].blank?) %>

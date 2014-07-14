@@ -1,4 +1,4 @@
-<div class="thumbnail" id="em_<%=equipment_model.id%>">
+<div class="thumbnail">
   <%= link_to equipment_model do %>
     <% image_tag (equipment_model.photo.exists? ? equipment_model.photo.url(:thumbnail) : "no-image.gif") %>
   <% end %>
@@ -7,7 +7,7 @@
   </h3>
   <div class="caption_cat">
     <hr class ="special-hr"/>
-    <span class="giant-numbers span1">
+    <span class="giant-numbers span1" id="availability_<%= equipment_model.id %>">
       <% @available = equipment_model.num_available_from_source(cart.start_date, cart.due_date, relevant_reservations) %>
       <%= @available %>
     </span>
