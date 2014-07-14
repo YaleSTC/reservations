@@ -162,10 +162,9 @@ class ReservationsController < ApplicationController
       redirect_to :back and return
     end
 
-    error_msgs = ""
-    reservations_to_be_checked_out = []
-
-    # throw all the reservations that are being checked out into an array
+    # convert all the reservations that are being checked out into an array
+    # of Reservation objects
+    reservations_to_check_out = []
     params[:reservations].each do |reservation_id, reservation_hash|
       if reservation_hash[:equipment_object_id].present?
         # update attributes for all equipment that is checked off
@@ -174,7 +173,7 @@ class ReservationsController < ApplicationController
         r.checked_out = Time.now
         r.equipment_object = EquipmentObject.find(reservation_hash[:equipment_object_id])
 
-        # deal with checkout procedures
+        # Check that checkout procedures have been performed
         incomplete_procedures = []
         r.equipment_model.checkout_procedures.each do |check|
           if reservation_hash[:checkout_procedures].nil? \
@@ -183,6 +182,7 @@ class ReservationsController < ApplicationController
           end
         end
 
+        # Update notes if any checkout procedures have not been performed
         reservation_hash[:notes] ||= ''
         r.notes = reservation_hash[:notes]
         if incomplete_procedures.present?
@@ -194,50 +194,57 @@ class ReservationsController < ApplicationController
         end
         r.notes.strip! if r.notes.present?
 
-        # put the data into the container we defined at the start of this action
-        reservations_to_be_checked_out << r
+        # Put the data into the container defined at the start of this action
+        reservations_to_check_out << r
       end
     end
 
-      # done with throwing things into the array
-      #All-encompassing checks, only need to be done once
-      if reservations_to_be_checked_out.first.nil? # Prevents the nil error from not selecting any reservations
-        flash[:error] = "No reservation selected."
-        redirect_to :back and return
-      # move method to user model TODO
-      elsif reservations_to_be_checked_out.first.reserver.overdue_reservations?
-        error_msgs += "User has overdue equipment."
-      end
+    ## Basic-logic checks, only need to be done once
+    # Prevent the nil error from not selecting any reservations
+    if reservations_to_check_out.first.nil?
+      flash[:error] = "No reservation selected."
+      redirect_to :back and return
+    end
 
-      # make sure we're not checking out the same object in more than one reservation
-      if !reservations_to_be_checked_out.first.checkout_object_uniqueness(reservations_to_be_checked_out) # if objects not unique, flash error
-        flash[:error] = "The same equipment item cannot be simultaneously checked out in multiple reservations."
+    # Prevent checking out the same object in more than one reservation
+    unless Reservation.unique_equipment_objects?(reservations_to_check_out)
+      flash[:error] = "The same equipment item cannot be simultaneously checked
+      out in multiple reservations."
+      redirect_to :back and return
+    end
+
+    # Overdue validation
+    reserver = reservations_to_check_out.first.reserver
+    if reserver.overdue_reservations?
+      if can? :override, :checkout_errors
+        # Admins can ignore this
+        error_msgs = 'Admin Override: Equipment has been checked out
+        successfully, even though the reserver has overdue equipment.'
+      else
+        # Everyone else is redirected
+        flash[:error] = 'Could not check out the equipment, because the reserver
+        has reservations that are overdue.'
         redirect_to :back and return
       end
+    end
 
-      # act on the errors
-      if !error_msgs.empty? # If any requirements are not met...
-        if can? :override, :checkout_errors # Admins can ignore them
-          error_msgs = " Admin Override: Equipment has been successfully checked out even though " + error_msgs
-        else # everyone else is redirected
-          flash[:error] = error_msgs
-          redirect_to :back and return
+    ## Save reservations
+    Reservation.transaction do
+      begin
+        reservations_to_check_out.each do |reservation|
+          reservation.save!
         end
+      rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid => e
+        flash[:error] = "Checking out your reservation failed: #{e.message}"
+        redirect_to manage_reservations_for_user_path(reserver)
+        raise ActiveRecord::Rollback
       end
+    end
 
-      # transaction this process ^downarrow
-
-      # save reservations
-      reservations_to_be_checked_out.each do |reservation| # updates to reservations are saved
-        reservation.save! # save!
-      end
-
-      # prep for receipt page and exit
-      @check_in_set = []
-      @check_out_set = reservations_to_be_checked_out
-      render 'receipt' and return
-  rescue ActiveRecord::RecordInvalid => e
-    redirect_to manage_reservations_for_user_path(reservations_to_be_checked_out.first.reserver), flash: {error: "Oops, something went wrong checking out your reservation.<br/> #{e.message}".html_safe}
+    # prep for receipt page and exit
+    @check_in_set = []
+    @check_out_set = reservations_to_check_out
+    render 'receipt' and return
   end
 
   def checkin
