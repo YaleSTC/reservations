@@ -1,9 +1,9 @@
 <div id="list_items_in_cart">
-  <% if cart.cart_reservations.size == 0 %>
+  <% if cart.items.empty? %>
     <span id="cart_is_empty">(empty)</span>
   <% else %>
     <table id="table_list_items" class="table table-bordered table-striped table-condensed">
-      <% cart.models_with_quantities.each_pair do |model_id, quantity| %>
+      <% cart.items.each do |model_id, quantity| %>
         <tr>
           <td colspan="2"><%= quantity %> x
             <div id="remove_button"><%= link_to "Remove", remove_from_cart_path(EquipmentModel.find(model_id)),

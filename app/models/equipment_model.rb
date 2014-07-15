@@ -145,30 +145,36 @@ class EquipmentModel < ActiveRecord::Base
     end
   end
 
-  #TODO: blackout vs validation
-  def num_available(start_date, due_date)
-    availability = start_date.to_date.upto(due_date.to_date).map do |date|
-       available_count(date)
+  def num_available_from_source(start_date, due_date, source_reservations)
+    # get the number available in the given date range
+    # take an array of reservations instead of using a database call
+    # for database query optimization purposes
+    # 2 queries to calculate max_num
+    max_num = self.equipment_objects.active.count - number_overdue
+    min_available = Float::INFINITY
+    start_date.to_date.upto(due_date.to_date) do |d|
+      available = max_num - Reservation.number_for_model_on_date(d,self.id,source_reservations)
+      return 0 if min_available <= 0
+      if min_available > available
+        min_available = available
+      end
     end
-    availability.min > 0 ? availability.min : 0
+    return min_available
+  end
+
+  def num_available(start_date, due_date)
+    # for if you just want the number available, 1 query to get
+    # relevant reservations
+    relevant_reservations = Reservation.for_eq_model(self).
+      reserved_in_date_range(start_date.to_datetime, due_date.to_datetime).
+      not_returned.all
+    num_available_from_source(start_date, due_date, relevant_reservations)
   end
 
   # Returns true if the reserver is ineligible to checkout the model.
   def model_restricted?(reserver_id)
     reserver = User.find(reserver_id)
-    self.requirements.each do |em_req|
-      unless reserver.requirements.include?(em_req)
-        return true
-      end
-    end
-    return false
-  end
-
-
-  # Returns the number of reserved objects for a particular model,
-  # as long as they have not been checked in
-  def number_reserved_on_date(date)
-    Reservation.reserved_on_date(date).not_returned.for_eq_model(self).size
+    !(self.requirements - reserver.requirements).empty?
   end
 
   # Returns the number of overdue objects for a given model,
@@ -182,7 +188,8 @@ class EquipmentModel < ActiveRecord::Base
     # get the total number of objects of this kind
     # then subtract the total quantity currently reserved, checked-out, and overdue
     total = equipment_objects.active.count
-    (total - number_reserved_on_date(date)) - number_overdue
+    reserved = Reservation.reserved_on_date(date).not_returned.for_eq_model(self).count
+    total - reserved - number_overdue
   end
 
   def available_object_select_options

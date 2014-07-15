@@ -1,0 +1,33 @@
+language: ruby
+
+rvm:
+  - 2.1.1
+
+env:
+  global:
+    - RAILS_ENV=test
+    -
+      # Code Climate Integration
+      secure: IHUYMK2spxorl9lUeAbAfT6btuP2qRT615bUnEuUDgYrXf9y1CdQprYWJaygou/+6aWmLL0NnxYSpOxi40bHgMKeUQnTjXVbkkqQ1Tml3cMSsjkBrx7CNUygHvDDzCQCEC6m9uZjUKMZAVzVSWlOQhSMKR7MtdsSvMCrKIgA2pM=
+
+before_install:
+  - 'echo ''gem: --no-ri --no-rdoc'' > ~/.gemrc'
+
+before_script:
+  - cp config/database.travis.yml config/database.yml
+  - bundle exec rake db:create
+  - bundle exec rake db:schema:load
+  - bundle exec rake db:test:prepare
+
+# From Travis CI Support: This will route jobs to our beta build environment,
+# which has much faster boot times, making it easier to debug via Travis.
+sudo: false
+
+# the new build env has caching enabled
+cache: bundler
+
+# Notifications settings
+notifications:
+  email: false
+  slack:
+    secure: IB5Uyt+TxPkNvddnWAOIYtfjMFCpFHVG3hPLpo5c0SzOUgk80JDlDaXQLyZGv6H9uaEqh+IZIZyvoJpdFgARmMv7+y7Fj8cXQ9zYN3EcmIRUomrDq9u2yjVcmOmGMW9o9e/cBISj0Lw/zc+7W0YZxzIT04NzCUwg0cQxfbE1X3M=

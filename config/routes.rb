@@ -30,6 +30,7 @@ Reservations::Application.routes.draw do
     collection do
       get :find
     end
+    get :autocomplete_user_last_name, on: :collection
   end
 
   get '/catalog/search' => 'catalog#search', :as => :catalog_search # what kind of http request is this?
@@ -41,7 +42,6 @@ Reservations::Application.routes.draw do
       get :checkin_email
       put :renew
     end
-    get :autocomplete_user_last_name, :on => :collection
   end
 
   get '/blackouts/flash_message' => 'blackouts#flash_message', :as => :flash_message

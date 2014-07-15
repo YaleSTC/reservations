@@ -36,4 +36,15 @@ Reservations::Application.configure do
 
   # Set Paperclip path
   Paperclip.options[:command_path] = '/usr/local/bin'
+
+  config.after_initialize do
+    Bullet.enable = true
+    # Bullet.alert = true
+    Bullet.bullet_logger = true
+    Bullet.console = true
+    Bullet.rails_logger = true
+    # Bullet.bugsnag = true
+    # Bullet.add_footer = true
+    # Bullet.stacktrace_includes = [ 'your_gem', 'your_middleware' ]
+  end
 end

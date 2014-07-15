@@ -1,5 +1,4 @@
 class CatalogController < ApplicationController
-  helper :blackouts
   layout 'application_with_sidebar'
 
   before_filter :set_equipment_model, only: [:add_to_cart, :remove_from_cart]
@@ -56,8 +55,7 @@ class CatalogController < ApplicationController
     # (or displays the appropriate errors)
     def change_cart(action, item)
       cart.send(action, item)
-
-      errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
+      errors = cart.validate_all
       flash[:error] = errors.to_sentence
       flash[:notice] = "Cart updated."
 

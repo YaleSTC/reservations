@@ -1,17 +1,13 @@
-#TODO: change set_reserver_id, set_start_date, and set_due_date to use update_all
-
 class Cart
   include ActiveModel::Validations
-  extend ActiveModel::Naming
-
+  include CartValidations
   validates :reserver_id, :start_date, :due_date, presence: true
 
   attr_accessor :items, :start_date, :due_date, :reserver_id
-  attr_reader   :errors
 
   def initialize
     @errors = ActiveModel::Errors.new(self)
-    @items = []
+    @items = Hash.new()
     @start_date = Date.today
     @due_date = Date.tomorrow
     @reserver_id = nil
@@ -21,123 +17,69 @@ class Cart
     false
   end
 
-  ## Functions for error handling
-
-  def read_attribute_for_validation(attr)
-    send(attr)
-  end
-
-  def Cart.human_attribute_name(attr, options = {})
-    attr
-  end
-
-  def Cart.lookup_ancestors
-    [self]
-  end
-
   ## Item methods
 
-  # Adds CartReservation to database; saves ID into items array
-  def add_item(equipment_model)
-    current_item = CartReservation.new(start_date: @start_date,
-      due_date: @due_date, reserver: self.reserver)
-    current_item.equipment_model = equipment_model
-    if current_item.save
-      @items << current_item.id
+  def get_items
+    # Used in cart_validations
+    # Return items where the key is the full equipment model object
+    # uses 1 database call and eager loads the categories
+    full_hash = Hash.new
+    EquipmentModel.includes(:category).find(self.items.keys).each do |em|
+      full_hash[em] = self.items[em.id]
     end
+    full_hash
+  end
+  # Adds equipment model id to items hash
+  def add_item(equipment_model)
+    return if equipment_model.nil?
+    key = equipment_model.id
+    self.items[key] = self.items[key] ? self.items[key] + 1 : 1
   end
 
-  # Removes CartReservation from database and ID from items array
+  # Remove equipment model id from items hash, or decrement its count
   def remove_item(equipment_model)
-    to_be_deleted = nil
-    @items.each { |item| to_be_deleted = item if CartReservation.find(item).equipment_model == equipment_model }
-    CartReservation.delete(to_be_deleted)
-    @items.delete(to_be_deleted)
-  end
-
-  # Returns CartReservations that correspond to the IDs in the items array
-  def cart_reservations
-    CartReservation.where(id: @items)
-  end
-
-  # Returns a hash of the equipment models in the cart with their quantities
-  def models_with_quantities
-    models = Hash.new
-    cart_reservations.each { |res| models[res.equipment_model.id] = res.same_model_count(cart_reservations) }
-    models
+    return if equipment_model.nil?
+    key = equipment_model.id
+    self.items[key] = self.items[key] ? self.items[key] - 1 : 0
+    self.items = self.items.except(key) if self.items[key] <= 0
   end
 
   def empty?
     @items.empty?
   end
 
-  ## Date methods
-
-  # Sets start date and updates all CartReservations to match
-  def set_start_date(date)
-    date = date.to_time.in_time_zone
-    if date >= Date.today
-      @start_date = date
-      fix_due_date
-      cart_reservations.update_all({start_date: @start_date, due_date: @due_date})
-    end
+  # remove all items from cart
+  def purge_all
+    @items = Hash.new()
   end
 
-  # Sets due date and updates all CartReservations to match
-  def set_due_date(date)
-    date = date.to_time.in_time_zone
-    @due_date = date
-    fix_due_date
-    cart_reservations.update_all({start_date: @start_date, due_date: @due_date})
-  end
-
-  # If the dates were illogical, sets due date to day after start date
-  def fix_due_date
-    if @start_date.to_time.in_time_zone > @due_date
-      #TODO: allow admin to set default reservation length and respect that length here
-      @due_date = @start_date + 1.day
-    end
-  end
-
-  #Create an array of all the reservations that should be renewed instead of having a new reservation
-  def renewable_reservations
-    user_reservations = reserver.reservations
-    renewable_reservations = []
-    @items.each do |item|
-      cart_item_count = item.quantity #renew up to this many of the item
-      matching_reservations = user_reservations.each do |res|
-        # the end date should be the same as the start date
-        # the reservation should be renewable
-        # also the user should only renew as many reservations as they have in their cart
-        if (res.due_date.to_date == @start_date &&
-           res.equipment_model_id == item.equipment_model_id &&
-           cart_item_count > 0 &&
-           res.is_eligible_for_renew?)
-          renewable_reservations << res
-          cart_item_count-= 1
-        end
+  # return array of reservations crafted from the cart contents
+  def prepare_all
+    reservations = []
+    @items.each do |id, quantity|
+      quantity.times do
+        reservations << Reservation.new(reserver: self.reserver,
+                                        start_date: @start_date,
+                                        due_date: @due_date,
+                                        equipment_model_id: id)
       end
     end
-    return renewable_reservations
+    reservations
   end
-
 
   # Returns the cart's duration
   def duration #in days
     @due_date.to_date - @start_date.to_date + 1
   end
 
-  ## Reserver methods
-
-  #TODO: should only have to set reserver OR reserver_id
-  # Sets reserver id and updates the CartReservations to match
-  def set_reserver_id(user_id)
-    @reserver_id = user_id
-    cart_reservations.update_all(reserver_id: @reserver_id)
-  end
-
   # Returns the reserver
   def reserver
-    reserver = User.find(@reserver_id)
+    User.find(@reserver_id)
+  end
+
+  def fix_due_date
+    if @start_date > @due_date
+      @due_date = @start_date + 1.day
+    end
   end
 end

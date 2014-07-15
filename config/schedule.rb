@@ -24,6 +24,7 @@ every 1.day, :at => '5:00 am' do
   rake "send_overdue_checkin_reminder"
   rake "delete_missed_reservations"
   rake "deny_missed_requests"
+  rake "delete_old_blackouts"
 end
 
 every 1.hour do

@@ -263,14 +263,6 @@ describe EquipmentModel do
           @model.num_available(@reservation.start_date, @reservation.due_date).should eq(0)
         end
       end
-      describe ".number_reserved_on_date" do
-        it "should return the number of objects of that model reserved on that date but not checked in" do
-          @reservation = FactoryGirl.create(:valid_reservation, equipment_model: @model)
-          @extra_object = FactoryGirl.create(:equipment_object, equipment_model: @model)
-          @model.equipment_objects.size.should eq(2)
-          @model.number_reserved_on_date(Date.today).should eq(1)
-        end
-      end
       describe ".number_overdue" do
         it "should return the number of objects of a given model that are checked out and overdue" do
           @reservation = FactoryGirl.build(:overdue_reservation, equipment_model: @model)

@@ -171,7 +171,19 @@ describe UsersController do
       #
     end
     describe 'PUT activate' do
-      #
+      before do
+        @user = FactoryGirl.create(:deactivated_user)
+        put :activate, id: @user.id
+      end
+
+      it 'reactivates user' do
+        @user.reload
+        expect(@user.deleted_at).to be_nil
+      end
+
+      it 'redirects to user_path' do
+        response.should redirect_to(@user)
+      end
     end
 
 
