@@ -21,7 +21,7 @@ class UsersController < ApplicationController
 
 
   def index
-    if params[:show_deleted]
+    if params[:show_banned]
       @users = User.order('login ASC')
     else
       @users = User.active.order('login ASC')

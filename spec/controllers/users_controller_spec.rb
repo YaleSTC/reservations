@@ -24,7 +24,7 @@ describe UsersController do
       @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
     end
     describe 'GET index' do
-      let!(:inactive_user) { FactoryGirl.create(:user, deleted_at: Date.today) }
+      let!(:banned_user) { FactoryGirl.create(:banned_user) }
       let!(:other_user) { FactoryGirl.create(:user) }
       before { get :index }
       it_behaves_like "page success"
@@ -32,13 +32,13 @@ describe UsersController do
       context 'without show deleted' do
         it 'should assign users to all active users' do
           assigns(:users).include?(other_user).should be_true
-          assigns(:users).include?(inactive_user).should be_false
+          assigns(:users).include?(banned_user).should be_false
         end
       end
       context 'with show deleted' do
         before { get :index, show_deleted: true }
         it 'should assign users to all users' do
-          assigns(:users).include?(inactive_user).should be_true
+          assigns(:users).include?(banned_user).should be_true
         end
       end
     end

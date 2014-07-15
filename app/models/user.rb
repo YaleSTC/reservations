@@ -35,7 +35,7 @@ class User < ActiveRecord::Base
             :view_mode,   inclusion: { in: ['admin', 'normal', 'checkout', 'superuser', 'banned'] }
 
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
-  scope :active, where("#{table_name}.deleted_at is null")
+  scope :active, where("role != 'banned'")
 
   # ------- validations -------- #
   def skip_phone_validation?
