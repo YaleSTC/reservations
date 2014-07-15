@@ -29,6 +29,8 @@ Reservations::Application.routes.draw do
   resources :users do
     collection do
       get :find
+    end
+    member do
       put :ban
       put :unban
     end

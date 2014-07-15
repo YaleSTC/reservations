@@ -130,10 +130,10 @@
 <div class="form-actions">
   <%= link_to "Edit Information", edit_user_path(@user), :class => 'btn' %>
   <% if can? :manage, User %>
-    <% if @user.deleted_at %>
-      <%= link_to "Activate User", activate_path(:users,@user.id), :class => "btn btn-success", :method => :put %>
+    <% if @user.role == "banned" %>
+      <%= make_unban_btn @user.id %>
     <% else %>
-      <%= link_to "Deactivate User", deactivate_path(:users, @user), :class => "btn btn-danger", :method => :put, :confirm => "Deactivating this user will permanently destroy all of their reservations, are you sure you want to do this?" %>
+      <%= make_ban_btn @user.id %>
     <% end %>
     <%= link_to "View All Users", users_path, :class => 'btn', :id => 'view_all_users' %>
   <% end %>

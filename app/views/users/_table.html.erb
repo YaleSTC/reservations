@@ -28,10 +28,10 @@
     <% if can? :manage, User %>
       <td><%= link_to "Edit", edit_user_path(user), :class => "btn" %></td>
       <td>
-        <% if user.deleted_at %>
-          <%= make_activate_btn(:users,user) %>
+        <% if user.role != 'banned' %>
+          <%= make_ban_btn(user) %>
         <% else %>
-          <%= make_deactivate_btn(:users,user) %>
+          <%= make_unban_btn(user) %>
         <% end %>
       </td>
     <% end %>

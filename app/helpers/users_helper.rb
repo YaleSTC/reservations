@@ -15,11 +15,11 @@ module UsersHelper
   end
 
   def make_ban_btn user_id
-    link_to "Ban", ban_path, class: "btn btn-danger", method: put
+    link_to "Ban", ban_user_path(user_id), class: "btn btn-danger", method: :put
   end
 
   def make_unban_btn user_id
-    link_to "Unban", unban_path, class: "btn btn-success", method: put
+    link_to "Unban", unban_user_path(user_id), class: "btn btn-success", method: :put
   end
 
 end
