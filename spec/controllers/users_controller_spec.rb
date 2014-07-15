@@ -24,7 +24,7 @@ describe UsersController do
       @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
     end
     describe 'GET index' do
-      let!(:banned_user) { FactoryGirl.create(:banned_user) }
+      let!(:banned) { FactoryGirl.create(:banned) }
       let!(:other_user) { FactoryGirl.create(:user) }
       before { get :index }
       it_behaves_like "page success"
@@ -184,7 +184,7 @@ describe UsersController do
     describe 'PUT unban' do
       before do
         request.env["HTTP_REFERER"] = 'where_i_came_from'
-        @user = FactoryGirl.create(:banned_user)
+        @user = FactoryGirl.create(:banned)
         put :unban, id: @user.id
       end
 
