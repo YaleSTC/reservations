@@ -29,16 +29,16 @@ describe UsersController do
       before { get :index }
       it_behaves_like "page success"
       it { should render_template(:index) }
-      context 'without show deleted' do
+      context 'without show banned' do
         it 'should assign users to all active users' do
           assigns(:users).include?(other_user).should be_true
-          assigns(:users).include?(banned_user).should be_false
+          assigns(:users).include?(banned).should be_false
         end
       end
-      context 'with show deleted' do
-        before { get :index, show_deleted: true }
+      context 'with show banned' do
+        before { get :index, show_banned: true }
         it 'should assign users to all users' do
-          assigns(:users).include?(banned_user).should be_true
+          assigns(:users).include?(banned).should be_true
         end
       end
     end
@@ -190,8 +190,8 @@ describe UsersController do
 
       it 'sets user to patron' do
         @user.reload
-        expect(@user.role).to eq('patron')
-        expect(@user.view_mode).to eq('patron')
+        expect(@user.role).to eq('normal')
+        expect(@user.view_mode).to eq('normal')
       end
 
       it { should set_the_flash}

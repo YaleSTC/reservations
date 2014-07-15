@@ -2,7 +2,6 @@ require 'net/ldap'
 
 class User < ActiveRecord::Base
   has_many :reservations, foreign_key: 'reserver_id', dependent: :destroy
-  nilify_blanks only: [:deleted_at]
   has_and_belongs_to_many :requirements,
                           class_name: "Requirement",
                           association_foreign_key: "requirement_id",
@@ -10,7 +9,7 @@ class User < ActiveRecord::Base
 
   attr_accessible :login, :first_name, :last_name, :nickname, :phone, :email,
                   :affiliation, :role, :view_mode, :created_by_admin,
-                  :deleted_at, :requirement_ids, :user_ids, :terms_of_service_accepted, :csv_import
+                  :requirement_ids, :user_ids, :terms_of_service_accepted, :csv_import
 
   attr_accessor   :full_query, :created_by_admin, :user_type, :csv_import
 
