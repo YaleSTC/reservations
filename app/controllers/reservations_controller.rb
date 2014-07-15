@@ -59,49 +59,25 @@ class ReservationsController < ApplicationController
   end
 
   def create
-    successful_reservations = []
-    #using http://stackoverflow.com/questions/7233859/ruby-on-rails-updating-multiple-models-from-the-one-controller as inspiration
+
     Reservation.transaction do
       begin
-        cart_reservations = cart.prepare_all
-        @errors = cart.validate_all
-        if @errors.empty?
-          # If the reservation is a finalized reservation, save it as auto-approved ...
-          params[:reservation][:approval_status] = "auto"
-          success_message = "Reservation created successfully." # errors are caught in the rollback
-        elsif can? :override, :reservation_errors
-          # display a different flash notice for privileged persons
-          params[:reservation][:approval_status] = "auto"
-          success_message = "Reservation created successfully, despite the aforementioned errors."
-        else
-          # ... otherwise mark it as a Reservation Request.
-          params[:reservation][:approval_status] = "requested"
-          success_message = "This request has been successfully submitted, and is now subject to approval by an administrator."
-        end
 
-        cart_reservations.each do |cart_res|
-          @reservation = Reservation.new(params[:reservation])
-          @reservation.equipment_model =  cart_res.equipment_model
-          @reservation.save!
-          successful_reservations << @reservation
-        end
-
-        session[:cart] = Cart.new
+        start_date = cart.start_date
+        success_message = cart.reserve_all
 
         # emails are probably failing---this code was already commented out 2014.06.19, and we don't know why.
         #if AppConfig.first.reservation_confirmation_email_active?
         #  #UserMailer.reservation_confirmation(complete_reservation).deliver
         #end
-        if can? :manage, Reservation
-          if params[:reservation][:start_date].to_date === Date::today.to_date
-            flash[:notice] = "Are you simultaneously checking out equipment for someone? Note that\
+
+        flash[:notice] = success_message
+        redirect_to catalog_path and return if cannot? :manage, Reservation
+          if start_date.to_date === Date::today.to_date
+            flash[:notice] += " Are you simultaneously checking out equipment for someone? Note that\
                              only the reservation has been made. Don't forget to continue to checkout."
           end
           redirect_to manage_reservations_for_user_path(params[:reservation][:reserver_id]) and return
-        else
-          flash[:notice] = success_message
-          redirect_to catalog_path and return
-        end
       rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid => e
         redirect_to catalog_path, flash: {error: "Oops, something went wrong with making your reservation.<br/> #{e.message}".html_safe}
         raise ActiveRecord::Rollback

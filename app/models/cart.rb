@@ -67,6 +67,27 @@ class Cart
     reservations
   end
 
+  def reserve_all
+    # reserve all the items in the cart!
+    reservations = prepare_all
+    message = []
+    reservations.each do |r|
+      errors = r.validate
+      if errors.empty? || (can? :override, :reservation_errors)
+        r.approval_status = 'auto'
+        message << "Reservation for #{r.equipment_model.name} created successfully#{", despite the aforementioned errors" unless errors.empty?}.\n"
+      else
+        r.approval_status = 'requested'
+        message << "Request for #{r.equipment_model.name} filed successfully.\n"
+      end
+      r.save
+    end
+
+    purge_all
+
+    messages.to_sentence
+  end
+
   # Returns the cart's duration
   def duration #in days
     @due_date.to_date - @start_date.to_date + 1
