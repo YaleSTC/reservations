@@ -6,7 +6,7 @@ class UsersController < ApplicationController
 
   skip_filter :cart, only: [:new, :create]
   skip_filter :first_time_user, only: [:new, :create]
-  before_filter :set_user, only: [:show, :edit, :update, :destroy, :deactivate, :activate]
+  before_filter :set_user, only: [:show, :edit, :update, :destroy, :ban, :unban]
 
   include ActivationHelper
   include Autocomplete
@@ -121,9 +121,25 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    @user.destroy(:force)
+    @user.destroy
     flash[:notice] = "Successfully destroyed user."
     redirect_to users_url
+  end
+
+  def ban
+    @user.role = "banned"
+    @user.view_mode = "banned"
+    @user.save
+    flash[:notice] = "#{@user.name} was banned succesfully."
+    redirect_to request.referer
+  end
+
+  def unban
+    @user.role = "normal"
+    @user.view_mode = "normal"
+    @user.save
+    flash[:notice] = "#{@user.name} was restored to patron status."
+    redirect_to request.referer
   end
 
   def find
@@ -148,15 +164,4 @@ class UsersController < ApplicationController
     end
   end
 
-  def deactivate
-    @user.destroy #Deactivate the user model
-    flash[:notice] = "Successfully deactivated user. Any related equipment has been deactivated as well. All reservations for this user have been permanently destroyed."
-    redirect_to users_path  # always redirect to show page for deactivated user
-  end
-
-  def activate
-    @user.revive
-    flash[:notice] = "Successfully reactivated user."
-    redirect_to @user
-  end
 end

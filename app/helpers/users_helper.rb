@@ -13,4 +13,13 @@ module UsersHelper
     return 'fa fa-minus-circle' if stat == :missed
     return 'fa fa-thumbs-down' if stat == :past_overdue
   end
+
+  def make_ban_btn user_id
+    link_to "Ban", ban_path, class: "btn btn-danger", method: put
+  end
+
+  def make_unban_btn user_id
+    link_to "Unban", unban_path, class: "btn btn-success", method: put
+  end
+
 end

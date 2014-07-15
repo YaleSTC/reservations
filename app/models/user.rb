@@ -39,19 +39,14 @@ class User < ActiveRecord::Base
 
   # ------- validations -------- #
   def skip_phone_validation?
-    if AppConfig.first          # is there an app config?
-      if !AppConfig.first.require_phone
-        return true             # if phone not required, return true
-      else
-        return ( @csv_import ? true : false ) # no phone required if csv
-      end
-    end
-    return true                 # no phone required if no app config
+    return true unless AppConfig.first
+    return true unless AppConfig.first.require_phone
+    return @csv_import
   end
   # ------- end validations -------- #
 
   def name
-    [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name].join(" ")
+    "#{(nickname.blank? ? first_name : nickname)} #{last_name}"
   end
 
   def equipment_objects
@@ -86,7 +81,7 @@ class User < ActiveRecord::Base
   end
 
   def render_name
-    [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name, login].join(" ")
+    "#{name} #{login}"
   end
 
 
