@@ -64,7 +64,7 @@ class ReservationsController < ApplicationController
       begin
 
         start_date = cart.start_date
-        success_message = cart.reserve_all
+        success_message = cart.reserve_all(can? :override, :reservation_errors)
 
         # emails are probably failing---this code was already commented out 2014.06.19, and we don't know why.
         #if AppConfig.first.reservation_confirmation_email_active?

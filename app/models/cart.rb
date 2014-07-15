@@ -67,13 +67,15 @@ class Cart
     reservations
   end
 
-  def reserve_all
+  def reserve_all override
     # reserve all the items in the cart!
+    # takes 1 argument which is whether or not
+    # validations can be overriden
     reservations = prepare_all
     message = []
     reservations.each do |r|
       errors = r.validate
-      if errors.empty? || (can? :override, :reservation_errors)
+      if errors.empty? || override
         r.approval_status = 'auto'
         message << "Reservation for #{r.equipment_model.name} created successfully#{", despite the aforementioned errors" unless errors.empty?}.\n"
       else
@@ -85,7 +87,7 @@ class Cart
 
     purge_all
 
-    messages.to_sentence
+    message.to_sentence
   end
 
   # Returns the cart's duration
