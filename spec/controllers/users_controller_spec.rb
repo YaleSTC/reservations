@@ -167,23 +167,35 @@ describe UsersController do
 
       end
     end
-    describe 'PUT deactivate' do
-      #
-    end
-    describe 'PUT activate' do
+    describe 'PUT ban' do
       before do
-        @user = FactoryGirl.create(:deactivated_user)
-        put :activate, id: @user.id
+        request.env["HTTP_REFERER"] = 'where_i_came_from'
+        @user = FactoryGirl.create(:user)
+        put :ban, id: @user.id
       end
-
-      it 'reactivates user' do
+      it 'should make the user banned' do
         @user.reload
-        expect(@user.deleted_at).to be_nil
+        expect(@user.role).to eq('banned')
+        expect(@user.view_mode).to eq('banned')
+      end
+      it { should set_the_flash }
+      it { should redirect_to("where_i_came_from") }
+    end
+    describe 'PUT unban' do
+      before do
+        request.env["HTTP_REFERER"] = 'where_i_came_from'
+        @user = FactoryGirl.create(:banned_user)
+        put :unban, id: @user.id
       end
 
-      it 'redirects to user_path' do
-        response.should redirect_to(@user)
+      it 'sets user to patron' do
+        @user.reload
+        expect(@user.role).to eq('patron')
+        expect(@user.view_mode).to eq('patron')
       end
+
+      it { should set_the_flash}
+      it { should redirect_to("where_i_came_from") }
     end
 
 
