@@ -9,7 +9,6 @@ class BlackoutsController < ApplicationController
 
   def set_params_for_create_and_update
     params[:blackout][:created_by] = current_user[:id] # Last-edited-by is automatically set
-    params[:blackout][:equipment_model_id] = 0 # If per-equipment_model blackouts are implemented, delete this line.
   end
 
   def set_current_blackout

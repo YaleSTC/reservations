@@ -13,7 +13,7 @@ describe LogController, versioning: true do
     PaperTrail.whodunnit = @controller.current_user
       # Necessary because for some reason, user ID that is responsible for
       # changes is deleted between tests
-    @reservation = FactoryGirl.create(:reservation)
+    @reservation = FactoryGirl.create(:valid_reservation)
     PaperTrail.enabled = false
   end
 

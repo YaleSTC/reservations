@@ -18,6 +18,7 @@ class ApplicationController < ActionController::Base
     c.before_filter :fix_cart_date
     c.before_filter :set_view_mode
     c.before_filter :check_view_mode
+    c.before_filter :make_cart_compatible
   end
 
   helper_method :current_user
@@ -66,7 +67,7 @@ class ApplicationController < ActionController::Base
   def cart
     session[:cart] ||= Cart.new
     if session[:cart].reserver_id.nil?
-      session[:cart].set_reserver_id(current_user.id) if current_user
+      session[:cart].reserver_id = current_user.id if current_user
     end
     session[:cart]
   end
@@ -110,7 +111,17 @@ class ApplicationController < ActionController::Base
   end
 
   def fix_cart_date
-    cart.set_start_date(Date.today) if cart.start_date < Date.today
+    cart.start_date = (Date.today) if cart.start_date < Date.today
+    cart.fix_due_date
+  end
+
+  # If user's session has an old Cart object that stores items in Array rather
+  # than a Hash (see #587), regenerate the Cart.
+  # TODO: Remove in ~2015, when nobody could conceivably run the old app?
+  def make_cart_compatible
+    unless session[:cart].items.is_a? Hash
+      session[:cart] = Cart.new
+    end
   end
 
   #-------- end before_filter methods --------#
@@ -120,18 +131,25 @@ class ApplicationController < ActionController::Base
     cart = session[:cart]
     flash.clear
     begin
-      cart.set_start_date(Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y'))
-      cart.set_due_date(Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y'))
-      cart.set_reserver_id(params[:reserver_id])
-    rescue ArgumentError => e
-      cart.set_start_date(Date.today)
+      cart.start_date = Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y')
+      cart.due_date = Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y')
+      cart.fix_due_date
+      cart.reserver_id = params[:reserver_id].blank? ? current_user.id : params[:reserver_id]
+    rescue ArgumentError
+      cart.start_date = Date.today
       flash[:error] = "Please enter a valid start or due date."
     end
 
+    # get soft blackout notices
+    notices = []
+    notices << Blackout.get_notices_for_date(cart.start_date,:soft)
+    notices << Blackout.get_notices_for_date(cart.due_date,:soft)
+    notices = notices.reject{ |a| a.blank? }
+
     # validate
-    errors = Reservation.validate_set(cart.reserver, cart.cart_reservations)
+    errors = cart.validate_all
     # don't over-write flash if invalid date was set above
-    flash[:error] ||= errors.to_sentence
+    flash[:error] ||= notices.to_sentence + "\n" + errors.to_sentence
     flash[:notice] = "Cart updated."
 
     # reload appropriate divs / exit
@@ -143,13 +161,8 @@ class ApplicationController < ActionController::Base
   end
 
   def empty_cart
-    #destroy old cart reservations
-    current_cart = session[:cart]
-    CartReservation.where(reserver_id: current_cart.reserver.id).destroy_all
-
     session[:cart] = nil
     flash[:notice] = "Cart emptied."
-
     redirect_to root_path
   end
 

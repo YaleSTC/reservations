@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140618173229) do
+ActiveRecord::Schema.define(:version => 20140714135920) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -62,27 +62,18 @@ ActiveRecord::Schema.define(:version => 20140618173229) do
     t.boolean  "viewed",                                             :default => true
     t.boolean  "override_on_create",                                 :default => false
     t.boolean  "override_at_checkout",                               :default => false
+    t.integer  "blackout_exp_time"
   end
 
   create_table "blackouts", :force => true do |t|
-    t.integer  "equipment_model_id"
     t.date     "start_date"
     t.date     "end_date"
     t.text     "notice"
     t.integer  "created_by"
     t.text     "blackout_type"
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
     t.integer  "set_id"
-  end
-
-  create_table "cart_reservations", :force => true do |t|
-    t.integer  "reserver_id"
-    t.datetime "start_date"
-    t.datetime "due_date"
-    t.integer  "equipment_model_id"
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
   end
 
   create_table "categories", :force => true do |t|

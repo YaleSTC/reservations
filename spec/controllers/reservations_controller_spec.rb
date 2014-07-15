@@ -139,7 +139,7 @@ describe ReservationsController do
 
   describe '#show (GET /reservations/:id)' do
     before(:each) do
-      @admin_res = FactoryGirl.create(:reservation, reserver: @admin)
+      @admin_res = FactoryGirl.create(:valid_reservation, reserver: @admin)
     end
 
     shared_examples 'can view reservation by patron' do
@@ -299,7 +299,7 @@ describe ReservationsController do
           expect { @req.call }.to change { Reservation.count }
         end
         it 'empties the Cart' do
-          expect { @req.call }.to change { CartReservation.count }
+          @req.call
           response.request.env['rack.session'][:cart].items.count.should eq(0)
           # Cart.should_receive(:new)
         end
@@ -419,8 +419,8 @@ describe ReservationsController do
         end
         it 'should update the reservation details' do
           @reservation.reload
-          expect(@reservation.start_date).to eq(Date.today.to_time)
-          expect(@reservation.due_date).to eq((Date.tomorrow + 3.days).to_time)
+          expect(@reservation.start_date.to_time.utc).to eq(Date.today.to_time.utc)
+          expect(@reservation.due_date.to_time.utc).to eq((Date.tomorrow + 3.days).to_time.utc)
         end
         it { should redirect_to(@reservation) }
       end
@@ -507,7 +507,7 @@ describe ReservationsController do
       end
 
       include_examples 'can destroy reservation' do
-        let!(:reservation) { FactoryGirl.create(:reservation, reserver: @user) }
+        let!(:reservation) { FactoryGirl.create(:valid_reservation, reserver: @user) }
       end
     end
 
@@ -524,7 +524,7 @@ describe ReservationsController do
 
       context 'and the reservation is not checked out' do
         include_examples 'can destroy reservation' do
-          let!(:reservation) { FactoryGirl.create(:reservation, reserver: @user) }
+          let!(:reservation) { FactoryGirl.create(:valid_reservation, reserver: @user) }
         end
       end
     end
@@ -551,7 +551,7 @@ describe ReservationsController do
 
       context 'and the reservation is not their own' do
         include_examples 'cannot destroy reservation' do
-          let(:reservation) { FactoryGirl.create(:reservation, reserver: @checkout_person) }
+          let(:reservation) { FactoryGirl.create(:valid_reservation, reserver: @checkout_person) }
         end
       end
     end
@@ -577,11 +577,11 @@ describe ReservationsController do
       end
 
       it 'assigns @check_out_set correctly' do
-        expect(assigns(:check_out_set)).to eq(Reservation.due_for_checkout(@user))
+        expect(assigns(:check_out_set)).to eq(@user.due_for_checkout)
       end
 
       it 'assigns @check_in_set correctly' do
-        expect(assigns(:check_in_set)).to eq(Reservation.due_for_checkin(@user))
+        expect(assigns(:check_in_set)).to eq(@user.due_for_checkin)
       end
     end
 
@@ -634,19 +634,19 @@ describe ReservationsController do
       end
 
       it 'assigns @user_overdue_reservations_set correctly' do
-        expect(assigns(:user_overdue_reservations_set)).to eq [Reservation.overdue_user_reservations(@user)].delete_if{|a| a.empty?}
+        expect(assigns(:user_overdue_reservations_set)).to eq [Reservation.overdue.for_reserver(@user)].delete_if{|a| a.empty?}
       end
 
       it 'assigns @user_checked_out_today_reservations_set correctly' do
-        expect(assigns(:user_checked_out_today_reservations_set)).to eq [Reservation.checked_out_today_user_reservations(@user)].delete_if{|a| a.empty?}
+        expect(assigns(:user_checked_out_today_reservations_set)).to eq [Reservation.checked_out_today.for_reserver(@user)].delete_if{|a| a.empty?}
       end
 
       it 'assigns @user_checked_out_previous_reservations_set correctly' do
-        expect(assigns(:user_checked_out_previous_reservations_set)).to eq [Reservation.checked_out_previous_user_reservations(@user)].delete_if{|a| a.empty?}
+        expect(assigns(:user_checked_out_previous_reservations_set)).to eq [Reservation.checked_out_previous.for_reserver(@user)].delete_if{|a| a.empty?}
       end
 
       it 'assigns @user_reserved_reservations_set correctly' do
-        expect(assigns(:user_reserved_reservations_set)).to eq [Reservation.reserved_user_reservations(@user)].delete_if{|a| a.empty?}
+        expect(assigns(:user_reserved_reservations_set)).to eq [Reservation.reserved.for_reserver(@user)].delete_if{|a| a.empty?}
       end
     end
 
