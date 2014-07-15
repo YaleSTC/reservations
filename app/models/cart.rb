@@ -67,7 +67,7 @@ class Cart
     reservations
   end
 
-  def reserve_all override
+  def reserve_all override=false
     # reserve all the items in the cart!
     # takes 1 argument which is whether or not
     # validations can be overriden
