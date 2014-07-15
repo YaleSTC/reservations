@@ -78,7 +78,7 @@ module CartValidations
 
       self.start_date.to_date.upto(self.due_date.to_date) do |d|
         if Reservation.number_for_model_on_date(d,model.id,relevant) + quantity > max_models
-          errors << "Cannot reserve more than #{max_models} #{model.name.pluralize}"
+          errors << "Only #{max_models} #{model.name.pluralize} can be reserved at a time"
           break
         end
       end
@@ -94,7 +94,7 @@ module CartValidations
       max_cat = cat.maximum_per_user
       self.start_date.to_date.upto(self.due_date.to_date) do |d|
         if Reservation.number_for_category_on_date(d,cat.id,relevant) + q > max_cat
-          errors << "Cannot reserve more than #{max_cat} #{cat.name.pluralize}"
+          errors << "Only #{max_cat} #{cat.name.pluralize} can be reserved at a time"
           break
         end
       end

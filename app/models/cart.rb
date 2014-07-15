@@ -77,17 +77,17 @@ class Cart
       errors = r.validate
       if errors.empty? || override
         r.approval_status = 'auto'
-        message << "Reservation for #{r.equipment_model.name} created successfully#{", despite the aforementioned errors" unless errors.empty?}.\n"
+        message << "Reservation for #{r.equipment_model.name} created successfully#{", even though " + errors.to_sentence[0,1].downcase + errors.to_sentence[1..-1] unless errors.empty?}.\n"
       else
         r.approval_status = 'requested'
-        message << "Request for #{r.equipment_model.name} filed successfully.\n"
+        message << "Request for #{r.equipment_model.name} filed successfully. (#{errors.to_sentence})\n"
       end
-      r.save
+      r.save!
     end
 
     purge_all
 
-    message.to_sentence
+    message.join(" ")
   end
 
   # Returns the cart's duration
