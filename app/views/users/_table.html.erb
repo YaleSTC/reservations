@@ -27,13 +27,7 @@
     <% end %>
     <% if can? :manage, User %>
       <td><%= link_to "Edit", edit_user_path(user), :class => "btn" %></td>
-      <td>
-        <% if user.role != 'banned' %>
-          <%= make_ban_btn(user) %>
-        <% else %>
-          <%= make_unban_btn(user) %>
-        <% end %>
-      </td>
+      <td><%= make_ban_btn(user) %></td>
     <% end %>
     </tr>
   <% end %>

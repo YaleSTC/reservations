@@ -14,12 +14,12 @@ module UsersHelper
     return 'fa fa-thumbs-down' if stat == :past_overdue
   end
 
-  def make_ban_btn user_id
-    link_to "Ban", ban_user_path(user_id), class: "btn btn-danger", method: :put
-  end
-
-  def make_unban_btn user_id
-    link_to "Unban", unban_user_path(user_id), class: "btn btn-success", method: :put
+  def make_ban_btn user
+    if user.role != 'banned'
+      link_to "Ban", ban_user_path(user_id), class: "btn btn-danger", method: :put
+    else
+      link_to "Unban", unban_user_path(user_id), class: "btn btn-success", method: :put
+    end
   end
 
 end

@@ -130,11 +130,7 @@
 <div class="form-actions">
   <%= link_to "Edit Information", edit_user_path(@user), :class => 'btn' %>
   <% if can? :manage, User %>
-    <% if @user.role == "banned" %>
-      <%= make_unban_btn @user.id %>
-    <% else %>
-      <%= make_ban_btn @user.id %>
-    <% end %>
+    <%= make_ban_btn @user %>
     <%= link_to "View All Users", users_path, :class => 'btn', :id => 'view_all_users' %>
   <% end %>
 </div>
