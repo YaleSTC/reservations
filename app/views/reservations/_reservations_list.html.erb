@@ -13,7 +13,7 @@
   </thead>
   <tbody>
 
-  <% for reservation in reservations_list %>
+  <% reservations_set.each do |reservation| %>
     <tr>
       <td><%= link_to reservation.id, reservation %></td>
       <% if can? :manage, Reservation %>

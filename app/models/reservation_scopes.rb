@@ -8,7 +8,7 @@ module ReservationScopes
       scope :untouched, where("checked_out IS NULL").not_returned
 
       scope :reserved, lambda { where("due_date >= ?", Time.now.midnight.utc).untouched.recent }
-      scope :checked_out, lambda { where("checked_out IS NOT NULL", Time.now.midnight.utc).not_returned.recent }
+      scope :checked_out, where("checked_out IS NOT NULL").not_returned.recent
       scope :checked_out_today, lambda { where("checked_out >= ? and checked_out <= ?", Date.today.to_datetime, Date.tomorrow.to_datetime).not_returned.recent }
       scope :checked_out_previous, lambda { where("checked_out < ? and due_date <= ?", Time.now.midnight.utc, Date.tomorrow.midnight.utc).not_returned.recent }
       scope :overdue, lambda { where("due_date < ?", Time.now.midnight.utc).not_returned.recent }
