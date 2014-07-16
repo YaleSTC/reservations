@@ -16,9 +16,9 @@ module UsersHelper
 
   def make_ban_btn user
     if user.role != 'banned'
-      link_to "Ban", ban_user_path(user_id), class: "btn btn-danger", method: :put
+      link_to "Ban", ban_user_path(user), class: "btn btn-danger", method: :put
     else
-      link_to "Unban", unban_user_path(user_id), class: "btn btn-success", method: :put
+      link_to "Unban", unban_user_path(user), class: "btn btn-success", method: :put
     end
   end
 
