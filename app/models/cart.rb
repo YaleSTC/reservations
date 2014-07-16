@@ -80,7 +80,7 @@ class Cart
         message << "Reservation for #{r.equipment_model.name} created successfully#{", even though " + errors.to_sentence[0,1].downcase + errors.to_sentence[1..-1] unless errors.empty?}.\n"
       else
         r.approval_status = 'requested'
-        message << "Request for #{r.equipment_model.name} filed successfully. (#{errors.to_sentence})\n"
+        message << "Request for #{r.equipment_model.name} filed successfully. #{errors.to_sentence}\n"
       end
       r.save!
     end
