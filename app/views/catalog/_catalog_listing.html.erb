@@ -1,8 +1,8 @@
 <% @eq_models_by_category.each do |category, equipment_models| %>
-      <h2 class="catalog">
-        <%= link_to category.name, category_equipment_models_path(category) %>
-      </h2>
       <% unless equipment_models.nil? %>
+        <h2 class="catalog">
+          <%= link_to category.name, category_equipment_models_path(category) %>
+        </h2>
         <ul class="thumbnails">
         <% equipment_models.each do |equipment_model| %>
           <li class="span3">

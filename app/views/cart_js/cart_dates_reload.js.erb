@@ -1,10 +1,5 @@
 $('#cart_dates').replaceWith('<%= escape_javascript(render :partial => 'reservations/cart_dates') %>');
 <% if params[:controller] == "catalog" %>
-  //$('.model_availability').html("<%= @available_string %>");
-  <%# @availability_hash.each do |em_id, q_available| %>
-    //$("#availability_<#%= em_id %>").html("<%#= q_available %>");
-  <%# end %>
-
   $('#catalog_listing').html('<%= escape_javascript( render partial: 'catalog/catalog_listing', locals: { available_hash: @available_hash, available_string: @available_string })%>');
 <% end %>
 resume_cart();
