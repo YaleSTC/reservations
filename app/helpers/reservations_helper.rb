@@ -29,7 +29,7 @@ module ReservationsHelper
   end
 
   def manage_reservations_btn
-    return if cannot? :manage, Reservation || @reservation.reserver.id.nil?
+    return if (cannot? :manage, Reservation) || @reservation.reserver.id.nil?
     if (can? :override, :reservation_errors) && @reservation.approval_status == 'requested'
       link_to 'Review Request', review_request_path, class: 'btn btn-inverse'
     elsif @reservation.status == 'reserved'
