@@ -49,7 +49,7 @@ class ReservationsController < ApplicationController
         if can? :override, :reservation_errors
           flash[:error] = 'Are you sure you want to continue? Please review the errors below.'
         else
-          flash[:error] = 'Please review the errors below. If uncorrected, your reservation will be filed as a request, and subject to administrator approval.'
+          flash[:error] = 'Please review the errors below. If uncorrected, any reservations with errors will be filed as a request, and subject to administrator approval.'
         end
       end
 
@@ -64,7 +64,11 @@ class ReservationsController < ApplicationController
       begin
 
         start_date = cart.start_date
-        success_message = cart.reserve_all(can? :override, :reservation_errors)
+        if cart.validate_all.empty? || (can? :override, :reservation_errors)
+          success_message = cart.reserve_all
+        else
+          success_message = cart.request_all
+        end
 
         # emails are probably failing---this code was already commented out 2014.06.19, and we don't know why.
         #if AppConfig.first.reservation_confirmation_email_active?

@@ -67,15 +67,15 @@ class Cart
     reservations
   end
 
-  def reserve_all override=false
+  def reserve_all(request = false)
     # reserve all the items in the cart!
     # takes 1 argument which is whether or not
-    # validations can be overriden
+    # the equipment should be requested or reserved
     reservations = prepare_all
     message = []
     reservations.each do |r|
       errors = r.validate
-      if errors.empty? || override
+      unless request
         r.approval_status = 'auto'
         message << "Reservation for #{r.equipment_model.name} created successfully#{", even though " + errors.to_sentence[0,1].downcase + errors.to_sentence[1..-1] unless errors.empty?}.\n"
       else
@@ -88,6 +88,10 @@ class Cart
     purge_all
 
     message.join(" ")
+  end
+
+  def request_all
+    reserve_all(true)
   end
 
   # Returns the cart's duration
