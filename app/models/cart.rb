@@ -67,10 +67,11 @@ class Cart
     reservations
   end
 
-  def reserve_all(request = false)
+  def reserve_all(notes = "" , request = false)
     # reserve all the items in the cart!
-    # takes 1 argument which is whether or not
+    # takes 2 arguments which is whether or not
     # the equipment should be requested or reserved
+    # and what notes the reservations should be initialized with
     reservations = prepare_all
     message = []
     reservations.each do |r|
@@ -80,8 +81,9 @@ class Cart
         message << "Reservation for #{r.equipment_model.name} created successfully#{", even though " + errors.to_sentence[0,1].downcase + errors.to_sentence[1..-1] unless errors.empty?}.\n"
       else
         r.approval_status = 'requested'
-        message << "Request for #{r.equipment_model.name} filed successfully. (#{errors.to_sentence})\n"
+        message << "Request for #{r.equipment_model.name} filed successfully. #{errors.to_sentence}\n"
       end
+      r.notes = notes
       r.save!
     end
 
@@ -90,8 +92,8 @@ class Cart
     message.join(" ")
   end
 
-  def request_all
-    reserve_all(true)
+  def request_all(notes = "")
+    reserve_all(notes, true)
   end
 
   # Returns the cart's duration
