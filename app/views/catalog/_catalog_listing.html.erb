@@ -1,4 +1,4 @@
-<% @eq_models_by_category.each do |category, equipment_models| %>
+<% eq_models_by_category.each do |category, equipment_models| %>
       <% unless equipment_models.nil? %>
         <h2 class="catalog">
           <%= link_to category.name, category_equipment_models_path(category) %>
@@ -7,8 +7,8 @@
         <% equipment_models.each do |equipment_model| %>
           <li class="span3">
           <%= render partial: 'equipment_model_div', locals: { equipment_model: equipment_model,
-                                                               availability_hash: @availability_hash,
-                                                               available_string: @available_string,
+                                                               availability_hash: availability_hash,
+                                                               available_string: available_string,
                                                               } %>
           </li>
         <% end %>

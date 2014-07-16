@@ -153,12 +153,6 @@ class ApplicationController < ActionController::Base
 
     # reload appropriate divs / exit
     if params[:controller] == 'catalog'
-     @page_eq_models_by_category = EquipmentModel.active.
-                              order('categories.sort_order ASC, equipment_models.name ASC').
-                              includes(:category).
-                              page(params[:page]).
-                              per(session[:items_per_page])
-    @eq_models_by_category = @page_eq_models_by_category.to_a.group_by(&:category)
       prepare_catalog_index_vars
     end
 
@@ -171,6 +165,13 @@ class ApplicationController < ActionController::Base
 
   def prepare_catalog_index_vars
     # prepare the catalog
+    @page_eq_models_by_category = EquipmentModel.active.
+                              order('categories.sort_order ASC, equipment_models.name ASC').
+                              includes(:category).
+                              page(params[:page]).
+                              per(session[:items_per_page])
+    @eq_models_by_category = @page_eq_models_by_category.to_a.group_by(&:category)
+
     @available_string = "available from #{cart.start_date.strftime("%b %d, %Y")} to #{cart.due_date.strftime("%b %d, %Y")}"
 
     # create an hash of em id's as keys and their availability as the value
