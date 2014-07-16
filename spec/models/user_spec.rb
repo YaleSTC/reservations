@@ -67,7 +67,7 @@ describe User do
   describe ".active" do
     before(:each) do
       @user = FactoryGirl.create(:user)
-      @deactivated = FactoryGirl.create(:deactivated_user)
+      @deactivated = FactoryGirl.create(:banned)
     end
 
     it "should return all active users" do
