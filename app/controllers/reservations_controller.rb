@@ -65,9 +65,9 @@ class ReservationsController < ApplicationController
 
         start_date = cart.start_date
         if cart.validate_all.empty? || (can? :override, :reservation_errors)
-          success_message = cart.reserve_all
+          success_message = cart.reserve_all(params[:reservation][:notes])
         else
-          success_message = cart.request_all
+          success_message = cart.request_all(params[:reservation][:notes])
         end
 
         # emails are probably failing---this code was already commented out 2014.06.19, and we don't know why.

@@ -28,6 +28,7 @@
     <%= f.input :start_date, :as => :hidden, :value => cart.start_date %>
     <%= f.input :due_date, :as => :hidden, :value => cart.due_date %>
   </p>
+
   <p>
     <ul class="rounded-list">
       <% cart.items.each do |model_id, quantity| %>
@@ -35,6 +36,10 @@
       <% end %>
     </ul>
   </p>
+
+  <%= f.label "Optional notes for this reservation:" %>
+  <%= f.input_field :notes, class: 'span6', rows: 5 %>
+
   <div class="form-actions">
     <%= f.button :submit, "Finalize Reservation" %>
     <%= link_to "Return to Catalog", catalog_path, class: 'btn' %>
