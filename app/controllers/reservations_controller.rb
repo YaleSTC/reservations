@@ -23,7 +23,7 @@ class ReservationsController < ApplicationController
     #if the filter is defined in the params, store those reservations
     filters.each do |filter|
       if params[filter]
-        @reservations_set = [@reservations_source.send(filter)].flatten
+        @reservations_set = @reservations_source.send(filter)
       end
     end
 
@@ -31,7 +31,7 @@ class ReservationsController < ApplicationController
     #if no filter is defined
     if @reservations_set.nil?
       @default = true
-      @reservations_set = [@reservations_source.send(default_filter)].flatten
+      @reservations_set = @reservations_source.send(default_filter)
     end
   end
 
