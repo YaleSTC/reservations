@@ -200,7 +200,7 @@ class EquipmentModel < ActiveRecord::Base
   end
 
   def available_object_select_options
-    self.equipment_objects.active.select{|e| e.available?}\
+    self.equipment_objects.includes(:reservations).active.select{|e| e.available?}\
         .sort_by(&:name)\
         .collect{|item| "<option value=#{item.id}>#{item.name}</option>"}\
         .join.html_safe
