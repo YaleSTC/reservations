@@ -60,22 +60,22 @@ class ReservationsController < ApplicationController
 
   def create
     @errors = cart.validate_all
-    puts "errors:" + @errors.to_s
     notes = params[:reservation][:notes]
+    requested = !@errors.empty? && (cannot? :override, :reservation_errors)
+
     if !@errors.blank? && notes.blank?
       # there were errors but they didn't fill out the notes
-      flash[:error] = "Please give a short justification for this reservation request/override"
+      flash[:error] = "Please give a short justification for this reservation #{requested ? 'request' : 'override'}"
       @notes_required = true
       render :new and return
     end
-    reserver = cart.reserver_id
 
     Reservation.transaction do
       begin
 
         start_date = cart.start_date
-        request_ = !@errors.empty? && (cannot? :override, :reservation_errors)
-        unless request_
+        reserver = cart.reserver_id
+        unless requested
           success_message = cart.reserve_all(params[:reservation][:notes])
         else
           success_message = cart.request_all(params[:reservation][:notes])
@@ -87,7 +87,7 @@ class ReservationsController < ApplicationController
         #end
 
         flash[:notice] = success_message
-        redirect_to catalog_path and return if (cannot? :manage, Reservation) || (request_ == true)
+        redirect_to catalog_path and return if (cannot? :manage, Reservation) || (requested == true)
           if start_date.to_date === Date::today.to_date
             flash[:notice] += " Are you simultaneously checking out equipment for someone? Note that\
                              only the reservation has been made. Don't forget to continue to checkout."

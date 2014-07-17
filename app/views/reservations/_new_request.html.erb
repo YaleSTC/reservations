@@ -38,7 +38,7 @@
   </div>
 
   <div class="form-actions">
-    <%= f.button :submit, "Submit Request" %>
+    <%= f.button :submit, "Submit Request", confirm: "Are you sure? This request is not finalized and will be subject to approval by an administrator. It will not be available for checkout until and unless approved, and the request may be denied for any reason at the sole discretion of the administrator." %>
     <%= link_to "Return to Catalog", catalog_path, class: 'btn' %>
   </div>
 <% end %>
