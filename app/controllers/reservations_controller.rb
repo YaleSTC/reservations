@@ -337,12 +337,10 @@ class ReservationsController < ApplicationController
   end
 
   def renew
-    @reservation.due_date += @reservation.max_renewal_length_available.days
-    @reservation.times_renewed = @reservation.times_renewed.to_i + 1
-
-    if !@reservation.save
+    message = @reservation.renew
+    if message
       redirect_to @reservation
-      flash[:error] = "Unable to update reservation dates. Please contact us for support."
+      flash[:error] = message
     end
     respond_to do |format|
       format.html{redirect_to root_path}

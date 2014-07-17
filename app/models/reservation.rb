@@ -144,12 +144,13 @@ class Reservation < ActiveRecord::Base
   def max_renewal_length_available
     # determine the max renewal length for a given reservation
     # O(n) queries
-
+    orig_due_date = self.due_date
     eq_model = self.equipment_model
-    for renewal_length in 1...eq_model.maximum_renewal_length do
-      break if eq_model.available_count(self.due_date + renewal_length.day) == 0
+    for renewal_length in eq_model.maximum_renewal_length...0 do
+      self.due_date = orig_due_date + renewal_length
+      break if self.validate.empty?
     end
-    renewal_length - 1
+    renewal_length
   end
 
   def is_eligible_for_renew?
@@ -168,6 +169,14 @@ class Reservation < ActiveRecord::Base
     max_renewal_days = Float::INFINITY if max_renewal_days == 'unrestricted'
     return ((self.due_date.to_date - Date.today).to_i < max_renewal_days ) &&
       (self.times_renewed < max_renewal_times)
+  end
+
+  def renew
+    # renew the reservation and return error messages if unsuccessful
+    return "Reservation not eligible for renewal" unless self.is_eligible_for_renew?
+    self.due_date += self.max_renewal_length_available
+    return "Unable to update reservation dates!" unless @reservation.save
+    return nil
   end
 
   def to_cart
