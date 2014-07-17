@@ -886,7 +886,6 @@ describe ReservationsController do
           put :renew, id: @other_res.id
         end
         it { response.should be_redirect }
-        it { should set_the_flash }
       end
 
     end
