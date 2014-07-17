@@ -232,12 +232,29 @@ describe ReservationsController do
 
       context 'with validation-failing items in Cart' do
         before(:each) do
-          @invalid_cart = FactoryGirl.build(:invalid_cart)
+          @invalid_cart = FactoryGirl.build(:invalid_cart, reserver_id: @user.id)
           @req = Proc.new do
             post :create,
-              {reservation: {start_date: Date.today, due_date: Date.tomorrow,
-                            reserver_id: @user.id}},
+              {reservation: {notes: "because I can" }},
               {cart: @invalid_cart}
+          end
+          @req_no_notes = Proc.new do
+            post :create,
+              { reservation: { } },
+              { cart: @invalid_cart }
+          end
+        end
+
+        context 'no justification provided' do
+          before do
+            @controller.stub(:current_user).and_return(@checkout_person)
+            @req_no_notes.call
+          end
+
+          it { should render_template(:new) }
+
+          it 'should set @notes_required to true' do
+            expect(assigns(:notes_required)).to be_true
           end
         end
 
@@ -263,23 +280,22 @@ describe ReservationsController do
           end
         end
 
-        # expected to fail until ReservationController is fixed from #583
         context 'and user cannot override errors' do
-          before { pending } # FIXME: Remove
+          # request would be filed
           before(:each) do
             AppConfig.first.update_attributes(override_on_create: false)
             @controller.stub(:current_user).and_return(@checkout_person)
           end
-          it 'does not affect database' do
-            expect { @req.call }.to_not change { Reservation.count }
+          it 'affects database' do
+            expect { @req.call }.to change { Reservation.count }
           end
           it 'redirects to catalog_path' do
             @req.call
             response.should redirect_to(catalog_path)
           end
-          it 'sets the flash' do
+          it 'should not set the flash' do
             @req.call
-            flash[:error].should_not be_nil
+            flash[:error].should be_nil
           end
         end
       end

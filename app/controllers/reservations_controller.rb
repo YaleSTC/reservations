@@ -59,15 +59,26 @@ class ReservationsController < ApplicationController
   end
 
   def create
+    @errors = cart.validate_all
+    notes = params[:reservation][:notes]
+    requested = !@errors.empty? && (cannot? :override, :reservation_errors)
+
+    if !@errors.blank? && notes.blank?
+      # there were errors but they didn't fill out the notes
+      flash[:error] = "Please give a short justification for this reservation #{requested ? 'request' : 'override'}"
+      @notes_required = true
+      render :new and return
+    end
 
     Reservation.transaction do
       begin
 
         start_date = cart.start_date
-        if cart.validate_all.empty? || (can? :override, :reservation_errors)
-          success_message = cart.reserve_all
+        reserver = cart.reserver_id
+        unless requested
+          success_message = cart.reserve_all(params[:reservation][:notes])
         else
-          success_message = cart.request_all
+          success_message = cart.request_all(params[:reservation][:notes])
         end
 
         # emails are probably failing---this code was already commented out 2014.06.19, and we don't know why.
@@ -76,12 +87,12 @@ class ReservationsController < ApplicationController
         #end
 
         flash[:notice] = success_message
-        redirect_to catalog_path and return if cannot? :manage, Reservation
+        redirect_to catalog_path and return if (cannot? :manage, Reservation) || (requested == true)
           if start_date.to_date === Date::today.to_date
             flash[:notice] += " Are you simultaneously checking out equipment for someone? Note that\
                              only the reservation has been made. Don't forget to continue to checkout."
           end
-          redirect_to manage_reservations_for_user_path(params[:reservation][:reserver_id]) and return
+          redirect_to manage_reservations_for_user_path(reserver) and return
       rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid => e
         redirect_to catalog_path, flash: {error: "Oops, something went wrong with making your reservation.<br/> #{e.message}".html_safe}
         raise ActiveRecord::Rollback
