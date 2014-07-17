@@ -696,11 +696,6 @@ describe ReservationsController do
     # - processes all reservations in params[:reservations] -- adds checkout_handler, checked_out (time), equipment_object; updates notes
     # - renders :receipt template
 
-    # TODO: Test cases for (non-)filled-in checkout procedures
-    # TODO: Test cases for different override-errors privileges
-    # TODO: Test cases for different TOS statuses
-    # TODO: Test cases for when a user has overdue reservations
-    # TODO: Test cases for when no reservations are selected
     # Note: Many of these can be cross-applied to #checkin as well
 
     shared_examples 'has successful checkout' do
@@ -760,6 +755,90 @@ describe ReservationsController do
     it_behaves_like 'inaccessible by banned user' do
       before { put :checkout, user_id: @banned.id }
     end
+
+    context 'when tos returns false' do
+      before do
+        @controller.stub(:check_tos).and_return(false)
+        put :checkout
+      end
+      it { response.should be_redirect }
+    end
+
+    context 'when not all procedures are filled out' do
+      before do
+        @controller.stub(:current_user).and_return(@admin)
+        @obj = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
+        @procedure = FactoryGirl.create(:checkout_procedure, equipment_model: @reservation.equipment_model)
+        reservations_params = {@reservation.id.to_s => {notes: "", equipment_object_id: @obj.id, checkout_procedures: {@procedure.id.to_s => 1}}}
+        put :checkout, user_id: @user.id, proc: true, reservations: reservations_params
+      end
+
+      it { response.should be_success }
+
+      it { should render_template(:receipt) }
+
+      it 'assigns empty @check_in_set' do
+        expect(assigns(:check_in_set)).to be_empty
+      end
+
+      it 'populates @check_out_set' do
+        expect(assigns(:check_out_set)).to eq [@reservation]
+      end
+
+      it 'updates the reservation' do
+        expect(@reservation.checkout_handler).to be_nil
+        expect(@reservation.checked_out).to be_nil
+        expect(@reservation.equipment_object).to be_nil
+        @reservation.reload
+        expect(@reservation.checkout_handler).to be_a(User)
+        expect(@reservation.checked_out).to_not be_nil
+        expect(@reservation.equipment_object).to eq @obj
+        expect(@reservation.notes).to_not be_nil
+      end
+    end
+
+    context 'no reservations selected' do
+      before(:each) do
+        reservations_params = {}
+        put :checkout, user_id: @user.id, reservations: reservations_params
+      end
+      it { should set_the_flash }
+      it { response.should be_redirect }
+    end
+
+    context 'reserver has overdue reservations' do
+
+      context 'can override reservations?' do
+        before do
+          @controller.stub(:current_user).and_return(@admin)
+          @obj = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
+          reservations_params = {@reservation.id.to_s => {notes: "", equipment_object_id: @obj.id }}
+          overdue = FactoryGirl.build(:overdue_reservation, reserver_id: @user.id)
+          overdue.save(validate: false)
+          put :checkout, user_id: @user.id, reservations: reservations_params
+        end
+        it { response.should be_success }
+        it { should render_template(:receipt) }
+      end
+      context 'cannot override' do
+        before do
+          @controller.stub(:current_user).and_return(@user)
+          @obj = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
+          reservations_params = {@reservation.id.to_s => {notes: "", equipment_object_id: @obj.id }}
+          overdue = FactoryGirl.build(:overdue_reservation, reserver_id: @user.id)
+          overdue.save(validate: false)
+          put :checkout, user_id: @user.id, reservations: reservations_params
+        end
+        it { should set_the_flash }
+        it { response.should be_redirect }
+      end
+
+    end
+
+
+
+
+
   end
 
   describe '#checkin (PUT /reservations/check-in/:user_id)' do

@@ -133,9 +133,11 @@ class ReservationsController < ApplicationController
   end
 
   def checkout
+    puts 'procing man' if params[:proc]
     unless check_tos(@user)
       redirect_to :back and return
     end
+    puts 'made it past  check tos' if params[:proc]
 
     # convert all the reservations that are being checked out into an array
     # of Reservation objects
@@ -159,6 +161,7 @@ class ReservationsController < ApplicationController
         reservations_to_check_out << r
       end
     end
+    puts reservations_to_check_out.to_s if params[:proc]
 
     ## Basic-logic checks, only need to be done once
     # Prevent the nil error from not selecting any reservations
