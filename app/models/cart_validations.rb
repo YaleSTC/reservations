@@ -21,7 +21,7 @@ module CartValidations
     source_res = Reservation.not_returned.where(equipment_model_id: self.items.keys).reserved_in_date_range(self.start_date,self.due_date).all
 
     models.each do |model, quantity|
-      errors += check_availability(model,quantity,source_res)
+      errors += check_availability(model,quantity,source_res) unless renew
       errors += check_duration(model) unless renew
       errors += check_should_be_renewed(user_reservations,model,self.start_date)
     end
@@ -42,7 +42,7 @@ module CartValidations
     # check that the due date is not on a blackout date
     # 1 query
     errors = []
-    if Blackout.hard.for_date(self.due_date).count > 1
+    if Blackout.hard.for_date(self.due_date).count > 0
       errors << "#{Blackout.get_notices_for_date(self.due_date,:hard)} (a reservation cannot end on #{self.due_date.to_date.strftime('%m/%d')})"
     end
     errors
@@ -108,7 +108,8 @@ module CartValidations
 
   def check_availability(model = EquipmentModel.find(self.items.keys.first),
                          quantity=1,
-                         source_res=Reservation.for_eq_model(self).not_returned.all)
+                         source_res=Reservation.for_eq_model(self).not_returned.all,
+                         preexisting = false)
     # checks that the model is available for the given quantity
     # given the existence of the source_reservations
     #

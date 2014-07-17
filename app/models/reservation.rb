@@ -83,8 +83,8 @@ class Reservation < ActiveRecord::Base
     self.to_cart.validate_all
   end
 
-  def validate_renewal
-    self.to_cart.validate_renew
+  def validate_renew
+    self.to_cart.validate_all(true)
   end
 
   def status
@@ -122,15 +122,17 @@ class Reservation < ActiveRecord::Base
   def max_renewal_length_available
     # determine the max renewal length for a given reservation
     # O(n) queries
+
     orig_due_date = self.due_date
     eq_model = self.equipment_model
-    self.due_date += eq_model.maximum_renewal_length
-    while true
-      break if self.validate_renew.empty?
-      self.due_date -= 1.day
-      break if self.due_date == orig_due_date
+    eq_model.maximum_renewal_length.downto(0).each do |r|
+      self.due_date = orig_due_date + r.days
+      if self.validate_renew.empty? && (eq_model.num_available(orig_due_date+1.day, self.due_date) > 0)
+        self.due_date = orig_due_date
+        return r
+      end
     end
-    self.due_date - orig_due_date
+    return 0
   end
 
   def is_eligible_for_renew?

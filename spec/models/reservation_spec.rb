@@ -18,20 +18,37 @@ describe Reservation do
   #
 
   describe '.max_renewal_length_available' do
+    subject(:reservation) {
+      r = FactoryGirl.create(:valid_reservation)
+      FactoryGirl.create(:equipment_object, equipment_model_id: r.equipment_model_id)
+      r
+    }
     context 'when no other reservations around' do
-      expect(reservation.max_renewal_length_available).to eq(equipment_model.max_renewal_length)
+      it 'should set the correct renewal length' do
+        expect(reservation.max_renewal_length_available).to eq(reservation.equipment_model.max_renewal_length)
+      end
     end
     context 'with a blackout date overlapping with the max renewal length' do
-      blackout = FactoryGirl.create(:blackout, start_date: Date.tomorrow + 1.day,
-                                     end_date: reservation.start_date + reservation.equipment_model.max_renewal_length.days)
-      expect(reservation.max_renewal_length_available).to eq(1.day)
+      it 'should set the correct renewal length' do
+       blackout = FactoryGirl.create(:blackout, start_date: reservation.due_date + 2.day,
+                                      end_date: reservation.due_date + reservation.equipment_model.max_renewal_length.days + 1.day)
+        expect(reservation.max_renewal_length_available).to eq(1)
+      end
+    end
+    context 'with a blackout date going right up to the max renewal length' do
+      it 'should set a length of 0' do
+        FactoryGirl.create(:blackout, start_date: reservation.due_date + 1.day,
+                end_date: reservation.due_date + reservation.equipment_model.max_renewal_length.days + 1.day)
+        expect(reservation.max_renewal_length_available).to eq(0)
+      end
     end
     context 'with another reservation starting in the middle of the max renewal length' do
-      EquipmentObject.where(equipment_model: reservation.equipment_model).delete_all
-      FactoryGirl.create(:equipment_object, equipment_model: reservation.equipment_model)
-      FactoryGirl.create(:reservation, equipment_model: reservation.equipment_model, start_date: Date.tomorrow + 1.day,
-                         due_date: reservation.start_date + reservation.equipment_model.max_renewal_length.days)
-      expect(reservation.max_renewal_length_available).to eq(1.day)
+      it 'should set the correct renewal length' do
+        r = FactoryGirl.create(:reservation, equipment_model: reservation.equipment_model, start_date: reservation.due_date + 3.days,
+                           due_date: reservation.due_date + reservation.equipment_model.max_renewal_length.days + 5.days)
+        r.equipment_model.equipment_objects.last.destroy
+        expect(reservation.max_renewal_length_available).to eq(3)
+      end
     end
 
   end
