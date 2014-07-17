@@ -146,7 +146,7 @@ class ReservationsController < ApplicationController
         r = Reservation.find(reservation_id)
         r.checkout_handler = current_user
         r.checked_out = Time.now
-        r.equipment_object = EquipmentObject.find(reservation_hash[:equipment_object_id])
+        r.equipment_object_id = reservation_hash[:equipment_object_id]
 
         # Check that checkout procedures have been performed
         incomplete_procedures = check_procedures(r, reservation_hash, :checkout)
@@ -179,7 +179,7 @@ class ReservationsController < ApplicationController
     if reserver.overdue_reservations?
       if can? :override, :checkout_errors
         # Admins can ignore this
-        error_msgs = 'Admin Override: Equipment has been checked out
+        flash[:notice] = 'Admin Override: Equipment has been checked out
         successfully, even though the reserver has overdue equipment.'
       else
         # Everyone else is redirected
