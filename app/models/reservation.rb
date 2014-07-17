@@ -146,11 +146,13 @@ class Reservation < ActiveRecord::Base
     # O(n) queries
     orig_due_date = self.due_date
     eq_model = self.equipment_model
-    for renewal_length in eq_model.maximum_renewal_length...0 do
-      self.due_date = orig_due_date + renewal_length
+    self.due_date += eq_model.maximum_renewal_length
+    while true
       break if self.validate.empty?
+      self.due_date -= 1.day
+      break if self.due_date == orig_due_date
     end
-    renewal_length
+    self.due_date - orig_due_date
   end
 
   def is_eligible_for_renew?
@@ -174,7 +176,7 @@ class Reservation < ActiveRecord::Base
   def renew
     # renew the reservation and return error messages if unsuccessful
     return "Reservation not eligible for renewal" unless self.is_eligible_for_renew?
-    self.due_date += self.max_renewal_length_available.day
+    self.due_date += self.max_renewal_length_available.days
     return "Unable to update reservation dates!" unless @reservation.save
     return nil
   end
