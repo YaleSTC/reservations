@@ -4,13 +4,16 @@ module CartValidations
   # queries as possible. Often it seems that a scope could be used but
   # it is important to remember that Rails lazy-loads the database calls
   #
-  def validate_all
+  def validate_all(renew = false)
     # 2 queries for every equipment model in the cart because of num_available
     # plus about 8 extra
+    #
+    # if passed with true argument doesn't run validations that should be
+    # skipped when validating renewals
     errors = []
     errors += check_start_date_blackout
     errors += check_due_date_blackout
-    errors += check_overdue_reservations
+    errors += check_overdue_reservations unless renew
     errors += check_max_items
 
     user_reservations = Reservation.for_reserver(self.reserver_id).not_returned.all
@@ -19,7 +22,7 @@ module CartValidations
 
     models.each do |model, quantity|
       errors += check_availability(model,quantity,source_res)
-      errors += check_duration(model)
+      errors += check_duration(model) unless renew
       errors += check_should_be_renewed(user_reservations,model,self.start_date)
     end
     return errors.uniq.reject{ |a| a.blank? }

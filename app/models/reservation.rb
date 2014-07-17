@@ -83,6 +83,10 @@ class Reservation < ActiveRecord::Base
     self.to_cart.validate_all
   end
 
+  def validate_renewal
+    self.to_cart.validate_renew
+  end
+
   def status
     if checked_out.nil?
       if approval_status == 'auto' or approval_status == 'approved'
