@@ -30,7 +30,7 @@ module CartValidations
     # 1 query
     errors = []
     if Blackout.hard.for_date(self.start_date).count > 0
-      errors << "A reservation cannot start on #{self.start_date.to_date.strftime('%m/%d')}"
+      errors << "#{Blackout.get_notices_for_date(self.start_date,:hard)} (a reservation cannot start on #{self.start_date.to_date.strftime('%m/%d')})"
     end
     errors
   end
@@ -40,7 +40,7 @@ module CartValidations
     # 1 query
     errors = []
     if Blackout.hard.for_date(self.due_date).count > 1
-      errors << "A reservation cannot end on #{self.due_date.to_date.strftime('%m/%d')}"
+      errors << "#{Blackout.get_notices_for_date(self.due_date,:hard)} (a reservation cannot end on #{self.due_date.to_date.strftime('%m/%d')})"
     end
     errors
   end
@@ -78,7 +78,7 @@ module CartValidations
 
       self.start_date.to_date.upto(self.due_date.to_date) do |d|
         if Reservation.number_for_model_on_date(d,model.id,relevant) + quantity > max_models
-          errors << "Cannot reserve more than #{max_models} #{model.name.pluralize}"
+          errors << "Only #{max_models} #{model.name.pluralize} can be reserved at a time"
           break
         end
       end
@@ -94,7 +94,7 @@ module CartValidations
       max_cat = cat.maximum_per_user
       self.start_date.to_date.upto(self.due_date.to_date) do |d|
         if Reservation.number_for_category_on_date(d,cat.id,relevant) + q > max_cat
-          errors << "Cannot reserve more than #{max_cat} #{cat.name.pluralize}"
+          errors << "Only #{max_cat} #{cat.name.pluralize} can be reserved at a time"
           break
         end
       end

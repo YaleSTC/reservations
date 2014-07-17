@@ -1,8 +1,6 @@
 
   <%= f.input :blackout_type, label: 'Blackout Type', collection: [['Blackout',"hard"],['Notice Only',"soft"]] %>
 
-  <%= f.input :equipment_model_id, :value => 0, :as => :hidden %>
-  <%# the ability to set per-model restrictions on blackout dates is actually built into Reservations, however it has been disabled as of 3.0.0 since there are easier ways to take care of it. %>
   <%= label_tag :start_date, 'Start of Blackout' %>
   <%= f.datepicker :start_date, class: 'date_start span2', :value => @blackout[:start_date].strftime('%m/%d/%Y') %>
   <%= f.input :start_date, as: :hidden, input_html: {id: 'date_start_alt'} %>

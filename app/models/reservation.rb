@@ -75,6 +75,20 @@ class Reservation < ActiveRecord::Base
     return count
   end
 
+  def self.number_overdue_for_eq_model(model_id, reservations)
+    # count the number of overdue reservations for a given
+    # eq model out of an array of source reservations
+    #
+    # used in rendering the catalog in order to save db queries
+    #
+    # 0 queries
+    count = 0
+    reservations.each do |r|
+      count += 1 if r.status == 'overdue' && r.equipment_model_id == model_id
+    end
+    count
+  end
+
 
   def reserver
     User.find(self.reserver_id)
