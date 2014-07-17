@@ -148,7 +148,7 @@ class Reservation < ActiveRecord::Base
     eq_model = self.equipment_model
     self.due_date += eq_model.maximum_renewal_length
     while true
-      break if self.validate.empty?
+      break if self.validate_renew.empty?
       self.due_date -= 1.day
       break if self.due_date == orig_due_date
     end

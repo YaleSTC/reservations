@@ -15,6 +15,26 @@ describe Reservation do
   it { should validate_presence_of(:equipment_model) }
   #it { should validate_presence_of(:start_date) } #fails because validations can't run if nil (?)
   #it { should validate_presence_of(:due_date) } #fails because validations can't run if nil (?)
+  #
+
+  describe '.max_renewal_length_available' do
+    context 'when no other reservations around' do
+      expect(reservation.max_renewal_length_available).to eq(equipment_model.max_renewal_length)
+    end
+    context 'with a blackout date overlapping with the max renewal length' do
+      blackout = FactoryGirl.create(:blackout, start_date: Date.tomorrow + 1.day,
+                                     end_date: reservation.start_date + reservation.equipment_model.max_renewal_length.days)
+      expect(reservation.max_renewal_length_available).to eq(1.day)
+    end
+    context 'with another reservation starting in the middle of the max renewal length' do
+      EquipmentObject.where(equipment_model: reservation.equipment_model).delete_all
+      FactoryGirl.create(:equipment_object, equipment_model: reservation.equipment_model)
+      FactoryGirl.create(:reservation, equipment_model: reservation.equipment_model, start_date: Date.tomorrow + 1.day,
+                         due_date: reservation.start_date + reservation.equipment_model.max_renewal_length.days)
+      expect(reservation.max_renewal_length_available).to eq(1.day)
+    end
+
+  end
 
   context "when valid" do
     it { should be_valid }
