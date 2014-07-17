@@ -31,17 +31,12 @@ class UsersController < ApplicationController
   def show
     @user_reservations = @user.reservations
     @all_equipment = Reservation.active.for_reserver(@user)
-    @show_equipment = { checked_out:  @user.reservations.
-                                            select {|r| \
-                                              (r.status == "checked out") || \
-                                              (r.status == "overdue")},
+    @show_equipment = { checked_out:  @user.reservations.checked_out,
                         overdue:      @user.reservations.overdue,
                         future:       @user.reservations.reserved,
                         past:         @user.reservations.returned,
                         missed:       @user.reservations.missed,
-                        past_overdue: @user.reservations.returned.
-                                            select {|r| \
-                                              r.status == "returned overdue"} }
+                        past_overdue: @user.reservations.returned_overdue }
   end
 
   def new
