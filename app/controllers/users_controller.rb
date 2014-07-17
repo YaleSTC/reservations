@@ -54,7 +54,7 @@ class UsersController < ApplicationController
 
       # TODO: What should it render?
       @partial_to_render = 'form'
-    elsif params[:possible_netid].blank?
+    elsif params[:possible_netid].nil?
       # users/new manual path
       @partial_to_render = 'form'
     else
