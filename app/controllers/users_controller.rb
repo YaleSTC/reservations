@@ -54,6 +54,9 @@ class UsersController < ApplicationController
 
       # TODO: What should it render?
       @partial_to_render = 'form'
+    elsif params[:possible_netid].blank?
+      # users/new manual path
+      @partial_to_render = 'form'
     else
       # Someone with permissions is creating a new user
       ldap_result = User.search_ldap(params[:possible_netid])
