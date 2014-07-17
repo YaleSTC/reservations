@@ -75,7 +75,7 @@ describe ReservationsController do
         @filters.each do |f|
           get :index, f => true
           expect(assigns(:reservations_set).uniq.sort).to \
-           eq([Reservation.send(f).uniq.sort])
+           eq(Reservation.send(f).uniq.sort)
         end
       end
 
@@ -106,7 +106,7 @@ describe ReservationsController do
         it 'uses :upcoming as default filter' do
           get :index
           # Cannot compare objects in nested arrays directly
-          assigns(:reservations_set)[0].each do |r|
+          assigns(:reservations_set).each do |r|
             expect(Reservation.upcoming.all.map(&:id)).to include(r.id)
           end
         end
@@ -125,7 +125,7 @@ describe ReservationsController do
         it 'uses :reserved as the default filter' do
           get :index
           # Cannot compare objects in nested arrays directly
-          assigns(:reservations_set)[0].each do |r|
+          assigns(:reservations_set).each do |r|
             expect(@controller.current_user.reservations.upcoming.map(&:id)).to include(r.id)
          end
         end
