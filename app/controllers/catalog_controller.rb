@@ -18,6 +18,8 @@ class CatalogController < ApplicationController
 
   def index
     @reserver_id = session[:cart].reserver_id
+    prepare_pagination
+    prepare_catalog_index_vars
   end
 
   def add_to_cart
@@ -29,7 +31,7 @@ class CatalogController < ApplicationController
   end
 
   def update_user_per_cat_page
-    session[:user_per_cat_page] = params[:user_cat_items_per_page] if !params[:user_cat_items_per_page].blank?
+    session[:items_per_page] = params[:items_per_page] if !params[:items_per_page].blank?
     respond_to do |format|
       format.html{redirect_to root_path}
       format.js{render action: "cat_pagination"}
@@ -61,7 +63,23 @@ class CatalogController < ApplicationController
 
       respond_to do |format|
         format.html{redirect_to root_path}
-        format.js{render action: "update_cart"}
+        format.js{render template: "cart_js/update_cart"}
       end
     end
+
+  def prepare_pagination
+    array = []
+    array << params[:items_per_page].to_i
+    array << session[:items_per_page].to_i
+    array << @app_configs.default_per_cat_page
+    array << 10
+    items_per_page = array.reject{ |a| a.blank? || a == 0 }.first
+    # assign items per page to the passed params, the default or 10
+    # depending on if they exist or not
+    @per_page_opts = [10, 20, 25, 30, 50].unshift(items_per_page).uniq
+    @pagination_required = EquipmentModel.active.size > items_per_page
+    session[:items_per_page] = items_per_page
+  end
+
+
 end

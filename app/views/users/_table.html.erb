@@ -27,13 +27,7 @@
     <% end %>
     <% if can? :manage, User %>
       <td><%= link_to "Edit", edit_user_path(user), :class => "btn" %></td>
-      <td>
-        <% if user.deleted_at %>
-          <%= make_activate_btn(:users,user) %>
-        <% else %>
-          <%= make_deactivate_btn(:users,user) %>
-        <% end %>
-      </td>
+      <td><%= make_ban_btn(user) %></td>
     <% end %>
     </tr>
   <% end %>

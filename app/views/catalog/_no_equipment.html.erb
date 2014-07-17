@@ -1,0 +1,10 @@
+<p>
+  <h3>No equipment found.
+    <% if can? :manage, EquipmentModel %>
+      Try creating some
+      <%= link_to "Equipment Models", new_equipment_model_path %>
+      first!
+    <% end %>
+  </h3>
+</p>
+

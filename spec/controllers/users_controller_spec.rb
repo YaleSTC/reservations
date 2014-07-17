@@ -24,21 +24,21 @@ describe UsersController do
       @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
     end
     describe 'GET index' do
-      let!(:inactive_user) { FactoryGirl.create(:user, deleted_at: Date.today) }
+      let!(:banned) { FactoryGirl.create(:banned) }
       let!(:other_user) { FactoryGirl.create(:user) }
       before { get :index }
       it_behaves_like "page success"
       it { should render_template(:index) }
-      context 'without show deleted' do
+      context 'without show banned' do
         it 'should assign users to all active users' do
           assigns(:users).include?(other_user).should be_true
-          assigns(:users).include?(inactive_user).should be_false
+          assigns(:users).include?(banned).should be_false
         end
       end
-      context 'with show deleted' do
-        before { get :index, show_deleted: true }
+      context 'with show banned' do
+        before { get :index, show_banned: true }
         it 'should assign users to all users' do
-          assigns(:users).include?(inactive_user).should be_true
+          assigns(:users).include?(banned).should be_true
         end
       end
     end
@@ -167,23 +167,35 @@ describe UsersController do
 
       end
     end
-    describe 'PUT deactivate' do
-      #
-    end
-    describe 'PUT activate' do
+    describe 'PUT ban' do
       before do
-        @user = FactoryGirl.create(:deactivated_user)
-        put :activate, id: @user.id
+        request.env["HTTP_REFERER"] = 'where_i_came_from'
+        @user = FactoryGirl.create(:user)
+        put :ban, id: @user.id
       end
-
-      it 'reactivates user' do
+      it 'should make the user banned' do
         @user.reload
-        expect(@user.deleted_at).to be_nil
+        expect(@user.role).to eq('banned')
+        expect(@user.view_mode).to eq('banned')
+      end
+      it { should set_the_flash }
+      it { should redirect_to("where_i_came_from") }
+    end
+    describe 'PUT unban' do
+      before do
+        request.env["HTTP_REFERER"] = 'where_i_came_from'
+        @user = FactoryGirl.create(:banned)
+        put :unban, id: @user.id
       end
 
-      it 'redirects to user_path' do
-        response.should redirect_to(@user)
+      it 'sets user to patron' do
+        @user.reload
+        expect(@user.role).to eq('normal')
+        expect(@user.view_mode).to eq('normal')
       end
+
+      it { should set_the_flash}
+      it { should redirect_to("where_i_came_from") }
     end
 
 
