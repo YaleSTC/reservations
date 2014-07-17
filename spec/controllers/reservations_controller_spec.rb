@@ -880,8 +880,15 @@ describe ReservationsController do
 
       include_examples 'can renew reservation'
 
-      pending 'cannot renew someone else\'s reservation'
-      pending 'cannot renew a reservation that was checked in'
+      context 'trying to renew someone elses reservation' do
+        before do
+          @other_res = FactoryGirl.create(:checked_out_reservation)
+          put :renew, id: @other_res.id
+        end
+        it { response.should be_redirect }
+        it { should set_the_flash }
+      end
+
     end
 
     it_behaves_like 'inaccessible by banned user' do

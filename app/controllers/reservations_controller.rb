@@ -338,11 +338,7 @@ class ReservationsController < ApplicationController
 
   def renew
     @reservation.due_date += @reservation.max_renewal_length_available.days
-    if @reservation.times_renewed == NIL # this check can be removed? just run the else now?
-      @reservation.times_renewed = 1
-    else
-      @reservation.times_renewed += 1
-    end
+    @reservation.times_renewed = @reservation.times_renewed.to_i + 1
 
     if !@reservation.save
       redirect_to @reservation
