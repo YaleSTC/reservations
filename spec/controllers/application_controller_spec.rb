@@ -313,8 +313,8 @@ describe ApplicationController do
       session[:cart].reserver_id = @first_user.id
       delete :empty_cart
     end
-    it 'empties the cart' do
-      session[:cart].items.should be_empty
+    it 'sets the session[:cart] variable back to nil' do
+      session[:cart].should be_nil
     end
     it { should redirect_to(root_path) }
     it { should set_the_flash }
