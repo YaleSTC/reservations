@@ -174,7 +174,7 @@ class Reservation < ActiveRecord::Base
   def renew
     # renew the reservation and return error messages if unsuccessful
     return "Reservation not eligible for renewal" unless self.is_eligible_for_renew?
-    self.due_date += self.max_renewal_length_available
+    self.due_date += self.max_renewal_length_available.day
     return "Unable to update reservation dates!" unless @reservation.save
     return nil
   end
