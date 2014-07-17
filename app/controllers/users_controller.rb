@@ -54,8 +54,9 @@ class UsersController < ApplicationController
 
       # TODO: What should it render?
       @partial_to_render = 'form'
+    elsif params[:from_cart].nil?
+      @partial_to_render = 'form'
     else
-      # Someone with permissions is creating a new user
       ldap_result = User.search_ldap(params[:possible_netid])
       @user = User.new(ldap_result)
 
@@ -75,12 +76,7 @@ class UsersController < ApplicationController
       end
 
       # With existing netID and no user record, what's the context of creation?
-      # FIXME: can the check be replaced by params[:from_cart].present?
-      if params[:from_cart] == 'true'
-        @partial_to_render = 'short_form' # Display short_form
-      else
-        @partial_to_render = 'form' # Display (normal) form
-      end
+      @partial_to_render = 'short_form' # Display short_form
     end
   end
 
