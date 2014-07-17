@@ -89,15 +89,15 @@ describe CatalogController do
     before(:each) do
       put :update_user_per_cat_page
     end
-    it 'should set session[:user_per_cat_page] to session[:user_cat_items_per_page] if exists' do
-      put :update_user_per_cat_page, :user_cat_items_per_page => 20
-      session[:user_per_cat_page].should eq('20')
+    it 'should set session[:items_per_page] to params[items_per_page] if exists' do
+      put :update_user_per_cat_page, :items_per_page => 20
+      session[:items_per_page].should eq('20')
     end
-    it 'should not alter session[:user_per_cat_page] if session[:user_cat_items_per_page] is nil' do
-      session[:user_per_cat_page] = '15'
-      put :update_user_per_cat_page, :user_cat_items_per_page => nil
-      session[:user_per_cat_page].should_not eq(nil)
-      session[:user_per_cat_page].should eq('15')
+    it 'should not alter session[:items_per_page] if params[:items_per_page] is nil' do
+      session[:items_per_page] = '15'
+      put :update_user_per_cat_page, :items_per_page => nil
+      session[:items_per_page].should_not eq(nil)
+      session[:items_per_page].should eq('15')
     end
     it { should redirect_to(root_path) }
     it { should render_template(:action => 'cat_pagination')}

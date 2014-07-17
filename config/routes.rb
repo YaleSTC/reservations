@@ -30,6 +30,10 @@ Reservations::Application.routes.draw do
     collection do
       get :find
     end
+    member do
+      put :ban
+      put :unban
+    end
     get :autocomplete_user_last_name, on: :collection
   end
 
