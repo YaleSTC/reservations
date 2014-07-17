@@ -29,16 +29,18 @@ module ReservationsHelper
   end
 
   def manage_reservations_btn
-    return if (cannot? :manage, Reservation) || @reservation.reserver.id.nil?
-    if (can? :override, :reservation_errors) && @reservation.approval_status == 'requested'
-      link_to 'Review Request', review_request_path, class: 'btn btn-inverse'
-    elsif @reservation.status == 'reserved'
-      link_to 'Check-Out', manage_reservations_for_user_path(@reservation.reserver.id,
-        anchor: 'check_out_row'), class: 'btn btn-inverse'
-    elsif @reservation.status == 'checked out' || @reservation.status == 'overdue'
-      link_to 'Check-In', manage_reservations_for_user_path(@reservation.reserver.id,
-        anchor: 'check_in_row'), class: 'btn btn-inverse'
+    if (can? :manage, Reservation)
+      if (can? :override, :reservation_errors) && @reservation.approval_status == 'requested'
+        link_to 'Review Request', review_request_path, class: 'btn btn-inverse'
+      elsif @reservation.status == 'reserved'
+        link_to 'Check-Out', manage_reservations_for_user_path(@reservation.reserver.id,
+          anchor: 'check_out_row'), class: 'btn btn-inverse'
+      elsif @reservation.status == 'checked out' || @reservation.status == 'overdue'
+        link_to 'Check-In', manage_reservations_for_user_path(@reservation.reserver.id,
+          anchor: 'check_in_row'), class: 'btn btn-inverse'
+      end
     end
+
   end
 
   private
