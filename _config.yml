@@ -6,6 +6,6 @@ description: "Reservation is an open-source application for item loan management
 baseurl: "/reservations"
 url: "https://yalestc.github.com"
 
-# Build settings
+# Build settings which are necessary
 markdown: kramdown
 permalink: pretty
