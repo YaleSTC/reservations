@@ -60,6 +60,7 @@ class ReservationsController < ApplicationController
 
   def create
     @errors = cart.validate_all
+    puts "errors:" + @errors.to_s
     notes = params[:reservation][:notes]
     if !@errors.blank? && notes.blank?
       # there were errors but they didn't fill out the notes

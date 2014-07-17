@@ -17,7 +17,7 @@ FactoryGirl.define do
               { e.id => 1 } }
 
       start_date Date.today
-      due_date { Date.today + (FactoryGirl.attributes_for(:equipment_model)[:max_per_user]+1).day }
+      due_date { Date.tomorrow + EquipmentModel.find(items.keys.first).category.max_checkout_length + 1.day }
 
     end
   end
