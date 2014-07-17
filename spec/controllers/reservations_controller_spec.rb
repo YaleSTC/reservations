@@ -770,7 +770,7 @@ describe ReservationsController do
         @obj = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
         @procedure = FactoryGirl.create(:checkout_procedure, equipment_model: @reservation.equipment_model)
         reservations_params = {@reservation.id.to_s => {notes: "", equipment_object_id: @obj.id, checkout_procedures: {@procedure.id.to_s => 1}}}
-        put :checkout, user_id: @user.id, proc: true, reservations: reservations_params
+        put :checkout, user_id: @user.id,  reservations: reservations_params
       end
 
       it { response.should be_success }
@@ -835,10 +835,6 @@ describe ReservationsController do
 
     end
 
-
-
-
-
   end
 
   describe '#checkin (PUT /reservations/check-in/:user_id)' do
@@ -851,8 +847,6 @@ describe ReservationsController do
     # - stops checkin if no reservations are selected
     # - overrides errors if you can and if there are some, otherwise redirects away
     # - renders :receipt template
-
-    # TODO: See todo's on #checkout
 
     shared_examples 'has successful checkin' do
       before(:each) do
@@ -909,6 +903,61 @@ describe ReservationsController do
     it_behaves_like 'inaccessible by banned user' do
       before { put :checkin, user_id: @banned.id }
     end
+
+    context 'items have already been checked in' do
+      before do
+        @controller.stub(:current_user).and_return(@admin)
+        request.env["HTTP_REFERER"] = 'where_i_came_from'
+        @reservation = FactoryGirl.build(:checked_in_reservation, reserver: @user)
+        @reservation.save(validate: false)
+        reservations_params = {@reservation.id.to_s => {notes: "", checkin?: "1"}}
+        put :checkin, user_id: @user.id, reservations: reservations_params
+      end
+
+      it { should set_the_flash }
+      it { response.should be_redirect }
+    end
+
+    context 'no reservations to check in' do
+      before do
+        request.env["HTTP_REFERER"] = 'where_i_came_from'
+        @controller.stub(:current_user).and_return(@admin)
+        put :checkin,  user_id: @user.id, reservations: {}
+      end
+      it { should set_the_flash }
+      it { response.should be_redirect }
+    end
+
+    context 'when not all procedures are filled out' do
+      before do
+        @controller.stub(:current_user).and_return(@admin)
+        @reservation = FactoryGirl.create(:checked_out_reservation, reserver: @user)
+        @procedure = FactoryGirl.create(:checkin_procedure, equipment_model: @reservation.equipment_model)
+        reservations_params = {@reservation.id.to_s => {notes: "", checkin?: "1", checkout_procedures: {@procedure.id.to_s => 1}}}
+        put :checkin, user_id: @user.id, reservations: reservations_params
+      end
+
+      it { response.should be_success }
+      it { should render_template(:receipt) }
+
+      it 'assigns empty @check_out_set' do
+        expect(assigns(:check_out_set)).to be_empty
+      end
+
+      it 'populates @check_in_set' do
+        expect(assigns(:check_in_set)).to eq [@reservation]
+      end
+
+      it 'updates the reservation' do
+        expect(@reservation.checkin_handler).to be_nil
+        expect(@reservation.checked_in).to be_nil
+        @reservation.reload
+        expect(@reservation.checkin_handler).to be_a(User)
+        expect(@reservation.checked_in).to_not be_nil
+        expect(@reservation.notes).to_not be_nil
+      end
+    end
+
   end
 
   describe '#renew (PUT /reservations/:id/renew)' do
