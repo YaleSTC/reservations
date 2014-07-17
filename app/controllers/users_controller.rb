@@ -47,7 +47,10 @@ class UsersController < ApplicationController
       @user = User.new(User.search_ldap(session[:cas_user]))
       @user.login = session[:cas_user] #default to current login
 
-      # TODO: What should it render?
+      # render long form for the user
+      @partial_to_render = 'form'
+    elsif params[:possible_netid].nil?
+      # users/new manual path
       @partial_to_render = 'form'
     else
       # Someone with permissions is creating a new user
