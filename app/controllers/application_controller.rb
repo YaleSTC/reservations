@@ -167,7 +167,7 @@ class ApplicationController < ActionController::Base
     # prepare the catalog
     @page_eq_models_by_category = EquipmentModel.active.
                               order('categories.sort_order ASC, equipment_models.name ASC').
-                              includes(:category).
+                              includes(:category, :requirements).
                               page(params[:page]).
                               per(session[:items_per_page])
     @eq_models_by_category = @page_eq_models_by_category.to_a.group_by(&:category)
