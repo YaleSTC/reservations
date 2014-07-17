@@ -46,4 +46,16 @@ class EquipmentObject < ActiveRecord::Base
     status == "available"
   end
 
+  def self.for_eq_model(model_id,source_objects)
+    # count the number of equipment objects for a given
+    # model out of an array of source objects
+    # 0 queries
+
+    count = 0
+    source_objects.each do |o|
+      count += 1 if o.equipment_model_id == model_id
+    end
+    count
+  end
+
 end

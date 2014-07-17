@@ -127,7 +127,6 @@ class ApplicationController < ActionController::Base
   #-------- end before_filter methods --------#
 
   def update_cart
-    # set dates
     cart = session[:cart]
     flash.clear
     begin
@@ -153,15 +152,53 @@ class ApplicationController < ActionController::Base
     flash[:notice] = "Cart updated."
 
     # reload appropriate divs / exit
+    if params[:controller] == 'catalog'
+      prepare_catalog_index_vars
+    end
+
     respond_to do |format|
-      format.js{render template: "reservations/cart_dates_reload"}
+      format.js{render template: "cart_js/cart_dates_reload"}
         # guys i really don't like how this is rendering a template for js, but :action doesn't work at all
       format.html{render partial: "reservations/cart_dates"}
     end
   end
 
+  def prepare_catalog_index_vars
+    # prepare the catalog
+    @page_eq_models_by_category = EquipmentModel.active.
+                              order('categories.sort_order ASC, equipment_models.name ASC').
+                              includes(:category).
+                              page(params[:page]).
+                              per(session[:items_per_page])
+    @eq_models_by_category = @page_eq_models_by_category.to_a.group_by(&:category)
+
+    @available_string = "available from #{cart.start_date.strftime("%b %d, %Y")} to #{cart.due_date.strftime("%b %d, %Y")}"
+
+    # create an hash of em id's as keys and their availability as the value
+    @availability_hash = Hash.new
+
+    # first get an array of all the paginated ids
+    id_array = []
+    @page_eq_models_by_category.each do |em|
+      id_array << em.id
+    end
+
+    # 1 query to grab all the active related equipment objects
+    eq_objects = EquipmentObject.active.where(equipment_model_id: id_array).all
+
+    # 1 query to grab all the related reservations
+    source_reservations = Reservation.not_returned.where(equipment_model_id: id_array).reserved_in_date_range(cart.start_date,cart.due_date).all
+
+    # build the hash using class methods that use 0 queries
+    @page_eq_models_by_category.each do |em|
+      @availability_hash[em.id] = EquipmentObject.for_eq_model(em.id,eq_objects) - Reservation.number_overdue_for_eq_model(em.id,source_reservations) - em.num_reserved(cart.start_date,cart.due_date,source_reservations)
+    end
+
+
+  end
+
   def empty_cart
-    session[:cart] = nil
+    session[:cart].purge_all if session[:cart]
     flash[:notice] = "Cart emptied."
     redirect_to root_path
   end
