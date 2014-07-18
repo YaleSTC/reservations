@@ -2,4 +2,4 @@
 
 <%= render :partial => "main_page_nav_buttons" %>
 
-<%= render :partial => "reservations_list", :collection => @reservations_set %>
+<%= render :partial => "reservations_list", locals: {reservations_set: @reservations_set} %>

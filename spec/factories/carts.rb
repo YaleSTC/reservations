@@ -3,15 +3,22 @@ FactoryGirl.define do
     reserver_id { FactoryGirl.create(:user).id }
     start_date { Date.today }
     due_date { Date.tomorrow }
-    items []
+    items {}
 
     factory :cart_with_items do
-      items { [ FactoryGirl.create(:cart_reservation).id ]}
+      items { e = FactoryGirl.create(:equipment_model)
+              FactoryGirl.create(:equipment_object, equipment_model: e)
+              { e.id => 1 } }
     end
 
     factory :invalid_cart do
-      items { [ FactoryGirl.create(:invalid_cart_reservation).id,
-                FactoryGirl.create(:invalid_cart_reservation).id ]}
+      items { e = FactoryGirl.create(:equipment_model)
+              FactoryGirl.create(:equipment_object, equipment_model: e)
+              { e.id => 1 } }
+
+      start_date Date.today
+      due_date { Date.tomorrow + EquipmentModel.find(items.keys.first).category.max_checkout_length + 1.day }
+
     end
   end
 end

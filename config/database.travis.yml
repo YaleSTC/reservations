@@ -1,0 +1,41 @@
+# This database.yml is for use by Travis CI. All this information must be
+# provided so Travis CI can actually build and test our app. It cannot
+# be removed and replaced by a database.yml.example file, because this is
+# configuration information necessary for Travis CI to build the app. For more
+# information, see http://docs.travis-ci.com/user/database-setup/#MySQL
+#
+# It is possible that with any further changes in the future we'll need to
+# update this configuration for Travis CI to build. Always check the Travis CI
+# build status for the latest information.
+# ==============================================================================
+
+development:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: reservations_development
+  pool: 5
+  username: root
+  password:
+  host: localhost
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: reservations_test
+  pool: 5
+  username: root
+  password:
+
+production:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: reservations_production
+  pool: 5
+  username: root
+  password:

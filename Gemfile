@@ -34,7 +34,7 @@ gem 'jquery-ui-rails'
 gem 'jquery-datatables-rails'
 gem 'rails3-jquery-autocomplete'
 gem 'select2-rails'
-gem 'kaminari'
+gem 'kaminari', '~> 0.16.1'
 gem 'spinjs-rails'
 
 #forms / formatting
@@ -48,7 +48,6 @@ gem 'redcarpet'
 gem 'paper_trail', git: "https://github.com/airblade/paper_trail.git", branch: "2.7-stable"
 
 group :development, :test do
-  gem 'sqlite3' # alternative db management for development
   gem 'factory_girl_rails'
   gem 'rspec-rails'
   gem 'shoulda-matchers'
@@ -64,6 +63,8 @@ group :development, :test do
   gem 'awesome_print'
   gem 'ruby-progressbar'
   gem 'codeclimate-test-reporter'
+  gem 'parallel_tests'
+  gem 'database_cleaner'
 end
 
 # Gems used only for assets and not required
@@ -77,7 +78,7 @@ group :assets do
 end
 
 group :development do
-	gem 'thin'
+  gem 'thin'
   gem 'pry'
   gem 'pry-rails'
   gem 'pry-byebug'
@@ -85,6 +86,8 @@ group :development do
   gem 'pry-remote'
   gem 'letter_opener'
   gem 'letter_opener_web', '~> 1.1.0'
+  gem 'rack-mini-profiler'
+  gem 'bullet'
 end
 
 group :production, :staging do

@@ -1,6 +1,7 @@
 require 'codeclimate-test-reporter'
 CodeClimate::TestReporter.start
-# Run RSpec with `CODECLIMATE_REPO_TOKEN=075afb721fe089e1b77ab194fcff1ac132765bbfd3f3777db52f7abaf9bf800d rspec` command to submit the result to CodeClimate
+# Rspec should submit the result to CodeClimate automatically with each Travis
+# CI build (repo token is encrypted in .travis.yml)
 
 require 'rubygems'
 require 'spork'
@@ -55,6 +56,18 @@ Spork.prefork do
     # the seed, which is printed after each run.
     #     --seed 1234
     config.order = "random"
+
+    # DatabaseCleaner setup
+    config.before(:suite) do
+      DatabaseCleaner.strategy = :transaction
+      DatabaseCleaner.clean_with(:truncation)
+    end
+
+    config.around(:each) do |example|
+      DatabaseCleaner.cleaning do
+        example.run
+      end
+    end
   end
 
 end

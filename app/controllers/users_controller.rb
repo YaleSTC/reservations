@@ -2,9 +2,11 @@ class UsersController < ApplicationController
   load_and_authorize_resource
   layout 'application_with_sidebar', only: [:show, :edit]
 
+  autocomplete :user, :last_name, extra_data: [:first_name, :login], display_value: :render_name
+
   skip_filter :cart, only: [:new, :create]
   skip_filter :first_time_user, only: [:new, :create]
-  before_filter :set_user, only: [:show, :edit, :update, :destroy, :deactivate, :activate]
+  before_filter :set_user, only: [:show, :edit, :update, :destroy, :ban, :unban]
 
   include ActivationHelper
   include Autocomplete
@@ -19,7 +21,7 @@ class UsersController < ApplicationController
 
 
   def index
-    if params[:show_deleted]
+    if params[:show_banned]
       @users = User.order('login ASC')
     else
       @users = User.active.order('login ASC')
@@ -29,31 +31,55 @@ class UsersController < ApplicationController
   def show
     @user_reservations = @user.reservations
     @all_equipment = Reservation.active.for_reserver(@user)
-    @show_equipment = { checked_out:  @user.reservations.
-                                            select {|r| \
-                                              (r.status == "checked out") || \
-                                              (r.status == "overdue")},
+    @show_equipment = { checked_out:  @user.reservations.checked_out,
                         overdue:      @user.reservations.overdue,
                         future:       @user.reservations.reserved,
                         past:         @user.reservations.returned,
                         missed:       @user.reservations.missed,
-                        past_overdue: @user.reservations.returned.
-                                            select {|r| \
-                                              r.status == "returned overdue"} }
+                        past_overdue: @user.reservations.returned_overdue }
   end
 
   def new
-    if can? :create, User
-      if params[:possible_netid]
-        @user = User.new(User.search_ldap(params[:possible_netid]))
-      else
-        @user = User.new
-      end
-    else
+    @can_edit_login = current_user.present? && (can? :create, User) # used in view
+
+    if current_user.nil?
+      # This is a new user -> create an account for them
       @user = User.new(User.search_ldap(session[:cas_user]))
       @user.login = session[:cas_user] #default to current login
+
+      # render long form for the user
+      @partial_to_render = 'form'
+    elsif params[:possible_netid].nil?
+      # users/new manual path
+      @partial_to_render = 'form'
+    else
+      # Someone with permissions is creating a new user
+      ldap_result = User.search_ldap(params[:possible_netid])
+      @user = User.new(ldap_result)
+
+      # Does netID exist?
+      if ldap_result.nil?
+        @message = 'Sorry, the netID that you entered does not exist.
+        You cannot create a user profile without a valid netID.'
+        render :new and return
+      end
+
+      # Is there a user record already?
+      if User.find_by_login(params[:possible_netid])
+        @message = 'You cannot create a new user, as the netID you entered
+        is already associated with a user. If you would like to reserve for
+        them, please select their name from the drop-down options in the cart.'
+        render :new and return
+      end
+
+      # With existing netID and no user record, what's the context of creation?
+      # FIXME: can the check be replaced by params[:from_cart].present?
+      if params[:from_cart] == 'true'
+        @partial_to_render = 'short_form' # Display short_form
+      else
+        @partial_to_render = 'form' # Display (normal) form
+      end
     end
-    @can_edit_login = (can? :create, User)
   end
 
   def create
@@ -93,9 +119,25 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    @user.destroy(:force)
+    @user.destroy
     flash[:notice] = "Successfully destroyed user."
     redirect_to users_url
+  end
+
+  def ban
+    @user.role = "banned"
+    @user.view_mode = "banned"
+    @user.save
+    flash[:notice] = "#{@user.name} was banned succesfully."
+    redirect_to request.referer
+  end
+
+  def unban
+    @user.role = "normal"
+    @user.view_mode = "normal"
+    @user.save
+    flash[:notice] = "#{@user.name} was restored to patron status."
+    redirect_to request.referer
   end
 
   def find
@@ -120,15 +162,4 @@ class UsersController < ApplicationController
     end
   end
 
-  def deactivate
-    @user.destroy #Deactivate the user model
-    flash[:notice] = "Successfully deactivated user. Any related equipment has been deactivated as well. All reservations for this user have been permanently destroyed."
-    redirect_to users_path  # always redirect to show page for deactivated user
-  end
-
-  def activate
-    @user.revive
-    flash[:notice] = "Successfully reactivated user."
-    redirect_to users_path
-  end
 end

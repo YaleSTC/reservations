@@ -27,7 +27,6 @@ module ApplicationHelper
   def make_deactivate_btn(model_symbol, model_object)
     link_to "Deactivate", deactivate_path(model_symbol, model_object),
       class: "btn btn-danger", method: :put,
-      confirm: "Deactivating this #{model_object.class} will permanently destroy all associated reservations, are you sure you want to do this?",
       onclick: model_symbol == :equipment_objects ? 'getDeactivationReason(this);' : ''
   end
 end

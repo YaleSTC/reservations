@@ -44,7 +44,7 @@ describe "transform_attributes" do
     end
 
     it "converts existing reservation ID into proper link" do
-      res = FactoryGirl.create(:reservation)
+      res = FactoryGirl.create(:valid_reservation)
       transform_attributes( ['reservation_id', res.id] )[1].should == link_to("#{res.id} (see current)", Reservation.find(res.id))
     end
 

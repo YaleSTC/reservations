@@ -48,6 +48,24 @@ describe TestController do
     controller.stub(:fix_cart_date)
     controller.stub(:set_view_mode)
     controller.stub(:current_user)
+    controller.stub(:make_cart_compatible)
+  end
+
+  describe 'make_cart_compatible' do
+    before(:each) do
+      controller.unstub(:make_cart_compatible)
+    end
+    it 'replaces the cart if items is an Array' do
+      session[:cart] = FactoryGirl.build(:cart, items: [1])
+      get :index
+      session[:cart].items.should be_a(Hash)
+      session[:cart].items.should be_empty
+      session[:cart].items.should_not be_a(Array)
+    end
+    it 'leaves the cart alone if items is a Hash' do
+      session[:cart] = FactoryGirl.build(:cart_with_items)
+      expect { get :index }.to_not change { session[:cart].items }
+    end
   end
 
   describe 'app_setup_check' do
@@ -84,6 +102,8 @@ describe TestController do
     before(:each) do
       controller.stub(:load_configs).and_return(@app_config)
       controller.unstub(:seen_app_configs)
+      @admin = FactoryGirl.create(:admin)
+      controller.stub(:current_user).and_return(@admin)
     end
     context 'app configs have not been viewed' do
       before(:each) do
@@ -219,7 +239,7 @@ describe TestController do
     it 'changes cart.start_date to today if date is in the past' do
       session[:cart].start_date = Date.yesterday
       get :index
-      session[:cart].start_date.should eq(Date.today.to_time)
+      session[:cart].start_date.should eq(Date.today)
     end
     it 'does not change the start_date if date is in the future' do
       session[:cart].start_date = Date.tomorrow
@@ -243,6 +263,7 @@ describe ApplicationController do
     controller.stub(:fix_cart_date)
     controller.stub(:set_view_mode)
     controller.stub(:current_user)
+    controller.stub(:make_cart_compatible)
   end
 
   #TODO - This may involve rewriting the method somewhat
@@ -250,11 +271,11 @@ describe ApplicationController do
     before(:each) do
       session[:cart] = Cart.new
       session[:cart].reserver_id = @first_user.id
-      session[:cart].set_start_date(Date.today + 1.day)
-      session[:cart].set_due_date(Date.today + 2.days)
-      
+      session[:cart].start_date = (Date.today + 1.day)
+      session[:cart].due_date = (Date.today + 2.days)
 
-      equipment_model = FactoryGirl.create(:equipment_model)
+
+      equipment_model = FactoryGirl.create(:equipment_model, category: FactoryGirl.create(:category))
       session[:cart].add_item(equipment_model)
       @new_reserver = FactoryGirl.create(:user)
     end
@@ -263,11 +284,11 @@ describe ApplicationController do
       it 'should update cart dates' do
         new_start = Date.today + 3.days
         new_end = Date.today + 4.days
-        
+
         put :update_cart, cart: {start_date_cart: new_start.strftime('%m/%d/%Y'), due_date_cart: new_end.strftime('%m/%d/%Y')}, reserver_id: @new_reserver.id
-        
-        session[:cart].start_date.should eq(new_start.to_time)
-        session[:cart].due_date.should eq(new_end.to_time)
+
+        session[:cart].start_date.should eq(new_start)
+        session[:cart].due_date.should eq(new_end)
         session[:cart].reserver_id.should eq(@new_reserver.id.to_s)
       end
 
@@ -280,9 +301,9 @@ describe ApplicationController do
       it 'should set the flash' do
         new_start = Date.today - 300.days
         new_end = Date.today + 4000.days
-        
+
         put :update_cart, cart: {start_date_cart: new_start.strftime('%m/%d/%Y'), due_date_cart: new_end.strftime('%m/%d/%Y')}, reserver_id: @new_reserver.id
-        
+
         flash.should_not be_empty
      end
    end
@@ -292,14 +313,10 @@ describe ApplicationController do
     before(:each) do
       session[:cart] = Cart.new
       session[:cart].reserver_id = @first_user.id
-      @cart_reservation = FactoryGirl.create(:cart_reservation, reserver: @first_user)
       delete :empty_cart
     end
-    it 'destroys cart reservations for the reserver associated with the current cart' do
-      CartReservation.find_by_reserver_id(@first_user.id).should be_nil
-    end
-    it 'sets the session[:cart] variable back to nil' do
-      session[:cart].should be_nil
+    it 'empties the cart' do
+      session[:cart].items.should be_empty
     end
     it { should redirect_to(root_path) }
     it { should set_the_flash }

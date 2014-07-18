@@ -1,11 +1,4 @@
-<% title "Blackout of " + (@blackout.equipment_model_id == 0 ? "All Equipment Items" : EquipmentModel.find(@blackout.equipment_model_id).name) %>
-
-<%# Setting black-outs on a per-model basis has been disabled %>
-<!--<p>
-  <b>Equipment model affected:</b>
-  <%# (@blackout.equipment_model_id == 0) ? "All Equipment Models" : EquipmentModel.find(@blackout.equipment_model_id).name %>
-</p> -->
-
+<% title "#{@blackout.blackout_type.capitalize} Blackout" %>
 <p>
   <b>Start date:</b>
   <%= @blackout.start_date.strftime('%m/%d/%Y') %>

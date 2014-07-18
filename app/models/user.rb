@@ -2,7 +2,6 @@ require 'net/ldap'
 
 class User < ActiveRecord::Base
   has_many :reservations, foreign_key: 'reserver_id', dependent: :destroy
-  nilify_blanks only: [:deleted_at]
   has_and_belongs_to_many :requirements,
                           class_name: "Requirement",
                           association_foreign_key: "requirement_id",
@@ -10,7 +9,7 @@ class User < ActiveRecord::Base
 
   attr_accessible :login, :first_name, :last_name, :nickname, :phone, :email,
                   :affiliation, :role, :view_mode, :created_by_admin,
-                  :deleted_at, :requirement_ids, :user_ids, :terms_of_service_accepted, :csv_import
+                  :requirement_ids, :user_ids, :terms_of_service_accepted, :csv_import
 
   attr_accessor   :full_query, :created_by_admin, :user_type, :csv_import
 
@@ -35,47 +34,28 @@ class User < ActiveRecord::Base
             :view_mode,   inclusion: { in: ['admin', 'normal', 'checkout', 'superuser', 'banned'] }
 
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
-  scope :active, where("#{table_name}.deleted_at is null")
+  scope :active, where("role != 'banned'")
 
   # ------- validations -------- #
   def skip_phone_validation?
-    if AppConfig.first          # is there an app config?
-      if !AppConfig.first.require_phone
-        return true             # if phone not required, return true
-      else
-        return ( @csv_import ? true : false ) # no phone required if csv
-      end
-    end
-    return true                 # no phone required if no app config
+    return true unless AppConfig.first
+    return true unless AppConfig.first.require_phone
+    return !@csv_import.nil?
   end
   # ------- end validations -------- #
 
   def name
-    [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name].join(" ")
+    "#{(nickname.blank? ? first_name : nickname)} #{last_name}"
   end
 
   def equipment_objects
     self.reservations.collect{ |r| r.equipment_object }.flatten
   end
 
-  # Returns hash of the checked out equipment models and their counts for the user
-  def checked_out_models
-    #Make a hash of the checked out eq. models and their counts for the user
-    model_ids = self.reservations.collect do |r|
-      if (!r.checked_out.nil? && r.checked_in.nil?) # i.e. if checked out but not checked in yet
-        r.equipment_model_id
-      end
-    end
-
-    #Remove nils, then count the number of unique model ids, and store the counts in a sub hash, and finally sort by model_id
-    arr = model_ids.compact.inject(Hash.new(0)) {|h,x| h[x]+=1;h}.sort
-    #Change into a hash of model_id => quantities
-    Hash[*arr.flatten]
-
-    #There might be a better way of doing this, but I realized that I wanted a hash instead of an array of hashes
-  end
 
   def self.search_ldap(login)
+    return nil if login.blank?
+
     ldap = Net::LDAP.new(host: "directory.yale.edu", port: 389)
     filter = Net::LDAP::Filter.eq("uid", login)
     attrs = ["givenname", "sn", "eduPersonNickname", "telephoneNumber", "uid",
@@ -100,7 +80,7 @@ class User < ActiveRecord::Base
   end
 
   def render_name
-    [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name, login].join(" ")
+    "#{name} #{login}"
   end
 
 
