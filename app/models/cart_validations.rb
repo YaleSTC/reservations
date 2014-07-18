@@ -4,13 +4,16 @@ module CartValidations
   # queries as possible. Often it seems that a scope could be used but
   # it is important to remember that Rails lazy-loads the database calls
   #
-  def validate_all
+  def validate_all(renew = false)
     # 2 queries for every equipment model in the cart because of num_available
     # plus about 8 extra
+    #
+    # if passed with true argument doesn't run validations that should be
+    # skipped when validating renewals
     errors = []
     errors += check_start_date_blackout
     errors += check_due_date_blackout
-    errors += check_overdue_reservations
+    errors += check_overdue_reservations unless renew
     errors += check_max_items
 
     user_reservations = Reservation.for_reserver(self.reserver_id).not_returned.all
@@ -19,7 +22,7 @@ module CartValidations
 
     models.each do |model, quantity|
       errors += check_availability(model,quantity,source_res)
-      errors += check_duration(model)
+      errors += check_duration(model) unless renew
       errors += check_should_be_renewed(user_reservations,model,self.start_date)
     end
     return errors.uniq.reject{ |a| a.blank? }
@@ -39,7 +42,7 @@ module CartValidations
     # check that the due date is not on a blackout date
     # 1 query
     errors = []
-    if Blackout.hard.for_date(self.due_date).count > 1
+    if Blackout.hard.for_date(self.due_date).count > 0
       errors << "#{Blackout.get_notices_for_date(self.due_date,:hard)} (a reservation cannot end on #{self.due_date.to_date.strftime('%m/%d')})"
     end
     errors
@@ -106,6 +109,7 @@ module CartValidations
   def check_availability(model = EquipmentModel.find(self.items.keys.first),
                          quantity=1,
                          source_res=Reservation.for_eq_model(self).not_returned.all)
+
     # checks that the model is available for the given quantity
     # given the existence of the source_reservations
     #

@@ -205,6 +205,8 @@ ActiveRecord::Schema.define(:version => 20140718195128) do
     t.string   "role",                      :default => "normal"
   end
 
+  add_index "users", ["login"], :name => "index_users_on_login", :unique => true
+
   create_table "users_requirements", :id => false, :force => true do |t|
     t.integer "user_id"
     t.integer "requirement_id"

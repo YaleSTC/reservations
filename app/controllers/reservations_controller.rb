@@ -332,16 +332,10 @@ class ReservationsController < ApplicationController
   end
 
   def renew
-    @reservation.due_date += @reservation.max_renewal_length_available.days
-    if @reservation.times_renewed == NIL # this check can be removed? just run the else now?
-      @reservation.times_renewed = 1
-    else
-      @reservation.times_renewed += 1
-    end
-
-    if !@reservation.save
-      redirect_to @reservation
-      flash[:error] = "Unable to update reservation dates. Please contact us for support."
+    message = @reservation.renew
+    if message
+      flash[:error] = message
+      redirect_to @reservation and return
     end
     respond_to do |format|
       format.html{redirect_to root_path}
