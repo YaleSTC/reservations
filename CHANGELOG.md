@@ -2,9 +2,8 @@ Changelog
 ==================
 
 ### About this file
-* This file will be updated whenever new release put into production.
-* The release version should be visible from within the application (coming soon).
-* Any problems should be reported via the "report an issue" link in the footer of the application instance.
+* This file will be updated whenever a new release is put into production.
+* Any problems should be reported via the "report an issue" link in the footer of the application.
 
 ### v3.4.0
 #### Bug Fixes
@@ -50,6 +49,8 @@ Changelog
 * Make everything a lot faster by not counting all users on every
   request ([#759](https://github.com/YaleSTC/reservations/issues/759))
 * Refactor checkin and checkout ([#666](https://github.com/YaleSTC/reservations/issues/666))
+* Index users table for speed optimization ([#755](https://github.com/YaleSTC/reservations/pull/755))
+* Clarified and refactored reservation renewal code ([#674](https://github.com/YaleSTC/reservations/issues/674))
 
 ###v3.3.0
 ####Bug Fixes
