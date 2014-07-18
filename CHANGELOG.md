@@ -47,6 +47,9 @@ Changelog
     * Clearing a reserver name in the cart resets the cart to the
       current user
     * Typing a full name with space doesn't delete the query
+* Make everything a lot faster by not counting all users on every
+  request ([#759](https://github.com/YaleSTC/reservations/issues/759))
+* Refactor checkin and checkout ([#666](https://github.com/YaleSTC/reservations/issues/666))
 
 ###v3.3.0
 ####Bug Fixes
