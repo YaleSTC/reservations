@@ -785,7 +785,7 @@ describe ReservationsController do
         @controller.stub(:current_user).and_return(@admin)
         @obj = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
         @procedure = FactoryGirl.create(:checkout_procedure, equipment_model: @reservation.equipment_model)
-        reservations_params = {@reservation.id.to_s => {notes: "", equipment_object_id: @obj.id, checkout_procedures: {@procedure.id.to_s => 1}}}
+        reservations_params = {@reservation.id.to_s => {notes: "", equipment_object_id: @obj.id, checkout_procedures: {}}}
         put :checkout, user_id: @user.id,  reservations: reservations_params
       end
 
@@ -809,7 +809,7 @@ describe ReservationsController do
         expect(@reservation.checkout_handler).to be_a(User)
         expect(@reservation.checked_out).to_not be_nil
         expect(@reservation.equipment_object).to eq @obj
-        expect(@reservation.notes).to_not be_nil
+        expect(@reservation.notes).to include(@procedure.step)
       end
     end
 
@@ -949,7 +949,7 @@ describe ReservationsController do
         @controller.stub(:current_user).and_return(@admin)
         @reservation = FactoryGirl.create(:checked_out_reservation, reserver: @user)
         @procedure = FactoryGirl.create(:checkin_procedure, equipment_model: @reservation.equipment_model)
-        reservations_params = {@reservation.id.to_s => {notes: "", checkin?: "1", checkout_procedures: {@procedure.id.to_s => 1}}}
+        reservations_params = {@reservation.id.to_s => {notes: "", checkin?: "1", checkin_procedures: {}}}
         put :checkin, user_id: @user.id, reservations: reservations_params
       end
 
@@ -970,7 +970,7 @@ describe ReservationsController do
         @reservation.reload
         expect(@reservation.checkin_handler).to be_a(User)
         expect(@reservation.checked_in).to_not be_nil
-        expect(@reservation.notes).to_not be_nil
+        expect(@reservation.notes).to include(@procedure.step)
       end
     end
 
