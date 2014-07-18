@@ -60,7 +60,7 @@ class EquipmentModel < ActiveRecord::Base
 
   #validate :renewal_not_longer_than_checkout
 
- # validate :not_associated_with_self
+  validate :not_associated_with_self
 
   def not_associated_with_self
     unless self.associated_equipment_models.where(id: self.id).blank?
