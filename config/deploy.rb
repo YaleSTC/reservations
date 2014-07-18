@@ -63,6 +63,22 @@ EOF
       put database_configuration, "#{shared_path}/config/database.yml"
     end
 
+    desc "Enter PartyFoul OAuth Token"
+    task :partyfoul do
+      set :oauth_token, Capistrano::CLI.us.ask("PartyFoul OAuth Token: ")
+      party_foul_initializer=<<-EOF
+PartyFoul.configure do |config|
+  config.blacklisted_exceptions = ['ActiveRecord::RecordNotFound', 'ActionController::RoutingError']
+  config.oauth_token            = '#{oauth_token}'
+  config.api_endpoint           = 'https://api.github.com'
+  config.web_url                = 'https://github.com'
+  config.owner                  = 'YaleSTC'
+  config.repo                   = 'reservations'
+end
+EOF
+    put party_foul_initializer, "#{shared_path}/config/initializers/party_foul.rb"
+  end
+
     desc "Enter Airbrake API code"
     task :airbrake do
       set :api_key, Capistrano::CLI.ui.ask("Airbrake API Key: ")
