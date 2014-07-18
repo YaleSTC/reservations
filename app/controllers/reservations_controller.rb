@@ -409,7 +409,7 @@ class ReservationsController < ApplicationController
     end
 
     if procedures.present?
-      notes += "The following #{procedure_kind} procedures were not" \
+      notes += "The following #{procedure_kind} procedures were not " \
       "performed:\n" + markdown_listify(procedures)
     end
 
