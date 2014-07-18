@@ -65,7 +65,7 @@ class UsersController < ApplicationController
       end
 
       # Is there a user record already?
-      if User.exists?(login: params[:possible_netid])
+      if User.find_by_login(params[:possible_netid])
         @message = 'You cannot create a new user, as the netID you entered
         is already associated with a user. If you would like to reserve for
         them, please select their name from the drop-down options in the cart.'
