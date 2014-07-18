@@ -49,7 +49,7 @@ class ApplicationController < ActionController::Base
   end
 
   def seen_app_configs
-    return if AppConfig.first.viewed || current_user.nil?
+    return if @app_configs.viewed || current_user.nil?
     if can? :edit, :app_config
       flash[:notice] = "Since this is your first time viewing the application configurations, we recommend\
       that you take some time to read each option and make sure that the settings are appropriate for your needs."
