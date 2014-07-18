@@ -29,7 +29,7 @@ Changelog
   ([#529](https://github.com/YaleSTC/reservations/issues/529))
 
 #### Enhancements
-* Completely overhauled cart ([#587](https://github.com/YaleSTC/reservations/pull/587), [#])
+* Completely overhauled cart ([#587](https://github.com/YaleSTC/reservations/pull/587))
 * Completely overhauled cart and reservation validations ([#644](https://github.com/YaleSTC/reservations/pull/644), [#343](https://github.com/YaleSTC/reservations/pull/343))
 * Refactored the Reservation model ([#614](https://github.com/YaleSTC/reservations/pull/614))
 * Greatly improved catalog render times ([#628](https://github.com/YaleSTC/reservations/pull/628))
