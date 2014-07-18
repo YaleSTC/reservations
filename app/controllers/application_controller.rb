@@ -14,7 +14,6 @@ class ApplicationController < ActionController::Base
     c.before_filter :seen_app_configs
     c.before_filter :current_user
     c.before_filter :first_time_user
-    c.before_filter :cart
     c.before_filter :fix_cart_date
     c.before_filter :set_view_mode
     c.before_filter :check_view_mode
