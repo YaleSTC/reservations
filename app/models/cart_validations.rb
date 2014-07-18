@@ -21,7 +21,7 @@ module CartValidations
     source_res = Reservation.not_returned.where(equipment_model_id: self.items.keys).reserved_in_date_range(self.start_date,self.due_date).all
 
     models.each do |model, quantity|
-      errors += check_availability(model,quantity,source_res) unless renew
+      errors += check_availability(model,quantity,source_res)
       errors += check_duration(model) unless renew
       errors += check_should_be_renewed(user_reservations,model,self.start_date)
     end

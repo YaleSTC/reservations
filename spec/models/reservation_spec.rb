@@ -17,7 +17,7 @@ describe Reservation do
   #it { should validate_presence_of(:due_date) } #fails because validations can't run if nil (?)
   #
 
-  describe '.max_renewal_length_available' do
+  describe '.find renewal length' do
     subject(:reservation) {
       r = FactoryGirl.create(:valid_reservation)
       FactoryGirl.create(:equipment_object, equipment_model_id: r.equipment_model_id)
@@ -25,21 +25,21 @@ describe Reservation do
     }
     context 'when no other reservations around' do
       it 'should set the correct renewal length' do
-        expect(reservation.max_renewal_length_available).to eq(reservation.equipment_model.max_renewal_length)
+        expect(reservation.find_renewal_date).to eq(reservation.due_date + reservation.equipment_model.max_renewal_length.days)
       end
     end
     context 'with a blackout date overlapping with the max renewal length' do
       it 'should set the correct renewal length' do
        blackout = FactoryGirl.create(:blackout, start_date: reservation.due_date + 2.day,
                                       end_date: reservation.due_date + reservation.equipment_model.max_renewal_length.days + 1.day)
-        expect(reservation.max_renewal_length_available).to eq(1)
+       expect(reservation.find_renewal_date).to eq(reservation.due_date + 1.day)
       end
     end
     context 'with a blackout date going right up to the max renewal length' do
       it 'should set a length of 0' do
         FactoryGirl.create(:blackout, start_date: reservation.due_date + 1.day,
                 end_date: reservation.due_date + reservation.equipment_model.max_renewal_length.days + 1.day)
-        expect(reservation.max_renewal_length_available).to eq(0)
+        expect(reservation.find_renewal_date).to eq(reservation.due_date)
       end
     end
     context 'with another reservation starting in the middle of the max renewal length' do
@@ -47,7 +47,7 @@ describe Reservation do
         r = FactoryGirl.create(:reservation, equipment_model: reservation.equipment_model, start_date: reservation.due_date + 3.days,
                            due_date: reservation.due_date + reservation.equipment_model.max_renewal_length.days + 5.days)
         r.equipment_model.equipment_objects.last.destroy
-        expect(reservation.max_renewal_length_available).to eq(3)
+        expect(reservation.find_renewal_date).to eq(reservation.due_date + 3.days)
       end
     end
 
@@ -80,7 +80,7 @@ describe Reservation do
     end
     it { should respond_to(:fake_reserver_id) }
     it { should respond_to(:late_fee) }
-    it { should respond_to(:max_renewal_length_available) }
+    it { should respond_to(:find_renewal_date) }
   end
 
   context 'when not checked out' do

@@ -119,20 +119,21 @@ class Reservation < ActiveRecord::Base
   def fake_reserver_id # this is necessary for autocomplete! delete me not!
   end
 
-  def max_renewal_length_available
+  def find_renewal_date
     # determine the max renewal length for a given reservation
     # O(n) queries
-
+    renew_extension = self.dup
+    renew_extension.start_date = self.due_date + 1.day
     orig_due_date = self.due_date
     eq_model = self.equipment_model
-    eq_model.maximum_renewal_length.downto(0).each do |r|
-      self.due_date = orig_due_date + r.days
-      if self.validate_renew.empty? && (eq_model.num_available(orig_due_date+1.day, self.due_date) > 0)
-        self.due_date = orig_due_date
-        return r
+
+    eq_model.maximum_renewal_length.downto(1).each do |r|
+      renew_extension.due_date = orig_due_date + r.days
+      if renew_extension.validate_renew.empty?
+        return renew_extension.due_date
       end
     end
-    return 0
+    return self.due_date
   end
 
   def is_eligible_for_renew?
@@ -156,7 +157,7 @@ class Reservation < ActiveRecord::Base
   def renew
     # renew the reservation and return error messages if unsuccessful
     return "Reservation not eligible for renewal" unless self.is_eligible_for_renew?
-    self.due_date += self.max_renewal_length_available.days
+    self.due_date = self.find_renewal_date
     return "Unable to update reservation dates!" unless self.save
     return nil
   end

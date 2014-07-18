@@ -34,11 +34,10 @@
       </div>
 
       <%# shows renew button if due_date is today, tomorrow, or the day after %>
-      <% if @reservation.is_eligible_for_renew? &&
-      (@reservation.max_renewal_length_available != 0) && (!@reservation.checked_out.nil?) %>
+      <% if @reservation.is_eligible_for_renew? %>
         <div id="renew_box">
           <p>You are currently eligible to renew the <%= @reservation.equipment_model.name.singularize %>
-          reservation for <strong><%= pluralize(@reservation.max_renewal_length_available, 'day') %></strong>.</p>
+          reservation until <strong><%= @reservation.find_renewal_length %></strong>.</p>
           <hr>
           <%= manage_reservations_btn %>
           <%= link_to "Renew Now", renew_reservation_path, :method => :put, remote: true, class: 'btn btn-primary' %>
@@ -192,7 +191,7 @@
   <%= button_to_function("Print this page", "javascript:print()", class: 'btn') %>
   <%# if (@reservation.status == "checked out") or (@reservation.status == "overdue") %>
     <%#= link_to "Email checkout receipt", {:controller => :reservations, :action => "checkout_email", :id => @reservation}, :method => "get", :class => 'btn' %>
-	<%# elsif @reservation.status.include?("returned") %>
+  <%# elsif @reservation.status.include?("returned") %>
     <%#= link_to "Email return receipt", {:controller => :reservations, :action => "checkin_email", :id => @reservation}, :method => "get", :class => 'btn' %>
   <%# end %>
   <% if can? :edit, @reservation %>
