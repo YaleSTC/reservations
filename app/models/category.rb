@@ -18,7 +18,7 @@ class Category < ActiveRecord::Base
                                     integer_only: true,
                                     greater_than_or_equal_to: 0 }
 
-  validate :renewal_not_longer_than_checkout
+  #validate :renewal_not_longer_than_checkout
 
   attr_accessible :name, :max_per_user,
                   :max_checkout_length, :deleted_at,
@@ -30,12 +30,12 @@ class Category < ActiveRecord::Base
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
   scope :active, where("#{table_name}.deleted_at is null")
 
-  def renewal_not_longer_than_checkout
-    return if max_checkout_length.nil?
-    if maximum_renewal_length > max_checkout_length
-      errors.add(:max_renewal_length, "You cannot have a renewal period longer than the maximum checkout length")
-    end
-  end
+  #def renewal_not_longer_than_checkout
+   # return if max_checkout_length.nil?
+   # if maximum_renewal_length > max_checkout_length
+   #   errors.add(:max_renewal_length, "You cannot have a renewal period longer than the maximum checkout length")
+   # end
+  #end
 
 
   def maximum_per_user
@@ -59,13 +59,4 @@ class Category < ActiveRecord::Base
     #self.max_checkout_length ? ("#{max_checkout_length} days") : "unrestricted"
   end
 
-  #TODO: this appears to be dead code - verify and remove
-  def self.select_options
-    self.find(:all, order: 'name ASC').collect{|item| [item.name, item.id]}
-  end
-
-  #TODO: this appears to be dead code - verify and remove
-  def self.singular_select_options
-    (self.find(:all, order: 'name ASC') - [self.find_by_name("Accessories")]).collect{|item| "<option value='#{item.id}'>#{item.name.singularize}</option>"}.join.html_safe
-  end
 end

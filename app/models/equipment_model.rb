@@ -134,7 +134,7 @@ class EquipmentModel < ActiveRecord::Base
   #inherits from category if not defined
 
   def maximum_checkout_length
-    max_checkout_length || category.max_checkout_length
+    max_checkout_length || category.maximum_checkout_length
   end
 
   def maximum_per_user
