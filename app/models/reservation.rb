@@ -83,6 +83,10 @@ class Reservation < ActiveRecord::Base
     self.to_cart.validate_all
   end
 
+  def validate_renew
+    self.to_cart.validate_all(true)
+  end
+
   def status
     if checked_out.nil?
       if approval_status == 'auto' or approval_status == 'approved'
@@ -111,15 +115,21 @@ class Reservation < ActiveRecord::Base
   def fake_reserver_id # this is necessary for autocomplete! delete me not!
   end
 
-  def max_renewal_length_available
+  def find_renewal_date
     # determine the max renewal length for a given reservation
     # O(n) queries
-
+    renew_extension = self.dup
+    renew_extension.start_date = self.due_date + 1.day
+    orig_due_date = self.due_date
     eq_model = self.equipment_model
-    for renewal_length in 1...eq_model.maximum_renewal_length do
-      break if eq_model.available_count(self.due_date + renewal_length.day) == 0
+
+    eq_model.maximum_renewal_length.downto(1).each do |r|
+      renew_extension.due_date = orig_due_date + r.days
+      if renew_extension.validate_renew.empty?
+        return renew_extension.due_date
+      end
     end
-    renewal_length - 1
+    return self.due_date
   end
 
   def is_eligible_for_renew?
@@ -138,6 +148,14 @@ class Reservation < ActiveRecord::Base
     max_renewal_days = Float::INFINITY if max_renewal_days == 'unrestricted'
     return ((self.due_date.to_date - Date.today).to_i < max_renewal_days ) &&
       (self.times_renewed < max_renewal_times)
+  end
+
+  def renew
+    # renew the reservation and return error messages if unsuccessful
+    return "Reservation not eligible for renewal" unless self.is_eligible_for_renew?
+    self.due_date = self.find_renewal_date
+    return "Unable to update reservation dates!" unless self.save
+    return nil
   end
 
   def to_cart
