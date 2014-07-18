@@ -8,7 +8,7 @@
       <div id="pagination_line" class="span9">
         <%# for kaminari pagination %>
         <%= paginate @page_eq_models_by_category,
-          params: {controller: 'catalog', action: 'index' } %>
+              params: {controller: 'catalog', action: 'index' } %>
         <%= form_tag update_user_per_cat_page_path,
               id: 'items_per_form', class: "form-inline pull-right",
               remote: true, method: 'put' do %>
