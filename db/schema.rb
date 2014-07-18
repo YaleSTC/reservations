@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140715164121) do
+ActiveRecord::Schema.define(:version => 20140718170250) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -203,6 +203,8 @@ ActiveRecord::Schema.define(:version => 20140715164121) do
     t.string   "view_mode",                 :default => "admin"
     t.string   "role",                      :default => "normal"
   end
+
+  add_index "users", ["login"], :name => "index_users_on_login", :unique => true
 
   create_table "users_requirements", :id => false, :force => true do |t|
     t.integer "user_id"
