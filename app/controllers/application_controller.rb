@@ -9,12 +9,11 @@ class ApplicationController < ActionController::Base
   before_filter :app_setup_check
   before_filter :cart
 
-  with_options unless: lambda {|u| User.all.count == 0 } do |c|
+  with_options unless: lambda {|u| User.count == 0 } do |c|
     c.before_filter :load_configs
     c.before_filter :seen_app_configs
     c.before_filter :current_user
     c.before_filter :first_time_user
-    c.before_filter :cart
     c.before_filter :fix_cart_date
     c.before_filter :set_view_mode
     c.before_filter :check_view_mode
@@ -36,7 +35,7 @@ class ApplicationController < ActionController::Base
   # -------- before_filter methods -------- #
 
   def app_setup_check
-    if User.all.blank? || !AppConfig.first
+    unless AppConfig.first && (User.count != 0)
       flash[:notice] = "Hey there! It looks like you haven't fully set up your application yet. To \
       create your first admin user and configure the application, please run $bundle exec rake app:setup \
       in the terminal. For more information, please see our github page: https://github.com/YaleSTC/reservations"
