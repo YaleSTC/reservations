@@ -58,9 +58,9 @@ class EquipmentModel < ActiveRecord::Base
             :max_renewal_times,
             :renewal_days_before_due,  numericality: { allow_nil: true, only_integer: true, greater_than_or_equal_to: 0 }
 
-  validate :renewal_not_longer_than_checkout
+  #validate :renewal_not_longer_than_checkout
 
-  validate :not_associated_with_self
+ # validate :not_associated_with_self
 
   def not_associated_with_self
     unless self.associated_equipment_models.where(id: self.id).blank?
@@ -68,12 +68,12 @@ class EquipmentModel < ActiveRecord::Base
     end
   end
 
-  def renewal_not_longer_than_checkout
-    max = self.maximum_checkout_length
-    if self.max_renewal_length > max
-      errors.add(:max_renewal_length, "You cannot have a renewal period longer than the maximum checkout length")
-    end
-  end
+  #def renewal_not_longer_than_checkout
+   # max = self.maximum_checkout_length
+    #if self.max_renewal_length > max
+     # errors.add(:max_renewal_length, "You cannot have a renewal period longer than the maximum checkout length")
+    #end
+  #end
 
   #################
   ## Paperclip   ##
