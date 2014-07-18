@@ -339,8 +339,8 @@ class ReservationsController < ApplicationController
   def renew
     message = @reservation.renew
     if message
-      redirect_to @reservation and return
       flash[:error] = message
+      redirect_to @reservation and return
     end
     respond_to do |format|
       format.html{redirect_to root_path}

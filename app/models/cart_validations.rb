@@ -108,8 +108,8 @@ module CartValidations
 
   def check_availability(model = EquipmentModel.find(self.items.keys.first),
                          quantity=1,
-                         source_res=Reservation.for_eq_model(self).not_returned.all,
-                         preexisting = false)
+                         source_res=Reservation.for_eq_model(self).not_returned.all)
+
     # checks that the model is available for the given quantity
     # given the existence of the source_reservations
     #
