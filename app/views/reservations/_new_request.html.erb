@@ -23,10 +23,6 @@
     <%= cart.start_date.to_date.to_s(:long) %> to
     <%= cart.due_date.to_date.to_s(:long) %>:
 
-    <%# hidden fields needed for data submission %>
-    <%= f.input :reserver_id, :as => :hidden, :value => cart.reserver_id %>
-    <%= f.input :start_date, :as => :hidden, :value => cart.start_date %>
-    <%= f.input :due_date, :as => :hidden, :value => cart.due_date %>
   </p>
   <p>
     <ul class="rounded-list">
@@ -35,6 +31,12 @@
       <% end %>
     </ul>
   </p>
+
+  <div class = "control-group text <%= 'error' if @notes_required %>">
+    <%= f.label "Please give a short justification for this equipment request:" %>
+    <%= f.input_field :notes, class: 'span6', rows: 5 %>
+  </div>
+
   <div class="form-actions">
     <%= f.button :submit, "Submit Request", confirm: "Are you sure? This request is not finalized and will be subject to approval by an administrator. It will not be available for checkout until and unless approved, and the request may be denied for any reason at the sole discretion of the administrator." %>
     <%= link_to "Return to Catalog", catalog_path, class: 'btn' %>

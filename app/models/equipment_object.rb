@@ -35,9 +35,7 @@ class EquipmentObject < ActiveRecord::Base
 
   def current_reservation
     self.reservations.each do |r|
-      if !r.checked_out.nil? && r.checked_in.nil?
-        return r
-      end
+      return r if r.checked_out && r.checked_in.nil?
     end
     return nil
   end

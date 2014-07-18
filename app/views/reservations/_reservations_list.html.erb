@@ -13,7 +13,7 @@
   </thead>
   <tbody>
 
-  <% for reservation in reservations_list.includes(:equipment_model, :equipment_object) %>
+  <% reservations_set.includes(:equipment_model, :equipment_object).each do |reservation| %>
     <tr>
       <td><%= link_to reservation.id, reservation %></td>
       <% if can? :manage, Reservation %>

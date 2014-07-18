@@ -31,17 +31,12 @@ class UsersController < ApplicationController
   def show
     @user_reservations = @user.reservations
     @all_equipment = Reservation.active.for_reserver(@user)
-    @show_equipment = { checked_out:  @user.reservations.
-                                            select {|r| \
-                                              (r.status == "checked out") || \
-                                              (r.status == "overdue")},
+    @show_equipment = { checked_out:  @user.reservations.checked_out,
                         overdue:      @user.reservations.overdue,
                         future:       @user.reservations.reserved,
                         past:         @user.reservations.returned,
                         missed:       @user.reservations.missed,
-                        past_overdue: @user.reservations.returned.
-                                            select {|r| \
-                                              r.status == "returned overdue"} }
+                        past_overdue: @user.reservations.returned_overdue }
   end
 
   def new
@@ -52,7 +47,10 @@ class UsersController < ApplicationController
       @user = User.new(User.search_ldap(session[:cas_user]))
       @user.login = session[:cas_user] #default to current login
 
-      # TODO: What should it render?
+      # render long form for the user
+      @partial_to_render = 'form'
+    elsif params[:possible_netid].nil?
+      # users/new manual path
       @partial_to_render = 'form'
     else
       # Someone with permissions is creating a new user
