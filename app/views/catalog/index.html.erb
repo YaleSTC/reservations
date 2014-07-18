@@ -4,7 +4,6 @@
 <% if @eq_models_by_category.empty? %>
   <%= render partial: 'no_equipment' %>
 <% else %>
-  <% if @pagination_required %>
     <div class="row">
       <div id="pagination_line" class="span9">
         <%# for kaminari pagination %>
@@ -20,13 +19,10 @@
         <% end %>
       </div>
     </div>
-  <% end %>
 
   <div id="catalog_listing">
     <%= render partial: 'catalog_listing', locals: { eq_models_by_category: @eq_models_by_category, available_string: @available_string, availability_hash: @availability_hash } %>
   </div>
-  <% if @pagination_required  %>
-    <%= paginate @page_eq_models_by_category %>
-  <% end %>
+  <%= paginate @page_eq_models_by_category %>
 <% end %>
 </div>

@@ -77,7 +77,6 @@ class CatalogController < ApplicationController
     # assign items per page to the passed params, the default or 10
     # depending on if they exist or not
     @per_page_opts = [10, 20, 25, 30, 50].unshift(items_per_page).uniq
-    @pagination_required = EquipmentModel.active.size > items_per_page
     session[:items_per_page] = items_per_page
   end
 
