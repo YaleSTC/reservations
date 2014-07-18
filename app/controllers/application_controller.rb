@@ -9,16 +9,16 @@ class ApplicationController < ActionController::Base
   before_filter :app_setup_check
   before_filter :cart
 
-  if User.count != 0
-    before_filter :load_configs
-    before_filter :seen_app_configs
-    before_filter :current_user
-    before_filter :first_time_user
-    before_filter :cart
-    before_filter :fix_cart_date
-    before_filter :set_view_mode
-    before_filter :check_view_mode
-    before_filter :make_cart_compatible
+  with_options unless: lambda {|u| User.count == 0 } do |c|
+    c.before_filter :load_configs
+    c.before_filter :seen_app_configs
+    c.before_filter :current_user
+    c.before_filter :first_time_user
+    c.before_filter :cart
+    c.before_filter :fix_cart_date
+    c.before_filter :set_view_mode
+    c.before_filter :check_view_mode
+    c.before_filter :make_cart_compatible
   end
 
   helper_method :current_user
@@ -49,7 +49,7 @@ class ApplicationController < ActionController::Base
   end
 
   def seen_app_configs
-    return if @app_configs.viewed || current_user.nil?
+    return if AppConfig.first.viewed || current_user.nil?
     if can? :edit, :app_config
       flash[:notice] = "Since this is your first time viewing the application configurations, we recommend\
       that you take some time to read each option and make sure that the settings are appropriate for your needs."
