@@ -395,13 +395,8 @@ class ReservationsController < ApplicationController
   # new_notes (from the form), procedure_kind (:checkin or :checkout) and array
   # of string steps of procedures that were not followed for procedure_kind.
   def make_notes(old_notes, new_notes, procedure_kind, procedures)
-    notes = ''
+    notes = old_notes ? old_notes + "\n\n" : ''
     procedure_kind = procedure_kind.to_s
-
-    if old_notes
-      notes += "== Notes previous to #{procedure_kind}\n" \
-      + old_notes + "\n\n"
-    end
 
     if new_notes || procedures.present?
       notes += "== Notes from #{procedure_kind}\n"
