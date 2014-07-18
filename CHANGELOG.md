@@ -20,6 +20,8 @@ Changelog
 * Added version number to footer and app settings page ([#560](https://github.com/YaleSTC/reservations/pull/560))
 * Added continuous integration testing w/ [TravisCI](https://travis-ci.org/) ([#641](https://github.com/YaleSTC/reservations/pull/641))
 * Added testing coverage w/ [CodeClimate](https://codeclimate.com/) ([#634](https://github.com/YaleSTC/reservations/pull/634))
+* Added reservation notes entry for validation-failing requests
+  ([502](https://github.com/YaleSTC/reservations/issues/502))
 
 #### Enhancements
 * Completely overhauled cart ([#587](https://github.com/YaleSTC/reservations/pull/587), [#])
@@ -29,6 +31,9 @@ Changelog
 * Updated `kaminari` gem ([#657](https://github.com/YaleSTC/reservations/pull/657))
 * Refactored `UsersController#new` ([#660](https://github.com/YaleSTC/reservations/pull/660))
 * Further speed enhancements for the catalog and checkout ([#734](https://github.com/YaleSTC/reservations/issues/734)).
+* Removed deletion of reservations when deactivating equipment ([#706](https://github.com/YaleSTC/reservations/issues/706))
+* Further speed enhancements for the reservation lists page ([#655](https://github.com/YaleSTC/reservations/issues/655))
+* Refactor blackout system ([#654](https://github.com/YaleSTC/reservations/issues/654))
 
 ###v3.3.0
 ####Bug Fixes
@@ -75,9 +80,9 @@ Changelog
 * Revamped authentication system with CanCan gem
   ([#419](https://github.com/YaleSTC/reservations/issues/419))
 * Revamped the check-in UX ([#172](https://github.com/YaleSTC/reservations/issues/172), [#568](https://github.com/YaleSTC/reservations/issues/568))
-	* Added ability to click div to select the checkbox
-	* Added color cues to indicate selection and overdue status
-	* Added overdue glyph
+    * Added ability to click div to select the checkbox
+    * Added color cues to indicate selection and overdue status
+    * Added overdue glyph
 * Upgraded to Ruby v2.1.1 and Rails v3.2.14 ([#535](https://github.com/YaleSTC/reservations/issues/535))
 * Added hidden field to datepickers for blackouts and announcements to
   remove unnecessary date parsing
