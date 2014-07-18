@@ -63,16 +63,21 @@ EOF
       put database_configuration, "#{shared_path}/config/database.yml"
     end
 
-    desc "Enter Airbrake API code"
-    task :airbrake do
-      set :api_key, Capistrano::CLI.ui.ask("Airbrake API Key: ")
-      airbrake_config=<<-EOF
-Airbrake.configure do |config|
-  config.api_key = '#{api_key}'
+    desc "Enter PartyFoul OAuth Token"
+    task :party_foul do
+      set :oauth_token, Capistrano::CLI.us.ask("PartyFoul OAuth Token: ")
+      party_foul_initializer=<<-EOF
+PartyFoul.configure do |config|
+  config.blacklisted_exceptions = ['ActiveRecord::RecordNotFound', 'ActionController::RoutingError']
+  config.oauth_token            = '#{oauth_token}'
+  config.api_endpoint           = 'https://api.github.com'
+  config.web_url                = 'https://github.com'
+  config.owner                  = 'YaleSTC'
+  config.repo                   = 'reservations'
 end
 EOF
-      put airbrake_config, "#{shared_path}/config/airbrake.rb"
-    end
+    put party_foul_initializer, "#{shared_path}/config/party_foul.rb"
+  end
 
     task :prefix_initializer do
       prefix_config_file =<<-EOF
@@ -91,22 +96,22 @@ EOF
     task :localize, :roles => [:app] do
 
       run "ln -nsf #{shared_path}/config/database.yml #{release_path}/config/database.yml"
-      run "ln -nsf #{shared_path}/config/airbrake.rb #{release_path}/config/initializers/airbrake.rb"
+      run "ln -nsf #{shared_path}/config/party_foul.rb #{release_path}/config/initializers/party_foul.rb"
       run "ln -nsf #{shared_path}/config/prefix.rb #{release_path}/config/initializers/prefix.rb"
-      
+
       run "mkdir -p #{shared_path}/log"
       run "ln -nsfF #{shared_path}/log/ #{release_path}/log"
 
       run "mkdir -p #{shared_path}/pids"
-      run "ln -nsfF #{shared_path}/pids/ #{release_path}/tmp/pids"      
+      run "ln -nsfF #{shared_path}/pids/ #{release_path}/tmp/pids"
 
       run "mkdir -p #{shared_path}/sessions"
       run "ln -nsfF #{shared_path}/sessions/ #{release_path}/tmp/sessions"
 
       run "mkdir -p #{shared_path}/attachments"
       run "ln -nsfF #{shared_path}/attachments/ #{release_path}/public/attachments"
-    end    
-  end  
+    end
+  end
 end
 
 # == DATABASE ==================================================================
@@ -146,7 +151,7 @@ namespace :deploy do
   desc "Create vhosts file for Passenger config"
   task :passenger_config, :roles => :app do
     run "sh -c \'echo \"RailsBaseURI /#{application_prefix}\" > #{apache_config_dir}/rails/rails_#{application}_#{application_prefix}.conf\'"
-    run "ln -s #{deploy_to}/current/public #{document_root}/#{application_prefix}"    
+    run "ln -s #{deploy_to}/current/public #{document_root}/#{application_prefix}"
   end
 
   desc "Create database"
@@ -180,16 +185,10 @@ namespace :deploy do
 end
 
 after "deploy:setup", "init:config:database"
-after "deploy:setup", "init:config:airbrake"
+after "deploy:setup", "init:config:party_foul"
 after "deploy:setup", "init:config:prefix_initializer"
 after "deploy:create_symlink", "init:config:localize"
 after "deploy:create_symlink", "deploy:update_crontab"
 after "deploy", "deploy:cleanup"
 after "deploy:migrations", "deploy:cleanup"
 before "deploy:assets:precompile", "init:config:localize"
-
-Dir[File.join(File.dirname(__FILE__), '..', 'vendor', 'gems', 'airbrake-*')].each do |vendored_notifier|
-  $: << File.join(vendored_notifier, 'lib')
-end
-
-require 'airbrake/capistrano'
