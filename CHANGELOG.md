@@ -14,6 +14,8 @@ Changelog
 * Ensured that the new cart would not break the app for existing users ([#676](https://github.com/YaleSTC/reservations/pull/676))
 * Fix edge case new user creation when :possible_netid is not set ([#732](https://github.com/YaleSTC/reservations/issues/732)).
 * Prevented infinite redirect loop in edge case when a user tries to log on to the system before the admin has set up the application ([#684](https://github.com/YaleSTC/reservations/issues/684)).
+* Updating the cart no longer breaks the catalog pagination links
+  ([#531](https://github.com/YaleSTC/reservations/issues/531))
 
 #### New Features
 * Added benchmarking for speed-testing ([#574](https://github.com/YaleSTC/reservations/pull/574))
@@ -21,7 +23,11 @@ Changelog
 * Added continuous integration testing w/ [TravisCI](https://travis-ci.org/) ([#641](https://github.com/YaleSTC/reservations/pull/641))
 * Added testing coverage w/ [CodeClimate](https://codeclimate.com/) ([#634](https://github.com/YaleSTC/reservations/pull/634))
 * Added reservation notes entry for validation-failing requests
-  ([502](https://github.com/YaleSTC/reservations/issues/502))
+  ([#502](https://github.com/YaleSTC/reservations/issues/502))
+* Blackouts automatically are removed after an admin-configurable period
+  ([#654](https://github.com/YaleSTC/reservations/issues/654))
+* User deactivation/reactivation has been changed to user ban/unban
+  ([#529](https://github.com/YaleSTC/reservations/issues/529))
 
 #### Enhancements
 * Completely overhauled cart ([#587](https://github.com/YaleSTC/reservations/pull/587), [#])
@@ -34,6 +40,13 @@ Changelog
 * Removed deletion of reservations when deactivating equipment ([#706](https://github.com/YaleSTC/reservations/issues/706))
 * Further speed enhancements for the reservation lists page ([#655](https://github.com/YaleSTC/reservations/issues/655))
 * Refactor blackout system ([#654](https://github.com/YaleSTC/reservations/issues/654))
+* Add full coverage for reservation checkin and checkout ([#679](https://github.com/YaleSTC/reservations/issues/679))
+* Autocomplete improvements ([#620](https://github.com/YaleSTC/reservations/issues/620))
+    * Clicking a user name in find user suggestions directs
+      automatically to the manage reservation page
+    * Clearing a reserver name in the cart resets the cart to the
+      current user
+    * Typing a full name with space doesn't delete the query
 
 ###v3.3.0
 ####Bug Fixes
