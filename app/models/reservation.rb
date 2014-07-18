@@ -99,13 +99,9 @@ class Reservation < ActiveRecord::Base
     end
   end
 
-  def checkout_object_uniqueness(reservations)
-    object_ids_taken = []
-    reservations.each do |r|
-      return false if object_ids_taken.include?(r.equipment_object_id)
-      object_ids_taken << r.equipment_object_id
-    end
-    return true # return true if unique
+  def self.unique_equipment_objects?(reservations)
+    object_ids = reservations.map(&:equipment_object_id)
+    return object_ids == object_ids.uniq
   end
 
   def late_fee

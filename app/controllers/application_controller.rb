@@ -249,4 +249,14 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  # Checks if params[:terms_of_service_accepted] is necessary; if filled-out,
+  # saves the state of the user; if not filled out and necessary, returns false.
+  # Otherwise, returns true.
+  def check_tos(user)
+    return true if user.terms_of_service_accepted
+
+    user.terms_of_service_accepted = params[:terms_of_service_accepted].present?
+    return user.terms_of_service_accepted ? user.save : (flash[:error] = "You must confirm that the user accepts the Terms of Service.") && false
+  end
+
 end
