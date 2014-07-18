@@ -18,6 +18,8 @@ class Category < ActiveRecord::Base
                                     integer_only: true,
                                     greater_than_or_equal_to: 0 }
 
+  validate :renewal_not_longer_than_checkout
+
   attr_accessible :name, :max_per_user,
                   :max_checkout_length, :deleted_at,
                   :max_renewal_times, :max_renewal_length,
@@ -27,6 +29,13 @@ class Category < ActiveRecord::Base
 
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
   scope :active, where("#{table_name}.deleted_at is null")
+
+  def renewal_not_longer_than_checkout
+    return if max_checkout_length.nil?
+    if maximum_renewal_length > max_checkout_length
+      errors.add(:max_renewal_length, "You cannot have a renewal period longer than the maximum checkout length")
+    end
+  end
 
 
   def maximum_per_user

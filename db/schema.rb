@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140715164121) do
+ActiveRecord::Schema.define(:version => 20140718195128) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -127,6 +127,7 @@ ActiveRecord::Schema.define(:version => 20140715164121) do
     t.integer  "max_renewal_times"
     t.integer  "max_renewal_length"
     t.integer  "renewal_days_before_due"
+    t.integer  "max_checkout_length"
   end
 
   create_table "equipment_models_associated_equipment_models", :id => false, :force => true do |t|

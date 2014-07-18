@@ -12,7 +12,7 @@ class EquipmentModel < ActiveRecord::Base
       :max_per_user, :document_attributes, :deleted_at,
       :checkout_procedures_attributes, :checkin_procedures_attributes, :photo,
       :documentation, :max_renewal_times, :max_renewal_length, :renewal_days_before_due,
-      :associated_equipment_model_ids, :requirement_ids, :requirements
+      :associated_equipment_model_ids, :requirement_ids, :requirements, :max_checkout_length
 
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
   scope :active, where("#{table_name}.deleted_at is null")
@@ -50,18 +50,28 @@ class EquipmentModel < ActiveRecord::Base
   validates :name,         uniqueness: true
   validates :late_fee,     :replacement_fee,
                            numericality: { greater_than_or_equal_to: 0 }
-  validates :max_per_user, numericality: { allow_nil: true, \
+  validates :max_per_user,
+            :max_checkout_length, numericality: { allow_nil: true, \
                                               only_integer: true, \
                                               greater_than_or_equal_to: 1 }
   validates :max_renewal_length,
             :max_renewal_times,
             :renewal_days_before_due,  numericality: { allow_nil: true, only_integer: true, greater_than_or_equal_to: 0 }
 
+  validate :renewal_not_longer_than_checkout
+
   validate :not_associated_with_self
 
   def not_associated_with_self
     unless self.associated_equipment_models.where(id: self.id).blank?
       errors.add(:associated_equipment_models, "You cannot associate a model with itself. Please deselect " + self.name)
+    end
+  end
+
+  def renewal_not_longer_than_checkout
+    max = self.maximum_checkout_length
+    if self.max_renewal_length > max
+      errors.add(:max_renewal_length, "You cannot have a renewal period longer than the maximum checkout length")
     end
   end
 
@@ -122,6 +132,11 @@ class EquipmentModel < ActiveRecord::Base
   ######################
 
   #inherits from category if not defined
+
+  def maximum_checkout_length
+    max_checkout_length || category.max_checkout_length
+  end
+
   def maximum_per_user
     max_per_user || category.maximum_per_user
   end
