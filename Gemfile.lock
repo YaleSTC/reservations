@@ -1,3 +1,10 @@
+GIT
+  remote: git://github.com/rubycas/rubycas-client.git
+  revision: b6692b942f69f8c088ef4fdbc14a8e9310e5271d
+  specs:
+    rubycas-client (2.3.10.rc1)
+      activesupport
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -277,11 +284,6 @@ GEM
       rspec-support (~> 3.0.0)
     rspec-support (3.0.2)
     ruby-progressbar (1.5.1)
-    rubycas-client (2.3.9)
-      activesupport
-    rubycas-client-rails (0.1.0)
-      rails (>= 3.0.0)
-      rubycas-client (>= 2.2.0)
     safe_yaml (1.0.3)
     sass (3.2.19)
     sass-rails (4.0.3)
@@ -403,8 +405,7 @@ DEPENDENCIES
   rspec-its
   rspec-rails
   ruby-progressbar
-  rubycas-client
-  rubycas-client-rails
+  rubycas-client!
   sass-rails
   select2-rails
   shoulda-matchers

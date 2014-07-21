@@ -18,8 +18,9 @@ gem 'activerecord-deprecated_finders'
 gem 'rspec-its'
 
 #authentication
-gem 'rubycas-client-rails'
-gem 'rubycas-client'
+#gem 'rubycas-client-rails'
+
+gem 'rubycas-client', :git => 'git://github.com/rubycas/rubycas-client.git'
 gem 'cancancan'
 
 #scheduling

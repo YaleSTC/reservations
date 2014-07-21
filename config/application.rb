@@ -39,7 +39,7 @@ module Reservations
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
 
-    config.rubycas.cas_base_url = 'https://secure.its.yale.edu/cas/'
+    #config.rubycas.cas_base_url = 'https://secure.its.yale.edu/cas/'
 
     # Enable the asset pipeline
     config.assets.enabled = true
