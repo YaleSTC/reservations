@@ -6,13 +6,13 @@ class LogController < ApplicationController
   def index
     # Past paper_trail 2.7-stable, Version is namespaced as PaperTrail::Version
     # and so this line will break.
-    @versions = Version.order("id desc").all
+    @versions = PaperTrail::Version.order("id desc").all
     # render layout: 'application_with_sidebar'
     @title = "to all Items"
   end
 
   def version
-    @version = Version.find_by_id(params[:id])
+    @version = PaperTrail::Version.find_by_id(params[:id])
 
     if @version.nil?
       flash[:notice] = "There is no changelog for this item."
@@ -30,7 +30,7 @@ class LogController < ApplicationController
   end
 
   def history
-    @versions = Version.where(item_type: params[:object_type].capitalize, item_id: params[:id])
+    @versions = PaperTrail::Version.where(item_type: params[:object_type].capitalize, item_id: params[:id])
 
     unless @versions.exists?
       flash[:notice] = "There is no changelog for this item."
