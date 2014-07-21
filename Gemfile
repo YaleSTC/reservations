@@ -15,6 +15,7 @@ gem 'rails-observers'
 gem 'actionpack-page_caching'
 gem 'actionpack-action_caching'
 gem 'activerecord-deprecated_finders'
+gem 'rspec-its'
 
 #authentication
 gem 'rubycas-client-rails'

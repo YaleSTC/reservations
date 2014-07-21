@@ -262,6 +262,9 @@ GEM
     rspec-expectations (3.0.2)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.0.0)
+    rspec-its (1.0.1)
+      rspec-core (>= 2.99.0.beta1)
+      rspec-expectations (>= 2.99.0.beta1)
     rspec-mocks (3.0.2)
       rspec-support (~> 3.0.0)
     rspec-rails (3.0.1)
@@ -397,6 +400,7 @@ DEPENDENCIES
   rake
   rdoc
   redcarpet
+  rspec-its
   rspec-rails
   ruby-progressbar
   rubycas-client

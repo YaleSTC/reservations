@@ -34,7 +34,7 @@ require 'rubygems'
     # config.mock_with :rr
     config.filter_run focus: true
     config.run_all_when_everything_filtered = true
-
+    config.infer_spec_type_from_file_location!
     # Needed in order to do integration tests with capybara
     config.include Capybara::DSL
 
