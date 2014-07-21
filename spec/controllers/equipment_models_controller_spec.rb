@@ -35,11 +35,11 @@ it { should respond_with(:success) }
       context 'without show deleted' do
 				let!(:mod_other_cat_active) { FactoryGirl.create(:equipment_model) }
 				let!(:mod_other_cat_inactive) { FactoryGirl.create(:equipment_model,
-					deleted_at: Date.today) }
+					deleted_at: Date.current) }
         context 'with @category set' do
           it 'should populate an array of of active category-type equipment models' do
           	mod_same_cat_inactive = FactoryGirl.create(:equipment_model,
-          		category: model.category, deleted_at: Date.today)
+          		category: model.category, deleted_at: Date.current)
             get :index, category_id: model.category
             assigns(:equipment_models).include?(model).should be_truthy
             assigns(:equipment_models).include?(mod_other_cat_active).should_not be_truthy
@@ -60,11 +60,11 @@ it { should respond_with(:success) }
 	    context 'with show deleted' do
 				let!(:mod_other_cat_active) { FactoryGirl.create(:equipment_model) }
 				let!(:mod_other_cat_inactive) { FactoryGirl.create(:equipment_model,
-					deleted_at: Date.today) }
+					deleted_at: Date.current) }
         context 'with @category set' do
           it 'should populate an array of category-type equipment models' do
           	mod_same_cat_inactive = FactoryGirl.create(:equipment_model,
-          		category: model.category, deleted_at: Date.today)
+          		category: model.category, deleted_at: Date.current)
             get :index, category_id: model.category, show_deleted: true
             assigns(:equipment_models).include?(model).should be_truthy
             assigns(:equipment_models).include?(mod_other_cat_active).should_not be_truthy

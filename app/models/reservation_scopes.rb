@@ -10,24 +10,24 @@ module ReservationScopes
       # better way to give the same scope two names
       scope :untouched, lambda { where("checked_out IS NULL").not_returned }
 
-      scope :reserved, lambda { where("due_date >= ?", Date.current).untouched.recent }
+      scope :reserved, lambda { where("due_date >= ?", Date.current.to_time).untouched.recent }
       scope :checked_out, lambda { where("checked_out IS NOT NULL").not_returned.recent }
-      scope :checked_out_today, lambda { where("checked_out >= ? and checked_out <= ?", Date.current.to_datetime, Date.current.to_datetime + 1.day).not_returned.recent }
-      scope :checked_out_previous, lambda { where("checked_out < ? and due_date <= ?", Date.current, Date.current + 1.day).not_returned.recent }
-      scope :overdue, lambda { where("due_date < ?", Date.current).not_returned }
+      scope :checked_out_today, lambda { where("checked_out >= ? and checked_out <= ?", Date.current.to_time.to_datetime, Date.current.to_time.to_datetime + 1.day).not_returned.recent }
+      scope :checked_out_previous, lambda { where("checked_out < ? and due_date <= ?", Date.current.to_time, Date.current.to_time + 1.day).not_returned.recent }
+      scope :overdue, lambda { where("due_date < ?", Date.current.to_time).not_returned }
       scope :returned, lambda { where("checked_in IS NOT NULL and checked_out IS NOT NULL").recent }
       scope :returned_overdue, lambda { where("due_date < checked_in").returned }
-      scope :missed, lambda { where("due_date < ?", Date.current).untouched.recent }
-      scope :upcoming, lambda { where("start_date = ?", Date.current).reserved.user_sort }
+      scope :missed, lambda { where("due_date < ?", Date.current.to_time).untouched.recent }
+      scope :upcoming, lambda { where("start_date = ?", Date.current.to_time).reserved.user_sort }
       scope :starts_on_days, lambda { |start_date, end_date|  where(start_date: start_date..end_date) }
       scope :reserved_on_date, lambda { |date|  where("start_date <= ? and due_date >= ?", date.to_time.utc, date.to_time.utc).finalized }
       scope :for_eq_model, lambda { |eq_model| where(equipment_model_id: eq_model.id).finalized }
       scope :active_or_requested, lambda { where("checked_in IS NULL and approval_status != ?", 'denied').recent }
       scope :notes_unsent, lambda { where(notes_unsent: true) }
-      scope :requested, lambda { where("start_date >= ? and approval_status = ?", Date.current, 'requested').recent }
+      scope :requested, lambda { where("start_date >= ? and approval_status = ?", Date.current.to_time, 'requested').recent }
       scope :approved_requests, lambda { where("approval_status = ?", 'approved').recent }
       scope :denied_requests, lambda { where("approval_status = ?", 'denied').recent }
-      scope :missed_requests, lambda { where("approval_status = ? and start_date < ?", 'requested', Date.current).recent }
+      scope :missed_requests, lambda { where("approval_status = ? and start_date < ?", 'requested', Date.current.to_time).recent }
 
       scope :for_reserver, lambda { |reserver| where(reserver_id: reserver) }
       scope :reserved_in_date_range, lambda { |start_date, end_date| where("start_date < ? and due_date > ?", end_date, start_date).finalized }

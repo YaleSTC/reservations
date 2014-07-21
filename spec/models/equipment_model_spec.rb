@@ -282,7 +282,7 @@ describe EquipmentModel do
           @overdue = FactoryGirl.build(:overdue_reservation, equipment_model: @model)
           @overdue.save(validate: false)
           @model.equipment_objects.size.should eq(4)
-          @model.available_count(Date.today).should eq(1)
+          @model.available_count(Date.current).should eq(1)
         end
       end
       describe ".available_object_select_options" do

@@ -238,13 +238,13 @@ describe TestController do
     it 'changes cart.start_date to today if date is in the past' do
       session[:cart].start_date = Date.yesterday
       get :index
-      session[:cart].start_date.should eq(Date.today)
+      session[:cart].start_date.should eq(Date.current)
     end
     it 'does not change the start_date if date is in the future' do
-      session[:cart].start_date = Date.tomorrow
+      session[:cart].start_date = (Date.current+1.day)
       get :index
-      session[:cart].start_date.should eq(Date.tomorrow)
-      session[:cart].start_date.should_not eq(Date.today)
+      session[:cart].start_date.should eq((Date.current+1.day))
+      session[:cart].start_date.should_not eq(Date.current)
     end
   end
 
@@ -270,8 +270,8 @@ describe ApplicationController do
     before(:each) do
       session[:cart] = Cart.new
       session[:cart].reserver_id = @first_user.id
-      session[:cart].start_date = (Date.today + 1.day)
-      session[:cart].due_date = (Date.today + 2.days)
+      session[:cart].start_date = (Date.current + 1.day)
+      session[:cart].due_date = (Date.current + 2.days)
 
 
       equipment_model = FactoryGirl.create(:equipment_model, category: FactoryGirl.create(:category))
@@ -281,8 +281,8 @@ describe ApplicationController do
 
     context 'valid parameters' do
       it 'should update cart dates' do
-        new_start = Date.today + 3.days
-        new_end = Date.today + 4.days
+        new_start = Date.current + 3.days
+        new_end = Date.current + 4.days
 
         put :update_cart, cart: {start_date_cart: new_start.strftime('%m/%d/%Y'), due_date_cart: new_end.strftime('%m/%d/%Y')}, reserver_id: @new_reserver.id
 
@@ -298,8 +298,8 @@ describe ApplicationController do
 
     context 'invalid parameters' do
       it 'should set the flash' do
-        new_start = Date.today - 300.days
-        new_end = Date.today + 4000.days
+        new_start = Date.current - 300.days
+        new_end = Date.current + 4000.days
 
         put :update_cart, cart: {start_date_cart: new_start.strftime('%m/%d/%Y'), due_date_cart: new_end.strftime('%m/%d/%Y')}, reserver_id: @new_reserver.id
 

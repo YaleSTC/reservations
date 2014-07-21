@@ -114,7 +114,7 @@ class ApplicationController < ActionController::Base
   end
 
   def fix_cart_date
-    cart.start_date = (Date.today) if cart.start_date < Date.today
+    cart.start_date = (Date.current) if cart.start_date < Date.current
     cart.fix_due_date
   end
 
@@ -138,7 +138,7 @@ class ApplicationController < ActionController::Base
       cart.fix_due_date
       cart.reserver_id = params[:reserver_id].blank? ? current_user.id : params[:reserver_id]
     rescue ArgumentError
-      cart.start_date = Date.today
+      cart.start_date = Date.current
       flash[:error] = "Please enter a valid start or due date."
     end
 

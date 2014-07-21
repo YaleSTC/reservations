@@ -21,10 +21,10 @@ describe Cart do
       @cart.items.nil?
     end
     it "starts today " do
-      @cart.start_date == Date.today
+      @cart.start_date == Date.current
     end
     it "is due tomorrow" do
-      @cart.due_date == Date.tomorrow
+      @cart.due_date == (Date.current+1.day)
     end
     it "has no reserver" do
       @cart.reserver_id.nil?
@@ -90,8 +90,8 @@ describe Cart do
         @cart.add_item(@equipment_model)
         @equipment_model2 = FactoryGirl.create(:equipment_model)
         @cart.add_item(@equipment_model2)
-        @cart.start_date = Date.today
-        @cart.due_date = Date.tomorrow
+        @cart.start_date = Date.current
+        @cart.due_date = (Date.current+1.day)
         @cart.reserver_id = FactoryGirl.create(:user).id
       end
       it "should create an array of reservations" do

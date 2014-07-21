@@ -68,7 +68,7 @@ describe Reservation do
       Reservation.all.first.should == reservation
     end
     it 'can be updated' do
-      reservation.due_date = Date.tomorrow + 1
+      reservation.due_date = (Date.current+1.day) + 1
       reservation.save.should be_truthy
     end
     it 'passes custom validations' do
@@ -125,7 +125,7 @@ describe Reservation do
       Reservation.all.size.should == 0
     end
     it 'cannot be updated' do
-      reservation.start_date = Date.tomorrow
+      reservation.start_date = (Date.current+1.day)
       reservation.save.should be_falsey
     end
     # it 'fails appropriate validations' do
@@ -162,7 +162,7 @@ describe Reservation do
       Reservation.all.size.should == 0
     end
     it 'cannot be updated' do
-      reservation.start_date = Date.tomorrow
+      reservation.start_date = (Date.current+1.day)
       reservation.save.should be_falsey
     end
     it 'fails appropriate validations' do
@@ -176,7 +176,7 @@ describe Reservation do
       reservation.validate.should eq([])
     end
     it 'updates with fixed date' do
-      reservation.due_date = Date.tomorrow + 1.day
+      reservation.due_date = (Date.current+1.day) + 1.day
       reservation.save.should be_truthy
       reservation.should be_valid
       Reservation.all.size.should == 1
@@ -192,7 +192,7 @@ describe Reservation do
       Reservation.all.size.should == 1
     end
     it 'can be updated' do
-      reservation.start_date = Date.tomorrow
+      reservation.start_date = (Date.current+1.day)
       reservation.save.should be_truthy
     end
     it 'fails appropriate validations' do
@@ -233,7 +233,7 @@ describe Reservation do
       Reservation.all.first.should == overdue
     end
     it 'can be updated' do
-      reservation.start_date = Date.tomorrow
+      reservation.start_date = (Date.current+1.day)
       reservation.save.should be_truthy
     end
     it 'fails appropriate validations' do
@@ -257,7 +257,7 @@ describe Reservation do
     #   Reservation.all.size.should == 0
     # end
     # it 'cannot be updated' do #fails
-    #   reservation.start_date = Date.tomorrow
+    #   reservation.start_date = (Date.current+1.day)
     #   reservation.save.should be_falsey
     # end
     # it 'fails appropriate validations' do # fails
@@ -284,7 +284,7 @@ describe Reservation do
       Reservation.all.size.should == 0
     end
     it 'cannot be updated' do
-      reservation.start_date = Date.tomorrow
+      reservation.start_date = (Date.current+1.day)
       reservation.save.should be_falsey
     end
     it 'fails appropriate validations' do
@@ -303,7 +303,7 @@ describe Reservation do
       r = FactoryGirl.build(:valid_reservation)
       r.equipment_model.category.max_checkout_length = 1
       r.equipment_model.category.save
-      r.due_date = Date.tomorrow + 2
+      r.due_date = (Date.current+1.day) + 2
       r
     }
 
@@ -313,7 +313,7 @@ describe Reservation do
       Reservation.all.size.should == 1
     end
     it 'can update' do
-      reservation.start_date = Date.tomorrow
+      reservation.start_date = (Date.current+1.day)
       reservation.save.should be_truthy
     end
     it 'fails appropriate validations' do
@@ -348,7 +348,7 @@ describe Reservation do
       Reservation.all.size.should == 2
     end
     it 'can be updated' do
-      reservation.start_date = Date.tomorrow
+      reservation.start_date = (Date.current+1.day)
       reservation.save.should be_truthy
     end
     it 'fails appropriate validations' do
@@ -382,7 +382,7 @@ describe Reservation do
       Reservation.all.size.should == 2
     end
     it 'can be updated' do
-      reservation.start_date = Date.tomorrow
+      reservation.start_date = (Date.current+1.day)
       reservation.save.should be_truthy
     end
     it 'fails appropriate validations' do

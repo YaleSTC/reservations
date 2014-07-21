@@ -33,7 +33,7 @@ class EquipmentModelsController < ApplicationController
     Reservation.active.for_eq_model(@equipment_model).each do |r|
       @reservation_data << {
         start: r.start_date,
-        end: (r.status == 'overdue' ? Date.today + calendar_length : r.due_date) }
+        end: (r.status == 'overdue' ? Date.current + calendar_length : r.due_date) }
       # the above code mimics the current available? setup to show overdue
       # equipment as permanently 'out'.
     end

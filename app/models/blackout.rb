@@ -13,7 +13,7 @@ class Blackout < ActiveRecord::Base
   # this only matters if a user tries to inject into params because the datepicker
   # doesn't allow form submission of invalid dates
 
-  scope :active, lambda { where("end_date >= ?", Date.today) }
+  scope :active, lambda { where("end_date >= ?", Date.current) }
   scope :for_date, lambda { |date| where("end_date >= ? and start_date <= ?", date, date) }
   scope :hard, lambda { where(blackout_type: 'hard') }
   scope :soft, lambda { where(blackout_type: 'soft') }

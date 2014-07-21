@@ -90,14 +90,14 @@ class Reservation < ActiveRecord::Base
   def status
     if checked_out.nil?
       if approval_status == 'auto' or approval_status == 'approved'
-        due_date >= Date.today ? "reserved" : "missed"
+        due_date >= Date.current ? "reserved" : "missed"
       elsif approval_status
         approval_status
       else
         "?" # ... is this just in case an admin does something absurd in the database?
       end
     elsif checked_in.nil?
-      due_date < Date.today ? "overdue" : "checked out"
+      due_date < Date.current ? "overdue" : "checked out"
     else
       due_date < checked_in.to_date ? "returned overdue" : "returned on time"
     end
@@ -146,7 +146,7 @@ class Reservation < ActiveRecord::Base
 
     max_renewal_days = self.equipment_model.maximum_renewal_days_before_due
     max_renewal_days = Float::INFINITY if max_renewal_days == 'unrestricted'
-    return ((self.due_date.to_date - Date.today).to_i < max_renewal_days ) &&
+    return ((self.due_date.to_date - Date.current).to_i < max_renewal_days ) &&
       (self.times_renewed < max_renewal_times)
   end
 

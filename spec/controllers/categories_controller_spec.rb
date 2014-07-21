@@ -10,7 +10,7 @@ describe CategoriesController do
   end
   describe 'GET index' do
     before(:each) do
-      @inactive_category = FactoryGirl.create(:category, deleted_at: Date.today - 1)
+      @inactive_category = FactoryGirl.create(:category, deleted_at: Date.current - 1)
     end
     context 'user is admin' do
       before(:each) do
