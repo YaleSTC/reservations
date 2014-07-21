@@ -175,7 +175,7 @@ describe TestController do
     it 'makes a new cart record for session[:cart] if !cart' do
       get :index
       session[:cart].should be_new_record
-      session[:cart].kind_of?(Cart).should be_true
+      session[:cart].kind_of?(Cart).should be_truthy
     end
     it 'returns session[:cart] if cart.reserver_id' do
       session[:cart] = Cart.new

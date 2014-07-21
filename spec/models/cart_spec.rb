@@ -35,7 +35,7 @@ describe Cart do
   end
 
   describe ".persisted?" do
-    it { @cart.persisted?.should be_false }
+    it { @cart.persisted?.should be_falsey }
   end
 
   describe "Item handling" do
@@ -140,11 +140,11 @@ describe Cart do
   describe ".empty?" do
     it "is true when there are no items in cart" do
       @cart.items = []
-      @cart.empty?.should be_true
+      @cart.empty?.should be_truthy
     end
     it "is false when there are some items in cart" do
       @cart.add_item(FactoryGirl.create(:equipment_model))
-      @cart.empty?.should be_false
+      @cart.empty?.should be_falsey
     end
   end
 

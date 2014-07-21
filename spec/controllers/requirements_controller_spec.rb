@@ -63,7 +63,7 @@ describe RequirementsController do
       it { should_not set_the_flash }
       it 'assigns a new requirement to @requirement' do
         assigns(:requirement).should be_new_record
-        assigns(:requirement).kind_of?(Requirement).should be_true
+        assigns(:requirement).kind_of?(Requirement).should be_truthy
       end
     end
     context 'not an admin' do

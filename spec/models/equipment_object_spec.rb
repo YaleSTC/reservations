@@ -7,7 +7,7 @@ describe EquipmentObject do
     end
 
     it "has a working factory" do
-      @object.save.should be_true
+      @object.save.should be_truthy
     end
 
     it { should validate_presence_of(:name) }
@@ -70,12 +70,12 @@ describe EquipmentObject do
   describe ".available?" do
     it "returns true if the equipment object is not checked out" do
       @object = FactoryGirl.create(:equipment_object)
-      @object.available?.should be_true
+      @object.available?.should be_truthy
     end
     it "returns false if the equipment object is currently checked out" do
       @reservation = FactoryGirl.create(:checked_out_reservation)
       @checked_out_object = @reservation.equipment_object
-      @checked_out_object.available?.should be_false
+      @checked_out_object.available?.should be_falsey
     end
   end
 end

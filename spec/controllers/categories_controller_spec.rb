@@ -71,7 +71,7 @@ describe CategoriesController do
       it { should_not set_the_flash }
       it 'assigns a new category to @category' do
         assigns(:category).should be_new_record
-        assigns(:category).kind_of?(Category).should be_true
+        assigns(:category).kind_of?(Category).should be_truthy
       end
     end
     context 'not admin' do

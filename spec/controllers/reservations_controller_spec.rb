@@ -254,7 +254,7 @@ describe ReservationsController do
           it { should render_template(:new) }
 
           it 'should set @notes_required to true' do
-            expect(assigns(:notes_required)).to be_true
+            expect(assigns(:notes_required)).to be_truthy
           end
         end
 

@@ -41,18 +41,18 @@ it { should respond_with(:success) }
           	mod_same_cat_inactive = FactoryGirl.create(:equipment_model,
           		category: model.category, deleted_at: Date.today)
             get :index, category_id: model.category
-            assigns(:equipment_models).include?(model).should be_true
-            assigns(:equipment_models).include?(mod_other_cat_active).should_not be_true
-            assigns(:equipment_models).include?(mod_same_cat_inactive).should_not be_true
-            assigns(:equipment_models).include?(mod_other_cat_inactive).should_not be_true
+            assigns(:equipment_models).include?(model).should be_truthy
+            assigns(:equipment_models).include?(mod_other_cat_active).should_not be_truthy
+            assigns(:equipment_models).include?(mod_same_cat_inactive).should_not be_truthy
+            assigns(:equipment_models).include?(mod_other_cat_inactive).should_not be_truthy
             expect(assigns(:equipment_models).size).to eq(1)
           end
         end
         context 'without @category set' do
           it 'should populate an array of all active equipment models' do
-            assigns(:equipment_models).include?(model).should be_true
-            assigns(:equipment_models).include?(mod_other_cat_active).should be_true
-            assigns(:equipment_models).include?(mod_other_cat_inactive).should_not be_true
+            assigns(:equipment_models).include?(model).should be_truthy
+            assigns(:equipment_models).include?(mod_other_cat_active).should be_truthy
+            assigns(:equipment_models).include?(mod_other_cat_inactive).should_not be_truthy
             expect(assigns(:equipment_models).size).to eq(2)
           end
         end
@@ -66,19 +66,19 @@ it { should respond_with(:success) }
           	mod_same_cat_inactive = FactoryGirl.create(:equipment_model,
           		category: model.category, deleted_at: Date.today)
             get :index, category_id: model.category, show_deleted: true
-            assigns(:equipment_models).include?(model).should be_true
-            assigns(:equipment_models).include?(mod_other_cat_active).should_not be_true
-            assigns(:equipment_models).include?(mod_same_cat_inactive).should be_true
-            assigns(:equipment_models).include?(mod_other_cat_inactive).should_not be_true
+            assigns(:equipment_models).include?(model).should be_truthy
+            assigns(:equipment_models).include?(mod_other_cat_active).should_not be_truthy
+            assigns(:equipment_models).include?(mod_same_cat_inactive).should be_truthy
+            assigns(:equipment_models).include?(mod_other_cat_inactive).should_not be_truthy
             expect(assigns(:equipment_models).size).to eq(2)
           end
         end
         context 'without @category set' do
           it 'should populate an array of all equipment models' do
             get :index, show_deleted: true
-            assigns(:equipment_models).include?(model).should be_true
-            assigns(:equipment_models).include?(mod_other_cat_active).should be_true
-            assigns(:equipment_models).include?(mod_other_cat_inactive).should be_true
+            assigns(:equipment_models).include?(model).should be_truthy
+            assigns(:equipment_models).include?(mod_other_cat_active).should be_truthy
+            assigns(:equipment_models).include?(mod_other_cat_inactive).should be_truthy
             expect(assigns(:equipment_models).size).to eq(3)
           end
         end

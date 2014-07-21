@@ -73,7 +73,7 @@ describe AppConfigsController do
             Rails.logger.debug @params
             post :update, app_config: @params
             @user.reload
-            expect(@user.terms_of_service_accepted).to be_false
+            expect(@user.terms_of_service_accepted).to be_falsey
           end
 
           it 'maintains TOS status for all users when :reset_tos_for_users is not 1' do
@@ -82,7 +82,7 @@ describe AppConfigsController do
             Rails.logger.debug @params
             post :update, app_config: @params
             @user.reload
-            expect(@user.terms_of_service_accepted).to be_true
+            expect(@user.terms_of_service_accepted).to be_truthy
           end
 
           it 'restores favicon when appropriate'
