@@ -53,6 +53,7 @@ group :development, :test do
   gem 'capybara'
   gem 'guard-rspec'
   gem 'spring'
+  gem 'spring-commands-rspec'
   gem 'fuubar'
   gem 'guard-livereload'
   gem 'yajl-ruby'
