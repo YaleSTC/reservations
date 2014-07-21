@@ -7,10 +7,10 @@
 //= require jquery.spin
 //= require cocoon
 //= require autocomplete-rails
+//= require dataTables/bootstrap/2/jquery.dataTables.bootstrap
 //= require dataTables/jquery.dataTables
 //= require dataTables_numhtml_sort.js
 //= require dataTables_numhtml_detect.js
-//= require dataTables/jquery.dataTables.bootstrap
 //= require bootstrap-transition
 //= require bootstrap-alert
 //= require bootstrap-button
