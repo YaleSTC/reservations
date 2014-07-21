@@ -102,8 +102,8 @@ describe Cart do
         it "should have the correct dates" do
           array = @cart.prepare_all
           array.each do |r|
-            expect(r.start_date).to eq(Date.today.to_time)
-            expect(r.due_date).to eq(Date.tomorrow.to_time)
+            expect(r.start_date).to eq(Time.current.midnight)
+            expect(r.due_date).to eq(Time.current.midnight + 24.hours)
           end
         end
         it "should have the correct equipment models" do

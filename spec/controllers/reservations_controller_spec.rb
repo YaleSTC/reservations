@@ -435,8 +435,8 @@ describe ReservationsController do
         end
         it 'should update the reservation details' do
           @reservation.reload
-          expect(@reservation.start_date.to_time.utc).to eq(Date.today.to_time.utc)
-          expect(@reservation.due_date.to_time.utc).to eq((Date.tomorrow + 3.days).to_time.utc)
+          expect(@reservation.start_date.to_time.utc).to eq(Time.current.midnight.utc)
+          expect(@reservation.due_date.to_time.utc).to eq((Time.current.midnight + 4*24.hours).utc)
         end
         it { should redirect_to(@reservation) }
       end
