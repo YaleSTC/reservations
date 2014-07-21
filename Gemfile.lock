@@ -10,6 +10,10 @@ GEM
       activesupport (= 4.1.4)
       rack (~> 1.5.2)
       rack-test (~> 0.6.2)
+    actionpack-action_caching (1.1.1)
+      actionpack (>= 4.0.0, < 5.0)
+    actionpack-page_caching (1.0.2)
+      actionpack (>= 4.0.0, < 5)
     actionview (4.1.4)
       activesupport (= 4.1.4)
       builder (~> 3.1)
@@ -21,6 +25,11 @@ GEM
       activemodel (= 4.1.4)
       activesupport (= 4.1.4)
       arel (~> 5.0.0)
+    activerecord-deprecated_finders (1.0.3)
+    activerecord-session_store (0.1.0)
+      actionpack (>= 4.0.0, < 5)
+      activerecord (>= 4.0.0, < 5)
+      railties (>= 4.0.0, < 5)
     activesupport (4.1.4)
       i18n (~> 0.6, >= 0.6.9)
       json (~> 1.7, >= 1.7.7)
@@ -177,6 +186,8 @@ GEM
     permanent_records (3.1.6)
       activerecord (>= 3.0.0)
     polyglot (0.3.5)
+    protected_attributes (1.0.8)
+      activemodel (>= 4.0.1, < 5.0)
     pry (0.10.0)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -210,6 +221,8 @@ GEM
       bundler (>= 1.3.0, < 2.0)
       railties (= 4.1.4)
       sprockets-rails (~> 2.0)
+    rails-observers (0.1.2)
+      activemodel (~> 4.0)
     rails4-autocomplete (1.1.0)
       rails (>= 3.0)
     rails_admin (0.6.2)
@@ -289,6 +302,8 @@ GEM
     spinjs-rails (1.3)
       rails (>= 3.1)
     spring (1.1.3)
+    spring-commands-rspec (1.0.2)
+      spring (>= 0.9.1)
     sprockets (2.11.0)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -333,6 +348,10 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  actionpack-action_caching
+  actionpack-page_caching
+  activerecord-deprecated_finders
+  activerecord-session_store
   airbrake
   awesome_print
   bootstrap-sass
@@ -357,13 +376,14 @@ DEPENDENCIES
   kaminari
   letter_opener
   letter_opener_web
-  mysql2 (= 0.3.16)
+  mysql2
   net-ldap
   nilify_blanks
   paper_trail
   paperclip
   parallel_tests
   permanent_records
+  protected_attributes
   pry
   pry-byebug
   pry-rails
@@ -371,6 +391,7 @@ DEPENDENCIES
   pry-stack_explorer
   rack-mini-profiler
   rails (= 4.1.4)
+  rails-observers
   rails4-autocomplete
   rails_admin
   rake
@@ -386,6 +407,7 @@ DEPENDENCIES
   simple_form
   spinjs-rails
   spring
+  spring-commands-rspec
   therubyracer
   thin
   uglifier

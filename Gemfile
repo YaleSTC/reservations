@@ -4,9 +4,17 @@ ruby '2.1.1'
 
 #standard gems
 gem 'rails', '4.1.4'
-gem 'mysql2', '0.3.16'
+gem 'mysql2'
 gem 'rake'
 gem 'rdoc'
+
+# rails 4 transition gems
+gem 'activerecord-session_store'
+gem 'protected_attributes'
+gem 'rails-observers'
+gem 'actionpack-page_caching'
+gem 'actionpack-action_caching'
+gem 'activerecord-deprecated_finders'
 
 #authentication
 gem 'rubycas-client-rails'
