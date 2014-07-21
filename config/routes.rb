@@ -82,19 +82,20 @@ Reservations::Application.routes.draw do
 
   get '/reports/index' => 'reports#index', :as => :reports
   get '/reports/:id/for_model' => 'reports#for_model', :as => :for_model_report
-  match '/reports/for_model_set' => 'reports#for_model_set', :as => :for_model_set_reports # what http request?
-  match '/reports/update' => 'reports#update_dates', :as => :update_dates # what http request?
-  match '/reports/generate' => 'reports#generate', :as => :generate_report # what http request?
 
-  put '/:controller/:id/deactivate' => ':controller#deactivate', :as => 'deactivate'
-  put '/:controller/:id/activate' => ':controller#activate', :as => 'activate'
+  get '/reports/for_model_set' => 'reports#for_model_set', :as => :for_model_set_reports # what http request? old match
+  get '/reports/update' => 'reports#update_dates', :as => :update_dates # what http request? old match
+  get '/reports/generate' => 'reports#generate', :as => :generate_report # what http request? old match
 
-  match '/logout' => 'application#logout', :as => :logout # what kind of http request is this?
+  #put '/:controller/:id/deactivate' => ':controller#deactivate', :as => 'deactivate'
+  #put '/:controller/:id/activate' => ':controller#activate', :as => 'activate'
 
-  match '/terms_of_service' => 'application#terms_of_service', :as => :tos # change match to get?
+  get '/logout' => 'application#logout', :as => :logout # what kind of http request is this? old match
+
+  get '/terms_of_service' => 'application#terms_of_service', :as => :tos # change match to get?
 
   # yes, both of these are needed to override rails defaults of /controller/:id/edit
-  match '/app_configs/' => 'app_configs#edit', :as => :edit_app_configs
+  get '/app_configs/' => 'app_configs#edit', :as => :edit_app_configs # match
   resources :app_configs, :only => [:update]
 
   get '/new_admin_user' => 'application_setup#new_admin_user', :as => :new_admin_user
@@ -105,13 +106,13 @@ Reservations::Application.routes.draw do
   post '/create_app_configs' => 'application_setup#create_app_configs', :as => :create_app_configs
 
   get 'contact' => 'contact#new', :as => 'contact_us'
-  post 'contact' => 'contact#create', :as => 'contact_us'
+  post 'contact' => 'contact#create', :as => 'contact_submitted'
 
-  match 'announcements/:id/hide', to: 'announcements#hide', as: 'hide_announcement'
+  get 'announcements/:id/hide', to: 'announcements#hide', as: 'hide_announcement'
 
   get 'status' => 'status#index'
 
-  match ':controller(/:action(/:id(.:format)))'
+  #match ':controller(/:action(/:id(.:format)))' #wtf match is this
 
   # this is a fix for running letter opener inside vagrant
   if Rails.env.development?
