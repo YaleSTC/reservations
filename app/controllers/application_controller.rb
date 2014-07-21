@@ -208,7 +208,10 @@ class ApplicationController < ActionController::Base
 
   def logout
     @current_user = nil
-    RubyCAS::Filter.logout(self)
+    CASClient::Frameworks::Rails::Filter.logout(self)
+    #RubyCAS::Filter.logout(self)
+    # the above code is used with ruby-cas-client-rails gem
+    # which was removed on 7/21/2014
   end
 
   def require_login
