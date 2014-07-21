@@ -42,7 +42,7 @@ describe AppConfigsController do
       end
       it { should respond_with(:success) }
       it { should set_the_flash }
-      it { should render_template(%w(layouts/application application_setup/index)) }
+      it { should render_template('application_setup/index') }
     end
   end
 
@@ -117,7 +117,7 @@ describe AppConfigsController do
       end
       it { should respond_with(:success) }
       it { should set_the_flash }
-      it { should render_template(%w(layouts/application application_setup/index)) }
+      it { should render_template('application_setup/index') }
     end
   end
 end

@@ -85,7 +85,7 @@ describe TestController do
         get :index
       end
       it { should set_the_flash }
-      it { should render_template('application_setup') }
+      it { should render_template('application_setup/index') }
     end
     context 'no user in the db' do
       before(:each) do
