@@ -77,7 +77,6 @@ describe TestController do
         get :index
       end
       it { should respond_with(:success) }
-      it { should render_template(:text => "hello world") }
       it { should_not set_the_flash }
     end
     context 'no app_config' do
@@ -86,7 +85,7 @@ describe TestController do
         get :index
       end
       it { should set_the_flash }
-      it { should render_template(%w(layouts/application application_setup/index)) }
+      it { should render_template('application_setup') }
     end
     context 'no user in the db' do
       before(:each) do
@@ -94,7 +93,7 @@ describe TestController do
         get :index
       end
       it { should set_the_flash }
-      it { should render_template(%w(layouts/application application_setup/index)) }
+      it { should render_template('application_setup/index') }
     end
   end
 
