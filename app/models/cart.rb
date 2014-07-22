@@ -9,7 +9,7 @@ class Cart
     @errors = ActiveModel::Errors.new(self)
     @items = Hash.new()
     @start_date = Date.current
-    @due_date = (Date.current+1.day)
+    @due_date = Date.tomorrow
     @reserver_id = nil
   end
 

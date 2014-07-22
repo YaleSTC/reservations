@@ -299,7 +299,7 @@ describe ReservationsController do
           @valid_cart = FactoryGirl.build(:cart_with_items)
           @req = Proc.new do
             post :create,
-              {reservation: {start_date: Date.current, due_date: (Date.current+1.day),
+              {reservation: {start_date: Date.current, due_date: Date.tomorrow,
                             reserver_id: @user.id}},
               {cart: @valid_cart}
           end
@@ -424,7 +424,7 @@ describe ReservationsController do
           put :update, { id: @reservation.id,
             reservation: FactoryGirl.attributes_for(:reservation,
               start_date: Date.current.strftime('%m/%d/%Y'),
-              due_date: ((Date.current+1.day) + 3.days).strftime('%m/%d/%Y')),
+              due_date: (Date.tomorrow + 3.days).strftime('%m/%d/%Y')),
             equipment_object: ''}
         end
         it 'should update the reservation details' do
@@ -441,7 +441,7 @@ describe ReservationsController do
           put :update, { id: @reservation.id,
             reservation: FactoryGirl.attributes_for(:reservation,
               start_date: Date.current.strftime('%m/%d/%Y'),
-              due_date: (Date.current+1.day).strftime('%m/%d/%Y')),
+              due_date: Date.tomorrow.strftime('%m/%d/%Y')),
             equipment_object: @new_equipment_object.id }
         end
         it 'should update the object on current reservation' do

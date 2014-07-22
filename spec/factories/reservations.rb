@@ -3,7 +3,7 @@
 FactoryGirl.define do
   factory :reservation do
     start_date { Date.current }
-    due_date { (Date.current+1.day) }
+    due_date { Date.tomorrow }
     reserver
     equipment_model
 
@@ -19,7 +19,7 @@ FactoryGirl.define do
 
     trait :reserved do
       start_date { Date.current }
-      due_date { (Date.current+1.day) }
+      due_date { Date.tomorrow }
     end
 
     trait :checked_out do

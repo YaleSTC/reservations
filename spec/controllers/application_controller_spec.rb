@@ -241,9 +241,9 @@ describe TestController do
       session[:cart].start_date.should eq(Date.current)
     end
     it 'does not change the start_date if date is in the future' do
-      session[:cart].start_date = (Date.current+1.day)
+      session[:cart].start_date = Date.tomorrow
       get :index
-      session[:cart].start_date.should eq((Date.current+1.day))
+      session[:cart].start_date.should eq(Date.tomorrow)
       session[:cart].start_date.should_not eq(Date.current)
     end
   end

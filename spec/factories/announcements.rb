@@ -4,6 +4,6 @@ FactoryGirl.define do
   factory :announcement do
     message "MyText"
     starts_at Date.current
-    ends_at (Date.current+1.day)
+    ends_at Date.tomorrow
   end
 end
