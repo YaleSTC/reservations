@@ -88,14 +88,14 @@ class UsersController < ApplicationController
     # this line is what allows checkoutpeople to create users
     @user.login = session[:cas_user] unless current_user and can? :manage, Reservation
     if @user.save
-      respond_to do |format|
         flash[:notice] = "Successfully created user."
-        format.js {render action: 'create_success'}
-      end
+        if params[:from_cart]
+          render action: 'create_success'
+        else
+          redirect_to user_path(@user)
+        end
     else
-      respond_to do |format|
-        format.js {render :action => 'load_form_errors'}
-      end
+      render :new
     end
   end
 
@@ -107,14 +107,10 @@ class UsersController < ApplicationController
     params[:user].delete(:login) unless can? :change_login, User #no changing login unless you're an admin
     params[:user][:view_mode] = params[:user][:role]
     if @user.update_attributes(params[:user])
-      respond_to do |format|
-        flash[:notice] = "Successfully updated user."
-        format.js {render action: 'create_success'}
-      end
+      flash[:notice] = "Successfully updated user."
+      redirect_to user_path(@user)
     else
-      respond_to do |format|
-        format.js {render :action => 'load_form_errors'}
-      end
+      render :edit
     end
   end
 

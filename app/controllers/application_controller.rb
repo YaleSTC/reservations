@@ -4,8 +4,8 @@
 class ApplicationController < ActionController::Base
   helper :layout
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
-
-  before_filter RubyCAS::Filter unless Rails.env.test?
+  before_filter CASClient::Frameworks::Rails::Filter unless Rails.env.test?
+  #before_filter RubyCAS::Filter unless Rails.env.test?
   before_filter :app_setup_check
   before_filter :cart
 
@@ -114,7 +114,7 @@ class ApplicationController < ActionController::Base
   end
 
   def fix_cart_date
-    cart.start_date = (Date.today) if cart.start_date < Date.today
+    cart.start_date = (Date.current) if cart.start_date < Date.current
     cart.fix_due_date
   end
 
@@ -138,7 +138,7 @@ class ApplicationController < ActionController::Base
       cart.fix_due_date
       cart.reserver_id = params[:reserver_id].blank? ? current_user.id : params[:reserver_id]
     rescue ArgumentError
-      cart.start_date = Date.today
+      cart.start_date = Date.current
       flash[:error] = "Please enter a valid start or due date."
     end
 
@@ -208,7 +208,10 @@ class ApplicationController < ActionController::Base
 
   def logout
     @current_user = nil
-    RubyCAS::Filter.logout(self)
+    CASClient::Frameworks::Rails::Filter.logout(self)
+    #RubyCAS::Filter.logout(self)
+    # the above code is used with ruby-cas-client-rails gem
+    # which was removed on 7/21/2014
   end
 
   def require_login

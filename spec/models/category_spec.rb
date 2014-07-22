@@ -16,109 +16,109 @@ describe Category do
   # :max_renewal_length
   it "validates max_renewal_length must be non-negative" do
     @category.max_renewal_length = -1
-    @category.save.should be_false
+    @category.save.should be_falsey
     @category.max_renewal_length = 0
-    @category.save.should be_true
+    @category.save.should be_truthy
   end
   it "validates max_renewal_length can be nil" do
     @category.max_renewal_length = nil
-    @category.save.should be_true
+    @category.save.should be_truthy
   end
   it "validates max_renewal_length must be an integer" do
     @category.max_renewal_length = "not_an_integer"
-    @category.save.should be_false
+    @category.save.should be_falsey
     @category.max_renewal_length = 1
-    @category.save.should be_true
+    @category.save.should be_truthy
   end
 
   # :max_renewal_times
   it "validates max_renewal_times must be non-negative" do
     @category.max_renewal_times = -1
-    @category.save.should be_false
+    @category.save.should be_falsey
     @category.max_renewal_times = 0
-    @category.save.should be_true
+    @category.save.should be_truthy
   end
   it "validates max_renewal_times can be nil" do
     @category.max_renewal_times = nil
-    @category.save.should be_true
+    @category.save.should be_truthy
   end
   it "validates max_renewal_times must be an integer" do
     @category.max_renewal_times = "not_an_integer"
-    @category.save.should be_false
+    @category.save.should be_falsey
     @category.max_renewal_times = 1
-    @category.save.should be_true
+    @category.save.should be_truthy
   end
 
   # :renewal_days_before_due
   it "validates renewal_days_before_due must be non-negative" do
     @category.renewal_days_before_due = -1
-    @category.save.should be_false
+    @category.save.should be_falsey
     @category.renewal_days_before_due = 0
-    @category.save.should be_true
+    @category.save.should be_truthy
   end
   it "validates renewal_days_before_due can be nil" do
     @category.renewal_days_before_due = nil
-    @category.save.should be_true
+    @category.save.should be_truthy
   end
   it "validates renewal_days_before_due must be an integer" do
     @category.renewal_days_before_due = "not_an_integer"
-    @category.save.should be_false
+    @category.save.should be_falsey
     @category.renewal_days_before_due = 1
-    @category.save.should be_true
+    @category.save.should be_truthy
   end
 
   # :sort_order
   it "validates sort_order must be non-negative" do
     @category.sort_order = -1
-    @category.save.should be_false
+    @category.save.should be_falsey
     @category.sort_order = 0
-    @category.save.should be_true
+    @category.save.should be_truthy
   end
   it "validates sort_order can be nil" do
     @category.sort_order = nil
-    @category.save.should be_true
+    @category.save.should be_truthy
   end
   it "validates sort_order must be an integer" do
     @category.sort_order = "not_an_integer"
-    @category.save.should be_false
+    @category.save.should be_falsey
     @category.sort_order = 1
-    @category.save.should be_true
+    @category.save.should be_truthy
   end
 
   # :max_per_user
   it "validates max_per_user must be non-negative" do
     @category.max_per_user = -1
-    @category.save.should be_false
+    @category.save.should be_falsey
     @category.max_per_user = 0
-    @category.save.should be_true
+    @category.save.should be_truthy
   end
   it "validates max_per_user can be nil" do
     @category.max_per_user = nil
-    @category.save.should be_true
+    @category.save.should be_truthy
   end
   it "validates max_per_user must be an integer" do
     @category.max_per_user = "not_an_integer"
-    @category.save.should be_false
+    @category.save.should be_falsey
     @category.max_per_user = 1
-    @category.save.should be_true
+    @category.save.should be_truthy
   end
 
   # :max_checkout_length
   it "validates max_checkout_length must be non-negative" do
     @category.max_checkout_length = -1
-    @category.save.should be_false
+    @category.save.should be_falsey
     @category.max_checkout_length = 0
-    @category.save.should be_true
+    @category.save.should be_truthy
   end
   it "validates max_checkout_length can be nil" do
     @category.max_checkout_length = nil
-    @category.save.should be_true
+    @category.save.should be_truthy
   end
   it "validates max_checkout_length must be an integer" do
     @category.max_checkout_length = "not_an_integer"
-    @category.save.should be_false
+    @category.save.should be_falsey
     @category.max_checkout_length = 1
-    @category.save.should be_true
+    @category.save.should be_truthy
   end
 
   # custom scope to return active categories

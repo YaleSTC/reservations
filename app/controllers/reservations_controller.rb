@@ -156,7 +156,7 @@ class ReservationsController < ApplicationController
         # update attributes for all equipment that is checked off
         r = Reservation.find(reservation_id)
         r.checkout_handler = current_user
-        r.checked_out = Time.now
+        r.checked_out = Time.current
         r.equipment_object_id = reservation_hash[:equipment_object_id]
 
         # Check that checkout procedures have been performed
@@ -237,7 +237,7 @@ class ReservationsController < ApplicationController
       end
 
       r.checkin_handler = current_user
-      r.checked_in = Time.now
+      r.checked_in = Time.current
 
       # Check that check-in procedures have been performed
       incomplete_procedures = check_procedures(r, reservation_hash, :checkin)

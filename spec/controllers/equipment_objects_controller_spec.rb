@@ -18,24 +18,24 @@ describe EquipmentObjectsController do
       context 'without show deleted' do
         let!(:obj_other_cat_active) { FactoryGirl.create(:equipment_object) }
         let!(:obj_other_cat_inactive) { FactoryGirl.create(:equipment_object,
-          deleted_at: Date.today) }
+          deleted_at: Date.current) }
         context 'with @equipment_model set' do
           it 'should populate an array of all active model-type equipment objects' do
             obj_same_cat_inactive = FactoryGirl.create(:equipment_object,
-              equipment_model: object.equipment_model, deleted_at: Date.today)
+              equipment_model: object.equipment_model, deleted_at: Date.current)
             get :index, equipment_model_id: object.equipment_model
-            assigns(:equipment_objects).include?(object).should be_true
-            assigns(:equipment_objects).include?(obj_other_cat_active).should_not be_true
-            assigns(:equipment_objects).include?(obj_same_cat_inactive).should_not be_true
-            assigns(:equipment_objects).include?(obj_other_cat_inactive).should_not be_true
+            assigns(:equipment_objects).include?(object).should be_truthy
+            assigns(:equipment_objects).include?(obj_other_cat_active).should_not be_truthy
+            assigns(:equipment_objects).include?(obj_same_cat_inactive).should_not be_truthy
+            assigns(:equipment_objects).include?(obj_other_cat_inactive).should_not be_truthy
             expect(assigns(:equipment_objects).size).to eq(1)
           end
         end
         context 'without @equipment_model set' do
           it 'should populate an array of all active equipment objects' do
-            assigns(:equipment_objects).include?(object).should be_true
-            assigns(:equipment_objects).include?(obj_other_cat_active).should be_true
-            assigns(:equipment_objects).include?(obj_other_cat_inactive).should_not be_true
+            assigns(:equipment_objects).include?(object).should be_truthy
+            assigns(:equipment_objects).include?(obj_other_cat_active).should be_truthy
+            assigns(:equipment_objects).include?(obj_other_cat_inactive).should_not be_truthy
             expect(assigns(:equipment_objects).size).to eq(2)
           end
         end
@@ -43,25 +43,25 @@ describe EquipmentObjectsController do
       context 'with show deleted' do
         let!(:obj_other_cat_active) { FactoryGirl.create(:equipment_object) }
         let!(:obj_other_cat_inactive) { FactoryGirl.create(:equipment_object,
-          deleted_at: Date.today) }
+          deleted_at: Date.current) }
         context 'with @equipment_model set' do
           it 'should populate an array of all model-type equipment objects' do
             obj_same_cat_inactive = FactoryGirl.create(:equipment_object,
-              equipment_model: object.equipment_model, deleted_at: Date.today)
+              equipment_model: object.equipment_model, deleted_at: Date.current)
             get :index, equipment_model_id: object.equipment_model, show_deleted: true
-            assigns(:equipment_objects).include?(object).should be_true
-            assigns(:equipment_objects).include?(obj_other_cat_active).should_not be_true
-            assigns(:equipment_objects).include?(obj_same_cat_inactive).should be_true
-            assigns(:equipment_objects).include?(obj_other_cat_inactive).should_not be_true
+            assigns(:equipment_objects).include?(object).should be_truthy
+            assigns(:equipment_objects).include?(obj_other_cat_active).should_not be_truthy
+            assigns(:equipment_objects).include?(obj_same_cat_inactive).should be_truthy
+            assigns(:equipment_objects).include?(obj_other_cat_inactive).should_not be_truthy
             expect(assigns(:equipment_objects).size).to eq(2)
           end
         end
         context 'without @equipment_model set' do
           it 'should populate an array of all equipment objects' do
             get :index, show_deleted: true
-            assigns(:equipment_objects).include?(object).should be_true
-            assigns(:equipment_objects).include?(obj_other_cat_active).should be_true
-            assigns(:equipment_objects).include?(obj_other_cat_inactive).should be_true
+            assigns(:equipment_objects).include?(object).should be_truthy
+            assigns(:equipment_objects).include?(obj_other_cat_active).should be_truthy
+            assigns(:equipment_objects).include?(obj_other_cat_inactive).should be_truthy
             expect(assigns(:equipment_objects).size).to eq(4)
           end
         end

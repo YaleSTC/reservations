@@ -7,7 +7,7 @@ describe EquipmentModel do
     end
 
     it "has a working factory" do
-      @model.save.should be_true
+      @model.save.should be_truthy
     end
 
     it { should belong_to(:category) }
@@ -29,101 +29,101 @@ describe EquipmentModel do
 
     it "requires an associated category" do
       @model.category = nil
-      @model.save.should be_false
+      @model.save.should be_falsey
       @model.category = FactoryGirl.create(:category)
-      @model.save.should be_true
+      @model.save.should be_truthy
     end
 
     it { should validate_uniqueness_of(:name) }
 
     it "requires a late fee greater than or equal to 0" do
       @model.late_fee = "-1.00"
-      @model.save.should be_false
+      @model.save.should be_falsey
       @model.late_fee = "0.00"
-      @model.save.should be_true
+      @model.save.should be_truthy
     end
 
     it "requires a replacement fee greater than or equal to 0" do
       @model.replacement_fee = "-1.00"
-      @model.save.should be_false
+      @model.save.should be_falsey
       @model.replacement_fee = "0.00"
-      @model.save.should be_true
+      @model.save.should be_truthy
     end
 
     # max_per_user
     # note: for some reason this allows a max_per_user value of "2.3" as a string to save properly.
     it "requires an integer value for maximum per user" do
       @model.max_per_user = 2.3
-      @model.save.should be_false
+      @model.save.should be_falsey
       @model.max_per_user = 2
-      @model.save.should be_true
+      @model.save.should be_truthy
     end
     it "requires a maximum per user value greater than or equal to 1" do
       @model.max_per_user = -1
-      @model.save.should be_false
+      @model.save.should be_falsey
       @model.max_per_user = 0
-      @model.save.should be_false
+      @model.save.should be_falsey
       @model.max_per_user = 1
-      @model.save.should be_true
+      @model.save.should be_truthy
     end
     # only necessary because of integer requirement
     it "allows nil values for maximum per user" do
       @model.max_per_user = nil
-      @model.save.should be_true
+      @model.save.should be_truthy
     end
 
     # max_renewal_length
     it "requires an integer value for maximum renewal length" do
       @model.max_renewal_length = 2.3
-      @model.save.should be_false
+      @model.save.should be_falsey
       @model.max_renewal_length = 2
-      @model.save.should be_true
+      @model.save.should be_truthy
     end
     it "requires a maximum renewal length value greater than or equal to 0" do
       @model.max_renewal_length = -1
-      @model.save.should be_false
+      @model.save.should be_falsey
       @model.max_renewal_length = 0
-      @model.save.should be_true
+      @model.save.should be_truthy
     end
     it "allows nil values for maximum renewal length" do
       @model.max_renewal_length = nil
-      @model.save.should be_true
+      @model.save.should be_truthy
     end
 
     # max_renewal_times
     it "requires an integer value for maximum renewal times" do
       @model.max_renewal_times = 2.3
-      @model.save.should be_false
+      @model.save.should be_falsey
       @model.max_renewal_times = 2
-      @model.save.should be_true
+      @model.save.should be_truthy
     end
     it "requires a maximum renewal times value greater than or equal to 0" do
       @model.max_renewal_times = -1
-      @model.save.should be_false
+      @model.save.should be_falsey
       @model.max_renewal_times = 0
-      @model.save.should be_true
+      @model.save.should be_truthy
     end
     it "allows nil values for maximum renewal times" do
       @model.max_renewal_times = nil
-      @model.save.should be_true
+      @model.save.should be_truthy
     end
 
     # renewal_days_before_due
     it "requires an integer value for renewal days before due" do
       @model.renewal_days_before_due = 2.3
-      @model.save.should be_false
+      @model.save.should be_falsey
       @model.renewal_days_before_due = 2
-      @model.save.should be_true
+      @model.save.should be_truthy
     end
     it "requires a renewal days before due value greater than or equal to 0" do
       @model.renewal_days_before_due = -1
-      @model.save.should be_false
+      @model.save.should be_falsey
       @model.renewal_days_before_due = 0
-      @model.save.should be_true
+      @model.save.should be_truthy
     end
     it "allows nil values for renewal days before due" do
       @model.renewal_days_before_due = nil
-      @model.save.should be_true
+      @model.save.should be_truthy
     end
   end
 
@@ -133,17 +133,17 @@ describe EquipmentModel do
       @model = FactoryGirl.create(:equipment_model, id: @unique_id)
     end
     it "has a working association callback" do
-      @model.save.should be_true
+      @model.save.should be_truthy
     end
     it "does not permit association with itself" do
       @model.associated_equipment_model_ids = [@unique_id]
-      @model.save.should be_false
+      @model.save.should be_falsey
     end
     describe ".not_associated_with_self" do
       it "creates an error if associated with self" do
         @model.associated_equipment_model_ids = [@unique_id]
         @model.not_associated_with_self
-        @model.errors.first.should be_true
+        @model.errors.first.should be_truthy
       end
     end
   end
@@ -232,20 +232,20 @@ describe EquipmentModel do
       end
       it "should return false if the user has fulfilled the requirements to use the model" do
         @user = FactoryGirl.create(:user, requirements: [@requirement, @requirement2])
-        @model.model_restricted?(@user.id).should be_false
+        @model.model_restricted?(@user.id).should be_falsey
       end
       it "should return false if the model has no requirements" do
         @model.requirements = []
         @user = FactoryGirl.create(:user, requirements: [@requirement, @requirement2])
-        @model.model_restricted?(@user.id).should be_false
+        @model.model_restricted?(@user.id).should be_falsey
       end
       it "should return true if the user has not fulfilled all of the requirements" do
         @user = FactoryGirl.create(:user, requirements: [@requirement])
-        @model.model_restricted?(@user.id).should be_true
+        @model.model_restricted?(@user.id).should be_truthy
       end
       it "should return true if the user has not fulfilled any of the requirements" do
         @user = FactoryGirl.create(:user)
-        @model.model_restricted?(@user.id).should be_true
+        @model.model_restricted?(@user.id).should be_truthy
       end
     end
 
@@ -282,7 +282,7 @@ describe EquipmentModel do
           @overdue = FactoryGirl.build(:overdue_reservation, equipment_model: @model)
           @overdue.save(validate: false)
           @model.equipment_objects.size.should eq(4)
-          @model.available_count(Date.today).should eq(1)
+          @model.available_count(Date.current).should eq(1)
         end
       end
       describe ".available_object_select_options" do

@@ -6,7 +6,7 @@ describe Requirement do
       @requirement = FactoryGirl.build(:requirement)
     end
     it "has a working factory" do
-      @requirement.save.should be_true
+      @requirement.save.should be_truthy
     end
 
     it { should validate_presence_of(:contact_name) }
