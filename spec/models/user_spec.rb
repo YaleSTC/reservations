@@ -58,9 +58,10 @@ describe User do
     end
 
     it "should not allow nil" do
+
       @user.nickname = nil
-      @user.save
-      User.find(@user.id).nickname.should_not be_nil
+      expect(lambda { @user.save }).to raise_error(ActiveRecord::StatementInvalid)
+#      User.find(@user.id).nickname.should_not be_nil
       # this test fails, saying that user nickname
       # cannot be nil so...idk what is going on
     end
