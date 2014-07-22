@@ -14,7 +14,6 @@ describe "transform_attributes" do
       it { should include 'I', 'C', 'A', 'T'}
       it { should include 'ID' }
       it { should eq("ID Checked At Time") }
-      it { should_not raise_error }
     end
 
     context "during value transformation" do
