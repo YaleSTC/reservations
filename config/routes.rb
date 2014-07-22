@@ -9,17 +9,25 @@ Reservations::Application.routes.draw do
 
   get "status/index"
 
+  concern :deactivatable do
+    member do
+      put :deactivate
+      put :activate
+    end
+  end
+
   resources :documents,
-            :equipment_objects,
             :requirements
+
+  resources :equipment_objects, concerns: :deactivatable
 
   resources :announcements, except: [:show]
 
-  resources :categories do
+  resources :categories, concerns: :deactivatable do
     resources :equipment_models
   end
 
-  resources :equipment_models do
+  resources :equipment_models, concerns: :deactivatable do
     resources :equipment_objects
   end
 
@@ -86,9 +94,6 @@ Reservations::Application.routes.draw do
   get '/reports/for_model_set' => 'reports#for_model_set', :as => :for_model_set_reports # what http request? old match
   get '/reports/update' => 'reports#update_dates', :as => :update_dates # what http request? old match
   get '/reports/generate' => 'reports#generate', :as => :generate_report # what http request? old match
-
-  #put '/:controller/:id/deactivate' => ':controller#deactivate', :as => 'deactivate'
-  #put '/:controller/:id/activate' => ':controller#activate', :as => 'activate'
 
   get '/logout' => 'application#logout', :as => :logout # what kind of http request is this? old match
 
