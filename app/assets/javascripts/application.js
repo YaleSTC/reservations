@@ -7,10 +7,10 @@
 //= require jquery.spin
 //= require cocoon
 //= require autocomplete-rails
-//= require dataTables/bootstrap/2/jquery.dataTables.bootstrap
 //= require dataTables/jquery.dataTables
 //= require dataTables_numhtml_sort.js
 //= require dataTables_numhtml_detect.js
+//= require dataTables/bootstrap/2/jquery.dataTables.bootstrap
 //= require bootstrap-transition
 //= require bootstrap-alert
 //= require bootstrap-button
@@ -27,6 +27,7 @@
 //= require calendar.js
 
   function truncate() {
+    console.log('truncating');
     if ($(".caption_cat").length) {
       $(".caption_cat").dotdotdot({
         height: 150,
