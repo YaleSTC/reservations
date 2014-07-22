@@ -66,8 +66,8 @@ class ReportsController < ApplicationController
 
   # get dates from datepicker
   def update_dates
-    @start_date = (Date.strptime(params[:report][:start_date],'%m/%d/%Y'))
-    @end_date = (Date.strptime(params[:report][:end_date],'%m/%d/%Y'))
+    @start_date = params[:report][:start_date]
+    @end_date = params[:report][:end_date]
     session[:report_start_date] = @start_date
     session[:report_end_date] = @end_date
 
