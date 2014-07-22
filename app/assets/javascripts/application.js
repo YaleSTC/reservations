@@ -275,6 +275,11 @@ if ($(window).width() > 767) {
     }
   });
 
+  $('.date_end').datepicker({
+    altField: '#date_end_alt',
+    altFormat: 'yy-mm-dd'
+  });
+
 
   // Select2 - fancy select lists
   $('select#equipment_model_category_id').select2();

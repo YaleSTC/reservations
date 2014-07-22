@@ -29,15 +29,15 @@
     <% end %>
 
       <%= label_tag :start_date, 'Start Date' %>
-      <%#= datepicker_input "cart", "start_date_cart", :class => 'autosubmitme span2', :value => cart.start_date.strftime('%m/%d/%Y') %>
+      <%= text_field "cart", "start_date_cart", :class => 'autosubmitme span2 date_start', :value => cart.start_date.strftime('%m/%d/%Y') %>
+      <%= hidden_field_tag "cart[start_date_cart]", cart.start_date, id: 'date_start_alt' %>
 
       <%= label_tag :due_date, 'Due Date' %>
-      <%#= datepicker_input "cart", "due_date_cart", :class => 'autosubmitme span2', :value => cart.due_date.strftime('%m/%d/%Y'), :minDate => cart.start_date.strftime('%m/%d/%Y') %>
+      <%= text_field "cart", "due_date_cart", :class => 'autosubmitme span2 date_end', :value => cart.due_date.strftime('%m/%d/%Y'), :minDate => cart.start_date.strftime('%m/%d/%Y') %>
+      <%= hidden_field_tag "cart[due_date_cart]", cart.due_date, id: 'date_end_alt' %>
 
   <% end %>
 </div>
-
-
 
 <div class="modal hide fade" id="userModal">
   <div class="modal-header">
