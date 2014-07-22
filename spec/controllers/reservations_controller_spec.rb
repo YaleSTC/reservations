@@ -105,10 +105,7 @@ describe ReservationsController do
         end
         it 'uses :upcoming as default filter' do
           get :index
-          # Cannot compare objects in nested arrays directly
-          assigns(:reservations_set).each do |r|
-            expect(Reservation.upcoming.all.map(&:id)).to include(r.id)
-          end
+          expect(assigns(:reservations_set) - Reservation.upcoming.all).to be_empty
         end
       end
 
@@ -117,17 +114,14 @@ describe ReservationsController do
           @controller.stub(:current_user).and_return(@user)
           @filters.each do |trait|
             res = FactoryGirl.build(:valid_reservation, trait,
-                                    reserver: [@user, @admin].sample)
+                                    reserver: [@user,@admin].sample)
             res.save(validate: false)
           end
         end
 
         it 'uses :reserved as the default filter' do
           get :index
-          # Cannot compare objects in nested arrays directly
-          assigns(:reservations_set).each do |r|
-            expect(@controller.current_user.reservations.upcoming.map(&:id)).to include(r.id)
-         end
+          expect(assigns(:reservations_set) - @user.reservations.reserved).to be_empty
         end
       end
     end
