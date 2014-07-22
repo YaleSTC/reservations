@@ -1,12 +1,12 @@
 <%= f.error_notification %>
 
 <fieldset>
-	<legend>General</legend>
+  <legend>General</legend>
   <%= f.input :site_title, hint: "The Site Title is displayed in the title bar / tab in the browser, as well as in the navigation bar." %>
   <%= f.input :admin_email %>
   <%= f.input :department_name %>
-	<%= f.input :home_link_text %>
-	<%= f.input :home_link_location %>
+  <%= f.input :home_link_text %>
+  <%= f.input :home_link_location %>
   <%= f.input :contact_link_location, label: 'Contact Email', hint:
   'Enter an email to which questions from the contact from will be sent' %>
   <%= f.input :default_per_cat_page, label: 'Items per page', hint:
@@ -55,6 +55,8 @@
     <dt>@start_date@</dt><dd>The start date for the reservation.</dd>
     <dt>@return_date@</dt><dd>The due date for the reservation.</dd>
     <dt>@late_fee@</dt><dd>The daily late fee for the equipment model in the reservation.</dd>
+    <dt>@replacement_fee@</dt><dd>The replacement fee for the equipment model in the reservation</dd>
+    <dt>@tos@</dt><dd>The terms of service</dd>
   </dl>
   <hr />
   <%= f.input :upcoming_checkin_email_active, label: 'Send equipment check-in reminders?',
@@ -87,6 +89,14 @@
     <%= f.input :reset_tos_for_users, input_html: {type: "checkbox", value: '1'} , label: "Force all patrons to accept the TOS again?", :hint => "i.e., if patrons need to be aware that the terms of service have changed." %>
   <% end %>
 </fieldset>
+
+<fieldset>
+  <legend>Blackout Dates</legend>
+  <%= f.input :blackout_exp_time, label: 'Days to keep old blackouts',
+      hint: 'Blackout dates a certain number of days old can be automatically deleted. Leave blank to keep
+      all blackouts forever.' %>
+</fieldset>
+
 <div class="form-actions">
   <%= f.button :submit, 'Update Settings' %>
 </div>

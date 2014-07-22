@@ -30,10 +30,12 @@ describe CatalogController do
       it 'should call cart.add_item to add item to cart' do
         expect{
           put :add_to_cart, id: @equipment_model.id
-        }.to change{session[:cart].items.size}.by(1)
+        }.to change{session[:cart].items[@equipment_model.id]}.by(1)
+
       end
-      it 'should set flash[:error] to the result of Reservation.validate_set if exists' do
-        Reservation.stub(:validate_set).with(session[:cart].reserver, session[:cart].cart_reservations).and_return("test")
+      it 'should set flash[:error] if errors exist' do
+        @cart.stub(:validate_items).and_return("test")
+        @cart.stub(:validate_dates_and_items).and_return("test2")
         flash[:error].should_not be_nil
       end
       it { should redirect_to(root_path) }
@@ -65,7 +67,7 @@ describe CatalogController do
         }.to change{session[:cart].items.size}.by(-1)
       end
       it 'should set flash[:error] to the result of Reservation.validate_set if exists' do
-        Reservation.stub(:validate_set).with(session[:cart].reserver, session[:cart].cart_reservations).and_return("test")
+        Reservation.stub(:validate_set).with(session[:cart].reserver, session[:cart].prepare_all).and_return("test")
         flash[:error].should_not be_nil
       end
       it { should redirect_to(root_path) }
@@ -87,15 +89,15 @@ describe CatalogController do
     before(:each) do
       put :update_user_per_cat_page
     end
-    it 'should set session[:user_per_cat_page] to session[:user_cat_items_per_page] if exists' do
-      put :update_user_per_cat_page, :user_cat_items_per_page => 20
-      session[:user_per_cat_page].should eq('20')
+    it 'should set session[:items_per_page] to params[items_per_page] if exists' do
+      put :update_user_per_cat_page, :items_per_page => 20
+      session[:items_per_page].should eq('20')
     end
-    it 'should not alter session[:user_per_cat_page] if session[:user_cat_items_per_page] is nil' do
-      session[:user_per_cat_page] = '15'
-      put :update_user_per_cat_page, :user_cat_items_per_page => nil
-      session[:user_per_cat_page].should_not eq(nil)
-      session[:user_per_cat_page].should eq('15')
+    it 'should not alter session[:items_per_page] if params[:items_per_page] is nil' do
+      session[:items_per_page] = '15'
+      put :update_user_per_cat_page, :items_per_page => nil
+      session[:items_per_page].should_not eq(nil)
+      session[:items_per_page].should eq('15')
     end
     it { should redirect_to(root_path) }
     it { should render_template(:action => 'cat_pagination')}

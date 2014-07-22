@@ -12,6 +12,39 @@
   }
 }
 
+.checkin-click:hover{
+  background-color: darken($bodyBackground, 6%);
+  cursor: pointer;
+}
+
+.selected {
+  background-color: adjust-hue(darken($bodyBackground, 5%), 45deg);
+}
+
+.selected-overdue {
+  background-color: adjust-hue(darken($bodyBackground, 7%), -25deg);
+}
+
+.check {
+  color: green;
+}
+
+.overdue-icon {
+  color: #AD0000;
+}
+
+.hidden {
+	opacity:0;
+}
+
+.icons {
+	float: right;
+}
+
+.title {
+	float: left;
+}
+	
 .checkin, .checkout {
   .rectangle-list {
     margin-bottom: 2em;

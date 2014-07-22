@@ -1,3 +1,8 @@
+require 'codeclimate-test-reporter'
+CodeClimate::TestReporter.start
+# Rspec should submit the result to CodeClimate automatically with each Travis
+# CI build (repo token is encrypted in .travis.yml)
+
 require 'rubygems'
 require 'spork'
 #uncomment the following line to use spork with the debugger
@@ -12,6 +17,7 @@ Spork.prefork do
   require File.expand_path("../../config/environment", __FILE__)
   require 'rspec/rails'
   require 'capybara/rspec'
+  require 'paper_trail'
   # require 'rspec/autorun'
 
   # Requires supporting ruby files with custom matchers and macros, etc,
@@ -50,6 +56,18 @@ Spork.prefork do
     # the seed, which is printed after each run.
     #     --seed 1234
     config.order = "random"
+
+    # DatabaseCleaner setup
+    config.before(:suite) do
+      DatabaseCleaner.strategy = :transaction
+      DatabaseCleaner.clean_with(:truncation)
+    end
+
+    config.around(:each) do |example|
+      DatabaseCleaner.cleaning do
+        example.run
+      end
+    end
   end
 
 end
@@ -87,8 +105,3 @@ end
 #
 # These instructions should self-destruct in 10 seconds.  If they don't, feel
 # free to delete them.
-
-
-
-
-

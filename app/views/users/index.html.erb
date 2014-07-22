@@ -3,14 +3,14 @@
 <%= render :partial => 'table', :locals => {:users => @users} %>
 
 <hr />
-<p> 
+<p>
   <%= link_to "New User", new_user_path, :class => "btn btn-primary" %>
-  <% if current_user.can_checkout? %>
+  <% if can? :create, User %>
     <%= link_to "Import Users", csv_import_page_path, :class => "btn" %>
   <% end %>
-  <% if params[:show_deleted] %>
-    <%= link_to "Hide Deactivated Users from List", users_path, :class => "btn" %>
+  <% if params[:show_banned] %>
+    <%= link_to "Hide Banned Users from List", users_path, :class => "btn" %>
   <% else %>
-    <%= link_to "Show Deactivated Users in List", users_path(:show_deleted => true), :class => "btn" %>
+    <%= link_to "Show Banned Users in List", users_path(:show_banned => true), :class => "btn" %>
   <% end %>
 </p>

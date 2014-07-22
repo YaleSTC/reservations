@@ -1,5 +1,5 @@
 class AppConfigsController < ApplicationController
-  before_filter :require_admin
+  authorize_resource :class => false
   skip_before_filter :seen_app_configs, only: [:edit]
 
   def edit

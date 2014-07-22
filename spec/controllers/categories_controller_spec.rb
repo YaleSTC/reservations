@@ -8,7 +8,6 @@ describe CategoriesController do
     @controller.stub(:first_time_user).and_return(nil)
     @category = FactoryGirl.create(:category)
   end
-  # admin and non-admin results are the same for GET #index and GET #show in the categories controller
   describe 'GET index' do
     before(:each) do
       @inactive_category = FactoryGirl.create(:category, deleted_at: Date.today - 1)
@@ -34,16 +33,8 @@ describe CategoriesController do
         @controller.stub(:current_user).and_return(FactoryGirl.create(:user))
         get :index
       end
-      it { should respond_with(:success) }
-      it { should render_template(:index) }
-      it { should_not set_the_flash }
-      it 'should populate an array of all categories if show deleted is true' do
-        get :index, show_deleted: true
-        expect(assigns(:categories)).to eq([@category, @inactive_category])
-      end
-      it 'should populate an array of active categories if show deleted is nil or false' do
-        expect(assigns(:categories)).to eq([@category])
-      end
+      it { should redirect_to(root_url) }
+      it { should set_the_flash }
     end
   end
   describe 'GET show' do
@@ -64,12 +55,8 @@ describe CategoriesController do
         @controller.stub(:current_user).and_return(FactoryGirl.create(:user))
         get :show, id: @category
       end
-      it { should respond_with(:success) }
-      it { should render_template(:show) }
-      it { should_not set_the_flash }
-      it 'should set @category to the selected category' do
-        expect(assigns(:category)).to eq(@category)
-      end
+      it { should redirect_to(root_url) }
+      it { should set_the_flash }
     end
   end
   # all methods below should redirect to root_url if user is not an admin
@@ -180,7 +167,7 @@ describe CategoriesController do
         it 'should not update attributes of @category in the database' do
           @category.reload
           @category.name.should_not be_nil
-          @category.max_per_user.should be_nil
+          @category.max_per_user.should_not eq(10)
         end
         it { should render_template(:edit) }
         it { should_not set_the_flash }

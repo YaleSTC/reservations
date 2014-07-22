@@ -67,7 +67,7 @@ describe User do
   describe ".active" do
     before(:each) do
       @user = FactoryGirl.create(:user)
-      @deactivated = FactoryGirl.create(:deactivated_user)
+      @deactivated = FactoryGirl.create(:banned)
     end
 
     it "should return all active users" do
@@ -90,131 +90,14 @@ describe User do
     end
   end
 
-  describe ".can_checkout?" do
-    it "should return true if user is a checkout person" do
-      checkout_person = FactoryGirl.create(:checkout_person)
-      checkout_person.can_checkout?.should == true
-    end
-    it "should return true if user is an admin in admin mode" do
-      admin_in_admin_mode = FactoryGirl.create(:admin, view_mode: 'admin')
-      admin_in_admin_mode.can_checkout?.should == true
-    end
-    it "should return true if user is an admin in checkoutperson mode" do
-      admin_in_checkout_mode = FactoryGirl.create(:admin, view_mode: 'checkout')
-      admin_in_checkout_mode.can_checkout?.should == true
-    end
-    it "should return false if user is banned" do
-      banned_user = FactoryGirl.create(:user, role: 'banned')
-      banned_user.can_checkout?.should be_false
-    end
-    it "should return false if user is normal" do
-      non_admin_user = FactoryGirl.create(:user)
-      non_admin_user.can_checkout?.should be_false
-    end
-    it "should return false if admin in bannedmode" do
-      admin_in_bannedmode = FactoryGirl.create(:admin, view_mode: 'banned')
-      admin_in_bannedmode.can_checkout?.should be_false
-    end
-    it "should return false if admin in normal mode" do
-      admin_in_normalusermode = FactoryGirl.create(:admin, view_mode: 'normal')
-      admin_in_normalusermode.can_checkout?.should be_false
-    end
-  end
-
-  describe ".is_admin?" do
-    it "should return true if user is admin and passed no parameter" do
-      user = FactoryGirl.create(:admin)
-      user.is_admin?.should be_true
-    end
-    context "not an admin" do
-      before(:each) do
-        @user = FactoryGirl.create(:user)
-      end
-      it "should return false if user is not an admin and passed no parameter" do
-        @user.is_admin?.should be_false
-      end
-      it "should return false if user is not admin and passed a parameter" do
-        @user.is_admin?(as: 'admin').should be_false
-        @user.is_admin?(as: 'checkout').should be_false
-        @user.is_admin?(as: 'banned').should be_false
-        @user.is_admin?(as: 'normal').should be_false
-      end
-    end
-    context "admin view_mode" do
-      before(:each) do
-        @user = FactoryGirl.create(:admin, view_mode: 'admin')
-      end
-      it "should return true if passed the parameter matching the view_mode" do
-        @user.is_admin?(as: 'admin').should be_true
-      end
-      it "should return false if passed a parameter not matching the view_mode" do
-        @user.is_admin?(as: 'checkout').should be_false
-        @user.is_admin?(as: 'normal').should be_false
-        @user.is_admin?(as: 'banned').should be_false
-      end
-    end
-    context "checkout view_mode" do
-      before(:each) do
-        @user = FactoryGirl.create(:admin, view_mode: 'checkout')
-      end
-      it "should return true if passed the parameter matching the view_mode" do
-        @user.is_admin?(as: 'checkout').should be_true
-      end
-      it "should return false if passed a parameter not matching the view_mode" do
-        @user.is_admin?(as: 'admin').should be_false
-        @user.is_admin?(as: 'normal').should be_false
-        @user.is_admin?(as: 'banned').should be_false
-      end
-    end
-    context "banned view_mode" do
-      before(:each) do
-        @user = FactoryGirl.create(:admin, view_mode: 'banned')
-      end
-      it "should return true if passed the parameter matching the view_mode" do
-        @user.is_admin?(as: 'banned').should be_true
-      end
-      it "should return false if passed a parameter not matching the view_mode" do
-        @user.is_admin?(as: 'checkout').should be_false
-        @user.is_admin?(as: 'normal').should be_false
-        @user.is_admin?(as: 'admin').should be_false
-      end
-    end
-    context "normal view_mode" do
-      before(:each) do
-        @user = FactoryGirl.create(:admin, view_mode: 'normal')
-      end
-      it "should return true if passed the parameter matching the view_mode" do
-        @user.is_admin?(as: 'normal').should be_true
-      end
-      it "should return false if passed a parameter not matching the view_mode" do
-        @user.is_admin?(as: 'checkout').should be_false
-        @user.is_admin?(as: 'admin').should be_false
-        @user.is_admin?(as: 'banned').should be_false
-      end
-    end
-  end
-
-
   describe ".equipment_objects" do
     it "has a working reservation factory" do
-      @reservation = FactoryGirl.create(:reservation)
+      @reservation = FactoryGirl.create(:valid_reservation)
     end
     it "should return all equipment_objects reserved by the user" do
       @user = FactoryGirl.create(:user)
-      @reservation = FactoryGirl.create(:reservation, reserver: @user)
+      @reservation = FactoryGirl.create(:valid_reservation, reserver: @user)
       @user.equipment_objects.should == [@reservation.equipment_object]
-    end
-  end
-
-  describe ".checked_out_models" do
-    it "should return a hash of checked out models and counts" do
-      @user = FactoryGirl.create(:user)
-      @model = FactoryGirl.create(:equipment_model)
-      # make two reservations of the same equipment model, only one of which is checked out
-      @reservation = FactoryGirl.create(:checked_out_reservation, reserver: @user, equipment_model: @model)
-      @another_reservation = FactoryGirl.create(:reservation, reserver: @user, equipment_model: @model)
-
-      @user.checked_out_models.should == {@model.id=>1}
     end
   end
 

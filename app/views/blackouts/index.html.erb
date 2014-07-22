@@ -8,7 +8,8 @@
   note that our offices will only be open from 2:36 AM to 2:37 AM on this date
   in observance of Arbitrary Day.'). The admin can also set that no reservation
   can be created if its start or end
-  date falls within the Blackout period.
+  date falls within the Blackout period. Expired blackouts will be automatically
+  deleted after a certain period of time, specified in the application settings.
 </p>
 <p>
   <%= link_to 'New Blackout'.titleize, new_blackout_path, class: 'btn btn-primary' %>

@@ -15,17 +15,22 @@ FactoryGirl.define do
     phone "555-555-5555"
     terms_of_service_accepted true
     created_by_admin false
-
-    factory :deactivated_user do
-      deleted_at "2013-01-01 00:00:00"
-    end
+    role 'normal'
+    view_mode 'normal'
 
     factory :admin do
       role 'admin'
+      view_mode 'admin'
     end
 
     factory :checkout_person do
       role 'checkout'
+      view_mode 'checkout'
+    end
+
+    factory :banned do
+      role 'banned'
+      view_mode 'banned'
     end
   end
 end

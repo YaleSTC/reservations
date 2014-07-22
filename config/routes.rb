@@ -1,13 +1,19 @@
 Reservations::Application.routes.draw do
+  root :to => 'catalog#index'
+
+  ActiveAdmin.routes(self) unless Rails.env.development?
+
+  get "log/index"
+  get "log/version/:id" => "log#version", as: :version_view
+  get "log/history/:object_type/:id" => "log#history", as: :history
 
   get "status/index"
 
-  root :to => 'catalog#index'
-
   resources :documents,
             :equipment_objects,
-            :requirements,
-            :announcements
+            :requirements
+
+  resources :announcements, except: [:show]
 
   resources :categories do
     resources :equipment_models
@@ -24,6 +30,11 @@ Reservations::Application.routes.draw do
     collection do
       get :find
     end
+    member do
+      put :ban
+      put :unban
+    end
+    get :autocomplete_user_last_name, on: :collection
   end
 
   get '/catalog/search' => 'catalog#search', :as => :catalog_search # what kind of http request is this?
@@ -35,7 +46,6 @@ Reservations::Application.routes.draw do
       get :checkin_email
       put :renew
     end
-    get :autocomplete_user_last_name, :on => :collection
   end
 
   get '/blackouts/flash_message' => 'blackouts#flash_message', :as => :flash_message
@@ -55,6 +65,9 @@ Reservations::Application.routes.draw do
   get '/reservations/manage/:user_id' => 'reservations#manage', :as => :manage_reservations_for_user
   get '/reservations/current/:user_id' => 'reservations#current', :as => :current_reservations_for_user
 
+  get '/reservations/review/:id' => 'reservations#review', :as => :review_request
+  put '/reservations/approve/:id' => 'reservations#approve_request', :as => :approve_request
+  put '/reservations/deny/:id' => 'reservations#deny_request', :as => :deny_request
 
   # reservation checkout / check-in actions
   put '/reservations/checkout/:user_id' => 'reservations#checkout', :as => :checkout

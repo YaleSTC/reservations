@@ -34,10 +34,11 @@ module LayoutHelper
   end
 
   def reservations_count
-    if current_user && current_user.is_admin?(as: 'admin') || current_user.role == 'checkout'
-      count = Reservation.where(checked_in: nil).size
+    if can? :manage, Reservation
+      count = Reservation.active.size
     else
-      @current_reservations = current_user.reservations.where(checked_in: nil)
+      @current_reservations = current_user.reservations.active_or_requested # this variable is called in _navbar.html.erb to list \
+                                                                            # a user's current reservations in the dropdown.
       count = @current_reservations.size
     end
   end
@@ -53,15 +54,18 @@ module LayoutHelper
     end
   end
 
-  def view_as_selected
-    if current_user && current_user.view_mode == 'admin'
-      'Admin'
-    elsif current_user && current_user.view_mode == 'checkout'
-      'Checkout Person'
-    elsif current_user && current_user.view_mode == 'normal'
-      'Patron'
-    elsif current_user && current_user.view_mode == 'banned'
-      'Banned User'
+  def get_role_name role
+    case role
+      when 'superuser'
+        'Superuser'
+      when 'admin'
+        'Admin'
+      when 'checkout'
+        'Checkout Person'
+      when 'normal'
+        'Patron'
+      when 'banned'
+        'Banned'
     end
   end
 end

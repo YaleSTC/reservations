@@ -1,13 +1,11 @@
 <div id="navigation_bar" class="navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="container">
-		<% unless @app_configs.nil? || @app_configs.site_title.nil? %>
-      <%= link_to sanitize("<i class=\"icon-th-list\"></i> #{site_title}"), root_path, :class => 'brand' %>
-		<% end %>
+    <% unless @app_configs.nil? || @app_configs.site_title.nil? %>
+      <%= link_to sanitize("<i class=\"fa fa-th-list\"></i> #{site_title}"), root_path, :class => 'brand' %>
+    <% end %>
       <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
+        <i class = "fa fa-bars fa-lg"></i>
       </a>
       <div class="nav-collapse">
 
@@ -15,10 +13,10 @@
 
         <li <%= navigation_active catalog_path %><%= navigation_active root_path %>><%= link_to "Catalog", catalog_path %></li>
 
-      <% if current_user && current_user.can_checkout? %>
+      <% if can? :manage, Reservation %>
 
           <li <%= navigation_active users_path %>><%= link_to "Users", users_path %></li>
-          <% if current_user && current_user.is_admin?(:as => 'admin') %>
+          <% if can? :read, :admin_panel %>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Equipment <b class="caret"></b></a>
               <ul class="dropdown-menu">
@@ -37,12 +35,10 @@
           <!-- Reservations Dropdown -->
 
           <li id="my_reservations" class="dropdown">
-            <% if current_user and current_user.can_checkout? %>
+            <% if can? :manage, Reservation %>
               <%= link_to "Reservations", reservations_path %>
             <% else %>
               <%= link_to sanitize("My Reservations &nbsp;<span class=\"badge\">#{reservations_count}</span> <b class=\"caret\"></b>"), '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' %>
-            <% end %>
-            <% if current_user and !current_user.can_checkout? %>
               <ul class="dropdown-menu">
                 <li class="nav-header"><h3>My Current Reservations</h3></li>
                 <% unless @current_reservations.blank? %>
@@ -61,14 +57,13 @@
                 <% end %>
               </ul>
             <% end %>
-
           </li>
 
           <!-- Equipment Dropdown -->
-          <% if current_user and !current_user.can_checkout? %>
+          <% if cannot? :manage, Reservation %>
           <li id="my_equipment" class="dropdown">
             <%= link_to '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' do %>
-              <% if current_user && !current_user.can_checkout? %>
+              <% if cannot? :manage, Reservation %>
                 <%= sanitize("My Equipment &nbsp;<span class=\"badge\">#{equipment_count}</span> <b class=\"caret\"></b>") %>
               <% end %>
             <% end %>
@@ -93,16 +88,17 @@
         <% end %>
 
         <!-- Admin Dropdown -->
-        <% if current_user && current_user.is_admin?(:as => 'admin') %>
+        <% if can? :read, :admin_panel %>
           <li class="divider-vertical"></li>
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
-				  <li><%= link_to "Announcements", announcements_path %></li>
+          <li><%= link_to "Announcements", announcements_path %></li>
                   <li><%= link_to "Blackout Dates", blackouts_path %></li>
                   <li><%= link_to "Reports", reports_path %></li>
                   <li><%= link_to "Settings", edit_app_configs_path %></li>
+                  <li><%= link_to "Logs", log_index_path %></li>
                 </ul>
               </li>
         <% end %>
@@ -119,15 +115,15 @@
       <% if current_user.nil? %>
         <li><%= link_to "Sign In" %></li>
       <% elsif current_user %>
-      	<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user"></i>
-        	<%= current_user.name %>
-      	  <b class="caret"></b></a>
-        	<ul class="dropdown-menu">
-          	<li><%= link_to "My Profile", current_user %></li>
-      	    <li><%= link_to "Log Out", logout_path %></li>
-    	    </ul>
-  	    </li>
-  	  <% end %>
+        <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i>
+          <%= current_user.name %>
+          <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><%= link_to "My Profile", current_user %></li>
+            <li><%= link_to "Log Out", logout_path %></li>
+          </ul>
+        </li>
+      <% end %>
     </ul>
     </div>
   </div>

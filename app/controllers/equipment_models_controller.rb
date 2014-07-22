@@ -1,9 +1,7 @@
 class EquipmentModelsController < ApplicationController
   layout 'application_with_sidebar', only: :show
-
-  before_filter :require_admin
+  load_and_authorize_resource
   before_filter :set_equipment_model, only: [:show, :edit, :update, :destroy]
-  skip_before_filter :require_admin, only: [:index, :show]
   before_filter :set_category_if_possible, only: [:index, :new]
 
   include ActivationHelper
@@ -28,7 +26,30 @@ class EquipmentModelsController < ApplicationController
 
   def show
     @associated_equipment_models = @equipment_model.associated_equipment_models.sample(6)
+
+    calendar_length = 1.month
+
+    @reservation_data = []
+    Reservation.active.for_eq_model(@equipment_model).each do |r|
+      @reservation_data << {
+        start: r.start_date,
+        end: (r.status == 'overdue' ? Date.today + calendar_length : r.due_date) }
+      # the above code mimics the current available? setup to show overdue
+      # equipment as permanently 'out'.
+    end
+
+    @blackouts = []
+    Blackout.active.each do |b|
+      @blackouts << {
+        start: b.start_date, end: b.end_date}
+    end
+    @date = Time.current.to_date
+    @date_max = @date + calendar_length - 1.week
+    @max = @equipment_model.equipment_objects.active.count
+
+    @restricted = @equipment_model.model_restricted?(cart.reserver_id)
   end
+
 
   def new
     @equipment_model = EquipmentModel.new(category: @category)
@@ -89,9 +110,11 @@ class EquipmentModelsController < ApplicationController
     def delete_procedures(params, phase)
       # phase needs to be equal to either "checkout" or "checkin"
       phase_params = params[:equipment_model][:"#{phase}_procedures_attributes"]
-      phase_params.each do |k, v|
-        if v["id"] and v["_destroy"] != "false"
-          @equipment_model.send(:"#{phase}_procedures")[k.to_i].destroy(:force)
+      unless phase_params.nil?
+        phase_params.each do |k, v|
+          if v["id"] and v["_destroy"] != "false"
+            @equipment_model.send(:"#{phase}_procedures")[k.to_i].destroy(:force)
+          end
         end
       end
     end

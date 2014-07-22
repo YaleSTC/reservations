@@ -1,17 +1,35 @@
 require 'spec_helper'
 
-describe EquipmentModelsController do
-	before(:all) { @app_config = FactoryGirl.create(:app_config) }
-	before { @controller.stub(:first_time_user).and_return(:nil) }
-	let!(:model) { FactoryGirl.create(:equipment_model) }
+shared_examples_for "GET show success" do
+  it { should respond_with(:success) }
+  it { should render_template(:show) }
+  it { should_not set_the_flash }
+  it 'should set to correct equipment model' do
+    expect(assigns(:equipment_model)).to eq(model)
+  end
+  it 'should set @associated_equipment_models' do
+    mod1 = FactoryGirl.create(:equipment_model)
+    model.associated_equipment_models = [mod1]
+    get :show, id: model
+    expect(assigns(:associated_equipment_models).size).to eq(1)
+    expect(assigns(:associated_equipment_models)).to eq([] << mod1)
+  end
+  it 'should limit @associated_equipment_models to maximum 6' do
+    mod1 = FactoryGirl.create(:equipment_model)
+    mod2 = FactoryGirl.create(:equipment_model)
+    mod3 = FactoryGirl.create(:equipment_model)
+    mod4 = FactoryGirl.create(:equipment_model)
+    mod5 = FactoryGirl.create(:equipment_model)
+    mod6 = FactoryGirl.create(:equipment_model)
+    mod7 = FactoryGirl.create(:equipment_model)
+    model.associated_equipment_models = [mod1, mod2, mod3, mod4, mod5, mod6, mod7]
+    get :show, id: model
+    expect(assigns(:associated_equipment_models).size).to eq(6)
+  end
+end
 
-	describe 'GET index' do
-    context 'with admin user' do
-			before do
-        @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
-        get :index
-      end
-      it { should respond_with(:success) }
+shared_examples_for "GET index success" do
+it { should respond_with(:success) }
       it { should render_template(:index) }
       it { should_not set_the_flash }
       context 'without show deleted' do
@@ -26,16 +44,16 @@ describe EquipmentModelsController do
             assigns(:equipment_models).include?(model).should be_true
             assigns(:equipment_models).include?(mod_other_cat_active).should_not be_true
             assigns(:equipment_models).include?(mod_same_cat_inactive).should_not be_true
-            assigns(:equipment_models).include?(mod_other_cat_inactive).should_not be_true 
-            expect(assigns(:equipment_models).size).to eq(1)            
+            assigns(:equipment_models).include?(mod_other_cat_inactive).should_not be_true
+            expect(assigns(:equipment_models).size).to eq(1)
           end
         end
         context 'without @category set' do
           it 'should populate an array of all active equipment models' do
             assigns(:equipment_models).include?(model).should be_true
             assigns(:equipment_models).include?(mod_other_cat_active).should be_true
-            assigns(:equipment_models).include?(mod_other_cat_inactive).should_not be_true 
-            expect(assigns(:equipment_models).size).to eq(2)           
+            assigns(:equipment_models).include?(mod_other_cat_inactive).should_not be_true
+            expect(assigns(:equipment_models).size).to eq(2)
           end
         end
       end
@@ -50,9 +68,9 @@ describe EquipmentModelsController do
             get :index, category_id: model.category, show_deleted: true
             assigns(:equipment_models).include?(model).should be_true
             assigns(:equipment_models).include?(mod_other_cat_active).should_not be_true
-            assigns(:equipment_models).include?(mod_same_cat_inactive).should be_true            
-            assigns(:equipment_models).include?(mod_other_cat_inactive).should_not be_true 
-            expect(assigns(:equipment_models).size).to eq(2)      
+            assigns(:equipment_models).include?(mod_same_cat_inactive).should be_true
+            assigns(:equipment_models).include?(mod_other_cat_inactive).should_not be_true
+            expect(assigns(:equipment_models).size).to eq(2)
           end
         end
         context 'without @category set' do
@@ -60,64 +78,53 @@ describe EquipmentModelsController do
             get :index, show_deleted: true
             assigns(:equipment_models).include?(model).should be_true
             assigns(:equipment_models).include?(mod_other_cat_active).should be_true
-            assigns(:equipment_models).include?(mod_other_cat_inactive).should be_true 
+            assigns(:equipment_models).include?(mod_other_cat_inactive).should be_true
             expect(assigns(:equipment_models).size).to eq(3)
-          end     
-        end   
+          end
+        end
       end
+
+end
+
+describe EquipmentModelsController do
+	before(:all) { @app_config = FactoryGirl.create(:app_config) }
+	before { @controller.stub(:first_time_user).and_return(:nil) }
+	let!(:model) { FactoryGirl.create(:equipment_model) }
+
+	describe 'GET index' do
+    context 'with admin user' do
+			before do
+        @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
+        get :index
+      end
+      it_behaves_like "GET index success"
     end
     context 'with non-admin user' do
       before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
-      describe 'should function normally' do
+      describe 'should redirect to root' do
         before { get :index }
-        it { should respond_with(:success) }
-        it { should render_template(:index) }
+        it_behaves_like 'GET index success'
       end
     end
   end
-		
+
 	describe 'GET show' do
     context 'with admin user' do
       before do
         @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
         get :show, id: model
       end
-      it { should respond_with(:success) }
-      it { should render_template(:show) }
-      it { should_not set_the_flash }
-      it 'should set to correct equipment model' do
-        expect(assigns(:equipment_model)).to eq(model)
-      end
-      it 'should set @associated_equipment_models' do
-      	mod1 = FactoryGirl.create(:equipment_model)
-      	model.associated_equipment_models = [mod1]
-      	get :show, id: model
-      	expect(assigns(:associated_equipment_models).size).to eq(1)
-      	expect(assigns(:associated_equipment_models)).to eq([] << mod1)
-      end
-      it 'should limit @associated_equipment_models to maximum 6' do
-      	mod1 = FactoryGirl.create(:equipment_model)
-      	mod2 = FactoryGirl.create(:equipment_model)
-      	mod3 = FactoryGirl.create(:equipment_model)
-      	mod4 = FactoryGirl.create(:equipment_model)
-      	mod5 = FactoryGirl.create(:equipment_model)
-      	mod6 = FactoryGirl.create(:equipment_model)
-      	mod7 = FactoryGirl.create(:equipment_model)
-      	model.associated_equipment_models = [mod1, mod2, mod3, mod4, mod5, mod6, mod7]
-      	get :show, id: model
-      	expect(assigns(:associated_equipment_models).size).to eq(6)
-      end
+      it_behaves_like "GET show success"
     end
     context 'with non-admin user' do
-      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
-      describe 'should funciton normally' do
-        before { get :show, id: model }
-        it { should respond_with(:success) }
-        it { should render_template(:show) }
+      before do
+        @controller.stub(:current_user).and_return(FactoryGirl.create(:user))
+        get :show, id: model
       end
+      it_behaves_like "GET show success"
     end
   end
-		
+
   describe 'GET new' do
     context 'with admin user' do
       before do
@@ -205,7 +212,7 @@ describe EquipmentModelsController do
       end
     end
   end
-		
+
 	describe 'PUT update' do
     context 'with admin user' do
       before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }

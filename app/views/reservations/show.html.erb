@@ -1,4 +1,3 @@
-<% if current_user.can_checkout? || current_user == @reservation.reserver %>
   <% title "Reservation ##{@reservation.id}" %>
   <% subtitle @reservation.reserver.first_name + " " +
   (!@reservation.reserver.nickname.blank? ? "(#{@reservation.reserver.nickname}) " : "") +
@@ -11,6 +10,9 @@
       <%= "<span class=\"user_label label-warning\">Returned Overdue</span>".html_safe if @reservation.status == 'returned overdue' %>
       <%= "<span class=\"user_label label-info\">Checked Out</span>".html_safe if @reservation.status == 'checked out' %>
       <%= "<span class=\"user_label\">Missed</span>".html_safe if @reservation.status == 'missed' %>
+      <%= "<span class=\"user_label label-important\">Requested</span>".html_safe if @reservation.approval_status == 'requested' %>
+      <%= "<span class=\"user_label label-success\">Approved</span>".html_safe if @reservation.approval_status == 'approved' %>
+      <%= "<span class=\"user_label label-warning\">Denied</span>".html_safe if @reservation.approval_status == 'denied' %>
       <% unless @reservation.status == 'reserved' %>
         <hr>
       <% end %>
@@ -32,11 +34,10 @@
       </div>
 
       <%# shows renew button if due_date is today, tomorrow, or the day after %>
-      <% if @reservation.is_eligible_for_renew? &&
-      (@reservation.max_renewal_length_available != 0) && (!@reservation.checked_out.nil?) %>
+      <% if @reservation.is_eligible_for_renew? %>
         <div id="renew_box">
           <p>You are currently eligible to renew the <%= @reservation.equipment_model.name.singularize %>
-          reservation for <strong><%= pluralize(@reservation.max_renewal_length_available, 'day') %></strong>.</p>
+          reservation until <strong><%= @reservation.find_renewal_length %></strong>.</p>
           <hr>
           <%= manage_reservations_btn %>
           <%= link_to "Renew Now", renew_reservation_path, :method => :put, remote: true, class: 'btn btn-primary' %>
@@ -83,8 +84,8 @@
                       <%# TODO: extract to a helper method? %>
                       <% unless reservation_length > 31 %>
                         <ul class="bar-dividers">
-                          <% reservation_length.times do %>
-                            <%= content_tag :li, nil, style: "width: #{100.0 / reservation_length.to_f}%" %>
+                          <% (reservation_length + 1).times do %>
+                            <%= content_tag :li, nil, style: "width: #{100.0 / (reservation_length.to_f + 1)}%" %>
                           <% end %>
                         </ul>
                       <% end %>
@@ -127,7 +128,7 @@
             </header>
             <hr>
             <%= link_to @reservation.reserver do %>
-              <i class="icon-user"></i>
+              <i class="fa fa-user"></i>
             <% end %>
             <p><h4>by <%= link_to @reservation.reserver.name, @reservation.reserver %></h4></p>
             <hr>
@@ -190,16 +191,16 @@
   <%= button_to_function("Print this page", "javascript:print()", class: 'btn') %>
   <%# if (@reservation.status == "checked out") or (@reservation.status == "overdue") %>
     <%#= link_to "Email checkout receipt", {:controller => :reservations, :action => "checkout_email", :id => @reservation}, :method => "get", :class => 'btn' %>
-	<%# elsif @reservation.status.include?("returned") %>
+  <%# elsif @reservation.status.include?("returned") %>
     <%#= link_to "Email return receipt", {:controller => :reservations, :action => "checkin_email", :id => @reservation}, :method => "get", :class => 'btn' %>
   <%# end %>
-  <% if current_user.can_checkout? %>
+  <% if can? :edit, @reservation %>
     <%= link_to "Edit", edit_reservation_path(@reservation), class: 'btn' %>
   <% end %>
-  <% if @reservation.status == "reserved" or current_user.is_admin?(:as => 'admin') %>
+  <% if can? :destroy, @reservation %>
     <%= link_to "Cancel Reservation", @reservation, confirm:
     'This will permanently delete the reservation. Are you sure?', method: :delete,
     class: 'btn btn-danger' %>
   <% end %>
-  </div>
-<% end %>
+</div>
+
