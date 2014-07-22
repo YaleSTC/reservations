@@ -1,7 +1,7 @@
 desc "Delete missed reservations"
 task :delete_missed_reservations => :environment do
   #get all reservations that ended yesterday and weren't checked out
-  missed_reservations = Reservation.where("checked_out IS NULL and start_date < ?", Time.now.midnight.utc)
+  missed_reservations = Reservation.where("checked_out IS NULL and start_date < ?", Time.current.midnight.utc)
   Rails.logger.info "Found #{missed_reservations.size} reservations"
   
   if AppConfig.first.send_notifications_for_deleted_missed_reservations
