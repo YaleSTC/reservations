@@ -19,7 +19,7 @@ describe Blackout do
       @other_hard = FactoryGirl.create(:blackout, start_date: (Date.current + 3.day), notice: 'other notice again')
     end
     after(:all) do
-      Blackouts.delete_all
+      Blackout.delete_all
     end
     context 'all blackouts' do
       subject(:return_value) {
