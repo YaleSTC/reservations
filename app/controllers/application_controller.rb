@@ -133,9 +133,9 @@ class ApplicationController < ActionController::Base
     cart = session[:cart]
     flash.clear
     begin
-      cart.start_date = Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y')
-      cart.due_date = Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y')
-      cart.fix_due_date
+      cart.start_date = params[:cart][:start_date_cart].to_date
+      cart.due_date = params[:cart][:due_date_cart].to_date
+      #cart.fix_due_date
       cart.reserver_id = params[:reserver_id].blank? ? current_user.id : params[:reserver_id]
     rescue ArgumentError
       cart.start_date = Date.current
@@ -152,7 +152,7 @@ class ApplicationController < ActionController::Base
     errors = cart.validate_all
     # don't over-write flash if invalid date was set above
     flash[:error] ||= notices.to_sentence + "\n" + errors.to_sentence
-    flash[:notice] = "Cart updated."
+    flash[:notice] = "Cart updated. start date is #{cart.start_date} and end date is #{cart.due_date}"
 
     # reload appropriate divs / exit
     if params[:controller] == 'catalog'

@@ -277,8 +277,17 @@ if ($(window).width() > 767) {
 
   $('.date_end').datepicker({
     altField: '#date_end_alt',
-    altFormat: 'yy-mm-dd'
+    altFormat: 'yy-mm-dd',
+    onClose: function(dateText, inst) {
+      var start_date = $('.date_start').datepicker("getDate");
+      var end_date = $('.date_end').datepicker("getDate");
+      if (start_date > end_date){
+        $('.date_end').datepicker("setDate", start_date)
+      }
+      $('.date_end').datepicker( "option" , "minDate" , start_date);
+    }
   });
+
 
 
   // Select2 - fancy select lists
