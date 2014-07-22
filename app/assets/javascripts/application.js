@@ -262,33 +262,7 @@ if ($(window).width() > 767) {
     $('#userModal div.modal-body').load(new_user, {from_cart : true, possible_netid : $('#fake_reserver_id').val() }); // new_user defined in variables.js.erb
   });
 
-  $('.date_start').datepicker({
-    altField: '#date_start_alt',
-    altFormat: 'yy-mm-dd',
-    onClose: function(dateText, inst) {
-      var start_date = $('.date_start').datepicker("getDate");
-      var end_date = $('.date_end').datepicker("getDate");
-      if (start_date > end_date){
-        $('.date_end').datepicker("setDate", start_date)
-      }
-      $('.date_end').datepicker( "option" , "minDate" , start_date);
-    }
-  });
-
-  $('.date_end').datepicker({
-    altField: '#date_end_alt',
-    altFormat: 'yy-mm-dd',
-    onClose: function(dateText, inst) {
-      var start_date = $('.date_start').datepicker("getDate");
-      var end_date = $('.date_end').datepicker("getDate");
-      if (start_date > end_date){
-        $('.date_end').datepicker("setDate", start_date)
-      }
-      $('.date_end').datepicker( "option" , "minDate" , start_date);
-    }
-  });
-
-
+  load_datepicker();
 
   // Select2 - fancy select lists
   $('select#equipment_model_category_id').select2();
@@ -304,6 +278,38 @@ if ($(window).width() > 767) {
 $.datepicker.setDefaults({
    minDate: new Date()
 });
+
+function load_datepicker() {
+  $('.date_start').datepicker({
+    altField: '#date_start_alt',
+    altFormat: 'yy-mm-dd',
+    onClose: function(dateText, inst) {
+      var start_date = $('.date_start').datepicker("getDate");
+      var end_date = $('.date_end').datepicker("getDate");
+      if (start_date > end_date){
+        var new_date = new Date(start_date.getTime()+86400000);
+        $('.date_end').datepicker("setDate", new_date)
+      }
+      $('.date_end').datepicker( "option" , "minDate" , start_date);
+    }
+  });
+
+  $('.date_end').datepicker({
+    altField: '#date_end_alt',
+    altFormat: 'yy-mm-dd',
+    onClose: function(dateText, inst) {
+      var start_date = $('.date_start').datepicker("getDate");
+      var end_date = $('.date_end').datepicker("getDate");
+      if (start_date > end_date){
+        var new_date = new Date(start_date.getTime()+86400000);
+        $('.date_end').datepicker("setDate", new_date)
+      }
+      $('.date_end').datepicker( "option" , "minDate" , start_date);
+    }
+  });
+};
+
+
 
 // function to hold cart during update
 function pause_cart () {

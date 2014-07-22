@@ -1,4 +1,3 @@
-$('#cart_dates').replaceWith('<%= escape_javascript(render :partial => 'reservations/cart_dates') %>');
 <% if params[:controller] == "catalog" %>
   $('#catalog_listing').html('<%= escape_javascript( render partial: 'catalog/catalog_listing', locals: { eq_models_by_category: @eq_models_by_category, availability_hash: @availability_hash, available_string: @available_string })%>');
   truncate();

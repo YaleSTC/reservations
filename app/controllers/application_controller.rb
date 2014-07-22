@@ -135,7 +135,7 @@ class ApplicationController < ActionController::Base
     begin
       cart.start_date = params[:cart][:start_date_cart].to_date
       cart.due_date = params[:cart][:due_date_cart].to_date
-      #cart.fix_due_date
+      cart.fix_due_date
       cart.reserver_id = params[:reserver_id].blank? ? current_user.id : params[:reserver_id]
     rescue ArgumentError
       cart.start_date = Date.current
