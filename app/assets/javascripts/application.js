@@ -286,7 +286,7 @@ function load_datepicker() {
       var end_date = $('.date_end').datepicker("getDate");
       if (start_date > end_date){
         var new_date = new Date(start_date.getTime()+86400000);
-        $('.date_end').datepicker("setDate", new_date)
+        $('.date_end').datepicker("setDate", new_date);
       }
       $('.date_end').datepicker( "option" , "minDate" , start_date);
     }
@@ -298,9 +298,9 @@ function load_datepicker() {
     onClose: function(dateText, inst) {
       var start_date = $('.date_start').datepicker("getDate");
       var end_date = $('.date_end').datepicker("getDate");
-      if (start_date > end_date){
+      if (start_date > end_date) {
         var new_date = new Date(start_date.getTime()+86400000);
-        $('.date_end').datepicker("setDate", new_date)
+        $('.date_end').datepicker("setDate", new_date);
       }
       $('.date_end').datepicker( "option" , "minDate" , start_date);
     }
@@ -314,7 +314,7 @@ function load_datepicker() {
       var end_date = $('.date_end').datepicker("getDate");
       if (start_date > end_date){
         var new_date = new Date(start_date.getTime()+86400000);
-        $('.date_end').datepicker("setDate", new_date)
+        $('.date_end').datepicker("setDate", new_date);
       }
       $('.date_end').datepicker( "option" , "minDate" , start_date);
     }
