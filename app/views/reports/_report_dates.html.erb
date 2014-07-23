@@ -5,7 +5,7 @@
       :value => @start_date.strftime('%m/%d/%Y') %>
     <%= hidden_field_tag "report[start_date]", id: 'start_date_alt' %>
     <%= label_tag :start_date, 'End of report' %>
-    <%= text_field_tag "report", "end_date", :class => 'date_end autosubmitme span2',
+    <%= text_field_tag "report", "end_date", :class => 'date_end_no_min autosubmitme span2',
       :value => @end_date.strftime('%m/%d/%Y') %>
     <%= hidden_field_tag "report[end_date]", id: 'end_date_alt' %>
   <% end %>
