@@ -492,6 +492,7 @@ else
   entered_num = ask_for_records("Reservation")
 end
 
+
 unless entered_num == 0
   if entered_num.integer? && entered_num > 0
     progress = ProgressBar.create(format: progress_str, total: entered_num)
