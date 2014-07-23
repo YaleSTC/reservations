@@ -284,7 +284,7 @@ describe ApplicationController do
         new_start = Date.current + 3.days
         new_end = Date.current + 4.days
 
-        put :update_cart, cart: {start_date_cart: new_start.strftime('%m/%d/%Y'), due_date_cart: new_end.strftime('%m/%d/%Y')}, reserver_id: @new_reserver.id
+        put :update_cart, cart: {start_date_cart: new_start, due_date_cart: new_end}, reserver_id: @new_reserver.id
 
         session[:cart].start_date.should eq(new_start)
         session[:cart].due_date.should eq(new_end)
