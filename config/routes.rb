@@ -1,7 +1,7 @@
 Reservations::Application.routes.draw do
   root :to => 'catalog#index'
 
-  #ActiveAdmin.routes(self) unless Rails.env.development?
+  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
 
   get "log/index"
   get "log/version/:id" => "log#version", as: :version_view
