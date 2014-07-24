@@ -78,6 +78,7 @@ module CartValidations
     # while simultaneously building a hash of category => quantity
     models.each do |model, quantity|
       max_models = model.maximum_per_user
+      max_models = Float::INFINITY if max_models == 'unrestricted'
 
       self.start_date.to_date.upto(self.due_date.to_date) do |d|
         if Reservation.number_for_model_on_date(d,model.id,relevant) + quantity > max_models
@@ -95,6 +96,7 @@ module CartValidations
     # similarly check category maxes using a similar method
     category.each do |cat, q|
       max_cat = cat.maximum_per_user
+      max_cat = Float::INFINITY if max_cat == 'unrestricted'
       self.start_date.to_date.upto(self.due_date.to_date) do |d|
         if Reservation.number_for_category_on_date(d,cat.id,relevant) + q > max_cat
           errors << "Only #{max_cat} #{cat.name.pluralize} can be reserved at a time"
