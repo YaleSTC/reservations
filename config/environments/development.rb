@@ -7,6 +7,7 @@ Reservations::Application.configure do
   config.cache_classes = false
   config.reload_classes_only_on_change = false
 
+  config.eager_load = false
 
   # Log error messages when you accidentally call methods on nil.
   config.whiny_nils = true
