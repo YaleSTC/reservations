@@ -152,7 +152,7 @@ class ApplicationController < ActionController::Base
     errors = cart.validate_all
     # don't over-write flash if invalid date was set above
     flash[:error] ||= notices.to_sentence + "\n" + errors.to_sentence
-    flash[:notice] = "Cart updated. start date is #{cart.start_date} and end date is #{cart.due_date}"
+    flash[:notice] = "Cart updated"
 
     # reload appropriate divs / exit
     if params[:controller] == 'catalog'

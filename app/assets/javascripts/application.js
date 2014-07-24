@@ -27,7 +27,6 @@
 //= require calendar.js
 
   function truncate() {
-    console.log('truncating');
     if ($(".caption_cat").length) {
       $(".caption_cat").dotdotdot({
         height: 150,
