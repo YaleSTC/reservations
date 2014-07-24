@@ -146,8 +146,8 @@ describe Category do
     it "Should return maximum_per_user if defined" do
       @category.maximum_per_user.should == 1
     end
-    it "Should return 'unrestricted' if not defined" do
-      @unrestrected_category.maximum_per_user.should == 'unrestricted'
+    it "Should return Float::INFINITY if not defined" do
+      @unrestrected_category.maximum_per_user.should == Float::INFINITY
     end
   end
 
@@ -174,8 +174,8 @@ describe Category do
     it "Should return maximum_renewal_times if defined" do
       @category.maximum_renewal_times.should == 1
     end
-    it "Default to unrestricted if not defined" do
-      @unrestrected_category.maximum_renewal_times.should == 'unrestricted'
+    it "Default to infinity if not defined" do
+      @unrestrected_category.maximum_renewal_times.should == Float::INFINITY
     end
   end
 
@@ -188,8 +188,8 @@ describe Category do
     it "Should return maximum_renewal_days_before_due if defined" do
       @category.maximum_renewal_days_before_due.should == 1
     end
-    it "Default to unrestricted if not defined" do
-      @unrestrected_category.maximum_renewal_days_before_due.should == 'unrestricted'
+    it "Default to infinity if not defined" do
+      @unrestrected_category.maximum_renewal_days_before_due.should == Float::INFINITY
     end
   end
 
@@ -202,8 +202,8 @@ describe Category do
     it "Should return maximum_checkout_length if defined" do
       @category.maximum_checkout_length.should == 5
     end
-    it "Default to unrestricted if not defined" do
-      @unrestrected_category.maximum_checkout_length.should == 'unrestricted'
+    it "Default to infinity if not defined" do
+      @unrestrected_category.maximum_checkout_length.should == Float::INFINITY
     end
   end
 
