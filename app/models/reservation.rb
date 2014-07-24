@@ -24,6 +24,20 @@ class Reservation < ActiveRecord::Base
                   :reserver_id, :reserver, :start_date, :due_date,
                   :equipment_model_id
 
+  def save
+    # SUPER JANKY MONKEY PATCH UNTIL RESERVATIONS
+    # USE DATES INSTEAD OF DATETIMES
+    self.due_date = (self.due_date.midnight + 1.day - 1.second)
+    super
+  end
+
+  def save!
+    # yea let's remove this ASAP
+    self.due_date = (self.due_date.midnight + 1.day - 1.second)
+    super
+  end
+
+
   def duration
     due_date.to_date - start_date.to_date + 1
   end
