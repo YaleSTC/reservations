@@ -95,6 +95,7 @@ class UsersController < ApplicationController
           redirect_to user_path(@user)
         end
     else
+      @partial_to_render = params[:from_cart] ? 'short_form' : 'form'
       render :new
     end
   end
