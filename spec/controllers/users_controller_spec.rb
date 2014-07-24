@@ -47,17 +47,21 @@ describe UsersController do
       it_behaves_like "page success"
       it { should render_template(:show) }
     end
+
+    describe 'POST quick_new' do
+      context 'possible netid provided' do
+        before { post :quick_new, possible_netid: 'csw3' }
+        it 'should assign @user to the possible netid' do
+          expect(assigns(:user).attributes).to eq(User.new(User.search_ldap('csw3')).attributes)
+        end
+      end
+    end
+
     describe 'GET new' do
       before { get :new }
       context 'possible netid not provided' do
         it 'should assign @user to a new user' do
           expect(assigns(:user).attributes).to eq(User.new.attributes)
-        end
-      end
-      context 'possible netid provided' do
-        before { get :new, possible_netid: 'csw3' }
-        it 'should assign @user to the possible netid' do
-          expect(assigns(:user).attributes).to eq(User.new(User.search_ldap('csw3')).attributes)
         end
       end
       it 'should assign @can_edit_login to true' do
