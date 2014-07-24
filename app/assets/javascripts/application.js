@@ -259,7 +259,7 @@ if ($(window).width() > 767) {
   }
 
   $('#modal').click(function() {
-    $('#userModal div.modal-body').load(new_user, {from_cart : true, possible_netid : $('#fake_reserver_id').val() }); // new_user defined in variables.js.erb
+    $('#userModal div.modal-body').load(new_user, {possible_netid : $('#fake_reserver_id').val() }); // new_user defined in variables.js.erb
   });
 
   load_datepicker();

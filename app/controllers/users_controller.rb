@@ -41,44 +41,12 @@ class UsersController < ApplicationController
 
   def new
     @can_edit_login = current_user.present? && (can? :create, User) # used in view
-
     if current_user.nil?
       # This is a new user -> create an account for them
       @user = User.new(User.search_ldap(session[:cas_user]))
       @user.login = session[:cas_user] #default to current login
-
-      # render long form for the user
-      @partial_to_render = 'form'
-    elsif params[:possible_netid].nil?
-      # users/new manual path
-      @partial_to_render = 'form'
     else
-      # Someone with permissions is creating a new user
-      ldap_result = User.search_ldap(params[:possible_netid])
-      @user = User.new(ldap_result)
-
-      # Does netID exist?
-      if ldap_result.nil?
-        @message = 'Sorry, the netID that you entered does not exist.
-        You cannot create a user profile without a valid netID.'
-        render :new and return
-      end
-
-      # Is there a user record already?
-      if User.find_by_login(params[:possible_netid])
-        @message = 'You cannot create a new user, as the netID you entered
-        is already associated with a user. If you would like to reserve for
-        them, please select their name from the drop-down options in the cart.'
-        render :new and return
-      end
-
-      # With existing netID and no user record, what's the context of creation?
-      # FIXME: can the check be replaced by params[:from_cart].present?
-      if params[:from_cart] == 'true'
-        @partial_to_render = 'short_form' # Display short_form
-      else
-        @partial_to_render = 'form' # Display (normal) form
-      end
+      @user = User.new
     end
   end
 
@@ -88,17 +56,43 @@ class UsersController < ApplicationController
     # this line is what allows checkoutpeople to create users
     @user.login = session[:cas_user] unless current_user and can? :manage, Reservation
     if @user.save
-        flash[:notice] = "Successfully created user."
-        if params[:from_cart]
-          render action: 'create_success'
-        else
-          redirect_to user_path(@user)
-        end
+      flash[:notice] = "Successfully created user."
+      redirect_to user_path(@user)
     else
-      @partial_to_render = params[:from_cart] ? 'short_form' : 'form'
       render :new
     end
   end
+
+  def quick_new
+    ldap_result = User.search_ldap(params[:possible_netid])
+    @user = User.new(ldap_result)
+
+    # Does netID exist?
+    if ldap_result.nil?
+      @message = 'Sorry, the netID that you entered does not exist.
+      You cannot create a user profile without a valid netID.'
+      render :quick_new and return
+    end
+
+    # Is there a user record already?
+    if User.find_by_login(params[:possible_netid])
+      @message = 'You cannot create a new user, as the netID you entered
+      is already associated with a user. If you would like to reserve for
+      them, please select their name from the drop-down options in the cart.'
+      render :quick_new and return
+    end
+  end
+
+  def quick_create
+    @user = User.new(params[:user])
+    @user.view_mode = @user.role
+    if @user.save
+      render action: 'create_success'
+    else
+      render action: 'load_form_errors'
+    end
+  end
+
 
   def edit
     @can_edit_login = can? :edit_login, User

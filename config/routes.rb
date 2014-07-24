@@ -37,6 +37,8 @@ Reservations::Application.routes.draw do
   resources :users do
     collection do
       get :find
+      post :quick_new
+      post :quick_create
     end
     member do
       put :ban
