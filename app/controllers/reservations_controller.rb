@@ -116,9 +116,8 @@ class ReservationsController < ApplicationController
     #make copy of params
     res = params[:reservation].clone
 
-    # adjust dates to match intended input of Month / Day / Year
-    res[:start_date] = Date.strptime(params[:reservation][:start_date],'%m/%d/%Y')
-    res[:due_date] = Date.strptime(params[:reservation][:due_date],'%m/%d/%Y')
+    res[:start_date] = params[:reservation][:start_date]
+    res[:due_date] = params[:reservation][:due_date]
 
     message = "Successfully edited reservation."
     # update attributes
