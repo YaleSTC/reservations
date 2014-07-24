@@ -423,8 +423,8 @@ describe ReservationsController do
         before(:each) do
           put :update, { id: @reservation.id,
             reservation: FactoryGirl.attributes_for(:reservation,
-              start_date: Date.current.strftime('%m/%d/%Y'),
-              due_date: (Date.tomorrow + 3.days).strftime('%m/%d/%Y')),
+              start_date: Date.current,
+              due_date: (Date.tomorrow + 3.days)),
             equipment_object: ''}
         end
         it 'should update the reservation details' do
@@ -440,8 +440,8 @@ describe ReservationsController do
           @new_equipment_object = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
           put :update, { id: @reservation.id,
             reservation: FactoryGirl.attributes_for(:reservation,
-              start_date: Date.current.strftime('%m/%d/%Y'),
-              due_date: Date.tomorrow.strftime('%m/%d/%Y')),
+              start_date: Date.current,
+              due_date: Date.tomorrow),
             equipment_object: @new_equipment_object.id }
         end
         it 'should update the object on current reservation' do
@@ -456,8 +456,8 @@ describe ReservationsController do
           request.env["HTTP_REFERER"] = reservation_path(@reservation)
           put :update, { id: @reservation.id,
             reservation: FactoryGirl.attributes_for(:reservation,
-              start_date: Date.current.strftime('%m/%d/%Y'),
-              due_date: Date.yesterday.strftime('%m/%d/%Y')),
+              start_date: Date.current,
+              due_date: Date.yesterday),
             equipment_object: ''}
         end
         include_examples 'cannot access page'
