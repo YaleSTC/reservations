@@ -26,7 +26,6 @@
       <%# TODO: Make this a fancy box %>
       <%= f.association :requirements, :collection => Requirement.all.map{|req| [req.description,req.id]}, :label => "Requirements user has satisfied"%>
       <%= f.input :role, :collection => (can? :appoint, :superuser) ? ['normal', 'checkout', 'admin', 'superuser', 'banned'] : ['normal', 'checkout', 'admin', 'banned'], placeholder: 'normal' %>
-      <%= f.input :deleted_at, label: "Disabled", :as => :deleted %>
   <% end %>
 
   <% if @user %>
