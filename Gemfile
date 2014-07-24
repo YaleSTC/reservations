@@ -78,11 +78,11 @@ end
 
 # Gems used only for assets and not required
 # in production environments by default.
-  gem 'sass-rails'
-  gem 'coffee-rails'
-  gem 'uglifier'
-  gem 'bootstrap-sass', '~> 2.0.3'
-  gem 'font-awesome-rails'
+gem 'sass-rails'
+gem 'coffee-rails'
+gem 'uglifier'
+gem 'bootstrap-sass', '~> 2.0.3'
+gem 'font-awesome-rails'
 
 group :development do
   gem 'thin'
