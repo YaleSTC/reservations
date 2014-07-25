@@ -116,7 +116,7 @@
       <%= number_to_currency(@equipment_model.replacement_fee) %>
     <% end %>
     <%= content_tag :div, :class => 'span2' do %>
-      <%= @equipment_model.maximum_per_user if can? :manage, EquipmentModel %>
+      <%= (intify @equipment_model.maximum_per_user) if can? :manage, EquipmentModel %>
     <% end %>
   <% end %>
 </section>
