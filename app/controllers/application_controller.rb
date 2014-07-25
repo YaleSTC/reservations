@@ -166,14 +166,14 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def prepare_catalog_index_vars
+  def prepare_catalog_index_vars(eq_models = nil)
     # prepare the catalog
-    @page_eq_models_by_category = EquipmentModel.active.
+    eq_models ||= EquipmentModel.active.
                               order('categories.sort_order ASC, equipment_models.name ASC').
                               includes(:category, :requirements).
                               page(params[:page]).
                               per(session[:items_per_page])
-    @eq_models_by_category = @page_eq_models_by_category.to_a.group_by(&:category)
+    @eq_models_by_category = eq_models.to_a.group_by(&:category)
 
     @available_string = "available from #{cart.start_date.strftime("%b %d, %Y")} to #{cart.due_date.strftime("%b %d, %Y")}"
 
@@ -182,7 +182,7 @@ class ApplicationController < ActionController::Base
 
     # first get an array of all the paginated ids
     id_array = []
-    @page_eq_models_by_category.each do |em|
+    eq_models.each do |em|
       id_array << em.id
     end
 
@@ -193,9 +193,10 @@ class ApplicationController < ActionController::Base
     source_reservations = Reservation.not_returned.where(equipment_model_id: id_array).all
 
     # build the hash using class methods that use 0 queries
-    @page_eq_models_by_category.each do |em|
+    eq_models.each do |em|
       @availability_hash[em.id] = EquipmentObject.for_eq_model(em.id,eq_objects) - Reservation.number_overdue_for_eq_model(em.id,source_reservations) - em.num_reserved(cart.start_date,cart.due_date,source_reservations)
     end
+    @page_eq_models_by_category = eq_models
 
 
   end

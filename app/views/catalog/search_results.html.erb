@@ -34,7 +34,7 @@
   <ul class="thumbnails">
     <% @equipment_model_results.each do |equipment_model| %>
       <li class="span3">
-        <%= render :partial => 'equipment_model_div', :locals => { :equipment_model => equipment_model } %>
+        <%= render :partial => 'equipment_model_div', :locals => { :equipment_model => equipment_model, availability_hash: @availability_hash, available_string: @available_string } %>
       </li>
     <% end %>
   </ul>
