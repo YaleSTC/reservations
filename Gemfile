@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.1.1'
+ruby '2.1.2'
 
 #standard gems
 gem 'rails', '4.1.4'
@@ -11,9 +11,6 @@ gem 'rdoc'
 # rails 4 transition gems
 gem 'activerecord-session_store'
 gem 'protected_attributes'
-gem 'rails-observers'
-gem 'actionpack-page_caching'
-gem 'actionpack-action_caching'
 gem 'activerecord-deprecated_finders'
 gem 'rspec-its'
 
