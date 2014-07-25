@@ -28,23 +28,25 @@
 .check {
   color: green;
 }
+.icons {
+  float: right;
+}
+.title {
+  float: left;
+}
 
 .overdue-icon {
   color: #AD0000;
 }
 
-.hidden {
-	opacity:0;
+.c-box {
+  cursor: pointer;
 }
 
-.icons {
-	float: right;
+.c-box:hover {
+  background-color: darken($bodyBackground,5%);
 }
 
-.title {
-	float: left;
-}
-	
 .checkin, .checkout {
   .rectangle-list {
     margin-bottom: 2em;
