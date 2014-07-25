@@ -33,13 +33,13 @@ it { should respond_with(:success) }
       it { should render_template(:index) }
       it { should_not set_the_flash }
       context 'without show deleted' do
-				let!(:mod_other_cat_active) { FactoryGirl.create(:equipment_model) }
-				let!(:mod_other_cat_inactive) { FactoryGirl.create(:equipment_model,
-					deleted_at: Date.current) }
+        let!(:mod_other_cat_active) { FactoryGirl.create(:equipment_model) }
+        let!(:mod_other_cat_inactive) { FactoryGirl.create(:equipment_model,
+          deleted_at: Date.current) }
         context 'with @category set' do
           it 'should populate an array of of active category-type equipment models' do
-          	mod_same_cat_inactive = FactoryGirl.create(:equipment_model,
-          		category: model.category, deleted_at: Date.current)
+            mod_same_cat_inactive = FactoryGirl.create(:equipment_model,
+              category: model.category, deleted_at: Date.current)
             get :index, category_id: model.category
             assigns(:equipment_models).include?(model).should be_truthy
             assigns(:equipment_models).include?(mod_other_cat_active).should_not be_truthy
@@ -57,14 +57,14 @@ it { should respond_with(:success) }
           end
         end
       end
-	    context 'with show deleted' do
-				let!(:mod_other_cat_active) { FactoryGirl.create(:equipment_model) }
-				let!(:mod_other_cat_inactive) { FactoryGirl.create(:equipment_model,
-					deleted_at: Date.current) }
+      context 'with show deleted' do
+        let!(:mod_other_cat_active) { FactoryGirl.create(:equipment_model) }
+        let!(:mod_other_cat_inactive) { FactoryGirl.create(:equipment_model,
+          deleted_at: Date.current) }
         context 'with @category set' do
           it 'should populate an array of category-type equipment models' do
-          	mod_same_cat_inactive = FactoryGirl.create(:equipment_model,
-          		category: model.category, deleted_at: Date.current)
+            mod_same_cat_inactive = FactoryGirl.create(:equipment_model,
+              category: model.category, deleted_at: Date.current)
             get :index, category_id: model.category, show_deleted: true
             assigns(:equipment_models).include?(model).should be_truthy
             assigns(:equipment_models).include?(mod_other_cat_active).should_not be_truthy
@@ -87,13 +87,13 @@ it { should respond_with(:success) }
 end
 
 describe EquipmentModelsController do
-	before(:all) { @app_config = FactoryGirl.create(:app_config) }
-	before { @controller.stub(:first_time_user).and_return(:nil) }
-	let!(:model) { FactoryGirl.create(:equipment_model) }
+  before(:all) { @app_config = FactoryGirl.create(:app_config) }
+  before { @controller.stub(:first_time_user).and_return(:nil) }
+  let!(:model) { FactoryGirl.create(:equipment_model) }
 
-	describe 'GET index' do
+  describe 'GET index' do
     context 'with admin user' do
-			before do
+      before do
         @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
         get :index
       end
@@ -108,7 +108,7 @@ describe EquipmentModelsController do
     end
   end
 
-	describe 'GET show' do
+  describe 'GET show' do
     context 'with admin user' do
       before do
         @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
@@ -178,12 +178,12 @@ describe EquipmentModelsController do
     end
   end
 
-	describe 'POST create' do
+  describe 'POST create' do
     context 'with admin user' do
       before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
       context 'with valid attributes' do
         before { post :create, equipment_model: FactoryGirl.attributes_for(
-        	:equipment_model, category_id: model.category) }
+          :equipment_model, category_id: model.category) }
         it 'should save model' do
           expect{ post :create, equipment_model: FactoryGirl.attributes_for(
             :equipment_model, category_id: model.category) }.to change(EquipmentModel, :count).by(1)
@@ -194,7 +194,7 @@ describe EquipmentModelsController do
 
       context 'without valid attributes' do
         before { post :create, equipment_model: FactoryGirl.attributes_for(
-        	:equipment_model, name: nil) }
+          :equipment_model, name: nil) }
         it { should set_the_flash }
         it { should render_template(:new) }
         it 'should not save' do
@@ -213,12 +213,12 @@ describe EquipmentModelsController do
     end
   end
 
-	describe 'PUT update' do
+  describe 'PUT update' do
     context 'with admin user' do
       before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
       context 'with valid attributes' do
         before { put :update, id: model, equipment_model:
-        	FactoryGirl.attributes_for(:equipment_model, name: 'Mod') }
+          FactoryGirl.attributes_for(:equipment_model, name: 'Mod') }
         it { should set_the_flash }
         it 'sets @equipment_model to selected model' do
           expect(assigns(:equipment_model)).to eq(model)
@@ -232,7 +232,7 @@ describe EquipmentModelsController do
 
       context 'without valid attributes' do
         before { put :update, id: model, equipment_model:
-        	FactoryGirl.attributes_for(:equipment_model, name: nil) }
+          FactoryGirl.attributes_for(:equipment_model, name: nil) }
         it { should_not set_the_flash }
         it 'should not update attributes' do
           model.reload
@@ -251,29 +251,5 @@ describe EquipmentModelsController do
     end
   end
 
-  describe 'DELETE destroy' do
-    context 'with admin user' do
-      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
-			it 'should remove model from database' do
-        expect{ delete :destroy, id: model }.to change(EquipmentModel, :count).by(-1)
-      end
-      context do
-        before { delete :destroy, id: model }
-        it 'sets @equipment_object to selected model' do
-          expect(assigns(:equipment_model)).to eq(model)
-        end
-        it { should set_the_flash }
-        it { should redirect_to(equipment_models_url) }
-      end
-    end
-    context 'with non-admin user' do
-      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
-      it 'DELETE destroy should redirect to root' do
-        delete :destroy, id: model
-        response.should redirect_to(root_url)
-      end
-    end
-	end
-
-	after(:all) { @app_config.destroy }
+  after(:all) { @app_config.destroy }
 end

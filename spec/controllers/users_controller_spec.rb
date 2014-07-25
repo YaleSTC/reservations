@@ -120,16 +120,6 @@ describe UsersController do
         end
       end
     end
-    describe 'DELETE destroy' do
-      before do
-        delete :destroy, id: FactoryGirl.create(:user)
-      end
-      it 'should destroy the user' do
-        User.where(id: assigns(:user)).should be_empty
-      end
-      it { should set_the_flash }
-      it { should redirect_to(users_url) }
-    end
     describe 'PUT find' do
       context 'fake searched id is blank' do
         before do
