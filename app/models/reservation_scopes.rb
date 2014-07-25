@@ -13,10 +13,11 @@ module ReservationScopes
       scope :checked_out_previous, lambda { where("checked_out < ? and due_date <= ?", Time.now.midnight.utc, Date.tomorrow.midnight.utc).not_returned.recent }
       scope :overdue, lambda { where("due_date < ?", Time.now.midnight.utc).not_returned }
       scope :returned, where("checked_in IS NOT NULL and checked_out IS NOT NULL").recent
-      scope :returned_overdue, where("due_date < checked_in").returned
+      scope :returned_overdue, lambda { returned.select { |r| r.due_date.to_date < r.checked_in.to_date } }
       scope :missed, lambda { where("due_date < ?", Time.now.midnight.utc).untouched.recent }
       scope :upcoming, lambda { where("start_date = ?", Time.now.midnight.utc).reserved.user_sort }
       scope :starts_on_days, lambda { |start_date, end_date|  where(start_date: start_date..end_date) }
+
       scope :reserved_on_date, lambda { |date|  where("start_date <= ? and due_date >= ?", date.to_time.utc, date.to_time.utc).finalized }
       scope :for_eq_model, lambda { |eq_model| where(equipment_model_id: eq_model.id).finalized }
       scope :active, not_returned
