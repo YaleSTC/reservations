@@ -63,13 +63,6 @@ class EquipmentObjectsController < ApplicationController
     end
   end
 
-  def destroy
-    @equipment_model = @equipment_object.equipment_model #We need this so that we know where to re-direct (look down 4 lines)
-    @equipment_object.destroy(:force)
-    flash[:notice] = "Successfully destroyed equipment object."
-    redirect_to @equipment_model
-  end
-
   # Deactivate and activate extend controller methods in ApplicationController
   def deactivate
     @equipment_object.update_attributes(deactivation_reason: params[:deactivation_reason])
