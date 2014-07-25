@@ -179,7 +179,7 @@ class ReportsController < ApplicationController
         params = rel_struct[:params]
         # select the reservations whose id of :id_type that are in the array of ids
         # e.g. equipment_model_id is a member of [1,2,3]
-        res_set = info.ids ? rel.select{|res| info.ids.include?(res.send(info.id_type))} : rel.all
+        res_set = info.ids ? rel.select{|res| info.ids.include?(res.send(info.id_type))} : rel
         case params[:stat_type]
         when :count
           if params[:secondary_id] #count how many unique
