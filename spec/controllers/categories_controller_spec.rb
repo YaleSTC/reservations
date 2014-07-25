@@ -173,40 +173,6 @@ describe CategoriesController do
         it { should_not set_the_flash }
       end
     end
-    context 'not admin' do
-      it 'should redirect to root url' do
-        @controller.stub(:current_user).and_return(FactoryGirl.create(:user))
-        delete :destroy, id: @category
-        response.should redirect_to(root_url)
-      end
-    end
-  end
-  describe 'DELETE destroy' do
-    context 'is admin' do
-      before(:each) do
-        @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
-      end
-      it 'assigns the selected category to @category' do
-        delete :destroy, id: @category
-        expect(assigns(:category)).to eq(@category)
-      end
-      it 'removes @category from the database' do
-        expect{
-            delete :destroy, id: @category
-          }.to change(Category,:count).by(-1)
-      end
-      it 'should redirect to the categorys index page' do
-        delete :destroy, id: @category
-        response.should redirect_to categories_url
-      end
-    end
-    context 'not admin' do
-      it 'should redirect to root url' do
-        @controller.stub(:current_user).and_return(FactoryGirl.create(:user))
-        delete :destroy, id: @category
-        response.should redirect_to(root_url)
-      end
-    end
   end
   after(:all) do
     @app_config.destroy
