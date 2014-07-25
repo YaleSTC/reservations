@@ -20,6 +20,6 @@
 </p>
 <div class="form-actions">
   <%= link_to "Edit", edit_equipment_object_path(@equipment_object), class: 'btn' %>
-  <%= link_to "Delete", @equipment_object, :confirm => 'Deleting this Equipment Item will delete all related reservations. Are you sure you want to do this?', :method => :delete, class: 'btn btn-danger' %>
+  <%= make_deactivate_btn :equipment_object, @equipment_object %>
   <%= link_to "View All", equipment_objects_path, class: 'btn' %>
 </div>
