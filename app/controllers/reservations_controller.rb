@@ -353,6 +353,7 @@ class ReservationsController < ApplicationController
     @reservation.approval_status = "approved"
     if @reservation.save
       flash[:notice] = "Request successfully approved"
+      UserMailer.request_approved_notification(@reservation).deliver
       redirect_to reservations_path(:requested => true)
     else
       flash[:error] = "Oops! Something went wrong. Unable to approve reservation."
@@ -365,6 +366,7 @@ class ReservationsController < ApplicationController
     @reservation.approval_status = "denied"
     if @reservation.save
       flash[:notice] = "Request successfully denied"
+      UserMailer.request_denied_notification(@reservation).deliver
       redirect_to reservations_path(:requested => true)
     else
       flash[:error] = "Oops! Something went wrong. Unable to deny reservation. We're not sure what that's all about."
