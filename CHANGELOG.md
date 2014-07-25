@@ -55,6 +55,7 @@ Changelog
 * Index users table for speed optimization ([#755](https://github.com/YaleSTC/reservations/pull/755))
 * Clarified and refactored reservation renewal code ([#674](https://github.com/YaleSTC/reservations/issues/674))
 * Update to Ruby v2.1.2 from v2.1.1
+* Restore Checkin box location from the v3.1-era ([#819](https://github.com/YaleSTC/reservations/issues/819))
 
 #### Deprecations
 * It's no-longer possible to delete categories, equipment models, or equipment items. Deactivation is now the only method ([#802](https://github.com/YaleSTC/reservations/issues/802))
