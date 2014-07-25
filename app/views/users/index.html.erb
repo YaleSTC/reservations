@@ -5,7 +5,7 @@
 <hr />
 <p>
   <%= link_to "New User", new_user_path, :class => "btn btn-primary" %>
-  <% if can? :create, User %>
+  <% if can? :manage, User %>
     <%= link_to "Import Users", csv_import_page_path, :class => "btn" %>
   <% end %>
   <% if params[:show_banned] %>

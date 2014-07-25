@@ -95,6 +95,7 @@ group :development do
   gem 'letter_opener_web'
   gem 'rack-mini-profiler'
   gem 'bullet'
+  gem 'travis'
 end
 
 group :production, :staging do
