@@ -210,7 +210,7 @@
 <div class="form-actions">
   <% if can? :manage, EquipmentModel %>
     <%= link_to "Edit "+@equipment_model.name.truncate(30), edit_equipment_model_path(@equipment_model), :class => 'btn' %>
-    <%= link_to "Delete "+@equipment_model.name.truncate(30), @equipment_model, :confirm => 'Deleting this Equipment Model will delete all related Equipment Items and reservations. Are you sure you want to do this?', :method => :delete, :class => 'btn btn-danger' %>
+    <%= make_deactivate_btn :equipment_model, @equipment_model %>
   <% end %>
   <%= link_to "View All "+ Category.find(@equipment_model.category_id)
 .name.pluralize.truncate(30), category_equipment_models_path(Category.find(@equipment_model.category_id)), :class => 'btn view_all' %>
