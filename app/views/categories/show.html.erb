@@ -52,7 +52,7 @@
 <% if can? :manage, Category %>
   <div class="form-actions">
     <%= link_to "Edit Category", edit_category_path(@category), class: 'btn' %>
-    <%= make_deactivate_btn :category, @category %>
+    <%= make_deactivate_btn :categories, @category %>
     <%= link_to "View All Categories", categories_path, class: 'btn' %>
   </div>
 <% end %>
