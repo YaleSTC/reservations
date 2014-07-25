@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe EquipmentObjectsController do
-	before(:all) { @app_config = FactoryGirl.create(:app_config) }
-	before { @controller.stub(:first_time_user).and_return(:nil) }
-	let!(:object) { FactoryGirl.create(:equipment_object) }
+  before(:all) { @app_config = FactoryGirl.create(:app_config) }
+  before { @controller.stub(:first_time_user).and_return(:nil) }
+  let!(:object) { FactoryGirl.create(:equipment_object) }
   let!(:deactivated_object) { FactoryGirl.create(:deactivated) }
 
   describe 'GET index' do
@@ -239,31 +239,7 @@ describe EquipmentObjectsController do
     end
   end
 
-  describe 'DELETE destroy' do
-    context 'with admin user' do
-      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
-      it 'should remove object from database' do
-        expect{ delete :destroy, id: object }.to change(EquipmentObject, :count).by(-1)
-      end
-      context do
-        before { delete :destroy, id: object }
-        it { should set_the_flash }
-        it { should redirect_to(object.equipment_model) }
-        it 'sets @equipment_object to selected object' do
-          expect(assigns(:equipment_object)).to eq(object)
-        end
-      end
-    end
-    context 'with non-admin user' do
-      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
-      it 'should redirect to root' do
-        delete :destroy, id: object
-        response.should redirect_to(root_url)
-      end
-    end
-  end
-
-	describe 'PUT deactivate' do
+  describe 'PUT deactivate' do
     before { request.env['HTTP_REFERER'] = '/referrer' }
     context 'with admin user' do
       before do
@@ -286,9 +262,9 @@ describe EquipmentObjectsController do
         response.should redirect_to(root_url)
       end
     end
-	end
+  end
 
-	describe 'PUT activate' do
+  describe 'PUT activate' do
     before { request.env['HTTP_REFERER'] = '/referrer' }
     context 'with admin user' do
       before do
@@ -313,7 +289,7 @@ describe EquipmentObjectsController do
         response.should redirect_to(root_url)
       end
     end
-	end
+  end
 
-	after(:all) { @app_config.destroy }
+  after(:all) { @app_config.destroy }
 end

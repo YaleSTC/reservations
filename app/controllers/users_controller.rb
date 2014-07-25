@@ -109,12 +109,6 @@ class UsersController < ApplicationController
     end
   end
 
-  def destroy
-    @user.destroy
-    flash[:notice] = "Successfully destroyed user."
-    redirect_to users_url
-  end
-
   def ban
     @user.role = "banned"
     @user.view_mode = "banned"
