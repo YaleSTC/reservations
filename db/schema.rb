@@ -9,36 +9,21 @@
 # from scratch. The latter is a flawed and unsustainable approach (the more migrations
 # you'll amass, the slower it'll run and the greater likelihood for issues).
 #
-# It's strongly recommended to check this file into your version control system.
+# It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140718195128) do
+ActiveRecord::Schema.define(version: 20140724194636) do
 
-  create_table "active_admin_comments", :force => true do |t|
-    t.string   "resource_id",   :null => false
-    t.string   "resource_type", :null => false
-    t.integer  "author_id"
-    t.string   "author_type"
-    t.text     "body"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
-    t.string   "namespace"
-  end
-
-  add_index "active_admin_comments", ["author_type", "author_id"], :name => "index_active_admin_comments_on_author_type_and_author_id"
-  add_index "active_admin_comments", ["namespace"], :name => "index_active_admin_comments_on_namespace"
-  add_index "active_admin_comments", ["resource_type", "resource_id"], :name => "index_admin_notes_on_resource_type_and_resource_id"
-
-  create_table "announcements", :force => true do |t|
+  create_table "announcements", force: true do |t|
     t.text     "message"
     t.datetime "starts_at"
     t.datetime "ends_at"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "app_configs", :force => true do |t|
-    t.boolean  "upcoming_checkin_email_active",                      :default => true
-    t.boolean  "reservation_confirmation_email_active",              :default => true
+  create_table "app_configs", force: true do |t|
+    t.boolean  "upcoming_checkin_email_active",                      default: true
+    t.boolean  "reservation_confirmation_email_active",              default: true
     t.string   "site_title"
     t.string   "admin_email"
     t.string   "department_name"
@@ -48,40 +33,40 @@ ActiveRecord::Schema.define(:version => 20140718195128) do
     t.integer  "default_per_cat_page"
     t.text     "upcoming_checkin_email_body"
     t.text     "overdue_checkin_email_body"
-    t.boolean  "overdue_checkin_email_active",                       :default => true
+    t.boolean  "overdue_checkin_email_active",                       default: true
     t.text     "terms_of_service"
     t.string   "favicon_file_name"
     t.string   "favicon_content_type"
     t.integer  "favicon_file_size"
     t.datetime "favicon_updated_at"
-    t.boolean  "delete_missed_reservations",                         :default => true
+    t.boolean  "delete_missed_reservations",                         default: true
     t.text     "deleted_missed_reservation_email_body"
-    t.boolean  "send_notifications_for_deleted_missed_reservations", :default => true
-    t.boolean  "checkout_persons_can_edit",                          :default => false
-    t.boolean  "require_phone",                                      :default => false
-    t.boolean  "viewed",                                             :default => true
-    t.boolean  "override_on_create",                                 :default => false
-    t.boolean  "override_at_checkout",                               :default => false
+    t.boolean  "send_notifications_for_deleted_missed_reservations", default: true
+    t.boolean  "checkout_persons_can_edit",                          default: false
+    t.boolean  "require_phone",                                      default: false
+    t.boolean  "viewed",                                             default: true
+    t.boolean  "override_on_create",                                 default: false
+    t.boolean  "override_at_checkout",                               default: false
     t.integer  "blackout_exp_time"
   end
 
-  create_table "blackouts", :force => true do |t|
+  create_table "blackouts", force: true do |t|
     t.date     "start_date"
     t.date     "end_date"
     t.text     "notice"
     t.integer  "created_by"
     t.text     "blackout_type"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
     t.integer  "set_id"
   end
 
-  create_table "categories", :force => true do |t|
+  create_table "categories", force: true do |t|
     t.string   "name"
     t.integer  "max_per_user"
     t.integer  "max_checkout_length"
-    t.datetime "created_at",              :null => false
-    t.datetime "updated_at",              :null => false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
     t.integer  "sort_order"
     t.datetime "deleted_at"
     t.integer  "max_renewal_times"
@@ -89,32 +74,32 @@ ActiveRecord::Schema.define(:version => 20140718195128) do
     t.integer  "renewal_days_before_due"
   end
 
-  create_table "checkin_procedures", :force => true do |t|
+  create_table "checkin_procedures", force: true do |t|
     t.integer  "equipment_model_id"
     t.string   "step"
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
     t.datetime "deleted_at"
   end
 
-  create_table "checkout_procedures", :force => true do |t|
+  create_table "checkout_procedures", force: true do |t|
     t.integer  "equipment_model_id"
     t.string   "step"
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
     t.datetime "deleted_at"
   end
 
-  create_table "equipment_models", :force => true do |t|
+  create_table "equipment_models", force: true do |t|
     t.string   "name"
     t.text     "description"
-    t.decimal  "late_fee",                   :precision => 10, :scale => 2
-    t.decimal  "replacement_fee",            :precision => 10, :scale => 2
+    t.decimal  "late_fee",                   precision: 10, scale: 2
+    t.decimal  "replacement_fee",            precision: 10, scale: 2
     t.integer  "max_per_user"
-    t.boolean  "active",                                                    :default => true
+    t.boolean  "active",                                              default: true
     t.integer  "category_id"
-    t.datetime "created_at",                                                                  :null => false
-    t.datetime "updated_at",                                                                  :null => false
+    t.datetime "created_at",                                                         null: false
+    t.datetime "updated_at",                                                         null: false
     t.datetime "deleted_at"
     t.string   "photo_file_name"
     t.string   "photo_content_type"
@@ -130,39 +115,39 @@ ActiveRecord::Schema.define(:version => 20140718195128) do
     t.integer  "max_checkout_length"
   end
 
-  create_table "equipment_models_associated_equipment_models", :id => false, :force => true do |t|
+  create_table "equipment_models_associated_equipment_models", id: false, force: true do |t|
     t.integer "equipment_model_id"
     t.integer "associated_equipment_model_id"
   end
 
-  create_table "equipment_models_requirements", :id => false, :force => true do |t|
-    t.integer "requirement_id",     :null => false
-    t.integer "equipment_model_id", :null => false
+  create_table "equipment_models_requirements", id: false, force: true do |t|
+    t.integer "requirement_id",     null: false
+    t.integer "equipment_model_id", null: false
   end
 
-  create_table "equipment_objects", :force => true do |t|
+  create_table "equipment_objects", force: true do |t|
     t.string   "name"
     t.string   "serial"
-    t.boolean  "active",              :default => true
+    t.boolean  "active",              default: true
     t.integer  "equipment_model_id"
-    t.datetime "created_at",                            :null => false
-    t.datetime "updated_at",                            :null => false
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
     t.datetime "deleted_at"
     t.string   "deactivation_reason"
   end
 
-  create_table "requirements", :force => true do |t|
+  create_table "requirements", force: true do |t|
     t.integer  "equipment_model_id"
     t.string   "contact_name"
     t.string   "contact_info"
     t.datetime "deleted_at"
     t.text     "notes"
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
     t.string   "description"
   end
 
-  create_table "reservations", :force => true do |t|
+  create_table "reservations", force: true do |t|
     t.integer  "reserver_id"
     t.integer  "checkout_handler_id"
     t.integer  "checkin_handler_id"
@@ -170,57 +155,57 @@ ActiveRecord::Schema.define(:version => 20140718195128) do
     t.datetime "due_date"
     t.datetime "checked_out"
     t.datetime "checked_in"
-    t.datetime "created_at",                              :null => false
-    t.datetime "updated_at",                              :null => false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
     t.integer  "equipment_model_id"
     t.integer  "equipment_object_id"
     t.text     "notes"
-    t.boolean  "notes_unsent",        :default => true
+    t.boolean  "notes_unsent",        default: true
     t.integer  "times_renewed"
-    t.string   "approval_status",     :default => "auto"
+    t.string   "approval_status",     default: "auto"
   end
 
-  create_table "sessions", :force => true do |t|
-    t.string   "session_id", :null => false
+  create_table "sessions", force: true do |t|
+    t.string   "session_id", null: false
     t.text     "data"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
-  add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
+  add_index "sessions", ["session_id"], name: "index_sessions_on_session_id", using: :btree
+  add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at", using: :btree
 
-  create_table "users", :force => true do |t|
+  create_table "users", force: true do |t|
     t.string   "login"
     t.string   "first_name"
     t.string   "last_name"
-    t.string   "nickname",                  :default => "",       :null => false
+    t.string   "nickname",                  default: "",       null: false
     t.string   "phone"
     t.string   "email"
     t.string   "affiliation"
-    t.datetime "created_at",                                      :null => false
-    t.datetime "updated_at",                                      :null => false
+    t.datetime "created_at",                                   null: false
+    t.datetime "updated_at",                                   null: false
     t.boolean  "terms_of_service_accepted"
-    t.string   "view_mode",                 :default => "admin"
-    t.string   "role",                      :default => "normal"
+    t.string   "view_mode",                 default: "admin"
+    t.string   "role",                      default: "normal"
   end
 
-  add_index "users", ["login"], :name => "index_users_on_login", :unique => true
+  add_index "users", ["login"], name: "index_users_on_login", unique: true, using: :btree
 
-  create_table "users_requirements", :id => false, :force => true do |t|
+  create_table "users_requirements", id: false, force: true do |t|
     t.integer "user_id"
     t.integer "requirement_id"
   end
 
-  create_table "versions", :force => true do |t|
-    t.string   "item_type",  :null => false
-    t.integer  "item_id",    :null => false
-    t.string   "event",      :null => false
+  create_table "versions", force: true do |t|
+    t.string   "item_type",  null: false
+    t.integer  "item_id",    null: false
+    t.string   "event",      null: false
     t.string   "whodunnit"
     t.text     "object"
     t.datetime "created_at"
   end
 
-  add_index "versions", ["item_type", "item_id"], :name => "index_versions_on_item_type_and_item_id"
+  add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
 
 end

@@ -20,13 +20,23 @@ module ApplicationHelper
   end
 
   # model_symbol must be a symbol for the model that is being deactivated, eg --> :equipment_models
-  def make_activate_btn(model_symbol, model_object)
-    link_to "Activate", activate_path(model_symbol, model_object), class: "btn btn-success", method: :put
+  def make_deactivate_btn(model_symbol, model_object)
+    if model_object.deleted_at
+      link_to "Activate", [:activate, model_object], class: "btn btn-success", method: :put
+    else
+      link_to "Deactivate", [:deactivate, model_object],
+        class: "btn btn-danger", method: :put,
+        onclick: model_symbol == :equipment_objects ? 'getDeactivationReason(this);' : ''
+    end
   end
 
-  def make_deactivate_btn(model_symbol, model_object)
-    link_to "Deactivate", deactivate_path(model_symbol, model_object),
-      class: "btn btn-danger", method: :put,
-      onclick: model_symbol == :equipment_objects ? 'getDeactivationReason(this);' : ''
+  def intify(integer)
+    return 'unrestricted' if integer.nil? || integer == Float::INFINITY
+    integer
+  end
+
+  def dayify(integer)
+    return 'unrestricted' if integer.nil? || integer == Float::INFINITY
+    pluralize(integer, 'day')
   end
 end

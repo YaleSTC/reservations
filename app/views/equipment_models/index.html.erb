@@ -20,11 +20,7 @@
       <% if can? :manage, EquipmentModel %>
         <td><%= link_to "Edit", edit_equipment_model_path(equipment_model), :class => "btn" %></td>
         <td>
-        <% if equipment_model.deleted_at %>
-          <%= make_activate_btn(:equipment_models,equipment_model) %>
-        <% else %>
           <%= make_deactivate_btn(:equipment_models,equipment_model) %>
-        <% end %>
         </td>
       <% end %>
     </tr>

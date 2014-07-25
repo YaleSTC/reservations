@@ -15,7 +15,7 @@ describe ContactController do
     end
     it 'should assign @message to a new message' do
       assigns(:message).should be_new_record
-      assigns(:message).kind_of?(Message).should be_true
+      assigns(:message).kind_of?(Message).should be_truthy
     end
     it { should respond_with(:success) }
     it { should render_template(:new) }

@@ -1,8 +1,8 @@
-<% title "New User" unless params[:from_cart] == "true" %>
+<% title "New User" %>
 
 <% unless @message %>
-  <%= render :partial => @partial_to_render %>
-  <%= content_tag(:p, link_to("Back to List", users_path)) if current_user && params[:from_cart] != "true" %>
+  <%= render partial: 'form' %>
+  <%= content_tag(:p, link_to("Back to List", users_path)) if current_user %>
 <% else %>
   <div class="span5">
     <%= content_tag(:p, @message) %>

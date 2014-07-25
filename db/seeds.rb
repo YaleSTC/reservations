@@ -256,7 +256,7 @@ end
 
 unless entered_num == 0
   if entered_num.integer? && entered_num > 0
-    category_names = Category.all.map! { |c| c.name }
+    category_names = Category.all.to_a.map! { |c| c.name }
     progress = ProgressBar.create(format: progress_str, total: entered_num)
 
     category = entered_num.times.map do
@@ -304,7 +304,7 @@ end
 
 unless entered_num == 0
   puts "\nThis is going to take awhile...\n"
-  if entered_num.integer? && entered_num > 0  
+  if entered_num.integer? && entered_num > 0
     progress = ProgressBar.create(format: progress_str, total: entered_num)
     equipment_model = entered_num.times.map do
       progress.increment
@@ -400,7 +400,7 @@ else
 end
 
 unless entered_num == 0
-  if entered_num.integer? && entered_num > 0 
+  if entered_num.integer? && entered_num > 0
     progress = ProgressBar.create(format: progress_str, total: entered_num)
     checkout_procedure = entered_num.times.map do
       progress.increment
@@ -426,7 +426,7 @@ else
 end
 
 unless entered_num == 0
-  if entered_num.integer? && entered_num > 0 
+  if entered_num.integer? && entered_num > 0
     progress = ProgressBar.create(format: progress_str, total: entered_num)
 
     blackout = entered_num.times.map do
@@ -492,8 +492,9 @@ else
   entered_num = ask_for_records("Reservation")
 end
 
+
 unless entered_num == 0
-  if entered_num.integer? && entered_num > 0 
+  if entered_num.integer? && entered_num > 0
     progress = ProgressBar.create(format: progress_str, total: entered_num)
     reservation = entered_num.times.map do
       random_time_in_future = time_rand(Time.now, Time.now + 2.months)

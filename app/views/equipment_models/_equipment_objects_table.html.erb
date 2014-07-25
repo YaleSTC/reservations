@@ -25,11 +25,7 @@
       <% if can? :manage, EquipmentObject %>
         <td><%= link_to "Edit", edit_equipment_object_path(equipment_object), :class => "btn" %></td>
         <td>
-          <% if equipment_object.deleted_at %>
-            <%= make_activate_btn(:equipment_objects,equipment_object) %>
-          <% else %>
-            <%= make_deactivate_btn(:equipment_objects,equipment_object) %>
-          <% end %>
+          <%= make_deactivate_btn(:equipment_objects,equipment_object) %>
         </td>
       <% end %>
     </tr>

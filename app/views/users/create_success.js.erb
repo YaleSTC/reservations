@@ -1,11 +1,2 @@
-<% if params[:from_cart] == "true" %>
-    <% session[:cart].reserver_id = @user.id %>
-    $('#userModal').modal('hide');
-    $(window.location.reload());
-<% elsif params[:action] == "update" %>
-  $(window.location.replace("<%= user_path(@user) %>"));
-<% elsif can? :create, User %>
-  $(window.location.replace("<%= user_path(@user) %>"));
-<% else %>
-    $(window.location.replace("<%= root_path %>"));
-<%end %>
+$('#userModal').modal('hide');
+$(window.location.reload());

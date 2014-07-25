@@ -77,7 +77,6 @@ describe TestController do
         get :index
       end
       it { should respond_with(:success) }
-      it { should render_template(:text => "hello world") }
       it { should_not set_the_flash }
     end
     context 'no app_config' do
@@ -86,7 +85,7 @@ describe TestController do
         get :index
       end
       it { should set_the_flash }
-      it { should render_template(%w(layouts/application application_setup/index)) }
+      it { should render_template('application_setup/index') }
     end
     context 'no user in the db' do
       before(:each) do
@@ -94,7 +93,7 @@ describe TestController do
         get :index
       end
       it { should set_the_flash }
-      it { should render_template(%w(layouts/application application_setup/index)) }
+      it { should render_template('application_setup/index') }
     end
   end
 
@@ -175,7 +174,7 @@ describe TestController do
     it 'makes a new cart record for session[:cart] if !cart' do
       get :index
       session[:cart].should be_new_record
-      session[:cart].kind_of?(Cart).should be_true
+      session[:cart].kind_of?(Cart).should be_truthy
     end
     it 'returns session[:cart] if cart.reserver_id' do
       session[:cart] = Cart.new
@@ -239,13 +238,13 @@ describe TestController do
     it 'changes cart.start_date to today if date is in the past' do
       session[:cart].start_date = Date.yesterday
       get :index
-      session[:cart].start_date.should eq(Date.today)
+      session[:cart].start_date.should eq(Date.current)
     end
     it 'does not change the start_date if date is in the future' do
       session[:cart].start_date = Date.tomorrow
       get :index
       session[:cart].start_date.should eq(Date.tomorrow)
-      session[:cart].start_date.should_not eq(Date.today)
+      session[:cart].start_date.should_not eq(Date.current)
     end
   end
 
@@ -271,8 +270,8 @@ describe ApplicationController do
     before(:each) do
       session[:cart] = Cart.new
       session[:cart].reserver_id = @first_user.id
-      session[:cart].start_date = (Date.today + 1.day)
-      session[:cart].due_date = (Date.today + 2.days)
+      session[:cart].start_date = (Date.current + 1.day)
+      session[:cart].due_date = (Date.current + 2.days)
 
 
       equipment_model = FactoryGirl.create(:equipment_model, category: FactoryGirl.create(:category))
@@ -282,10 +281,10 @@ describe ApplicationController do
 
     context 'valid parameters' do
       it 'should update cart dates' do
-        new_start = Date.today + 3.days
-        new_end = Date.today + 4.days
+        new_start = Date.current + 3.days
+        new_end = Date.current + 4.days
 
-        put :update_cart, cart: {start_date_cart: new_start.strftime('%m/%d/%Y'), due_date_cart: new_end.strftime('%m/%d/%Y')}, reserver_id: @new_reserver.id
+        put :update_cart, cart: {start_date_cart: new_start, due_date_cart: new_end}, reserver_id: @new_reserver.id
 
         session[:cart].start_date.should eq(new_start)
         session[:cart].due_date.should eq(new_end)
@@ -299,8 +298,8 @@ describe ApplicationController do
 
     context 'invalid parameters' do
       it 'should set the flash' do
-        new_start = Date.today - 300.days
-        new_end = Date.today + 4000.days
+        new_start = Date.current - 300.days
+        new_end = Date.current + 4000.days
 
         put :update_cart, cart: {start_date_cart: new_start.strftime('%m/%d/%Y'), due_date_cart: new_end.strftime('%m/%d/%Y')}, reserver_id: @new_reserver.id
 

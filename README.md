@@ -16,12 +16,12 @@ Reservations makes it easy to manage the checking in and out of equipment, much 
 Getting Started
 ===============
 
-There are two mains steps to setting up Reservations, setting up a deployment server, and installing the Reservations application.
+There are two mains steps to setting up Reservations: setting up a deployment server, and installing the Reservations application.
 
 ### Prerequisites
 You'll need the following to run Reservations:
-* [Ruby 1.9](http://www.ruby-lang.org/) and [Rails 3.2](http://rubyonrails.org/)
-* a database server ([Sqlite](http://www.sqlite.org/), [MySQL](http://www.mysql.com/) or any database supported by Rails)
+* [Ruby 2.1](http://www.ruby-lang.org/) and [Rails 3.2](http://rubyonrails.org/)
+* a database server ([MySQL](http://www.mysql.com/) or any database supported by Rails)
 * [ImageMagick](http://www.imagemagick.org/script/index.php)
 * a [CAS](http://www.jasig.org/cas) authentication system
 
@@ -41,13 +41,13 @@ gem install bundler
 bundle install
 ```
 
-You'll need to edit config/database.yml to point to your database, including the correct username and password. See [Rails Guides](http://guides.rubyonrails.org/configuring.html#configuring-a-database) for common database examples.
+You'll need to edit config/database.yml to point to your database, including the correct username and password. See [Rails Guides](http://guides.rubyonrails.org/configuring.html#configuring-a-database) for common database examples. We package a few example files in the ```config/``` folder for Ubuntu, Fedora, and OS X.
 
-Then, create the database and run migrations to build the structure:
+Then, create the database and load the database structure:
 
 ```
 rake db:create
-rake db:migrate
+rake db:schema:load
 ```
 
 Finally, start the app locally:
@@ -60,7 +60,7 @@ Just point your browser to ```localhost:3000``` to use Reservations.
 
 Reservations is built using [Ruby on Rails](http://rubyonrails.org/), and can be set up (deployed) like most Rails apps. You'll need a server running with the following software:
 
-* [Ruby 1.9](http://www.ruby-lang.org/)
+* [Ruby 2.1](http://www.ruby-lang.org/)
 * database server ([MySQL](http://www.mysql.com/) is preferred, but any database supported by Rails should work, including PostgreSQL)
 * web server ([apache](http://apache.org/) or [nginx](http://wiki.nginx.org/Main) both work well) 
 * Rails application server (usually [Passenger Phusion](http://www.modrails.com/) aka mod_rails)

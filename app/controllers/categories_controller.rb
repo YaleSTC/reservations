@@ -49,9 +49,4 @@ class CategoriesController < ApplicationController
     end
   end
 
-  def destroy
-    @category.destroy(:force)
-    flash[:notice] = "Successfully destroyed category."
-    redirect_to categories_url
-  end
 end

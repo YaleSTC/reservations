@@ -4,8 +4,8 @@
 class ApplicationController < ActionController::Base
   helper :layout
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
-
-  before_filter RubyCAS::Filter unless Rails.env.test?
+  before_filter CASClient::Frameworks::Rails::Filter unless Rails.env.test?
+  #before_filter RubyCAS::Filter unless Rails.env.test?
   before_filter :app_setup_check
   before_filter :cart
 
@@ -114,7 +114,7 @@ class ApplicationController < ActionController::Base
   end
 
   def fix_cart_date
-    cart.start_date = (Date.today) if cart.start_date < Date.today
+    cart.start_date = (Date.current) if cart.start_date < Date.current
     cart.fix_due_date
   end
 
@@ -133,12 +133,12 @@ class ApplicationController < ActionController::Base
     cart = session[:cart]
     flash.clear
     begin
-      cart.start_date = Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y')
-      cart.due_date = Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y')
+      cart.start_date = params[:cart][:start_date_cart].to_date
+      cart.due_date = params[:cart][:due_date_cart].to_date
       cart.fix_due_date
       cart.reserver_id = params[:reserver_id].blank? ? current_user.id : params[:reserver_id]
     rescue ArgumentError
-      cart.start_date = Date.today
+      cart.start_date = Date.current
       flash[:error] = "Please enter a valid start or due date."
     end
 
@@ -152,7 +152,7 @@ class ApplicationController < ActionController::Base
     errors = cart.validate_all
     # don't over-write flash if invalid date was set above
     flash[:error] ||= notices.to_sentence + "\n" + errors.to_sentence
-    flash[:notice] = "Cart updated."
+    flash[:notice] = "Cart updated"
 
     # reload appropriate divs / exit
     if params[:controller] == 'catalog'
@@ -166,14 +166,14 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def prepare_catalog_index_vars
+  def prepare_catalog_index_vars(eq_models = nil)
     # prepare the catalog
-    @page_eq_models_by_category = EquipmentModel.active.
+    eq_models ||= EquipmentModel.active.
                               order('categories.sort_order ASC, equipment_models.name ASC').
                               includes(:category, :requirements).
                               page(params[:page]).
                               per(session[:items_per_page])
-    @eq_models_by_category = @page_eq_models_by_category.to_a.group_by(&:category)
+    @eq_models_by_category = eq_models.to_a.group_by(&:category)
 
     @available_string = "available from #{cart.start_date.strftime("%b %d, %Y")} to #{cart.due_date.strftime("%b %d, %Y")}"
 
@@ -182,7 +182,7 @@ class ApplicationController < ActionController::Base
 
     # first get an array of all the paginated ids
     id_array = []
-    @page_eq_models_by_category.each do |em|
+    eq_models.each do |em|
       id_array << em.id
     end
 
@@ -190,12 +190,13 @@ class ApplicationController < ActionController::Base
     eq_objects = EquipmentObject.active.where(equipment_model_id: id_array).all
 
     # 1 query to grab all the related reservations
-    source_reservations = Reservation.not_returned.where(equipment_model_id: id_array).reserved_in_date_range(cart.start_date,cart.due_date).all
+    source_reservations = Reservation.not_returned.where(equipment_model_id: id_array).all
 
     # build the hash using class methods that use 0 queries
-    @page_eq_models_by_category.each do |em|
+    eq_models.each do |em|
       @availability_hash[em.id] = EquipmentObject.for_eq_model(em.id,eq_objects) - Reservation.number_overdue_for_eq_model(em.id,source_reservations) - em.num_reserved(cart.start_date,cart.due_date,source_reservations)
     end
+    @page_eq_models_by_category = eq_models
 
 
   end
@@ -208,7 +209,10 @@ class ApplicationController < ActionController::Base
 
   def logout
     @current_user = nil
-    RubyCAS::Filter.logout(self)
+    CASClient::Frameworks::Rails::Filter.logout(self)
+    #RubyCAS::Filter.logout(self)
+    # the above code is used with ruby-cas-client-rails gem
+    # which was removed on 7/21/2014
   end
 
   def require_login

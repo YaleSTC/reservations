@@ -39,7 +39,6 @@ describe CatalogController do
         flash[:error].should_not be_nil
       end
       it { should redirect_to(root_path) }
-      it { should render_template(:action => 'update_cart') }
     end
     context 'invalid equipment_model selected' do
       before(:each) do
@@ -71,7 +70,6 @@ describe CatalogController do
         flash[:error].should_not be_nil
       end
       it { should redirect_to(root_path) }
-      it { should render_template(:action => 'update_cart') }
     end
     context 'invalid equipment_model selected' do
       before(:each) do
@@ -100,7 +98,6 @@ describe CatalogController do
       session[:items_per_page].should eq('15')
     end
     it { should redirect_to(root_path) }
-    it { should render_template(:action => 'cat_pagination')}
   end
 
   # I don't like that this test is actually searching the database, but unfortunately
@@ -131,7 +128,6 @@ describe CatalogController do
         put :search, { query: 'query' }
         expect(assigns(:category_results)).to eq([@category])
       end
-      it { should render_template(:action => 'search_results') }
     end
   end
 end

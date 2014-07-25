@@ -63,13 +63,13 @@ describe Reservation do
     its(:start_date) { should_not be_nil }
     its(:due_date) { should_not be_nil }
     it 'should save' do
-      reservation.save.should be_true
+      reservation.save.should be_truthy
       Reservation.all.size.should == 1
       Reservation.all.first.should == reservation
     end
     it 'can be updated' do
       reservation.due_date = Date.tomorrow + 1
-      reservation.save.should be_true
+      reservation.save.should be_truthy
     end
     it 'passes custom validations' do
       reservation.start_date_before_due_date.should be_nil
@@ -121,12 +121,12 @@ describe Reservation do
 
     it { should_not be_valid }
     it 'should not save' do
-      reservation.save.should be_false
+      reservation.save.should be_falsey
       Reservation.all.size.should == 0
     end
     it 'cannot be updated' do
       reservation.start_date = Date.tomorrow
-      reservation.save.should be_false
+      reservation.save.should be_falsey
     end
     # it 'fails appropriate validations' do
     #   reservation.should_not be_not_empty
@@ -147,7 +147,7 @@ describe Reservation do
     it 'updates with equipment model' do
       reservation.equipment_model = FactoryGirl.create(:equipment_model)
       FactoryGirl.create(:equipment_object, equipment_model: reservation.equipment_model)
-      reservation.save.should be_true
+      reservation.save.should be_truthy
       reservation.should be_valid
       Reservation.all.size.should == 1
     end
@@ -158,12 +158,12 @@ describe Reservation do
 
     it { should_not be_valid }
     it 'should not save' do
-      reservation.save.should be_false
+      reservation.save.should be_falsey
       Reservation.all.size.should == 0
     end
     it 'cannot be updated' do
       reservation.start_date = Date.tomorrow
-      reservation.save.should be_false
+      reservation.save.should be_falsey
     end
     it 'fails appropriate validations' do
       reservation.start_date_before_due_date.should_not be_nil
@@ -177,7 +177,7 @@ describe Reservation do
     end
     it 'updates with fixed date' do
       reservation.due_date = Date.tomorrow + 1.day
-      reservation.save.should be_true
+      reservation.save.should be_truthy
       reservation.should be_valid
       Reservation.all.size.should == 1
     end
@@ -188,12 +188,12 @@ describe Reservation do
 
     it { should be_valid }
     it 'should save' do
-      reservation.save.should be_true
+      reservation.save.should be_truthy
       Reservation.all.size.should == 1
     end
     it 'can be updated' do
       reservation.start_date = Date.tomorrow
-      reservation.save.should be_true
+      reservation.save.should be_truthy
     end
     it 'fails appropriate validations' do
       reservation.validate.should_not eq([])
@@ -228,13 +228,13 @@ describe Reservation do
 
     it { should be_valid }
     it 'should not save' do
-      reservation.save.should be_true
+      reservation.save.should be_truthy
       Reservation.all.size.should == 2
       Reservation.all.first.should == overdue
     end
     it 'can be updated' do
       reservation.start_date = Date.tomorrow
-      reservation.save.should be_true
+      reservation.save.should be_truthy
     end
     it 'fails appropriate validations' do
       reservation.validate.should_not eq([])
@@ -253,12 +253,12 @@ describe Reservation do
 
     # it { should_not be_valid } #fails
     # it 'should not save' do #fails
-    #   reservation.save.should be_false
+    #   reservation.save.should be_falsey
     #   Reservation.all.size.should == 0
     # end
     # it 'cannot be updated' do #fails
     #   reservation.start_date = Date.tomorrow
-    #   reservation.save.should be_false
+    #   reservation.save.should be_falsey
     # end
     # it 'fails appropriate validations' do # fails
     #   reservation.should_not be_available
@@ -280,12 +280,12 @@ describe Reservation do
 
     it { should_not be_valid }
     it 'should not save' do
-      reservation.save.should be_false
+      reservation.save.should be_falsey
       Reservation.all.size.should == 0
     end
     it 'cannot be updated' do
       reservation.start_date = Date.tomorrow
-      reservation.save.should be_false
+      reservation.save.should be_falsey
     end
     it 'fails appropriate validations' do
       reservation.matched_object_and_model.should_not be_nil
@@ -309,12 +309,12 @@ describe Reservation do
 
     it { should be_valid }
     it 'should save' do
-      reservation.save.should be_true
+      reservation.save.should be_truthy
       Reservation.all.size.should == 1
     end
     it 'can update' do
       reservation.start_date = Date.tomorrow
-      reservation.save.should be_true
+      reservation.save.should be_truthy
     end
     it 'fails appropriate validations' do
       reservation.validate.should_not eq([])
@@ -344,12 +344,12 @@ describe Reservation do
 
     it { should be_valid }
     it 'should save' do
-      reservation.save.should be_true
+      reservation.save.should be_truthy
       Reservation.all.size.should == 2
     end
     it 'can be updated' do
       reservation.start_date = Date.tomorrow
-      reservation.save.should be_true
+      reservation.save.should be_truthy
     end
     it 'fails appropriate validations' do
       reservation.validate.should_not eq([])
@@ -378,12 +378,12 @@ describe Reservation do
 
     it { should be_valid }
     it 'should save' do
-      reservation.save.should be_true
+      reservation.save.should be_truthy
       Reservation.all.size.should == 2
     end
     it 'can be updated' do
       reservation.start_date = Date.tomorrow
-      reservation.save.should be_true
+      reservation.save.should be_truthy
     end
     it 'fails appropriate validations' do
       reservation.validate.should_not eq([])

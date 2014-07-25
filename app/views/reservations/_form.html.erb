@@ -1,22 +1,23 @@
-<%= simple_form_for @reservation, :html => { :class => "form-horizontal" } do |f| %>
+<%= simple_form_for @reservation, html: { multipart: true } do |f| %>
   <%= f.error_notification %>
-  <%= f.input :fake_reserver_id, :as => :autocomplete, :url => autocomplete_user_last_name_users_path,
-              :id_element => '#reservation_reserver_id',
-              label: "Reserver", placeholder: "Start typing a name or login", input_html: {value: @reservation.reserver.name} %>
+
+  <%= f.input :fake_reserver_id, as: :autocomplete,
+                url: autocomplete_user_last_name_users_path,
+                id_element: '#reservation_reserver_id',
+                label: "Reserver",
+                placeholder: "Start typing a name or login",
+                input_html: { value: @reservation.reserver.name } %>
+
   <%= f.input :reserver_id, as: :hidden %>
 
-  <div class='control-group'>
-    <label class='control-label'>* Start date</label>
-    <div class="controls">
-      <%= datepicker_input "reservation", "start_date", :value => @reservation.start_date.strftime('%m/%d/%Y'), class: "date_start" %>
-    </div>
-  </div>
-  <div class='control-group'>
-    <label class='control-label'>* Due date</label>
-    <div class="controls">
-      <%= datepicker_input "reservation", "due_date", :value => @reservation.due_date.strftime('%m/%d/%Y'), class: "date_end" %>
-    </div>
-  </div>
+  <%= f.label 'Start date' %>
+  <%= f.text_field :start_date, class: 'date_start', value: @reservation.start_date.strftime('%m/%d/%Y') %>
+  <%= f.input :start_date, as: :hidden, input_html: { id: "date_start_alt" } %>
+
+  <%= f.label 'Due date' %>
+  <%= f.text_field :due_date, class: 'date_end', value: @reservation.due_date.strftime('%m/%d/%Y') %>
+  <%= f.input :due_date, as: :hidden, input_html: { id: 'date_end_alt' } %>
+
   <% message = '' %>
   <% if @reservation.equipment_object %>
     <% message = "Be aware that changing the reservation equipment item may have an effect on another reservation. \
@@ -34,6 +35,6 @@
     </div>
   <% end %>
 
-  <%= f.input :notes, :as => :text, :hint => "#{render :partial => 'shared/markdown_button'}" %>
+  <%= f.input :notes, :as => :text, :hint => "#{render :partial => 'shared/markdown_button'}".html_safe %>
   <%= f.button :wrapped, :cancel => reservations_path, :confirm => message %>
 <% end %>

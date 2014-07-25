@@ -17,10 +17,10 @@ class AppConfig < ActiveRecord::Base
                                       message: "Must be .ico"
 
 
-  validates :site_title, 	presence: true,
-							length: {maximum: 20 }
+  validates :site_title,   presence: true,
+              length: {maximum: 20 }
   validates :admin_email,
-							format: { with: /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i }
+              format: { with: /\A([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})\z/i }
   validates :default_per_cat_page, numericality: { only_integer: true }
 
 end

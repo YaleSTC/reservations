@@ -19,7 +19,7 @@ describe Message do
   describe ".persisted?" do
     it "should always return false" do
       @message = FactoryGirl.build(:message)
-      @message.persisted?.should be_false
+      @message.persisted?.should be_falsey
     end
   end
 end

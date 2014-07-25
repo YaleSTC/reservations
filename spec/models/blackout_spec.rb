@@ -15,15 +15,15 @@ describe Blackout do
     before do
       @soft = FactoryGirl.create(:blackout,blackout_type:'soft',notice:'soft_notice')
       @hard = FactoryGirl.create(:blackout)
-      @other_soft = FactoryGirl.create(:blackout, start_date: (Date.today + 3.day), blackout_type: 'soft', notice:'other notice')
-      @other_hard = FactoryGirl.create(:blackout, start_date: (Date.today + 3.day), notice: 'other notice again')
+      @other_soft = FactoryGirl.create(:blackout, start_date: (Date.current + 3.day), blackout_type: 'soft', notice:'other notice')
+      @other_hard = FactoryGirl.create(:blackout, start_date: (Date.current + 3.day), notice: 'other notice again')
     end
     after(:all) do
-      Blackouts.delete_all
+      Blackout.delete_all
     end
     context 'all blackouts' do
       subject(:return_value) {
-        Blackout.get_notices_for_date(Date.today)
+        Blackout.get_notices_for_date(Date.current)
       }
       it 'should contain the soft notice' do
         expect(return_value).to include(@soft.notice)
@@ -38,7 +38,7 @@ describe Blackout do
     end
     context 'only hard blackouts' do
       subject(:return_value) {
-        Blackout.get_notices_for_date(Date.today, :hard)
+        Blackout.get_notices_for_date(Date.current, :hard)
       }
       it 'should contain the hard notice' do
         expect(return_value).to include(@hard.notice)
@@ -51,7 +51,7 @@ describe Blackout do
     end
     context 'only soft blackouts' do
       subject(:return_value) {
-        Blackout.get_notices_for_date(Date.today, :soft)
+        Blackout.get_notices_for_date(Date.current, :soft)
       }
       it 'should contain the soft notice' do
         expect(return_value).to include(@soft.notice)

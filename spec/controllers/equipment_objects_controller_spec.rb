@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe EquipmentObjectsController do
-	before(:all) { @app_config = FactoryGirl.create(:app_config) }
-	before { @controller.stub(:first_time_user).and_return(:nil) }
-	let!(:object) { FactoryGirl.create(:equipment_object) }
+  before(:all) { @app_config = FactoryGirl.create(:app_config) }
+  before { @controller.stub(:first_time_user).and_return(:nil) }
+  let!(:object) { FactoryGirl.create(:equipment_object) }
   let!(:deactivated_object) { FactoryGirl.create(:deactivated) }
 
   describe 'GET index' do
@@ -18,24 +18,24 @@ describe EquipmentObjectsController do
       context 'without show deleted' do
         let!(:obj_other_cat_active) { FactoryGirl.create(:equipment_object) }
         let!(:obj_other_cat_inactive) { FactoryGirl.create(:equipment_object,
-          deleted_at: Date.today) }
+          deleted_at: Date.current) }
         context 'with @equipment_model set' do
           it 'should populate an array of all active model-type equipment objects' do
             obj_same_cat_inactive = FactoryGirl.create(:equipment_object,
-              equipment_model: object.equipment_model, deleted_at: Date.today)
+              equipment_model: object.equipment_model, deleted_at: Date.current)
             get :index, equipment_model_id: object.equipment_model
-            assigns(:equipment_objects).include?(object).should be_true
-            assigns(:equipment_objects).include?(obj_other_cat_active).should_not be_true
-            assigns(:equipment_objects).include?(obj_same_cat_inactive).should_not be_true
-            assigns(:equipment_objects).include?(obj_other_cat_inactive).should_not be_true
+            assigns(:equipment_objects).include?(object).should be_truthy
+            assigns(:equipment_objects).include?(obj_other_cat_active).should_not be_truthy
+            assigns(:equipment_objects).include?(obj_same_cat_inactive).should_not be_truthy
+            assigns(:equipment_objects).include?(obj_other_cat_inactive).should_not be_truthy
             expect(assigns(:equipment_objects).size).to eq(1)
           end
         end
         context 'without @equipment_model set' do
           it 'should populate an array of all active equipment objects' do
-            assigns(:equipment_objects).include?(object).should be_true
-            assigns(:equipment_objects).include?(obj_other_cat_active).should be_true
-            assigns(:equipment_objects).include?(obj_other_cat_inactive).should_not be_true
+            assigns(:equipment_objects).include?(object).should be_truthy
+            assigns(:equipment_objects).include?(obj_other_cat_active).should be_truthy
+            assigns(:equipment_objects).include?(obj_other_cat_inactive).should_not be_truthy
             expect(assigns(:equipment_objects).size).to eq(2)
           end
         end
@@ -43,25 +43,25 @@ describe EquipmentObjectsController do
       context 'with show deleted' do
         let!(:obj_other_cat_active) { FactoryGirl.create(:equipment_object) }
         let!(:obj_other_cat_inactive) { FactoryGirl.create(:equipment_object,
-          deleted_at: Date.today) }
+          deleted_at: Date.current) }
         context 'with @equipment_model set' do
           it 'should populate an array of all model-type equipment objects' do
             obj_same_cat_inactive = FactoryGirl.create(:equipment_object,
-              equipment_model: object.equipment_model, deleted_at: Date.today)
+              equipment_model: object.equipment_model, deleted_at: Date.current)
             get :index, equipment_model_id: object.equipment_model, show_deleted: true
-            assigns(:equipment_objects).include?(object).should be_true
-            assigns(:equipment_objects).include?(obj_other_cat_active).should_not be_true
-            assigns(:equipment_objects).include?(obj_same_cat_inactive).should be_true
-            assigns(:equipment_objects).include?(obj_other_cat_inactive).should_not be_true
+            assigns(:equipment_objects).include?(object).should be_truthy
+            assigns(:equipment_objects).include?(obj_other_cat_active).should_not be_truthy
+            assigns(:equipment_objects).include?(obj_same_cat_inactive).should be_truthy
+            assigns(:equipment_objects).include?(obj_other_cat_inactive).should_not be_truthy
             expect(assigns(:equipment_objects).size).to eq(2)
           end
         end
         context 'without @equipment_model set' do
           it 'should populate an array of all equipment objects' do
             get :index, show_deleted: true
-            assigns(:equipment_objects).include?(object).should be_true
-            assigns(:equipment_objects).include?(obj_other_cat_active).should be_true
-            assigns(:equipment_objects).include?(obj_other_cat_inactive).should be_true
+            assigns(:equipment_objects).include?(object).should be_truthy
+            assigns(:equipment_objects).include?(obj_other_cat_active).should be_truthy
+            assigns(:equipment_objects).include?(obj_other_cat_inactive).should be_truthy
             expect(assigns(:equipment_objects).size).to eq(4)
           end
         end
@@ -239,31 +239,7 @@ describe EquipmentObjectsController do
     end
   end
 
-  describe 'DELETE destroy' do
-    context 'with admin user' do
-      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
-      it 'should remove object from database' do
-        expect{ delete :destroy, id: object }.to change(EquipmentObject, :count).by(-1)
-      end
-      context do
-        before { delete :destroy, id: object }
-        it { should set_the_flash }
-        it { should redirect_to(object.equipment_model) }
-        it 'sets @equipment_object to selected object' do
-          expect(assigns(:equipment_object)).to eq(object)
-        end
-      end
-    end
-    context 'with non-admin user' do
-      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
-      it 'should redirect to root' do
-        delete :destroy, id: object
-        response.should redirect_to(root_url)
-      end
-    end
-  end
-
-	describe 'PUT deactivate' do
+  describe 'PUT deactivate' do
     before { request.env['HTTP_REFERER'] = '/referrer' }
     context 'with admin user' do
       before do
@@ -286,9 +262,9 @@ describe EquipmentObjectsController do
         response.should redirect_to(root_url)
       end
     end
-	end
+  end
 
-	describe 'PUT activate' do
+  describe 'PUT activate' do
     before { request.env['HTTP_REFERER'] = '/referrer' }
     context 'with admin user' do
       before do
@@ -313,7 +289,7 @@ describe EquipmentObjectsController do
         response.should redirect_to(root_url)
       end
     end
-	end
+  end
 
-	after(:all) { @app_config.destroy }
+  after(:all) { @app_config.destroy }
 end

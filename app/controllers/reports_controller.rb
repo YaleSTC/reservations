@@ -66,8 +66,8 @@ class ReportsController < ApplicationController
 
   # get dates from datepicker
   def update_dates
-    @start_date = (Date.strptime(params[:report][:start_date],'%m/%d/%Y'))
-    @end_date = (Date.strptime(params[:report][:end_date],'%m/%d/%Y'))
+    @start_date = params[:report][:start_date].to_date
+    @end_date = params[:report][:end_date].to_date
     session[:report_start_date] = @start_date
     session[:report_end_date] = @end_date
 
@@ -102,12 +102,12 @@ class ReportsController < ApplicationController
 
   private
   def start_date
-    date = session[:report_start_date] ? session[:report_start_date] : Date.today.beginning_of_year
+    date = session[:report_start_date] ? session[:report_start_date] : Date.current.beginning_of_year
     return date
   end
 
   def end_date
-    date = session[:report_end_date] ? session[:report_end_date] : Date.today
+    date = session[:report_end_date] ? session[:report_end_date] : Date.current
     return date
   end
 
@@ -135,7 +135,7 @@ class ReportsController < ApplicationController
     res_rels << ResRelation.new("Avg Planned Duration", res_set, {id_type: :equipment_model_id, stat_type: :duration,
       secondary_id: {date_type1: :start_date, date_type2: :due_date}})
     res_rels << ResRelation.new("Avg Duration Checked Out", res_set, {id_type: :equipment_model_id, stat_type: :duration,
-      secondary_id: {date_type1: :checked_out, date_type2: :checked_in, catch2: Date.today}})
+      secondary_id: {date_type1: :checked_out, date_type2: :checked_in, catch2: Date.current}})
 
 
     em_info = eq_models.collect do |em|

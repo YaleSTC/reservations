@@ -23,8 +23,8 @@ class User < ActiveRecord::Base
                           length:      { minimum: 10 }, unless: lambda {|x| x.skip_phone_validation?}
 
   validates :email,       presence:    true,
-                          format:      { with: /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i }
-  validates :nickname,    format:      { with: /^[^0-9`!@#\$%\^&*+_=]+$/ },
+                          format:      { with: /\A([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})\z/i }
+  validates :nickname,    format:      { with: /\A[^0-9`!@#\$%\^&*+_=]+\z/ },
                           allow_blank: true
   validates :terms_of_service_accepted,
                           acceptance: {accept: true, message: "You must accept the terms of service."},
@@ -34,7 +34,7 @@ class User < ActiveRecord::Base
             :view_mode,   inclusion: { in: ['admin', 'normal', 'checkout', 'superuser', 'banned'] }
 
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
-  scope :active, where("role != 'banned'")
+  scope :active, lambda { where("role != 'banned'") }
 
   # ------- validations -------- #
   def skip_phone_validation?
@@ -76,7 +76,7 @@ class User < ActiveRecord::Base
   end
 
   def self.select_options
-    self.find(:all, order: 'last_name ASC').collect{ |item| ["#{item.last_name}, #{item.first_name}", item.id] }
+    User.order('last_name ASC').all.collect{ |item| ["#{item.last_name}, #{item.first_name}", item.id] }
   end
 
   def render_name

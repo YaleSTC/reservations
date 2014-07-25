@@ -1,25 +1,15 @@
-<div class="span5">
-  <p>Please double check that this information is correct.
-      The user can update their personal information later by clicking 'edit' on their profile page.</p>
-  <%= simple_form_for @user, :html => { :class => "form-horizontal" }, :remote => true do |f| %>
-    <%= f.error_notification %>
-    </br>
+<%= simple_form_for @user,
+    url: { controller: 'users', action: 'quick_create' },
+        html: { class: "form-horizontal" }, remote: true do |f| %>
+<%= f.error_notification %>
+</br>
 
-    <%= f.input :login, as: :hidden %>
-    <%= f.input :first_name, :readonly => true %>
-    <%= f.input :last_name, :readonly => true %>
+<%= f.input :login, as: :hidden %>
+<%= f.input :first_name, :readonly => true %>
+<%= f.input :last_name, :readonly => true %>
+<%= f.input :phone, hint: "format like (555) 555-5555" %>
+<%= f.input :email %>
+<%= f.input :affiliation %>
 
-    <% if AppConfig.first.require_phone %>
-      <%= f.input :phone, required: true, hint: "format like (555) 555-5555" %>
-    <% else %>
-      <%= f.input :phone, hint: "format like (555) 555-5555" %>
-    <% end %>
-
-    <%= f.input :email %>
-    <%= f.input :affiliation %>
-
-    <%= hidden_field_tag(:from_cart, true) %>
-
-    <%= f.button :wrapped, cancel: root_path %>
-  <% end %>
-</div>
+<%= f.button :wrapped, cancel: root_path %>
+<% end %>
