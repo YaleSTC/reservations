@@ -29,4 +29,14 @@ module ApplicationHelper
       class: "btn btn-danger", method: :put,
       onclick: model_symbol == :equipment_objects ? 'getDeactivationReason(this);' : ''
   end
+
+  def intify(integer)
+    return 'unrestricted' if integer.nil? || integer == Float::INFINITY
+    integer
+  end
+
+  def dayify(integer)
+    return 'unrestricted' if integer.nil? || integer == Float::INFINITY
+    pluralize(integer, 'day')
+  end
 end

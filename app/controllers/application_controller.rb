@@ -190,7 +190,7 @@ class ApplicationController < ActionController::Base
     eq_objects = EquipmentObject.active.where(equipment_model_id: id_array).all
 
     # 1 query to grab all the related reservations
-    source_reservations = Reservation.not_returned.where(equipment_model_id: id_array).reserved_in_date_range(cart.start_date,cart.due_date).all
+    source_reservations = Reservation.not_returned.where(equipment_model_id: id_array).all
 
     # build the hash using class methods that use 0 queries
     @page_eq_models_by_category.each do |em|

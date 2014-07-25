@@ -30,7 +30,7 @@ class Category < ActiveRecord::Base
 
 
   def maximum_per_user
-    max_per_user || "unrestricted"
+    max_per_user || Float::INFINITY
   end
 
   def maximum_renewal_length
@@ -38,16 +38,15 @@ class Category < ActiveRecord::Base
   end
 
   def maximum_renewal_times
-    max_renewal_times || "unrestricted"
+    max_renewal_times || Float::INFINITY
   end
 
   def maximum_renewal_days_before_due
-    renewal_days_before_due || "unrestricted"
+    renewal_days_before_due || Float::INFINITY
   end
 
   def maximum_checkout_length
-    max_checkout_length || "unrestricted"
-    #self.max_checkout_length ? ("#{max_checkout_length} days") : "unrestricted"
+    max_checkout_length || Float::INFINITY
   end
 
   #TODO: this appears to be dead code - verify and remove
