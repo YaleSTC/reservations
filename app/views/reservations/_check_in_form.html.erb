@@ -59,12 +59,12 @@
         </ol>
       </p>
 
-      <% if reservation.due_date.to_date < Date.today %>
+      <% if reservation.due_date.to_date < Date.current %>
       <hr>
       <footer>
         <p>
           This equipment is <strong class="error">overdue.</strong><br />
-          At a fee of <%= number_to_currency(reservation.late_fee) %> / day, the renter owes <strong><%= number_to_currency(reservation.late_fee * (Date.today - reservation.due_date.to_date).to_i)  %></strong> total.
+          At a fee of <%= number_to_currency(reservation.late_fee) %> / day, the renter owes <strong><%= number_to_currency(reservation.late_fee * (Date.current - reservation.due_date.to_date).to_i)  %></strong> total.
         </p>
       </footer>
 

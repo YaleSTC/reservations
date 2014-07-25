@@ -5,7 +5,7 @@ describe AppConfig do
     @ac = FactoryGirl.build(:app_config)
   end
   it "has a working factory" do
-    @ac.save.should be_true
+    @ac.save.should be_truthy
   end
   it "does not accept empty site title" do
     @ac.site_title = nil

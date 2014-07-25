@@ -105,10 +105,7 @@ describe ReservationsController do
         end
         it 'uses :upcoming as default filter' do
           get :index
-          # Cannot compare objects in nested arrays directly
-          assigns(:reservations_set).each do |r|
-            expect(Reservation.upcoming.all.map(&:id)).to include(r.id)
-          end
+          expect(assigns(:reservations_set) - Reservation.upcoming.all).to be_empty
         end
       end
 
@@ -117,17 +114,14 @@ describe ReservationsController do
           @controller.stub(:current_user).and_return(@user)
           @filters.each do |trait|
             res = FactoryGirl.build(:valid_reservation, trait,
-                                    reserver: [@user, @admin].sample)
+                                    reserver: [@user,@admin].sample)
             res.save(validate: false)
           end
         end
 
         it 'uses :reserved as the default filter' do
           get :index
-          # Cannot compare objects in nested arrays directly
-          assigns(:reservations_set).each do |r|
-            expect(@controller.current_user.reservations.upcoming.map(&:id)).to include(r.id)
-         end
+          expect(assigns(:reservations_set) - @user.reservations.reserved).to be_empty
         end
       end
     end
@@ -254,7 +248,7 @@ describe ReservationsController do
           it { should render_template(:new) }
 
           it 'should set @notes_required to true' do
-            expect(assigns(:notes_required)).to be_true
+            expect(assigns(:notes_required)).to be_truthy
           end
         end
 
@@ -305,7 +299,7 @@ describe ReservationsController do
           @valid_cart = FactoryGirl.build(:cart_with_items)
           @req = Proc.new do
             post :create,
-              {reservation: {start_date: Date.today, due_date: Date.tomorrow,
+              {reservation: {start_date: Date.current, due_date: Date.tomorrow,
                             reserver_id: @user.id}},
               {cart: @valid_cart}
           end
@@ -429,14 +423,14 @@ describe ReservationsController do
         before(:each) do
           put :update, { id: @reservation.id,
             reservation: FactoryGirl.attributes_for(:reservation,
-              start_date: Date.today.strftime('%m/%d/%Y'),
-              due_date: (Date.tomorrow + 3.days).strftime('%m/%d/%Y')),
+              start_date: Date.current,
+              due_date: (Date.tomorrow + 3.days)),
             equipment_object: ''}
         end
         it 'should update the reservation details' do
           @reservation.reload
-          expect(@reservation.start_date.to_time.utc).to eq(Date.today.to_time.utc)
-          expect(@reservation.due_date.to_time.utc).to eq((Date.tomorrow + 3.days).to_time.utc)
+          expect(@reservation.start_date.to_time.utc).to eq(Time.current.midnight.utc)
+          expect(@reservation.due_date.to_time.utc).to eq((Time.current.midnight + 4*24.hours).utc)
         end
         it { should redirect_to(@reservation) }
       end
@@ -446,8 +440,8 @@ describe ReservationsController do
           @new_equipment_object = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
           put :update, { id: @reservation.id,
             reservation: FactoryGirl.attributes_for(:reservation,
-              start_date: Date.today.strftime('%m/%d/%Y'),
-              due_date: Date.tomorrow.strftime('%m/%d/%Y')),
+              start_date: Date.current,
+              due_date: Date.tomorrow),
             equipment_object: @new_equipment_object.id }
         end
         it 'should update the object on current reservation' do
@@ -462,8 +456,8 @@ describe ReservationsController do
           request.env["HTTP_REFERER"] = reservation_path(@reservation)
           put :update, { id: @reservation.id,
             reservation: FactoryGirl.attributes_for(:reservation,
-              start_date: Date.today.strftime('%m/%d/%Y'),
-              due_date: Date.yesterday.strftime('%m/%d/%Y')),
+              start_date: Date.current,
+              due_date: Date.yesterday),
             equipment_object: ''}
         end
         include_examples 'cannot access page'

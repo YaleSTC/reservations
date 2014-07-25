@@ -37,8 +37,8 @@ describe AnnouncementsController do
         get :new
       end
       it 'sets the default announcement' do
-        assigns(:announcement)[:starts_at].should eq(Date::today.to_time)
-        assigns(:announcement)[:ends_at].should eq(Date::tomorrow.to_time)
+        assigns(:announcement)[:starts_at].should eq(Time.current.midnight)
+        assigns(:announcement)[:ends_at].should eq(Time.current.midnight + 24.hours)
       end
       it_behaves_like 'page success'
       it { should render_template(:new) }
@@ -105,7 +105,7 @@ describe AnnouncementsController do
     context 'GET index' do
       before do
         get :index
-      end 
+      end
       it_behaves_like 'access denied'
     end
     context 'POST create' do

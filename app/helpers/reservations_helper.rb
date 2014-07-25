@@ -45,7 +45,7 @@ module ReservationsHelper
     # the "+ 1" terms are to account for the fact that the first
     # day is counted as part of the length of the reservation.
     def define_width_res
-      passed_length = Time.now.to_date - @reservation.start_date.to_date + 1
+      passed_length = Time.current.to_date - @reservation.start_date.to_date + 1
       total_length = @reservation.due_date.to_date - @reservation.start_date.to_date + 1
       total_length = total_length == 0 ? 1 : total_length # necessary to prevent division by 0
       @width = passed_length / total_length

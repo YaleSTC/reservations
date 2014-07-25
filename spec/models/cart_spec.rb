@@ -21,7 +21,7 @@ describe Cart do
       @cart.items.nil?
     end
     it "starts today " do
-      @cart.start_date == Date.today
+      @cart.start_date == Date.current
     end
     it "is due tomorrow" do
       @cart.due_date == Date.tomorrow
@@ -35,7 +35,7 @@ describe Cart do
   end
 
   describe ".persisted?" do
-    it { @cart.persisted?.should be_false }
+    it { @cart.persisted?.should be_falsey }
   end
 
   describe "Item handling" do
@@ -90,7 +90,7 @@ describe Cart do
         @cart.add_item(@equipment_model)
         @equipment_model2 = FactoryGirl.create(:equipment_model)
         @cart.add_item(@equipment_model2)
-        @cart.start_date = Date.today
+        @cart.start_date = Date.current
         @cart.due_date = Date.tomorrow
         @cart.reserver_id = FactoryGirl.create(:user).id
       end
@@ -102,8 +102,8 @@ describe Cart do
         it "should have the correct dates" do
           array = @cart.prepare_all
           array.each do |r|
-            expect(r.start_date).to eq(Date.today.to_time)
-            expect(r.due_date).to eq(Date.tomorrow.to_time)
+            expect(r.start_date).to eq(Time.current.midnight)
+            expect(r.due_date).to eq(Time.current.midnight + 24.hours)
           end
         end
         it "should have the correct equipment models" do
@@ -140,11 +140,11 @@ describe Cart do
   describe ".empty?" do
     it "is true when there are no items in cart" do
       @cart.items = []
-      @cart.empty?.should be_true
+      @cart.empty?.should be_truthy
     end
     it "is false when there are some items in cart" do
       @cart.add_item(FactoryGirl.create(:equipment_model))
-      @cart.empty?.should be_false
+      @cart.empty?.should be_falsey
     end
   end
 

@@ -28,7 +28,7 @@ describe LogController, versioning: true do
 
     it "contains links to all individual-version views, regardless of object type" do
       get :index
-      Version.last(20).each do |v|
+      PaperTrail::Version.last(20).each do |v|
         expect(response.body).to include version_view_path(v.id)
       end
     end

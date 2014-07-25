@@ -44,7 +44,7 @@ module LayoutHelper
   end
 
   def equipment_count
-    @current_equipment = current_user.reservations.select{|r| (r.status == "checked out") || (r.status == "overdue")}
+    @current_equipment = current_user.reservations.checked_out
     @current_equipment.size
   end
 

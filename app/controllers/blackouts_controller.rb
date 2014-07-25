@@ -151,7 +151,7 @@ class BlackoutsController < ApplicationController
     end
 
     def set_dates_for_datepicker
-      @blackout[:start_date] = Date.today # Necessary for datepicker functionality
-      @blackout[:end_date] = Date.today # Necessary for datepicker functionality
+      @blackout[:start_date] = Date.current # Necessary for datepicker functionality
+      @blackout[:end_date] = Date.current # Necessary for datepicker functionality
     end
 end

@@ -17,7 +17,7 @@ class EquipmentObject < ActiveRecord::Base
   attr_accessible :deactivation_reason
 
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
-  scope :active, where("#{table_name}.deleted_at is null")
+  scope :active, lambda { where("#{table_name}.deleted_at is null") }
 
   searchable_on(:name, :serial)
 

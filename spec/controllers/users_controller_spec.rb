@@ -31,14 +31,14 @@ describe UsersController do
       it { should render_template(:index) }
       context 'without show banned' do
         it 'should assign users to all active users' do
-          assigns(:users).include?(other_user).should be_true
-          assigns(:users).include?(banned).should be_false
+          assigns(:users).include?(other_user).should be_truthy
+          assigns(:users).include?(banned).should be_falsey
         end
       end
       context 'with show banned' do
         before { get :index, show_banned: true }
         it 'should assign users to all users' do
-          assigns(:users).include?(banned).should be_true
+          assigns(:users).include?(banned).should be_truthy
         end
       end
     end
@@ -47,6 +47,16 @@ describe UsersController do
       it_behaves_like "page success"
       it { should render_template(:show) }
     end
+
+    describe 'POST quick_new' do
+      context 'possible netid provided' do
+        before { post :quick_new, possible_netid: 'csw3' }
+        it 'should assign @user to the possible netid' do
+          expect(assigns(:user).attributes).to eq(User.new(User.search_ldap('csw3')).attributes)
+        end
+      end
+    end
+
     describe 'GET new' do
       before { get :new }
       context 'possible netid not provided' do
@@ -54,14 +64,8 @@ describe UsersController do
           expect(assigns(:user).attributes).to eq(User.new.attributes)
         end
       end
-      context 'possible netid provided' do
-        before { get :new, possible_netid: 'csw3' }
-        it 'should assign @user to the possible netid' do
-          expect(assigns(:user).attributes).to eq(User.new(User.search_ldap('csw3')).attributes)
-        end
-      end
       it 'should assign @can_edit_login to true' do
-        expect(assigns(:can_edit_login)).to be_true
+        expect(assigns(:can_edit_login)).to be_truthy
       end
       it_behaves_like 'page success'
       it { should render_template(:new) }
@@ -82,7 +86,7 @@ describe UsersController do
           post :create, user: @bad_attributes
         end
         it 'should not save the user' do
-          expect(assigns(:user).save).to be_false
+          expect(assigns(:user).save).to be_falsey
         end
       end
 
@@ -90,7 +94,7 @@ describe UsersController do
     describe 'GET edit' do
       before { get :edit, id: FactoryGirl.create(:user) }
       it 'should set @can_edit_login to true' do
-        expect(assigns(:can_edit_login)).to be_true
+        expect(assigns(:can_edit_login)).to be_truthy
       end
       it_behaves_like 'page success'
       it { should render_template(:edit) }
