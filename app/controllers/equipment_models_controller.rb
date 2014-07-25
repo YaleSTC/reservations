@@ -98,12 +98,6 @@ class EquipmentModelsController < ApplicationController
     end
   end
 
-  def destroy
-    @equipment_model.destroy(:force)
-    flash[:notice] = "Successfully destroyed equipment model."
-    redirect_to equipment_models_url
-  end
-
   private
 
     # function to check for deleted checkin/checkout procedures and hard-delete them after equipment model update
