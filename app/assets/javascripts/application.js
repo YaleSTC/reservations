@@ -117,7 +117,8 @@ $(document).ready(function() {
     } else {
       $(this).toggleClass("selected",box.prop("checked"));
     }
-    $(this).find('.check').toggleClass("hidden",!box.prop("checked"));
+    $(this).find('.c-box').toggleClass("fa-check-square-o check",box.prop("checked"));
+    $(this).find('.c-box').toggleClass("fa-square-o",!box.prop("checked"));
   });
 
   $('#checkout_button').click(function() {
