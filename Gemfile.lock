@@ -57,6 +57,7 @@ GEM
       activesupport (>= 3.0.0)
     arel (3.0.3)
     awesome_print (1.2.0)
+    backports (3.6.0)
     bcrypt (3.1.7)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
@@ -121,6 +122,8 @@ GEM
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0.5.3)
     erubis (2.7.0)
+    ethon (0.7.1)
+      ffi (>= 1.3.0)
     eventmachine (1.0.3)
     execjs (2.0.2)
     factory_girl (4.2.0)
@@ -128,6 +131,10 @@ GEM
     factory_girl_rails (4.2.1)
       factory_girl (~> 4.2.0)
       railties (>= 3.0.0)
+    faraday (0.9.0)
+      multipart-post (>= 1.2, < 3)
+    faraday_middleware (0.9.1)
+      faraday (>= 0.7.4, < 0.10)
     fastercsv (1.5.5)
     ffaker (1.19.0)
     ffi (1.9.0)
@@ -140,6 +147,13 @@ GEM
       rspec (~> 2.0)
       rspec-instafail (~> 0.2.0)
       ruby-progressbar (~> 1.0)
+    gh (0.13.2)
+      addressable
+      backports
+      faraday (~> 0.8)
+      multi_json (~> 1.0)
+      net-http-persistent (>= 2.7)
+      net-http-pipeline
     guard (1.8.3)
       formatador (>= 0.2.4)
       listen (~> 1.3)
@@ -205,7 +219,10 @@ GEM
     mime-types (1.25.1)
     mini_portile (0.5.1)
     multi_json (1.10.1)
+    multipart-post (2.0.0)
     mysql2 (0.3.16)
+    net-http-persistent (2.9.4)
+    net-http-pipeline (1.0.1)
     net-ldap (0.3.1)
     net-scp (1.1.2)
       net-ssh (>= 2.6.5)
@@ -248,6 +265,9 @@ GEM
     pry-stack_explorer (0.4.9.1)
       binding_of_caller (>= 0.7)
       pry (>= 0.9.11)
+    pusher-client (0.6.0)
+      json
+      websocket (~> 1.0)
     rack (1.4.5)
     rack-cache (1.2)
       rack (>= 0.4)
@@ -353,9 +373,22 @@ GEM
     thor (0.19.1)
     thread_safe (0.3.4)
     tilt (1.4.1)
+    travis (1.6.17)
+      addressable (~> 2.3)
+      backports
+      faraday (~> 0.9)
+      faraday_middleware (~> 0.9, >= 0.9.1)
+      gh (~> 0.13)
+      highline (~> 1.6)
+      launchy (~> 2.1)
+      pry (~> 0.9, < 0.10)
+      pusher-client (~> 0.4)
+      typhoeus (~> 0.6, >= 0.6.8)
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
+    typhoeus (0.6.9)
+      ethon (>= 0.7.1)
     tzinfo (0.3.39)
     uglifier (2.2.1)
       execjs (>= 0.3.0)
@@ -432,6 +465,7 @@ DEPENDENCIES
   spork-rails
   therubyracer
   thin
+  travis
   uglifier
   whenever
   yajl-ruby
