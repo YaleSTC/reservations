@@ -150,7 +150,7 @@ class UsersController < ApplicationController
     permitted_attributes << :login if (can? :manage, Reservation)
     permitted_attributes += [:requirement_ids, :user_ids, :role] if can? :assign, :requirements
     p = params.require(:user).permit(*permitted_attributes)
-    p[:view_mode] = p[:role]
+    p[:view_mode] = p[:role] if p[:role]
     p
   end
 
