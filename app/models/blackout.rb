@@ -1,7 +1,5 @@
 class Blackout < ActiveRecord::Base
 
-  #attr_accessible :start_date, :end_date, :notice, :blackout_type, :created_by, :set_id
-
   attr_accessor :days # needed for days of the week checkboxes in new_recurring
 
   validates :notice,
