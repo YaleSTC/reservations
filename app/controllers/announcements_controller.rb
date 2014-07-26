@@ -1,6 +1,6 @@
 class AnnouncementsController < ApplicationController
   load_and_authorize_resource
-  before_filter :set_current_announcement, :only => [:edit, :update, :destroy]
+  before_action :set_current_announcement, only: [:edit, :update, :destroy]
 
   # ------------- before filter methods ------------- #
   def set_current_announcement
@@ -22,16 +22,16 @@ class AnnouncementsController < ApplicationController
   end
 
   def new
-    @announcement = Announcement.new({:starts_at => Date::today, :ends_at => Date::tomorrow})
+    @announcement = Announcement.new({starts_at: Date.current, ends_at: Date.tomorrow})
   end
 
 
   def create
-    @announcement = Announcement.new(params[:announcement])
+    @announcement = Announcement.new(announcement_params)
     if @announcement.save
-      redirect_to(announcements_url, :notice => 'Announcement was successfully created.')
+      redirect_to(announcements_url, notice: 'Announcement was successfully created.')
     else
-      render :action => "new"
+      render action: 'new'
     end
   end
 
@@ -39,16 +39,22 @@ class AnnouncementsController < ApplicationController
   end
 
   def update
-    if  @announcement.update_attributes(params[:announcement])
-      redirect_to(announcements_url, :notice => 'Announcement was successfully updated.')
+    if  @announcement.update_attributes(announcement_params)
+      redirect_to(announcements_url, notice: 'Announcement was successfully updated.')
     else
-      render :action => "edit"
+      render action: 'edit'
     end
   end
 
   def destroy
     @announcement.destroy(:force)
     redirect_to(announcements_url)
+  end
+
+  private
+
+  def announcement_params
+    params.require(:message, :ends_at, :starts_at)
   end
 
 end
