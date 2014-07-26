@@ -35,7 +35,7 @@ class Blackout < ActiveRecord::Base
     messages.to_sentence
   end
 
-  def self.create_blackout_set(params_hash)
+  def self.create_blackout_set(params_hash, days)
     #generate a unique id for this blackout date set, make sure that nil reads as 0 for the first blackout
     last_blackout = Blackout.last
     params_hash[:set_id] = last_blackout ? (last_blackout.id.to_i + 1) : 0
@@ -43,8 +43,8 @@ class Blackout < ActiveRecord::Base
     successful_save = nil
     date_range = params_hash[:start_date].to_date..params_hash[:end_date].to_date
     date_range.each do |date|
-      if params_hash[:days].include?(date.wday.to_s) # because it's passed as a string
-        @blackout = Blackout.new(params_hash.except(:days))
+      if days.include?(date.wday.to_s) # because it's passed as a string
+        @blackout = Blackout.new(params_hash)
         @blackout.start_date = date
         @blackout.end_date = date
         successful_save = @blackout.save
