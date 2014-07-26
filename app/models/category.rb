@@ -51,11 +51,11 @@ class Category < ActiveRecord::Base
 
   #TODO: this appears to be dead code - verify and remove
   def self.select_options
-    self.find(:all, order: 'name ASC').collect{|item| [item.name, item.id]}
+    self.order('name ASC').collect{|item| [item.name, item.id]}
   end
 
   #TODO: this appears to be dead code - verify and remove
   def self.singular_select_options
-    (self.find(:all, order: 'name ASC') - [self.find_by_name("Accessories")]).collect{|item| "<option value='#{item.id}'>#{item.name.singularize}</option>"}.join.html_safe
+    (self.order('name ASC') - [self.find_by_name("Accessories")]).collect{|item| "<option value='#{item.id}'>#{item.name.singularize}</option>"}.join.html_safe
   end
 end
