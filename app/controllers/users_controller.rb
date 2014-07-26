@@ -105,7 +105,7 @@ class UsersController < ApplicationController
 
   def update
     params[:user].delete(:login) unless can? :change_login, User #no changing login unless you're an admin
-    params[:user][:view_mode] = params[:user][:role]
+    params[:user][:view_mode] = params[:user][:role] if params[:user][:role]
     if @user.update_attributes(params[:user])
       respond_to do |format|
         flash[:notice] = "Successfully updated user."
