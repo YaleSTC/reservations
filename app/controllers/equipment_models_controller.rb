@@ -55,7 +55,7 @@ class EquipmentModelsController < ApplicationController
   end
 
   def create
-    @equipment_model = EquipmentModel.new(em_params)
+    @equipment_model = EquipmentModel.new(equipment_model_params)
     if @equipment_model.save
       flash[:notice] = "Successfully created equipment model."
       redirect_to @equipment_model
@@ -86,7 +86,7 @@ class EquipmentModelsController < ApplicationController
   def update
     delete_files
 
-    if @equipment_model.update_attributes(em_params)
+    if @equipment_model.update_attributes(equipment_model_params)
       # hard-delete any deleted checkin/checkout procedures
       delete_procedures(params, "checkout")
       delete_procedures(params, "checkin")
@@ -112,7 +112,7 @@ class EquipmentModelsController < ApplicationController
       end
     end
 
-    def em_params
+    def equipment_model_params
       params.require(:equipment_model).
              permit(:name, :category_id, :category, :description, :late_fee,
                     :replacement_fee, :max_per_user, :document_attributes,

@@ -34,7 +34,7 @@ class EquipmentObjectsController < ApplicationController
   end
 
   def create
-    @equipment_object = EquipmentObject.new(eo_params)
+    @equipment_object = EquipmentObject.new(equipment_object_params)
     if @equipment_object.save
       flash[:notice] = "Successfully created equipment object. #{@equipment_object.serial}"
       redirect_to @equipment_object.equipment_model
@@ -47,7 +47,7 @@ class EquipmentObjectsController < ApplicationController
   end
 
   def update
-    p = eo_params
+    p = equipment_object_params
     if p[:deleted_at].blank?
       # Delete deactivation reason when "Disabled?" is toggled
       p[:deactivation_reason] = ""
@@ -74,7 +74,7 @@ class EquipmentObjectsController < ApplicationController
 
   private
 
-  def eo_params
+  def equipment_object_params
     params.require(:equipment_object).permit(:name, :serial, :equipment_model_id,
                                              :deleted_at, :deactivation_reason)
   end

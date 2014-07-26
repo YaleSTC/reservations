@@ -411,8 +411,8 @@ class ReservationsController < ApplicationController
   end
 
   def reservation_params
-    params.require(:reservation).
-           permit(:checkout_handler_id, :checkin_handler_id, :approval_status,
+    params.require(:reservation)
+          .permit(:checkout_handler_id, :checkin_handler_id, :approval_status,
                   :checked_out, :checked_in, :equipment_object,
                   :equipment_object_id, :notes, :notes_unsent, :times_renewed,
                   :reserver_id, :reserver, :start_date, :due_date,

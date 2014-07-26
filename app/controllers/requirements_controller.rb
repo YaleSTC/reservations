@@ -1,7 +1,6 @@
 class RequirementsController < ApplicationController
 
   load_and_authorize_resource
-
   before_action :set_current_requirement, only: [:show, :edit, :update, :destroy]
 
   # ------------- before filter methods ------------- #
@@ -25,7 +24,7 @@ class RequirementsController < ApplicationController
   end
 
   def create
-    @requirement = Requirement.new(req_params)
+    @requirement = Requirement.new(requirement_params)
     if @requirement.save
       redirect_to @requirement, notice: 'Requirement was successfully created.'
     else
@@ -34,7 +33,7 @@ class RequirementsController < ApplicationController
   end
 
   def update
-    if @requirement.update_attributes(req_params)
+    if @requirement.update_attributes(requirement_params)
       redirect_to @requirement, notice: 'Requirement was successfully updated.'
     else
       render action: 'edit'
@@ -48,7 +47,10 @@ class RequirementsController < ApplicationController
 
   private
 
-  def req_params
-    params.require(:requirement).permit(:user_ids, :description, :equipment_model_ids, :notes, :contact_info, :contact_name)
+  def requirement_params
+    params.require(:requirement).permit(:user_id, :user_ids, :description,
+                                        :equipment_model_id,
+                                        :equipment_model_ids, :notes,
+                                        :contact_info, :contact_name)
   end
 end
