@@ -4,10 +4,10 @@ class ReservationsController < ApplicationController
 
   layout 'application_with_sidebar'
 
-  before_filter :require_login, only: [:index, :show]
-  before_filter :set_reservation, only: [:show, :edit, :update, :destroy,
+  before_action :require_login, only: [:index, :show]
+  before_action :set_reservation, only: [:show, :edit, :update, :destroy,
      :checkout_email, :checkin_email, :renew]
-  before_filter :set_user, only: [:manage, :current, :checkout]
+  before_action :set_user, only: [:manage, :current, :checkout]
 
   private
 
@@ -113,13 +113,8 @@ class ReservationsController < ApplicationController
   end
 
   def update # for editing reservations; not for checkout or check-in
-    #make copy of params
-    res = params[:reservation].clone
-
-    res[:start_date] = params[:reservation][:start_date]
-    res[:due_date] = params[:reservation][:due_date]
-
     message = "Successfully edited reservation."
+    res = reservation_params
     # update attributes
     if params[:equipment_object] && params[:equipment_object] != ''
       object = EquipmentObject.find(params[:equipment_object])
@@ -413,5 +408,14 @@ class ReservationsController < ApplicationController
     end
 
     return notes.strip
+  end
+
+  def reservation_params
+    params.require(:reservation).
+           permit(:checkout_handler_id, :checkin_handler_id, :approval_status,
+                  :checked_out, :checked_in, :equipment_object,
+                  :equipment_object_id, :notes, :notes_unsent, :times_renewed,
+                  :reserver_id, :reserver, :start_date, :due_date,
+                  :equipment_model_id)
   end
 end

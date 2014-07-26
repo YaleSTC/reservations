@@ -17,13 +17,6 @@ class Reservation < ActiveRecord::Base
 
   nilify_blanks only: [:notes]
 
- # attr_accessible :checkout_handler_id,
-  #                :checkin_handler_id, :approval_status,
-   #               :checked_out, :checked_in, :equipment_object,
-    #              :equipment_object_id, :notes, :notes_unsent, :times_renewed,
-     #             :reserver_id, :reserver, :start_date, :due_date,
-      #            :equipment_model_id
-
   def duration
     due_date.to_date - start_date.to_date + 1
   end
