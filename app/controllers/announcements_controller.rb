@@ -22,7 +22,7 @@ class AnnouncementsController < ApplicationController
   end
 
   def new
-    @announcement = Announcement.new({starts_at: Date.current, ends_at: Date.tomorrow})
+    @announcement = Announcement.new(starts_at: Date.current, ends_at: Date.tomorrow)
   end
 
 
@@ -54,7 +54,7 @@ class AnnouncementsController < ApplicationController
   private
 
   def announcement_params
-    params.require(:message, :ends_at, :starts_at)
+    params[:announcement].require(:message, :ends_at, :starts_at)
   end
 
 end

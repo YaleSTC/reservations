@@ -4,10 +4,10 @@ class Requirement < ActiveRecord::Base
                           class_name: "User",
                           association_foreign_key: "user_id",
                           join_table: "users_requirements" # This join table associates users with the requirements that they have fulfilled. To give a user permission to reserve an item with a requirement, go to their Edit page.
-   attr_accessible :user_id, :description, :equipment_model_id, :contact_info, :contact_name, :requirement_ids, :user_ids, :equipment_model_ids, :notes
+   #attr_accessible :user_id, :description, :equipment_model_id, :contact_info, :contact_name, :requirement_ids, :user_ids, :equipment_model_ids, :notes
    #serialize :requirement_steps
 
-  validates :contact_info, 
+  validates :contact_info,
             :description,
             :contact_name, presence: true
 
@@ -32,7 +32,7 @@ end
 
    #has_many :requirement_steps, :dependent => :destroy
    #accepts_nested_attributes_for :requirement_steps, :reject_if => :all_blank, :allow_destroy => true
-#   
+#
 #
 #  def Requirement.get_all_ems_for_user(user)
 #    a = []
