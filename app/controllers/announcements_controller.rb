@@ -54,7 +54,7 @@ class AnnouncementsController < ApplicationController
   private
 
   def announcement_params
-    params[:announcement].require(:message, :ends_at, :starts_at)
+    params.require(:announcement).permit(:message, :ends_at, :starts_at)
   end
 
 end
