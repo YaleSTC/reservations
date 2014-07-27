@@ -39,6 +39,12 @@
 </fieldset>
 
 <fieldset>
+  <legend>Reservation requests</legend><br />
+  <%= f.input :request_text, label: 'Reservation request text', input_html: {class: 'span6', rows: 7},
+    hint: 'This message will be displayed to users who are about to file a reservation request for invalid reservations' %>
+</fieldset>
+
+<fieldset>
   <legend>Emails</legend><br />
   <p>
     Configure notifications that will be sent to users.
