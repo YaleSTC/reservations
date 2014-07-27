@@ -3,6 +3,7 @@
 <% unless @errors.empty? %>
   <p>
     <h3><i class="fa fa-exclamation-triangle warning-icon"></i> Would you like to <%= link_to "return to the Catalog", catalog_path %> to resolve the following error(s)?</h3>
+    <%= markdown(@app_configs.request_text) %>
   </p>
   <% @errors.each do |msg| %>
     <ul>
@@ -22,7 +23,6 @@
     from
     <%= cart.start_date.to_date.to_s(:long) %> to
     <%= cart.due_date.to_date.to_s(:long) %>:
-
   </p>
   <p>
     <ul class="rounded-list">
