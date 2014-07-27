@@ -41,7 +41,9 @@
 <fieldset>
   <legend>Reservation requests</legend><br />
   <%= f.input :request_text, label: 'Reservation request text', input_html: {class: 'span6', rows: 7},
-    hint: 'This message will be displayed to users who are about to file a reservation request for invalid reservations' %>
+    hint: 'This message will be displayed to users who are about to file a reservation request for invalid reservations.
+           You can use markdown in this field' %>
+  <%= render partial: 'shared/markdown_button' %>
 </fieldset>
 
 <fieldset>
