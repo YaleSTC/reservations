@@ -6,6 +6,7 @@ Changelog
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
 ### v3.4.0
+*Released on 27 July 2014.*
 #### Bug Fixes
 * Fixed failing tests in `user_mailer_spec` ([#643](https://github.com/YaleSTC/reservations/pull/643))
 * Ensured that overdue equipment items could not be checked out ([#625](https://github.com/YaleSTC/reservations/pull/625))
