@@ -91,7 +91,7 @@ class User < ActiveRecord::Base
   end
 
   def due_for_checkout
-    self.reservations.upcoming
+    self.reservations.checkoutable
   end
 
   def due_for_checkin
