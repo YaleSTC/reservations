@@ -112,6 +112,7 @@ ActiveRecord::Schema.define(version: 20140724194636) do
     t.integer  "max_renewal_times"
     t.integer  "max_renewal_length"
     t.integer  "renewal_days_before_due"
+    t.integer  "max_checkout_length"
   end
 
   create_table "equipment_models_associated_equipment_models", id: false, force: true do |t|
