@@ -168,6 +168,7 @@ module CartValidations
     end
     errors
   end
+
   def check_requirements(items = self.get_items)
     # check that the reserver specified in the cart has all the necessary
     # requirements for the equipment models in the cart
