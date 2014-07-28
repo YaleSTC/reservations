@@ -1,5 +1,5 @@
 <div class="span4 checkin">
-  <div class="well checkin-click <%= reservation.status %>" title="Click to select me for checkin">
+  <div class="well" title="Click to select me for checkin">
     <header>
       <span class="title">
         <h3><%= link_to "Reservation ##{reservation.id}", reservation, target:
@@ -16,7 +16,7 @@
     </header><br>
 
     <hr>
-      <div class="well well-em-manage">
+      <div class="well well-em-manage checkin-click">
         <h4><p><%= link_to reservation.equipment_model.name, reservation.equipment_model,
         target: '_blank' %></p></h4>
         <p><%= link_to reservation.equipment_model, target: '_blank' do %>
