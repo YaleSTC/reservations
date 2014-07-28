@@ -42,13 +42,16 @@ function truncate() {
   // Until it's refactored, it's better off disabled.
   // This code displays a tooltip in the catalog if the equipment model name is truncated.
   //
-  // $(".equipment_title").each(function(){
-  //   $(this).trigger("isTruncated", function( isTruncated ) {
-  //     if ( isTruncated ) {
-  //       $(this).children(".equipment_title_link").tooltip();
-  //     }
-  //   });
-  // });
+  // This code was re-enabled on 2014-07-28 and no noticeable
+  // performance hit was noted
+
+   $(".equipment_title").each(function(){
+     $(this).trigger("isTruncated", function( isTruncated ) {
+       if ( isTruncated ) {
+         $(this).children(".equipment_title_link").tooltip();
+       }
+     });
+   });
 };
 
 // general submit on change class
@@ -85,6 +88,8 @@ $(document).ready(function() {
         ]
   });
 
+  // ### LOG JS ### //
+
   // Ugly hack to avoid reinitializing #table_log with the correct order
   try {
     if (wideDataTables[0].id == "table_log") {
@@ -100,6 +105,8 @@ $(document).ready(function() {
           { "bSortable": false, "aTargets": [ "no_sort" ] }
         ]
   });
+
+  // ### REPORTS JS ### //
 
   $('.report_table').dataTable({
     "sDom": "<'row'<'span3'l>fr>t<'row'<'span3'i><p>>",
@@ -119,6 +126,7 @@ $(document).ready(function() {
     $("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
   }
 
+  // truncate catalog descriptions
   truncate();
 
   $(".btn#modal").tooltip();
