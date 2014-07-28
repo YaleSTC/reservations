@@ -24,7 +24,11 @@
 //= require variables.js
 //= require select2
 //= require_self
+
 //= require calendar.js
+//= require manage_reservation.js
+//= require datepickers.js
+//= require cart_pause-resume.js
 
   function truncate() {
     if ($(".caption_cat").length) {
@@ -55,85 +59,9 @@
     // });
   };
 
-  function validate_checkin(){
-    flag = false;
-    $.each( $(".checkin"), function(i, l){
-      var steps = $(this).find(':checkbox').length;
-      var steps_completed = $(this).find("input:checked").length;
-      var selected = $(this).find("input.checkin-select").is(':checked');
-      if ( selected  && (steps_completed < steps) ){
-        flag = true;
-      }
-      //If they don't select a given item to checkin, but select some of the steps
-      if ( !selected && (steps_completed > 0) ){
-        flag = true;
-      }
-
-    });
-    return flag;
-  };
-
-  function validate_checkout(){
-    flag = false;
-    $.each( $(".checkout"), function(i, l){
-      var steps = $(this).find(':checkbox').length;
-      var steps_completed = $(this).find("input:checked").length;
-      var selected = $(this).find("select.dropselect").val();
-      //If they select a given item to checkin, but not all the steps
-      if ((selected != "") && (steps_completed < steps) ){
-        flag = true;
-      }
-      //If they don't select a given item to checkin, but select some of the steps
-      if ((selected == "") && (steps_completed > 0) ){
-        flag = true;
-      }
-
-    });
-    return flag;
-  };
-
-  function confirm_checkinout(flag){
-    if (flag){
-      if( confirm("Oops! We've noticed one of the following issues:\n\nYou checked off procedures for an item you're not checking in/out.\n\n       or\n\nYou didn't check off all procedures for an item that you are checking in/out.\n\nAre you sure you want to continue?")){
-        (this).submit();
-        return false;
-      } else {
-        //they clicked no.
-        return false;
-      }
-    }
-    else {
-      (this).submit();
-    }
-  };
-
 $(document).ready(function() {
 
-  $('.checkin-click').click( function() {
-    var box = $(":checkbox:eq(0)", this);
-    box.prop("checked", !box.prop("checked"));
-    if ($(this).hasClass("overdue")) {
-      $(this).toggleClass("selected-overdue",box.prop("checked"));
-    } else {
-      $(this).toggleClass("selected",box.prop("checked"));
-    }
-    $(this).find('.c-box').toggleClass("fa-check-square-o check",box.prop("checked"));
-    $(this).find('.c-box').toggleClass("fa-square-o",!box.prop("checked"));
-  });
-
-  $('#checkout_button').click(function() {
-    var flag = validate_checkout();
-    confirm_checkinout(flag);
-    return false;
-  });
-
-  $('#checkin_button').click(function() {
-    var flag = validate_checkin();
-    confirm_checkinout(flag);
-    return false;
-  });
-
-// For DataTables and Bootstrap
+  // For DataTables and Bootstrap
   $('.datatable').dataTable({
     "sDom": "<'row'<'span4'l><'span5'f>r>t<'row'<'span3'i><'span6'p>>",
     "sPaginationType": "bootstrap",
@@ -274,83 +202,7 @@ if ($(window).width() > 767) {
 
 
 });
-// to disable selection of dates in the past with datepicker
-function load_datepicker() {
-  $('.date_start').datepicker({
-    altField: '#date_start_alt',
-    altFormat: 'yy-mm-dd',
-    minDate: 0,
-    onClose: function(dateText, inst) {
-      var start_date = $('.date_start').datepicker("getDate");
-      var end_date = $('.date_end').datepicker("getDate");
-      if (start_date > end_date){
-        var new_date = new Date(start_date.getTime()+86400000);
-        $('.date_end').datepicker("setDate", new_date);
-      }
-      $('.date_end').datepicker( "option" , "minDate" , start_date);
-    }
-  });
 
-  $('.date_end').datepicker({
-    altField: '#date_end_alt',
-    altFormat: 'yy-mm-dd',
-    minDate: 0
-  });
-
-  $('.date_start_no_min').datepicker({
-    altField: '#date_start_alt',
-    altFormat: 'yy-mm-dd',
-    onClose: function(dateText, inst) {
-      var start_date = $('.date_start_no_min').datepicker("getDate");
-      var end_date = $('.date_end_no_min').datepicker("getDate");
-      if (start_date > end_date){
-        var new_date = new Date(start_date.getTime()+86400000);
-        $('.date_end_no_min').datepicker("setDate", new_date);
-      }
-      $('.date_end_no_min').datepicker( "option" , "minDate" , start_date);
-    }
-  });
-
-  $('.date_end_no_min').datepicker({
-    altField: '#date_end_alt',
-    altFormat: 'yy-mm-dd',
-    onClose: function(dateText, inst) {
-      var start_date = $('.date_start_no_min').datepicker("getDate");
-      var end_date = $('.date_end_no_min').datepicker("getDate");
-      if (start_date > end_date) {
-        var new_date = new Date(start_date.getTime()+86400000);
-        $('.date_end_no_min').datepicker("setDate", new_date);
-      }
-      $('.date_end_no_min').datepicker( "option" , "minDate" , start_date);
-    }
-  });
-};
-
-
-
-// function to hold cart during update
-function pause_cart () {
-  // disable the cart form (using `readonly` to avoid breaking the session)
-  $('#fake_reserver_id').prop('readonly', true);
-  $('#modal').addClass('disabled');
-  $('#cart_start_date_cart').prop('readonly', true);
-  $('#cart_due_date_cart').prop('readonly', true);
-  $('#cart_buttons').children('a').addClass("disabled"); // disable cart buttons
-  $('.add_to_cart_box').children('#add_to_cart').addClass("disabled"); // disable add to cart buttons
-  $('#cartSpinner').spin("large"); // toggle cart spinner
-}
-
-// function to unlock cart after update
-function resume_cart () {
-  // enable the cart form
-  $('#fake_reserver_id').prop('readonly', false);
-  $('#modal').removeClass('disabled');
-  $('#cart_start_date_cart').prop('readonly', false);
-  $('#cart_due_date_cart').prop('readonly', false);
-  $('#cart_buttons').children('a').removeClass("disabled"); // disable cart buttons
-  $('.add_to_cart_box').children('#add_to_cart').removeClass("disabled"); // enable add to cart buttons
-  $('#cartSpinner').spin(false); // turn off cart spinner
-}
 
 // general submit on change class
 $(document).on('change', '.autosubmitme', function() {
@@ -359,34 +211,6 @@ $(document).on('change', '.autosubmitme', function() {
     pause_cart();
   }
   $(this).parents('form:first').submit();
-});
-
-//$(document).on('change', '.autosubmitme2', function() {
-//  $.ajax("update_dates");
-//});
-
-// click add to cart button
-$(document).on('click', '.add_to_cart', function () {
-  pause_cart();
-});
-
-// click remove from cart button
-$(document).on('click', '#remove_button > a', function () {
-  pause_cart();
-});
-
-$(document).on('railsAutocomplete.select', '#fake_reserver_id', function(event, data){
-  pause_cart();
-  $(this).parents('form').submit();
-});
-
-$(document).on('change','#fake_reserver_id',function() {
-    if (!$('#fake_reserver_id').val()) {
-      $('#reserver_id').val('');
-      pause_cart();
-      $(this).parents('form').submit();
-    };
-
 });
 
 $(document).on('railsAutocomplete.select', '#fake_searched_id', function(){
