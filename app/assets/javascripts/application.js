@@ -2,14 +2,10 @@
 //= require jquery_ujs
 //= require jquery.ui.datepicker
 //= require jquery.ui.autocomplete
-//= require jquery.sticky
-//= require jquery.dotdotdot-1.5.1
 //= require jquery.spin
 //= require cocoon
 //= require autocomplete-rails
 //= require dataTables/jquery.dataTables
-//= require dataTables_numhtml_sort.js
-//= require dataTables_numhtml_detect.js
 //= require dataTables/bootstrap/2/jquery.dataTables.bootstrap
 //= require bootstrap-transition
 //= require bootstrap-alert
@@ -23,41 +19,50 @@
 //= require bootstrap-popover
 //= require variables.js
 //= require select2
+//= require_tree
 //= require_self
 
-//= require calendar.js
-//= require manage_reservation.js
-//= require datepickers.js
-//= require cart_pause-resume.js
+function truncate() {
+  if ($(".caption_cat").length) {
+    $(".caption_cat").dotdotdot({
+      height: 150,
+      after: ".more_info",
+      watch: 'window'
+    });
+  }
 
-  function truncate() {
-    if ($(".caption_cat").length) {
-      $(".caption_cat").dotdotdot({
-        height: 150,
-        after: ".more_info",
-        watch: 'window'
-      });
-    }
+  if ($(".equipment_title").length) {
+    $(".equipment_title").dotdotdot({
+      height: 27, // must match .equipment_title height
+      watch: 'window'
+    });
+  }
 
-    if ($(".equipment_title").length) {
-      $(".equipment_title").dotdotdot({
-        height: 27, // must match .equipment_title height
-        watch: 'window'
-      });
-    }
+  // TODO: Refactor this so it won't so drastically impact client-side performance.
+  // Until it's refactored, it's better off disabled.
+  // This code displays a tooltip in the catalog if the equipment model name is truncated.
+  //
+  // $(".equipment_title").each(function(){
+  //   $(this).trigger("isTruncated", function( isTruncated ) {
+  //     if ( isTruncated ) {
+  //       $(this).children(".equipment_title_link").tooltip();
+  //     }
+  //   });
+  // });
+};
 
-    // TODO: Refactor this so it won't so drastically impact client-side performance.
-    // Until it's refactored, it's better off disabled.
-    // This code displays a tooltip in the catalog if the equipment model name is truncated.
-    //
-    // $(".equipment_title").each(function(){
-    //   $(this).trigger("isTruncated", function( isTruncated ) {
-    //     if ( isTruncated ) {
-    //       $(this).children(".equipment_title_link").tooltip();
-    //     }
-    //   });
-    // });
-  };
+// general submit on change class
+$(document).on('change', '.autosubmitme', function() {
+  // test for cart date fields to toggle cart spinner
+  if ( $(this).parents('div:first').is("#cart_dates") ) {
+    pause_cart();
+  }
+  $(this).parents('form:first').submit();
+});
+
+$(document).on('railsAutocomplete.select', '#fake_searched_id', function(){
+  $(this).parents('form').submit();
+});
 
 $(document).ready(function() {
 
@@ -104,46 +109,17 @@ $(document).ready(function() {
     "aoColumnDefs": [{ "bSortable": false, "aTargets": [ "no_sort" ] }]
   });
 
-// For fading out flash notices
+  // For fading out flash notices
   $(".alert .close").click( function() {
        $(this).parent().addClass("fade");
   });
 
-// make the sidebar follow you down the page
-if ($(window).width() > 767) {
-  $("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
-}
-
-// perform truncate, which is also defined outside of document ready
-// it needs to be both places due to a webkit bug not loading named
-// JS functions in (document).ready() until AFTER displaying all the things
-
-  if ($(".caption_cat").length) {
-    $(".caption_cat").dotdotdot({
-      height: 150,
-      after: ".more_info",
-      watch: 'window'
-    });
+  // make the sidebar follow you down the page
+  if ($(window).width() > 767) {
+    $("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
   }
 
-  if ($(".equipment_title").length) {
-    $(".equipment_title").dotdotdot({
-      height: 27, // must match .equipment_title height
-      watch: 'window'
-    });
-  }
-
-  // TODO: Refactor this so it won't so drastically impact client-side performance.
-  // Until it's refactored, it's better off disabled.
-  // This code displays a tooltip in the catalog if the equipment model name is truncated.
-  //
-  // $(".equipment_title").each(function(){
-  //   $(this).trigger("isTruncated", function( isTruncated ) {
-  //     if ( isTruncated ) {
-  //       $(this).children(".equipment_title_link").tooltip();
-  //     }
-  //   });
-  // });
+  truncate();
 
   $(".btn#modal").tooltip();
   $(".not-qualified-icon").tooltip();
@@ -204,23 +180,6 @@ if ($(window).width() > 767) {
 });
 
 
-// general submit on change class
-$(document).on('change', '.autosubmitme', function() {
-  // test for cart date fields to toggle cart spinner
-  if ( $(this).parents('div:first').is("#cart_dates") ) {
-    pause_cart();
-  }
-  $(this).parents('form:first').submit();
-});
 
-$(document).on('railsAutocomplete.select', '#fake_searched_id', function(){
-  $(this).parents('form').submit();
-});
-
-
-function getDeactivationReason(e) {
-  var p = prompt("Write down the reason for deactivation of this equipment object.")
-  e.href += "?deactivation_reason=" + encodeURIComponent(p)
-};
 
 
