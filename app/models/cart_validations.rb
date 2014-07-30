@@ -144,7 +144,7 @@ module CartValidations
     #
     # 0 queries if categories have been eager loaded
     errors = []
-    max_length = model.category.max_checkout_length
+    max_length = model.maximum_checkout_length
     if self.duration > max_length
       errors << "#{model.name.titleize} can only be reserved for #{max_length} days"
     end

@@ -12,7 +12,7 @@ class EquipmentModel < ActiveRecord::Base
       :max_per_user, :document_attributes, :deleted_at,
       :checkout_procedures_attributes, :checkin_procedures_attributes, :photo,
       :documentation, :max_renewal_times, :max_renewal_length, :renewal_days_before_due,
-      :associated_equipment_model_ids, :requirement_ids, :requirements
+      :associated_equipment_model_ids, :requirement_ids, :requirements, :max_checkout_length
 
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
   scope :active, lambda { where("#{table_name}.deleted_at is null") }
@@ -50,7 +50,8 @@ class EquipmentModel < ActiveRecord::Base
   validates :name,         uniqueness: true
   validates :late_fee,     :replacement_fee,
                            numericality: { greater_than_or_equal_to: 0 }
-  validates :max_per_user, numericality: { allow_nil: true, \
+  validates :max_per_user,
+            :max_checkout_length, numericality: { allow_nil: true, \
                                               only_integer: true, \
                                               greater_than_or_equal_to: 1 }
   validates :max_renewal_length,
@@ -122,6 +123,11 @@ class EquipmentModel < ActiveRecord::Base
   ######################
 
   #inherits from category if not defined
+
+  def maximum_checkout_length
+    max_checkout_length || category.maximum_checkout_length
+  end
+
   def maximum_per_user
     max_per_user || category.maximum_per_user
   end
