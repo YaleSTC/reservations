@@ -52,7 +52,7 @@ class BlackoutsController < ApplicationController
 
     # method will return an error message if save is not successful
     flash[:error] = Blackout.create_blackout_set(p, params[:blackout][:days])
-      # if there is an error, show it and redirect :back
+    # if there is an error, show it and redirect :back
     if flash[:error]
       render 'new_recurring'
     else
