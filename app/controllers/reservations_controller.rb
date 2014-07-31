@@ -339,7 +339,7 @@ class ReservationsController < ApplicationController
 
   def review
     set_reservation
-    @all_current_requests_by_user = @reservation.reserver.reservations.requested.delete_if{|res| res.id == @reservation.id}
+    @all_current_requests_by_user = @reservation.reserver.reservations.requested.reject{|res| res.id == @reservation.id}
     @errors = @reservation.validate
   end
 
@@ -348,6 +348,7 @@ class ReservationsController < ApplicationController
     @reservation.approval_status = "approved"
     if @reservation.save
       flash[:notice] = "Request successfully approved"
+      UserMailer.request_approved_notification(@reservation).deliver
       redirect_to reservations_path(:requested => true)
     else
       flash[:error] = "Oops! Something went wrong. Unable to approve reservation."
@@ -360,6 +361,7 @@ class ReservationsController < ApplicationController
     @reservation.approval_status = "denied"
     if @reservation.save
       flash[:notice] = "Request successfully denied"
+      UserMailer.request_denied_notification(@reservation).deliver
       redirect_to reservations_path(:requested => true)
     else
       flash[:error] = "Oops! Something went wrong. Unable to deny reservation. We're not sure what that's all about."
