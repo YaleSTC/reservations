@@ -1,5 +1,5 @@
 require 'spec_helper'
 
-describe CheckinProcedure do
-  it { should belong_to(:equipment_model) }
+describe CheckinProcedure, :type => :model do
+  it { is_expected.to belong_to(:equipment_model) }
 end
