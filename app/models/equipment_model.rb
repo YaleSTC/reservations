@@ -44,7 +44,8 @@ class EquipmentModel < ActiveRecord::Base
   validates :name,         uniqueness: true
   validates :late_fee,     :replacement_fee,
                            numericality: { greater_than_or_equal_to: 0 }
-  validates :max_per_user, numericality: { allow_nil: true, \
+  validates :max_per_user,
+            :max_checkout_length, numericality: { allow_nil: true, \
                                               only_integer: true, \
                                               greater_than_or_equal_to: 1 }
   validates :max_renewal_length,
@@ -116,6 +117,11 @@ class EquipmentModel < ActiveRecord::Base
   ######################
 
   #inherits from category if not defined
+
+  def maximum_checkout_length
+    max_checkout_length || category.maximum_checkout_length
+  end
+
   def maximum_per_user
     max_per_user || category.maximum_per_user
   end

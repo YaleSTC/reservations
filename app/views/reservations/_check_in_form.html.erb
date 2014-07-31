@@ -1,13 +1,13 @@
 <div class="span4 checkin">
-  <div class="well checkin-click <%= reservation.status %>" title="Click to select me for checkin">
+  <div class="well">
     <header>
       <span class="title">
         <h3><%= link_to "Reservation ##{reservation.id}", reservation, target:
-		'_blank' %></h3>
-	  </span>
+    '_blank' %></h3>
+    </span>
       <span class="icons">
         <h3>
-	  <% if reservation.status == "overdue" %>
+    <% if reservation.status == "overdue" %>
       <i class="fa fa-exclamation-circle fa-lg overdue-icon"></i>
     <% end %>
     <i class="fa fa-check hidden check fa-lg"></i>
@@ -16,13 +16,14 @@
     </header><br>
 
     <hr>
-      <div class="well well-em-manage">
+      <div class="well well-em-manage checkin-click" title="Click to select me for checkin">
         <h4><p><%= link_to reservation.equipment_model.name, reservation.equipment_model,
         target: '_blank' %></p></h4>
         <p><%= link_to reservation.equipment_model, target: '_blank' do %>
               <%= image_tag reservation.equipment_model.photo.url(:medium) %>
             <% end %></p>
         <%= label_tag "reservations[#{reservation.id}][checkin?]" do %>
+    <i class="fa fa-square-o c-box fa-lg"></i>
           <%= check_box_tag "reservations[#{reservation.id}][checkin?]", 1, false, class: "checkin-select hidden" %>
           <%= reservation.equipment_object.name %>
         <% end %>

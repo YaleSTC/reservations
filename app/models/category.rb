@@ -23,7 +23,6 @@ class Category < ActiveRecord::Base
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
   scope :active, lambda { where("#{table_name}.deleted_at is null") }
 
-
   def maximum_per_user
     max_per_user || Float::INFINITY
   end
@@ -44,13 +43,4 @@ class Category < ActiveRecord::Base
     max_checkout_length || Float::INFINITY
   end
 
-  #TODO: this appears to be dead code - verify and remove
-  def self.select_options
-    self.find(:all, order: 'name ASC').collect{|item| [item.name, item.id]}
-  end
-
-  #TODO: this appears to be dead code - verify and remove
-  def self.singular_select_options
-    (self.find(:all, order: 'name ASC') - [self.find_by_name("Accessories")]).collect{|item| "<option value='#{item.id}'>#{item.name.singularize}</option>"}.join.html_safe
-  end
 end
