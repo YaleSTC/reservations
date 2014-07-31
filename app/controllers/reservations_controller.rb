@@ -138,49 +138,35 @@ class ReservationsController < ApplicationController
   end
 
   def checkout
-    unless check_tos(@user)
-      redirect_to :back and return
-    end
+    redirect_to :back and return unless check_tos(@user)
 
     # convert all the reservations that are being checked out into an array
     # of Reservation objects
-    reservations_to_check_out = []
+    checked_out_reservations = []
     params[:reservations].each do |reservation_id, reservation_hash|
-      if reservation_hash[:equipment_object_id].present?
-        # update attributes for all equipment that is checked off
-        r = Reservation.find(reservation_id)
-        r.checkout_handler = current_user
-        r.checked_out = Time.current
-        r.equipment_object_id = reservation_hash[:equipment_object_id]
+      next if reservation_hash[:equipment_object_id].blank?
+      # update attributes for all equipment that is checked off
+      r = Reservation.find(reservation_id)
 
-        # Check that checkout procedures have been performed
-        incomplete_procedures = check_procedures(r, reservation_hash, :checkout)
-
-        # Update notes if any checkout procedures have not been performed
-        r.notes = make_notes(r.notes, reservation_hash[:notes], \
-                             :checkout, incomplete_procedures)
-
-        # Put the data into the container defined at the start of this action
-        reservations_to_check_out << r
-      end
+      checked_out_reservations << r.checkout(reservation_hash[:equipment_object_id], current_user, reservation_hash[:checkout_procedures], reservation_hash[:notes])
     end
 
     ## Basic-logic checks, only need to be done once
     # Prevent the nil error from not selecting any reservations
-    if reservations_to_check_out.empty?
+    if checked_out_reservations.empty?
       flash[:error] = "No reservation selected."
       redirect_to :back and return
     end
 
     # Prevent checking out the same object in more than one reservation
-    unless Reservation.unique_equipment_objects?(reservations_to_check_out)
+    unless Reservation.unique_equipment_objects?(checked_out_reservations)
       flash[:error] = "The same equipment item cannot be simultaneously checked
       out in multiple reservations."
       redirect_to :back and return
     end
 
     # Overdue validation
-    reserver = reservations_to_check_out.first.reserver
+    reserver = checked_out_reservations.first.reserver
     if reserver.overdue_reservations?
       if can? :override, :checkout_errors
         # Admins can ignore this
@@ -197,7 +183,7 @@ class ReservationsController < ApplicationController
     ## Save reservations
     Reservation.transaction do
       begin
-        reservations_to_check_out.each do |reservation|
+        checked_out_reservations.each do |reservation|
           reservation.save!
         end
       rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid => e
@@ -209,18 +195,15 @@ class ReservationsController < ApplicationController
 
     # prep for receipt page and exit
     @check_in_set = []
-    @check_out_set = reservations_to_check_out
+    @check_out_set = checked_out_reservations
     render 'receipt' and return
   end
 
   def checkin
-    reservations_to_check_in = []
-
+    checked_in_reservations = []
     params[:reservations].each do |reservation_id, reservation_hash|
       # only update attributes for all equipment that is checked off
-      unless reservation_hash[:checkin?] == "1"
-        next
-      end
+      next if reservation_hash[:checkin?].blank?
 
       r = Reservation.find(reservation_id)
 
@@ -230,37 +213,20 @@ class ReservationsController < ApplicationController
         redirect_to :back and return
       end
 
-      r.checkin_handler = current_user
-      r.checked_in = Time.current
-
-      # Check that check-in procedures have been performed
-      incomplete_procedures = check_procedures(r, reservation_hash, :checkin)
-
-      # add incomplete_procedures to r.notes so admin gets the errors
-      r.notes = make_notes(r.notes, reservation_hash[:notes], \
-                           :checkin, incomplete_procedures)
-
-      # if equipment was overdue, send an email confirmation
-      if r.status == 'returned overdue'
-        AdminMailer.overdue_checked_in_fine_admin(r).deliver
-        UserMailer.overdue_checked_in_fine(r).deliver
-      end
-
-      # put the data into the container defined at the beginning of this action
-      reservations_to_check_in << r
+      checked_in_reservations << r.checkin(current_user,
+                                           reservation_hash[:checkin_procedures],
+                                           reservation_hash[:notes])
     end
 
-    # flash errors
-    if reservations_to_check_in.empty?
+    if checked_in_reservations.empty?
       flash[:error] = "No reservation selected!"
       redirect_to :back and return
     end
 
-    # save the reservations
     ## Save reservations
     Reservation.transaction do
       begin
-        reservations_to_check_in.each do |reservation|
+        checked_in_reservations.each do |reservation|
           reservation.save!
         end
       rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid => e
@@ -271,8 +237,8 @@ class ReservationsController < ApplicationController
     end
 
     # prep for receipt page and exit
-    @user = reservations_to_check_in.first.reserver
-    @check_in_set = reservations_to_check_in
+    @user = checked_in_reservations.first.reserver
+    @check_in_set = checked_in_reservations
     @check_out_set = []
     render 'receipt' and return
   end
@@ -370,47 +336,6 @@ class ReservationsController < ApplicationController
   end
 
   private
-
-  # returns a string where each item is begun with a '*'
-  def markdown_listify(items)
-    return '* ' + items.join("\n* ")
-  end
-
-  # Takes Reservation object, reservation_hash (item from params[:reservations])
-  # and a symbol of either :checkin or :checkout as procedure_kind
-  def check_procedures(reservation, reservation_hash, procedure_kind)
-    r = reservation
-    procedure_kind = (procedure_kind.to_s + "_procedures").to_sym
-    incomplete_procedures = []
-    r.equipment_model.send(procedure_kind).each do |check|
-      if reservation_hash[procedure_kind].nil? \
-        || reservation_hash[procedure_kind].keys.exclude?(check.id.to_s)
-        incomplete_procedures << check.step
-      end
-    end
-
-    return incomplete_procedures
-  end
-
-  # Takes old_notes (presumably those already existing on the reservation)
-  # new_notes (from the form), procedure_kind (:checkin or :checkout) and array
-  # of string steps of procedures that were not followed for procedure_kind.
-  def make_notes(old_notes, new_notes, procedure_kind, procedures)
-    notes = old_notes ? old_notes + "\n\n" : ''
-    procedure_kind = procedure_kind.to_s
-
-    if new_notes || procedures.present?
-      notes += "== Notes from #{procedure_kind}\n"
-      notes += new_notes + "\n\n" if new_notes
-    end
-
-    if procedures.present?
-      notes += "The following #{procedure_kind} procedures were not " \
-      "performed:\n" + markdown_listify(procedures)
-    end
-
-    return notes.strip
-  end
 
   def reservation_params
     params.require(:reservation)
