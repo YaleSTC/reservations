@@ -1,0 +1,10 @@
+<p>A new reservation request has been filed by
+<%= link_to @reservation.reserver, @reservation.reserver.name %></p>
+<ul>
+<li>Equipment requested: <%= link_to @reservation.equipment_model, @reservation.equipment_model.name %> </li>
+<li>Requested start date: <%= @reservation.start_date.to_date.to_s(:long) %></li>
+<li>Requested end date: <%= @reservation.due_date.to_date.to_s(:long) %></li>
+<li>Notes: <%= @reservation.notes %></li>
+</ul>
+<p>Click <%= link_to review_reservation_path(@reservation), "here" %> to review this request</p>
+
