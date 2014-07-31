@@ -9,8 +9,8 @@ FactoryGirl.define do
   end
 
   factory :another_requirement, class: Requirement do
-  	contact_name "Austin Czarnecki"
-  	description "You must attend a training session with Austin before using this equipment."
-  	contact_info "austin.czarnecki@yale.edu"
+    contact_name "Austin Czarnecki"
+    description "You must attend a training session with Austin before using this equipment."
+    contact_info "austin.czarnecki@yale.edu"
   end
 end

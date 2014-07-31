@@ -19,7 +19,7 @@ class Ability
           unless AppConfig.first.checkout_persons_can_edit
             cannot :update, Reservation
           end
-          can [:read,:update,:create,:find], User
+          can [:read,:update,:create,:find,:autocomplete_user_last_name], User
           can :read, EquipmentObject
           can :read, EquipmentModel
           if AppConfig.first.override_on_create
@@ -29,7 +29,7 @@ class Ability
             can :override, :checkout_errors
           end
         when 'normal' || 'checkout'
-          can [:create,:update,:show], User, :id => user.id
+          can [:update,:show], User, :id => user.id
           can :read, EquipmentModel
           can [:read,:create], Reservation, :reserver_id => user.id
           can :destroy, Reservation, :reserver_id => user.id, :checked_out => nil
