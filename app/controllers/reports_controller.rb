@@ -151,7 +151,7 @@ class ReportsController < ApplicationController
     user_stats = collect_stat_set(user_info,res_rels)
 
     # collect data by equipment object
-    eq_objects = EquipmentObject.find(:all, conditions: {equipment_model_id: ids})
+    eq_objects = EquipmentObject.where(equipment_model_id: ids)
     obj_info = eq_objects.collect {|obj| ResSetInfo.new(obj.name,:equipment_object_id, [obj.id])}
     obj_stats = collect_stat_set(obj_info,res_rels)
 

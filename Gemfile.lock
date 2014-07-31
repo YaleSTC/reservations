@@ -28,7 +28,6 @@ GEM
       activemodel (= 4.1.4)
       activesupport (= 4.1.4)
       arel (~> 5.0.0)
-    activerecord-deprecated_finders (1.0.3)
     activerecord-session_store (0.1.0)
       actionpack (>= 4.0.0, < 5)
       activerecord (>= 4.0.0, < 5)
@@ -379,7 +378,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activerecord-deprecated_finders
   activerecord-session_store
   airbrake
   awesome_print
