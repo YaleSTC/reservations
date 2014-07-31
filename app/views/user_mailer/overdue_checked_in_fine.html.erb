@@ -1,4 +1,4 @@
-Hi <%= @overdue_checked_in.reserver.name.html_safe %>,
+Hi <%= @overdue_checked_in.reserver.name %>,
 <br />
 
 <p>This is a notification for your late equipment checkin. </p>
@@ -20,4 +20,3 @@ Hi <%= @overdue_checked_in.reserver.name.html_safe %>,
 Sincerely, <br />
 <%= @app_configs.department_name %>
 <br /><br />
-<%= link_to 'Terms of Service', '/terms_of_service' %>
