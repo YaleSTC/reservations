@@ -99,7 +99,7 @@ describe BlackoutsController do
           post :create_recurring, blackout: @attributes
         end
         it { should set_the_flash }
-        it { should redirect_to("where_i_came_from") }
+        it { should render_template("new_recurring") }
       end
     end
     context 'POST create' do
@@ -186,7 +186,7 @@ describe BlackoutsController do
     context 'GET index' do
       before do
         get :index
-      end 
+      end
       it_behaves_like 'access denied'
     end
     context 'GET show' do

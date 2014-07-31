@@ -6,9 +6,8 @@ class UsersController < ApplicationController
 
   skip_filter :cart, only: [:new, :create]
   skip_filter :first_time_user, only: [:new, :create]
-  before_filter :set_user, only: [:show, :edit, :update, :destroy, :ban, :unban]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :ban, :unban]
 
-  include ActivationHelper
   include Autocomplete
 
   # ------------ before filter methods ------------ #
@@ -31,12 +30,12 @@ class UsersController < ApplicationController
   def show
     @user_reservations = @user.reservations
     @all_equipment = Reservation.active.for_reserver(@user)
-    @show_equipment = { checked_out:  @user.reservations.checked_out,
-                        overdue:      @user.reservations.overdue,
-                        future:       @user.reservations.reserved,
-                        past:         @user.reservations.returned,
-                        missed:       @user.reservations.missed,
-                        past_overdue: @user.reservations.returned_overdue }
+    @show_equipment = { checked_out:  @user_reservations.checked_out,
+                        overdue:      @user_reservations.overdue,
+                        future:       @user_reservations.reserved,
+                        past:         @user_reservations.returned,
+                        missed:       @user_reservations.missed,
+                        past_overdue: @user_reservations.returned_overdue }
   end
 
   def new
@@ -51,14 +50,13 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = User.new(params[:user])
-    @user.view_mode = @user.role
-    # this line is what allows checkoutpeople to create users
+    @user = User.new(user_params)
     @user.login = session[:cas_user] unless current_user and can? :manage, Reservation
     if @user.save
       flash[:notice] = "Successfully created user."
       redirect_to user_path(@user)
     else
+      @can_edit_login = current_user.present? && (can? :create, User) # used in view
       render :new
     end
   end
@@ -84,7 +82,7 @@ class UsersController < ApplicationController
   end
 
   def quick_create
-    @user = User.new(params[:user])
+    @user = User.new(user_params)
     @user.view_mode = @user.role
     if @user.save
       render action: 'create_success'
@@ -99,9 +97,7 @@ class UsersController < ApplicationController
   end
 
   def update
-    params[:user].delete(:login) unless can? :change_login, User #no changing login unless you're an admin
-    params[:user][:view_mode] = params[:user][:role]
-    if @user.update_attributes(params[:user])
+    if @user.update_attributes(user_params)
       flash[:notice] = "Successfully updated user."
       redirect_to user_path(@user)
     else
@@ -145,6 +141,17 @@ class UsersController < ApplicationController
       @user = User.find(params[:searched_id])
       redirect_to manage_reservations_for_user_path(@user.id) and return
     end
+  end
+
+  private
+
+  def user_params
+    permitted_attributes = [:first_name, :last_name, :nickname, :phone, :email, :affiliation, :terms_of_service_accepted, :created_by_admin]
+    permitted_attributes << :login if (can? :manage, Reservation)
+    permitted_attributes += [:requirement_ids, :user_ids, :role] if can? :assign, :requirements
+    p = params.require(:user).permit(*permitted_attributes)
+    p[:view_mode] = p[:role] if p[:role]
+    p
   end
 
 end

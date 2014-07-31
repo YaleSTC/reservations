@@ -1,8 +1,8 @@
 class EquipmentModelsController < ApplicationController
   layout 'application_with_sidebar', only: :show
   load_and_authorize_resource
-  before_filter :set_equipment_model, only: [:show, :edit, :update, :destroy]
-  before_filter :set_category_if_possible, only: [:index, :new]
+  before_action :set_equipment_model, only: [:show, :edit, :update, :destroy]
+  before_action :set_category_if_possible, only: [:index, :new]
 
   include ActivationHelper
 
@@ -50,13 +50,12 @@ class EquipmentModelsController < ApplicationController
     @restricted = @equipment_model.model_restricted?(cart.reserver_id)
   end
 
-
   def new
     @equipment_model = EquipmentModel.new(category: @category)
   end
 
   def create
-    @equipment_model = EquipmentModel.new(params[:equipment_model])
+    @equipment_model = EquipmentModel.new(equipment_model_params)
     if @equipment_model.save
       flash[:notice] = "Successfully created equipment model."
       redirect_to @equipment_model
@@ -87,7 +86,7 @@ class EquipmentModelsController < ApplicationController
   def update
     delete_files
 
-    if @equipment_model.update_attributes(params[:equipment_model])
+    if @equipment_model.update_attributes(equipment_model_params)
       # hard-delete any deleted checkin/checkout procedures
       delete_procedures(params, "checkout")
       delete_procedures(params, "checkin")
@@ -111,5 +110,16 @@ class EquipmentModelsController < ApplicationController
           end
         end
       end
+    end
+
+    def equipment_model_params
+      params.require(:equipment_model).
+             permit(:name, :category_id, :category, :description, :late_fee,
+                    :replacement_fee, :max_per_user, :document_attributes,
+                    :deleted_at, :checkout_procedures_attributes,
+                    :checkin_procedures_attributes, :photo, :documentation,
+                    :max_renewal_times, :max_renewal_length,
+                    :renewal_dats_before_due, :associated_equipment_model_ids,
+                    :requirement_ids, :requirements, :max_checkout_length)
     end
 end

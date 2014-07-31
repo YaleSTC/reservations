@@ -18,6 +18,8 @@ module CartValidations
 
     user_reservations = Reservation.for_reserver(self.reserver_id).not_returned.all
     models = self.get_items
+
+    errors += check_requirements(models)
     source_res = Reservation.not_returned.where(equipment_model_id: self.items.keys).reserved_in_date_range(self.start_date,self.due_date).all
 
     models.each do |model, quantity|
@@ -142,7 +144,7 @@ module CartValidations
     #
     # 0 queries if categories have been eager loaded
     errors = []
-    max_length = model.category.max_checkout_length
+    max_length = model.maximum_checkout_length
     if self.duration > max_length
       errors << "#{model.name.titleize} can only be reserved for #{max_length} days"
     end
@@ -165,6 +167,25 @@ module CartValidations
       end
     end
     errors
+  end
+
+  def check_requirements(items = self.get_items)
+    # check that the reserver specified in the cart has all the necessary
+    # requirements for the equipment models in the cart
+
+    user = User.find(self.reserver_id)
+    user_reqs = user.requirements
+    item_reqs = []
+    items.each do |em, q|
+      item_reqs += em.requirements
+    end
+    unfulfilled_reqs = item_reqs.uniq - user_reqs
+    return [] if unfulfilled_reqs.blank?
+    unfulfilled_req_text = []
+    unfulfilled_reqs.each do |r|
+      unfulfilled_req_text << r.description
+    end
+    return ["#{user.name} is missing the following certifications: #{unfulfilled_req_text.to_sentence}"]
   end
 
 end

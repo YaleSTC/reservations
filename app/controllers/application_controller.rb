@@ -146,13 +146,14 @@ class ApplicationController < ActionController::Base
     notices = []
     notices << Blackout.get_notices_for_date(cart.start_date,:soft)
     notices << Blackout.get_notices_for_date(cart.due_date,:soft)
-    notices = notices.reject{ |a| a.blank? }
+    notices = notices.reject{ |a| a.blank? }.to_sentence
+    notices += "\n" unless notices.blank?
 
     # validate
     errors = cart.validate_all
     # don't over-write flash if invalid date was set above
-    flash[:error] ||= notices.to_sentence + "\n" + errors.to_sentence
-    flash[:notice] = "Cart updated"
+    flash[:error] ||= notices + errors.to_sentence
+    flash[:notice] = "Cart updated."
 
     # reload appropriate divs / exit
     if params[:controller] == 'catalog'

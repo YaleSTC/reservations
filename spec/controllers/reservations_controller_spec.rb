@@ -218,7 +218,7 @@ describe ReservationsController do
 
   describe '#create (POST /reservations/create)' do
     it_behaves_like 'inaccessible by banned user' do
-      before { post :create }
+      before { post :create, reservation: FactoryGirl.attributes_for(:valid_reservation) }
     end
 
     context 'when accessed by non-banned user' do
@@ -234,7 +234,7 @@ describe ReservationsController do
           end
           @req_no_notes = Proc.new do
             post :create,
-              { reservation: { } },
+              { reservation: {notes: "" } },
               { cart: @invalid_cart }
           end
         end
@@ -411,7 +411,7 @@ describe ReservationsController do
       before(:each) do
         @controller.stub(:current_user).and_return(@checkout_person)
         AppConfig.first.update_attributes(checkout_persons_can_edit: false)
-        put 'update', {id: @reservation.id, reservation: FactoryGirl.attributes_for(:reservation)}
+        put 'update', id: @reservation.id, reservation: FactoryGirl.attributes_for(:reservation)
       end
       include_examples 'cannot access page'
     end
