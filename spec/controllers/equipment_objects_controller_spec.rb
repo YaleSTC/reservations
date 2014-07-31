@@ -156,9 +156,6 @@ describe EquipmentObjectsController do
         end
         it { should set_the_flash }
         it { should redirect_to(EquipmentObject.last.equipment_model) }
-        it 'should change default serial to nil' do
-          EquipmentObject.last.serial.should == nil
-        end
       end
       context 'without valid attributes' do
         before { post :create, equipment_object: FactoryGirl.attributes_for(

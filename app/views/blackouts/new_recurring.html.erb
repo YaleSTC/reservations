@@ -1,7 +1,7 @@
 <% title "New Recurring Blackout" %>
 
 <div id="form_recurring">
-  <%= simple_form_for(@blackout, url: create_recurring_blackouts_path, method: 'post', remote: true ) do |f| %>
+  <%= simple_form_for(@blackout, url: {controller: 'blackouts', action: 'create_recurring' }) do |f| %>
     <%= f.error_notification %>
 
     <div class="form-inputs">
