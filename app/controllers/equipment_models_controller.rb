@@ -119,7 +119,7 @@ class EquipmentModelsController < ApplicationController
                     :deleted_at, :checkout_procedures_attributes,
                     :checkin_procedures_attributes, :photo, :documentation,
                     :max_renewal_times, :max_renewal_length,
-                    :renewal_dats_before_due, :associated_equipment_model_ids,
+                    :renewal_days_before_due, :associated_equipment_model_ids,
                     :requirement_ids, :requirements, :max_checkout_length)
     end
 end
