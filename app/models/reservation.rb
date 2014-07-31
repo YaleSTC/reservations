@@ -205,7 +205,6 @@ class Reservation < ActiveRecord::Base
       end
     end
     self.make_notes("checkout", new_notes, incomplete_procedures)
-    self.notes = self.notes.strip
     self
   end
 
@@ -214,13 +213,15 @@ class Reservation < ActiveRecord::Base
     #
     # takes the new notes and a string, checkin or checkout as the
     # procedure_kind
-    self.notes += "== Notes from #{procedure_kind}\n"
-    self.notes += new_notes + "\n\n" if new_notes
+    notes = self.notes.to_s
+    notes += "== Notes from #{procedure_kind}\n"
+    notes += new_notes + "\n\n" if new_notes
     unless incomplete_procedures.blank?
-      self.notes += "The following #{procedure_kind} were not performed:\n"
-      self.notes += markdown_listify(incomplete_procedures)
+      notes += "The following #{procedure_kind} were not performed:\n"
+      notes += markdown_listify(incomplete_procedures)
     end
-    self.notes = self.notes.strip
+    self.notes = notes.strip
+    self.notes_unsent = false
   end
 
   # returns a string where each item is begun with a '*'
