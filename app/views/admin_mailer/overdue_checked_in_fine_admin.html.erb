@@ -1,5 +1,5 @@
 
-<p>This is a notification for a late equipment checkin by user <%= link_to @overdue_checked_in.reserver.name.html_safe, user_path(@overdue_checked_in.reserver) %>. </p>
+<p>This is a notification for a late equipment checkin by user <%= link_to @overdue_checked_in.reserver.name.html_safe, user_url(@overdue_checked_in.reserver, only_path: false) %>. </p>
 
 <p>Equipment picked up: <%= @overdue_checked_in.equipment_model.name%> (<%= @overdue_checked_in.equipment_object.name %>)</p>
 <p>Reservation created at <%= @overdue_checked_in.created_at.strftime("%B %e, %Y") %> by </p>
