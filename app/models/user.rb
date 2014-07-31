@@ -7,10 +7,6 @@ class User < ActiveRecord::Base
                           association_foreign_key: "requirement_id",
                           join_table: "users_requirements"
 
-  attr_accessible :login, :first_name, :last_name, :nickname, :phone, :email,
-                  :affiliation, :role, :view_mode, :created_by_admin,
-                  :requirement_ids, :user_ids, :terms_of_service_accepted, :csv_import
-
   attr_accessor   :full_query, :created_by_admin, :user_type, :csv_import
 
   validates :login,       presence: true,

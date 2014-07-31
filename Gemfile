@@ -10,7 +10,6 @@ gem 'rdoc'
 
 # rails 4 transition gems
 gem 'activerecord-session_store'
-gem 'protected_attributes'
 gem 'activerecord-deprecated_finders'
 gem 'rspec-its'
 

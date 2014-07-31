@@ -18,12 +18,6 @@ class Category < ActiveRecord::Base
                                     integer_only: true,
                                     greater_than_or_equal_to: 0 }
 
-
-  attr_accessible :name, :max_per_user,
-                  :max_checkout_length, :deleted_at,
-                  :max_renewal_times, :max_renewal_length,
-                  :renewal_days_before_due, :sort_order
-
   nilify_blanks only: [:deleted_at]
 
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
