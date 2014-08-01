@@ -115,6 +115,7 @@ class ReservationsController < ApplicationController
   def update # for editing reservations; not for checkout or check-in
     message = "Successfully edited reservation."
     res = reservation_params
+
     # update attributes
     if params[:equipment_object] && params[:equipment_object] != ''
       object = EquipmentObject.find(params[:equipment_object])
@@ -130,7 +131,12 @@ class ReservationsController < ApplicationController
     end
 
     # save changes to database
-    Reservation.update(@reservation, res)
+    @reservation.update_attributes(res)
+    if params[:new_notes]
+      @reservation.notes = @reservation.notes.to_s + "\n#### New notes added at #{Time.current.to_s(:long)} by #{current_user.name}\n" + params[:new_notes]
+      @reservation.save
+    end
+
 
     # flash success and exit
     flash[:notice] = message
@@ -419,5 +425,6 @@ class ReservationsController < ApplicationController
                   :equipment_object_id, :notes, :notes_unsent, :times_renewed,
                   :reserver_id, :reserver, :start_date, :due_date,
                   :equipment_model_id)
+
   end
 end
