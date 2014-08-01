@@ -6,7 +6,7 @@ class ReservationsController < ApplicationController
 
   before_action :require_login, only: [:index, :show]
   before_action :set_reservation, only: [:show, :edit, :update, :destroy,
-     :checkout_email, :checkin_email, :renew]
+     :checkout_email, :checkin_email, :renew, :review, :approve_request, :deny_request]
   before_action :set_user, only: [:manage, :current, :checkout]
 
   private
@@ -83,23 +83,17 @@ class ReservationsController < ApplicationController
         start_date = cart.start_date
         reserver = cart.reserver_id
         unless requested
-          success_message = cart.reserve_all(params[:reservation][:notes])
+          flash[:notice] = cart.reserve_all(params[:reservation][:notes])
         else
-          success_message = cart.request_all(params[:reservation][:notes])
+          flash[:notice] = cart.request_all(params[:reservation][:notes])
         end
 
-        # emails are probably failing---this code was already commented out 2014.06.19, and we don't know why.
-        #if AppConfig.first.reservation_confirmation_email_active?
-        #  #UserMailer.reservation_confirmation(complete_reservation).deliver
-        #end
-
-        flash[:notice] = success_message
         redirect_to catalog_path and return if (cannot? :manage, Reservation) || (requested == true)
-          if start_date.to_date === Date::today.to_date
-            flash[:notice] += " Are you simultaneously checking out equipment for someone? Note that\
-                             only the reservation has been made. Don't forget to continue to checkout."
-          end
-          redirect_to manage_reservations_for_user_path(reserver) and return
+        if start_date.to_date == Date.current
+          flash[:notice] += " Are you simultaneously checking out equipment for someone? Note that "\
+                             "only the reservation has been made. Don't forget to continue to checkout."
+        end
+        redirect_to manage_reservations_for_user_path(reserver) and return
       rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid => e
         redirect_to catalog_path, flash: {error: "Oops, something went wrong with making your reservation.<br/> #{e.message}".html_safe}
         raise ActiveRecord::Rollback
@@ -116,7 +110,7 @@ class ReservationsController < ApplicationController
     message = "Successfully edited reservation."
     res = reservation_params
     # update attributes
-    if params[:equipment_object] && params[:equipment_object] != ''
+    unless params[:equipment_object].blank?
       object = EquipmentObject.find(params[:equipment_object])
       unless object.available?
         r = object.current_reservation
@@ -138,36 +132,36 @@ class ReservationsController < ApplicationController
   end
 
   def checkout
-    redirect_to :back and return unless check_tos(@user)
-
     # convert all the reservations that are being checked out into an array
-    # of Reservation objects
-    checked_out_reservations = []
-    params[:reservations].each do |reservation_id, reservation_hash|
-      next if reservation_hash[:equipment_object_id].blank?
-      # update attributes for all equipment that is checked off
-      r = Reservation.find(reservation_id)
+    # of Reservation objects. only select the ones who are selected, eg
+    # they have an equipment object id set.
 
-      checked_out_reservations << r.checkout(reservation_hash[:equipment_object_id], current_user, reservation_hash[:checkout_procedures], reservation_hash[:notes])
+    checked_out_reservations = []
+    params[:reservations].each do |r_id, r_attrs|
+      next if r_attrs[:equipment_object_id].blank?
+      r = Reservation.find(r_id)
+      checked_out_reservations << r.checkout(r_attrs[:equipment_object_id],
+                                             current_user,
+                                             r_attrs[:checkout_procedures],
+                                             r_attrs[:notes])
     end
 
     ## Basic-logic checks, only need to be done once
-    # Prevent the nil error from not selecting any reservations
+
+    redirect_to :back and return unless check_tos(@user)
+
     if checked_out_reservations.empty?
       flash[:error] = "No reservation selected."
       redirect_to :back and return
     end
-
-    # Prevent checking out the same object in more than one reservation
     unless Reservation.unique_equipment_objects?(checked_out_reservations)
       flash[:error] = "The same equipment item cannot be simultaneously checked
-      out in multiple reservations."
-      redirect_to :back and return
+        out in multiple reservations."
+      redirect_to :bacj and return
     end
 
     # Overdue validation
-    reserver = checked_out_reservations.first.reserver
-    if reserver.overdue_reservations?
+    if @user.overdue_reservations?
       if can? :override, :checkout_errors
         # Admins can ignore this
         flash[:notice] = 'Admin Override: Equipment has been checked out
@@ -183,12 +177,10 @@ class ReservationsController < ApplicationController
     ## Save reservations
     Reservation.transaction do
       begin
-        checked_out_reservations.each do |reservation|
-          reservation.save!
-        end
+        checked_out_reservations.each { |r| r.save! }
       rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid => e
         flash[:error] = "Checking out your reservation failed: #{e.message}"
-        redirect_to manage_reservations_for_user_path(reserver)
+        redirect_to manage_reservations_for_user_path(@user)
         raise ActiveRecord::Rollback
       end
     end
@@ -200,13 +192,12 @@ class ReservationsController < ApplicationController
   end
 
   def checkin
+    # see comments for checkout, this method proceeds in a similar way
+
     checked_in_reservations = []
-    params[:reservations].each do |reservation_id, reservation_hash|
-      # only update attributes for all equipment that is checked off
-      next if reservation_hash[:checkin?].blank?
-
-      r = Reservation.find(reservation_id)
-
+    params[:reservations].each do |r_id, r_attrs|
+      next if r_attrs[:checkin?].blank?
+      r = Reservation.find(r_id)
       if r.checked_in
         flash[:error] = 'One of the items you tried to check in has already been
         checked in.'
@@ -214,8 +205,8 @@ class ReservationsController < ApplicationController
       end
 
       checked_in_reservations << r.checkin(current_user,
-                                           reservation_hash[:checkin_procedures],
-                                           reservation_hash[:notes])
+                                           r_attrs[:checkin_procedures],
+                                           r_attrs[:notes])
     end
 
     if checked_in_reservations.empty?
@@ -226,9 +217,7 @@ class ReservationsController < ApplicationController
     ## Save reservations
     Reservation.transaction do
       begin
-        checked_in_reservations.each do |reservation|
-          reservation.save!
-        end
+        checked_in_reservations.each { |r| r.save! }
       rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid => e
         flash[:error] = "Checking in your reservation failed: #{e.message}"
         redirect_to :back
@@ -244,7 +233,6 @@ class ReservationsController < ApplicationController
   end
 
   def destroy
-    set_reservation
     @reservation.destroy
     flash[:notice] = "Successfully destroyed reservation."
     redirect_to reservations_url
@@ -310,12 +298,11 @@ class ReservationsController < ApplicationController
   end
 
   def approve_request
-    set_reservation
     @reservation.approval_status = "approved"
     if @reservation.save
       flash[:notice] = "Request successfully approved"
       UserMailer.request_approved_notification(@reservation).deliver
-      redirect_to reservations_path(:requested => true)
+      redirect_to reservations_path(requested: true)
     else
       flash[:error] = "Oops! Something went wrong. Unable to approve reservation."
       redirect_to @reservation
@@ -323,12 +310,11 @@ class ReservationsController < ApplicationController
   end
 
   def deny_request
-    set_reservation
     @reservation.approval_status = "denied"
     if @reservation.save
       flash[:notice] = "Request successfully denied"
       UserMailer.request_denied_notification(@reservation).deliver
-      redirect_to reservations_path(:requested => true)
+      redirect_to reservations_path(requested: true)
     else
       flash[:error] = "Oops! Something went wrong. Unable to deny reservation. We're not sure what that's all about."
       redirect_to @reservation
