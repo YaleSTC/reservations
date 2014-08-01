@@ -332,6 +332,10 @@ $(document).on('change', '.autosubmitme', function() {
 //  $.ajax("update_dates");
 //});
 
+$(document).on('click', '#empty_cart_btn', function () {
+  pause_cart();
+});
+
 // click add to cart button
 $(document).on('click', '.add_to_cart', function () {
   pause_cart();
