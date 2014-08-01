@@ -1,33 +1,33 @@
 require 'spec_helper'
 
 shared_examples_for 'page success' do
-  it { should respond_with(:success) }
-  it { should_not set_the_flash }
+  it { is_expected.to respond_with(:success) }
+  it { is_expected.not_to set_the_flash }
 end
 
 shared_examples_for 'access denied' do
-  it { should redirect_to(root_url) }
-  it { should set_the_flash }
+  it { is_expected.to redirect_to(root_url) }
+  it { is_expected.to set_the_flash }
 end
 
-describe BlackoutsController do
+describe BlackoutsController, :type => :controller do
   before(:all) {
     @app_config = FactoryGirl.create(:app_config)
   }
   before {
-    @controller.stub(:first_time_user).and_return(:nil)
+    allow(@controller).to receive(:first_time_user).and_return(:nil)
   }
 
   describe 'with admin' do
     before do
-      @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
+      allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
     end
     context 'GET index' do
       before do
         get:index
       end
       it_behaves_like 'page success'
-      it { should render_template(:index) }
+      it { is_expected.to render_template(:index) }
       it 'should assign @blackouts to all blackouts' do
         expect(assigns(:blackouts)).to eq(Blackout.all)
       end
@@ -37,7 +37,7 @@ describe BlackoutsController do
         get :show, id: FactoryGirl.create(:blackout)
       end
       it_behaves_like 'page success'
-      it { should render_template(:show) }
+      it { is_expected.to render_template(:show) }
       context 'single blackout' do
         it 'should not display a set' do
           expect(assigns(:blackout_set) == nil)
@@ -53,7 +53,7 @@ describe BlackoutsController do
       it_behaves_like 'page success'
       context 'recurring blackout' do
         it 'should display the correct set' do
-          assigns(:blackout_set).uniq.sort.should eq(@blackout_set.uniq.sort)
+          expect(assigns(:blackout_set).uniq.sort).to eq(@blackout_set.uniq.sort)
         end
         # the above code doesn't work; i'm too much of an rspec newbie
       end
@@ -63,21 +63,21 @@ describe BlackoutsController do
         get :new
       end
       it_behaves_like 'page success'
-      it { should render_template(:new) }
+      it { is_expected.to render_template(:new) }
     end
     context 'GET new_recurring' do
       before do
         get :new_recurring
       end
       it_behaves_like 'page success'
-      it { should render_template(:new_recurring) }
+      it { is_expected.to render_template(:new_recurring) }
     end
     context 'GET edit' do
       before do
         get :edit, id: FactoryGirl.create(:blackout)
       end
       it_behaves_like 'page success'
-      it { should render_template(:edit) }
+      it { is_expected.to render_template(:edit) }
     end
     context 'POST create_recurring' do
       context 'with correct params' do
@@ -87,10 +87,10 @@ describe BlackoutsController do
           post :create_recurring, blackout: @attributes
         end
         it 'should create a set' do
-          Blackout.where(set_id: @new_set_id).should_not be_empty
+          expect(Blackout.where(set_id: @new_set_id)).not_to be_empty
         end
-        it { should redirect_to(blackouts_path) }
-        it { should set_the_flash }
+        it { is_expected.to redirect_to(blackouts_path) }
+        it { is_expected.to set_the_flash }
       end
       context 'with incorrect params' do
         before do
@@ -98,8 +98,8 @@ describe BlackoutsController do
           @attributes = FactoryGirl.attributes_for(:blackout, days: [""])
           post :create_recurring, blackout: @attributes
         end
-        it { should set_the_flash }
-        it { should render_template("new_recurring") }
+        it { is_expected.to set_the_flash }
+        it { is_expected.to render_template("new_recurring") }
       end
     end
     context 'POST create' do
@@ -109,16 +109,16 @@ describe BlackoutsController do
           post :create, blackout: @attributes
         end
         it 'should create the new blackout' do
-          Blackout.find(assigns(:blackout)).should_not be_nil
+          expect(Blackout.find(assigns(:blackout))).not_to be_nil
         end
         it 'should pass the correct params' do
-          assigns(:blackout)[:notice].should eq(@attributes[:notice])
-          assigns(:blackout)[:start_date].should eq(@attributes[:start_date])
-          assigns(:blackout)[:end_date].should eq(@attributes[:end_date])
-          assigns(:blackout)[:blackout_type].should eq(@attributes[:blackout_type])
+          expect(assigns(:blackout)[:notice]).to eq(@attributes[:notice])
+          expect(assigns(:blackout)[:start_date]).to eq(@attributes[:start_date])
+          expect(assigns(:blackout)[:end_date]).to eq(@attributes[:end_date])
+          expect(assigns(:blackout)[:blackout_type]).to eq(@attributes[:blackout_type])
         end
-        it { should redirect_to(blackout_path(assigns(:blackout))) }
-        it { should set_the_flash }
+        it { is_expected.to redirect_to(blackout_path(assigns(:blackout))) }
+        it { is_expected.to set_the_flash }
       end
       context 'with incorrect params' do
         before do
@@ -126,7 +126,7 @@ describe BlackoutsController do
           @attributes[:end_date] = Date.yesterday
           post :create, blackout: @attributes
         end
-        it { should render_template(:new) }
+        it { is_expected.to render_template(:new) }
       end
     end
     context 'PUT update' do
@@ -137,7 +137,7 @@ describe BlackoutsController do
           put :update, id: FactoryGirl.create(:blackout), blackout: @new_attributes
         end
         it 'updates the blackout' do
-          assigns(:blackout)[:notice].should eq(@new_attributes[:notice])
+          expect(assigns(:blackout)[:notice]).to eq(@new_attributes[:notice])
         end
       end
       context 'recurring blackout' do
@@ -147,10 +147,10 @@ describe BlackoutsController do
           put :update, id: FactoryGirl.create(:blackout, set_id: 1), blackout: @new_attributes
         end
         it 'updates the blackout' do
-          assigns(:blackout)[:notice].should eq(@new_attributes[:notice])
+          expect(assigns(:blackout)[:notice]).to eq(@new_attributes[:notice])
         end
         it 'sets the set_id to nil' do
-          assigns(:blackout)[:set_id].should be_nil
+          expect(assigns(:blackout)[:set_id]).to be_nil
         end
       end
     end
@@ -159,9 +159,9 @@ describe BlackoutsController do
         delete :destroy, id: FactoryGirl.create(:blackout)
       end
       it 'should delete the blackout' do
-        Blackout.where(id:  assigns(:blackout)[:id]).should be_empty
+        expect(Blackout.where(id:  assigns(:blackout)[:id])).to be_empty
       end
-      it { should redirect_to(blackouts_path) }
+      it { is_expected.to redirect_to(blackouts_path) }
     end
     context 'DELETE destroy recurring' do
       before do
@@ -170,15 +170,15 @@ describe BlackoutsController do
         delete :destroy_recurring, id: FactoryGirl.create(:blackout, set_id: 1)
       end
       it 'should delete the whole set' do
-        Blackout.where(set_id: @extra[:set_id]).should be_empty
+        expect(Blackout.where(set_id: @extra[:set_id])).to be_empty
       end
-      it { should set_the_flash }
-      it { should redirect_to(blackouts_path) }
+      it { is_expected.to set_the_flash }
+      it { is_expected.to redirect_to(blackouts_path) }
     end
   end
   context 'is not admin' do
     before do
-      @controller.stub(:current_user).and_return(FactoryGirl.create(:user))
+      allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:user))
       @blackout = FactoryGirl.create(:blackout)
       @attributes = FactoryGirl.attributes_for(:blackout)
     end
