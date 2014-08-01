@@ -35,6 +35,9 @@
     </div>
   <% end %>
 
-  <%= f.input :notes, :as => :text, :hint => "#{render :partial => 'shared/markdown_button'}".html_safe %>
+  <%= label_tag "Add new notes" %>
+  <%= text_area_tag :new_notes, "", rows: 5 %>
+  <br />
+  <%= render :partial => 'shared/markdown_button' %>
   <%= f.button :wrapped, :cancel => reservations_path, :confirm => message %>
 <% end %>
