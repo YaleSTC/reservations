@@ -292,7 +292,6 @@ class ReservationsController < ApplicationController
   end
 
   def review
-    set_reservation
     @all_current_requests_by_user = @reservation.reserver.reservations.requested.reject{|res| res.id == @reservation.id}
     @errors = @reservation.validate
   end
