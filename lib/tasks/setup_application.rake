@@ -96,10 +96,10 @@ namespace :app do
       "@department_name@"
 
     request_text =
-      "The following equipment cannot be reserved because of admin restrictions. "\
-      "However, you can file a request for this reservation; please fill out the "\
-      "short form and an admin will be able to approve or deny your request. "\
-      "You will be notified by email when your request has been reviewed."
+      "The following equipment cannot be reserved because of admin restrictions; "\
+      "however, you can file a request for this reservation. Please fill out the "\
+      "form below and an admin will be able to approve or deny your request. You "\
+      "will be notified by email when your request has been reviewed."
 
     # Create initial application configs.
 
