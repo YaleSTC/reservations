@@ -26,6 +26,10 @@ $(document).on('click', '.add_to_cart', function () {
   pause_cart();
 });
 
+$(document).on('click', '#empty_cart_btn', function () {
+  pause_cart();
+});
+
 // click remove from cart button
 $(document).on('click', '#remove_button > a', function () {
   pause_cart();
