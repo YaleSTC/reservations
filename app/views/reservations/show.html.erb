@@ -202,5 +202,9 @@
     'This will permanently delete the reservation. Are you sure?', method: :delete,
     class: 'btn btn-danger' %>
   <% end %>
+  <% if can? :archive, @reservation %>
+    <%= link_to "Archive Reservation", @reservation, confirm:
+    'This will archive the reservation so it does not affect the rest of the
+    system. Are you sure?', method: :put, clas: 'btn btn-danger' %>
+<% end %>
 </div>
-

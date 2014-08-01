@@ -369,6 +369,13 @@ class ReservationsController < ApplicationController
     end
   end
 
+  def archive
+    set_reservation
+    @reservation.archive(current_user).save(validate: false)
+    flash[:notice] = "Reservation successfully archived."
+    redirect_to :back
+  end
+
   private
 
   # returns a string where each item is begun with a '*'

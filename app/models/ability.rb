@@ -13,6 +13,7 @@ class Ability
           cannot [:destroy,:update], User, :role => 'superuser'
         when 'checkout'
           can :manage, Reservation
+          cannot :archive, Reservation
           cannot :destroy, Reservation do |r|
              r.checked_out != nil
           end

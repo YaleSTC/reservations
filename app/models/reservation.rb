@@ -157,4 +157,17 @@ class Reservation < ActiveRecord::Base
     temp_cart.items = { self.equipment_model_id => 1 }
     temp_cart
   end
+
+  def archive(archiver)
+    # set the reservation as checked in if it has been checked out
+    # used for emergency situations or when equipment is deactivated
+    # to preserve database sanity (eg, equipment object is deactivated while
+    # that reseration is checked out)
+    # returns self
+
+    self.checked_in = Time.current
+    self.checked_out = Time.current if self.checked_out.nil?
+    self.notes = self.notes.to_s + "\nThis reservation was archived on #{Time.current.to_s(:long)} by #{archiver.name}. The checkin and checkout dates may reflect the archive date because the reservation was for a nonexistent piece of equipment or otherwise problematic."
+    self
+  end
 end
