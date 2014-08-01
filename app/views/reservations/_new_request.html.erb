@@ -3,7 +3,6 @@
 <% unless @errors.empty? %>
   <p>
     <h3><i class="fa fa-exclamation-triangle warning-icon"></i> Would you like to <%= link_to "return to the Catalog", catalog_path %> to resolve the following error(s)?</h3>
-    <%= markdown(@app_configs.request_text) %>
   </p>
   <% @errors.each do |msg| %>
     <ul>
@@ -32,6 +31,7 @@
     </ul>
   </p>
 
+  <%= markdown(@app_configs.request_text) %>
   <div class = "control-group text <%= 'error' if @notes_required %>">
     <%= f.label "Please give a short justification for this equipment request:" %>
     <%= f.input_field :notes, class: 'span6', rows: 5 %>
