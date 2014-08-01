@@ -22,7 +22,6 @@
     from
     <%= cart.start_date.to_date.to_s(:long) %> to
     <%= cart.due_date.to_date.to_s(:long) %>:
-
   </p>
   <p>
     <ul class="rounded-list">
@@ -32,6 +31,7 @@
     </ul>
   </p>
 
+  <%= markdown(@app_configs.request_text) %>
   <div class = "control-group text <%= 'error' if @notes_required %>">
     <%= f.label "Please give a short justification for this equipment request:" %>
     <%= f.input_field :notes, class: 'span6', rows: 5 %>

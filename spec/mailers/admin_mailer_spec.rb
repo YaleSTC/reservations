@@ -10,11 +10,11 @@ shared_examples_for "a valid admin email" do
     expect(@mail.from.first).to eq("no-reply@reservations.app")
   end
   it "should actually send the email" do
-    ActionMailer::Base.deliveries.count.should eq(1)
+    expect(ActionMailer::Base.deliveries.count).to eq(1)
   end
 end
 
-describe AdminMailer do
+describe AdminMailer, :type => :mailer do
   before(:all) {
     @app_config = FactoryGirl.create(:app_config)
   }
