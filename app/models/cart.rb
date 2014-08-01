@@ -50,7 +50,7 @@ class Cart
 
   # remove all items from cart
   def purge_all
-    @items = Hash.new()
+    initialize
   end
 
   # return array of reservations crafted from the cart contents
