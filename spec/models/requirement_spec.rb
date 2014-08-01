@@ -1,19 +1,19 @@
 require 'spec_helper'
 
-describe Requirement do
+describe Requirement, :type => :model do
   context "Validations" do
     before(:each) do
       @requirement = FactoryGirl.build(:requirement)
     end
     it "has a working factory" do
-      @requirement.save.should be_truthy
+      expect(@requirement.save).to be_truthy
     end
 
-    it { should validate_presence_of(:contact_name) }
-    it { should validate_presence_of(:description) }
-    it { should validate_presence_of(:contact_info) }
-    it { should have_and_belong_to_many(:equipment_models) }
-    it { should have_and_belong_to_many(:users) }
+    it { is_expected.to validate_presence_of(:contact_name) }
+    it { is_expected.to validate_presence_of(:description) }
+    it { is_expected.to validate_presence_of(:contact_info) }
+    it { is_expected.to have_and_belong_to_many(:equipment_models) }
+    it { is_expected.to have_and_belong_to_many(:users) }
   end
 
   describe "#list_requirement_admins" do
@@ -29,14 +29,14 @@ describe Requirement do
       req_message = "This model requires proper training before it can be reserved. "\
             "Please contact #{@requirement.contact_name} and #{@another_requirement.contact_name} at "\
             "#{@requirement.contact_info} and #{@another_requirement.contact_info} about becoming certified."
-      Requirement.list_requirement_admins(@user_with_unmet_requirement, @equipment_model).should == req_message
+      expect(Requirement.list_requirement_admins(@user_with_unmet_requirement, @equipment_model)).to eq(req_message)
     end
 
     it "should return a list of met requirements, followed by unmet requirements if they exists" do
       req_message = "You have already met the requirements to check out this model set by #{@requirement.contact_name}. "\
             "However, this model requires additional training before it can be reserved. "\
             "Please contact #{@another_requirement.contact_name} at #{@another_requirement.contact_info} about becoming certified."
-      Requirement.list_requirement_admins(@user_that_meets_some_requirements, @equipment_model).should == req_message
+      expect(Requirement.list_requirement_admins(@user_that_meets_some_requirements, @equipment_model)).to eq(req_message)
     end
   end
 end

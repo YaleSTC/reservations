@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe Blackout do
+describe Blackout, :type => :model do
   context "validations and associations" do
-    it { should validate_presence_of(:notice) }
-    it { should validate_presence_of(:start_date) }
-    it { should validate_presence_of(:end_date) }
-    it { should validate_presence_of(:blackout_type) }
+    it { is_expected.to validate_presence_of(:notice) }
+    it { is_expected.to validate_presence_of(:start_date) }
+    it { is_expected.to validate_presence_of(:end_date) }
+    it { is_expected.to validate_presence_of(:blackout_type) }
 
     it "validates a set_id if it is a recurring blackout"
       # new feature that should exist already

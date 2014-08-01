@@ -9,13 +9,13 @@ require 'spec_helper'
 # match '/create_app_configs' => 'application_setup#create_app_configs', :as => :create_app_configs
 
 
-describe AppConfigsController do
+describe AppConfigsController, :type => :controller do
   before(:each) do
     @app_config = FactoryGirl.create(:app_config)
   end
   context 'User is not admin' do
     before (:each) do
-      @controller.stub(:current_user).and_return(FactoryGirl.create(:user))
+      allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:user))
     end
 
     describe 'GET edit' do
@@ -31,13 +31,13 @@ describe AppConfigsController do
     end
 
     after(:each) do
-      response.should redirect_to(root_path)
+      expect(response).to redirect_to(root_path)
     end
   end
 
   context 'User is admin' do
     before (:each) do
-      @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
+      allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
     end
 
     describe 'GET edit' do
@@ -51,9 +51,9 @@ describe AppConfigsController do
           get :edit
           expect(assigns(:app_config)).to eq(AppConfig.first)
         end
-        it { should respond_with(:success) }
-        it { should render_template(:edit) }
-        it { should_not set_the_flash }
+        it { is_expected.to respond_with(:success) }
+        it { is_expected.to render_template(:edit) }
+        it { is_expected.not_to set_the_flash }
       end
     end
 
