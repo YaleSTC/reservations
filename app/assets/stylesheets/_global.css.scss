@@ -213,3 +213,11 @@ td > a, td > div.dropdown {
     }
   }
 }
+
+.notes-container {
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  background-color: darken($bodyBackground, 5%);
+  border-radius: 5px;
+}
