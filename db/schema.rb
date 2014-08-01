@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140724194636) do
+ActiveRecord::Schema.define(version: 20140727232238) do
 
   create_table "announcements", force: true do |t|
     t.text     "message"
@@ -48,6 +48,7 @@ ActiveRecord::Schema.define(version: 20140724194636) do
     t.boolean  "override_on_create",                                 default: false
     t.boolean  "override_at_checkout",                               default: false
     t.integer  "blackout_exp_time"
+    t.text     "request_text"
   end
 
   create_table "blackouts", force: true do |t|
