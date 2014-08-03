@@ -5,6 +5,19 @@ Changelog
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+### v3.4.3
+*Released on [INSERT DATE]
+#### Bug Fixes
+* Fixed typo on the application settings form ([#850](https://github.com/YaleSTC/reservations/issues/850)).
+* Fixed an issue where checkout persons could not use autocomplete ([#857](https://github.com/YaleSTC/reservations/issues/857)).
+* Fixed an issue where items with unrestricted checkout lengths could not be added to the cart ([#848](https://github.com/YaleSTC/reservations/issues/848)).
+* Fixed an issue where the overdue fines sent via e-mail were incorrect ([#876](https://github.com/YaleSTC/reservations/issues/876)).
+* Fixed an issue where the calendar availability was incorrect ([#883](https://github.com/YaleSTC/reservations/issues/883)).
+* Ensured that the empty cart button completely resets the cart([#845](https://github.com/YaleSTC/reservations/issues/845)).
+
+#### Enhancements
+* Made version number visible to all users ([#856](https://github.com/YaleSTC/reservations/issues/856)).
+
 ### v3.4.2
 *Released on 28 July 2014*
 #### Bug Fixes
