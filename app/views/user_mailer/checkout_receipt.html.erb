@@ -1,4 +1,4 @@
-Hi <%= @reservation.reserver.name.html_safe %>,
+Hi <%= @reservation.reserver.name %>,
 <br />
 
 <p>This is a receipt for your equipment checkout. </p>
@@ -6,7 +6,7 @@ Hi <%= @reservation.reserver.name.html_safe %>,
 <p>Equipment picked up: <%= @reservation.equipment_model.name%> (<%= @reservation.equipment_object.name %>)</p>
 <p>Checkout date: <%= @reservation.checked_out.strftime(" %B %e, %Y at %l:%M%P") %></p>
 <p>Due date: <%= @reservation.due_date.strftime("%B %e, %Y") %></p>
-<% unless @reservation.notes.nil? %> 
+<% unless @reservation.notes.nil? %>
   Notes: <%= markdown(@reservation.notes) %>
 <% end %>
 
@@ -15,4 +15,4 @@ Hi <%= @reservation.reserver.name.html_safe %>,
 <br />
 
 Sincerely, <br />
-<%= @app_configs.department_name %> 
+<%= @app_configs.department_name %>
