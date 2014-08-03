@@ -205,7 +205,10 @@ class ApplicationController < ActionController::Base
   def empty_cart
     session[:cart].purge_all if session[:cart]
     flash[:notice] = "Cart emptied."
-    redirect_to root_path
+    respond_to do |format|
+      format.js{render template: "cart_js/reload_all"}
+      format.html{redirect_to root_path}
+    end
   end
 
   def logout
