@@ -13,7 +13,8 @@ Changelog
 * Fixed an issue where items with unrestricted checkout lengths could not be added to the cart ([#848](https://github.com/YaleSTC/reservations/issues/848)).
 * Fixed an issue where the overdue fines sent via e-mail were incorrect ([#876](https://github.com/YaleSTC/reservations/issues/876)).
 * Fixed an issue where the calendar availability was incorrect ([#883](https://github.com/YaleSTC/reservations/issues/883)).
-* Ensured that the empty cart button completely resets the cart([#845](https://github.com/YaleSTC/reservations/issues/845)).
+* Ensured that the empty cart button completely resets the cart ([#845](https://github.com/YaleSTC/reservations/issues/845)).
+* Fixed an issue where all links in e-mails were broken ([#868](https://github.com/YaleSTC/reservations/issues/868)).
 
 #### Enhancements
 * Made version number visible to all users ([#856](https://github.com/YaleSTC/reservations/issues/856)).
