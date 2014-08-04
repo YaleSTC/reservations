@@ -2,7 +2,7 @@ class ImportEquipmentController < ApplicationController
   include CsvImport
   include EquipmentImport
 
-  before_filter :require_admin
+  authorize_resource :class => false
 
   # modeled after the ImportUsersController
   def import
