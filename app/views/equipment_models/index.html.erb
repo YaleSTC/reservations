@@ -36,6 +36,7 @@
       <%= link_to "View All Equipment Models", equipment_models_path, :class => 'btn' %>
     <% else %>
       <%= link_to "New Equipment Model", new_equipment_model_path, :class => "btn btn-primary" %>
+    <%= link_to "Import Equipment Models", equip_import_page_path, :class => "btn" %>
     <% end %>
     <% if params[:show_deleted] %>
       <% if (@category.nil?) %>
