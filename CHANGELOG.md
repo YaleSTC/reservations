@@ -17,6 +17,9 @@ Changelog
 * Fixed an issue where all links in e-mails were broken ([#868](https://github.com/YaleSTC/reservations/issues/868)).
 * Fixed an issue where the overdue scope was including missed reservations ([#893](https://github.com/YaleSTC/reservations/issues/893)).
 
+#### New Features
+* Added equipment import functionality ([#494](https://github.com/YaleSTC/reservations/issues/494)).
+
 #### Enhancements
 * Made version number visible to all users ([#856](https://github.com/YaleSTC/reservations/issues/856)).
 
