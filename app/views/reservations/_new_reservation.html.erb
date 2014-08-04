@@ -1,0 +1,45 @@
+<% title "Create Reservation" %>
+<% unless @errors.empty? %>
+  <p>
+    <h3><i class="fa fa-exclamation-triangle warning-icon"></i> Please be aware of the following errors:</h3>
+  </p>
+  <% @errors.each do |msg| %>
+    <ul>
+      <li><%= msg %></li>
+    </ul>
+  <% end %>
+<% end %>
+
+<p>
+  <h3>Equipment being reserved:</h3>
+</p>
+
+<%= simple_form_for @reservation do |f| %>
+  <%= f.error_messages %>
+  <p>
+    The following equipment will be reserved by
+    <%= User.find(cart.reserver_id).name %>
+    from
+    <%= cart.start_date.to_date.to_s(:long) %> to
+    <%= cart.due_date.to_date.to_s(:long) %>:
+
+  </p>
+
+  <p>
+    <ul class="rounded-list">
+      <% cart.items.each do |model_id, quantity| %>
+        <li data-value="<%= quantity %>"><%= link_to EquipmentModel.find(model_id).name, EquipmentModel.find(model_id) %></li>
+      <% end %>
+    </ul>
+  </p>
+
+  <div class = "control-group text <%= 'error' if @notes_required %>">
+    <%= f.label "#{@errors.blank? ? 'Optional notes' : 'Justification for error override'} for this reservation:" %>
+    <%= f.input_field :notes, class: 'span6', rows: 5 %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit, "Finalize Reservation" %>
+    <%= link_to "Return to Catalog", catalog_path, class: 'btn' %>
+  </div>
+<% end %>

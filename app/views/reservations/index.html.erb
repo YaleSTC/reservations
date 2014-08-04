@@ -1,5 +1,5 @@
-<% title (current_user.can_checkout? ? "" : "My ")+"Reservations" %>
+<% title ((can? :manage, Reservation) ? "" : "My ")+"Reservations" %>
 
 <%= render :partial => "main_page_nav_buttons" %>
 
-<%= render :partial => "reservations_list", :collection => @reservations_set %>
+<%= render :partial => "reservations_list", locals: {reservations_set: @reservations_set} %>

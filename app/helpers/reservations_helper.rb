@@ -12,7 +12,7 @@ module ReservationsHelper
     if @reservation_length == 0
       'same day'
     else
-      distance_of_time_in_words(@reservation.start_date, @reservation.due_date)
+      distance_of_time_in_words(@reservation.start_date, @reservation.due_date + 1.days)
     end
   end
 
@@ -29,23 +29,24 @@ module ReservationsHelper
   end
 
   def manage_reservations_btn
-    if current_user.can_checkout?
-      if @reservation.status == 'reserved'
-        link_to 'Check-Out', manage_reservations_for_user_path(@reservation.reserver.id,
-          anchor: 'check_out_row'), class: 'btn btn-inverse'
-      elsif @reservation.status == 'checked out' || @reservation.status == 'overdue'
-        link_to 'Check-In', manage_reservations_for_user_path(@reservation.reserver.id,
-          anchor: 'check_in_row'), class: 'btn btn-inverse'
-      end
+    return if (cannot? :manage, Reservation) || @reservation.reserver.id.nil?
+    if (can? :override, :reservation_errors) && @reservation.approval_status == 'requested'
+      link_to 'Review Request', review_request_path, class: 'btn btn-inverse'
+    elsif @reservation.status == 'reserved'
+      link_to 'Check-Out', manage_reservations_for_user_path(@reservation.reserver.id,
+        anchor: 'check_out_row'), class: 'btn btn-inverse'
+    elsif @reservation.status == 'checked out' || @reservation.status == 'overdue'
+      link_to 'Check-In', manage_reservations_for_user_path(@reservation.reserver.id,
+        anchor: 'check_in_row'), class: 'btn btn-inverse'
     end
-
   end
 
   private
-
+    # the "+ 1" terms are to account for the fact that the first
+    # day is counted as part of the length of the reservation.
     def define_width_res
-      passed_length = Time.now.to_date - @reservation.start_date.to_date
-      total_length = @reservation.due_date.to_date - @reservation.start_date.to_date
+      passed_length = Time.now.to_date - @reservation.start_date.to_date + 1
+      total_length = @reservation.due_date.to_date - @reservation.start_date.to_date + 1
       total_length = total_length == 0 ? 1 : total_length # necessary to prevent division by 0
       @width = passed_length / total_length
 

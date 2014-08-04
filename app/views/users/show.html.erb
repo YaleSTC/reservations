@@ -1,7 +1,7 @@
 <% title @user.first_name + " " + (!@user.nickname.blank? ? "(#{@user.nickname}) " : "") + @user.last_name %>
 <% subtitle @user.login %>
 
-<% if current_user.can_checkout? %>
+<% if can? :read, User %>
   <div class="row">
     <div class="span9">
       <%= render :partial => 'reservations/top_buttons', :locals => {:reserver => @user} %>
@@ -12,10 +12,10 @@
 
 <div class="row">
   <div id="bool_labels" class="span9">
-    <% if current_user.is_admin?(:as => 'admin') %>
+    <% if can? :manage, User %>
       <%= "<span class=\"user_label label-important\">Banned</span>".html_safe if @user.role == 'banned' %>
-      <%= "<span class=\"user_label label-warning\">Deactivated</span>".html_safe if @user.deleted_at %>
       <%= "<span class=\"user_label label-success\">Admin</span>".html_safe if @user.role == 'admin' %>
+      <%= "<span class=\"user_label label-success\">Super User</span>".html_safe if @user.role == 'superuser' %>
       <%= "<span class=\"user_label\">Checkout Person</span>".html_safe if @user.role == 'checkout' %>
     <% end %>
   </div>
@@ -52,12 +52,14 @@
 
   <div id="user_stats" class="span5">
 
-  <% @show_equipment.each do |key, value| %>
-    <%= content_tag :div, :id => "#{key}_count", :class => 'span2' do %>
-      <%= content_tag :h4, key.to_s.titleize %>
-      <%= content_tag :div, :class => "#{key}_num" do %>
-        <%= content_tag :i, nil, :class => stats_icons(key) %>
-        <%= value.size %>
+  <%# @show_equipment has reservation status (:overdue, ...) as key, full
+  reservations in question as value %>
+  <% @show_equipment.each do |status, reservations| %>
+    <%= content_tag :div, :id => "#{status}_count", :class => 'span2' do %>
+      <%= content_tag :h4, status.to_s.titleize %>
+      <%= content_tag :div, :class => "#{status}_num" do %>
+        <%= content_tag :i, nil, :class => stats_icons(status) %>
+        <%= reservations.size %>
       <% end %>
     <% end %>
   <% end %>
@@ -77,7 +79,7 @@
     <div id="qualif_box" class="span9">
       <ul id="qualifications">
         <% @user.requirements.each do |req| %>
-          <li><i class="icon-ok"></i><%= link_to req.description, req %></li>
+          <li><i class="fa fa-check"></i><%= link_to req.description, req %></li>
         <% end %>
       </ul>
     </div>
@@ -87,12 +89,7 @@
 
 <div class="row">
   <div class="span9">
-    <h2>
-      History
-      <% if !current_user.can_checkout? %>
-        <%= link_to 'Current Reservations', current_reservations_for_user_path(@user.id), :id => 'current_activity', :class => 'btn btn-inverse' %>
-      <% end %>
-    </h2>
+    <h2>History</h2>
   </div>
 </div>
 <hr />
@@ -102,22 +99,22 @@
   <div class="tabbable tabs-left span9">
 
     <ul class="nav nav-tabs">
-      <% @show_equipment.each do |key, value| %>
-        <%= content_tag :li, :class => active_tab(key) do %>
-          <%= link_to "##{key.to_s}", :class => 'tab-text', :"data-toggle" => 'tab' do %>
-            <%= key.to_s.titleize %>
-            <%= content_tag :span, value.size, :class => 'badge tab-badge' %>
+      <% @show_equipment.each do |status, reservations| %>
+        <%= content_tag :li, :class => active_tab(status) do %>
+          <%= link_to "##{status.to_s}", :class => 'tab-text', :"data-toggle" => 'tab' do %>
+            <%= status.to_s.titleize %>
+            <%= content_tag :span, reservations.size, :class => 'badge tab-badge' %>
           <% end %>
         <% end %>
       <% end %>
     </ul>
 
     <div class="tab-content">
-      <% @show_equipment.each do |key, value| %>
+      <% @show_equipment.each do |status, reservations| %>
         <p>
-          <%= content_tag :div, {:class => "tab-pane #{active_tab(key)}", :id => key}, false do %>
-            <% unless value.empty? %>
-              <%= render partial: 'history_table', locals: { :key => key, :value => value } %>
+          <%= content_tag :div, {:class => "tab-pane #{active_tab(status)}", :id => status}, false do %>
+            <% unless reservations.empty? %>
+              <%= render partial: 'history_table', locals: { :key => status, :value => reservations } %>
             <% end %>
           <% end %>
         </p>
@@ -131,12 +128,8 @@
 
 <div class="form-actions">
   <%= link_to "Edit Information", edit_user_path(@user), :class => 'btn' %>
-  <% if current_user.is_admin?(:as => 'admin') %>
-    <% if @user.deleted_at %>
-      <%= link_to "Activate User", activate_path(:users,@user.id), :class => "btn btn-success", :method => :put %>
-    <% else %>
-      <%= link_to "Deactivate User", deactivate_path(:users, @user), :class => "btn btn-danger", :method => :put, :confirm => "Deactivating this user will permanently destroy all of their reservations, are you sure you want to do this?" %>
-    <% end %>
+  <% if can? :manage, User %>
+    <%= make_ban_btn @user %>
     <%= link_to "View All Users", users_path, :class => 'btn', :id => 'view_all_users' %>
   <% end %>
 </div>

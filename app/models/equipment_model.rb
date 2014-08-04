@@ -6,6 +6,8 @@ class EquipmentModel < ActiveRecord::Base
 
   nilify_blanks only: [:deleted_at]
 
+  has_paper_trail
+
   attr_accessible :name, :category, :category_id, :description, :late_fee, :replacement_fee,
       :max_per_user, :document_attributes, :deleted_at,
       :checkout_procedures_attributes, :checkin_procedures_attributes, :photo,
@@ -23,7 +25,7 @@ class EquipmentModel < ActiveRecord::Base
   has_and_belongs_to_many :requirements
   has_many :equipment_objects, dependent: :destroy
   has_many :documents
-  has_many :reservations, dependent: :destroy
+  has_many :reservations
   has_many :checkin_procedures, dependent: :destroy
   accepts_nested_attributes_for :checkin_procedures, \
                                 reject_if: :all_blank, allow_destroy: true
@@ -143,30 +145,43 @@ class EquipmentModel < ActiveRecord::Base
     end
   end
 
-  #TODO: blackout vs validation
-  def num_available(start_date, due_date)
-    availability = start_date.to_date.upto(due_date.to_date).map do |date|
-       available_count(date)
+  def num_reserved(start_date, due_date, source_reservations)
+    # get the number reserved in the source reservations
+    # uses 0 queries, you need to specify the max number of
+    # items yourself
+    max_reserved = 0
+    start_date.to_date.upto(due_date.to_date) do |d|
+      reserved = Reservation.number_for_model_on_date(d,self.id,source_reservations)
+      if reserved > max_reserved
+        max_reserved = reserved
+      end
     end
-    availability.min > 0 ? availability.min : 0
+    return max_reserved
+  end
+
+  def num_available_from_source(start_date, due_date, source_reservations)
+    # get the number available in the given date range
+    # take an array of reservations instead of using a database call
+    # for database query optimization purposes
+    # 2 queries to calculate max_num
+    max_num = self.equipment_objects.active.count - number_overdue
+    available = max_num - num_reserved(start_date,due_date, source_reservations)
+    return available < 0 ? 0 : available
+  end
+
+  def num_available(start_date, due_date)
+    # for if you just want the number available, 1 query to get
+    # relevant reservations
+    relevant_reservations = Reservation.for_eq_model(self).
+      reserved_in_date_range(start_date.to_datetime, due_date.to_datetime).
+      not_returned.all
+    num_available_from_source(start_date, due_date, relevant_reservations)
   end
 
   # Returns true if the reserver is ineligible to checkout the model.
   def model_restricted?(reserver_id)
     reserver = User.find(reserver_id)
-    self.requirements.each do |em_req|
-      unless reserver.requirements.include?(em_req)
-        return true
-      end
-    end
-    return false
-  end
-
-
-  # Returns the number of reserved objects for a particular model,
-  # as long as they have not been checked in
-  def number_reserved_on_date(date)
-    Reservation.reserved_on_date(date).not_returned.for_eq_model(self).size
+    !(self.requirements - reserver.requirements).empty?
   end
 
   # Returns the number of overdue objects for a given model,
@@ -180,11 +195,12 @@ class EquipmentModel < ActiveRecord::Base
     # get the total number of objects of this kind
     # then subtract the total quantity currently reserved, checked-out, and overdue
     total = equipment_objects.active.count
-    (total - number_reserved_on_date(date)) - number_overdue
+    reserved = Reservation.reserved_on_date(date).not_returned.for_eq_model(self).count
+    total - reserved - number_overdue
   end
 
   def available_object_select_options
-    self.equipment_objects.active.select{|e| e.available?}\
+    self.equipment_objects.includes(:reservations).active.select{|e| e.available?}\
         .sort_by(&:name)\
         .collect{|item| "<option value=#{item.id}>#{item.name}</option>"}\
         .join.html_safe

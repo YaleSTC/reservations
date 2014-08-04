@@ -1,9 +1,10 @@
 require 'spec_helper'
 
 describe EquipmentObjectsController do
-	before(:all) { @app_config = FactoryGirl.create(:app_config) }
-	before { @controller.stub(:first_time_user).and_return(:nil) }
-	let!(:object) { FactoryGirl.create(:equipment_object) }
+  before(:all) { @app_config = FactoryGirl.create(:app_config) }
+  before { @controller.stub(:first_time_user).and_return(:nil) }
+  let!(:object) { FactoryGirl.create(:equipment_object) }
+  let!(:deactivated_object) { FactoryGirl.create(:deactivated) }
 
   describe 'GET index' do
     context 'with admin user' do
@@ -26,7 +27,7 @@ describe EquipmentObjectsController do
             assigns(:equipment_objects).include?(object).should be_true
             assigns(:equipment_objects).include?(obj_other_cat_active).should_not be_true
             assigns(:equipment_objects).include?(obj_same_cat_inactive).should_not be_true
-            assigns(:equipment_objects).include?(obj_other_cat_inactive).should_not be_true 
+            assigns(:equipment_objects).include?(obj_other_cat_inactive).should_not be_true
             expect(assigns(:equipment_objects).size).to eq(1)
           end
         end
@@ -34,7 +35,7 @@ describe EquipmentObjectsController do
           it 'should populate an array of all active equipment objects' do
             assigns(:equipment_objects).include?(object).should be_true
             assigns(:equipment_objects).include?(obj_other_cat_active).should be_true
-            assigns(:equipment_objects).include?(obj_other_cat_inactive).should_not be_true 
+            assigns(:equipment_objects).include?(obj_other_cat_inactive).should_not be_true
             expect(assigns(:equipment_objects).size).to eq(2)
           end
         end
@@ -51,7 +52,7 @@ describe EquipmentObjectsController do
             assigns(:equipment_objects).include?(object).should be_true
             assigns(:equipment_objects).include?(obj_other_cat_active).should_not be_true
             assigns(:equipment_objects).include?(obj_same_cat_inactive).should be_true
-            assigns(:equipment_objects).include?(obj_other_cat_inactive).should_not be_true 
+            assigns(:equipment_objects).include?(obj_other_cat_inactive).should_not be_true
             expect(assigns(:equipment_objects).size).to eq(2)
           end
         end
@@ -60,10 +61,10 @@ describe EquipmentObjectsController do
             get :index, show_deleted: true
             assigns(:equipment_objects).include?(object).should be_true
             assigns(:equipment_objects).include?(obj_other_cat_active).should be_true
-            assigns(:equipment_objects).include?(obj_other_cat_inactive).should be_true 
-            expect(assigns(:equipment_objects).size).to eq(3)
-          end     
-        end   
+            assigns(:equipment_objects).include?(obj_other_cat_inactive).should be_true
+            expect(assigns(:equipment_objects).size).to eq(4)
+          end
+        end
       end
     end
     context 'with checkout person user' do
@@ -80,7 +81,7 @@ describe EquipmentObjectsController do
         get :index
         response.should redirect_to(root_url)
       end
-    end 
+    end
   end
 
   describe 'GET show' do
@@ -107,7 +108,7 @@ describe EquipmentObjectsController do
       end
     end
   end
-    
+
   describe 'GET new' do
     context 'with admin user' do
       before do
@@ -141,7 +142,7 @@ describe EquipmentObjectsController do
       end
     end
   end
-        
+
   describe 'POST create' do
     context 'with admin user' do
       before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
@@ -185,7 +186,7 @@ describe EquipmentObjectsController do
       before do
         @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
         get :edit, id: object
-      end   
+      end
       it { should respond_with(:success) }
       it { should render_template(:edit) }
       it { should_not set_the_flash }
@@ -201,7 +202,7 @@ describe EquipmentObjectsController do
       end
     end
   end
-    
+
   describe 'PUT update' do
     context 'with admin user' do
       before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
@@ -238,29 +239,57 @@ describe EquipmentObjectsController do
     end
   end
 
-  describe 'DELETE destroy' do
+  describe 'PUT deactivate' do
+    before { request.env['HTTP_REFERER'] = '/referrer' }
     context 'with admin user' do
-      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:admin)) }
-      it 'should remove object from database' do
-        expect{ delete :destroy, id: object }.to change(EquipmentObject, :count).by(-1)
+      before do
+        @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
+        put :deactivate, id: object, deactivation_reason: "Because I can"
+        object.reload
       end
-      context do
-        before { delete :destroy, id: object }
-        it { should set_the_flash }
-        it { should redirect_to(object.equipment_model) }
-        it 'sets @equipment_object to selected object' do
-          expect(assigns(:equipment_object)).to eq(object)
-        end
-      end
+      it { response.should be_redirect }
+
+      subject { object }
+      its(:deactivation_reason) { should == "Because I can" }
     end
+
     context 'with non-admin user' do
-      before { @controller.stub(:current_user).and_return(FactoryGirl.create(:user)) }
+      before do
+        @controller.stub(:current_user).and_return(FactoryGirl.create(:user))
+      end
       it 'should redirect to root' do
-        delete :destroy, id: object
+        put :deactivate, id: object, deactivation_reason: "Because I can't"
         response.should redirect_to(root_url)
       end
     end
   end
-  
-	after(:all) { @app_config.destroy }
+
+  describe 'PUT activate' do
+    before { request.env['HTTP_REFERER'] = '/referrer' }
+    context 'with admin user' do
+      before do
+        @controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
+        put :activate, id: deactivated_object
+        deactivated_object.reload
+      end
+
+      it { response.should be_redirect }
+
+      subject { deactivated_object }
+      its(:deactivation_reason) { should == nil }
+    end
+
+    context 'with non-admin user' do
+      before do
+        @controller.stub(:current_user).and_return(FactoryGirl.create(:user))
+      end
+
+      it 'should redirect to root' do
+        put :activate, id: object
+        response.should redirect_to(root_url)
+      end
+    end
+  end
+
+  after(:all) { @app_config.destroy }
 end

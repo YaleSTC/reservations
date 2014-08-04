@@ -2,10 +2,8 @@
 <div id="form_recurring">
 <%= simple_form_for(@blackout) do |f| %>
   <%= f.error_notification %>
-
-  <div class="form-inputs">
-    <%= render :partial => 'form', :locals => {:f => f} %>
-
+  <div class="form_inputs">
+  <%= render partial: 'form', locals: {f: f}%>
 <% end %>
 </div>
 

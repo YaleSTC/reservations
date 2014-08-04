@@ -1,8 +1,7 @@
 class CategoriesController < ApplicationController
 
-  before_filter :require_admin
+  load_and_authorize_resource
   before_filter :set_current_category, only: [:show, :edit, :update, :destroy]
-  skip_before_filter :require_admin, only: [:index, :show]
 
   include ActivationHelper
 
@@ -50,9 +49,4 @@ class CategoriesController < ApplicationController
     end
   end
 
-  def destroy
-    @category.destroy(:force)
-    flash[:notice] = "Successfully destroyed category."
-    redirect_to categories_url
-  end
 end

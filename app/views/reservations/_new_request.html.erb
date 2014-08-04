@@ -1,0 +1,44 @@
+<% title "File Reservation Request" %>
+
+<% unless @errors.empty? %>
+  <p>
+    <h3><i class="fa fa-exclamation-triangle warning-icon"></i> Would you like to <%= link_to "return to the Catalog", catalog_path %> to resolve the following error(s)?</h3>
+  </p>
+  <% @errors.each do |msg| %>
+    <ul>
+      <li><%= msg %></li>
+    </ul>
+  <% end %>
+<% end %>
+
+<p>
+  <h3>Equipment requested:</h3>
+</p>
+<%= simple_form_for @reservation do |f| %>
+  <%= f.error_messages %>
+  <p>
+    The following equipment will be requested for
+    <%= User.find(cart.reserver_id).name %>
+    from
+    <%= cart.start_date.to_date.to_s(:long) %> to
+    <%= cart.due_date.to_date.to_s(:long) %>:
+
+  </p>
+  <p>
+    <ul class="rounded-list">
+      <% cart.items.each do |model_id, quantity| %>
+        <li data-value="<%= quantity %>"><%= link_to EquipmentModel.find(model_id).name, EquipmentModel.find(model_id) %></li>
+      <% end %>
+    </ul>
+  </p>
+
+  <div class = "control-group text <%= 'error' if @notes_required %>">
+    <%= f.label "Please give a short justification for this equipment request:" %>
+    <%= f.input_field :notes, class: 'span6', rows: 5 %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit, "Submit Request", confirm: "Are you sure? This request is not finalized and will be subject to approval by an administrator. It will not be available for checkout until and unless approved, and the request may be denied for any reason at the sole discretion of the administrator." %>
+    <%= link_to "Return to Catalog", catalog_path, class: 'btn' %>
+  </div>
+<% end %>

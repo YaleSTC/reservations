@@ -48,7 +48,24 @@ describe TestController do
     controller.stub(:fix_cart_date)
     controller.stub(:set_view_mode)
     controller.stub(:current_user)
-    controller.stub(:check_if_is_admin)
+    controller.stub(:make_cart_compatible)
+  end
+
+  describe 'make_cart_compatible' do
+    before(:each) do
+      controller.unstub(:make_cart_compatible)
+    end
+    it 'replaces the cart if items is an Array' do
+      session[:cart] = FactoryGirl.build(:cart, items: [1])
+      get :index
+      session[:cart].items.should be_a(Hash)
+      session[:cart].items.should be_empty
+      session[:cart].items.should_not be_a(Array)
+    end
+    it 'leaves the cart alone if items is a Hash' do
+      session[:cart] = FactoryGirl.build(:cart_with_items)
+      expect { get :index }.to_not change { session[:cart].items }
+    end
   end
 
   describe 'app_setup_check' do
@@ -85,6 +102,8 @@ describe TestController do
     before(:each) do
       controller.stub(:load_configs).and_return(@app_config)
       controller.unstub(:seen_app_configs)
+      @admin = FactoryGirl.create(:admin)
+      controller.stub(:current_user).and_return(@admin)
     end
     context 'app configs have not been viewed' do
       before(:each) do
@@ -211,35 +230,6 @@ describe TestController do
     end
   end
 
-  describe 'check_if_is_admin' do
-    before(:each) do
-      controller.unstub(:check_if_is_admin)
-    end
-    context 'user is an admin' do
-      before(:each) do
-        @admin = FactoryGirl.create(:admin)
-        controller.stub(:current_user).and_return(@admin)
-        get :activate
-        get :deactivate
-      end
-      it { should_not set_the_flash }
-      it 'should not redirect' do
-        response.should_not be_redirect
-      end
-    end
-    context 'user is not an admin' do
-      before(:each) do
-        @user = FactoryGirl.create(:user)
-        controller.stub(:current_user).and_return(@user)
-        request.env["HTTP_REFERER"] = "where_i_came_from"
-        get :deactivate
-        get :activate
-      end
-      it { should set_the_flash }
-      it { should redirect_to(request.referer) }
-    end
-  end
-
   describe 'fix_cart_date' do
     before(:each) do
       controller.unstub(:fix_cart_date)
@@ -259,22 +249,6 @@ describe TestController do
     end
   end
 
-  # it may be better to test these methods within the controllers that call them, because the
-  # restrictions that they enforce need to be tested anyway for those actions.
-  describe 'require_admin' do
-    context 'admin user' do
-      it 'does nothing if admin in admin mode'
-    end
-    context 'not an admin' do
-      it 'redirects to root url if not an admin and no parameter passed'
-      it 'redirects to new_path if not an admin and new_path passed'
-      it 'redirects to new path admin not in admin mode'
-    end
-  end
-  describe 'require_checkout_person'
-  describe 'require_login'
-  describe 'require_user'
-  describe 'require_user_or_checkout_person'
 end
 
 describe ApplicationController do
@@ -289,7 +263,7 @@ describe ApplicationController do
     controller.stub(:fix_cart_date)
     controller.stub(:set_view_mode)
     controller.stub(:current_user)
-    controller.stub(:check_if_is_admin)
+    controller.stub(:make_cart_compatible)
   end
 
   #TODO - This may involve rewriting the method somewhat
@@ -297,11 +271,11 @@ describe ApplicationController do
     before(:each) do
       session[:cart] = Cart.new
       session[:cart].reserver_id = @first_user.id
-      session[:cart].set_start_date(Date.today + 1.day)
-      session[:cart].set_due_date(Date.today + 2.days)
-      
+      session[:cart].start_date = (Date.today + 1.day)
+      session[:cart].due_date = (Date.today + 2.days)
 
-      equipment_model = FactoryGirl.create(:equipment_model)
+
+      equipment_model = FactoryGirl.create(:equipment_model, category: FactoryGirl.create(:category))
       session[:cart].add_item(equipment_model)
       @new_reserver = FactoryGirl.create(:user)
     end
@@ -310,9 +284,9 @@ describe ApplicationController do
       it 'should update cart dates' do
         new_start = Date.today + 3.days
         new_end = Date.today + 4.days
-        
+
         put :update_cart, cart: {start_date_cart: new_start.strftime('%m/%d/%Y'), due_date_cart: new_end.strftime('%m/%d/%Y')}, reserver_id: @new_reserver.id
-        
+
         session[:cart].start_date.should eq(new_start)
         session[:cart].due_date.should eq(new_end)
         session[:cart].reserver_id.should eq(@new_reserver.id.to_s)
@@ -327,9 +301,9 @@ describe ApplicationController do
       it 'should set the flash' do
         new_start = Date.today - 300.days
         new_end = Date.today + 4000.days
-        
+
         put :update_cart, cart: {start_date_cart: new_start.strftime('%m/%d/%Y'), due_date_cart: new_end.strftime('%m/%d/%Y')}, reserver_id: @new_reserver.id
-        
+
         flash.should_not be_empty
      end
    end
@@ -339,14 +313,10 @@ describe ApplicationController do
     before(:each) do
       session[:cart] = Cart.new
       session[:cart].reserver_id = @first_user.id
-      @cart_reservation = FactoryGirl.create(:cart_reservation, reserver: @first_user)
       delete :empty_cart
     end
-    it 'destroys cart reservations for the reserver associated with the current cart' do
-      CartReservation.find_by_reserver_id(@first_user.id).should be_nil
-    end
-    it 'sets the session[:cart] variable back to nil' do
-      session[:cart].should be_nil
+    it 'empties the cart' do
+      session[:cart].items.should be_empty
     end
     it { should redirect_to(root_path) }
     it { should set_the_flash }
