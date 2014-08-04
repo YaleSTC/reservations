@@ -5,7 +5,7 @@
     <th>Max Per User</th>
     <th>Max Checkout Length (days)</th>
     <th>Sort Order</th>
-  <% if current_user.is_admin?(:as => 'admin') %>
+  <% if can? :manage, Category %>
     <th class="no_sort"> </th>
     <th class="no_sort"> </th>
   <% end %>
