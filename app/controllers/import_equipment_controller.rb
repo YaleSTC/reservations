@@ -62,12 +62,7 @@ class ImportEquipmentController < ApplicationController
     end
 
     # render the import status page
-    # binding.pry
     render 'imported'
-
-    # at this point all that remains is testing
-    # we can also add the sort_order to the category import so that they can
-    # do it externally rather than having to go through the app
   end
 
   def import_page
