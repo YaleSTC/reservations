@@ -126,7 +126,7 @@ class ReservationsController < ApplicationController
 
     # save changes to database
     @reservation.update_attributes(res)
-    if params[:new_notes]
+    unless params[:new_notes].blank?
       @reservation.notes = @reservation.notes.to_s + "\n#### New notes added at #{Time.current.to_s(:long)} by #{current_user.name}\n" + params[:new_notes]
       @reservation.save
     end
