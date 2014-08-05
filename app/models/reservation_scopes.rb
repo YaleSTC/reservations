@@ -14,7 +14,7 @@ module ReservationScopes
       scope :checked_out, lambda { where("checked_out IS NOT NULL").not_returned.recent }
       scope :checked_out_today, lambda { where("checked_out >= ? and checked_out <= ?", Date.current.to_time.to_datetime, Date.current.to_time.to_datetime + 1.day).not_returned.recent }
       scope :checked_out_previous, lambda { where("checked_out < ? and due_date <= ?", Date.current.to_time, Date.current.to_time + 1.day).not_returned.recent }
-      scope :overdue, lambda { where("due_date < ?", Date.current.to_time).not_returned }
+      scope :overdue, lambda { where("due_date < ?", Date.current.to_time).checked_out }
       scope :returned, lambda { where("checked_in IS NOT NULL and checked_out IS NOT NULL").recent }
       scope :returned_on_time, lambda { where("checked_in <= due_date").returned }
       scope :returned_overdue, lambda { where("due_date < checked_in").returned }

@@ -9,6 +9,15 @@ function parseDate(dateString){
   var string = d.toISOString();
   return string.substring(5,7) + "/" + string.substring(8,10) + '/' + string.substring(0,4);
 }
+
+function dateInTimeZone(dateString) {
+  // parse an ISO date string and returns
+  // midnight of that date in the system time
+  date = new Date(dateString);
+  date.setTime(date.getTime() + date.getTimezoneOffset()*60*1000);
+  return date;
+}
+
 function dateToRubyString(date) {
   return date.toISOString().substring(0,10);
 };
@@ -33,11 +42,12 @@ function renderCalendar(reservations, week_start, max, blackouts) {
   $('.month').children()[0].innerHTML = months[week_start.getMonth()] + " " + date.getFullYear().toString();
 
   //set cell values based on reservations
+  var week_end = new Date(week_start.getTime());
+  week_end.setDate(week_start.getDate() + 6);
+
   for(var d = 0; d < reservations.length; d++) {
       var end = new Date (reservations[d].end);
       var start = new Date (reservations[d].start);
-      var week_end = new Date();
-      week_end.setDate(week_start.getDate() + 7);
       if ((start < week_end) && (end >= week_start)) {
         //for each reservation, decrement availability per day
         var begin_date = ((week_start > start) ? week_start : start);
@@ -54,7 +64,7 @@ function renderCalendar(reservations, week_start, max, blackouts) {
   $('.calendar_cell').each(function() {
     var blacked = false;
     for(var b = 0; b < blackouts.length; b++) {
-      date = new Date($(this).attr('id'));
+      date = dateInTimeZone($(this).attr('id'));
       if ((new Date(blackouts[b].start) <= date) && (new Date(blackouts[b].end) >= date)) {
         blacked = true;
         break;
@@ -77,17 +87,18 @@ function renderCalendar(reservations, week_start, max, blackouts) {
 function shiftCalendar(offset) {
   var reservations = $('#res-data').data('url');
   var blackouts = $('#res-data').data('blackouts');
-  var week_start = new Date($('.calendar_cell').first().attr('id'));
-  var today = new Date($('#res-data').data('today'));
-  var date_max = new Date($('#res-data').data('dateMax'));
+  var week_start = dateInTimeZone($('.calendar_cell').first().attr('id'));
+  var today = dateInTimeZone($('#res-data').data('today'));
+  var date_max = dateInTimeZone($('#res-data').data('dateMax'));
   var max = $('#res-data').data('max');
+
   week_start.setDate(week_start.getDate() + offset);
   block_left = week_start <= today;
   if (block_left) {
     week_start.setTime(today.getTime());
   }
   $('.c-left').children().toggleClass('disabled-control',block_left);
-  
+
   block_right = week_start >= date_max;
   if (block_right) {
     week_start.setTime(date_max.getTime());

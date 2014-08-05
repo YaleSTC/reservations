@@ -36,7 +36,7 @@ Reservations::Application.routes.draw do
 
   resources :users do
     collection do
-      get :find
+      post :find
       post :quick_new
       post :quick_create
     end

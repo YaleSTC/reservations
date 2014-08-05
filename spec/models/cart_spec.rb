@@ -1,19 +1,19 @@
 require 'spec_helper'
 
-describe Cart do
+describe Cart, :type => :model do
   before (:each) do
     @cart = FactoryGirl.build(:cart)
     @cart.items = {} # Needed to avoid db flushing problems
   end
 
   it "has a working factory" do
-    @cart.should be_valid
+    expect(@cart).to be_valid
   end
 
   context "General validations" do
-    it { should validate_presence_of(:reserver_id) }
-    it { should validate_presence_of(:start_date) }
-    it { should validate_presence_of(:due_date) }
+    it { is_expected.to validate_presence_of(:reserver_id) }
+    it { is_expected.to validate_presence_of(:start_date) }
+    it { is_expected.to validate_presence_of(:due_date) }
   end
 
   describe ".initialize" do
@@ -35,7 +35,7 @@ describe Cart do
   end
 
   describe ".persisted?" do
-    it { @cart.persisted?.should be_falsey }
+    it { expect(@cart.persisted?).to be_falsey }
   end
 
   describe "Item handling" do
@@ -126,13 +126,13 @@ describe Cart do
 
     describe ".duration" do
       it "should calculate the sum correctly" do
-        @cart.duration.should == @cart.due_date - @cart.start_date + 1
+        expect(@cart.duration).to eq(@cart.due_date - @cart.start_date + 1)
       end
     end
 
     describe ".reserver" do
       it "should return a correct user instance" do
-        @cart.reserver.should == User.find(@cart.reserver_id)
+        expect(@cart.reserver).to eq(User.find(@cart.reserver_id))
       end
     end
   end
@@ -140,11 +140,11 @@ describe Cart do
   describe ".empty?" do
     it "is true when there are no items in cart" do
       @cart.items = []
-      @cart.empty?.should be_truthy
+      expect(@cart.empty?).to be_truthy
     end
     it "is false when there are some items in cart" do
       @cart.add_item(FactoryGirl.create(:equipment_model))
-      @cart.empty?.should be_falsey
+      expect(@cart.empty?).to be_falsey
     end
   end
 
