@@ -43,6 +43,10 @@
     <% end %>
   </p>
 <% end %>
+<h4>Notes</h4>
+<div class="notes-container">
+  <%= markdown @reservation.notes %>
+</div>
 <div class="form-actions">
   <%= link_to "Edit Request", edit_reservation_path(@reservation), class: 'btn' %>
   <%= link_to "Deny", deny_request_path, :method => "put", :class => 'btn btn-danger' %>
