@@ -109,6 +109,12 @@
 
 $(document).ready(function() {
 
+  $('.reservation_eq_objects').on('change', function() {
+    newMsg = "Be aware that changing the reservation equipment item may have an effect on another reservation. If you set this reservation's equipment item to an item that has already been checked out, the reservations will be swapped."
+    $('.form-actions').children('input').data('confirm', newMsg);
+  });
+
+
   $('.checkin-click').click( function() {
     var box = $(":checkbox:eq(0)", this);
     box.prop("checked", !box.prop("checked"));
