@@ -157,7 +157,7 @@ class ReservationsController < ApplicationController
     unless Reservation.unique_equipment_objects?(checked_out_reservations)
       flash[:error] = "The same equipment item cannot be simultaneously checked
         out in multiple reservations."
-      redirect_to :bacj and return
+      redirect_to :back and return
     end
 
     # Overdue validation
