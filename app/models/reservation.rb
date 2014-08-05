@@ -214,7 +214,7 @@ class Reservation < ActiveRecord::Base
     # takes the new notes and a string, checkin or checkout as the
     # procedure_kind
     notes = self.notes.to_s
-    notes += "== Notes from #{procedure_kind}\n"
+    notes += "\n### Notes from #{procedure_kind}\n"
     notes += new_notes + "\n\n" if new_notes
     unless incomplete_procedures.blank?
       notes += "The following #{procedure_kind} were not performed:\n"
