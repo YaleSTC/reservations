@@ -32,7 +32,7 @@ describe AdminMailer, :type => :mailer do
       @mail = AdminMailer.notes_reservation_notification(@res1,@res2).deliver
     end
     it 'renders the subject' do
-      expect(@mail.subject).to eq("[Reservation] Notes for " + (Date.yesterday.midnight).strftime("%m/%d/%y"))
+      expect(@mail.subject).to eq("[Reservations] Notes for " + (Date.yesterday.midnight).strftime("%m/%d/%y"))
     end
     it_behaves_like "a valid admin email"
 
@@ -47,7 +47,7 @@ describe AdminMailer, :type => :mailer do
     end
     it_behaves_like "a valid admin email"
     it 'renders the subject' do
-      expect(@mail.subject).to eq("[Reservation] Overdue equipment fine")
+      expect(@mail.subject).to eq("[Reservations] Overdue equipment fine")
     end
 
   end

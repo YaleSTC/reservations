@@ -87,6 +87,7 @@ class Cart
       end
       r.notes = notes
       r.save!
+      AdminMailer.request_filed(r).deliver if request
     end
 
     purge_all
