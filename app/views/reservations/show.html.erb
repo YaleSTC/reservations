@@ -203,7 +203,7 @@
     class: 'btn btn-danger' %>
   <% end %>
   <% if can? :archive, @reservation %>
-    <%= link_to "Archive Reservation", @reservation, confirm:
+    <%= link_to "Archive Reservation", archive_reservation_path(@reservation), confirm:
     'This will archive the reservation so it does not affect the rest of the
     system. Are you sure?', method: :put, class: 'btn btn-danger' %>
 <% end %>
