@@ -28,14 +28,14 @@ task :send_overdue_checkin_reminder => :environment do
                                               checked_in IS NULL and\
                                               due_date < ?", Time.current.midnight.utc)
     puts "Found #{overdue_reservations.size} reservations overdue for checkin.\
-          Sending reminder emails..."
+Sending reminder emails..."
     overdue_reservations.each do |overdue_reservation|
       UserMailer.overdue_checkin_notification(overdue_reservation).deliver
     end
     puts "Done!"
   else
     puts "Overdue check in emails are not sent by admin.\
-          Please change the application settings if you wish to send them."
+Please change the application settings if you wish to send them."
   end
 end
 
@@ -51,7 +51,7 @@ task :send_reservation_notes => :environment do
                                              checked_in IS NOT NULL and\
                                              notes_unsent = true")
   puts "Found #{notes_reservations_out.size} reservations checked out with notes and\
-        #{notes_reservations_in.size} reservations checked in with notes. Sending a reminder email..."
+#{notes_reservations_in.size} reservations checked in with notes. Sending a reminder email..."
   unless notes_reservations_out.empty? and notes_reservations_in.empty?
     AdminMailer.notes_reservation_notification(notes_reservations_out, notes_reservations_in).deliver
   end
