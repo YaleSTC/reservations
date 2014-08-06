@@ -163,8 +163,12 @@ class ReservationsController < ApplicationController
         incomplete_procedures = check_procedures(r, reservation_hash, :checkout)
 
         # Update notes if any checkout procedures have not been performed
-        r.notes = make_notes(r.notes, reservation_hash[:notes], \
+        new_notes = make_notes(r.notes, reservation_hash[:notes], \
                              :checkout, incomplete_procedures)
+        unless r.notes == new_notes
+          r.notes = new_notes
+          r.notes_unsent = true
+        end
 
         # Put the data into the container defined at the start of this action
         reservations_to_check_out << r
@@ -243,8 +247,12 @@ class ReservationsController < ApplicationController
       incomplete_procedures = check_procedures(r, reservation_hash, :checkin)
 
       # add incomplete_procedures to r.notes so admin gets the errors
-      r.notes = make_notes(r.notes, reservation_hash[:notes], \
+      new_notes = make_notes(r.notes, reservation_hash[:notes], \
                            :checkin, incomplete_procedures)
+      unless r.notes == new_notes
+        r.notes = new_notes
+        r.notes_unsent = true
+      end
 
       # if equipment was overdue, send an email confirmation
       if r.status == 'returned overdue'
