@@ -136,8 +136,8 @@ class ReservationsController < ApplicationController
         case param
         when 'reserver_id'
           name = 'Reserver'
-          old_val = User.find(diff[0]).name
-          new_val = User.find(diff[1]).name
+          old_val = diff[0] ? User.find(diff[0]).name : 'nil'
+          new_val = diff[1] ? User.find(diff[1]).name : 'nil'
         when 'start_date'
           name = 'Start Date'
           old_val = diff[0].to_date.to_s
@@ -148,8 +148,8 @@ class ReservationsController < ApplicationController
           new_val = diff[1].to_date.to_s
         when 'equipment_object_id'
           name = 'Item'
-          old_val = EquipmentObject.find(diff[0]).name
-          new_val = EquipmentObject.find(diff[1]).name
+          old_val = diff[0] ? EquipmentObject.find(diff[0]).name : 'nil'
+          new_val = diff[1] ? EquipmentObject.find(diff[1]).name : 'nil'
         end
         @reservation.notes = @reservation.notes.to_s + "\n#{name} changed from " + old_val + " to " + new_val + "."
       end
