@@ -126,11 +126,35 @@ class ReservationsController < ApplicationController
 
     # save changes to database
     @reservation.update_attributes(res)
-    unless params[:new_notes].blank?
-      @reservation.notes = @reservation.notes.to_s + "\n#### New notes added at #{Time.current.to_s(:long)} by #{current_user.name}\n" + params[:new_notes]
+    last_changes = @reservation.previous_changes.except('updated_at')
+    unless last_changes.empty? && params[:new_notes].blank?
+      @reservation.notes = @reservation.notes.to_s + "\n### Reservation edited at #{Time.current.to_s(:long)} by #{current_user.name}\n"
+      unless params[:new_notes].blank?
+        @reservation.notes = @reservation.notes.to_s + "\n**Notes:** " + params[:new_notes]
+      end
+      last_changes.each do |param, diff|
+        case param
+        when 'reserver_id'
+          name = 'Reserver'
+          old_val = User.find(diff[0]).name
+          new_val = User.find(diff[1]).name
+        when 'start_date'
+          name = 'Start Date'
+          old_val = diff[0].to_date.to_s
+          new_val = diff[1].to_date.to_s
+        when 'due_date'
+          name = 'Due Date'
+          old_val = diff[0].to_date.to_s
+          new_val = diff[1].to_date.to_s
+        when 'equipment_object_id'
+          name = 'Item'
+          old_val = EquipmentObject.find(diff[0]).name
+          new_val = EquipmentObject.find(diff[1]).name
+        end
+        @reservation.notes = @reservation.notes.to_s + "\n#{name} changed from " + old_val + " to " + new_val + "."
+      end
       @reservation.save
     end
-
 
     # flash success and exit
     flash[:notice] = message
