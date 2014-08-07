@@ -16,13 +16,14 @@ Changelog
 * Ensured that the empty cart button completely resets the cart ([#845](https://github.com/YaleSTC/reservations/issues/845)).
 * Fixed an issue where all links in e-mails were broken ([#868](https://github.com/YaleSTC/reservations/issues/868)).
 * Fixed an issue where the overdue scope was including missed reservations ([#893](https://github.com/YaleSTC/reservations/issues/893)).
-* The request notes are now shown on the request review page ([#901](https://github.com/YaleSTC/reservations/issues/901)).
+* Fixed an issue where the reservation notes e-mails were not being sent ([#906](https://github.com/YaleSTC/reservations/issues/906)).
 
 #### New Features
 * Added equipment import functionality ([#494](https://github.com/YaleSTC/reservations/issues/494)).
 
 #### Enhancements
 * Made version number visible to all users ([#856](https://github.com/YaleSTC/reservations/issues/856)).
+* The request notes are now shown on the request review page ([#901](https://github.com/YaleSTC/reservations/issues/901)).
 
 ### v3.4.2
 *Released on 28 July 2014*
