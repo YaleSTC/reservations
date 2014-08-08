@@ -20,14 +20,14 @@
 # Learn more: http://github.com/javan/whenever
 
 every 1.day, :at => '5:00 am' do
-  rake "send_upcoming_checkin_reminder"
-  rake "send_overdue_checkin_reminder"
+  rake "send_upcoming_checkin_reminder", :environment => 'production'
+  rake "send_overdue_checkin_reminder", :environment => 'production'
   rake "delete_missed_reservations"
   rake "deny_missed_requests"
   rake "delete_old_blackouts"
 end
 
 every 1.hour do
-  rake "send_reservation_notes"
+  rake "send_reservation_notes", :environment => 'production'
 end
 
