@@ -5,6 +5,27 @@ Changelog
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+### v3.4.3
+*Released on 13 August 2014*
+#### Bug Fixes
+* Fixed typo on the application settings form ([#850](https://github.com/YaleSTC/reservations/issues/850)).
+* Fixed an issue where checkout persons could not use autocomplete ([#857](https://github.com/YaleSTC/reservations/issues/857)).
+* Fixed an issue where items with unrestricted checkout lengths could not be added to the cart ([#848](https://github.com/YaleSTC/reservations/issues/848)).
+* Fixed an issue where the overdue fines sent via e-mail were incorrect ([#876](https://github.com/YaleSTC/reservations/issues/876)).
+* Fixed an issue where the calendar availability was incorrect ([#883](https://github.com/YaleSTC/reservations/issues/883)).
+* Ensured that the empty cart button completely resets the cart ([#845](https://github.com/YaleSTC/reservations/issues/845)).
+* Fixed an issue where all links in e-mails were broken ([#868](https://github.com/YaleSTC/reservations/issues/868)).
+* Fixed an issue where the overdue scope was including missed reservations ([#893](https://github.com/YaleSTC/reservations/issues/893)).
+* Fixed an issue where the reservation notes e-mails were not being sent ([#906](https://github.com/YaleSTC/reservations/issues/906)).
+* Fixed the equipment model change popup to only show when relevant ([#890](https://github.com/YaleSTC/reservations/issues/890)).
+
+#### New Features
+* Added equipment import functionality ([#494](https://github.com/YaleSTC/reservations/issues/494)).
+
+#### Enhancements
+* Made version number visible to all users ([#856](https://github.com/YaleSTC/reservations/issues/856)).
+* The request notes are now shown on the request review page ([#901](https://github.com/YaleSTC/reservations/issues/901)).
+
 ### v3.4.2
 *Released on 28 July 2014*
 #### Bug Fixes
