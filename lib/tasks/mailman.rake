@@ -24,13 +24,7 @@ desc "Send email reminder about overdue checkins"
 task :send_overdue_checkin_reminder => :environment do
   if AppConfig.first.overdue_checkin_email_active?
     #get all reservations that ended before today and aren't already checked in
-<<<<<<< HEAD
-    overdue_reservations = Reservation.where("checked_out IS NOT NULL and\
-                                              checked_in IS NULL and\
-                                              due_date < ?", Time.current.midnight.utc)
-=======
     overdue_reservations = Reservation.overdue
->>>>>>> 27380b4... updated mailman rake task to use scope
     puts "Found #{overdue_reservations.size} reservations overdue for checkin.\
 Sending reminder emails..."
     overdue_reservations.each do |overdue_reservation|

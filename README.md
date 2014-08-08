@@ -1,7 +1,7 @@
-# Welcome to Reservations 
+# Welcome to Reservations
 
-[![Build Status](https://travis-ci.org/YaleSTC/reservations.svg?branch=development)](https://travis-ci.org/YaleSTC/reservations) 
-[![Code Climate](https://img.shields.io/codeclimate/github/YaleSTC/reservations.svg)](https://codeclimate.com/github/YaleSTC/reservations) 
+[![Build Status](https://travis-ci.org/YaleSTC/reservations.svg?branch=development)](https://travis-ci.org/YaleSTC/reservations)
+[![Code Climate](https://img.shields.io/codeclimate/github/YaleSTC/reservations.svg)](https://codeclimate.com/github/YaleSTC/reservations)
 [![Test Coverage](https://codeclimate.com/github/YaleSTC/reservations/coverage.png)](https://codeclimate.com/github/YaleSTC/reservations)
 [![Dependency Status](https://gemnasium.com/YaleSTC/reservations.svg)](https://gemnasium.com/YaleSTC/reservations)
 [![Inline docs](http://inch-ci.org/github/yalestc/reservations.svg?branch=development)](http://inch-ci.org/github/yalestc/reservations)
@@ -26,7 +26,7 @@ You'll need the following to run Reservations:
 * [ImageMagick](http://www.imagemagick.org/script/index.php)
 * a [CAS](http://www.jasig.org/cas) authentication system
 
-### Installation 
+### Installation
 First, checkout a copy of Reservations using git:
 
 ```
@@ -63,7 +63,7 @@ Reservations is built using [Ruby on Rails](http://rubyonrails.org/), and can be
 
 * [Ruby 2.1](http://www.ruby-lang.org/)
 * database server ([MySQL](http://www.mysql.com/) is preferred, but any database supported by Rails should work, including PostgreSQL)
-* web server ([apache](http://apache.org/) or [nginx](http://wiki.nginx.org/Main) both work well) 
+* web server ([apache](http://apache.org/) or [nginx](http://wiki.nginx.org/Main) both work well)
 * Rails application server (usually [Passenger Phusion](http://www.modrails.com/) aka mod_rails)
 
 For a general guide to setting up your web and application servers, including hosting providers, see the [Rails Deployment Guide](http://rubyonrails.org/deploy/).
@@ -80,8 +80,14 @@ CASClient::Frameworks::Rails::Filter.configure(
 ```
 (Change the :cas_base_url value to your CAS server's base URL; also note that many CAS servers are configured with a base URL that looks more like “cas.example.foo/cas”.)
 
-Reservations ships with the default config time set to Eastern Time (US and Canada). To change the time, edit `config/application.rb` 
+Reservations ships with the default config time set to Eastern Time (US and Canada). To change the time, edit `config/application.rb`
 `config.time_zone = 'Eastern Time (US & Canada)'`
+
+
+You will need to also configure the email config in
+`config/environments/production.rb`. Replace `example.com` with the
+relevant hostname. This will allow links in emails to point to the
+correct places.
 
 
 Further Documentation
@@ -93,6 +99,6 @@ Suggestions and Issues
 ======================
 
 If you have any suggestions, or would like to report an issue, please either:
-* Create an issue for [this repository](https://github.com/YaleSTC/reservations/) on Github 
+* Create an issue for [this repository](https://github.com/YaleSTC/reservations/) on Github
 * or, if you don't have a GitHub account, use our [issue submission form](https://docs.google.com/a/yale.edu/spreadsheet/viewform?formkey=dE8zTFprNVB4RTAwdURhWEVTTlpDQVE6MQ#gid=0)
 
