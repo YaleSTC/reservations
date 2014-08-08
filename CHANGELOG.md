@@ -6,7 +6,7 @@ Changelog
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
 ### v3.4.3
-*Released on [INSERT DATE]*
+*Released on 13 August 2014*
 #### Bug Fixes
 * Fixed typo on the application settings form ([#850](https://github.com/YaleSTC/reservations/issues/850)).
 * Fixed an issue where checkout persons could not use autocomplete ([#857](https://github.com/YaleSTC/reservations/issues/857)).
@@ -17,6 +17,7 @@ Changelog
 * Fixed an issue where all links in e-mails were broken ([#868](https://github.com/YaleSTC/reservations/issues/868)).
 * Fixed an issue where the overdue scope was including missed reservations ([#893](https://github.com/YaleSTC/reservations/issues/893)).
 * Fixed an issue where the reservation notes e-mails were not being sent ([#906](https://github.com/YaleSTC/reservations/issues/906)).
+* Fixed the equipment model change popup to only show when relevant ([#890](https://github.com/YaleSTC/reservations/issues/890)).
 
 #### New Features
 * Added equipment import functionality ([#494](https://github.com/YaleSTC/reservations/issues/494)).
