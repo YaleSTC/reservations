@@ -140,12 +140,12 @@ class ReservationsController < ApplicationController
           new_val = diff[1] ? User.find(diff[1]).name : 'nil'
         when 'start_date'
           name = 'Start Date'
-          old_val = diff[0].to_date.to_s
-          new_val = diff[1].to_date.to_s
+          old_val = diff[0].to_date.to_s(:long)
+          new_val = diff[1].to_date.to_s(:long)
         when 'due_date'
           name = 'Due Date'
-          old_val = diff[0].to_date.to_s
-          new_val = diff[1].to_date.to_s
+          old_val = diff[0].to_date.to_s(:long)
+          new_val = diff[1].to_date.to_s(:long)
         when 'equipment_object_id'
           name = 'Item'
           old_val = diff[0] ? EquipmentObject.find(diff[0]).name : 'nil'
