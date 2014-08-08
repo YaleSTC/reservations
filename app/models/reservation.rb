@@ -213,15 +213,18 @@ class Reservation < ActiveRecord::Base
     #
     # takes the new notes and a string, checkin or checkout as the
     # procedure_kind
+    self.notes_unsent = false unless incomplete_procedures.empty? && new_notes.blank?
     notes = self.notes.to_s
     notes += "\n### Notes from #{procedure_kind}\n"
     notes += new_notes + "\n\n" if new_notes
-    unless incomplete_procedures.blank?
-      notes += "The following #{procedure_kind} were not performed:\n"
+    if incomplete_procedures.blank?
+      notes += "All #{procedure_kind} procedures were performed!"
+    else
+      notes += "The following #{procedure_kind} procedures were not performed:\n"
       notes += markdown_listify(incomplete_procedures)
     end
     self.notes = notes.strip
-    self.notes_unsent = false
+
   end
 
   # returns a string where each item is begun with a '*'
