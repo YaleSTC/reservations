@@ -6,7 +6,7 @@ Changelog
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
 ### v3.4.3
-*Released on 13 August 2014*
+*Released on 18 August 2014*
 #### Bug Fixes
 * Fixed typo on the application settings form ([#850](https://github.com/YaleSTC/reservations/issues/850)).
 * Fixed an issue where checkout persons could not use autocomplete ([#857](https://github.com/YaleSTC/reservations/issues/857)).
