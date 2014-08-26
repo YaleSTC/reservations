@@ -18,9 +18,12 @@ Changelog
 * Fixed an issue where the overdue scope was including missed reservations ([#893](https://github.com/YaleSTC/reservations/issues/893)).
 * Fixed an issue where the reservation notes e-mails were not being sent ([#906](https://github.com/YaleSTC/reservations/issues/906)).
 * Fixed the equipment model change popup to only show when relevant ([#890](https://github.com/YaleSTC/reservations/issues/890)).
+* Fixed an issue where the notes field in the check-out form was being populated with prior notes ([#915](https://github.com/YaleSTC/reservations/issues/915)).
+* Fixed an issue where the renewal button would be active even when the max renewal length was zero ([#916](https://github.com/YaleSTC/reservations/issues/916)).
 
 #### New Features
 * Added equipment import functionality ([#494](https://github.com/YaleSTC/reservations/issues/494)).
+* Added an option to disable renewals for patrons ([#916](https://github.com/YaleSTC/reservations/issues/916)).
 
 #### Enhancements
 * Made version number visible to all users ([#856](https://github.com/YaleSTC/reservations/issues/856)).
