@@ -23,7 +23,7 @@ Changelog
 
 #### New Features
 * Added equipment import functionality ([#494](https://github.com/YaleSTC/reservations/issues/494)).
-* Added an option to disable renewals for patrons ([#916](https://github.com/YaleSTC/reservations/issues/916)).
+* Added an option to disable renewals ([#916](https://github.com/YaleSTC/reservations/issues/916)).
 * Added a customizable prompt to the reservation request page ([#746](https://github.com/YaleSTC/reservations/issues/746)).
 
 #### Enhancements
