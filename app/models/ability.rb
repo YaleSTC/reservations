@@ -8,11 +8,17 @@ class Ability
           can :manage, :all
         when 'admin'
           can :manage, :all
+          unless AppConfig.first.enable_renewals
+            cannot :renew, Reservation
+          end
           cannot :appoint, :superuser
           cannot :access, :active_admin
           cannot [:destroy,:update], User, :role => 'superuser'
         when 'checkout'
           can :manage, Reservation
+          unless AppConfig.first.enable_renewals
+            cannot :renew, Reservation
+          end
           cannot :destroy, Reservation do |r|
              r.checked_out != nil
           end
