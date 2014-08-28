@@ -63,6 +63,7 @@ ActiveRecord::Schema.define(:version => 20140826040900) do
     t.boolean  "override_on_create",                                 :default => false
     t.boolean  "override_at_checkout",                               :default => false
     t.integer  "blackout_exp_time"
+    t.text     "request_text"
     t.boolean  "enable_renewals",                                    :default => true
   end
 
