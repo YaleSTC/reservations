@@ -33,7 +33,7 @@ class Ability
           can :read, EquipmentModel
           can [:read,:create], Reservation, :reserver_id => user.id
           can :destroy, Reservation, :reserver_id => user.id, :checked_out => nil
-          if AppConfig.first.patrons_can_renew
+          if AppConfig.first.enable_renewals
             can :renew, Reservation, :reserver_id => user.id
           end
           can :update_cart, :all
