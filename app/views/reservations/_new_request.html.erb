@@ -31,7 +31,9 @@
     </ul>
   </p>
 
-  <%= markdown(@app_configs.request_text) %>
+  <div class="well">
+    <%= markdown(@app_configs.request_text) %>
+  </div>
   <div class = "control-group text <%= 'error' if @notes_required %>">
     <%= f.label "Please give a short justification for this equipment request:" %>
     <%= f.input_field :notes, class: 'span6', rows: 5 %>
