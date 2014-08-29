@@ -86,7 +86,8 @@
     font-style: normal;
   }
 
-  &:-moz-placeholder:after {
+  // this is currently broken in FF, apparently :after doesn't work
+  &::-moz-placeholder:after {
     font-family: $sansFontFamily;
     content: "Search the catalog";
   }
