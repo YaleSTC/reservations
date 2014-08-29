@@ -29,6 +29,7 @@ Changelog
 #### Enhancements
 * Made version number visible to all users ([#856](https://github.com/YaleSTC/reservations/issues/856)).
 * The request notes are now shown on the request review page ([#901](https://github.com/YaleSTC/reservations/issues/901)).
+* Made the search box more noticable ([#293](https://github.com/YaleSTC/reservations/issues/293)).
 
 ### v3.4.2
 *Released on 28 July 2014*

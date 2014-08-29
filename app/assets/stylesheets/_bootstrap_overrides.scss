@@ -33,6 +33,6 @@ $navbarLinkColorHover: lighten(desaturate($left-2-color, 40%), 60%);
 // $navbarLinkColorActive  // @navbarLinkColorHover
 // $navbarLinkBackgroundHover: @include gradient-vertical;  // transparent
 // $navbarLinkBackgroundActive // @navbarBackground
-$navbarSearchBackground: desaturate(lighten($navbarBackground, 30%), 30%); // lighten(@navbarBackground, 25%)
-$navbarSearchPlaceholderColor: lighten(desaturate($left-2-color, 40%), 30%);
+$navbarSearchBackground: lighten(desaturate($left-2-color, 40%), 30%);
+$navbarSearchPlaceholderColor: darken(desaturate($navbarBackground, 30%), 30%);
 // $navbarBrandColor
