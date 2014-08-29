@@ -41,8 +41,8 @@ namespace :app do
               u.email = email
               u.login = login
               u.affiliation = affiliation
-              u.role = 'admin'
-              u.view_mode = 'admin'
+              u.role = 'superuser'
+              u.view_mode = 'superuser'
             end
           rescue Exception => e
             ActiveRecord::Rollback
