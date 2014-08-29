@@ -73,7 +73,7 @@
 }
 
 .navbar-search .search-query {
-  &:-moz-placeholder {
+  &::-moz-placeholder {
     font-family: FontAwesome;
     font-style: normal;
   }
