@@ -31,7 +31,7 @@ module ReservationScopes
       scope :missed_requests, lambda { where("approval_status = ? and start_date < ?", 'requested', Time.now.midnight.utc).recent }
 
       scope :for_reserver, lambda { |reserver| where(reserver_id: reserver) }
-      scope :reserved_in_date_range, lambda { |start_date, end_date| where("start_date < ? and due_date > ?", end_date, start_date).finalized }
+      scope :reserved_in_date_range, lambda { |start_date, end_date| where("start_date <= ? and due_date >= ?", end_date, start_date).finalized }
       scope :overlaps_with_date, lambda{ |date| where("start_date <= ? and due_date >= ?", date.to_datetime, date.to_datetime) }
     end
   end
