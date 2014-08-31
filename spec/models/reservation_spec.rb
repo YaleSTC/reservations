@@ -47,7 +47,7 @@ describe Reservation, :type => :model do
         r = FactoryGirl.create(:reservation, equipment_model: reservation.equipment_model, start_date: reservation.due_date + 3.days,
                            due_date: reservation.due_date + reservation.equipment_model.max_renewal_length.days + 5.days)
         r.equipment_model.equipment_objects.last.destroy
-        expect(reservation.find_renewal_date).to eq(reservation.due_date + 3.days)
+        expect(reservation.find_renewal_date).to eq(reservation.due_date + 2.days)
       end
     end
 
