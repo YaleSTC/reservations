@@ -6,7 +6,7 @@ Changelog
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
 ### v3.4.3
-*Released on 18 August 2014*
+*Released on 2 September 2014*
 #### Bug Fixes
 * Fixed typo on the application settings form ([#850](https://github.com/YaleSTC/reservations/issues/850)).
 * Fixed an issue where checkout persons could not use autocomplete ([#857](https://github.com/YaleSTC/reservations/issues/857)).
@@ -18,13 +18,20 @@ Changelog
 * Fixed an issue where the overdue scope was including missed reservations ([#893](https://github.com/YaleSTC/reservations/issues/893)).
 * Fixed an issue where the reservation notes e-mails were not being sent ([#906](https://github.com/YaleSTC/reservations/issues/906)).
 * Fixed the equipment model change popup to only show when relevant ([#890](https://github.com/YaleSTC/reservations/issues/890)).
+* Fixed an issue where the notes field in the check-out form was being populated with prior notes ([#915](https://github.com/YaleSTC/reservations/issues/915)).
+* Fixed an issue where the renewal button would be active even when the max renewal length was zero ([#916](https://github.com/YaleSTC/reservations/issues/916)).
+* Fixed an issue where the app wasn't properly counting reservations that started on the same day as the cart start date for availability ([#932](https://github.com/YaleSTC/reservations/issues/932)).
+* Fixed an issue where renewals were including the start date of any upcoming reservations that required the item ([#932](https://github.com/YaleSTC/reservations/issues/932)).
 
 #### New Features
 * Added equipment import functionality ([#494](https://github.com/YaleSTC/reservations/issues/494)).
+* Added an option to disable renewals ([#916](https://github.com/YaleSTC/reservations/issues/916)).
+* Added a customizable prompt to the reservation request page ([#746](https://github.com/YaleSTC/reservations/issues/746)).
 
 #### Enhancements
 * Made version number visible to all users ([#856](https://github.com/YaleSTC/reservations/issues/856)).
 * The request notes are now shown on the request review page ([#901](https://github.com/YaleSTC/reservations/issues/901)).
+* Made the search box more noticable ([#293](https://github.com/YaleSTC/reservations/issues/293)).
 
 ### v3.4.2
 *Released on 28 July 2014*
