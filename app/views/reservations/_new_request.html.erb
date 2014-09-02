@@ -32,10 +32,10 @@
   </p>
 
   <div class="well">
-    <%= @app_configs.request_text.empty? ? "Please give a short justification for this equipment request:" : markdown(@app_configs.request_text) %>
+    <%= markdown(@request_text) %>
   </div>
   <div class = "control-group text <%= 'error' if @notes_required %>">
-    <%= f.label "" %>
+    <%= f.label "Enter your comments here:" %>
     <%= f.input_field :notes, class: 'span6', rows: 5 %>
   </div>
 

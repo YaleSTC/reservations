@@ -57,6 +57,9 @@ class ReservationsController < ApplicationController
           flash[:error] = 'Are you sure you want to continue? Please review the errors below.'
         else
           flash[:error] = 'Please review the errors below. If uncorrected, any reservations with errors will be filed as a request, and subject to administrator approval.'
+          @request_text = AppConfig.first.request_text.empty? ? \
+            "Please give a short justification for this equipment request:" :
+            AppConfig.first.request_text
         end
       end
 
