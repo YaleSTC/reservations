@@ -25,6 +25,7 @@ You'll need the following to run Reservations:
 * [Bundler](http://bundler.io/)
 * a database server ([MySQL](http://www.mysql.com/) or any database supported by Rails)
 * [ImageMagick](http://www.imagemagick.org/script/index.php)
+* [GhostScript](http://www.ghostscript.com/)
 * a [CAS](http://www.jasig.org/cas) authentication system
 
 ### Installation
