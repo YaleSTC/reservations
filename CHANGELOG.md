@@ -5,8 +5,15 @@ Changelog
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
-### v3.4.3
+### v3.4.4
 *Released on 2 September 2014*
+#### New Features
+* An email will now be sent to the administrators when a new request is created ([#943](https://github.com/YaleSTC/reservations/943)).
+
+#### Enhancements
+* Made sure that there were no redundant prompts when a custom request prompt was defined ([#940](https://github.com/YaleSTC/reservations/940)).
+
+### v3.4.3
 #### Bug Fixes
 * Fixed typo on the application settings form ([#850](https://github.com/YaleSTC/reservations/issues/850)).
 * Fixed an issue where checkout persons could not use autocomplete ([#857](https://github.com/YaleSTC/reservations/issues/857)).
