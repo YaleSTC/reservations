@@ -61,6 +61,7 @@ class ReservationsController < ApplicationController
             @request_text = "Please give a short justification for this equipment request."
           else
             @request_text = AppConfig.first.request_text
+          end
         end
       end
 
