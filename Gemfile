@@ -10,7 +10,6 @@ gem 'rdoc'
 
 # rails 4 transition gems
 gem 'activerecord-session_store'
-gem 'rspec-its'
 
 #authentication
 #gem 'rubycas-client-rails'
