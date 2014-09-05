@@ -416,7 +416,7 @@ class ReservationsController < ApplicationController
     notes = old_notes ? old_notes + "\n\n" : ''
     procedure_kind = procedure_kind.to_s
 
-    if new_notes || procedures.present?
+    if !new_notes.empty? || procedures.present?
       notes += "== Notes from #{procedure_kind}\n"
       notes += new_notes + "\n\n" if new_notes
     end
