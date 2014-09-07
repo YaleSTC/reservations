@@ -13,38 +13,42 @@
 }
 
 .checkin-click:hover{
-  background-color: darken($bodyBackground, 6%);
+  background-color: darken(desaturate($bodyBackground, 10%), 17%);
   cursor: pointer;
 }
 
 .selected {
-  background-color: adjust-hue(darken($bodyBackground, 5%), 45deg);
+  background-color: adjust-hue(darken($bodyBackground, 12%), 45deg);
 }
 
 .selected-overdue {
-  background-color: adjust-hue(darken($bodyBackground, 7%), -25deg);
+  //background-color: adjust-hue(darken($bodyBackground, 12%), -25deg);
+  //commented out red background but we may want to save it for later,
+  // possibly for unselected checkin procedures
 }
 
 .check {
   color: green;
+}
+.icons {
+  float: right;
+}
+.title {
+  float: left;
 }
 
 .overdue-icon {
   color: #AD0000;
 }
 
-.hidden {
-	opacity:0;
+.c-box {
+  cursor: pointer;
 }
 
-.icons {
-	float: right;
+.c-box:hover {
+  background-color: darken($bodyBackground,5%);
 }
 
-.title {
-	float: left;
-}
-	
 .checkin, .checkout {
   .rectangle-list {
     margin-bottom: 2em;

@@ -8,14 +8,8 @@ class EquipmentModel < ActiveRecord::Base
 
   has_paper_trail
 
-  attr_accessible :name, :category, :category_id, :description, :late_fee, :replacement_fee,
-      :max_per_user, :document_attributes, :deleted_at,
-      :checkout_procedures_attributes, :checkin_procedures_attributes, :photo,
-      :documentation, :max_renewal_times, :max_renewal_length, :renewal_days_before_due,
-      :associated_equipment_model_ids, :requirement_ids, :requirements
-
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
-  scope :active, where("#{table_name}.deleted_at is null")
+  scope :active, lambda { where("#{table_name}.deleted_at is null") }
 
   ##################
   ## Associations ##
@@ -25,7 +19,7 @@ class EquipmentModel < ActiveRecord::Base
   has_and_belongs_to_many :requirements
   has_many :equipment_objects, dependent: :destroy
   has_many :documents
-  has_many :reservations, dependent: :destroy
+  has_many :reservations
   has_many :checkin_procedures, dependent: :destroy
   accepts_nested_attributes_for :checkin_procedures, \
                                 reject_if: :all_blank, allow_destroy: true
@@ -50,7 +44,8 @@ class EquipmentModel < ActiveRecord::Base
   validates :name,         uniqueness: true
   validates :late_fee,     :replacement_fee,
                            numericality: { greater_than_or_equal_to: 0 }
-  validates :max_per_user, numericality: { allow_nil: true, \
+  validates :max_per_user,
+            :max_checkout_length, numericality: { allow_nil: true, \
                                               only_integer: true, \
                                               greater_than_or_equal_to: 1 }
   validates :max_renewal_length,
@@ -122,6 +117,11 @@ class EquipmentModel < ActiveRecord::Base
   ######################
 
   #inherits from category if not defined
+
+  def maximum_checkout_length
+    max_checkout_length || category.maximum_checkout_length
+  end
+
   def maximum_per_user
     max_per_user || category.maximum_per_user
   end
@@ -145,28 +145,36 @@ class EquipmentModel < ActiveRecord::Base
     end
   end
 
-  def num_available_from_source(start_date, due_date, source_reservations)
-    # get the number available in the given date range
-    # take an activerecord relation instead of using a database call
-    # for database query optimization purposes
-    # O(n) comparisons
-    max_num = self.equipment_objects.active.count - number_overdue
-    min_available = Float::INFINITY
+  def num_reserved(start_date, due_date, source_reservations)
+    # get the number reserved in the source reservations
+    # uses 0 queries, you need to specify the max number of
+    # items yourself
+    max_reserved = 0
     start_date.to_date.upto(due_date.to_date) do |d|
-      available = max_num - source_reservations.reserved_on_date(d).count
-      return 0 if min_available <= 0
-      if min_available > available
-        min_available = available
+      reserved = Reservation.number_for_model_on_date(d,self.id,source_reservations)
+      if reserved > max_reserved
+        max_reserved = reserved
       end
     end
-    return min_available
+    return max_reserved
+  end
+
+  def num_available_from_source(start_date, due_date, source_reservations)
+    # get the number available in the given date range
+    # take an array of reservations instead of using a database call
+    # for database query optimization purposes
+    # 2 queries to calculate max_num
+    max_num = self.equipment_objects.active.count - number_overdue
+    available = max_num - num_reserved(start_date,due_date, source_reservations)
+    return available < 0 ? 0 : available
   end
 
   def num_available(start_date, due_date)
-    # for if you just want the number available
+    # for if you just want the number available, 1 query to get
+    # relevant reservations
     relevant_reservations = Reservation.for_eq_model(self).
       reserved_in_date_range(start_date.to_datetime, due_date.to_datetime).
-      not_returned
+      not_returned.all
     num_available_from_source(start_date, due_date, relevant_reservations)
   end
 
@@ -192,7 +200,7 @@ class EquipmentModel < ActiveRecord::Base
   end
 
   def available_object_select_options
-    self.equipment_objects.active.select{|e| e.available?}\
+    self.equipment_objects.includes(:reservations).active.select{|e| e.available?}\
         .sort_by(&:name)\
         .collect{|item| "<option value=#{item.id}>#{item.name}</option>"}\
         .join.html_safe

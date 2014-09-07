@@ -2,11 +2,11 @@
   <%= f.error_notification %>
 
   <%= f.label "Starts At:" %>
-  <%= f.datepicker :starts_at, value: @announcement.starts_at.strftime('%m/%d/%Y'), class: 'date_start'%>
+  <%= f.text_field :starts_at, value: @announcement.starts_at.strftime('%m/%d/%Y'), class: 'date_start'%>
   <%= f.input :starts_at, as: :hidden, input_html: {id: 'date_start_alt'} %>
 
   <%= f.label "Ends At:" %>
-  <%= f.datepicker :ends_at, value: @announcement.ends_at.strftime('%m/%d/%Y'), class: 'date_end', altField: '#date_end_alt', altFormat: 'yy-mm-dd' %>
+  <%= f.text_field :ends_at, value: @announcement.ends_at.strftime('%m/%d/%Y'), class: 'date_end' %>
   <%= f.input :ends_at, as: :hidden, input_html: {id: 'date_end_alt'} %>
 
   <%#= f.label "Visible To" %>

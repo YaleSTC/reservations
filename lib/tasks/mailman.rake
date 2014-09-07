@@ -6,8 +6,8 @@ task :send_upcoming_checkin_reminder => :environment do
                                                checked_in IS NULL and\
                                                due_date >= ?\
                                                and due_date < ?",
-                                               Time.now.midnight.utc,
-                                               Time.now.midnight.utc + 1.day)
+                                               Time.current.midnight.utc,
+                                               Time.current.midnight.utc + 1.day)
     puts "Found #{upcoming_reservations.size} reservations due for checkin.\
           Sending reminder emails..."
     upcoming_reservations.each do |upcoming_reservation|
@@ -26,7 +26,7 @@ task :send_overdue_checkin_reminder => :environment do
     #get all reservations that ended before today and aren't already checked in
     overdue_reservations = Reservation.where("checked_out IS NOT NULL and\
                                               checked_in IS NULL and\
-                                              due_date < ?", Time.now.midnight.utc)
+                                              due_date < ?", Time.current.midnight.utc)
     puts "Found #{overdue_reservations.size} reservations overdue for checkin.\
           Sending reminder emails..."
     overdue_reservations.each do |overdue_reservation|

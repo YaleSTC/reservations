@@ -8,7 +8,7 @@ class Cart
   def initialize
     @errors = ActiveModel::Errors.new(self)
     @items = Hash.new()
-    @start_date = Date.today
+    @start_date = Date.current
     @due_date = Date.tomorrow
     @reserver_id = nil
   end
@@ -22,9 +22,9 @@ class Cart
   def get_items
     # Used in cart_validations
     # Return items where the key is the full equipment model object
-    # uses 1 database call
+    # uses 1 database call and eager loads the categories
     full_hash = Hash.new
-    EquipmentModel.find(self.items.keys).each do |em|
+    EquipmentModel.includes(:category).find(self.items.keys).each do |em|
       full_hash[em] = self.items[em.id]
     end
     full_hash
@@ -50,7 +50,7 @@ class Cart
 
   # remove all items from cart
   def purge_all
-    @items = Hash.new()
+    initialize
   end
 
   # return array of reservations crafted from the cart contents
@@ -65,6 +65,38 @@ class Cart
       end
     end
     reservations
+  end
+
+  def reserve_all(notes = "" , request = false)
+    # reserve all the items in the cart!
+    # takes 2 arguments which is whether or not
+    # the equipment should be requested or reserved
+    # and what notes the reservations should be initialized with
+    reservations = prepare_all
+    message = []
+    reservations.each do |r|
+      errors = r.validate
+      unless request
+        notes = "### Reservation notes (#{Time.current.to_s(:long)})\n#{notes}"
+        r.approval_status = 'auto'
+        message << "Reservation for #{r.equipment_model.name} created successfully#{", even though " + errors.to_sentence[0,1].downcase + errors.to_sentence[1..-1] unless errors.empty?}.\n"
+      else
+        notes = "### Request notes (#{Time.current.to_s(:long)})\n#{notes}"
+        r.approval_status = 'requested'
+        message << "Request for #{r.equipment_model.name} filed successfully. #{errors.to_sentence}\n"
+      end
+      r.notes = notes
+      r.save!
+      AdminMailer.request_filed(r).deliver if request
+    end
+
+    purge_all
+
+    message.join(" ")
+  end
+
+  def request_all(notes = "")
+    reserve_all(notes, true)
   end
 
   # Returns the cart's duration

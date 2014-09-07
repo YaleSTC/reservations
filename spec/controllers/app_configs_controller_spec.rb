@@ -9,7 +9,7 @@ require 'spec_helper'
 # match '/create_app_configs' => 'application_setup#create_app_configs', :as => :create_app_configs
 
 
-describe AppConfigsController do
+describe AppConfigsController, :type => :controller do
 
   describe 'GET edit' do
     context 'app_config exists already' do
@@ -18,31 +18,31 @@ describe AppConfigsController do
       end
       context 'user is admin' do
         before(:each) do
-          controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
+          allow(controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
           get :edit
         end
-        it { should render_template(:edit) }
-        it { should respond_with(:success) }
-        it { should_not set_the_flash }
+        it { is_expected.to render_template(:edit) }
+        it { is_expected.to respond_with(:success) }
+        it { is_expected.not_to set_the_flash }
         it 'should assign @app_config variable to the first appconfig in the db' do
           expect(assigns(:app_config)).to eq(AppConfig.first)
         end
       end
       context 'user is not admin' do
         before(:each) do
-          controller.stub(:current_user).and_return(FactoryGirl.create(:user))
+          allow(controller).to receive(:current_user).and_return(FactoryGirl.create(:user))
           get :edit
         end
-        it { should redirect_to(root_path) }
+        it { is_expected.to redirect_to(root_path) }
       end
     end
     context 'app_config does not exist yet' do
       before(:each) do
         get :edit
       end
-      it { should respond_with(:success) }
-      it { should set_the_flash }
-      it { should render_template(%w(layouts/application application_setup/index)) }
+      it { is_expected.to respond_with(:success) }
+      it { is_expected.to set_the_flash }
+      it { is_expected.to render_template('application_setup/index') }
     end
   end
 
@@ -54,7 +54,7 @@ describe AppConfigsController do
       end
       context 'user is admin' do
         before (:each) do
-          controller.stub(:current_user).and_return(FactoryGirl.create(:admin))
+          allow(controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
           @params = FactoryGirl.attributes_for(:app_config) # Except paperclip attributes that trigger MassAssignment errors
             .reject {|k,v| [:favicon_file_name, :favicon_content_type, :favicon_file_size, :favicon_updated_at].include? k}
         end
@@ -73,7 +73,7 @@ describe AppConfigsController do
             Rails.logger.debug @params
             post :update, app_config: @params
             @user.reload
-            expect(@user.terms_of_service_accepted).to be_false
+            expect(@user.terms_of_service_accepted).to be_falsey
           end
 
           it 'maintains TOS status for all users when :reset_tos_for_users is not 1' do
@@ -82,7 +82,7 @@ describe AppConfigsController do
             Rails.logger.debug @params
             post :update, app_config: @params
             @user.reload
-            expect(@user.terms_of_service_accepted).to be_true
+            expect(@user.terms_of_service_accepted).to be_truthy
           end
 
           it 'restores favicon when appropriate'
@@ -102,10 +102,10 @@ describe AppConfigsController do
       end
       context 'user is not admin' do
         before(:each) do
-          controller.stub(:current_user).and_return(FactoryGirl.create(:user))
+          allow(controller).to receive(:current_user).and_return(FactoryGirl.create(:user))
           post :update
         end
-        it { should redirect_to(root_path) }
+        it { is_expected.to redirect_to(root_path) }
       end
     end
     context 'app_config does not exist yet' do
@@ -115,9 +115,9 @@ describe AppConfigsController do
       before(:each) do
         post :update
       end
-      it { should respond_with(:success) }
-      it { should set_the_flash }
-      it { should render_template(%w(layouts/application application_setup/index)) }
+      it { is_expected.to respond_with(:success) }
+      it { is_expected.to set_the_flash }
+      it { is_expected.to render_template('application_setup/index') }
     end
   end
 end

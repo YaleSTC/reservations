@@ -23,11 +23,8 @@
     <%= cart.start_date.to_date.to_s(:long) %> to
     <%= cart.due_date.to_date.to_s(:long) %>:
 
-    <%# hidden fields needed for data submission %>
-    <%= f.input :reserver_id, :as => :hidden, :value => cart.reserver_id %>
-    <%= f.input :start_date, :as => :hidden, :value => cart.start_date %>
-    <%= f.input :due_date, :as => :hidden, :value => cart.due_date %>
   </p>
+
   <p>
     <ul class="rounded-list">
       <% cart.items.each do |model_id, quantity| %>
@@ -35,6 +32,12 @@
       <% end %>
     </ul>
   </p>
+
+  <div class = "control-group text <%= 'error' if @notes_required %>">
+    <%= f.label "#{@errors.blank? ? 'Optional notes' : 'Justification for error override'} for this reservation:" %>
+    <%= f.input_field :notes, class: 'span6', rows: 5 %>
+  </div>
+
   <div class="form-actions">
     <%= f.button :submit, "Finalize Reservation" %>
     <%= link_to "Return to Catalog", catalog_path, class: 'btn' %>

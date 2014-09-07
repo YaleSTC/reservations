@@ -17,9 +17,6 @@ FactoryGirl.define do
     created_by_admin false
     role 'normal'
     view_mode 'normal'
-    factory :deactivated_user do
-      deleted_at "2013-01-01 00:00:00"
-    end
 
     factory :admin do
       role 'admin'

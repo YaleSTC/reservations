@@ -1,14 +1,14 @@
 <%= f.error_notification %>
 
 <fieldset>
-	<legend>General</legend>
+  <legend>General</legend>
   <%= f.input :site_title, hint: "The Site Title is displayed in the title bar / tab in the browser, as well as in the navigation bar." %>
   <%= f.input :admin_email %>
   <%= f.input :department_name %>
-	<%= f.input :home_link_text %>
-	<%= f.input :home_link_location %>
+  <%= f.input :home_link_text %>
+  <%= f.input :home_link_location %>
   <%= f.input :contact_link_location, label: 'Contact Email', hint:
-  'Enter an email to which questions from the contact from will be sent' %>
+  'The email to which contact form submissions will be sent.' %>
   <%= f.input :default_per_cat_page, label: 'Items per page', hint:
   'Default number of items to display per page in the Catalog.' %>
   <%# Paperclip inline error fix %>
@@ -36,6 +36,14 @@
   <%= f.input :override_on_create, label: 'Override on create', hint: 'Give checkout persons admin-level override capability when creating a reservation. For example, they would be able to create a reservation on a blackout date, or for a period longer than the permitted length for that item.' %>
   <%= f.input :override_at_checkout, label: 'Override at checkout', hint: 'Give checkout persons admin-level override capability when checking out. For example, they would be able to checkout equipment to someone with an overdue reservation.' %>
   <%= f.input :require_phone, label: 'Are users required to provide a phone number?' %>
+</fieldset>
+
+<fieldset>
+  <legend>Reservation requests</legend><br />
+  <%= f.input :request_text, label: 'Reservation request text', input_html: {class: 'span6', rows: 7},
+    hint: 'This message will be displayed to users who are about to file a reservation request for invalid reservations.
+           You can use markdown in this field' %>
+  <%= render partial: 'shared/markdown_button' %>
 </fieldset>
 
 <fieldset>
@@ -89,6 +97,14 @@
     <%= f.input :reset_tos_for_users, input_html: {type: "checkbox", value: '1'} , label: "Force all patrons to accept the TOS again?", :hint => "i.e., if patrons need to be aware that the terms of service have changed." %>
   <% end %>
 </fieldset>
+
+<fieldset>
+  <legend>Blackout Dates</legend>
+  <%= f.input :blackout_exp_time, label: 'Days to keep old blackouts',
+      hint: 'Blackout dates a certain number of days old can be automatically deleted. Leave blank to keep
+      all blackouts forever.' %>
+</fieldset>
+
 <div class="form-actions">
   <%= f.button :submit, 'Update Settings' %>
 </div>

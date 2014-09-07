@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ReservationsController do
+describe ReservationsController, :type => :controller do
 
   ## Common setup
   render_views
@@ -26,26 +26,26 @@ describe ReservationsController do
   before(:each) do
     @cart = FactoryGirl.build(:cart, reserver_id: @user.id)
 
-    @controller.stub(:first_time_user).and_return(nil)
-    @controller.stub(:current_user).and_return(@user)
+    allow(@controller).to receive(:first_time_user).and_return(nil)
+    allow(@controller).to receive(:current_user).and_return(@user)
 
     @reservation = FactoryGirl.create(:valid_reservation, reserver: @user)
   end
 
   ## Shared examples
   shared_examples 'cannot access page' do
-    it { response.should be_redirect }
-    it { should set_the_flash }
+    it { expect(response).to be_redirect }
+    it { is_expected.to set_the_flash }
   end
 
   shared_examples 'inaccessible by banned user' do
     before(:each) do
       banned = FactoryGirl.build(:banned)
-      @controller.stub(:current_user).and_return(banned)
-      Reservation.stub(:find).and_return(FactoryGirl.build_stubbed(:reservation, reserver: banned))
+      allow(@controller).to receive(:current_user).and_return(banned)
+      allow(Reservation).to receive(:find).and_return(FactoryGirl.build_stubbed(:reservation, reserver: banned))
     end
     include_examples 'cannot access page'
-    it { should redirect_to(root_path) }
+    it { is_expected.to redirect_to(root_path) }
   end
 
   ## Controller method tests
@@ -61,8 +61,8 @@ describe ReservationsController do
 
     context 'when accessed by non-banned user' do
       subject { get :index }
-      it { should be_success }
-      it { should render_template(:index) }
+      it { is_expected.to be_success }
+      it { is_expected.to render_template(:index) }
 
       it 'populates @reservations_set with respect to params[filter]' do
         # Setup
@@ -75,7 +75,7 @@ describe ReservationsController do
         @filters.each do |f|
           get :index, f => true
           expect(assigns(:reservations_set).uniq.sort).to \
-           eq([Reservation.send(f).uniq.sort])
+           eq(Reservation.send(f).uniq.sort)
         end
       end
 
@@ -96,7 +96,7 @@ describe ReservationsController do
 
       context 'who is an admin' do
         before(:each) do
-          @controller.stub(:current_user).and_return(@admin)
+          allow(@controller).to receive(:current_user).and_return(@admin)
           @filters.each do |trait|
             res = FactoryGirl.build(:valid_reservation, trait,
                                     reserver: [@user, @admin].sample)
@@ -105,29 +105,23 @@ describe ReservationsController do
         end
         it 'uses :upcoming as default filter' do
           get :index
-          # Cannot compare objects in nested arrays directly
-          assigns(:reservations_set)[0].each do |r|
-            expect(Reservation.upcoming.all.map(&:id)).to include(r.id)
-          end
+          expect(assigns(:reservations_set) - Reservation.upcoming.all).to be_empty
         end
       end
 
       context 'who is not an admin' do
         before(:each) do
-          @controller.stub(:current_user).and_return(@user)
+          allow(@controller).to receive(:current_user).and_return(@user)
           @filters.each do |trait|
             res = FactoryGirl.build(:valid_reservation, trait,
-                                    reserver: [@user, @admin].sample)
+                                    reserver: [@user,@admin].sample)
             res.save(validate: false)
           end
         end
 
         it 'uses :reserved as the default filter' do
           get :index
-          # Cannot compare objects in nested arrays directly
-          assigns(:reservations_set)[0].each do |r|
-            expect(@controller.current_user.reservations.upcoming.map(&:id)).to include(r.id)
-         end
+          expect(assigns(:reservations_set) - @user.reservations.reserved).to be_empty
         end
       end
     end
@@ -144,15 +138,15 @@ describe ReservationsController do
 
     shared_examples 'can view reservation by patron' do
       before(:each) { get :show, id: @reservation.id }
-      it { should render_template(:show) }
-      it { response.should be_success }
+      it { is_expected.to render_template(:show) }
+      it { expect(response).to be_success }
       it { expect(assigns(:reservation)).to eq @reservation }
     end
 
     shared_examples 'can view reservation by admin' do
       before(:each) { get :show, id: @admin_res.id }
-      it { should render_template(:show) }
-      it { response.should be_success }
+      it { is_expected.to render_template(:show) }
+      it { expect(response).to be_success }
       it { expect(assigns(:reservation)).to eq @admin_res }
     end
 
@@ -163,7 +157,7 @@ describe ReservationsController do
 
     context 'when accessed by admin' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@admin)
+        allow(@controller).to receive(:current_user).and_return(@admin)
       end
 
       it_behaves_like 'can view reservation by patron'
@@ -172,7 +166,7 @@ describe ReservationsController do
 
     context 'when accessed by checkout person' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@checkout_person)
+        allow(@controller).to receive(:current_user).and_return(@checkout_person)
       end
 
       it_behaves_like 'can view reservation by patron'
@@ -181,7 +175,7 @@ describe ReservationsController do
 
     context 'when accessed by patron' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@user)
+        allow(@controller).to receive(:current_user).and_return(@user)
       end
 
       it_behaves_like 'can view reservation by patron'
@@ -200,14 +194,14 @@ describe ReservationsController do
     end
 
     context 'when accessed by a non-banned user' do
-      before(:each) { @controller.stub(:current_user).and_return(@user) }
+      before(:each) { allow(@controller).to receive(:current_user).and_return(@user) }
 
       context 'with an empty cart' do
         before(:each) do
           get :new
         end
-        it { response.should be_redirect }
-        it { should set_the_flash }
+        it { expect(response).to be_redirect }
+        it { is_expected.to set_the_flash }
       end
 
       context 'with a non-empty cart' do
@@ -217,27 +211,44 @@ describe ReservationsController do
         end
 
         it 'should display errors'
-        it { should render_template(:new) }
+        it { is_expected.to render_template(:new) }
       end
     end
   end
 
   describe '#create (POST /reservations/create)' do
     it_behaves_like 'inaccessible by banned user' do
-      before { post :create }
+      before { post :create, reservation: FactoryGirl.attributes_for(:valid_reservation) }
     end
 
     context 'when accessed by non-banned user' do
-      before(:each) { @controller.stub(:current_user).and_return(@user) }
+      before(:each) { allow(@controller).to receive(:current_user).and_return(@user) }
 
       context 'with validation-failing items in Cart' do
         before(:each) do
-          @invalid_cart = FactoryGirl.build(:invalid_cart)
+          @invalid_cart = FactoryGirl.build(:invalid_cart, reserver_id: @user.id)
           @req = Proc.new do
             post :create,
-              {reservation: {start_date: Date.today, due_date: Date.tomorrow,
-                            reserver_id: @user.id}},
+              {reservation: {notes: "because I can" }},
               {cart: @invalid_cart}
+          end
+          @req_no_notes = Proc.new do
+            post :create,
+              { reservation: {notes: "" } },
+              { cart: @invalid_cart }
+          end
+        end
+
+        context 'no justification provided' do
+          before do
+            allow(@controller).to receive(:current_user).and_return(@checkout_person)
+            @req_no_notes.call
+          end
+
+          it { is_expected.to render_template(:new) }
+
+          it 'should set @notes_required to true' do
+            expect(assigns(:notes_required)).to be_truthy
           end
         end
 
@@ -245,7 +256,7 @@ describe ReservationsController do
         context 'and user can override errors' do
           before(:each) do
             AppConfig.first.update_attributes(override_on_create: true)
-            @controller.stub(:current_user).and_return(@checkout_person)
+            allow(@controller).to receive(:current_user).and_return(@checkout_person)
           end
 
           it 'affects the database' do
@@ -254,32 +265,31 @@ describe ReservationsController do
 
           it 'should redirect' do
             @req.call
-            response.should redirect_to(manage_reservations_for_user_path(@user.id))
+            expect(response).to redirect_to(manage_reservations_for_user_path(@user.id))
           end
 
           it 'sets the flash' do
             @req.call
-            flash[:notice].should_not be_nil
+            expect(flash[:notice]).not_to be_nil
           end
         end
 
-        # expected to fail until ReservationController is fixed from #583
         context 'and user cannot override errors' do
-          before { pending } # FIXME: Remove
+          # request would be filed
           before(:each) do
             AppConfig.first.update_attributes(override_on_create: false)
-            @controller.stub(:current_user).and_return(@checkout_person)
+            allow(@controller).to receive(:current_user).and_return(@checkout_person)
           end
-          it 'does not affect database' do
-            expect { @req.call }.to_not change { Reservation.count }
+          it 'affects database' do
+            expect { @req.call }.to change { Reservation.count }
           end
           it 'redirects to catalog_path' do
             @req.call
-            response.should redirect_to(catalog_path)
+            expect(response).to redirect_to(catalog_path)
           end
-          it 'sets the flash' do
+          it 'should not set the flash' do
             @req.call
-            flash[:error].should_not be_nil
+            expect(flash[:error]).to be_nil
           end
         end
       end
@@ -289,7 +299,7 @@ describe ReservationsController do
           @valid_cart = FactoryGirl.build(:cart_with_items)
           @req = Proc.new do
             post :create,
-              {reservation: {start_date: Date.today, due_date: Date.tomorrow,
+              {reservation: {start_date: Date.current, due_date: Date.tomorrow,
                             reserver_id: @user.id}},
               {cart: @valid_cart}
           end
@@ -300,16 +310,16 @@ describe ReservationsController do
         end
         it 'empties the Cart' do
           @req.call
-          response.request.env['rack.session'][:cart].items.count.should eq(0)
+          expect(response.request.env['rack.session'][:cart].items.count).to eq(0)
           # Cart.should_receive(:new)
         end
         it 'sets flash[:notice]' do
           @req.call
-          flash[:notice].should_not be_nil
+          expect(flash[:notice]).not_to be_nil
         end
         it 'is a redirect' do
           @req.call
-          response.should be_redirect
+          expect(response).to be_redirect
         end
       end
     end
@@ -323,7 +333,7 @@ describe ReservationsController do
 
     context 'when accessed by patron' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@user)
+        allow(@controller).to receive(:current_user).and_return(@user)
         get 'edit', id: @reservation.id
       end
       include_examples 'cannot access page'
@@ -331,7 +341,7 @@ describe ReservationsController do
 
     context 'when accessed by checkout person disallowed by settings' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@checkout_person)
+        allow(@controller).to receive(:current_user).and_return(@checkout_person)
         AppConfig.first.update_attributes(checkout_persons_can_edit: false)
         get 'edit', id: @reservation.id
       end
@@ -349,12 +359,12 @@ describe ReservationsController do
       it 'assigns @option_array with the correct contents' do
         expect(assigns(:option_array)).to eq @reservation.equipment_model.equipment_objects.collect { |e| [e.name, e.id] }
       end
-      it { should render_template(:edit) }
+      it { is_expected.to render_template(:edit) }
     end
 
     context 'when accessed by checkout person allowed by settings' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@checkout_person)
+        allow(@controller).to receive(:current_user).and_return(@checkout_person)
         AppConfig.first.update_attributes(checkout_persons_can_edit: true)
         get :edit, id: @reservation.id
       end
@@ -363,7 +373,7 @@ describe ReservationsController do
 
     context 'when accessed by admin' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@admin)
+        allow(@controller).to receive(:current_user).and_return(@admin)
         AppConfig.first.update_attributes(checkout_persons_can_edit: false)
         get :edit, id: @reservation.id
       end
@@ -391,7 +401,7 @@ describe ReservationsController do
 
     context 'when accessed by patron' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@user)
+        allow(@controller).to receive(:current_user).and_return(@user)
         put 'update', id: @reservation.id
       end
       include_examples 'cannot access page'
@@ -399,9 +409,9 @@ describe ReservationsController do
 
     context 'when accessed by checkout person disallowed by settings' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@checkout_person)
+        allow(@controller).to receive(:current_user).and_return(@checkout_person)
         AppConfig.first.update_attributes(checkout_persons_can_edit: false)
-        put 'update', {id: @reservation.id, reservation: FactoryGirl.attributes_for(:reservation)}
+        put 'update', id: @reservation.id, reservation: FactoryGirl.attributes_for(:reservation)
       end
       include_examples 'cannot access page'
     end
@@ -413,16 +423,16 @@ describe ReservationsController do
         before(:each) do
           put :update, { id: @reservation.id,
             reservation: FactoryGirl.attributes_for(:reservation,
-              start_date: Date.today.strftime('%m/%d/%Y'),
-              due_date: (Date.tomorrow + 3.days).strftime('%m/%d/%Y')),
+              start_date: Date.current,
+              due_date: (Date.tomorrow + 3.days)),
             equipment_object: ''}
         end
         it 'should update the reservation details' do
           @reservation.reload
-          expect(@reservation.start_date.to_time.utc).to eq(Date.today.to_time.utc)
-          expect(@reservation.due_date.to_time.utc).to eq((Date.tomorrow + 3.days).to_time.utc)
+          expect(@reservation.start_date.to_time.utc).to eq(Time.current.midnight.utc)
+          expect(@reservation.due_date.to_time.utc).to eq((Time.current.midnight + 4*24.hours).utc)
         end
-        it { should redirect_to(@reservation) }
+        it { is_expected.to redirect_to(@reservation) }
       end
 
       describe 'and provides valid params[:equipment_object]' do
@@ -430,14 +440,14 @@ describe ReservationsController do
           @new_equipment_object = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
           put :update, { id: @reservation.id,
             reservation: FactoryGirl.attributes_for(:reservation,
-              start_date: Date.today.strftime('%m/%d/%Y'),
-              due_date: Date.tomorrow.strftime('%m/%d/%Y')),
+              start_date: Date.current,
+              due_date: Date.tomorrow),
             equipment_object: @new_equipment_object.id }
         end
         it 'should update the object on current reservation' do
           expect{ @reservation.reload }.to change{@reservation.equipment_object}
         end
-        it { should redirect_to(@reservation) }
+        it { is_expected.to redirect_to(@reservation) }
       end
 
       # Unhappy path
@@ -446,8 +456,8 @@ describe ReservationsController do
           request.env["HTTP_REFERER"] = reservation_path(@reservation)
           put :update, { id: @reservation.id,
             reservation: FactoryGirl.attributes_for(:reservation,
-              start_date: Date.today.strftime('%m/%d/%Y'),
-              due_date: Date.yesterday.strftime('%m/%d/%Y')),
+              start_date: Date.current,
+              due_date: Date.yesterday),
             equipment_object: ''}
         end
         include_examples 'cannot access page'
@@ -456,7 +466,7 @@ describe ReservationsController do
 
     context 'when accessed by checkout person allowed by settings' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@checkout_person)
+        allow(@controller).to receive(:current_user).and_return(@checkout_person)
         AppConfig.first.update_attributes(checkout_persons_can_edit: true)
       end
       include_examples 'can access update page'
@@ -464,7 +474,7 @@ describe ReservationsController do
 
     context 'when accessed by admin' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@admin)
+        allow(@controller).to receive(:current_user).and_return(@admin)
         AppConfig.first.update_attributes(checkout_persons_can_edit: false)
       end
       include_examples 'can access update page'
@@ -486,12 +496,12 @@ describe ReservationsController do
 
       it 'redirects to reservations_url' do
         delete :destroy, id: reservation.id
-        response.should redirect_to(reservations_url)
+        expect(response).to redirect_to(reservations_url)
       end
 
       it 'sets the flash' do
         delete :destroy, id: reservation.id
-        flash[:notice].should_not be_nil
+        expect(flash[:notice]).not_to be_nil
       end
     end
 
@@ -503,7 +513,7 @@ describe ReservationsController do
 
     context 'when accessed by admin' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@admin)
+        allow(@controller).to receive(:current_user).and_return(@admin)
       end
 
       include_examples 'can destroy reservation' do
@@ -513,7 +523,7 @@ describe ReservationsController do
 
     context 'when accessed by checkout person' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@checkout_person)
+        allow(@controller).to receive(:current_user).and_return(@checkout_person)
       end
 
       context 'and the reservation is checked out' do
@@ -531,7 +541,7 @@ describe ReservationsController do
 
     context 'when accessed by patron' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@user)
+        allow(@controller).to receive(:current_user).and_return(@user)
       end
 
       context 'and the reservation is their own' do
@@ -569,8 +579,8 @@ describe ReservationsController do
 
     shared_examples 'can access #manage' do
       before(:each) { get :manage, user_id: @user.id }
-      it { response.should be_success }
-      it { should render_template(:manage) }
+      it { expect(response).to be_success }
+      it { is_expected.to render_template(:manage) }
 
       it 'assigns @user correctly' do
         expect(assigns(:user)).to eq(@user)
@@ -587,7 +597,7 @@ describe ReservationsController do
 
     context 'when accessed by admin' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@admin)
+        allow(@controller).to receive(:current_user).and_return(@admin)
       end
 
       include_examples 'can access #manage'
@@ -595,7 +605,7 @@ describe ReservationsController do
 
     context 'when accessed by checkout person' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@checkout_person)
+        allow(@controller).to receive(:current_user).and_return(@checkout_person)
       end
 
       include_examples 'can access #manage'
@@ -603,7 +613,7 @@ describe ReservationsController do
 
     context 'when accessed by patron' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@user)
+        allow(@controller).to receive(:current_user).and_return(@user)
         get :manage, user_id: @user.id
       end
 
@@ -626,8 +636,8 @@ describe ReservationsController do
 
     shared_examples 'can access #current' do
       before { get :current, user_id: @user.id }
-      it { response.should be_success }
-      it { should render_template(:current_reservations) }
+      it { expect(response).to be_success }
+      it { is_expected.to render_template(:current_reservations) }
 
       it 'assigns @user correctly' do
         expect(assigns(:user)).to eq(@user)
@@ -652,7 +662,7 @@ describe ReservationsController do
 
     context 'when accessed by admin' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@admin)
+        allow(@controller).to receive(:current_user).and_return(@admin)
       end
 
       include_examples 'can access #current'
@@ -660,7 +670,7 @@ describe ReservationsController do
 
     context 'when accessed by checkout person' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@checkout_person)
+        allow(@controller).to receive(:current_user).and_return(@checkout_person)
       end
 
       include_examples 'can access #current'
@@ -668,7 +678,7 @@ describe ReservationsController do
 
     context 'when accessed by patron' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@user)
+        allow(@controller).to receive(:current_user).and_return(@user)
         get :current, user_id: @user.id
       end
 
@@ -696,11 +706,6 @@ describe ReservationsController do
     # - processes all reservations in params[:reservations] -- adds checkout_handler, checked_out (time), equipment_object; updates notes
     # - renders :receipt template
 
-    # TODO: Test cases for (non-)filled-in checkout procedures
-    # TODO: Test cases for different override-errors privileges
-    # TODO: Test cases for different TOS statuses
-    # TODO: Test cases for when a user has overdue reservations
-    # TODO: Test cases for when no reservations are selected
     # Note: Many of these can be cross-applied to #checkin as well
 
     shared_examples 'has successful checkout' do
@@ -710,8 +715,8 @@ describe ReservationsController do
         put :checkout, user_id: @user.id, reservations: reservations_params
       end
 
-      it { response.should be_success }
-      it { should render_template(:receipt) }
+      it { expect(response).to be_success }
+      it { is_expected.to render_template(:receipt) }
 
       it 'assigns empty @check_in_set' do
         expect(assigns(:check_in_set)).to be_empty
@@ -734,7 +739,7 @@ describe ReservationsController do
 
     context 'when accessed by admin' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@admin)
+        allow(@controller).to receive(:current_user).and_return(@admin)
       end
 
       include_examples 'has successful checkout'
@@ -742,7 +747,7 @@ describe ReservationsController do
 
     context 'when accessed by checkout person' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@checkout_person)
+        allow(@controller).to receive(:current_user).and_return(@checkout_person)
       end
 
       include_examples 'has successful checkout'
@@ -750,7 +755,7 @@ describe ReservationsController do
 
     context 'when accessed by patron' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@user)
+        allow(@controller).to receive(:current_user).and_return(@user)
         put :checkout, user_id: @user.id
       end
 
@@ -760,6 +765,86 @@ describe ReservationsController do
     it_behaves_like 'inaccessible by banned user' do
       before { put :checkout, user_id: @banned.id }
     end
+
+    context 'when tos returns false' do
+      before do
+        allow(@controller).to receive(:check_tos).and_return(false)
+        put :checkout
+      end
+      it { expect(response).to be_redirect }
+    end
+
+    context 'when not all procedures are filled out' do
+      before do
+        allow(@controller).to receive(:current_user).and_return(@admin)
+        @obj = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
+        @procedure = FactoryGirl.create(:checkout_procedure, equipment_model: @reservation.equipment_model)
+        reservations_params = {@reservation.id.to_s => {notes: "", equipment_object_id: @obj.id, checkout_procedures: {}}}
+        put :checkout, user_id: @user.id,  reservations: reservations_params
+      end
+
+      it { expect(response).to be_success }
+
+      it { is_expected.to render_template(:receipt) }
+
+      it 'assigns empty @check_in_set' do
+        expect(assigns(:check_in_set)).to be_empty
+      end
+
+      it 'populates @check_out_set' do
+        expect(assigns(:check_out_set)).to eq [@reservation]
+      end
+
+      it 'updates the reservation' do
+        expect(@reservation.checkout_handler).to be_nil
+        expect(@reservation.checked_out).to be_nil
+        expect(@reservation.equipment_object).to be_nil
+        @reservation.reload
+        expect(@reservation.checkout_handler).to be_a(User)
+        expect(@reservation.checked_out).to_not be_nil
+        expect(@reservation.equipment_object).to eq @obj
+        expect(@reservation.notes).to include(@procedure.step)
+      end
+    end
+
+    context 'no reservations selected' do
+      before(:each) do
+        reservations_params = {}
+        put :checkout, user_id: @user.id, reservations: reservations_params
+      end
+      it { is_expected.to set_the_flash }
+      it { expect(response).to be_redirect }
+    end
+
+    context 'reserver has overdue reservations' do
+
+      context 'can override reservations?' do
+        before do
+          allow(@controller).to receive(:current_user).and_return(@admin)
+          @obj = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
+          reservations_params = {@reservation.id.to_s => {notes: "", equipment_object_id: @obj.id }}
+          overdue = FactoryGirl.build(:overdue_reservation, reserver_id: @user.id)
+          overdue.save(validate: false)
+          put :checkout, user_id: @user.id, reservations: reservations_params
+        end
+        it { expect(response).to be_success }
+        it { is_expected.to render_template(:receipt) }
+      end
+      context 'cannot override' do
+        before do
+          allow(@controller).to receive(:current_user).and_return(@user)
+          @obj = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
+          reservations_params = {@reservation.id.to_s => {notes: "", equipment_object_id: @obj.id }}
+          overdue = FactoryGirl.build(:overdue_reservation, reserver_id: @user.id)
+          overdue.save(validate: false)
+          put :checkout, user_id: @user.id, reservations: reservations_params
+        end
+        it { is_expected.to set_the_flash }
+        it { expect(response).to be_redirect }
+      end
+
+    end
+
   end
 
   describe '#checkin (PUT /reservations/check-in/:user_id)' do
@@ -773,8 +858,6 @@ describe ReservationsController do
     # - overrides errors if you can and if there are some, otherwise redirects away
     # - renders :receipt template
 
-    # TODO: See todo's on #checkout
-
     shared_examples 'has successful checkin' do
       before(:each) do
         @reservation = FactoryGirl.create(:checked_out_reservation, reserver: @user)
@@ -782,8 +865,8 @@ describe ReservationsController do
         put :checkin, user_id: @user.id, reservations: reservations_params
       end
 
-      it { response.should be_success }
-      it { should render_template(:receipt) }
+      it { expect(response).to be_success }
+      it { is_expected.to render_template(:receipt) }
 
       it 'assigns empty @check_out_set' do
         expect(assigns(:check_out_set)).to be_empty
@@ -804,7 +887,7 @@ describe ReservationsController do
 
     context 'when accessed by admin' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@admin)
+        allow(@controller).to receive(:current_user).and_return(@admin)
       end
 
       include_examples 'has successful checkin'
@@ -812,7 +895,7 @@ describe ReservationsController do
 
     context 'when accessed by checkout person' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@checkout_person)
+        allow(@controller).to receive(:current_user).and_return(@checkout_person)
       end
 
       include_examples 'has successful checkin'
@@ -820,7 +903,7 @@ describe ReservationsController do
 
     context 'when accessed by patron' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@user)
+        allow(@controller).to receive(:current_user).and_return(@user)
         put :checkin, user_id: @user.id
       end
 
@@ -830,6 +913,61 @@ describe ReservationsController do
     it_behaves_like 'inaccessible by banned user' do
       before { put :checkin, user_id: @banned.id }
     end
+
+    context 'items have already been checked in' do
+      before do
+        allow(@controller).to receive(:current_user).and_return(@admin)
+        request.env["HTTP_REFERER"] = 'where_i_came_from'
+        @reservation = FactoryGirl.build(:checked_in_reservation, reserver: @user)
+        @reservation.save(validate: false)
+        reservations_params = {@reservation.id.to_s => {notes: "", checkin?: "1"}}
+        put :checkin, user_id: @user.id, reservations: reservations_params
+      end
+
+      it { is_expected.to set_the_flash }
+      it { expect(response).to be_redirect }
+    end
+
+    context 'no reservations to check in' do
+      before do
+        request.env["HTTP_REFERER"] = 'where_i_came_from'
+        allow(@controller).to receive(:current_user).and_return(@admin)
+        put :checkin,  user_id: @user.id, reservations: {}
+      end
+      it { is_expected.to set_the_flash }
+      it { expect(response).to be_redirect }
+    end
+
+    context 'when not all procedures are filled out' do
+      before do
+        allow(@controller).to receive(:current_user).and_return(@admin)
+        @reservation = FactoryGirl.create(:checked_out_reservation, reserver: @user)
+        @procedure = FactoryGirl.create(:checkin_procedure, equipment_model: @reservation.equipment_model)
+        reservations_params = {@reservation.id.to_s => {notes: "", checkin?: "1", checkin_procedures: {}}}
+        put :checkin, user_id: @user.id, reservations: reservations_params
+      end
+
+      it { expect(response).to be_success }
+      it { is_expected.to render_template(:receipt) }
+
+      it 'assigns empty @check_out_set' do
+        expect(assigns(:check_out_set)).to be_empty
+      end
+
+      it 'populates @check_in_set' do
+        expect(assigns(:check_in_set)).to eq [@reservation]
+      end
+
+      it 'updates the reservation' do
+        expect(@reservation.checkin_handler).to be_nil
+        expect(@reservation.checked_in).to be_nil
+        @reservation.reload
+        expect(@reservation.checkin_handler).to be_a(User)
+        expect(@reservation.checked_in).to_not be_nil
+        expect(@reservation.notes).to include(@procedure.step)
+      end
+    end
+
   end
 
   describe '#renew (PUT /reservations/:id/renew)' do
@@ -850,7 +988,7 @@ describe ReservationsController do
         put :renew, id: @reservation.id
       end
 
-      it { should redirect_to(root_path) }
+      it { is_expected.to redirect_to(root_path) }
 
       it 'should extend due_date' do
         expect { @reservation.reload }.to change { @reservation.due_date }
@@ -859,7 +997,7 @@ describe ReservationsController do
 
     context 'when accessed by admin' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@admin)
+        allow(@controller).to receive(:current_user).and_return(@admin)
       end
 
       include_examples 'can renew reservation'
@@ -867,7 +1005,7 @@ describe ReservationsController do
 
     context 'when accessed by checkout person' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@checkout_person)
+        allow(@controller).to receive(:current_user).and_return(@checkout_person)
       end
 
       include_examples 'can renew reservation'
@@ -875,13 +1013,19 @@ describe ReservationsController do
 
     context 'when accessed by patron' do
       before(:each) do
-        @controller.stub(:current_user).and_return(@user)
+        allow(@controller).to receive(:current_user).and_return(@user)
       end
 
       include_examples 'can renew reservation'
 
-      pending 'cannot renew someone else\'s reservation'
-      pending 'cannot renew a reservation that was checked in'
+      context 'trying to renew someone elses reservation' do
+        before do
+          @other_res = FactoryGirl.create(:checked_out_reservation)
+          put :renew, id: @other_res.id
+        end
+        it { expect(response).to be_redirect }
+      end
+
     end
 
     it_behaves_like 'inaccessible by banned user' do

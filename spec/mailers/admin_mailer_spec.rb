@@ -10,11 +10,11 @@ shared_examples_for "a valid admin email" do
     expect(@mail.from.first).to eq("no-reply@reservations.app")
   end
   it "should actually send the email" do
-    ActionMailer::Base.deliveries.count.should eq(1)
+    expect(ActionMailer::Base.deliveries.count).to eq(1)
   end
 end
 
-describe AdminMailer do
+describe AdminMailer, :type => :mailer do
   before(:all) {
     @app_config = FactoryGirl.create(:app_config)
   }
@@ -32,7 +32,7 @@ describe AdminMailer do
       @mail = AdminMailer.notes_reservation_notification(@res1,@res2).deliver
     end
     it 'renders the subject' do
-      expect(@mail.subject).to eq("[Reservation] Notes for " + (Date.yesterday.midnight).strftime("%m/%d/%y"))
+      expect(@mail.subject).to eq("[Reservations] Notes for " + (Date.yesterday.midnight).strftime("%m/%d/%y"))
     end
     it_behaves_like "a valid admin email"
 
@@ -47,7 +47,7 @@ describe AdminMailer do
     end
     it_behaves_like "a valid admin email"
     it 'renders the subject' do
-      expect(@mail.subject).to eq("[Reservation] Overdue equipment fine")
+      expect(@mail.subject).to eq("[Reservations] Overdue equipment fine")
     end
 
   end

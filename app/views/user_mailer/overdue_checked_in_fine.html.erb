@@ -1,4 +1,4 @@
-Hi <%= @overdue_checked_in.reserver.name.html_safe %>,
+Hi <%= @overdue_checked_in.reserver.name %>,
 <br />
 
 <p>This is a notification for your late equipment checkin. </p>
@@ -12,7 +12,7 @@ Hi <%= @overdue_checked_in.reserver.name.html_safe %>,
   Notes: <%= @overdue_checked_in.notes %>
 <% end %>
 
-<p>Your late fee is <%= number_to_currency(@overdue_checked_in.equipment_model.late_fee) %> per day, for a total of <%= number_to_currency(((@overdue_checked_in.checked_in - @overdue_checked_in.due_date )).to_i*(@overdue_checked_in.equipment_model.late_fee))%>
+<p>Your late fee is <%= number_to_currency(@overdue_checked_in.equipment_model.late_fee) %> per day, for a total of <%= number_to_currency(((@overdue_checked_in.checked_in.to_date - @overdue_checked_in.due_date.to_date )).to_i*(@overdue_checked_in.equipment_model.late_fee))%>
 </p>
 
 <br />
@@ -20,4 +20,3 @@ Hi <%= @overdue_checked_in.reserver.name.html_safe %>,
 Sincerely, <br />
 <%= @app_configs.department_name %>
 <br /><br />
-<%= link_to 'Terms of Service', '/terms_of_service' %>

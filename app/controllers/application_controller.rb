@@ -4,17 +4,16 @@
 class ApplicationController < ActionController::Base
   helper :layout
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
-
-  before_filter RubyCAS::Filter unless Rails.env.test?
+  before_filter CASClient::Frameworks::Rails::Filter unless Rails.env.test?
+  #before_filter RubyCAS::Filter unless Rails.env.test?
   before_filter :app_setup_check
   before_filter :cart
 
-  with_options unless: lambda {|u| User.all.count == 0 } do |c|
+  with_options unless: lambda {|u| User.count == 0 } do |c|
     c.before_filter :load_configs
     c.before_filter :seen_app_configs
     c.before_filter :current_user
     c.before_filter :first_time_user
-    c.before_filter :cart
     c.before_filter :fix_cart_date
     c.before_filter :set_view_mode
     c.before_filter :check_view_mode
@@ -36,7 +35,7 @@ class ApplicationController < ActionController::Base
   # -------- before_filter methods -------- #
 
   def app_setup_check
-    if User.all.blank? || !AppConfig.first
+    unless AppConfig.first && (User.count != 0)
       flash[:notice] = "Hey there! It looks like you haven't fully set up your application yet. To \
       create your first admin user and configure the application, please run $bundle exec rake app:setup \
       in the terminal. For more information, please see our github page: https://github.com/YaleSTC/reservations"
@@ -49,10 +48,14 @@ class ApplicationController < ActionController::Base
   end
 
   def seen_app_configs
-    if AppConfig.first.viewed == false
-      flash[:notice] = "Since this is your first time viewing the application configurations, we recoomend\
+    return if AppConfig.first.viewed || current_user.nil?
+    if can? :edit, :app_config
+      flash[:notice] = "Since this is your first time viewing the application configurations, we recommend\
       that you take some time to read each option and make sure that the settings are appropriate for your needs."
       redirect_to edit_app_configs_path
+    else
+      flash[:notice] = "It looks like this application has not yet been fully set up. Check back in a little while or contact your system administrator"
+      render file: 'application_setup/index', layout: 'application'
     end
   end
 
@@ -111,7 +114,7 @@ class ApplicationController < ActionController::Base
   end
 
   def fix_cart_date
-    cart.start_date = (Date.today) if cart.start_date < Date.today
+    cart.start_date = (Date.current) if cart.start_date < Date.current
     cart.fix_due_date
   end
 
@@ -127,42 +130,93 @@ class ApplicationController < ActionController::Base
   #-------- end before_filter methods --------#
 
   def update_cart
-    # set dates
     cart = session[:cart]
     flash.clear
     begin
-      cart.start_date = Date.strptime(params[:cart][:start_date_cart],'%m/%d/%Y')
-      cart.due_date = Date.strptime(params[:cart][:due_date_cart],'%m/%d/%Y')
+      cart.start_date = params[:cart][:start_date_cart].to_date
+      cart.due_date = params[:cart][:due_date_cart].to_date
       cart.fix_due_date
-      cart.reserver_id = params[:reserver_id]
+      cart.reserver_id = params[:reserver_id].blank? ? current_user.id : params[:reserver_id]
     rescue ArgumentError
-      cart.start_date = Date.today
+      cart.start_date = Date.current
       flash[:error] = "Please enter a valid start or due date."
     end
 
+    # get soft blackout notices
+    notices = []
+    notices << Blackout.get_notices_for_date(cart.start_date,:soft)
+    notices << Blackout.get_notices_for_date(cart.due_date,:soft)
+    notices = notices.reject{ |a| a.blank? }.to_sentence
+    notices += "\n" unless notices.blank?
+
     # validate
-    errors = cart.validate_dates.concat(cart.validate_dates_and_items)
+    errors = cart.validate_all
     # don't over-write flash if invalid date was set above
-    flash[:error] ||= errors.to_sentence
+    flash[:error] ||= notices + errors.to_sentence
     flash[:notice] = "Cart updated."
 
     # reload appropriate divs / exit
+    if params[:controller] == 'catalog'
+      prepare_catalog_index_vars
+    end
+
     respond_to do |format|
-      format.js{render template: "reservations/cart_dates_reload"}
+      format.js{render template: "cart_js/cart_dates_reload"}
         # guys i really don't like how this is rendering a template for js, but :action doesn't work at all
       format.html{render partial: "reservations/cart_dates"}
     end
   end
 
+  def prepare_catalog_index_vars(eq_models = nil)
+    # prepare the catalog
+    eq_models ||= EquipmentModel.active.
+                              order('categories.sort_order ASC, equipment_models.name ASC').
+                              includes(:category, :requirements).
+                              page(params[:page]).
+                              per(session[:items_per_page])
+    @eq_models_by_category = eq_models.to_a.group_by(&:category)
+
+    @available_string = "available from #{cart.start_date.strftime("%b %d, %Y")} to #{cart.due_date.strftime("%b %d, %Y")}"
+
+    # create an hash of em id's as keys and their availability as the value
+    @availability_hash = Hash.new
+
+    # first get an array of all the paginated ids
+    id_array = []
+    eq_models.each do |em|
+      id_array << em.id
+    end
+
+    # 1 query to grab all the active related equipment objects
+    eq_objects = EquipmentObject.active.where(equipment_model_id: id_array).all
+
+    # 1 query to grab all the related reservations
+    source_reservations = Reservation.not_returned.where(equipment_model_id: id_array).all
+
+    # build the hash using class methods that use 0 queries
+    eq_models.each do |em|
+      @availability_hash[em.id] = EquipmentObject.for_eq_model(em.id,eq_objects) - Reservation.number_overdue_for_eq_model(em.id,source_reservations) - em.num_reserved(cart.start_date,cart.due_date,source_reservations)
+    end
+    @page_eq_models_by_category = eq_models
+
+
+  end
+
   def empty_cart
-    session[:cart] = nil
+    session[:cart].purge_all if session[:cart]
     flash[:notice] = "Cart emptied."
-    redirect_to root_path
+    respond_to do |format|
+      format.js{render template: "cart_js/reload_all"}
+      format.html{redirect_to root_path}
+    end
   end
 
   def logout
     @current_user = nil
-    RubyCAS::Filter.logout(self)
+    CASClient::Frameworks::Rails::Filter.logout(self)
+    #RubyCAS::Filter.logout(self)
+    # the above code is used with ruby-cas-client-rails gem
+    # which was removed on 7/21/2014
   end
 
   def require_login
@@ -182,7 +236,7 @@ class ApplicationController < ActionController::Base
     authorize! :be, :admin
     @objects_class2 = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (EM, EO, Category)
     @objects_class2.destroy #Deactivate the model you had originally intended to deactivate
-    flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + ". Any related equipment has been deactivated as well. Any related reservations have been perminently deleted."
+    flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + ". Any related equipment has been deactivated as well."
     redirect_to request.referer  # Or use redirect_to(back).
   end
 
@@ -200,6 +254,16 @@ class ApplicationController < ActionController::Base
       format.html{render partial: 'shared/markdown_help'}
       format.js{render template: 'shared/markdown_help_js'}
     end
+  end
+
+  # Checks if params[:terms_of_service_accepted] is necessary; if filled-out,
+  # saves the state of the user; if not filled out and necessary, returns false.
+  # Otherwise, returns true.
+  def check_tos(user)
+    return true if user.terms_of_service_accepted
+
+    user.terms_of_service_accepted = params[:terms_of_service_accepted].present?
+    return user.terms_of_service_accepted ? user.save : (flash[:error] = "You must confirm that the user accepts the Terms of Service.") && false
   end
 
 end

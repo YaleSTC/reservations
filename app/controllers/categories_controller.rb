@@ -27,7 +27,7 @@ class CategoriesController < ApplicationController
   end
 
   def create
-    @category = Category.new(params[:category])
+    @category = Category.new(category_params)
     if @category.save
       flash[:notice] = "Successfully created category."
       redirect_to @category
@@ -41,7 +41,7 @@ class CategoriesController < ApplicationController
   end
 
   def update
-    if @category.update_attributes(params[:category])
+    if @category.update_attributes(category_params)
       flash[:notice] = "Successfully updated category."
       redirect_to @category
     else
@@ -49,9 +49,12 @@ class CategoriesController < ApplicationController
     end
   end
 
-  def destroy
-    @category.destroy(:force)
-    flash[:notice] = "Successfully destroyed category."
-    redirect_to categories_url
+  private
+
+  def category_params
+    params.require(:category).permit(:name, :max_per_user, :max_checkout_length,
+                                     :deleted_at, :max_renewal_times, :max_renewal_length,
+                                     :renewal_days_before_due, :sort_order)
   end
+
 end

@@ -1,13 +1,9 @@
 class Blackout < ActiveRecord::Base
 
-  belongs_to :equipment_model
-  attr_accessible :start_date, :end_date, :notice, :equipment_model_id, :blackout_type, :created_by, :set_id
-
   attr_accessor :days # needed for days of the week checkboxes in new_recurring
 
   validates :notice,
             :start_date,
-            :equipment_model_id,
             :blackout_type,
             :end_date, presence: true
 
@@ -15,33 +11,29 @@ class Blackout < ActiveRecord::Base
   # this only matters if a user tries to inject into params because the datepicker
   # doesn't allow form submission of invalid dates
 
-  scope :active, where("end_date >= ?", Date.today)
+  scope :active, lambda { where("end_date >= ?", Date.current) }
   scope :for_date, lambda { |date| where("end_date >= ? and start_date <= ?", date, date) }
-  scope :hard, where(blackout_type: 'hard')
-  scope :soft, where(blackout_type: 'notice only')
+  scope :hard, lambda { where(blackout_type: 'hard') }
+  scope :soft, lambda { where(blackout_type: 'soft') }
 
-  def self.blackouts_on_date(date) # Returns the blackout object that blacks out the day if the day is blacked out. Otherwise, returns nil.
-    blackouts = []
-    Blackout.all.each do |blackout|
-      if ((blackout.start_date..blackout.end_date).cover?(date.to_date))
-        blackouts << blackout
-      end
-    end
-    blackouts
-  end
-
-  #TODO: fix typo here and everywhere that this method is called. While at it, put a space in blackout since that's
-  # it is everywhere else.
-  def self.hard_blackout_exists_on_date(date)
-    blackouts = self.blackouts_on_date(date)
-    if blackouts && blackouts.map(&:blackout_type).include?('hard')
-      return true
+  def self.get_notices_for_date(date, type = :all)
+    # get a string of all notices for a given date
+    # default to all blackouts
+    if type == :soft
+      blackouts = Blackout.soft.for_date(date)
+    elsif type == :hard
+      blackouts = Blackout.hard.for_date(date)
     else
-      return false
+      blackouts = Blackout.for_date(date)
     end
+    messages = []
+    blackouts.for_date(date).each do |b|
+      messages << b.notice
+    end
+    messages.to_sentence
   end
 
-  def self.create_blackout_set(params_hash)
+  def self.create_blackout_set(params_hash, days)
     #generate a unique id for this blackout date set, make sure that nil reads as 0 for the first blackout
     last_blackout = Blackout.last
     params_hash[:set_id] = last_blackout ? (last_blackout.id.to_i + 1) : 0
@@ -49,8 +41,8 @@ class Blackout < ActiveRecord::Base
     successful_save = nil
     date_range = params_hash[:start_date].to_date..params_hash[:end_date].to_date
     date_range.each do |date|
-      if params_hash[:days].include?(date.wday.to_s) # because it's passed as a string
-        @blackout = Blackout.new(params_hash.except(:days))
+      if days.include?(date.wday.to_s) # because it's passed as a string
+        @blackout = Blackout.new(params_hash)
         @blackout.start_date = date
         @blackout.end_date = date
         successful_save = @blackout.save

@@ -6,6 +6,7 @@ Reservations::Application.configure do
   # your test database is "scratch space" for the test suite and is wiped
   # and recreated between test runs.  Don't rely on the data there!
   config.cache_classes = false
+  config.eager_load = false
 
   # Log error messages when you accidentally call methods on nil.
   config.whiny_nils = true
@@ -38,9 +39,6 @@ Reservations::Application.configure do
   config.assets.compress = false
   config.assets.debug = false
   config.assets.digest = false
-
-  # Raise exception on mass assignment protection for Active Record models
-  config.active_record.mass_assignment_sanitizer = :strict
 
   config.after_initialize do
     PaperTrail.enabled = false

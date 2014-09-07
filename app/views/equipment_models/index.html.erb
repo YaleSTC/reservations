@@ -13,18 +13,14 @@
   </tr>
   </thead>
   <tbody>
-  <% for equipment_model in @equipment_models %>
+  <% for equipment_model in @equipment_models.includes(:category) %>
     <tr>
       <td><%= link_to equipment_model.name, equipment_model %></td>
       <%= ("<td>" + (link_to equipment_model.category.name.singularize, equipment_model.category) + "</td>").html_safe unless @category %>
       <% if can? :manage, EquipmentModel %>
         <td><%= link_to "Edit", edit_equipment_model_path(equipment_model), :class => "btn" %></td>
         <td>
-        <% if equipment_model.deleted_at %>
-          <%= make_activate_btn(:equipment_models,equipment_model) %>
-        <% else %>
           <%= make_deactivate_btn(:equipment_models,equipment_model) %>
-        <% end %>
         </td>
       <% end %>
     </tr>
@@ -41,7 +37,7 @@
     <% else %>
       <%= link_to "New Equipment Model", new_equipment_model_path, :class => "btn btn-primary" %>
     <% end %>
-	  <% if params[:show_deleted] %>
+    <% if params[:show_deleted] %>
       <% if (@category.nil?) %>
         <%= link_to "Hide Deactivated Models", equipment_models_path, :class => "btn" %>
       <% else %>

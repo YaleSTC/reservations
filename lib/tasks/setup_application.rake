@@ -95,6 +95,12 @@ namespace :app do
       "Thank you,\n"\
       "@department_name@"
 
+    request_text =
+      "The following equipment cannot be reserved because of admin restrictions; "\
+      "however, you may file a request for this reservation. Please fill out the "\
+      "form below and an admin will be able to approve or deny your request. You "\
+      "will be notified by email when your request has been reviewed."
+
     # Create initial application configs.
 
     if AppConfig.all.empty?
@@ -133,8 +139,10 @@ namespace :app do
               ac.department_name = department_name
               ac.home_link_text = home_link_text
               ac.home_link_location = home_link_location
+              ac.request_text = request_text
               ac.default_per_cat_page = 20
               ac.viewed = false
+              ac.blackout_exp_time = 30
             end
           rescue Exception => e
             ActiveRecord::Rollback

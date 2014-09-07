@@ -1,19 +1,19 @@
 require 'spec_helper'
 
-describe Cart do
+describe Cart, :type => :model do
   before (:each) do
     @cart = FactoryGirl.build(:cart)
     @cart.items = {} # Needed to avoid db flushing problems
   end
 
   it "has a working factory" do
-    @cart.should be_valid
+    expect(@cart).to be_valid
   end
 
   context "General validations" do
-    it { should validate_presence_of(:reserver_id) }
-    it { should validate_presence_of(:start_date) }
-    it { should validate_presence_of(:due_date) }
+    it { is_expected.to validate_presence_of(:reserver_id) }
+    it { is_expected.to validate_presence_of(:start_date) }
+    it { is_expected.to validate_presence_of(:due_date) }
   end
 
   describe ".initialize" do
@@ -21,7 +21,7 @@ describe Cart do
       @cart.items.nil?
     end
     it "starts today " do
-      @cart.start_date == Date.today
+      @cart.start_date == Date.current
     end
     it "is due tomorrow" do
       @cart.due_date == Date.tomorrow
@@ -35,7 +35,7 @@ describe Cart do
   end
 
   describe ".persisted?" do
-    it { @cart.persisted?.should be_false }
+    it { expect(@cart.persisted?).to be_falsey }
   end
 
   describe "Item handling" do
@@ -90,7 +90,7 @@ describe Cart do
         @cart.add_item(@equipment_model)
         @equipment_model2 = FactoryGirl.create(:equipment_model)
         @cart.add_item(@equipment_model2)
-        @cart.start_date = Date.today
+        @cart.start_date = Date.current
         @cart.due_date = Date.tomorrow
         @cart.reserver_id = FactoryGirl.create(:user).id
       end
@@ -102,8 +102,8 @@ describe Cart do
         it "should have the correct dates" do
           array = @cart.prepare_all
           array.each do |r|
-            expect(r.start_date).to eq(Date.today.to_time)
-            expect(r.due_date).to eq(Date.tomorrow.to_time)
+            expect(r.start_date).to eq(Time.current.midnight)
+            expect(r.due_date).to eq(Time.current.midnight + 24.hours)
           end
         end
         it "should have the correct equipment models" do
@@ -126,13 +126,13 @@ describe Cart do
 
     describe ".duration" do
       it "should calculate the sum correctly" do
-        @cart.duration.should == @cart.due_date - @cart.start_date + 1
+        expect(@cart.duration).to eq(@cart.due_date - @cart.start_date + 1)
       end
     end
 
     describe ".reserver" do
       it "should return a correct user instance" do
-        @cart.reserver.should == User.find(@cart.reserver_id)
+        expect(@cart.reserver).to eq(User.find(@cart.reserver_id))
       end
     end
   end
@@ -140,11 +140,11 @@ describe Cart do
   describe ".empty?" do
     it "is true when there are no items in cart" do
       @cart.items = []
-      @cart.empty?.should be_true
+      expect(@cart.empty?).to be_truthy
     end
     it "is false when there are some items in cart" do
       @cart.add_item(FactoryGirl.create(:equipment_model))
-      @cart.empty?.should be_false
+      expect(@cart.empty?).to be_falsey
     end
   end
 

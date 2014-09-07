@@ -1,22 +1,26 @@
 source 'https://rubygems.org'
 
-ruby '2.1.1'
+ruby '2.1.2'
 
 #standard gems
-gem 'rails', '3.2.14'
-gem 'mysql2', '0.3.16'
+gem 'rails', '4.1.4'
+gem 'mysql2'
 gem 'rake'
 gem 'rdoc'
 
+# rails 4 transition gems
+gem 'activerecord-session_store'
+
 #authentication
-gem 'rubycas-client-rails'
-gem 'rubycas-client', '2.2.1'
-gem 'cancan'
+#gem 'rubycas-client-rails'
+
+gem 'rubycas-client', :git => 'git://github.com/rubycas/rubycas-client.git'
+gem 'cancancan'
 
 #scheduling
 gem 'whenever'
 
-gem 'activeadmin'
+gem 'rails_admin'
 
 #ldap integration
 gem 'net-ldap'
@@ -28,13 +32,12 @@ gem 'permanent_records'
 gem 'nilify_blanks'
 
 #ui
-gem 'jquery_datepicker'
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'jquery-datatables-rails'
-gem 'rails3-jquery-autocomplete'
+gem 'rails4-autocomplete'
 gem 'select2-rails'
-gem 'kaminari', '~> 0.16.1'
+gem 'kaminari'
 gem 'spinjs-rails'
 
 #forms / formatting
@@ -45,17 +48,17 @@ gem 'redcarpet'
 
 
 # auditting / logging
-gem 'paper_trail', git: "https://github.com/airblade/paper_trail.git", branch: "2.7-stable"
+gem 'paper_trail'
 
 group :development, :test do
   gem 'factory_girl_rails'
   gem 'rspec-rails'
   gem 'shoulda-matchers'
-  gem 'capybara', '~> 2.0.0'
+  gem 'capybara'
   gem 'guard-rspec'
-  gem 'spork-rails'
-  gem 'guard-spork'
-  gem 'fuubar'
+  gem 'spring'
+  gem 'spring-commands-rspec'
+  gem 'fuubar', '~> 2.0.0rc1'
   gem 'guard-livereload'
   gem 'yajl-ruby'
   gem 'ffaker'
@@ -64,17 +67,16 @@ group :development, :test do
   gem 'ruby-progressbar'
   gem 'codeclimate-test-reporter'
   gem 'parallel_tests'
+  gem 'database_cleaner'
 end
 
 # Gems used only for assets and not required
 # in production environments by default.
-group :assets do
-  gem 'sass-rails'
-  gem 'coffee-rails'
-  gem 'uglifier'
-  gem 'bootstrap-sass', '~> 2.0.3'
-  gem 'font-awesome-rails', '~> 4.1.0'
-end
+gem 'sass-rails'
+gem 'coffee-rails'
+gem 'uglifier'
+gem 'bootstrap-sass', '~> 2.0.3'
+gem 'font-awesome-rails'
 
 group :development do
   gem 'thin'
@@ -84,9 +86,10 @@ group :development do
   gem 'pry-stack_explorer'
   gem 'pry-remote'
   gem 'letter_opener'
-  gem 'letter_opener_web', '~> 1.1.0'
+  gem 'letter_opener_web'
   gem 'rack-mini-profiler'
   gem 'bullet'
+  gem 'travis'
 end
 
 group :production, :staging do

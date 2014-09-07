@@ -7,13 +7,11 @@
   </h3>
   <div class="caption_cat">
     <hr class ="special-hr"/>
-    <span class="giant-numbers span1">
-      <% @available = equipment_model.num_available_from_source(cart.start_date, cart.due_date, relevant_reservations) %>
-      <%= @available %>
+    <span class="giant-numbers span1" id="availability_<%= equipment_model.id %>">
+      <%= availability_hash[equipment_model.id] %>
     </span>
     <p class="model_availability">
-      available from <%= cart.start_date.strftime("%b %d, %Y") %>
-      to <%= cart.due_date.strftime("%b %d, %Y") %>
+      <%= available_string %>
     </p>
     <hr class ="special-hr"/>
     <p class="equipment_descr">
@@ -29,7 +27,7 @@
       <%= link_to "#qualifications_modal", class: 'not-qualified-icon', rel: "tooltip", title: "Not Qualified (click for more info)", :"data-toggle" => 'modal' do %>
         <i class="fa fa-exclamation-triangle"></i>
       <% end %>
-    <% elsif @available > 0 %>
+      <% elsif availability_hash[equipment_model.id] > 0 %>
       <%= link_to "Add to Cart", add_to_cart_path(equipment_model), :method => :put, :remote => true, :class => "btn add_to_cart" %>
     <% else %>
       <%= button_tag "Add to Cart", :class => "btn disabled add_to_cart_disabled"%>
@@ -43,7 +41,7 @@
       <h3>Qualification Required</h3>
     </div>
     <div class="modal-body">
-      <p><%= Requirement.list_requirement_admins(User.find(cart.reserver_id), equipment_model) %></p>:w
+      <p><%= Requirement.list_requirement_admins(User.find(cart.reserver_id), equipment_model) %></p>
     </div>
   </div>
   <% end %>

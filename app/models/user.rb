@@ -2,15 +2,10 @@ require 'net/ldap'
 
 class User < ActiveRecord::Base
   has_many :reservations, foreign_key: 'reserver_id', dependent: :destroy
-  nilify_blanks only: [:deleted_at]
   has_and_belongs_to_many :requirements,
                           class_name: "Requirement",
                           association_foreign_key: "requirement_id",
                           join_table: "users_requirements"
-
-  attr_accessible :login, :first_name, :last_name, :nickname, :phone, :email,
-                  :affiliation, :role, :view_mode, :created_by_admin,
-                  :deleted_at, :requirement_ids, :user_ids, :terms_of_service_accepted, :csv_import
 
   attr_accessor   :full_query, :created_by_admin, :user_type, :csv_import
 
@@ -24,8 +19,8 @@ class User < ActiveRecord::Base
                           length:      { minimum: 10 }, unless: lambda {|x| x.skip_phone_validation?}
 
   validates :email,       presence:    true,
-                          format:      { with: /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i }
-  validates :nickname,    format:      { with: /^[^0-9`!@#\$%\^&*+_=]+$/ },
+                          format:      { with: /\A([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})\z/i }
+  validates :nickname,    format:      { with: /\A[^0-9`!@#\$%\^&*+_=]+\z/ },
                           allow_blank: true
   validates :terms_of_service_accepted,
                           acceptance: {accept: true, message: "You must accept the terms of service."},
@@ -35,23 +30,18 @@ class User < ActiveRecord::Base
             :view_mode,   inclusion: { in: ['admin', 'normal', 'checkout', 'superuser', 'banned'] }
 
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
-  scope :active, where("#{table_name}.deleted_at is null")
+  scope :active, lambda { where("role != 'banned'") }
 
   # ------- validations -------- #
   def skip_phone_validation?
-    if AppConfig.first          # is there an app config?
-      if !AppConfig.first.require_phone
-        return true             # if phone not required, return true
-      else
-        return ( @csv_import ? true : false ) # no phone required if csv
-      end
-    end
-    return true                 # no phone required if no app config
+    return true unless AppConfig.first
+    return true unless AppConfig.first.require_phone
+    return !@csv_import.nil?
   end
   # ------- end validations -------- #
 
   def name
-    [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name].join(" ")
+    "#{(nickname.blank? ? first_name : nickname)} #{last_name}"
   end
 
   def equipment_objects
@@ -82,11 +72,11 @@ class User < ActiveRecord::Base
   end
 
   def self.select_options
-    self.find(:all, order: 'last_name ASC').collect{ |item| ["#{item.last_name}, #{item.first_name}", item.id] }
+    User.order('last_name ASC').all.collect{ |item| ["#{item.last_name}, #{item.first_name}", item.id] }
   end
 
   def render_name
-    [((nickname.nil? || nickname.length == 0) ? first_name : nickname), last_name, login].join(" ")
+    "#{name} #{login}"
   end
 
 
@@ -97,7 +87,7 @@ class User < ActiveRecord::Base
   end
 
   def due_for_checkout
-    self.reservations.upcoming
+    self.reservations.checkoutable
   end
 
   def due_for_checkin

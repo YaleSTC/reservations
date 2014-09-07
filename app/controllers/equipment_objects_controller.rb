@@ -1,7 +1,7 @@
 class EquipmentObjectsController < ApplicationController
   load_and_authorize_resource
-  before_filter :set_current_equipment_object, only: [:show, :edit, :update, :destroy, :deactivate, :activate]
-  before_filter :set_equipment_model_if_possible, only: [:index, :new]
+  before_action :set_current_equipment_object, only: [:show, :edit, :update, :destroy, :deactivate, :activate]
+  before_action :set_equipment_model_if_possible, only: [:index, :new]
 
   include ActivationHelper
 
@@ -34,10 +34,7 @@ class EquipmentObjectsController < ApplicationController
   end
 
   def create
-    @equipment_object = EquipmentObject.new(params[:equipment_object])
-    if @equipment_object.serial == "Enter serial # (optional)"
-      @equipment_object.serial = nil
-    end
+    @equipment_object = EquipmentObject.new(equipment_object_params)
     if @equipment_object.save
       flash[:notice] = "Successfully created equipment object. #{@equipment_object.serial}"
       redirect_to @equipment_object.equipment_model
@@ -50,24 +47,18 @@ class EquipmentObjectsController < ApplicationController
   end
 
   def update
-    if params[:equipment_object][:deleted_at].blank?
+    p = equipment_object_params
+    if p[:deleted_at].blank?
       # Delete deactivation reason when "Disabled?" is toggled
-      params[:equipment_object][:deactivation_reason] = ""
+      p[:deactivation_reason] = ""
     end
 
-    if @equipment_object.update_attributes(params[:equipment_object])
+    if @equipment_object.update_attributes(p)
       flash[:notice] = "Successfully updated equipment object."
       redirect_to @equipment_object.equipment_model
     else
       render action: 'edit'
     end
-  end
-
-  def destroy
-    @equipment_model = @equipment_object.equipment_model #We need this so that we know where to re-direct (look down 4 lines)
-    @equipment_object.destroy(:force)
-    flash[:notice] = "Successfully destroyed equipment object."
-    redirect_to @equipment_model
   end
 
   # Deactivate and activate extend controller methods in ApplicationController
@@ -79,5 +70,12 @@ class EquipmentObjectsController < ApplicationController
   def activate
     super
     @equipment_object.update_attributes(deactivation_reason: nil)
+  end
+
+  private
+
+  def equipment_object_params
+    params.require(:equipment_object).permit(:name, :serial, :equipment_model_id,
+                                             :deleted_at, :deactivation_reason)
   end
 end
