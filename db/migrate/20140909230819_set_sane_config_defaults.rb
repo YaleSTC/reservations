@@ -2,15 +2,9 @@ class SetSaneConfigDefaults < ActiveRecord::Migration
   def change
     config = AppConfig.first
     columns(:app_configs).each do |col|
-      if col.type == :string && !(col.name.include? 'favicon')
-        # set default for all string-type columns
-        change_column_default(:app_configs, col.name.to_s, '')
-        if config && config.send(col.name).nil?
-          # if configs are already set but parameter is nil, set to empty
-          # string
-          config.send(col.name+'=', '')
-          config.save!
-        end
+      if (col.type == :string || col.type == :text) && !(col.name.include? 'favicon')
+        # prevent nil strings/text and replace with empty string
+        change_column_null(:app_configs, col.name.to_s, false, '')
       end
     end
   end
