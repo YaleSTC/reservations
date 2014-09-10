@@ -3,6 +3,10 @@
 # It's helpful, but not entirely necessary to understand cron before proceeding.
 # http://en.wikipedia.org/wiki/Cron
 
+# For Heroku deployments, this will be superseded by the Heroku scheduler (for
+# more info see: https://devcenter.heroku.com/articles/scheduler).
+# Any changes here should be implemented in lib/tasks/scheduler.rake!
+
 # Example:
 #
 # set :cron_log, "/path/to/my/cron_log.log"
