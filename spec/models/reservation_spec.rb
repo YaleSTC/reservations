@@ -47,7 +47,7 @@ describe Reservation, :type => :model do
         r = FactoryGirl.create(:reservation, equipment_model: reservation.equipment_model, start_date: reservation.due_date + 3.days,
                            due_date: reservation.due_date + reservation.equipment_model.max_renewal_length.days + 5.days)
         r.equipment_model.equipment_objects.last.destroy
-        expect(reservation.find_renewal_date).to eq(reservation.due_date + 3.days)
+        expect(reservation.find_renewal_date).to eq(reservation.due_date + 2.days)
       end
     end
 
@@ -59,9 +59,9 @@ describe Reservation, :type => :model do
       expect(reservation.reserver).not_to be_nil
       expect(reservation.reserver.first_name).not_to eq("Deleted")
     end
-    its(:equipment_model) { should_not be_nil }
-    its(:start_date) { should_not be_nil }
-    its(:due_date) { should_not be_nil }
+    it { expect(reservation.equipment_model).to_not be_nil }
+    it { expect(reservation.start_date).to_not be_nil }
+    it { expect(reservation.due_date).to_not be_nil }
     it 'should save' do
       expect(reservation.save).to be_truthy
       expect(Reservation.all.size).to eq(1)
@@ -84,35 +84,35 @@ describe Reservation, :type => :model do
   end
 
   context 'when not checked out' do
-    its(:status) { should == 'reserved' }
-  #  it { should_not be_is_eligible_for_renew } #currently returns true; doesn't check for checked out
+    it { expect(reservation.status).to eq('reserved') }
+    it { expect(reservation).to_not be_is_eligible_for_renew } #currently returns true; doesn't check for checked out
   end
 
   context 'when checked out' do
-    subject { FactoryGirl.build(:checked_out_reservation) }
+    subject(:reservation) { FactoryGirl.build(:checked_out_reservation) }
 
-    its(:status) { should == 'checked out' }
+    it { expect(reservation.status).to eq('checked out') }
     it { is_expected.to be_is_eligible_for_renew }
   end
 
   context 'when checked in' do
-    subject { FactoryGirl.build(:checked_in_reservation) }
+    subject(:reservation) { FactoryGirl.build(:checked_in_reservation) }
 
-    its(:status) { should == 'returned on time'}
+    it { expect(reservation.status).to eq('returned on time') }
     it { is_expected.not_to be_is_eligible_for_renew }
   end
 
   context 'when overdue' do
-    subject { FactoryGirl.build(:overdue_reservation) }
+    subject(:reservation) { FactoryGirl.build(:overdue_reservation) }
 
-    its(:status) { should == 'overdue' }
+    it { expect(reservation.status).to eq('overdue') }
     it { is_expected.to be_is_eligible_for_renew } #should this be true?
   end
 
    context 'when missed' do
-     subject { FactoryGirl.build(:missed_reservation) }
+     subject(:reservation) { FactoryGirl.build(:missed_reservation) }
 
-     its(:status) { should == 'missed' }
+     it { expect(reservation.status).to eq('missed') }
    #  it { should_not be_is_eligible_for_renew} #returns true; should it?
    end
 
