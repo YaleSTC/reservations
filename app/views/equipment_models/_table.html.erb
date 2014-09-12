@@ -1,0 +1,31 @@
+<table id="table_equipment_models" class="datatable-wide table table-striped table-bordered">
+  <thead>
+  <tr>
+    <th>Name</th>
+    <%= "<th>Type</th>".html_safe unless @category %>
+  <%# these blank TH's necessary for the sort function %>
+  <% if can? :manage, EquipmentModel %>
+    <th class="no_sort"> </th>
+    <th class="no_sort"> </th>
+  <% end %>
+  </tr>
+  </thead>
+  <tbody>
+  <% for equipment_model in equipment_models %>
+    <tr>
+      <td><%= link_to equipment_model.name, equipment_model %></td>
+      <%= ("<td>" + (link_to equipment_model.category.name.singularize, equipment_model.category) + "</td>").html_safe unless @category %>
+      <% if can? :manage, EquipmentModel %>
+        <td><%= link_to "Edit", edit_equipment_model_path(equipment_model), :class => "btn" %></td>
+        <td>
+        <% if equipment_model.deleted_at %>
+          <%= make_activate_btn(:equipment_models,equipment_model) %>
+        <% else %>
+          <%= make_deactivate_btn(:equipment_models,equipment_model) %>
+        <% end %>
+        </td>
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
