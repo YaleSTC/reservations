@@ -37,7 +37,7 @@ class ApplicationController < ActionController::Base
   def app_setup_check
     unless AppConfig.first && (User.count != 0)
       flash[:notice] = "Hey there! It looks like you haven't fully set up your application yet. To \
-      create your first admin user and configure the application, please run $bundle exec rake app:setup \
+      create your first superuser and configure the application, please run $bundle exec rake app:setup \
       in the terminal. For more information, please see our github page: https://github.com/YaleSTC/reservations"
       render file: 'application_setup/index', layout: 'application'
     end
