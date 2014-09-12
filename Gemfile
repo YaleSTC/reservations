@@ -49,7 +49,7 @@ gem 'redcarpet'
 
 
 # auditting / logging
-gem 'paper_trail'
+gem 'paper_trail', '~> 3.0.5'
 
 group :development, :test do
   gem 'factory_girl_rails'

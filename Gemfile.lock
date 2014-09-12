@@ -191,7 +191,7 @@ GEM
       activesupport (>= 3.0.0)
     nokogiri (1.6.3.1)
       mini_portile (= 0.6.0)
-    paper_trail (3.0.3)
+    paper_trail (3.0.5)
       activerecord (>= 3.0, < 5.0)
       activesupport (>= 3.0, < 5.0)
     paperclip (4.2.0)
@@ -406,7 +406,7 @@ DEPENDENCIES
   mysql2
   net-ldap
   nilify_blanks
-  paper_trail
+  paper_trail (~> 3.0.5)
   paperclip
   parallel_tests
   permanent_records
