@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140727232238) do
+ActiveRecord::Schema.define(version: 20140916025809) do
 
   create_table "announcements", force: true do |t|
     t.text     "message"
@@ -49,6 +49,7 @@ ActiveRecord::Schema.define(version: 20140727232238) do
     t.boolean  "override_at_checkout",                               default: false
     t.integer  "blackout_exp_time"
     t.text     "request_text"
+    t.boolean  "enable_renewals",                                    default: true
   end
 
   create_table "blackouts", force: true do |t|
@@ -66,13 +67,14 @@ ActiveRecord::Schema.define(version: 20140727232238) do
     t.string   "name"
     t.integer  "max_per_user"
     t.integer  "max_checkout_length"
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
     t.integer  "sort_order"
     t.datetime "deleted_at"
     t.integer  "max_renewal_times"
     t.integer  "max_renewal_length"
     t.integer  "renewal_days_before_due"
+    t.boolean  "csv_import",              default: false, null: false
   end
 
   create_table "checkin_procedures", force: true do |t|
@@ -99,8 +101,8 @@ ActiveRecord::Schema.define(version: 20140727232238) do
     t.integer  "max_per_user"
     t.boolean  "active",                                              default: true
     t.integer  "category_id"
-    t.datetime "created_at",                                                         null: false
-    t.datetime "updated_at",                                                         null: false
+    t.datetime "created_at",                                                          null: false
+    t.datetime "updated_at",                                                          null: false
     t.datetime "deleted_at"
     t.string   "photo_file_name"
     t.string   "photo_content_type"
@@ -113,6 +115,7 @@ ActiveRecord::Schema.define(version: 20140727232238) do
     t.integer  "max_renewal_times"
     t.integer  "max_renewal_length"
     t.integer  "renewal_days_before_due"
+    t.boolean  "csv_import",                                          default: false, null: false
     t.integer  "max_checkout_length"
   end
 
@@ -131,9 +134,10 @@ ActiveRecord::Schema.define(version: 20140727232238) do
     t.string   "serial"
     t.boolean  "active",              default: true
     t.integer  "equipment_model_id"
-    t.datetime "created_at",                         null: false
-    t.datetime "updated_at",                         null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
     t.datetime "deleted_at"
+    t.boolean  "csv_import",          default: false, null: false
     t.string   "deactivation_reason"
   end
 
@@ -187,7 +191,7 @@ ActiveRecord::Schema.define(version: 20140727232238) do
     t.datetime "created_at",                                   null: false
     t.datetime "updated_at",                                   null: false
     t.boolean  "terms_of_service_accepted"
-    t.string   "view_mode",                 default: "admin"
+    t.string   "view_mode",                 default: "normal"
     t.string   "role",                      default: "normal"
   end
 
