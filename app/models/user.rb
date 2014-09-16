@@ -42,6 +42,7 @@ class User < ActiveRecord::Base
 
   def view_mode_reset
     return if role == 'superuser'
+    return if role == 'admin' && view_mode != 'superuser'
     self.view_mode = role
   end
   # ------- end validations -------- #
