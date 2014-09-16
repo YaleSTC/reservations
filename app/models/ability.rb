@@ -47,12 +47,13 @@ class Ability
           #cannot :create, Reservation
       end
       case user.role
-        when 'superuser'
-          can :change, :views
-        when 'admin'
-          can :change, :views
-          cannot :view_as, :superuser
+      when 'superuser'
+        can :change, :views
+      when 'admin'
+        can :change, :views
+        cannot :view_as, :superuser
       end
+      cannot :change, :views unless ['admin', 'superuser'].include?(user.role)
     else
       can :create, User
     end
