@@ -45,6 +45,7 @@ class Ability
           can :change, :views
           cannot :view_as, :superuser
       end
+      cannot :change, :views unless ['admin', 'superuser'].include?(user.role)
     else
       can :create, User
     end
