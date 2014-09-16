@@ -28,6 +28,7 @@ class User < ActiveRecord::Base
                           if: Proc.new { |u| !u.created_by_admin == "true" }
   validates :role,
             :view_mode,   inclusion: { in: ['admin', 'normal', 'checkout', 'superuser', 'banned'] }
+  validate :view_mode_check
 
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
   scope :active, lambda { where("role != 'banned'") }
@@ -37,6 +38,16 @@ class User < ActiveRecord::Base
     return true unless AppConfig.first
     return true unless AppConfig.first.require_phone
     return !@csv_import.nil?
+  end
+
+  def view_mode_check
+    return if role == 'superuser'
+    case view_mode
+      when 'admin'
+        errors.add(:base, "Inappropriate permissions.\n") unless role == 'admin'
+      when 'checkout'
+        errors.add(:base, "Inappropriate permissions.\n") unless ['admin', 'checkout'].include?(role)
+    end
   end
   # ------- end validations -------- #
 
