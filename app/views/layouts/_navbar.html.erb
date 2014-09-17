@@ -99,6 +99,9 @@
                   <li><%= link_to "Reports", reports_path %></li>
                   <li><%= link_to "Settings", edit_app_configs_path %></li>
                   <li><%= link_to "Logs", log_index_path %></li>
+                  <% if can? :access, :rails_admin %>
+                    <li><%= link_to "Rails Admin", rails_admin_path %></li>
+                  <% end %>
                 </ul>
               </li>
         <% end %>
