@@ -106,7 +106,7 @@ class ApplicationController < ActionController::Base
 
   def check_view_mode
     return unless current_user
-    if current_user.role == 'admin' && current_user.view_mode != 'admin'
+    if (can? :change, :views) && (current_user.view_mode != current_user.role)
       flash[:persistent] = "Currently viewing as #{current_user.view_mode} user. You can switch back to your regular view \
                   #{ActionController::Base.helpers.link_to('below','#view_as')} \
                   (see #{ActionController::Base.helpers.link_to('here','https://yalestc.github.io/reservations/')} for details)."
