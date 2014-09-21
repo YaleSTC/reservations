@@ -6,11 +6,12 @@ Changelog
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
 ### v3.4.5
-*Released on 15 September 2014*
+*Released on 22 September 2014*
 #### Bug Fixes
 * Ensured that only reservations with notes or missed procedures were being sent in the notes e-mail ([#948](https://github.com/YaleSTC/reservations/issues/948))
 * Finally resolved the issue where the links in e-mails were broken ([#868](https://github.com/YaleSTC/reservations/issues/868)).
 * Fixed an issue where the catalog was showing negative equipment availability ([#982](https://github.com/YaleSTC/reservations/issues/982)).
+* Fixed some holes in our admin and default new user permissions ([#966](https://github.com/YaleSTC/reservations/issues/966)).
 
 ### v3.4.4
 *Released on 2 September 2014*
