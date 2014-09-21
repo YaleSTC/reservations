@@ -30,5 +30,5 @@
 <div class="form-actions">
   <%= link_to 'Edit', edit_requirement_path(@requirement), class: 'btn' %>
   <%= link_to 'Back', requirements_path, class: 'btn' %>
-  <%= link_to 'Delete', @requirement, class: 'btn btn-danger', :confirm => 'Are you sure?', :method => :delete %>
+  <%= link_to 'Delete', @requirement, class: 'btn btn-danger', :data => {:confirm => 'Are you sure?'}, :method => :delete %>
 </div>
