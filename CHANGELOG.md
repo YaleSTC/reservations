@@ -5,13 +5,21 @@ Changelog
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+### v3.4.5
+*Released on 22 September 2014*
+#### Bug Fixes
+* Ensured that only reservations with notes or missed procedures were being sent in the notes e-mail ([#948](https://github.com/YaleSTC/reservations/issues/948)).
+* Finally resolved the issue where the links in e-mails were broken ([#868](https://github.com/YaleSTC/reservations/issues/868)).
+* Fixed an issue where the catalog was showing negative equipment availability ([#982](https://github.com/YaleSTC/reservations/issues/982)).
+* Fixed some holes in our admin and default new user permissions ([#966](https://github.com/YaleSTC/reservations/issues/966)).
+
 ### v3.4.4
 *Released on 2 September 2014*
 #### New Features
-* An email will now be sent to the administrators when a new request is created ([#943](https://github.com/YaleSTC/reservations/943)).
+* An email will now be sent to the administrators when a new request is created ([#943](https://github.com/YaleSTC/reservations/issues/943)).
 
 #### Enhancements
-* Made sure that there were no redundant prompts when a custom request prompt was defined ([#940](https://github.com/YaleSTC/reservations/940)).
+* Made sure that there were no redundant prompts when a custom request prompt was defined ([#940](https://github.com/YaleSTC/reservations/issues/940)).
 
 ### v3.4.3
 #### Bug Fixes
@@ -57,10 +65,15 @@ Changelog
 * Ensured that overdue equipment items could not be checked out ([#625](https://github.com/YaleSTC/reservations/pull/625))
 * Fixed typo in `ability.rb` ([#649](https://github.com/YaleSTC/reservations/pull/649))
 * Ensured that the new cart would not break the app for existing users ([#676](https://github.com/YaleSTC/reservations/pull/676))
-* Fix edge case new user creation when :possible_netid is not set ([#732](https://github.com/YaleSTC/reservations/issues/732)).
-* Prevented infinite redirect loop in edge case when a user tries to log on to the system before the admin has set up the application ([#684](https://github.com/YaleSTC/reservations/issues/684)).
+* Fix edge case new user creation when :possible_netid is not set ([#732](https://github.com/YaleSTC/reservations/issues/732))
+* Prevented infinite redirect loop in edge case when a user tries to log on to the system before the admin has set up the application ([#684](https://github.com/YaleSTC/reservations/issues/684))
 * Updating the cart no longer breaks the catalog pagination links
   ([#531](https://github.com/YaleSTC/reservations/issues/531))
+* Deleting Blackout Dates now works in all cases ([#808](https://github.com/YaleSTC/reservations/issues/808))
+* Checkout persons can no longer see the Import Users button ([#810](https://github.com/YaleSTC/reservations/issues/810))
+* Reservations checked in on their due-date are no-longer counted as overdue ([#785](https://github.com/YaleSTC/reservations/issues/785))
+* Block patrons from URL-hacking and creating new users ([#823](https://github.com/YaleSTC/reservations/issues/823))
+* Fixed a bug wherewith patrons were unable to edit their own profiles ([#830](https://github.com/YaleSTC/reservations/issues/830))
 
 #### New Features
 * Added benchmarking for speed-testing ([#574](https://github.com/YaleSTC/reservations/pull/574))
@@ -81,7 +94,7 @@ Changelog
 * Greatly improved catalog render times ([#628](https://github.com/YaleSTC/reservations/pull/628))
 * Updated `kaminari` gem ([#657](https://github.com/YaleSTC/reservations/pull/657))
 * Refactored `UsersController#new` ([#660](https://github.com/YaleSTC/reservations/pull/660))
-* Further speed enhancements for the catalog and checkout ([#734](https://github.com/YaleSTC/reservations/issues/734)).
+* Further speed enhancements for the catalog and checkout ([#734](https://github.com/YaleSTC/reservations/issues/734))
 * Removed deletion of reservations when deactivating equipment ([#706](https://github.com/YaleSTC/reservations/issues/706))
 * Further speed enhancements for the reservation lists page ([#655](https://github.com/YaleSTC/reservations/issues/655))
 * Refactor blackout system ([#654](https://github.com/YaleSTC/reservations/issues/654))
@@ -97,8 +110,13 @@ Changelog
 * Refactor checkin and checkout ([#666](https://github.com/YaleSTC/reservations/issues/666))
 * Index users table for speed optimization ([#755](https://github.com/YaleSTC/reservations/pull/755))
 * Clarified and refactored reservation renewal code ([#674](https://github.com/YaleSTC/reservations/issues/674))
+* Restore Checkin box location from the v3.1-era ([#819](https://github.com/YaleSTC/reservations/issues/819))
+
+#### Deprecations
+* It's no-longer possible to delete categories, equipment models, or equipment items. Deactivation is now the only method ([#802](https://github.com/YaleSTC/reservations/issues/802))
 
 ###v3.3.0
+*Please don't use this version. Use 3.4.x instead: it has undergone more bugtesting.*
 ####Bug Fixes
 * Fixed catalog pagination not working correctly ([#533](https://github.com/YaleSTC/reservations/issues/533))
 * Fix bug preventing recurring blackouts not being able to be created if
