@@ -376,7 +376,7 @@ class ReservationsController < ApplicationController
   end
 
   def archive
-    if params[:archive_note].empty?
+    if params[:archive_note].strip.empty?
       flash[:error] = 'Reason for archiving cannot be empty.'
     else
       set_reservation
