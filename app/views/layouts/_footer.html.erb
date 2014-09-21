@@ -44,7 +44,7 @@
               <ul class="dropdown-menu">
                 <% viewmode_array = ['admin','checkout','normal','banned'] %>
                 <% if can? :view_as, :superuser %>
-                  <%  viewmode_array << 'superuser' %>
+                  <%  viewmode_array.unshift 'superuser' %>
                 <% end %>
                 <% viewmode_array.each do |role| %>
                   <% if current_user.view_mode == role %>

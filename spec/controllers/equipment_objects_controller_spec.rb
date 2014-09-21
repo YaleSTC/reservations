@@ -246,8 +246,7 @@ describe EquipmentObjectsController, :type => :controller do
       end
       it { expect(response).to be_redirect }
 
-      subject { object }
-      its(:deactivation_reason) { should == "Because I can" }
+      it { expect(object.deactivation_reason).to eq ("Because I can") }
     end
 
     context 'with non-admin user' do
@@ -271,9 +270,7 @@ describe EquipmentObjectsController, :type => :controller do
       end
 
       it { expect(response).to be_redirect }
-
-      subject { deactivated_object }
-      its(:deactivation_reason) { should == nil }
+      it { expect(deactivated_object.deactivation_reason).to be_nil }
     end
 
     context 'with non-admin user' do

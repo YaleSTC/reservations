@@ -155,8 +155,8 @@ if User.all.empty?
     u.email = email
     u.login = login
     u.affiliation = affiliation
-    u.role = 'admin'
-    u.view_mode = 'admin'
+    u.role = 'superuser'
+    u.view_mode = 'superuser'
   end
 end
 
@@ -368,7 +368,7 @@ end
 # ============================================================================
 
 if ENV["minimal"]
-  entered_num = 0
+  entered_num = 3
 else
   entered_num = ask_for_records("CheckinProcedure")
 end
@@ -394,7 +394,7 @@ end
 # ============================================================================
 
 if ENV["minimal"]
-  entered_num = 0
+  entered_num = 3
 else
   entered_num = ask_for_records("CheckoutProcedure")
 end
@@ -487,7 +487,7 @@ end
 # ============================================================================
 
 if ENV["minimal"]
-  entered_num = 0
+  entered_num = 10
 else
   entered_num = ask_for_records("Reservation")
 end

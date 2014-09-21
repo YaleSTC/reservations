@@ -5,6 +5,52 @@ Changelog
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+### v3.4.4
+*Released on 2 September 2014*
+#### New Features
+* An email will now be sent to the administrators when a new request is created ([#943](https://github.com/YaleSTC/reservations/943)).
+
+#### Enhancements
+* Made sure that there were no redundant prompts when a custom request prompt was defined ([#940](https://github.com/YaleSTC/reservations/940)).
+
+### v3.4.3
+#### Bug Fixes
+* Fixed typo on the application settings form ([#850](https://github.com/YaleSTC/reservations/issues/850)).
+* Fixed an issue where checkout persons could not use autocomplete ([#857](https://github.com/YaleSTC/reservations/issues/857)).
+* Fixed an issue where items with unrestricted checkout lengths could not be added to the cart ([#848](https://github.com/YaleSTC/reservations/issues/848)).
+* Fixed an issue where the overdue fines sent via e-mail were incorrect ([#876](https://github.com/YaleSTC/reservations/issues/876)).
+* Fixed an issue where the calendar availability was incorrect ([#883](https://github.com/YaleSTC/reservations/issues/883)).
+* Ensured that the empty cart button completely resets the cart ([#845](https://github.com/YaleSTC/reservations/issues/845)).
+* Fixed an issue where all links in e-mails were broken ([#868](https://github.com/YaleSTC/reservations/issues/868)).
+* Fixed an issue where the overdue scope was including missed reservations ([#893](https://github.com/YaleSTC/reservations/issues/893)).
+* Fixed an issue where the reservation notes e-mails were not being sent ([#906](https://github.com/YaleSTC/reservations/issues/906)).
+* Fixed the equipment model change popup to only show when relevant ([#890](https://github.com/YaleSTC/reservations/issues/890)).
+* Fixed an issue where the notes field in the check-out form was being populated with prior notes ([#915](https://github.com/YaleSTC/reservations/issues/915)).
+* Fixed an issue where the renewal button would be active even when the max renewal length was zero ([#916](https://github.com/YaleSTC/reservations/issues/916)).
+* Fixed an issue where the app wasn't properly counting reservations that started on the same day as the cart start date for availability ([#932](https://github.com/YaleSTC/reservations/issues/932)).
+* Fixed an issue where renewals were including the start date of any upcoming reservations that required the item ([#932](https://github.com/YaleSTC/reservations/issues/932)).
+
+#### New Features
+* Added equipment import functionality ([#494](https://github.com/YaleSTC/reservations/issues/494)).
+* Added an option to disable renewals ([#916](https://github.com/YaleSTC/reservations/issues/916)).
+* Added a customizable prompt to the reservation request page ([#746](https://github.com/YaleSTC/reservations/issues/746)).
+
+#### Enhancements
+* Made version number visible to all users ([#856](https://github.com/YaleSTC/reservations/issues/856)).
+* The request notes are now shown on the request review page ([#901](https://github.com/YaleSTC/reservations/issues/901)).
+* Made the search box more noticable ([#293](https://github.com/YaleSTC/reservations/issues/293)).
+
+### v3.4.2
+*Released on 28 July 2014*
+#### Bug Fixes
+* Added requirements to cart validations to prevent unqualified users from being granted reservations inappropriately ([#763](https://github.com/YaleSTC/reservations/issues/763))
+* Tweaked the check-in UI to fix an issue where clicking in the notes field would toggle item selection ([#840](https://github.com/YaleSTC/reservations/issues/840))
+* Updated scopes to ensure that reservations could be checked out any time before due date ([#844](https://github.com/YaleSTC/reservations/issues/844))
+
+### v3.4.1
+#### Enhancements
+* Updated Ruby version to 2.1.2
+
 ### v3.4.0
 #### Bug Fixes
 * Fixed failing tests in `user_mailer_spec` ([#643](https://github.com/YaleSTC/reservations/pull/643))
@@ -75,9 +121,9 @@ Changelog
 * Added ability to swap equipment objects for checked out reservations
   ([#536](https://github.com/YaleSTC/reservations/issues/536))
 * Added the ability to add a deactivation reason to equipment objects
-  ([#332](https://github.com/YaleSTC/reservations/issues/332)
+  ([#332](https://github.com/YaleSTC/reservations/issues/332))
 * Added a comprehensive auditing/logging feature
-  ([#319](https://github.com/YaleSTC/reservations/issues/319)
+  ([#319](https://github.com/YaleSTC/reservations/issues/319))
 * Enabled editing of email field in quick create user modal
   ([#567](https://github.com/YaleSTC/reservations/issues/567))
 * Set up ActiveAdmin and added superuser role for easy backup

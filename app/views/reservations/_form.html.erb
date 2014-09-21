@@ -20,16 +20,13 @@
 
   <% message = '' %>
   <% if @reservation.equipment_object %>
-    <% message = "Be aware that changing the reservation equipment item may have an effect on another reservation. \
-          If you set this reservation's equipment item to an item that has already been checked out, the \
-          reservations will be swapped." %>
     <div class='control-group'>
     <label class='control-label'>Item</label>
     <div class = "controls">
       <%= select_tag :equipment_object,
           options_for_select(@option_array),
           placeholder: @reservation.equipment_object.name,
-          class: 'dropdown dropselect',
+          class: 'dropdown dropselect reservation_eq_objects',
           prompt: '', width: 80 %>
     </div>
     </div>
@@ -48,5 +45,5 @@
   <%= text_area_tag :new_notes, "", rows: 5, class: 'span4' %>
   <br />
   <%= render :partial => 'shared/markdown_button' %>
-  <%= f.button :wrapped, :cancel => reservations_path, :confirm => message %>
+  <%= f.button :wrapped, :cancel => reservations_path %>
 <% end %>

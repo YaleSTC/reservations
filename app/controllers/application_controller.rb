@@ -37,7 +37,7 @@ class ApplicationController < ActionController::Base
   def app_setup_check
     unless AppConfig.first && (User.count != 0)
       flash[:notice] = "Hey there! It looks like you haven't fully set up your application yet. To \
-      create your first admin user and configure the application, please run $bundle exec rake app:setup \
+      create your first superuser and configure the application, please run $bundle exec rake app:setup \
       in the terminal. For more information, please see our github page: https://github.com/YaleSTC/reservations"
       render file: 'application_setup/index', layout: 'application'
     end
@@ -106,7 +106,7 @@ class ApplicationController < ActionController::Base
 
   def check_view_mode
     return unless current_user
-    if current_user.role == 'admin' && current_user.view_mode != 'admin'
+    if (can? :change, :views) && (current_user.view_mode != current_user.role)
       flash[:persistent] = "Currently viewing as #{current_user.view_mode} user. You can switch back to your regular view \
                   #{ActionController::Base.helpers.link_to('below','#view_as')} \
                   (see #{ActionController::Base.helpers.link_to('here','https://yalestc.github.io/reservations/')} for details)."
@@ -195,7 +195,9 @@ class ApplicationController < ActionController::Base
 
     # build the hash using class methods that use 0 queries
     eq_models.each do |em|
-      @availability_hash[em.id] = EquipmentObject.for_eq_model(em.id,eq_objects) - Reservation.number_overdue_for_eq_model(em.id,source_reservations) - em.num_reserved(cart.start_date,cart.due_date,source_reservations)
+      @availability_hash[em.id] = [EquipmentObject.for_eq_model(em.id,eq_objects) - \
+        Reservation.number_overdue_for_eq_model(em.id,source_reservations) - \
+        em.num_reserved(cart.start_date,cart.due_date,source_reservations), 0].max
     end
     @page_eq_models_by_category = eq_models
 
