@@ -164,10 +164,11 @@ class Reservation < ActiveRecord::Base
     # to preserve database sanity (eg, equipment object is deactivated while
     # that reseration is checked out)
     # returns self
-
-    self.checked_in = Time.current
-    self.checked_out = Time.current if self.checked_out.nil?
-    self.notes = self.notes.to_s + "\n\nThis reservation was archived on #{Time.current.to_s(:long)} by #{archiver.name} for the following reason: #{note}. The checkin and checkout dates may reflect the archive date because the reservation was for a nonexistent piece of equipment or otherwise problematic."
+    if self.checked_in.nil?
+      self.checked_in = Time.current
+      self.checked_out = Time.current if self.checked_out.nil?
+      self.notes = self.notes.to_s + "\n\nThis reservation was archived on #{Time.current.to_s(:long)} by #{archiver.name} for the following reason: #{note}. The checkin and checkout dates may reflect the archive date because the reservation was for a nonexistent piece of equipment or otherwise problematic."
+    end
     self
   end
 end
