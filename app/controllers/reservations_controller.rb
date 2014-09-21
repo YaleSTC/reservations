@@ -376,9 +376,13 @@ class ReservationsController < ApplicationController
   end
 
   def archive
-    set_reservation
-    @reservation.archive(current_user).save(validate: false)
-    flash[:notice] = "Reservation successfully archived."
+    if params[:archive_note].empty?
+      flash[:error] = 'Reason for archiving cannot be empty.'
+    else
+      set_reservation
+      @reservation.archive(current_user, params[:archive_note]).save(validate: false)
+      flash[:notice] = "Reservation successfully archived."
+    end
     redirect_to :back
   end
 
