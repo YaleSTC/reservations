@@ -8,6 +8,6 @@
   <p>
     <%= link_to "Show", @user %> |
     <%= link_to "View All", users_path %> |
-    <%= link_to "Delete", @user, :confirm => 'Deleting this user will delete all of their related reservations. Are you sure you want to do this?', :method => :delete %>
+    <%= link_to "Delete", @user, :data => {:confirm => 'Deleting this user will delete all of their related reservations. Are you sure you want to do this?'}, :method => :delete %>
   </p>
 <% end %>
