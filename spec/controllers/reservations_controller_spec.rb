@@ -1024,6 +1024,7 @@ describe ReservationsController, :type => :controller do
           put :renew, id: @other_res.id
         end
         it { expect(response).to be_redirect }
+        it { expect { @other_res.reload }.not_to change { @other_res.checked_in } }
       end
 
     end
