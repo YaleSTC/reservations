@@ -41,7 +41,7 @@
             reservation until <strong><%= @reservation.find_renewal_date.to_date.to_s(:long) %></strong>.</p>
             <hr>
             <%= manage_reservations_btn %>
-            <%= link_to "Renew Now", renew_reservation_path, :method => :put, remote: true, class: 'btn btn-primary' %>
+            <%= link_to "Renew Now", renew_reservation_path, :method => :put,  class: 'btn btn-primary' %>
           </div>
         <% elsif @reservation.checked_out.nil? or !@reservation.checked_in.nil? %>
           <%# you can't renew if you haven't checked it out, or if you've already checked it in %>
