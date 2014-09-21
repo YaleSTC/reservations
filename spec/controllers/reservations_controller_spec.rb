@@ -1034,6 +1034,119 @@ describe ReservationsController, :type => :controller do
     end
   end
 
+  describe '#archive (PUT /reservations/:id/archive)' do
+    # Access: Admins
+    # Functionality:
+    # - requests note from admin
+    # - sets @reservation
+    # - sets @reservation.checked_in to today
+    # - adds archival comment to note
+    # - redirects to @reservation
+
+    # TODO:
+
+    shared_examples 'cannot archive reservation' do
+      before do
+        request.env["HTTP_REFERER"] = reservation_path(@reservation)
+        put :archive, id: @reservation.id, archive_note: "I can't!"
+      end
+
+      it { expect(response).to redirect_to(root_path) }
+      it 'should not be checked in' do
+        expect { @reservation.reload }.not_to change { @reservation.checked_in }
+      end
+      it 'should not have new notes' do
+        expect { @reservation.reload }.not_to change { @reservation.notes }
+      end
+    end
+
+    context 'for checked-out reservation' do
+      before(:each) do
+        @reservation = FactoryGirl.create(:checked_out_reservation, reserver: @user)
+        request.env["HTTP_REFERER"] = reservation_path(@reservation)
+      end
+
+      context 'when accessed by admin' do
+        before(:each) do
+          allow(@controller).to receive(:current_user).and_return(@admin)
+        end
+
+        context 'with archive note' do
+          before(:each) do
+            put :archive, id: @reservation.id, archive_note: "Because I can"
+          end
+
+          it 'redirects to reservation show view' do
+            expect(response).to redirect_to(reservation_path(@reservation))
+          end
+          it 'should be checked in' do
+            expect { @reservation.reload }.to change { @reservation.checked_in }
+          end
+          it 'should have new notes' do
+            expect { @reservation.reload }.to change { @reservation.notes }
+          end
+        end
+
+        context 'without archive note' do
+          before(:each) do
+            put :archive, id: @reservation.id
+          end
+
+          it 'redirects to reservation show view' do
+            expect(response).to redirect_to(reservation_path(@reservation))
+          end
+          it 'should not be checked in' do
+            expect(@reservation.checked_in).to be_nil
+          end
+          it 'should not have new notes' do
+            expect { @reservation.reload }.not_to change { @reservation.notes }
+          end
+        end
+      end
+
+      context 'when accessed by checkout person' do
+        before(:each) do
+          allow(@controller).to receive(:current_user).and_return(@checkout_person)
+        end
+
+        include_examples 'cannot archive reservation'
+      end
+
+      context 'when accessed by patron' do
+        before(:each) do
+          allow(@controller).to receive(:current_user).and_return(@user)
+        end
+
+        include_examples 'cannot archive reservation'
+      end
+    end
+
+    context 'for checked-in reservations' do
+      before(:each) do
+        allow(@controller).to receive(:current_user).and_return(@admin)
+        @reservation = FactoryGirl.build(:checked_in_reservation, reserver: @user)
+        @reservation.save(validate: false)
+        request.env["HTTP_REFERER"] = reservation_path(@reservation)
+        put :archive, id: @reservation.id, archive_note: "Because I can"
+      end
+
+      it 'redirects to reservation show view' do
+        expect(response).to redirect_to(reservation_path(@reservation))
+      end
+      it 'should not change reservation' do
+        expect { @reservation.reload }.not_to change { @reservation.checked_in }
+        expect { @reservation.reload }.not_to change { @reservation.notes }
+      end
+    end
+
+    it_behaves_like 'inaccessible by banned user' do
+      before do
+        @reservation = FactoryGirl.create(:checked_out_reservation, reserver: @user)
+        put :archive, id: @reservation.id
+      end
+    end
+  end
+
   describe '#checkout_email (GET reservations/checkout_email)' do
     pending 'E-mails get sent'
   end
