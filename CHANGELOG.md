@@ -121,9 +121,9 @@ Changelog
 * Added ability to swap equipment objects for checked out reservations
   ([#536](https://github.com/YaleSTC/reservations/issues/536))
 * Added the ability to add a deactivation reason to equipment objects
-  ([#332](https://github.com/YaleSTC/reservations/issues/332)
+  ([#332](https://github.com/YaleSTC/reservations/issues/332))
 * Added a comprehensive auditing/logging feature
-  ([#319](https://github.com/YaleSTC/reservations/issues/319)
+  ([#319](https://github.com/YaleSTC/reservations/issues/319))
 * Enabled editing of email field in quick create user modal
   ([#567](https://github.com/YaleSTC/reservations/issues/567))
 * Set up ActiveAdmin and added superuser role for easy backup
