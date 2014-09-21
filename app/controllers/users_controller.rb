@@ -84,6 +84,7 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(params[:user])
+    @user.role = 'normal' if params[:role].blank?
     @user.view_mode = @user.role
     # this line is what allows checkoutpeople to create users
     @user.login = session[:cas_user] unless current_user and can? :manage, Reservation

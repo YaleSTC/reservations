@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140826040900) do
+ActiveRecord::Schema.define(:version => 20140916025809) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -179,7 +179,7 @@ ActiveRecord::Schema.define(:version => 20140826040900) do
     t.integer  "equipment_model_id"
     t.integer  "equipment_object_id"
     t.text     "notes"
-    t.boolean  "notes_unsent",        :default => true
+    t.boolean  "notes_unsent",        :default => false
     t.integer  "times_renewed"
     t.string   "approval_status",     :default => "auto"
   end
@@ -205,7 +205,7 @@ ActiveRecord::Schema.define(:version => 20140826040900) do
     t.datetime "created_at",                                      :null => false
     t.datetime "updated_at",                                      :null => false
     t.boolean  "terms_of_service_accepted"
-    t.string   "view_mode",                 :default => "admin"
+    t.string   "view_mode",                 :default => "normal"
     t.string   "role",                      :default => "normal"
   end
 
