@@ -50,6 +50,7 @@
      <%= link_to "View All Equipment Items", equipment_objects_path %>
     <% else %>
       <%= link_to "New Equipment Item", new_equipment_object_path, :class => "btn btn-primary" %>
+    <%= link_to "Import Equipment Item", equip_import_page_path, :class => "btn" %>
     <% end %>
 
     <% if params[:show_deleted] %>

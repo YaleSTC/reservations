@@ -71,3 +71,32 @@
     @include transition(none);
   }
 }
+
+.navbar-search .search-query {
+  &::-moz-placeholder {
+    font-family: FontAwesome;
+    font-style: normal;
+  }
+  &:-ms-input-placeholder {
+    font-family: FontAwesome;
+    font-style: normal;
+  }
+  &::-webkit-input-placeholder {
+    font-family: FontAwesome;
+    font-style: normal;
+  }
+
+  // this is currently broken in FF, apparently :after doesn't work
+  &::-moz-placeholder:after {
+    font-family: $sansFontFamily;
+    content: "Search the catalog";
+  }
+  &:-ms-input-placeholder:after {
+    font-family: $sansFontFamily;
+    content: "Search the catalog";
+  }
+  &::-webkit-input-placeholder:after {
+    font-family: $sansFontFamily;
+    content: "Search the catalog";
+  }
+}

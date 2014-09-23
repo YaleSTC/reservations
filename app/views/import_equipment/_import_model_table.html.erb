@@ -1,0 +1,28 @@
+<thead>
+<tr>
+  <th>Category</th>
+  <th>Name</th>
+  <th>Description</th>
+  <th>Late Fee</th>
+  <th>Replacement Fee</th>
+  <th>Max/User</th>
+  <th>Renewal Length</th>
+  <th>Reason</th>
+</tr>
+</thead>
+<tbody>
+  <% models.each do |model_data| %>
+    <% model = model_data.first %>
+    <% message = model_data.last %>
+    <tr>
+      <td><%= Category.find(model[:category]).name if model[:category] and Category.find(model[:category]) %></td>
+      <td><%= model[:name] %></td>
+      <td><%= model[:description] %></td>
+      <td><%= model[:late_fee] %></td>
+      <td><%= model[:replacement_fee] %></td>
+      <td><%= model[:max_per_user] %></td>
+      <td><%= model[:max_renewal_length] %></td>
+      <td><%= message %></td>
+    </tr>
+  <% end %>
+</tbody>

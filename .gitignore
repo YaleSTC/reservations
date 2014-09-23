@@ -18,6 +18,5 @@ public/assets
 public/attachments
 diff.py
 Vagrantfile
-.ruby*
 *.sublime*
 coverage/

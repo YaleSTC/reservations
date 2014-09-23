@@ -50,7 +50,7 @@ class Cart
 
   # remove all items from cart
   def purge_all
-    @items = Hash.new()
+    initialize
   end
 
   # return array of reservations crafted from the cart contents
@@ -77,14 +77,17 @@ class Cart
     reservations.each do |r|
       errors = r.validate
       unless request
+        notes = "### Reservation notes (#{Time.current.to_s(:long)})\n#{notes}"
         r.approval_status = 'auto'
         message << "Reservation for #{r.equipment_model.name} created successfully#{", even though " + errors.to_sentence[0,1].downcase + errors.to_sentence[1..-1] unless errors.empty?}.\n"
       else
+        notes = "### Request notes (#{Time.current.to_s(:long)})\n#{notes}"
         r.approval_status = 'requested'
         message << "Request for #{r.equipment_model.name} filed successfully. #{errors.to_sentence}\n"
       end
       r.notes = notes
       r.save!
+      AdminMailer.request_filed(r).deliver if request
     end
 
     purge_all

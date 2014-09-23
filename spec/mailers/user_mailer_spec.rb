@@ -6,7 +6,7 @@ shared_examples_for "valid user email" do
     expect(@mail.to.first).to eq(reserver.email)
   end
   it "sends an email" do
-    ActionMailer::Base.deliveries.count.should eq(1)
+    expect(ActionMailer::Base.deliveries.count).to eq(1)
   end
   # FIXME: Workaround for #398 disables this functionality for RSpec testing
   # it "is from the admin" do
@@ -15,7 +15,7 @@ shared_examples_for "valid user email" do
   # end
 end
 
-describe UserMailer do
+describe UserMailer, :type => :mailer do
   before(:all) {
     @app_config = FactoryGirl.create(:app_config)
   }
