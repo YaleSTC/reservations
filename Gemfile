@@ -8,9 +8,6 @@ gem 'mysql2'
 gem 'rake'
 gem 'rdoc'
 
-# rails 4 transition gems
-gem 'activerecord-session_store'
-
 #authentication
 #gem 'rubycas-client-rails'
 
