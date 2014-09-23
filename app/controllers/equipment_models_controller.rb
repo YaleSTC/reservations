@@ -116,10 +116,10 @@ class EquipmentModelsController < ApplicationController
       params.require(:equipment_model).
              permit(:name, :category_id, :category, :description, :late_fee,
                     :replacement_fee, :max_per_user, :document_attributes,
-                    :deleted_at, :checkout_procedures_attributes,
-                    :checkin_procedures_attributes, :photo, :documentation,
+                    :deleted_at, {:checkout_procedures_attributes => []},
+                    :photo, :documentation, {:checkin_procedures_attributes => []},
                     :max_renewal_times, :max_renewal_length,
-                    :renewal_days_before_due, :associated_equipment_model_ids,
+                    :renewal_days_before_due, {:associated_equipment_model_ids => []},
                     :requirement_ids, :requirements, :max_checkout_length)
     end
 end
