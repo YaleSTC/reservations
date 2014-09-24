@@ -121,11 +121,14 @@ class EquipmentModelsController < ApplicationController
                     {:associated_equipment_model_ids => []},
                     :requirement_ids, :requirements, :max_checkout_length).
               # manually add on the procedure elements from params since they
-              # don't have fixed hash keys
+              # don't have fixed hash keys (check to see if they exist first
+              # to resolve test failures)
               tap do |whitelisted|
                 whitelisted[:checkin_procedures_attributes] =
+                  params[:equipment_model][:checkin_procedures_attributes] if
                   params[:equipment_model][:checkin_procedures_attributes]
                 whitelisted[:checkout_procedures_attributes] =
+                  params[:equipment_model][:checkout_procedures_attributes] if
                   params[:equipment_model][:checkout_procedures_attributes]
               end
     end
