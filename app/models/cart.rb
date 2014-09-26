@@ -37,7 +37,7 @@ class Cart
     self.items.each do
       num_items = num_items + 1 #Limit number of equipment_models
     end
-    if num_items >= 2 #CHANGE THIS
+    if num_items >= 100
        #errors.add(:items, "Too many items.")
        return
     end

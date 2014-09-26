@@ -73,8 +73,8 @@ module CartValidations
       num_items += 1
     end
 
-    if num_items > 2
-      errors << "KSLJFLKJSFL:ES"
+    if num_items > 100
+      errors << "Your cart has more than 100 items."
     end
 
     errors
