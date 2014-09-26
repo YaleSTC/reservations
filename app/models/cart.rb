@@ -32,8 +32,18 @@ class Cart
   # Adds equipment model id to items hash
   def add_item(equipment_model)
     return if equipment_model.nil?
+    #Limit cart to 100 items
+    num_items = 0 #Initialize num_items
+    self.items.each do
+      num_items = num_items + 1 #Limit number of equipment_models
+    end
+    if num_items >= 2 #CHANGE THIS
+       #errors.add(:items, "Too many items.")
+       return
+    end
     key = equipment_model.id
     self.items[key] = self.items[key] ? self.items[key] + 1 : 1
+
   end
 
   # Remove equipment model id from items hash, or decrement its count
