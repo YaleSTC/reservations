@@ -67,13 +67,7 @@ module CartValidations
     errors = []
 
     models = self.get_items
-
-    num_items = 0
-    models.each do
-      num_items += 1
-    end
-
-    if num_items > 100
+    if models.length > 2
       errors << "Your cart has more than 100 items."
     end
 

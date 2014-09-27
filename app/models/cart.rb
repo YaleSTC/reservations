@@ -33,11 +33,7 @@ class Cart
   def add_item(equipment_model)
     return if equipment_model.nil?
     #Limit cart to 100 items
-    num_items = 0 #Initialize num_items
-    self.items.each do
-      num_items = num_items + 1 #Limit number of equipment_models
-    end
-    if num_items >= 100
+    if self.items.length >= 2
        #errors.add(:items, "Too many items.")
        return
     end
