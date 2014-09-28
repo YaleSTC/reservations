@@ -11,11 +11,7 @@ gem 'rdoc'
 # rails 4 transition gems
 gem 'activerecord-session_store'
 
-#authentication
-#gem 'rubycas-client-rails'
-
-
-#gem 'rubycas-client', :git => 'git://github.com/rubycas/rubycas-client.git'
+# authentication / authorization
 gem 'devise', '~> 3.3.0'
 gem 'cancancan'
 
