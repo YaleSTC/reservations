@@ -14,7 +14,9 @@ gem 'activerecord-session_store'
 #authentication
 #gem 'rubycas-client-rails'
 
-gem 'rubycas-client', :git => 'git://github.com/rubycas/rubycas-client.git'
+
+#gem 'rubycas-client', :git => 'git://github.com/rubycas/rubycas-client.git'
+gem 'devise', '~> 3.3.0'
 gem 'cancancan'
 
 #scheduling
