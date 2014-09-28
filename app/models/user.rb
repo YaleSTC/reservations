@@ -1,6 +1,8 @@
 require 'net/ldap'
 
 class User < ActiveRecord::Base
+  # Include cas devise module
+  devise :cas_authenticatable
   has_many :reservations, foreign_key: 'reserver_id', dependent: :destroy
   has_and_belongs_to_many :requirements,
                           class_name: "Requirement",
