@@ -176,7 +176,7 @@ class Reservation < ActiveRecord::Base
         incomplete_procedures << checkin_procedure.step
       end
     end
-    self.make_notes("checkin", new_notes, incomplete_procedures)
+    self.make_notes("checked in", new_notes, incomplete_procedures, checkin_handler)
 
     if self.checked_in.to_date > self.due_date.to_date
       # equipment was overdue, send an email confirmati
@@ -204,26 +204,42 @@ class Reservation < ActiveRecord::Base
         incomplete_procedures << checkout_procedure.step
       end
     end
-    self.make_notes("checkout", new_notes, incomplete_procedures)
+    self.make_notes("checked out", new_notes, incomplete_procedures, checkout_handler)
     self
   end
 
-  def make_notes(procedure_kind, new_notes, incomplete_procedures)
+  def make_notes(procedure_verb, new_notes, incomplete_procedures, current_user)
     # handles the reservation notes from the new notes
     #
     # takes the new notes and a string, checkin or checkout as the
     # procedure_kind
-    self.notes_unsent = false unless incomplete_procedures.empty? && new_notes.blank?
-    notes = self.notes.to_s
-    notes += "\n### Notes from #{procedure_kind}\n"
-    notes += new_notes + "\n\n" if new_notes
-    if incomplete_procedures.blank?
-      notes += "All #{procedure_kind} procedures were performed!"
+
+    # write notes header
+    self.notes = self.notes + "\n### Reservation #{procedure_verb} at #{Time.current.to_s(:long)} by #{current_user.name}\n"
+
+    # If no new notes and no missed procedures, set e-mail flag to false and
+    # return
+    if new_notes.empty? && incomplete_procedures.empty?
+      self.notes += "\n\nAll procedures were performed!"
+      self.notes_unsent = false
+      return
     else
-      notes += "The following #{procedure_kind} procedures were not performed:\n"
-      notes += markdown_listify(incomplete_procedures)
+      self.notes_unsent = true
     end
-    self.notes = notes.strip
+
+    # add notes if they exist
+    unless new_notes.empty?
+      self.notes += "\n\n#### Notes:\n#{new_notes}"
+    end
+
+    # record note procedure status
+    if incomplete_procedures.empty?
+      self.notes += "\n\nAll procedures were performed!"
+    else
+      self.notes += "\n\n#### The following procedures were not performed:\n"
+      self.notes += markdown_listify(incomplete_procedures)
+    end
+    self.notes = self.notes.strip
 
   end
 
