@@ -215,7 +215,8 @@ class Reservation < ActiveRecord::Base
     # procedure_kind
 
     # write notes header
-    self.notes = self.notes + "\n### Reservation #{procedure_verb} at #{Time.current.to_s(:long)} by #{current_user.name}\n"
+    header = "### Reservation #{procedure_verb} at #{Time.current.to_s(:long)} by #{current_user.name}\n"
+    self.notes = self.notes ? self.notes + "\n" + header : header
 
     # If no new notes and no missed procedures, set e-mail flag to false and
     # return
