@@ -4,8 +4,7 @@
 class ApplicationController < ActionController::Base
   helper :layout
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
-  before_filter CASClient::Frameworks::Rails::Filter unless Rails.env.test?
-  #before_filter RubyCAS::Filter unless Rails.env.test?
+  before_filter :authenticate_user!
   before_filter :app_setup_check
   before_filter :cart
 
