@@ -1,10 +1,10 @@
 # Welcome to Reservations
 
-[![Build Status](https://travis-ci.org/YaleSTC/reservations.svg?branch=development)](https://travis-ci.org/YaleSTC/reservations)
+[![Build Status](https://travis-ci.org/YaleSTC/reservations.svg)](https://travis-ci.org/YaleSTC/reservations)
 [![Code Climate](https://img.shields.io/codeclimate/github/YaleSTC/reservations.svg)](https://codeclimate.com/github/YaleSTC/reservations)
 [![Test Coverage](https://codeclimate.com/github/YaleSTC/reservations/coverage.png)](https://codeclimate.com/github/YaleSTC/reservations)
 [![Dependency Status](https://gemnasium.com/YaleSTC/reservations.svg)](https://gemnasium.com/YaleSTC/reservations)
-[![Inline docs](http://inch-ci.org/github/yalestc/reservations.svg?branch=development)](http://inch-ci.org/github/yalestc/reservations)
+[![Inline docs](http://inch-ci.org/github/yalestc/reservations.svg)](http://inch-ci.org/github/yalestc/reservations)
 
 Reservations makes it easy to manage the checking in and out of equipment, much like a library! Here are some of the things Reservations can do:
 
@@ -21,9 +21,11 @@ There are two mains steps to setting up Reservations: setting up a deployment se
 
 ### Prerequisites
 You'll need the following to run Reservations:
-* [Ruby 2.1](http://www.ruby-lang.org/) and [Rails 3.2](http://rubyonrails.org/)
+* [Ruby 2.1](http://www.ruby-lang.org/)
+* [Bundler](http://bundler.io/)
 * a database server ([MySQL](http://www.mysql.com/) or any database supported by Rails)
 * [ImageMagick](http://www.imagemagick.org/script/index.php)
+* [GhostScript](http://www.ghostscript.com/)
 * a [CAS](http://www.jasig.org/cas) authentication system
 
 ### Installation

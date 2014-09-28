@@ -7,14 +7,14 @@ namespace :app do
     # Welcome message and create admin user
     puts ''
     puts 'Welcome to reservations! Before using your application, we need to create an'
-    puts 'initial administrator account and set some application-wide configurations.'
-    puts 'This administrator account can be used later to create other admins, import'
-    puts 'users, and change any configurations that you set from this script. With'
-    puts "that in mind, let's get started!"
+    puts 'initial superuser account and set some application-wide configurations.'
+    puts 'This superuser account can be used later to create admins, import users'
+    puts 'and change any configurations that you set from this script. With that'
+    puts "in mind, let's get started!"
 
     if User.all.empty?
       puts ''
-      puts 'We need to start by creating an admin account. Please enter the'
+      puts 'We need to start by creating a superuser account. Please enter the'
       puts 'following info:'
 
       while !User.first
@@ -41,13 +41,13 @@ namespace :app do
               u.email = email
               u.login = login
               u.affiliation = affiliation
-              u.role = 'admin'
-              u.view_mode = 'admin'
+              u.role = 'superuser'
+              u.view_mode = 'superuser'
             end
           rescue Exception => e
             ActiveRecord::Rollback
-            puts "Oops! Your admin account was not saved for the reasons listed below. Please"
-            puts "double check that you're entering valid information for each item.\n"
+            puts "Oops! Your superuser account was not saved for the reasons listed below"
+            puts "Please double check that you're entering valid information for each item.\n"
             puts e
           end
         end # transaction
@@ -97,7 +97,7 @@ namespace :app do
 
     request_text =
       "The following equipment cannot be reserved because of admin restrictions; "\
-      "however, you can file a request for this reservation. Please fill out the "\
+      "however, you may file a request for this reservation. Please fill out the "\
       "form below and an admin will be able to approve or deny your request. You "\
       "will be notified by email when your request has been reviewed."
 

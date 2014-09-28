@@ -113,13 +113,23 @@ class EquipmentModelsController < ApplicationController
     end
 
     def equipment_model_params
-      params.require(:equipment_model).
-             permit(:name, :category_id, :category, :description, :late_fee,
+      params. require(:equipment_model).
+              permit(:name, :category_id, :category, :description, :late_fee,
                     :replacement_fee, :max_per_user, :document_attributes,
-                    :deleted_at, :checkout_procedures_attributes,
-                    :checkin_procedures_attributes, :photo, :documentation,
-                    :max_renewal_times, :max_renewal_length,
-                    :renewal_days_before_due, :associated_equipment_model_ids,
-                    :requirement_ids, :requirements, :max_checkout_length)
+                    :deleted_at, :photo, :documentation, :max_renewal_times,
+                    :max_renewal_length, :renewal_days_before_due,
+                    {:associated_equipment_model_ids => []},
+                    :requirement_ids, :requirements, :max_checkout_length).
+              # manually add on the procedure elements from params since they
+              # don't have fixed hash keys (check to see if they exist first
+              # to resolve test failures)
+              tap do |whitelisted|
+                whitelisted[:checkin_procedures_attributes] =
+                  params[:equipment_model][:checkin_procedures_attributes] if
+                  params[:equipment_model][:checkin_procedures_attributes]
+                whitelisted[:checkout_procedures_attributes] =
+                  params[:equipment_model][:checkout_procedures_attributes] if
+                  params[:equipment_model][:checkout_procedures_attributes]
+              end
     end
 end

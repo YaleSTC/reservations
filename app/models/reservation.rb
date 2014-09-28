@@ -32,7 +32,7 @@ class Reservation < ActiveRecord::Base
     # this code is used largely in validations because it uses 0 queries
     count = 0
     source.each do |r|
-      count += 1 if r.start_date <= date && r.due_date >= date && r.equipment_model_id == model_id
+      count += 1 if r.start_date.to_date <= date && r.due_date.to_date >= date && r.equipment_model_id == model_id
     end
     count
   end
@@ -40,7 +40,7 @@ class Reservation < ActiveRecord::Base
   def self.number_for_category_on_date(date,category_id,reservations)
     count = 0
     reservations.each do |r|
-      count += 1 if r.start_date <= date && r.due_date >= date && r.equipment_model.category_id == category_id
+      count += 1 if r.start_date.to_date <= date && r.due_date.to_date >= date && r.equipment_model.category_id == category_id
     end
     return count
   end

@@ -5,7 +5,7 @@
 }
 
 @mixin placeholder-extended ($color: $placeholderText, $font-style: italic){
-  &:-moz-placeholder {
+  &::-moz-placeholder {
     position: relative;
     top: 2px;
     color: $color;

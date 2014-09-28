@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.1.2'
+ruby '2.1.2' # Version in .ruby-version must match
 
 #standard gems
 gem 'rails', '4.1.4'
@@ -10,7 +10,6 @@ gem 'rdoc'
 
 # rails 4 transition gems
 gem 'activerecord-session_store'
-gem 'rspec-its'
 
 #authentication
 #gem 'rubycas-client-rails'
@@ -49,7 +48,7 @@ gem 'redcarpet'
 
 
 # auditting / logging
-gem 'paper_trail'
+gem 'paper_trail', '~> 3.0.5'
 
 group :development, :test do
   gem 'factory_girl_rails'
@@ -95,5 +94,5 @@ end
 
 group :production, :staging do
   gem 'therubyracer', require: 'v8'
-  gem 'airbrake'
+  gem 'party_foul'
 end

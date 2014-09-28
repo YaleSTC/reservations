@@ -155,8 +155,8 @@ if User.all.empty?
     u.email = email
     u.login = login
     u.affiliation = affiliation
-    u.role = 'admin'
-    u.view_mode = 'admin'
+    u.role = 'superuser'
+    u.view_mode = 'superuser'
   end
 end
 
