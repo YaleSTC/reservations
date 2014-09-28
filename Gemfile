@@ -13,6 +13,7 @@ gem 'activerecord-session_store'
 
 # authentication / authorization
 gem 'devise', '~> 3.3.0'
+gem 'devise_cas_authenticatable', '~> 1.3.7'
 gem 'cancancan'
 
 #scheduling
