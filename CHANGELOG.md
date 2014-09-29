@@ -83,7 +83,7 @@ Changelog
 * Added reservation notes entry for validation-failing requests
   ([#502](https://github.com/YaleSTC/reservations/issues/502))
 * Blackouts automatically are removed after an admin-configurable period
-  ([#654](https://github.com/YaleSTC/reservations/issues/654))
+  ([#654](https://github.com/YaleSTC/reservations/issues/654), [#242](https://github.com/YaleSTC/reservations/issues/242))
 * User deactivation/reactivation has been changed to user ban/unban
   ([#529](https://github.com/YaleSTC/reservations/issues/529))
 
