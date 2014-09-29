@@ -49,6 +49,7 @@ class Ability
       case user.role
         when 'superuser'
           can :change, :views
+          can :view_as, :superuser
         when 'admin'
           can :change, :views
           cannot :view_as, :superuser

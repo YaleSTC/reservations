@@ -36,6 +36,7 @@
 <div class="form-actions">
   <% if can? :manage, Category %>
     <%= link_to "New Category", new_category_path, :class => "btn btn-primary" %>
+    <%= link_to "Import Categories", equip_import_page_path, :class => "btn" %>
   <% end %>
   <% if params[:show_deleted] %>
     <%= link_to "Hide Old Categories from List", categories_path, :class => "btn" %>
