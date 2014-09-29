@@ -211,7 +211,7 @@ class Reservation < ActiveRecord::Base
   def make_notes(procedure_verb, new_notes, incomplete_procedures, current_user)
     # handles the reservation notes from the new notes
     #
-    # takes the new notes and a string, checkin or checkout as the
+    # takes the new notes and a string, 'checked in' or 'checked out' as the
     # procedure_kind
 
     # write notes header
