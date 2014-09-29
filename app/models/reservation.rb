@@ -257,6 +257,7 @@ class Reservation < ActiveRecord::Base
       end
       
       self.notes = self.notes.strip
+      self
     end
   end
 
