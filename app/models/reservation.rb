@@ -208,6 +208,55 @@ class Reservation < ActiveRecord::Base
     self
   end
 
+  def update(current_user, new_params, new_notes)
+    # updates a reservation and records changes in the notes
+    #
+    # takes the new params from the controller that have been updated w/ a new
+    # equipment object
+
+    self.assign_attributes(new_params)
+    changes = self.changes
+    if new_notes.empty? && changes.empty?
+      self
+      return
+    else
+      # write notes header
+      header = "### Reservation edited at #{Time.current.to_s(:long)} by #{current_user.name}\n"
+      self.notes = self.notes ? self.notes + "\n" + header : header
+
+      # add notes if they exist
+      unless new_notes.empty?
+        self.notes += "\n\n#### Notes:\n#{new_notes}"
+      end
+
+      # record changes
+      unless changes.empty?
+        self.notes += "\n\n#### Changes:\n"
+        changes.each do |param, diff|
+          case param
+          when 'reserver_id'
+            name = 'Reserver'
+            old_val = diff[0] ? User.find(diff[0]).name : 'nil'
+            new_val = diff[1] ? User.find(diff[1]).name : 'nil'
+          when 'start_date'
+            name = 'Start Date'
+            old_val = diff[0].to_date.to_s(:long)
+            new_val = diff[1].to_date.to_s(:long)
+          when 'due_date'
+            name = 'Due Date'
+            old_val = diff[0].to_date.to_s(:long)
+            new_val = diff[1].to_date.to_s(:long)
+          when 'equipment_object_id'
+            name = 'Item'
+            old_val = diff[0] ? EquipmentObject.find(diff[0]).name : 'nil'
+            new_val = diff[1] ? EquipmentObject.find(diff[1]).name : 'nil'
+          end
+          self.notes += "\n#{name} changed from " + old_val + " to " + new_val + "."
+        end
+      end
+    end
+  end
+
   def make_notes(procedure_verb, new_notes, incomplete_procedures, current_user)
     # handles the reservation notes from the new notes
     #
