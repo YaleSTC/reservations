@@ -74,6 +74,7 @@ Changelog
 * Reservations checked in on their due-date are no-longer counted as overdue ([#785](https://github.com/YaleSTC/reservations/issues/785))
 * Block patrons from URL-hacking and creating new users ([#823](https://github.com/YaleSTC/reservations/issues/823))
 * Fixed a bug wherewith patrons were unable to edit their own profiles ([#830](https://github.com/YaleSTC/reservations/issues/830))
+* Fixed broken user form ([#787](https://github.com/YaleSTC/reservations/issues/787))
 
 #### New Features
 * Added benchmarking for speed-testing ([#574](https://github.com/YaleSTC/reservations/pull/574))
