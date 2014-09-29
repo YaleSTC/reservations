@@ -255,6 +255,8 @@ class Reservation < ActiveRecord::Base
           self.notes += "\n#{name} changed from " + old_val + " to " + new_val + "."
         end
       end
+      
+      self.notes = self.notes.strip
     end
   end
 
