@@ -1,6 +1,6 @@
 function decCellValue(cell) {
   var obj = cell.children('.num').children()[0];
-  obj.innerHTML = parseInt(obj.innerHTML) - 1;
+  obj.innerHTML = Math.max(parseInt(obj.innerHTML) - 1, 0);
 };
 
 function parseDate(dateString){

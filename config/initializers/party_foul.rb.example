@@ -24,7 +24,7 @@ PartyFoul.configure do |config|
   # config.branch               = 'master'
 
   # Additional labels to add to issues created
-  # config.additional_labels    = ['production']
+  config.additional_labels    = ['partyfoul']
   # or
   # config.additional_labels    = Proc.new do |exception, env|
   #   []
