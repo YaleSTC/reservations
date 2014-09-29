@@ -211,8 +211,8 @@ class Reservation < ActiveRecord::Base
   def update(current_user, new_params, new_notes)
     # updates a reservation and records changes in the notes
     #
-    # takes the new params from the controller that have been updated w/ a new
-    # equipment object
+    # takes the current user, the new params from the controller that have
+    # been updated w/ a new equipment object, and the new notes (if any)
 
     self.assign_attributes(new_params)
     changes = self.changes
