@@ -232,7 +232,7 @@ class Reservation < ActiveRecord::Base
 
       # record changes
       unless changes.empty?
-        self.notes += "\n\n#### Changes:\n"
+        self.notes += "\n\n#### Changes:"
         changes.each do |param, diff|
           case param
           when 'reserver_id'
