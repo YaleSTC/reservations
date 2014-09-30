@@ -13,7 +13,7 @@
   'Default number of items to display per page in the Catalog.' %>
   <%# Paperclip inline error fix %>
   <%= f.input :favicon, label: 'Custom Favicon', hint:
-  "Displayed in the tab and address bar of most browsers. Must be <em>*.ico</em> #{current_favicon_and_options}", wrapper_html: {class: paperclip_field_error(f, :favicon_content_type)} do %>
+  "Displayed in the tab and address bar of most browsers. Must be <em>*.ico</em> #{current_favicon_and_options}".html_safe, wrapper_html: {class: paperclip_field_error(f, :favicon_content_type)} do %>
     <%= f.input_field :favicon, as: :file %>
     <%= f.error :favicon_content_type %>
   <% end %>
