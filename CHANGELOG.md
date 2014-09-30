@@ -9,7 +9,7 @@ Changelog
 *Released on 5 October 2014*
 #### Bug Fixes
 * Fixed CodeClimate testing coverage ([#682](https://github.com/YaleSTC/reservations/issues/682)).
-* Fixed unescaped HTML on some views ([#860](https://github.com/YaleSTC/reservations/issues/860)).
+* Fixed unescaped HTML on some views ([781](https://github.com/YaleSTC/reservations/issues/781), [#860](https://github.com/YaleSTC/reservations/issues/860)).
 * Fixed broken migration due to switch to Rails Admin ([#853](https://github.com/YaleSTC/reservations/issues/853), see below).
 * The 'superuser' option now appears in the View Mode menu from any view mode when logged in as a superuser ([#976](https://github.com/YaleSTC/reservations/issues/976)).
 
