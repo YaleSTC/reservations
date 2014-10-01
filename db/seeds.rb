@@ -469,6 +469,7 @@ unless entered_num == 0
         eo.serial = (0...8).map{65.+(rand(25)).chr}.join
         eo.active = true
         eo.equipment_model_id = equipment_model.flatten.sample.id
+        eo.notes = ''
       end
     end
     puts "\n#{entered_num} equipment object records successfully created!"
