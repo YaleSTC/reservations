@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140727232238) do
+ActiveRecord::Schema.define(version: 20140930233633) do
 
   create_table "announcements", force: true do |t|
     t.text     "message"
@@ -189,6 +189,7 @@ ActiveRecord::Schema.define(version: 20140727232238) do
     t.boolean  "terms_of_service_accepted"
     t.string   "view_mode",                 default: "admin"
     t.string   "role",                      default: "normal"
+    t.boolean  "missing_phone",             default: false
   end
 
   add_index "users", ["login"], name: "index_users_on_login", unique: true, using: :btree
