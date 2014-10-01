@@ -55,9 +55,9 @@ task :send_reservation_notes => :environment do
   unless notes_reservations_out.empty? and notes_reservations_in.empty?
     AdminMailer.notes_reservation_notification(notes_reservations_out, notes_reservations_in).deliver
   end
-  (notes_reservations_out + notes_reservations_in).each do |notes_reservation|
-    notes_reservation.update_attribute(:notes_unsent, false)
-  end
+  # reset notes_unsent flag on all reservations
+  notes_reservations_out.update_all(notes_unsent: false)
+  notes_reservations_in.update_all(notes_unsent: false)
 
   puts "Done!"
 end
