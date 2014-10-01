@@ -75,7 +75,10 @@ class EquipmentObjectsController < ApplicationController
 
   def activate
     super
-    @equipment_object.update_attributes(deactivation_reason: nil)
+    @equipment_object.assign_attributes(deactivation_reason: nil)
+    old_notes = @equipment_object.notes
+    @equipment_object.assign_attributes(notes: old_notes.prepend("#### Reactivated at #{Time.current.to_s(:long)} by #{current_user.name}\n\n"))
+    @equipment_object.save
   end
 
   private
