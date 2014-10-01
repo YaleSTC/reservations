@@ -139,7 +139,7 @@ ActiveRecord::Schema.define(version: 20141001000934) do
     t.datetime "deleted_at"
     t.boolean  "csv_import",                           default: false, null: false
     t.string   "deactivation_reason"
-    t.text     "notes",               limit: 16777215
+    t.text     "notes",               limit: 16777215,                 null: false
   end
 
   create_table "requirements", force: true do |t|
