@@ -5,6 +5,11 @@ Changelog
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+### v3.4.6
+*Released on 6 October 2014*
+#### Bug Fixes
+* Improved performance of sending reservations notes emails
+
 ### v3.4.5
 *Released on 22 September 2014*
 #### Bug Fixes
