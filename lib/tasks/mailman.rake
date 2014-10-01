@@ -40,14 +40,9 @@ end
 desc "Send email to admins on reservations with notes"
 task :send_reservation_notes => :environment do
   #gets all reservations with notes and sends an email to the admin of the application, to alert them.
-  notes_reservations_out = Reservation.where("notes IS NOT NULL and\
-                                              checked_out IS NOT NULL and\
-                                              checked_in IS NULL and\
-                                              notes_unsent = true")
-  notes_reservations_in = Reservation.where("notes IS NOT NULL and\
-                                             checked_out IS NOT NULL and\
-                                             checked_in IS NOT NULL and\
-                                             notes_unsent = true")
+  notes_reservations_out = Reservation.checked_out.has_notes.notes_unsent
+  notes_reservations_in = Reservation.checked_in.has_notes.notes_unsent
+
   puts "Found #{notes_reservations_out.size} reservations checked out with notes and \
 #{notes_reservations_in.size} reservations checked in with notes. Sending a reminder email..."
   unless notes_reservations_out.empty? and notes_reservations_in.empty?
