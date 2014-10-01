@@ -76,7 +76,8 @@ class EquipmentObjectsController < ApplicationController
   private
 
   def equipment_object_params
-    params.require(:equipment_object).permit(:name, :serial, :equipment_model_id,
-                                             :deleted_at, :deactivation_reason)
+    params.require(:equipment_object).permit(:name, :serial, :deleted_at,
+                                             :equipment_model_id,
+                                             :deactivation_reason, :notes)
   end
 end
