@@ -5,10 +5,7 @@ class AddRequirePhoneToUsers < ActiveRecord::Migration
     # go through existing users if require_phone is set to true and set
     # missing_phone appropriately
     if AppConfig.first.require_phone
-      User.where("phone = ? OR phone IS NULL", '').each do |user|
-        user.missing_phone = true
-        user.save
-      end
+      User.no_phone.update_all(missing_phone: true)
     end
   end
 end
