@@ -1,4 +1,4 @@
-class AddRequirePhoneToUsers < ActiveRecord::Migration
+class AddMissingPhoneToUsers < ActiveRecord::Migration
   def change
     add_column :users, :missing_phone, :boolean, default: false
 
