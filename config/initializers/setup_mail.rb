@@ -12,4 +12,4 @@ ActionMailer::Base.smtp_settings = {
 
 }
 
-ActionMailer::Base.default_url_options[:host] = "pants"
+ActionMailer::Base.default_url_options[:host] = "0.0.0.0:3000"
