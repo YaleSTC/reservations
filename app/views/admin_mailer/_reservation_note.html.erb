@@ -1,5 +1,5 @@
-<%= link_to 'Reservation ##{reservation_note.id}', reservation_url(reservation, only_path: false) %><br />
-Equipment: <%= link_to reservation_note.equipment_model.name, equipment_model_path(reservation_note.equipment_model) %>
+<%= link_to "Reservation ##{reservation_note.id}", reservation_url(reservation_note, only_path: false) %><br />
+Equipment: <%= link_to reservation_note.equipment_model.name, equipment_model_url(reservation_note.equipment_model), only_path: false %>
 (<%= reservation_note.equipment_object.name %>)<br />
 Reserver: <%= link_to reservation_note.reserver.name, user_url(reservation.reserver, only_path: false) %><br />
 Check-in Handler: <%= link_to reservation_note.checkin_handler.name, user_url(reservation_note.checkin_handler, only_path: false) %> <br />
