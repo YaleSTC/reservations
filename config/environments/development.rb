@@ -21,7 +21,6 @@ Reservations::Application.configure do
 
   # Use letter_opener for development mail testing
   config.action_mailer.delivery_method = ENV['USER'] == 'vagrant' ? :letter_opener_web : :letter_opener
-  config.action_mailer.default_url_options = { host: "localhost:3000" }
 
   # Print deprecation notices to the Rails logger
   config.active_support.deprecation = :log
