@@ -9,6 +9,7 @@ Changelog
 *Released on 6 October 2014*
 #### Bug Fixes
 * Improved performance of sending reservations notes emails
+* Actually finally resolved the issue where links in e-mails were broken ([#868](https://github.com/YaleSTC/reservations/issues/868)).
 
 ### v3.4.5
 *Released on 22 September 2014*
