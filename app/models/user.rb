@@ -31,6 +31,7 @@ class User < ActiveRecord::Base
 
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
   scope :active, lambda { where("role != 'banned'") }
+  scope :no_phone, lambda { where("phone = ? OR phone IS NULL", '') }
 
   # ------- validations -------- #
   def skip_phone_validation?
