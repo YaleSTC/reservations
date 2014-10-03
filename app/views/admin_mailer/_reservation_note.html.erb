@@ -5,5 +5,5 @@ Reserver: <%= link_to reservation_note.reserver.name, user_url(reservation_note.
 Check-in Handler: <%= link_to reservation_note.checkin_handler.name, user_url(reservation_note.checkin_handler, only_path: false) if reservation_note.checked_in %> <br />
 Check-out Handler: <%= link_to reservation_note.checkout_handler.name, user_url(reservation_note.checkout_handler, only_path: false) if reservation_note.checked_out %> <br />
 Due Date: <%= reservation_note.due_date.strftime(" %B %e, %Y")  %><br />
-Notes: <%= reservation_note.notes %> <%# TODO: add markdown? %><br />
+Notes: <%= markdown(reservation_note.notes) %><br />
 ---------<br /><br />
