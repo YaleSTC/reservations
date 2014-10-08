@@ -29,6 +29,17 @@ Changelog
 * Replaced Airbrake with Party Foul ([#501](https://github.com/YaleSTC/reservations/issues/501)).
 * The first user is now created as a superuser ([#753](https://github.com/YaleSTC/reservations/issues/753)).
 
+### v3.4.7
+*Released on 12 October 2014*
+#### Enhancements
+* Modified `schedule.rb` so that the cron jobs of multiple Reservations instances on the same server don't overload the server.
+
+### v3.4.6
+*Released on 6 October 2014*
+#### Bug Fixes
+* Improved performance of sending reservations notes emails
+* Actually finally resolved the issue where links in e-mails were broken ([#868](https://github.com/YaleSTC/reservations/issues/868)).
+
 ### v3.4.5
 *Released on 22 September 2014*
 #### Bug Fixes

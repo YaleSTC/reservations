@@ -87,7 +87,7 @@ Reservations ships with the default config time set to Eastern Time (US and Cana
 
 
 You will need to also configure the email config in
-`config/environments/production.rb`. Replace `example.com` with the
+`config/initializers/setup_mail.rb`. Replace `0.0.0.0:3000` with the
 relevant hostname. This will allow links in emails to point to the
 correct places.
 

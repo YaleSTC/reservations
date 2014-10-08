@@ -16,6 +16,7 @@ module ReservationScopes
       scope :checked_out_previous, lambda { where("checked_out < ? and due_date <= ?", Date.current.to_time, Date.current.to_time + 1.day).not_returned.recent }
       scope :overdue, lambda { where("due_date < ?", Date.current.to_time).checked_out }
       scope :returned, lambda { where("checked_in IS NOT NULL and checked_out IS NOT NULL").recent }
+      scope :checked_in, lambda { returned }
       scope :returned_on_time, lambda { where("checked_in <= due_date").returned }
       scope :returned_overdue, lambda { where("due_date < checked_in").returned }
       scope :missed, lambda { where("due_date < ?", Date.current.to_time).untouched.recent }
@@ -33,7 +34,8 @@ module ReservationScopes
 
       scope :for_reserver, lambda { |reserver| where(reserver_id: reserver) }
       scope :reserved_in_date_range, lambda { |start_date, end_date| where("start_date <= ? and due_date >= ?", end_date, start_date).finalized }
-      scope :overlaps_with_date, lambda{ |date| where("start_date <= ? and due_date >= ?", date.to_datetime, date.to_datetime) }
+      scope :overlaps_with_date, lambda { |date| where("start_date <= ? and due_date >= ?", date.to_datetime, date.to_datetime) }
+      scope :has_notes, lambda { where.not(notes: nil) }
     end
   end
 end
