@@ -62,7 +62,7 @@ group :development, :test do
   gem 'guard-livereload'
   gem 'yajl-ruby'
   gem 'ffaker'
-  gem 'capistrano'
+  gem 'capistrano-rails', '~> 1.1.2'
   gem 'awesome_print'
   gem 'ruby-progressbar'
   gem 'codeclimate-test-reporter'
