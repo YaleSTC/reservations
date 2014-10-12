@@ -93,9 +93,9 @@ class ApplicationController < ActionController::Base
 
   end
 
-  def current_user
-    @current_user ||= User.find_by_login(session[:cas_user])
-  end
+  # def current_user
+  #   @current_user ||= User.find_by_login(session[:cas_user])
+  # end
 
   def check_active_admin_permission
     if cannot? :access, :active_admin
