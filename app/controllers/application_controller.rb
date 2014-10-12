@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   before_filter :app_setup_check
   before_filter :cart
 
-  with_options unless: lambda {|u| User.count == 0 } do |c|
+  with_options unless: lambda { |u| User.count == 0 && :devise_controller? } do |c|
     c.before_filter :load_configs
     c.before_filter :seen_app_configs
     c.before_filter :current_user
