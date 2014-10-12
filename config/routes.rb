@@ -1,5 +1,10 @@
 Reservations::Application.routes.draw do
 
+  # routes for Devise
+  # note that the generalized routes are currently defined to use CAS-specific
+  # controllers, which is not ideal. The devise_for generated routes (e.g.
+  # /users/sign_out) correctly uses the CAS methods but presumably wouldn't
+  # change for any other authentication methods.
   devise_scope :user do
     get "login", to: "devise/cas_sessions#new"
     get "logout", to: "devise/cas_sessions#destroy"
