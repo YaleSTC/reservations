@@ -27,8 +27,8 @@ namespace :app do
         phone = STDIN.gets.chomp
         puts 'Email Address:'
         email = STDIN.gets.chomp
-        puts 'Login (i.e. NetID, please double check that this is correct):'
-        login = STDIN.gets.chomp
+        puts 'Username (i.e. NetID, please double check that this is correct):'
+        username = STDIN.gets.chomp
         puts 'Affiliation (i.e. Yale College):'
         affiliation = STDIN.gets.chomp
 
@@ -39,7 +39,7 @@ namespace :app do
               u.last_name = last_name
               u.phone = phone
               u.email = email
-              u.login = login
+              u.username = username
               u.affiliation = affiliation
               u.role = 'superuser'
               u.view_mode = 'superuser'

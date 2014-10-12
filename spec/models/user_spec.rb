@@ -13,8 +13,8 @@ describe User, :type => :model do
     it { is_expected.to have_many(:reservations) }
     it { is_expected.to have_and_belong_to_many(:requirements) }
 
-    it { is_expected.to validate_presence_of(:login) }
-    it { is_expected.to validate_uniqueness_of(:login) }
+    it { is_expected.to validate_presence_of(:username) }
+    it { is_expected.to validate_uniqueness_of(:username) }
     it { is_expected.to validate_presence_of(:first_name) }
     it { is_expected.to validate_presence_of(:last_name) }
     it { is_expected.to validate_presence_of(:affiliation) }
@@ -119,13 +119,13 @@ describe User, :type => :model do
   end
 
   describe ".render_name" do
-    it "should return the nickname, last name, and login id as a string if nickname exists" do
+    it "should return the nickname, last name, and username id as a string if nickname exists" do
       @user = FactoryGirl.create(:user, nickname: "Sasha Fierce")
-      expect(@user.render_name).to eq("#{@user.nickname} #{@user.last_name} #{@user.login}")
+      expect(@user.render_name).to eq("#{@user.nickname} #{@user.last_name} #{@user.username}")
     end
-    it "should return the first name, last name, and login id as a string if no nickname" do
+    it "should return the first name, last name, and username id as a string if no nickname" do
       @no_nickname = FactoryGirl.create(:user)
-      expect(@no_nickname.render_name).to eq("#{@no_nickname.first_name} #{@no_nickname.last_name} #{@no_nickname.login}")
+      expect(@no_nickname.render_name).to eq("#{@no_nickname.first_name} #{@no_nickname.last_name} #{@no_nickname.username}")
     end
   end
 end

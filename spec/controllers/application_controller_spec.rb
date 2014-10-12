@@ -215,7 +215,7 @@ describe TestController, :type => :controller do
       context 'session[:cas_user] exists' do
         it 'should find the current user based on the session :cas_user' do
           @user = FactoryGirl.create(:user)
-          session[:cas_user] = @user.login
+          session[:cas_user] = @user.username
           get :index
           expect(assigns(:current_user)).to eq(@user)
         end

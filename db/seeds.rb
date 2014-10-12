@@ -138,7 +138,7 @@ if User.all.empty?
     email = STDIN.gets.chomp
     puts 'Affiliation:'
     affiliation = STDIN.gets.chomp
-    puts 'Login (i.e. NetID):'
+    puts 'Username (i.e. NetID):'
   else
     first_name = "Donny"
     last_name = "Darko"
@@ -147,13 +147,13 @@ if User.all.empty?
     affiliation = "Your Mother"
     puts "Please enter your netID"
   end
-  login = STDIN.gets.chomp
+  username = STDIN.gets.chomp
   User.create! do |u|
     u.first_name = first_name
     u.last_name = last_name
     u.phone = phone
     u.email = email
-    u.login = login
+    u.username = username
     u.affiliation = affiliation
     u.role = 'superuser'
     u.view_mode = 'superuser'
@@ -181,7 +181,7 @@ unless entered_num == 0
         u.nickname = Faker::Name.first_name
         u.phone = Faker::PhoneNumber.short_phone_number
         u.email = Faker::Internet.email
-        u.login = (0...3).map{65.+(rand(25)).chr}.join.downcase + r.rand(2..99).to_s
+        u.username = (0...3).map{65.+(rand(25)).chr}.join.downcase + r.rand(2..99).to_s
         u.affiliation = 'YC ' + %w{BK BR CC DC ES JE MC PC SM SY TC TD}.sample + ' ' + r.rand(2012..2015).to_s
         u.role = ['normal', 'checkout'].sample
       end

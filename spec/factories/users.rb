@@ -2,12 +2,12 @@
 
 FactoryGirl.define do
 
-  sequence :login do |n|
+  sequence :username do |n|
     "abc#{n}"
   end
 
   factory :user, aliases: [:reserver, :checkout_handler, :checkin_handler] do
-    sequence(:login) { |n| "netid#{n}" }
+    sequence(:username) { |n| "netid#{n}" }
     first_name "First"
     last_name "Last"
     affiliation "Yale"

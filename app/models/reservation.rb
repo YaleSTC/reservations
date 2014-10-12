@@ -92,7 +92,7 @@ class Reservation < ActiveRecord::Base
     #if user's been deleted, return a dummy user
     User.new( first_name: "Deleted",
               last_name: "User",
-              login: "deleted",
+              username: "deleted",
               email: "deleted.user@invalid.address",
               nickname: "",
               phone: "555-555-5555",
@@ -256,7 +256,7 @@ class Reservation < ActiveRecord::Base
           self.notes += "\n#{name} changed from " + old_val + " to " + new_val + "."
         end
       end
-      
+
       self.notes = self.notes.strip
       self
     end

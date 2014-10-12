@@ -2,7 +2,7 @@ class UsersController < ApplicationController
   load_and_authorize_resource
   layout 'application_with_sidebar', only: [:show, :edit]
 
-  autocomplete :user, :last_name, extra_data: [:first_name, :login], display_value: :render_name
+  autocomplete :user, :last_name, extra_data: [:first_name, :username], display_value: :render_name
 
   skip_filter :cart, only: [:new, :create]
   skip_filter :first_time_user, only: [:new, :create]
@@ -21,9 +21,9 @@ class UsersController < ApplicationController
 
   def index
     if params[:show_banned]
-      @users = User.order('login ASC')
+      @users = User.order('username ASC')
     else
-      @users = User.active.order('login ASC')
+      @users = User.active.order('username ASC')
     end
   end
 
@@ -39,11 +39,11 @@ class UsersController < ApplicationController
   end
 
   def new
-    @can_edit_login = current_user.present? && (can? :create, User) # used in view
+    @can_edit_username = current_user.present? && (can? :create, User) # used in view
     if current_user.nil?
       # This is a new user -> create an account for them
       @user = User.new(User.search_ldap(session[:cas_user]))
-      @user.login = session[:cas_user] #default to current login
+      @user.username = session[:cas_user] #default to current username
     else
       @user = User.new
     end
@@ -53,12 +53,12 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     @user.role = 'normal' if user_params[:role].blank?
     @user.view_mode = @user.role
-    @user.login = session[:cas_user] unless current_user and can? :manage, Reservation
+    @user.username = session[:cas_user] unless current_user and can? :manage, Reservation
     if @user.save
       flash[:notice] = "Successfully created user."
       redirect_to user_path(@user)
     else
-      @can_edit_login = current_user.present? && (can? :create, User) # used in view
+      @can_edit_username = current_user.present? && (can? :create, User) # used in view
       render :new
     end
   end
@@ -75,7 +75,7 @@ class UsersController < ApplicationController
     end
 
     # Is there a user record already?
-    if User.find_by_login(params[:possible_netid])
+    if User.find_by_username(params[:possible_netid])
       @message = 'You cannot create a new user, as the netID you entered
       is already associated with a user. If you would like to reserve for
       them, please select their name from the drop-down options in the cart.'
@@ -96,7 +96,7 @@ class UsersController < ApplicationController
 
 
   def edit
-    @can_edit_login = can? :edit_login, User
+    @can_edit_username = can? :edit_username, User
   end
 
   def update
@@ -150,7 +150,7 @@ class UsersController < ApplicationController
 
   def user_params
     permitted_attributes = [:first_name, :last_name, :nickname, :phone, :email, :affiliation, :terms_of_service_accepted, :created_by_admin]
-    permitted_attributes << :login if (can? :manage, Reservation)
+    permitted_attributes << :username if (can? :manage, Reservation)
     permitted_attributes += [:requirement_ids, :user_ids, :role] if can? :assign, :requirements
     p = params.require(:user).permit(*permitted_attributes)
     p[:view_mode] = p[:role] if p[:role]
