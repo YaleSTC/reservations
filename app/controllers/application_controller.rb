@@ -11,7 +11,6 @@ class ApplicationController < ActionController::Base
   with_options unless: lambda { |u| User.count == 0 } do |c|
     c.before_filter :load_configs
     c.before_filter :seen_app_configs
-    c.before_filter :current_user
     c.before_filter :first_time_user unless :devise_controller?
     c.before_filter :fix_cart_date
     c.before_filter :set_view_mode
@@ -19,7 +18,6 @@ class ApplicationController < ActionController::Base
     c.before_filter :make_cart_compatible
   end
 
-  helper_method :current_user
   helper_method :cart
 
   rescue_from CanCan::AccessDenied do |exception|
@@ -92,10 +90,6 @@ class ApplicationController < ActionController::Base
     end
 
   end
-
-  # def current_user
-  #   @current_user ||= User.find_by_login(session[:cas_user])
-  # end
 
   def check_active_admin_permission
     if cannot? :access, :active_admin
