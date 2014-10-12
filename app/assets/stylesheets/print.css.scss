@@ -27,7 +27,7 @@ p {
 
 #header, #sidebar-right, #top_buttons, .form-actions, #pagination_line,
 #add_to_cart, .pagination, .container > hr, a[href="#date_range"], #links_box,
-.nav, .nav-collapse, #res_right_column nav.nav-tabs, #footer_feedback, input,
+.nav, .navbar-collapse, #res_right_column nav.nav-tabs, #footer_feedback, input,
 #people_row i.icon-user, .bar, .bar-dividers, #flashes {
 	display: none;
 }
@@ -56,7 +56,7 @@ img {
 }
 
 .navbar {
-  .brand {
+  .navbar-brand {
     display: block;
     // Vertically center the text given $navbarHeight
     $elementHeight: 20px;

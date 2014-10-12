@@ -1,21 +1,21 @@
-<div id="navigation_bar" class="navbar navbar-fixed-top">
-  <div class="navbar-inner">
+<div id="navigation_bar" class="navbar navbar-fixed-top navbar-default">
+  <div class="container">
     <div class="container">
     <% unless @app_configs.nil? || @app_configs.site_title.nil? %>
-      <%= link_to sanitize("<i class=\"fa fa-th-list\"></i> #{site_title}"), root_path, :class => 'brand' %>
+      <%= link_to sanitize("<i class="\&quot;fa" fa-th-list\"=""></i> #{site_title}"), root_path, :class => 'brand' %>
     <% end %>
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <i class = "fa fa-bars fa-lg"></i>
+      <a class="btn btn-navbar btn-default" data-toggle="collapse" data-target=".navbar-collapse">
+        <i class="fa fa-bars fa-lg"></i>
       </a>
-      <div class="nav-collapse">
+      <div class="navbar-collapse">
 
-      <ul class="nav">
+      <ul class="nav navbar-nav">
 
-        <li <%= navigation_active catalog_path %><%= navigation_active root_path %>><%= link_to "Catalog", catalog_path %></li>
+        <li <%="navigation_active" catalog_path="" %=""><%= navigation_active root_path %>><%= link_to "Catalog", catalog_path %></li>
 
       <% if can? :manage, Reservation %>
 
-          <li <%= navigation_active users_path %>><%= link_to "Users", users_path %></li>
+          <li <%="navigation_active" users_path="" %="">><%= link_to "Users", users_path %></li>
           <% if can? :read, :admin_panel %>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Equipment <b class="caret"></b></a>
@@ -38,14 +38,14 @@
             <% if can? :manage, Reservation %>
               <%= link_to "Reservations", reservations_path %>
             <% else %>
-              <%= link_to sanitize("My Reservations &nbsp;<span class=\"badge\">#{reservations_count}</span> <b class=\"caret\"></b>"), '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' %>
+              <%= link_to sanitize("My Reservations &nbsp;<span class="\&quot;badge\&quot;">#{reservations_count}</span> <b class="\&quot;caret\&quot;"></b>"), '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' %>
               <ul class="dropdown-menu">
                 <li class="nav-header"><h3>My Current Reservations</h3></li>
                 <% unless @current_reservations.blank? %>
                   <% @current_reservations.each do |res| %>
                     <li>
                       <%= link_to "#{res.equipment_model.name}
-                                   (#{res.start_date.to_date.to_s(:long)} &ndash;
+                                   (#{res.start_date.to_date.to_s(:long)} –
                                    #{res.due_date.to_date.to_s(:long)})".html_safe, res, rel: 'popover',
                                    title: res.equipment_model.name, :"data-content" => markdown(res.equipment_model.description).truncate(100) %>
                     </li>
@@ -64,7 +64,7 @@
           <li id="my_equipment" class="dropdown">
             <%= link_to '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' do %>
               <% if cannot? :manage, Reservation %>
-                <%= sanitize("My Equipment &nbsp;<span class=\"badge\">#{equipment_count}</span> <b class=\"caret\"></b>") %>
+                <%= sanitize("My Equipment &nbsp;<span class="\&quot;badge\&quot;">#{equipment_count}</span> <b class="\&quot;caret\&quot;"></b>") %>
               <% end %>
             <% end %>
             <% equipment_count %>
@@ -108,10 +108,10 @@
 
       <!-- SEARCH BOX -->
       <%= form_tag catalog_search_path, class: 'navbar-search pull-left', method: :get do %>
-          <%= search_field_tag 'query', (params[:query] unless params[:query].blank?), class: 'search-query span2', placeholder: "&#xf002;  ".html_safe %>
+          <%= search_field_tag 'query', (params[:query] unless params[:query].blank?), class: 'search-query span2', placeholder: "  ".html_safe %>
       <% end %>
       <!-- Current User Dropdown -->
-      <ul class="nav pull-right" id="logged_in">
+      <ul class="nav pull-right navbar-nav" id="logged_in">
       <% if current_user.nil? %>
         <li><%= link_to "Sign In" %></li>
       <% elsif current_user %>
