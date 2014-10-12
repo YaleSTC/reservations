@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
 
   attr_accessor   :full_query, :created_by_admin, :user_type, :csv_import
 
-  validates :login,       presence: true,
+  validates :username,    presence: true,
                           uniqueness: true
   validates :first_name,
             :last_name,
@@ -72,7 +72,7 @@ class User < ActiveRecord::Base
                nickname:    result[0][:eduPersonNickname][0],
                # :phone     => result[0][:telephoneNumber][0],
                # Above line removed because the phone number in the Yale phonebook is always wrong
-               login:       result[0][:uid][0],
+               username:       result[0][:uid][0],
                email:       result[0][:mail][0],
                affiliation: [result[0][:curriculumshortname],
                                 result[0][:college],
@@ -85,7 +85,7 @@ class User < ActiveRecord::Base
   end
 
   def render_name
-    "#{name} #{login}"
+    "#{name} #{username}"
   end
 
 
