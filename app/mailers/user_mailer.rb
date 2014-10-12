@@ -1,5 +1,6 @@
 class UserMailer < ActionMailer::Base
   # Workaround so that RSpec start-up doesn't fail. TODO: Have RSpec initialize AppConfig with configuration.
+  add_template_helper(ApplicationHelper)
   unless (AppConfig.first.nil?)
     default from: AppConfig.first.admin_email, cc: AppConfig.first.admin_email
   else
