@@ -5,6 +5,17 @@ Changelog
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+### v3.4.7
+*Released on 12 October 2014*
+#### Enhancements
+* Modified `schedule.rb` so that the cron jobs of multiple Reservations instances on the same server don't overload the server.
+
+### v3.4.6
+*Released on 6 October 2014*
+#### Bug Fixes
+* Improved performance of sending reservations notes emails
+* Actually finally resolved the issue where links in e-mails were broken ([#868](https://github.com/YaleSTC/reservations/issues/868)).
+
 ### v3.4.5
 *Released on 22 September 2014*
 #### Bug Fixes

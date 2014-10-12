@@ -998,7 +998,7 @@ describe ReservationsController, :type => :controller do
         put :renew, id: @reservation.id
       end
 
-      it { is_expected.to redirect_to(root_path) }
+      it { is_expected.to redirect_to(reservation_path(@reservation)) }
 
       it 'should extend due_date' do
         expect { @reservation.reload }.to change { @reservation.due_date }

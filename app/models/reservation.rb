@@ -133,8 +133,9 @@ class Reservation < ActiveRecord::Base
     max_renewal_times = self.equipment_model.maximum_renewal_times
 
     max_renewal_days = self.equipment_model.maximum_renewal_days_before_due
-    return ((self.due_date.to_date - Date.current).to_i < max_renewal_days ) &&
-      (self.times_renewed < max_renewal_times)
+    return ((self.due_date.to_date - Date.current).to_i < max_renewal_days) &&
+      (self.times_renewed < max_renewal_times) &&
+      self.equipment_model.maximum_renewal_length > 0
   end
 
   def to_cart
