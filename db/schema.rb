@@ -11,14 +11,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140826040900) do
+ActiveRecord::Schema.define(version: 20140916025809) do
 
   create_table "announcements", force: true do |t|
     t.text     "message"
     t.datetime "starts_at"
     t.datetime "ends_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "app_configs", force: true do |t|
@@ -58,8 +58,8 @@ ActiveRecord::Schema.define(version: 20140826040900) do
     t.text     "notice"
     t.integer  "created_by"
     t.text     "blackout_type"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "set_id"
   end
 
@@ -67,28 +67,29 @@ ActiveRecord::Schema.define(version: 20140826040900) do
     t.string   "name"
     t.integer  "max_per_user"
     t.integer  "max_checkout_length"
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "sort_order"
     t.datetime "deleted_at"
     t.integer  "max_renewal_times"
     t.integer  "max_renewal_length"
     t.integer  "renewal_days_before_due"
+    t.boolean  "csv_import",              default: false, null: false
   end
 
   create_table "checkin_procedures", force: true do |t|
     t.integer  "equipment_model_id"
     t.string   "step"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.datetime "deleted_at"
   end
 
   create_table "checkout_procedures", force: true do |t|
     t.integer  "equipment_model_id"
     t.string   "step"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.datetime "deleted_at"
   end
 
@@ -100,8 +101,8 @@ ActiveRecord::Schema.define(version: 20140826040900) do
     t.integer  "max_per_user"
     t.boolean  "active",                                              default: true
     t.integer  "category_id"
-    t.datetime "created_at",                                                         null: false
-    t.datetime "updated_at",                                                         null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.datetime "deleted_at"
     t.string   "photo_file_name"
     t.string   "photo_content_type"
@@ -114,6 +115,7 @@ ActiveRecord::Schema.define(version: 20140826040900) do
     t.integer  "max_renewal_times"
     t.integer  "max_renewal_length"
     t.integer  "renewal_days_before_due"
+    t.boolean  "csv_import",                                          default: false, null: false
     t.integer  "max_checkout_length"
   end
 
@@ -132,9 +134,10 @@ ActiveRecord::Schema.define(version: 20140826040900) do
     t.string   "serial"
     t.boolean  "active",              default: true
     t.integer  "equipment_model_id"
-    t.datetime "created_at",                         null: false
-    t.datetime "updated_at",                         null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.datetime "deleted_at"
+    t.boolean  "csv_import",          default: false, null: false
     t.string   "deactivation_reason"
   end
 
@@ -144,8 +147,8 @@ ActiveRecord::Schema.define(version: 20140826040900) do
     t.string   "contact_info"
     t.datetime "deleted_at"
     t.text     "notes"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "description"
   end
 
@@ -157,8 +160,8 @@ ActiveRecord::Schema.define(version: 20140826040900) do
     t.datetime "due_date"
     t.datetime "checked_out"
     t.datetime "checked_in"
-    t.datetime "created_at",                           null: false
-    t.datetime "updated_at",                           null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "equipment_model_id"
     t.integer  "equipment_object_id"
     t.text     "notes"
@@ -170,8 +173,8 @@ ActiveRecord::Schema.define(version: 20140826040900) do
   create_table "sessions", force: true do |t|
     t.string   "session_id", null: false
     t.text     "data"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "sessions", ["session_id"], name: "index_sessions_on_session_id", using: :btree
@@ -185,10 +188,10 @@ ActiveRecord::Schema.define(version: 20140826040900) do
     t.string   "phone"
     t.string   "email"
     t.string   "affiliation"
-    t.datetime "created_at",                                   null: false
-    t.datetime "updated_at",                                   null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.boolean  "terms_of_service_accepted"
-    t.string   "view_mode",                 default: "admin"
+    t.string   "view_mode",                 default: "normal"
     t.string   "role",                      default: "normal"
   end
 
