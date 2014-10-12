@@ -2,6 +2,19 @@ module ReservationValidations
 
   ## Validations ##
 
+  # Catch-all validation methods #
+
+  def validate
+    # Convert reservation to a cart object and run validations on it
+    # For hard validations, use reservation.valid
+    self.to_cart.validate_all
+  end
+
+  def validate_renew
+    self.to_cart.validate_all(true)
+  end
+
+
   # ------- Hard Validations (ActiveRecord) ------------#
   # Adds an error if the validation fails
 

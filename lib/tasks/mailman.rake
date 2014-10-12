@@ -24,18 +24,16 @@ desc "Send email reminder about overdue checkins"
 task :send_overdue_checkin_reminder => :environment do
   if AppConfig.first.overdue_checkin_email_active?
     #get all reservations that ended before today and aren't already checked in
-    overdue_reservations = Reservation.where("checked_out IS NOT NULL and\
-                                              checked_in IS NULL and\
-                                              due_date < ?", Time.current.midnight.utc)
+    overdue_reservations = Reservation.overdue
     puts "Found #{overdue_reservations.size} reservations overdue for checkin.\
-          Sending reminder emails..."
+Sending reminder emails..."
     overdue_reservations.each do |overdue_reservation|
       UserMailer.overdue_checkin_notification(overdue_reservation).deliver
     end
     puts "Done!"
   else
     puts "Overdue check in emails are not sent by admin.\
-          Please change the application settings if you wish to send them."
+Please change the application settings if you wish to send them."
   end
 end
 

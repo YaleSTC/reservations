@@ -165,7 +165,7 @@ ActiveRecord::Schema.define(version: 20140916025809) do
     t.integer  "equipment_model_id"
     t.integer  "equipment_object_id"
     t.text     "notes"
-    t.boolean  "notes_unsent",        default: true
+    t.boolean  "notes_unsent",        default: false
     t.integer  "times_renewed"
     t.string   "approval_status",     default: "auto"
   end
