@@ -33,7 +33,7 @@ dl#user_info {
 		}
 	}
 	dd, dt {
-		line-height: $base-line-height * 1.5;
+		line-height: $line-height-base * 1.5;
 		text-align: left;
 	}
 }
@@ -54,7 +54,7 @@ dl#user_info {
 			}
 		}
 		dd, dt {
-			line-height: $base-line-height * 1.5;
+			line-height: $line-height-base * 1.5;
 			text-align: left;
 		}
 	}
@@ -76,7 +76,7 @@ dl#user_info {
 			}
 		}
 		dd, dt {
-			line-height: $base-line-height * 1.5;
+			line-height: $line-height-base * 1.5;
 			text-align: left;
 		}
 	}
@@ -99,7 +99,7 @@ dl#user_info {
 			}
 		}
 		dd, dt {
-			line-height: $base-line-height * 1.5;
+			line-height: $line-height-base * 1.5;
 			text-align: left;
 		}
 	}
@@ -118,7 +118,7 @@ dl#user_info {
 			@include text-overflow;
 		}
 		dd, dt {
-			line-height: $base-line-height * 1.5;
+			line-height: $line-height-base * 1.5;
 			text-align: left;
 		}
 	}
@@ -131,7 +131,7 @@ a .tab-badge {
 }
 
 div#qualif_box {
-	padding-bottom: $base-line-height;
+	padding-bottom: $line-height-base;
 }
 
 ul#qualifications {

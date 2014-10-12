@@ -18,12 +18,12 @@
 
 body {
   font-family: $sansFontFamily;
-  line-height: $base-line-height;
+  line-height: $line-height-base;
   background: white;
 }
 
 p {
-  line-height: 1.4 * $base-line-height;
+  line-height: 1.4 * $line-height-base;
 }
 
 #header, #sidebar-right, #top_buttons, .form-actions, #pagination_line,
