@@ -1,9 +1,9 @@
 Reservations::Application.routes.draw do
-  devise_for :users
 
   devise_scope :user do
-    get "login", to: "devise/sessions#new"
-    get "logout", to: "devise/sessions#destroy"
+    get "login", to: "devise/cas_sessions#new"
+    get "logout", to: "devise/cas_sessions#destroy"
+    devise_for :users
   end
 
   root :to => 'catalog#index'
