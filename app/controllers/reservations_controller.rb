@@ -341,10 +341,9 @@ class ReservationsController < ApplicationController
     if message
       flash[:error] = message
       redirect_to @reservation and return
-    end
-    respond_to do |format|
-      format.html{redirect_to root_path}
-      format.js{render action: "renew_box"}
+    else
+      flash[:notice] = "Your reservation has been renewed until #{@reservation.due_date.to_date.to_s(:long)}."
+      redirect_to @reservation
     end
   end
 
