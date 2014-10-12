@@ -45,12 +45,12 @@ a.not-qualified-icon {
 	bottom: 13px;
 	left: 110px;
 	font-size: $font-size-base * 2;
-	color: $btnWarningBackgroundHighlight;
+	color: $btn-warning-bg-highlight;
   @include warning-icon-drop-shadow;
 
 	&:hover, &:active {
 		text-decoration: none;
-		color: $btnWarningBackground;
+		color: $btn-warning-bg;
 	}
 }
 
