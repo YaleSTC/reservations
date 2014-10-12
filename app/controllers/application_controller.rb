@@ -206,14 +206,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def logout
-    @current_user = nil
-    CASClient::Frameworks::Rails::Filter.logout(self)
-    #RubyCAS::Filter.logout(self)
-    # the above code is used with ruby-cas-client-rails gem
-    # which was removed on 7/21/2014
-  end
-
   def require_login
     if current_user.nil?
       flash[:error] = "Sorry, that action requires you to log in."
