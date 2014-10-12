@@ -5,8 +5,8 @@ ruby '2.1.2' # Version in .ruby-version must match
 #standard gems
 gem 'rails', '4.1.4'
 gem 'mysql2'
-gem 'rake'
-gem 'rdoc'
+gem 'rake', '~> 10.3.2'
+gem 'rdoc', '~> 4.1.2'
 
 # rails 4 transition gems
 gem 'activerecord-session_store'
@@ -31,8 +31,8 @@ gem 'permanent_records'
 gem 'nilify_blanks'
 
 #ui
-gem 'jquery-rails'
-gem 'jquery-ui-rails'
+gem 'jquery-rails', '~> 3.1.2'
+gem 'jquery-ui-rails', '~> 5.0.1'
 gem 'jquery-datatables-rails'
 gem 'rails4-autocomplete'
 gem 'select2-rails'
