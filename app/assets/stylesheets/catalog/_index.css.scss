@@ -1,7 +1,7 @@
 .thumbnail {
   height: 420px;
   position: relative;
-  line-height: $baseLineHeight;
+  line-height: $base-line-height;
   @include box-shadow(#{inset 0px 0px 30px rgba(0,0,0,.1), 0 0 0 rgba(0,0,0,0)});
   @include transition(all .15s ease-out);
 

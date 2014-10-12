@@ -3,7 +3,7 @@
 
   .fa-user {
     font-size: $baseFontSize * 7;
-    line-height: $baseLineHeight * 4;
+    line-height: $base-line-height * 4;
     color: lighten($textColor, 50%);
     @include transition(color .3s ease);
 
@@ -50,7 +50,7 @@ ul.bar-dividers {
     }
     span {
       position: relative;
-      bottom: $baseLineHeight;
+      bottom: $base-line-height;
       z-index: 4;
       font-weight: bold;
     }
