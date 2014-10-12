@@ -54,3 +54,11 @@
 @import "equipment_models/*";
 
 @import "log";
+
+// Custom mixins
+@mixin border-radius($w) {
+  @include border-radius-top($w);
+  @include border-radius-right($w);
+  @include border-radius-bottom($w);
+  @include border-radius-left($w);
+}
