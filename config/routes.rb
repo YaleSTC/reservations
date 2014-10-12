@@ -1,5 +1,11 @@
 Reservations::Application.routes.draw do
   devise_for :users
+
+  devise_scope :user do
+    get "login", to: "devise/sessions#new"
+    get "logout", to: "devise/sessions#destroy"
+  end
+
   root :to => 'catalog#index'
 
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
@@ -100,8 +106,6 @@ Reservations::Application.routes.draw do
   get '/reports/for_model_set' => 'reports#for_model_set', :as => :for_model_set_reports # what http request? old match
   post '/reports/update' => 'reports#update_dates', :as => :update_dates # what http request? old match
   post '/reports/generate' => 'reports#generate', :as => :generate_report
-
-  get '/logout' => 'application#logout', :as => :logout # what kind of http request is this? old match
 
   get '/terms_of_service' => 'application#terms_of_service', :as => :tos # change match to get?
 

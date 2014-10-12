@@ -8,11 +8,11 @@ class ApplicationController < ActionController::Base
   before_filter :app_setup_check
   before_filter :cart
 
-  with_options unless: lambda { |u| User.count == 0 && :devise_controller? } do |c|
+  with_options unless: lambda { |u| User.count == 0 } do |c|
     c.before_filter :load_configs
     c.before_filter :seen_app_configs
     c.before_filter :current_user
-    c.before_filter :first_time_user
+    c.before_filter :first_time_user unless :devise_controller?
     c.before_filter :fix_cart_date
     c.before_filter :set_view_mode
     c.before_filter :check_view_mode

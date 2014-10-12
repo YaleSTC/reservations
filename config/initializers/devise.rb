@@ -285,7 +285,7 @@ Devise.setup do |config|
   # config.cas_create_user = false
 
   # You can enable Single Sign Out, which by default is disabled.
-  # config.cas_enable_single_sign_out = true
+  config.cas_enable_single_sign_out = true
 
   # If you want to use the Devise Timeoutable module with single sign out,
   # uncommenting this will redirect timeouts to the logout url, so that the CAS can
