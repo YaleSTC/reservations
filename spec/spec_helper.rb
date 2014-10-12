@@ -63,4 +63,7 @@ RSpec.configure do |config|
       example.run
     end
   end
+
+  # Devise helpers
+  config.include Devise::TestHelpers, type: :controller
 end
