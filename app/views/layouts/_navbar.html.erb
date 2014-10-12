@@ -1,21 +1,21 @@
-<div id="navigation_bar" class="navbar navbar-fixed-top navbar-default">
-  <div class="container">
+<div id="navigation_bar" class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
     <div class="container">
     <% unless @app_configs.nil? || @app_configs.site_title.nil? %>
       <%= link_to sanitize("<i class=\"fa fa-th-list\"></i> #{site_title}"), root_path, :class => 'brand' %>
     <% end %>
-      <a class="btn btn-navbar btn-default" data-toggle="collapse" data-target=".navbar-collapse">
-        <i class="fa fa-bars fa-lg"></i>
+      <a class="btn btn-default btn-navbar" data-toggle="collapse" data-target=".navbar-collapse">
+        <i class = "fa fa-bars fa-lg"></i>
       </a>
-      <div class="navbar-collapse">
+      <div class="nav-collapse">
 
-      <ul class="nav navbar-nav">
+      <ul class="nav">
 
-        <li <%="navigation_active" catalog_path="" %=""><%= navigation_active root_path %>><%= link_to "Catalog", catalog_path %></li>
+        <li <%= navigation_active catalog_path %><%= navigation_active root_path %>><%= link_to "Catalog", catalog_path %></li>
 
       <% if can? :manage, Reservation %>
 
-          <li <%="navigation_active" users_path="" %="">><%= link_to "Users", users_path %></li>
+          <li <%= navigation_active users_path %>><%= link_to "Users", users_path %></li>
           <% if can? :read, :admin_panel %>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Equipment <b class="caret"></b></a>
@@ -45,7 +45,7 @@
                   <% @current_reservations.each do |res| %>
                     <li>
                       <%= link_to "#{res.equipment_model.name}
-                                   (#{res.start_date.to_date.to_s(:long)} –
+                                   (#{res.start_date.to_date.to_s(:long)} &ndash;
                                    #{res.due_date.to_date.to_s(:long)})".html_safe, res, rel: 'popover',
                                    title: res.equipment_model.name, :"data-content" => markdown(res.equipment_model.description).truncate(100) %>
                     </li>
@@ -108,10 +108,10 @@
 
       <!-- SEARCH BOX -->
       <%= form_tag catalog_search_path, class: 'navbar-search pull-left', method: :get do %>
-          <%= search_field_tag 'query', (params[:query] unless params[:query].blank?), class: 'search-query span2', placeholder: "  ".html_safe %>
+          <%= search_field_tag 'query', (params[:query] unless params[:query].blank?), class: 'search-query span2', placeholder: "&#xf002;  ".html_safe %>
       <% end %>
       <!-- Current User Dropdown -->
-      <ul class="nav pull-right navbar-nav" id="logged_in">
+      <ul class="nav pull-right" id="logged_in">
       <% if current_user.nil? %>
         <li><%= link_to "Sign In" %></li>
       <% elsif current_user %>
