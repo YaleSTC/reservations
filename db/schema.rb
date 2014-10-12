@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140916025809) do
+ActiveRecord::Schema.define(version: 20141012145135) do
 
   create_table "announcements", force: true do |t|
     t.text     "message"
@@ -181,7 +181,7 @@ ActiveRecord::Schema.define(version: 20140916025809) do
   add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at", using: :btree
 
   create_table "users", force: true do |t|
-    t.string   "login"
+    t.string   "username"
     t.string   "first_name"
     t.string   "last_name"
     t.string   "nickname",                  default: "",       null: false
@@ -195,7 +195,7 @@ ActiveRecord::Schema.define(version: 20140916025809) do
     t.string   "role",                      default: "normal"
   end
 
-  add_index "users", ["login"], name: "index_users_on_login", unique: true, using: :btree
+  add_index "users", ["username"], name: "index_users_on_username", unique: true, using: :btree
 
   create_table "users_requirements", id: false, force: true do |t|
     t.integer "user_id"
