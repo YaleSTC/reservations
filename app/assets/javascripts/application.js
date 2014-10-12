@@ -17,6 +17,7 @@
 //= require bootstrap-tab
 //= require bootstrap-tooltip
 //= require bootstrap-popover
+//= require bootstrap-sprockets
 //= require variables.js
 //= require select2
 //= require_tree
