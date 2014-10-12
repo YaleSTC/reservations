@@ -7,7 +7,7 @@
 	@extend .label;
 	@include border-radius(5px);
 	padding: $user_label-size*1px $user_label-size*4px $user_label-size*2px;
-	font-size: $baseFontSize * 1.5;
+	font-size: $font-size-base * 1.5;
 	line-height: 14px;
 	margin-right: 10px;
 }
