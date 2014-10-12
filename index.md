@@ -3,7 +3,7 @@ layout: page
 title: Welcome to Reservations!
 permalink: /
 ---
-![screenshot](/screenshot.png "Screenshot")
+![screenshot](images/screenshot.png "Screenshot")
 
 **Reservations** is *the* app to use for keeping track of loaning items! Whether you're an office loaning out work laptops, a library loaning out photography equipment, or a department loaning out anything else, **Reservations** makes your life easier. Reservations:
 
