@@ -43,9 +43,9 @@
   text-shadow: 0 1px 1px lighten(black, 58%);
 }
 
-@mixin border-radius(@radius){
-  .border-top-radius(@radius);
-  .border-right-radius(@radius);
-  .border-bottom-radius(@radius);
-  .border-left-radius(@radius);
+@mixin border-radius($w) {
+  @include border-top-radius($w);
+  @include border-right-radius($w);
+  @include border-bottom-radius($w);
+  @include border-left-radius($w);
 }
