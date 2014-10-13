@@ -130,6 +130,8 @@ class ApplicationController < ActionController::Base
       if current_user && current_user.id
         stored_location_for(user) || request.referer || root_path
       elsif current_user && current_user.username
+        # I don't like this... we should make sure it also works when we don't
+        # user CAS for authentication
         session[:new_username] = current_user.username
         new_user_path
       else
