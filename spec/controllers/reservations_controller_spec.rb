@@ -41,9 +41,8 @@ describe ReservationsController, :type => :controller do
 
   shared_examples 'inaccessible by banned user' do
     before(:each) do
-      banned = FactoryGirl.build(:banned)
-      sign_in banned
-      allow(Reservation).to receive(:find).and_return(FactoryGirl.build_stubbed(:reservation, reserver: banned))
+      sign_in @banned
+      allow(Reservation).to receive(:find).and_return(FactoryGirl.build_stubbed(:reservation, reserver: @banned))
     end
     include_examples 'cannot access page'
     it { is_expected.to redirect_to(root_path) }
