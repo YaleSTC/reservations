@@ -6,6 +6,7 @@ class UsersController < ApplicationController
 
   skip_filter :cart, only: [:new, :create]
   skip_filter :first_time_user, only: [:new, :create]
+  skip_filter :authenticate_user!, only: [:new, :create]
   before_action :set_user, only: [:show, :edit, :update, :destroy, :ban, :unban]
 
   include Autocomplete
@@ -40,10 +41,15 @@ class UsersController < ApplicationController
 
   def new
     @can_edit_username = current_user.present? && (can? :create, User) # used in view
-    if current_user.nil?
+    if current_user.nil? && session[:new_username]
       # This is a new user -> create an account for them
-      @user = User.new(User.search_ldap(session[:cas_user]))
-      @user.username = session[:cas_user] #default to current username
+      @user = User.new(User.search_ldap(session[:new_username]))
+      @user.username = session[:new_username] #default to current username
+      flash.delete(:alert)
+      flash[:notice] = "Hey there! Since this is your first time making a reservation, we'll need you to supply us with some basic contact information."
+    elsif current_user.nil?
+      # we don't have the current session's username
+      redirect_to unregistered_user_session_path, username: 'unknown'
     else
       @user = User.new
     end
@@ -53,8 +59,10 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     @user.role = 'normal' if user_params[:role].blank?
     @user.view_mode = @user.role
-    @user.username = session[:cas_user] unless current_user and can? :manage, Reservation
+    @user.username = session[:new_username] unless current_user and can? :manage, Reservation
     if @user.save
+      session.delete(:new_username)
+      flash.delete(:alert)
       flash[:notice] = "Successfully created user."
       redirect_to user_path(@user)
     else

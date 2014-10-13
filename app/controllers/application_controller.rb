@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
   with_options unless: lambda { |u| User.count == 0 } do |c|
     c.before_filter :load_configs
     c.before_filter :seen_app_configs
-    c.before_filter :first_time_user unless :devise_controller?
+    # c.before_filter :first_time_user
     c.before_filter :fix_cart_date
     c.before_filter :set_view_mode
     c.before_filter :check_view_mode
@@ -56,13 +56,13 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def first_time_user
-    if current_user.nil? && params[:action] != "terms_of_service"
-      flash[:notice] = "Hey there! Since this is your first time making a reservation, we'll
-        need you to supply us with some basic contact information."
-      redirect_to new_user_path
-    end
-  end
+  # def first_time_user
+  #   if current_user.nil? && params[:action] != "terms_of_service"
+  #     flash[:notice] = "Hey there! Since this is your first time making a reservation, we'll
+  #       need you to supply us with some basic contact information."
+  #     redirect_to new_user_path
+  #   end
+  # end
 
   def cart
     session[:cart] ||= Cart.new
@@ -121,6 +121,22 @@ class ApplicationController < ActionController::Base
   end
 
   #-------- end before_filter methods --------#
+
+  def after_sign_in_path_for(user)
+    sign_in_url = url_for(:action => 'new', :controller => 'sessions', :only_path => false, :protocol => 'http')
+    if request.referer == sign_in_url
+      super
+    else
+      if current_user && current_user.id
+        stored_location_for(user) || request.referer || root_path
+      elsif current_user && current_user.username
+        session[:new_username] = current_user.username
+        new_user_path
+      else
+        super
+      end
+    end
+  end
 
   def update_cart
     cart = session[:cart]
