@@ -20,7 +20,7 @@ describe AnnouncementsController, :type => :controller do
 
  describe 'with admin' do
     before do
-      allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+      sign_in FactoryGirl.create(:admin)
     end
     context 'GET index' do
       before do
@@ -97,7 +97,7 @@ describe AnnouncementsController, :type => :controller do
   end
   context 'is not admin' do
     before do
-      allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:user))
+      sign_in FactoryGirl.create(:user)
       @announcement = FactoryGirl.create(:announcement)
       @attributes = FactoryGirl.attributes_for(:announcement)
     end

@@ -21,7 +21,7 @@ describe UsersController, :type => :controller do
 
   context 'with admin user' do
     before do
-      allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+      sign_in FactoryGirl.create(:admin)
     end
     describe 'GET index' do
       let!(:banned) { FactoryGirl.create(:banned) }

@@ -47,8 +47,9 @@ describe TestController, :type => :controller do
     allow(controller).to receive(:cart)
     allow(controller).to receive(:fix_cart_date)
     allow(controller).to receive(:set_view_mode)
-    allow(controller).to receive(:current_user)
     allow(controller).to receive(:make_cart_compatible)
+    @user = FactoryGirl.create(:user)
+    sign_in @user
   end
 
   describe 'make_cart_compatible' do
@@ -89,10 +90,14 @@ describe TestController, :type => :controller do
     end
     context 'no user in the db' do
       before(:each) do
+        sign_out @user
         User.delete_all
         get :index
       end
       it { is_expected.to set_the_flash }
+      # this is failing and I can't figure out why. It doesn't appear to be
+      # calling the actual app_setup_check method / before_filter and I'm not
+      # sure why (checked using binding.pry)
       it { is_expected.to render_template('application_setup/index') }
     end
   end
@@ -102,7 +107,7 @@ describe TestController, :type => :controller do
       allow(controller).to receive(:load_configs).and_return(@app_config)
       allow(controller).to receive(:seen_app_configs).and_call_original
       @admin = FactoryGirl.create(:admin)
-      allow(controller).to receive(:current_user).and_return(@admin)
+      sign_in @admin
     end
     context 'app configs have not been viewed' do
       before(:each) do
@@ -132,44 +137,43 @@ describe TestController, :type => :controller do
     end
   end
 
-  describe 'first_time_user' do
-    before(:each) do
-      @user = FactoryGirl.create(:user)
-      allow(controller).to receive(:current_user).and_return(@user)
-      allow(controller).to receive(:first_time_user).and_call_original
-    end
-    context 'current_user exists' do
-      before(:each) do
-        get :index
-      end
-      it { is_expected.not_to set_the_flash }
-      it 'should not redirect' do
-        expect(response).not_to be_redirect
-      end
-    end
-    context 'current_user is nil' do
-      before(:each) do
-        allow(controller).to receive(:current_user).and_return(nil)
-        get :index
-      end
-      context 'params[:action] = "terms_of_service"' do
-        before(:each) do
-          get :terms_of_service
-        end
-        it { is_expected.not_to set_the_flash }
-        it 'should not redirect' do
-          expect(response).not_to be_redirect
-        end
-      end
-      it { is_expected.to set_the_flash }
-      it { is_expected.to redirect_to(new_user_path) }
-    end
-  end
+  # describe 'first_time_user' do
+  #   before(:each) do
+  #     @user = FactoryGirl.create(:user)
+  #     sign_in @user
+  #     allow(controller).to receive(:first_time_user).and_call_original
+  #   end
+  #   context 'current_user exists' do
+  #     before(:each) do
+  #       get :index
+  #     end
+  #     it { is_expected.not_to set_the_flash }
+  #     it 'should not redirect' do
+  #       expect(response).not_to be_redirect
+  #     end
+  #   end
+  #   context 'current_user is nil' do
+  #     before(:each) do
+  #       allow(controller).to receive(:current_user).and_return(nil)
+  #       get :index
+  #     end
+  #     context 'params[:action] = "terms_of_service"' do
+  #       before(:each) do
+  #         get :terms_of_service
+  #       end
+  #       it { is_expected.not_to set_the_flash }
+  #       it 'should not redirect' do
+  #         expect(response).not_to be_redirect
+  #       end
+  #     end
+  #     it { is_expected.to set_the_flash }
+  #     it { is_expected.to redirect_to(new_user_path) }
+  #   end
+  # end
 
   describe 'cart' do
     before(:each) do
       allow(controller).to receive(:cart).and_call_original
-      @user = FactoryGirl.create(:user)
     end
     it 'makes a new cart record for session[:cart] if !cart' do
       get :index
@@ -183,12 +187,12 @@ describe TestController, :type => :controller do
       expect(session[:cart].reserver_id).to eq(@user.id)
     end
     it 'sets the session[:cart].reserver_id to current_user.id if !cart.reserver_id && current_user' do
-      allow(controller).to receive(:current_user).and_return(@user)
       session[:cart] = Cart.new
       get :index
       expect(session[:cart].reserver_id).to eq(@user.id)
     end
     it 'returns session[:cart] without a reserver_id if !cart.reserver_id && !current_user' do
+      sign_out @user
       session[:cart] = Cart.new
       get :index
       expect(session[:cart].reserver_id).to be_nil
@@ -197,36 +201,6 @@ describe TestController, :type => :controller do
 
   describe 'set_view_mode' do
     # this has changed as of the resolution of #415
-  end
-
-  describe 'current_user' do
-    before(:each) do
-      allow(controller).to receive(:current_user).and_call_original
-    end
-    context '@current_user already exists' do
-      it 'should return the current user' do
-        @user = FactoryGirl.create(:user)
-        controller.instance_variable_set(:@current_user, @user)
-        get :index
-        expect(assigns(:current_user)).to eq(@user)
-      end
-    end
-    context '@current_user does not already exist' do
-      context 'session[:cas_user] exists' do
-        it 'should find the current user based on the session :cas_user' do
-          @user = FactoryGirl.create(:user)
-          session[:cas_user] = @user.username
-          get :index
-          expect(assigns(:current_user)).to eq(@user)
-        end
-      end
-      context 'session[:cas_user] does not exist' do
-        it 'should return nil' do
-          get :index
-          expect(assigns(:current_user)).to eq(nil)
-        end
-      end
-    end
   end
 
   describe 'fix_cart_date' do
@@ -261,8 +235,8 @@ describe ApplicationController, :type => :controller do
     allow(controller).to receive(:cart)
     allow(controller).to receive(:fix_cart_date)
     allow(controller).to receive(:set_view_mode)
-    allow(controller).to receive(:current_user)
     allow(controller).to receive(:make_cart_compatible)
+    sign_in FactoryGirl.create(:user)
   end
 
   #TODO - This may involve rewriting the method somewhat
@@ -319,16 +293,6 @@ describe ApplicationController, :type => :controller do
     end
     it { is_expected.to redirect_to(root_path) }
     it { is_expected.to set_the_flash }
-  end
-
-  describe 'GET logout' do
-    it 'should always set @current_user to nil' do
-      @user = FactoryGirl.create(:user)
-      controller.instance_variable_set(:@current_user, @user)
-      get :logout
-      expect(assigns(:current_user)).to be_nil
-    end
-    it 'should log the user out of CAS' # TODO: figure out how to test this
   end
 
   describe 'GET terms_of_service' do

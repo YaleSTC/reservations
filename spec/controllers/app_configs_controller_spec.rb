@@ -18,7 +18,7 @@ describe AppConfigsController, :type => :controller do
       end
       context 'user is admin' do
         before(:each) do
-          allow(controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+          sign_in FactoryGirl.create(:admin)
           get :edit
         end
         it { is_expected.to render_template(:edit) }
@@ -30,7 +30,7 @@ describe AppConfigsController, :type => :controller do
       end
       context 'user is not admin' do
         before(:each) do
-          allow(controller).to receive(:current_user).and_return(FactoryGirl.create(:user))
+          sign_in FactoryGirl.create(:user)
           get :edit
         end
         it { is_expected.to redirect_to(root_path) }
@@ -54,7 +54,7 @@ describe AppConfigsController, :type => :controller do
       end
       context 'user is admin' do
         before (:each) do
-          allow(controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+          sign_in FactoryGirl.create(:admin)
           @params = FactoryGirl.attributes_for(:app_config) # Except paperclip attributes that trigger MassAssignment errors
             .reject {|k,v| [:favicon_file_name, :favicon_content_type, :favicon_file_size, :favicon_updated_at].include? k}
         end
@@ -102,7 +102,7 @@ describe AppConfigsController, :type => :controller do
       end
       context 'user is not admin' do
         before(:each) do
-          allow(controller).to receive(:current_user).and_return(FactoryGirl.create(:user))
+          sign_in FactoryGirl.create(:user)
           post :update
         end
         it { is_expected.to redirect_to(root_path) }

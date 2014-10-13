@@ -14,7 +14,7 @@ describe CategoriesController, :type => :controller do
     end
     context 'user is admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+        sign_in FactoryGirl.create(:admin)
         get :index
       end
       it 'should populate an array of all categories if show deleted is true' do
@@ -30,7 +30,7 @@ describe CategoriesController, :type => :controller do
     end
     context 'user is not admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:user))
+        sign_in FactoryGirl.create(:user)
         get :index
       end
       it { is_expected.to redirect_to(root_url) }
@@ -40,7 +40,7 @@ describe CategoriesController, :type => :controller do
   describe 'GET show' do
     context 'user is admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+        sign_in FactoryGirl.create(:admin)
         get :show, id: @category
       end
       it { is_expected.to respond_with(:success) }
@@ -52,7 +52,7 @@ describe CategoriesController, :type => :controller do
     end
     context 'user is not admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:user))
+        sign_in FactoryGirl.create(:user)
         get :show, id: @category
       end
       it { is_expected.to redirect_to(root_url) }
@@ -63,7 +63,7 @@ describe CategoriesController, :type => :controller do
   describe 'GET new' do
     context 'is admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+        sign_in FactoryGirl.create(:admin)
         get :new
       end
       it { is_expected.to respond_with(:success) }
@@ -76,7 +76,7 @@ describe CategoriesController, :type => :controller do
     end
     context 'not admin' do
       it 'should redirect to root_url' do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:user))
+        sign_in FactoryGirl.create(:user)
         get :new
         expect(response).to redirect_to(root_url)
       end
@@ -85,7 +85,7 @@ describe CategoriesController, :type => :controller do
   describe 'POST create' do
     context 'is admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+        sign_in FactoryGirl.create(:admin)
       end
       context 'with valid attributes' do
         before(:each) do
@@ -114,7 +114,7 @@ describe CategoriesController, :type => :controller do
     end
     context 'not admin' do
       it 'should redirect to root url' do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:user))
+        sign_in FactoryGirl.create(:user)
         post :create, category: FactoryGirl.attributes_for(:category)
         expect(response).to redirect_to(root_url)
       end
@@ -123,7 +123,7 @@ describe CategoriesController, :type => :controller do
   describe 'GET edit' do
     context 'is admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+        sign_in FactoryGirl.create(:admin)
         get :edit, id: @category
       end
       it 'should set @category to the selected category' do
@@ -135,7 +135,7 @@ describe CategoriesController, :type => :controller do
     end
     context 'not admin' do
       it 'should redirect to root_url' do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:user))
+        sign_in FactoryGirl.create(:user)
         get :edit, id: @category
         expect(response).to redirect_to(root_url)
       end
@@ -144,7 +144,7 @@ describe CategoriesController, :type => :controller do
   describe 'PUT update' do
     context 'is admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+        sign_in FactoryGirl.create(:admin)
       end
       context 'with valid attributes' do
         before(:each) do

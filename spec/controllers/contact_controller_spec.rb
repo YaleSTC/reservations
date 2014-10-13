@@ -7,7 +7,7 @@ describe ContactController, :type => :controller do
   before(:each) do
     allow(@controller).to receive(:first_time_user).and_return(nil)
     @category = FactoryGirl.create(:category)
-    allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:user))
+    sign_in FactoryGirl.create(:user)
   end
   describe 'GET new' do
     before(:each) do

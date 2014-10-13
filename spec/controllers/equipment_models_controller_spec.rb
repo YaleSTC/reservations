@@ -94,13 +94,13 @@ describe EquipmentModelsController, :type => :controller do
   describe 'GET index' do
     context 'with admin user' do
       before do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+        sign_in FactoryGirl.create(:admin)
         get :index
       end
       it_behaves_like "GET index success"
     end
     context 'with non-admin user' do
-      before { allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:user)) }
+      before { sign_in FactoryGirl.create(:user) }
       describe 'should redirect to root' do
         before { get :index }
         it_behaves_like 'GET index success'
@@ -111,14 +111,14 @@ describe EquipmentModelsController, :type => :controller do
   describe 'GET show' do
     context 'with admin user' do
       before do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+        sign_in FactoryGirl.create(:admin)
         get :show, id: model
       end
       it_behaves_like "GET show success"
     end
     context 'with non-admin user' do
       before do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:user))
+        sign_in FactoryGirl.create(:user)
         get :show, id: model
       end
       it_behaves_like "GET show success"
@@ -128,7 +128,7 @@ describe EquipmentModelsController, :type => :controller do
   describe 'GET new' do
     context 'with admin user' do
       before do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+        sign_in FactoryGirl.create(:admin)
         get :new
       end
       it { is_expected.to respond_with(:success) }
@@ -148,7 +148,7 @@ describe EquipmentModelsController, :type => :controller do
       end
     end
     context 'with non-admin user' do
-      before { allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:user)) }
+      before { sign_in FactoryGirl.create(:user) }
       it 'should redirect to root' do
         get :new
         expect(response).to redirect_to(root_url)
@@ -159,7 +159,7 @@ describe EquipmentModelsController, :type => :controller do
   describe 'GET edit' do
     context 'with admin user' do
       before do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+        sign_in FactoryGirl.create(:admin)
         get :edit, id: model
       end
       it { is_expected.to respond_with(:success) }
@@ -170,7 +170,7 @@ describe EquipmentModelsController, :type => :controller do
       end
     end
     context 'with non-admin user' do
-      before { allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:user)) }
+      before { sign_in FactoryGirl.create(:user) }
       it 'should redirect to root' do
         get :edit, id: model
         expect(response).to redirect_to(root_url)
@@ -180,7 +180,7 @@ describe EquipmentModelsController, :type => :controller do
 
   describe 'POST create' do
     context 'with admin user' do
-      before { allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin)) }
+      before { sign_in FactoryGirl.create(:admin) }
       context 'with valid attributes' do
         before { post :create, equipment_model: FactoryGirl.attributes_for(
           :equipment_model, category_id: model.category) }
@@ -205,7 +205,7 @@ describe EquipmentModelsController, :type => :controller do
       end
     end
     context 'with non-admin user' do
-      before { allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:user)) }
+      before { sign_in FactoryGirl.create(:user) }
       it 'should redirect to root' do
         post :create, equipment_model: FactoryGirl.attributes_for(:equipment_model)
         expect(response).to redirect_to(root_url)
@@ -215,7 +215,7 @@ describe EquipmentModelsController, :type => :controller do
 
   describe 'PUT update' do
     context 'with admin user' do
-      before { allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin)) }
+      before { sign_in FactoryGirl.create(:admin) }
       context 'with valid attributes' do
         before { put :update, id: model, equipment_model:
           FactoryGirl.attributes_for(:equipment_model, name: 'Mod') }
@@ -243,7 +243,7 @@ describe EquipmentModelsController, :type => :controller do
       it 'calls delete_files'
     end
     context 'with non-admin user' do
-      before { allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:user)) }
+      before { sign_in FactoryGirl.create(:user) }
       it 'should redirect to root' do
         put :update, id: model, equipment_model: FactoryGirl.attributes_for(:equipment_model)
         expect(response).to redirect_to(root_url)
