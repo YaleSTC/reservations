@@ -66,7 +66,8 @@ class ApplicationController < ActionController::Base
 
   def cart
     session[:cart] ||= Cart.new
-    if session[:cart].reserver_id.nil?
+    # if there is no cart reserver_id or the old cart reserver was deleted
+    if session[:cart].reserver_id.nil? || User.find_by_id(session[:cart].reserver_id).nil?
       session[:cart].reserver_id = current_user.id if current_user
     end
     session[:cart]
