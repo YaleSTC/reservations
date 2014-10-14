@@ -65,20 +65,15 @@ class EquipmentObjectsController < ApplicationController
   # Deactivate and activate extend controller methods in ApplicationController
   def deactivate
     # TODO: validate that deactivation reason is not null
-    @equipment_object.assign_attributes(deactivation_reason: params[:deactivation_reason])
-    old_notes = @equipment_object.notes
-    # WHY DOESN'T THIS SAVE? (also below)
-    @equipment_object.assign_attributes(notes: old_notes.prepend("#### Deactivated at #{Time.current.to_s(:long)} by #{current_user.name}\n#{@equipment_object.deactivation_reason}\n\n"))
-    @equipment_object.save
+    new_notes = "#### Deactivated at #{Time.current.to_s(:long)} by #{current_user.name}\n#{params[:deactivation_reason]}\n\n" + @equipment_object.notes
+    @equipment_object.update_attributes(deactivation_reason: params[:deactivation_reason], notes: new_notes)
     super
   end
 
   def activate
     super
-    @equipment_object.assign_attributes(deactivation_reason: nil)
-    old_notes = @equipment_object.notes
-    @equipment_object.assign_attributes(notes: old_notes.prepend("#### Reactivated at #{Time.current.to_s(:long)} by #{current_user.name}\n\n"))
-    @equipment_object.save
+    new_notes = "#### Reactivated at #{Time.current.to_s(:long)} by #{current_user.name}\n\n" + @equipment_object.notes
+    @equipment_object.update_attributes(deactivation_reason: nil, notes: new_notes)
   end
 
   private
