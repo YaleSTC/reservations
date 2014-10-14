@@ -95,9 +95,6 @@ describe TestController, :type => :controller do
         get :index
       end
       it { is_expected.to set_the_flash }
-      # this is failing and I can't figure out why. It doesn't appear to be
-      # calling the actual app_setup_check method / before_filter and I'm not
-      # sure why (checked using binding.pry)
       it { is_expected.to render_template('application_setup/index') }
     end
   end
