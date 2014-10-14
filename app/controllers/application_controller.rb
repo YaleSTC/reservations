@@ -123,6 +123,7 @@ class ApplicationController < ActionController::Base
 
   #-------- end before_filter methods --------#
 
+  # DEPENDENT ON CAS, I THINK --> THIS NEEDS TO BE HEAVILY INVESTIGATED
   def after_sign_in_path_for(user)
     sign_in_url = url_for(:action => 'new', :controller => 'sessions', :only_path => false, :protocol => 'http')
     if request.referer == sign_in_url

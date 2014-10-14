@@ -7,6 +7,10 @@
       <%= f.input :username, :readonly => true, :input_html => {:value => @user.username}%>
   <% end %>
 
+  <% #code for database_authenticatable devise authentication %>
+  <%= #f.input :password, required: true %>
+  <%= #f.input :password_confirmation, required: true %>
+
   <%= f.input :first_name %>
   <%= f.input :last_name %>
   <%= f.input :nickname %>

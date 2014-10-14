@@ -3,6 +3,9 @@ require 'net/ldap'
 class User < ActiveRecord::Base
   # Include cas devise module
   devise :cas_authenticatable
+  # devise :database_authenticatable # THIS IS BROKEN... we need to heavily
+  # tweak the User resource to get it working w/ Devise and flexible enough
+  # to support other authentication methods
   has_many :reservations, foreign_key: 'reserver_id', dependent: :destroy
   has_and_belongs_to_many :requirements,
                           class_name: "Requirement",

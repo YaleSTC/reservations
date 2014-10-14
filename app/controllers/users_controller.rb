@@ -49,6 +49,7 @@ class UsersController < ApplicationController
       flash[:notice] = "Hey there! Since this is your first time making a reservation, we'll need you to supply us with some basic contact information."
     elsif current_user.nil?
       # we don't have the current session's username
+      # THIS ONLY APPLIES TO CAS
       redirect_to unregistered_user_session_path, username: 'unknown'
     else
       @user = User.new
@@ -61,6 +62,7 @@ class UsersController < ApplicationController
     @user.view_mode = @user.role
     # this is kinda hack-y, and also dependent on how CAS works which we
     # shouldn't be dependent on
+    # THIS ONLY APPLIES TO CAS
     @user.username = session[:new_username] unless current_user and can? :manage, Reservation
     if @user.save
       session.delete(:new_username)
