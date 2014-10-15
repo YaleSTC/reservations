@@ -1,6 +1,7 @@
 class Reservation < ActiveRecord::Base
   include ReservationValidations
   include ReservationScopes
+  include Rails.application.routes.url_helpers
 
   has_paper_trail
 
@@ -305,6 +306,8 @@ class Reservation < ActiveRecord::Base
     return '* ' + items.join("\n* ")
   end
 
-
+  def md_link
+    "[res. \##{self.id.to_s}](#{reservation_path(self)})"
+  end
 
 end
