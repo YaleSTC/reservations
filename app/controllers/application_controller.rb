@@ -73,7 +73,7 @@ class ApplicationController < ActionController::Base
     # if there is no cart reserver_id or the old cart reserver was deleted
     # (i.e. we've logged in and the guest user was destroyed)
     if session[:cart].reserver_id.nil? || User.find_by_id(session[:cart].reserver_id).nil?
-      session[:cart].reserver_id = reserver
+      session[:cart].reserver_id = reserver.id
     end
     session[:cart]
   end
