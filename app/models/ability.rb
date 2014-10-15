@@ -45,7 +45,6 @@ class Ability
         can :update_cart, :all
       when 'guest'
         can :read, EquipmentModel
-        can :read, Category
         can :update_cart, :all
       when 'banned'
         #cannot :create, Reservation
