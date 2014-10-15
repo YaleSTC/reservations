@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
   before_filter :app_setup_check
   before_filter :authenticate_user!, unless: :devise_controller?
-  skip_before_filter :authenticate_user!, only: [:update_cart, :empty_cart]
+  skip_before_filter :authenticate_user!, only: [:update_cart, :empty_cart, :terms_of_service]
   before_filter :cart, unless: :devise_controller?
 
   with_options unless: lambda { |u| User.count == 0 } do |c|
