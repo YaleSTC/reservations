@@ -32,7 +32,7 @@ class User < ActiveRecord::Base
                           on: :create,
                           if: Proc.new { |u| !u.created_by_admin == "true" }
   validates :role,
-            :view_mode,   inclusion: { in: ['admin', 'normal', 'checkout', 'superuser', 'banned'] }
+            :view_mode,   inclusion: { in: ['admin', 'normal', 'checkout', 'superuser', 'banned', 'guest'] }
   validate :view_mode_reset
 
   # table_name is needed to resolve ambiguity for certain queries with 'includes'

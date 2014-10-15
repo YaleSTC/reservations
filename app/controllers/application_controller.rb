@@ -325,7 +325,7 @@ class ApplicationController < ActionController::Base
       username: "guest#{rand(100)}",
       first_name: 'Guest',
       last_name: 'User',
-      view_mode: 'guest')
+      role: 'guest')
     u.save!(:validate => false)
     session[:guest_user_id] = u.id
     u
