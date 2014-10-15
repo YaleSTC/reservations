@@ -117,11 +117,13 @@ class ReservationsController < ApplicationController
 
     # update attributes
     unless params[:equipment_object].blank?
-      object = EquipmentObject.find(params[:equipment_object])
-      unless object.available?
-        r = object.current_reservation
+      new_object = EquipmentObject.find(params[:equipment_object])
+      old_object = EquipmentObject.find(@reservation.equipment_object_id)
+      unless new_object.available?
+        r = new_object.current_reservation
         r.equipment_object_id = @reservation.equipment_object_id
         r.save
+        # clean up this code with a model method?
         message << " Note equipment item #{r.equipment_object.name} is now assigned to \
             #{ActionController::Base.helpers.link_to('reservation #' + r.id.to_s, reservation_path(r))} \
             (#{r.reserver.render_name})"
@@ -132,6 +134,12 @@ class ReservationsController < ApplicationController
     # save changes to database
     @reservation.update(current_user, res, params[:new_notes])
     @reservation.save
+
+    # if equipment object switch happened, make notes
+    if r
+      old_object.make_switch_notes(@reservation, r, current_user)
+      new_object.make_switch_notes(r, @reservation, current_user)
+    end
 
     # flash success and exit
     flash[:notice] = message

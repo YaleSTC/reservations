@@ -63,4 +63,8 @@ class EquipmentObject < ActiveRecord::Base
     self.update_attributes(notes: new_str)
   end
 
+  def make_switch_notes(old_res, new_res, handler)
+    self.update_attributes(notes: "#### Switched by #{handler.md_link} from #{old_res.md_link} to #{new_res.md_link} on #{Time.current.to_s(:long)}\n\n" + self.notes)
+  end
+
 end
