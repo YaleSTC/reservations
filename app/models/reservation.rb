@@ -178,6 +178,7 @@ class Reservation < ActiveRecord::Base
       end
     end
     self.make_notes("checked in", new_notes, incomplete_procedures, checkin_handler)
+    self.equipment_object.make_reservation_notes("checked in", self, checkin_handler, new_notes)
 
     if self.checked_in.to_date > self.due_date.to_date
       # equipment was overdue, send an email confirmati
@@ -206,6 +207,7 @@ class Reservation < ActiveRecord::Base
       end
     end
     self.make_notes("checked out", new_notes, incomplete_procedures, checkout_handler)
+    self.equipment_object.make_reservation_notes("checked out", self, checkout_handler, new_notes)
     self
   end
 

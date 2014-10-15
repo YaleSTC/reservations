@@ -1,6 +1,7 @@
 class EquipmentObject < ActiveRecord::Base
 
   include Searchable
+  include Rails.application.routes.url_helpers
 
   has_paper_trail
 
@@ -51,6 +52,15 @@ class EquipmentObject < ActiveRecord::Base
       count += 1 if o.equipment_model_id == model_id
     end
     count
+  end
+
+  def make_reservation_notes(procedure_verb, reservation, handler, new_notes)
+    new_str = "#### [#{procedure_verb.capitalize}](#{reservation_path(reservation.id)}) by #{handler.md_link} to #{reservation.reserver.md_link} on #{Time.current.to_s(:long)}\n"
+    unless new_notes.empty?
+      new_str += "##### Notes:\n#{new_notes}\n\n"
+    end
+    new_str += self.notes
+    self.update_attributes(notes: new_str)
   end
 
 end
