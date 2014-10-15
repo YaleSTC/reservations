@@ -211,6 +211,10 @@ class ApplicationController < ActionController::Base
      guest_user
   end
 
+  def current_ability
+    @current_ability ||= Ability.new(current_or_guest_user)
+  end
+
 
   def prepare_catalog_index_vars(eq_models = nil)
     # prepare the catalog
@@ -321,7 +325,7 @@ class ApplicationController < ActionController::Base
       username: "guest#{rand(100)}",
       first_name: 'Guest',
       last_name: 'User',
-      view_mode: 'normal')
+      view_mode: 'guest')
     u.save!(:validate => false)
     session[:guest_user_id] = u.id
     u
