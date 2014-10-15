@@ -58,6 +58,8 @@ class EquipmentObject < ActiveRecord::Base
     new_str = "#### [#{procedure_verb.capitalize}](#{reservation_path(reservation.id)}) by #{handler.md_link} to #{reservation.reserver.md_link} on #{Time.current.to_s(:long)}\n"
     unless new_notes.empty?
       new_str += "##### Notes:\n#{new_notes}\n\n"
+    else
+      new_str += "\n"
     end
     new_str += self.notes
     self.update_attributes(notes: new_str)
