@@ -223,7 +223,7 @@ class Reservation < ActiveRecord::Base
       return
     else
       # write notes header
-      header = "### Reservation edited at #{Time.current.to_s(:long)} by #{current_user.name}\n"
+      header = "### Reservation edited at #{Time.current.to_s(:long)} by #{current_user.md_link}\n"
       self.notes = self.notes ? self.notes + "\n" + header : header
 
       # add notes if they exist
@@ -256,7 +256,7 @@ class Reservation < ActiveRecord::Base
           self.notes += "\n#{name} changed from " + old_val + " to " + new_val + "."
         end
       end
-      
+
       self.notes = self.notes.strip
       self
     end
@@ -269,7 +269,7 @@ class Reservation < ActiveRecord::Base
     # procedure_kind
 
     # write notes header
-    header = "### Reservation #{procedure_verb} at #{Time.current.to_s(:long)} by #{current_user.name}\n"
+    header = "### Reservation #{procedure_verb} at #{Time.current.to_s(:long)} by #{current_user.md_link}\n"
     self.notes = self.notes ? self.notes + "\n" + header : header
 
     # If no new notes and no missed procedures, set e-mail flag to false and
@@ -302,6 +302,7 @@ class Reservation < ActiveRecord::Base
   def markdown_listify(items)
     return '* ' + items.join("\n* ")
   end
+
 
 
 end
