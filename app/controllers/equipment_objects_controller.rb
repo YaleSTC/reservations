@@ -65,14 +65,14 @@ class EquipmentObjectsController < ApplicationController
   # Deactivate and activate extend controller methods in ApplicationController
   def deactivate
     # TODO: validate that deactivation reason is not null
-    new_notes = "#### Deactivated at #{Time.current.to_s(:long)} by #{current_user.name}\n#{params[:deactivation_reason]}\n\n" + @equipment_object.notes
+    new_notes = "#### Deactivated at #{Time.current.to_s(:long)} by #{current_user.md_link}\n#{params[:deactivation_reason]}\n\n" + @equipment_object.notes
     @equipment_object.update_attributes(deactivation_reason: params[:deactivation_reason], notes: new_notes)
     super
   end
 
   def activate
     super
-    new_notes = "#### Reactivated at #{Time.current.to_s(:long)} by #{current_user.name}\n\n" + @equipment_object.notes
+    new_notes = "#### Reactivated at #{Time.current.to_s(:long)} by #{current_user.md_link}\n\n" + @equipment_object.notes
     @equipment_object.update_attributes(deactivation_reason: nil, notes: new_notes)
   end
 
