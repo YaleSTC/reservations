@@ -65,11 +65,14 @@ class ApplicationController < ActionController::Base
   # end
 
   def cart
+    # ensure that we call current_or_guest_user during a new request to delete
+    # the guest user from the db
+    reserver = current_or_guest_user
     session[:cart] ||= Cart.new
     # if there is no cart reserver_id or the old cart reserver was deleted
+    # (i.e. we've logged in and the guest user was destroyed)
     if session[:cart].reserver_id.nil? || User.find_by_id(session[:cart].reserver_id).nil?
-      # if logged in
-      session[:cart].reserver_id = current_or_guest_user.id
+      session[:cart].reserver_id = reserver
     end
     session[:cart]
   end
@@ -150,7 +153,7 @@ class ApplicationController < ActionController::Base
       cart.start_date = params[:cart][:start_date_cart].to_date
       cart.due_date = params[:cart][:due_date_cart].to_date
       cart.fix_due_date
-      cart.reserver_id = params[:reserver_id].blank? ? current_user.id : params[:reserver_id]
+      cart.reserver_id = params[:reserver_id].blank? ? current_or_guest_user.id : params[:reserver_id]
     rescue ArgumentError
       cart.start_date = Date.current
       flash[:error] = "Please enter a valid start or due date."
@@ -306,20 +309,18 @@ class ApplicationController < ActionController::Base
   # https://github.com/plataformatec/devise/wiki/How-To:-Create-a-guest-user
   # called (once) when the user logs in
   def logging_in
-    cart.reserver_id = current_user.id
-    # For example:
-    # guest_comments = guest_user.comments.all
-    # guest_comments.each do |comment|
-      # comment.user_id = current_user.id
-      # comment.save!
-    # end
+    # any code we need to run to transfer the cart over goes here
+    # our current cart method will reset the reserver to current_user if the
+    # old reserver (i.e. the guest user) was deleted, so we don't need to
+    # explicitly switch the reserver_id
   end
 
   def create_guest_user
     u = User.create(
-      username: "gst#{rand(100)}",
+      username: "guest#{rand(100)}",
       first_name: 'Guest',
-      last_name: 'User')
+      last_name: 'User',
+      view_mode: 'normal')
     u.save!(:validate => false)
     session[:guest_user_id] = u.id
     u
