@@ -35,7 +35,7 @@ class EquipmentObjectsController < ApplicationController
 
   def create
     @equipment_object = EquipmentObject.new(equipment_object_params)
-    @equipment_object.notes = "#### Created at #{Time.current.to_s(:long)} by #{current_user.name}"
+    @equipment_object.notes = "#### Created at #{Time.current.to_s(:long)} by #{current_user.md_link}"
     if @equipment_object.save
       flash[:notice] = "Successfully created equipment object. #{@equipment_object.serial}"
       redirect_to @equipment_object.equipment_model
