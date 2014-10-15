@@ -89,7 +89,7 @@ class User < ActiveRecord::Base
   end
 
   def md_link
-    "[#{self.name}](#{user_path(self.id)})"
+    "[#{self.name}](#{user_path(self)})"
   end
 
 
