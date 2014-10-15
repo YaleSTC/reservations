@@ -136,6 +136,10 @@ class ReservationsController < ApplicationController
     @reservation.save
 
     # if equipment object switch happened, make notes
+    # TODO first check for params[:equipment_object].blank as above and then
+    # modify make_switch_notes method to account for cases where either
+    # old_res or new_res are `nil` (i.e. the new equipment object was
+    # available)
     if r
       old_object.make_switch_notes(@reservation, r, current_user)
       new_object.make_switch_notes(r, @reservation, current_user)
