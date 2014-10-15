@@ -68,7 +68,8 @@ class ApplicationController < ActionController::Base
     session[:cart] ||= Cart.new
     # if there is no cart reserver_id or the old cart reserver was deleted
     if session[:cart].reserver_id.nil? || User.find_by_id(session[:cart].reserver_id).nil?
-      session[:cart].reserver_id = current_user.id if current_user
+      # if logged in
+      session[:cart].reserver_id = current_or_guest_user.id
     end
     session[:cart]
   end
@@ -180,6 +181,33 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  # if user is logged in, return current_user, else return guest_user
+  # https://github.com/plataformatec/devise/wiki/How-To:-Create-a-guest-user
+  def current_or_guest_user
+    if current_user
+      if session[:guest_user_id]
+        logging_in
+        guest_user.destroy
+        session[:guest_user_id] = nil
+      end
+      current_user
+    else
+      guest_user
+    end
+  end
+
+  # find guest_user object associated with the current session,
+  # creating one as needed
+  def guest_user
+    # Cache the value the first time it's gotten.
+    @cached_guest_user ||= User.find(session[:guest_user_id] ||= create_guest_user.id)
+
+  rescue ActiveRecord::RecordNotFound # if session[:guest_user_id] invalid
+     session[:guest_user_id] = nil
+     guest_user
+  end
+
+
   def prepare_catalog_index_vars(eq_models = nil)
     # prepare the catalog
     eq_models ||= EquipmentModel.active.
@@ -271,6 +299,30 @@ class ApplicationController < ActionController::Base
 
     user.terms_of_service_accepted = params[:terms_of_service_accepted].present?
     return user.terms_of_service_accepted ? user.save : (flash[:error] = "You must confirm that the user accepts the Terms of Service.") && false
+  end
+
+  private
+
+  # https://github.com/plataformatec/devise/wiki/How-To:-Create-a-guest-user
+  # called (once) when the user logs in
+  def logging_in
+    cart.reserver_id = current_user.id
+    # For example:
+    # guest_comments = guest_user.comments.all
+    # guest_comments.each do |comment|
+      # comment.user_id = current_user.id
+      # comment.save!
+    # end
+  end
+
+  def create_guest_user
+    u = User.create(
+      username: "gst#{rand(100)}",
+      first_name: 'Guest',
+      last_name: 'User')
+    u.save!(:validate => false)
+    session[:guest_user_id] = u.id
+    u
   end
 
 end
