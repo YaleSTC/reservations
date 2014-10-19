@@ -60,9 +60,8 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     @user.role = 'normal' if user_params[:role].blank?
     @user.view_mode = @user.role
-    # this is kinda hack-y, and also dependent on how CAS works which we
-    # shouldn't be dependent on
-    # THIS ONLY APPLIES TO CAS
+    # THIS ONLY APPLIES TO CAS, I THINK, SINCE WITH DATABASE AUTHENTICATABLE
+    # THERE'S NO SERVICE URL, ETC.
     @user.username = session[:new_username] unless current_user and can? :manage, Reservation
     if @user.save
       session.delete(:new_username)
