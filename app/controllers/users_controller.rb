@@ -50,7 +50,8 @@ class UsersController < ApplicationController
     elsif current_user.nil?
       # we don't have the current session's username
       # THIS ONLY APPLIES TO CAS
-      redirect_to unregistered_user_session_path, username: 'unknown'
+      flash[:error] = "Something seems to have gone wrong. Please try that again."
+      redirect_to root_path
     else
       @user = User.new
     end
