@@ -128,22 +128,13 @@ class ApplicationController < ActionController::Base
 
   #-------- end before_filter methods --------#
 
-  # DEPENDENT ON CAS, I THINK --> THIS NEEDS TO BE HEAVILY INVESTIGATED
   def after_sign_in_path_for(user)
-    sign_in_url = url_for(:action => 'new', :controller => 'sessions', :only_path => false, :protocol => 'http')
-    if request.referer == sign_in_url
-      super
+    # CODE FOR CAS LOGIN --> NEW USER
+    if current_user && current_user.id.nil? && current_user.username
+      session[:new_username] = current_user.username
+      new_user_path
     else
-      if current_user && current_user.id
-        stored_location_for(user) || request.referer || root_path
-      elsif current_user && current_user.username
-        # I don't like this... we should make sure it also works when we don't
-        # user CAS for authentication
-        session[:new_username] = current_user.username
-        new_user_path
-      else
-        super
-      end
+      super
     end
   end
 
