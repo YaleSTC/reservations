@@ -46,6 +46,7 @@ class Ability
       when 'guest'
         can :read, EquipmentModel
         can :update_cart, :all
+        can :create, User
       when 'banned'
         #cannot :create, Reservation
       end
