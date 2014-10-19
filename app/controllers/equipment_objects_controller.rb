@@ -67,7 +67,7 @@ class EquipmentObjectsController < ApplicationController
       @equipment_object.update_attributes(deactivation_reason: params[:deactivation_reason])
       super
     else
-      flash[:error] = 'Please enter a deactivation reason.'
+      flash[:error] = 'Please enter a deactivation reason.' unless params[:deactivation_cancelled]
       redirect_to @equipment_object.equipment_model
     end
   end
