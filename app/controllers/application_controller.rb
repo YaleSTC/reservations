@@ -312,14 +312,23 @@ class ApplicationController < ActionController::Base
   end
 
   def create_guest_user
+    username = generate_guest_username
+    # ensure no matches since we index
+    while User.find_by_username(username)
+      username = generate_guest_username
+    end
     u = User.create(
-      username: "guest#{rand(100)}",
+      username: username,
       first_name: 'Guest',
       last_name: 'User',
       role: 'guest')
     u.save!(:validate => false)
     session[:guest_user_id] = u.id
     u
+  end
+
+  def generate_guest_username
+    "guest#{rand(1000000)}"
   end
 
 end
