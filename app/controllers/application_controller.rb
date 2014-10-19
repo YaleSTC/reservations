@@ -128,16 +128,6 @@ class ApplicationController < ActionController::Base
 
   #-------- end before_filter methods --------#
 
-  def after_sign_in_path_for(user)
-    # CODE FOR CAS LOGIN --> NEW USER
-    if current_user && current_user.id.nil? && current_user.username
-      session[:new_username] = current_user.username
-      new_user_path
-    else
-      super
-    end
-  end
-
   def update_cart
     cart = session[:cart]
     flash.clear
@@ -300,6 +290,17 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  # modify redirect after signing in
+  def after_sign_in_path_for(user)
+    # CODE FOR CAS LOGIN --> NEW USER
+    if current_user && current_user.id.nil? && current_user.username
+      session[:new_username] = current_user.username
+      new_user_path
+    else
+      super
+    end
+  end
 
   # https://github.com/plataformatec/devise/wiki/How-To:-Create-a-guest-user
   # called (once) when the user logs in
