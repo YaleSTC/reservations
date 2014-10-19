@@ -8,6 +8,9 @@ gem 'mysql2'
 gem 'rake', '~> 10.3.2'
 gem 'rdoc', '~> 4.1.2'
 
+# simulate environment variables
+gem 'dotenv-rails', '~> 1.0.2', :groups => [:development, :test]
+
 # rails 4 transition gems
 gem 'activerecord-session_store'
 
