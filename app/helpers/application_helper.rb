@@ -27,7 +27,7 @@ module ApplicationHelper
     else
       link_to "Deactivate", [:deactivate, model_object],
         class: "btn btn-danger", method: :put,
-        onclick: model_symbol == :equipment_objects ? 'getDeactivationReason(this);' : ''
+        onclick: model_symbol == :equipment_objects ? 'handleDeactivation(this);' : ''
     end
   end
 
