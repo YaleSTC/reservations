@@ -182,7 +182,6 @@ class ApplicationController < ActionController::Base
     if current_user
       if session[:guest_user_id]
         logging_in
-        guest_user.destroy
         session[:guest_user_id] = nil
       end
       current_user
@@ -342,7 +341,7 @@ class ApplicationController < ActionController::Base
   end
 
   def generate_guest_username
-    "guest#{rand(1000000)}"
+    "guest#{rand(100)}"
   end
 
 end
