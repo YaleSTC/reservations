@@ -39,6 +39,8 @@ class UsersController < ApplicationController
                         past_overdue: @user_reservations.returned_overdue }
   end
 
+  # This needs code added to it to accomodate non-CAS login and reference the
+  # CAS_AUTH environment variable to switch between the two
   def new
     @can_edit_username = current_user.present? && (can? :create, User) # used in view
     if current_user.nil? && session[:new_username]

@@ -294,7 +294,7 @@ class ApplicationController < ActionController::Base
   # modify redirect after signing in
   def after_sign_in_path_for(user)
     # CODE FOR CAS LOGIN --> NEW USER
-    if current_user && current_user.id.nil? && current_user.username
+    if ENV['CAS_AUTH'] && current_user && current_user.id.nil? && current_user.username
       session[:new_username] = current_user.username
       new_user_path
     else
