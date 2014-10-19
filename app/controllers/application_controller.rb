@@ -195,7 +195,7 @@ class ApplicationController < ActionController::Base
   # creating one as needed
   def guest_user
     # Cache the value the first time it's gotten.
-    @cached_guest_user ||= User.find(session[:guest_user_id] ||= create_guest_user.id)
+    @cached_guest_user ||= User.find(session[:guest_user_id] ||= find_guest_user.id)
 
   rescue ActiveRecord::RecordNotFound # if session[:guest_user_id] invalid
      session[:guest_user_id] = nil
@@ -309,6 +309,20 @@ class ApplicationController < ActionController::Base
     # our current cart method will reset the reserver to current_user if the
     # old reserver (i.e. the guest user) was deleted, so we don't need to
     # explicitly switch the reserver_id
+  end
+
+  # find guest user - looks for existing guest user in the database and
+  # creates a new one if one doesn't exist. This should only be called once
+  # PER INSTANCE, and means that we won't clog up our Users table w/ guest
+  # records.
+  def find_guest_user
+    guest = User.find_by_role('guest')
+    if guest
+      session[:guest_user_id] = guest.id
+      guest
+    else
+      create_guest_user
+    end
   end
 
   def create_guest_user
