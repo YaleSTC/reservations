@@ -47,20 +47,30 @@ class UsersController < ApplicationController
   # This needs code added to it to accomodate non-CAS login and reference the
   # CAS_AUTH environment variable to switch between the two
   def new
-    @can_edit_username = current_user.present? && (can? :create, User) # used in view
-    if current_user.nil? && session[:new_username]
-      # This is a new user -> create an account for them
-      @user = User.new(User.search_ldap(session[:new_username]))
-      @user.username = session[:new_username] #default to current username
-      flash.delete(:alert)
-      flash[:notice] = "Hey there! Since this is your first time making a reservation, we'll need you to supply us with some basic contact information."
-    elsif current_user.nil?
-      # we don't have the current session's username
-      # THIS ONLY APPLIES TO CAS
-      flash[:error] = "Something seems to have gone wrong. Please try that again."
-      redirect_to root_path
+    # if CAS authentication
+    if @cas_auth
+      @can_edit_username = current_user.present? && (can? :create, User) # used in view
+      if current_user.nil? && session[:new_username]
+        # This is a new user -> create an account for them
+        @user = User.new(User.search_ldap(session[:new_username]))
+        @user.username = session[:new_username] #default to current username
+        flash[:notice] = "Hey there! Since this is your first time making a reservation, we'll need you to supply us with some basic contact information."
+      elsif current_user.nil?
+        # we don't have the current session's username
+        # THIS ONLY APPLIES TO CAS
+        flash[:error] = "Something seems to have gone wrong. Please try that again."
+        redirect_to root_path
+      else
+        @user = User.new
+      end
+    # if database authenticatable
     else
       @user = User.new
+      unless current_user
+        flash[:notice] = "Hey there! Since this is your first time making a reservation, we'll need you to supply us with some basic contact information."
+      else
+        @user = User.new
+      end
     end
   end
 
@@ -68,12 +78,16 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     @user.role = 'normal' if user_params[:role].blank?
     @user.view_mode = @user.role
-    # THIS ONLY APPLIES TO CAS, I THINK, SINCE WITH DATABASE AUTHENTICATABLE
-    # THERE'S NO SERVICE URL, ETC.
-    @user.username = session[:new_username] unless current_user and can? :manage, Reservation
+    # if we're using CAS
+    if @cas_auth
+      @user.username = session[:new_username] unless current_user and can? :manage, Reservation
+    else
+      # check for devise methods for checking password match
+      @user.username = @user.email
+      @user.password = user_params[:password] if (user_params[:password] == user_params[:password_confirmation]) && !user_params[:password].blank?
+    end
     if @user.save
-      session.delete(:new_username)
-      flash.delete(:alert)
+      session.delete(:new_username) if @cas_auth
       flash[:notice] = "Successfully created user."
       redirect_to user_path(@user)
     else
