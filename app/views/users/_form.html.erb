@@ -1,10 +1,16 @@
 <%= simple_form_for @user, :html => { :class => "form-horizontal" } do |f| %>
   <%= f.error_notification %>
 
-  <% if @can_edit_username %>
-    <%= f.input :username %>
+  <% if @cas_auth %>
+    <% if @can_edit_username %>
+      <%= f.input :username %>
+    <% else %>
+        <%= f.input :username, :readonly => true, :input_html => {:value => @user.username}%>
+    <% end %>
   <% else %>
-      <%= f.input :username, :readonly => true, :input_html => {:value => @user.username}%>
+    <%= f.input :email %>
+    <%= f.input :password, required: true %>
+    <%= f.input :password_confirmation, required: true %>
   <% end %>
 
   <%= f.input :first_name %>
@@ -15,7 +21,7 @@
   <% else %>
     <%= f.input :phone, hint: "format like (555) 555-5555" %>
   <% end %>
-  <%= f.input :email %>
+  <%= f.input :email if @cas_auth %>
   <%= f.input :affiliation, hint: "including college, year, etc"%>
 
   <%= hidden_field_tag(:from_cart, false) %>
