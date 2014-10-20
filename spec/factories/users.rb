@@ -11,7 +11,7 @@ FactoryGirl.define do
     first_name "First"
     last_name "Last"
     affiliation "Yale"
-    email { "#{first_name}.#{last_name}@yale.edu".downcase }
+    email { "#{username}@example.edu".downcase }
     phone "555-555-5555"
     terms_of_service_accepted true
     created_by_admin false
