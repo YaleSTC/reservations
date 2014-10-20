@@ -8,6 +8,7 @@ class UsersController < ApplicationController
   skip_filter :first_time_user, only: [:new, :create]
   skip_filter :authenticate_user!, only: [:new, :create]
   before_action :set_user, only: [:show, :edit, :update, :destroy, :ban, :unban]
+  before_action :check_cas_auth, only: [:new, :create, :edit, :update]
 
   include Autocomplete
 
@@ -15,6 +16,10 @@ class UsersController < ApplicationController
 
   def set_user
     @user = User.find(params[:id])
+  end
+
+  def check_cas_auth
+    @cas_auth = ENV['CAS_AUTH']
   end
 
   # ------------ end before filter methods ------------ #
