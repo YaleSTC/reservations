@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141012145135) do
+ActiveRecord::Schema.define(version: 20141014041026) do
 
   create_table "announcements", force: true do |t|
     t.text     "message"
@@ -184,15 +184,16 @@ ActiveRecord::Schema.define(version: 20141012145135) do
     t.string   "username"
     t.string   "first_name"
     t.string   "last_name"
-    t.string   "nickname",                  default: "",       null: false
+    t.string   "nickname",                              default: "",       null: false
     t.string   "phone"
     t.string   "email"
     t.string   "affiliation"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "terms_of_service_accepted"
-    t.string   "view_mode",                 default: "normal"
-    t.string   "role",                      default: "normal"
+    t.string   "view_mode",                             default: "normal"
+    t.string   "role",                                  default: "normal"
+    t.string   "encrypted_password",        limit: 128, default: "",       null: false
   end
 
   add_index "users", ["username"], name: "index_users_on_username", unique: true, using: :btree
