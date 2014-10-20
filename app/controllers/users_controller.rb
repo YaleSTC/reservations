@@ -184,7 +184,7 @@ class UsersController < ApplicationController
   def user_params
     permitted_attributes = [:first_name, :last_name, :nickname, :phone,
       :email, :affiliation, :terms_of_service_accepted, :created_by_admin,]
-    permitted_attributes += [:password, :password_confirmation] if @cas_auth
+    permitted_attributes += [:password, :password_confirmation] unless @cas_auth
     permitted_attributes << :username if (can? :manage, Reservation)
     permitted_attributes += [:requirement_ids, :user_ids, :role] if can? :assign, :requirements
     p = params.require(:user).permit(*permitted_attributes)
