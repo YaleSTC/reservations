@@ -120,7 +120,7 @@
           <b class="caret"></b></a>
           <ul class="dropdown-menu">
             <li><%= link_to "My Profile", current_user %></li>
-            <li><%= link_to "Log Out", logout_path %></li>
+            <li><%= link_to "Log Out", destroy_user_session_path %></li>
           </ul>
         </li>
       <% end %>
