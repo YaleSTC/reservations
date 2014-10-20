@@ -65,6 +65,7 @@ class UsersController < ApplicationController
       end
     # if database authenticatable
     else
+      @can_edit_username = true
       @user = User.new
       unless current_user
         flash[:notice] = "Hey there! Since this is your first time making a reservation, we'll need you to supply us with some basic contact information."
