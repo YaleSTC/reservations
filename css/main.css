@@ -243,6 +243,10 @@ a:visited { color: #205caa; }
 
 .post pre code { border: none; }
 
+.post-content p img {
+  width: 100%;
+}
+
 /* terminal */
 .post pre.terminal {
   border: 1px solid #000;
