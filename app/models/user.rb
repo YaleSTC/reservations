@@ -87,6 +87,10 @@ class User < ActiveRecord::Base
     end
   end
 
+  def self.search_ldap_email(email)
+    # CODE TO SEARCH BY EMAIL HERE
+  end
+
   def self.select_options
     User.order('last_name ASC').all.collect{ |item| ["#{item.last_name}, #{item.first_name}", item.id] }
   end
