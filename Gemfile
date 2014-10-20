@@ -38,7 +38,7 @@ gem 'jquery-datatables-rails'
 gem 'rails4-autocomplete'
 gem 'select2-rails'
 gem 'kaminari'
-gem 'spinjs-rails', '1.3'
+gem 'spinjs-rails', '~> 1.4'
 
 #forms / formatting
 gem 'dynamic_form'
