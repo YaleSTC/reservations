@@ -24,6 +24,7 @@ class User < ActiveRecord::Base
                           length:      { minimum: 10 }, unless: lambda {|x| x.skip_phone_validation?}
 
   validates :email,       presence:    true,
+                          uniqueness: true,
                           format:      { with: /\A([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})\z/i }
   validates :nickname,    format:      { with: /\A[^0-9`!@#\$%\^&*+_=]+\z/ },
                           allow_blank: true
