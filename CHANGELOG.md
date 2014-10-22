@@ -7,9 +7,12 @@ Changelog
 
 ### v3.4.8
 *Released on 26 October 2014*
-### Bug Fixes
+#### Bug Fixes
 * Fixed an issue where links in the request e-mail were broken ([#1017](https://github.com/YaleSTC/reservations/issues/1017)).
 * Moved the email link hostname back to the environment files ([#1017](https://github.com/YaleSTC/reservations/issues/1017)).
+
+#### Enhancements
+* Announcements are now rendered in Markdown so they can include links and formatting ([#1027](https://github.com/YaleSTC/reservations/issues/1027)).
 
 ### v3.4.7
 *Released on 12 October 2014*
