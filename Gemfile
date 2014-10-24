@@ -90,7 +90,6 @@ group :development do
   gem 'rack-mini-profiler'
   gem 'bullet'
   gem 'travis'
-  gem 'guard-spork'
 end
 
 group :production, :staging do
