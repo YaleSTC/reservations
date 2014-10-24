@@ -98,7 +98,7 @@ class User < ActiveRecord::Base
   end
 
   def render_name
-    "#{name} #{username}"
+    ENV['CAS_AUTH'] ? "#{name} #{username}" : "#{name}"
   end
 
 
