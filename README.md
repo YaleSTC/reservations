@@ -6,6 +6,8 @@
 [![Dependency Status](https://gemnasium.com/YaleSTC/reservations.svg)](https://gemnasium.com/YaleSTC/reservations)
 [![Inline docs](http://inch-ci.org/github/yalestc/reservations.svg)](http://inch-ci.org/github/yalestc/reservations)
 
+![](http://yalestc.github.io/reservations/screenshot.png)
+
 Reservations makes it easy to manage the checking in and out of equipment, much like a library! Here are some of the things Reservations can do:
 
 * manage your inventory of equipment, including storing serial numbers, manuals and other documents, and more.
@@ -87,7 +89,7 @@ Reservations ships with the default config time set to Eastern Time (US and Cana
 
 
 You will need to also configure the email config in
-`config/environments/production.rb`. Replace `example.com` with the
+`config/initializers/setup_mail.rb`. Replace `0.0.0.0:3000` with the
 relevant hostname. This will allow links in emails to point to the
 correct places.
 
