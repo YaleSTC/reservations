@@ -549,3 +549,4 @@ unless entered_num == 0
 end
 
 puts "\n***Successfully seeded all records!***\n\n"
+puts "You can log in using the e-mail 'email@email.com' and password 'passw0rd'\n\n" if (!ENV['CAS_AUTH'] && ENV['minimal'])
