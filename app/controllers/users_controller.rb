@@ -88,8 +88,11 @@ class UsersController < ApplicationController
       @user.password = user_params[:password] if (user_params[:password] == user_params[:password_confirmation]) && !user_params[:password].blank?
     end
     if @user.save
+      # delete extra session parameter if we came from CAS hackery
       session.delete(:new_username) if @cas_auth
       flash[:notice] = "Successfully created user."
+      # log in the new user
+      sign_in @user, :bypass => true unless (current_user.present?)
       redirect_to user_path(@user)
     else
       @can_edit_username = current_user.present? && (can? :create, User) # used in view
