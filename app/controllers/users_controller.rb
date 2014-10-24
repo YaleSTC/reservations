@@ -137,7 +137,9 @@ class UsersController < ApplicationController
   end
 
   def update
-    if @user.update_attributes(user_params)
+    method = @cas_auth ? :update_attributes : :update_with_password
+    if @user.send(method, user_params)
+      sign_in @user, :bypass => true
       flash[:notice] = "Successfully updated user."
       redirect_to user_path(@user)
     else
