@@ -47,8 +47,9 @@ class AppConfigsController < ApplicationController
                   :delete_missed_reservations, :send_notifications_for_deleted_missed_reservations,
                   :deleted_missed_reservation_email_body,
                   :default_per_cat_page, :terms_of_service, :favicon,
-                  :checkout_persons_can_edit, :override_on_create,
-                  :override_at_checkout, :require_phone, :request_text)
+                  :checkout_persons_can_edit, :enable_renewals,
+                  :override_on_create, :override_at_checkout, :require_phone,
+                  :request_text)
   end
 end
 
