@@ -33,7 +33,7 @@
   <%= hidden_field_tag(:from_cart, false) %>
   <%= hidden_field_tag(:partial_to_render, 'form') %>
 
-  <%= render partial: 'terms_of_service/user_accepted', locals: {f: f}%>
+  <%= render partial: 'terms_of_service/user_accepted', locals: {f: f} unless action_name == 'new' %>
 
   <% if can? :manage, User %>
       <%# TODO: Make this a fancy box %>
