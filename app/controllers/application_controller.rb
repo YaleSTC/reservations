@@ -66,9 +66,8 @@ class ApplicationController < ActionController::Base
   # end
 
   def cart
-    # ensure that we call current_or_guest_user during a new request to delete
-    # the guest user from the db
-    reserver = current_or_guest_user
+    # make sure we reset the reserver when we log in
+    reserver = current_user ? current_user : current_or_guest_user
     session[:cart] ||= Cart.new
     # if there is no cart reserver_id or the old cart reserver was deleted
     # (i.e. we've logged in and the guest user was destroyed)
@@ -171,7 +170,6 @@ class ApplicationController < ActionController::Base
   def current_or_guest_user
     if current_user
       if session[:guest_user_id]
-        logging_in
         session[:guest_user_id] = nil
       end
       current_user
@@ -302,19 +300,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  # https://github.com/plataformatec/devise/wiki/How-To:-Create-a-guest-user
-  # called (once) when the user logs in
-  def logging_in
-    # any code we need to run to transfer the cart over goes here
-    # our current cart method will reset the reserver to current_user if the
-    # old reserver (i.e. the guest user) was deleted, so we don't need to
-    # explicitly switch the reserver_id
-  end
-
   # find guest user - looks for existing guest user in the database and
-  # creates a new one if one doesn't exist. This should only be called once
-  # PER INSTANCE, and means that we won't clog up our Users table w/ guest
-  # records.
+  # creates a new one if one doesn't exist. The latter should only be called
+  # once PER INSTANCE, and means that we won't clog up our Users table w/
+  # guest records.
   def find_guest_user
     guest = User.find_by_role('guest')
     if guest
