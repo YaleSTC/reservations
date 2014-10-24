@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 ruby '2.1.2' # Version in .ruby-version must match
 
 #standard gems
-gem 'rails', '4.1.4'
+gem 'rails', '~> 4.1.5'
 gem 'mysql2'
 gem 'rake'
 gem 'rdoc'
@@ -35,7 +35,7 @@ gem 'jquery-datatables-rails'
 gem 'rails4-autocomplete'
 gem 'select2-rails'
 gem 'kaminari'
-gem 'spinjs-rails'
+gem 'spinjs-rails', '~> 1.4'
 
 #forms / formatting
 gem 'dynamic_form'

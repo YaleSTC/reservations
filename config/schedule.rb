@@ -19,7 +19,15 @@
 
 # Learn more: http://github.com/javan/whenever
 
-every 1.day, :at => '5:00 am' do
+# stagger jobs by offsetting with current time
+time = Time.new
+
+# define cron strings
+nightly_cron_str = time.min.to_s + " 5 * * *"
+hourly_cron_str = time.min.to_s + " * * * *"
+
+# every night around 5 AM
+every nightly_cron_str do
   rake "send_upcoming_checkin_reminder"
   rake "send_overdue_checkin_reminder"
   rake "delete_missed_reservations"
@@ -27,7 +35,8 @@ every 1.day, :at => '5:00 am' do
   rake "delete_old_blackouts"
 end
 
-every 1.hour do
+# every hour (except five AM)
+every hourly_cron_str do
   rake "send_reservation_notes"
 end
 
