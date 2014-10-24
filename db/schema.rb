@@ -193,6 +193,7 @@ ActiveRecord::Schema.define(version: 20141014041026) do
     t.boolean  "terms_of_service_accepted"
     t.string   "view_mode",                             default: "normal"
     t.string   "role",                                  default: "normal"
+    t.boolean  "missing_phone",                         default: false
     t.string   "encrypted_password",        limit: 128, default: "",       null: false
   end
 

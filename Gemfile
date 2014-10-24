@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 ruby '2.1.2' # Version in .ruby-version must match
 
 #standard gems
-gem 'rails', '4.1.4'
+gem 'rails', '~> 4.1.5'
 gem 'mysql2'
 gem 'rake', '~> 10.3.2'
 gem 'rdoc', '~> 4.1.2'
@@ -12,9 +12,6 @@ gem 'rdoc', '~> 4.1.2'
 group :development, :test do
   gem 'dotenv-rails', '~> 1.0.2'
 end
-
-# rails 4 transition gems
-gem 'activerecord-session_store'
 
 # authentication / authorization
 gem 'devise', '~> 3.3.0'
