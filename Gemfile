@@ -68,6 +68,7 @@ group :development, :test do
   gem 'codeclimate-test-reporter'
   gem 'parallel_tests'
   gem 'database_cleaner'
+  gem 'selenium-webdriver', '~> 2.43.0' # for integration tests w/ JS
 end
 
 # Gems used only for assets and not required

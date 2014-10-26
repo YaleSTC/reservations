@@ -23,5 +23,6 @@ FactoryGirl.define do
     deleted_missed_reservation_email_body "MyText"
     send_notifications_for_deleted_missed_reservations true
     checkout_persons_can_edit false
+    # viewed true # used to play with selenium testing
   end
 end

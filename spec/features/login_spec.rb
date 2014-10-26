@@ -1,10 +1,6 @@
 require 'spec_helper'
-require 'capybara/rails'
 
-# Warden test mode for authentication
-Warden.test_mode!
-
-describe "login process", :type => :feature do
+describe "login process" do
   before :each do
     app_setup
     @user = FactoryGirl.create(:admin)
@@ -15,6 +11,11 @@ describe "login process", :type => :feature do
     visit "/"
     # save_and_open_page
     expect(page).to have_content 'Catalog'
+  end
+
+  it "allows admins to see the users index" do
+    visit '/users'
+    expect(page).to have_content 'Users'
   end
 end
 
