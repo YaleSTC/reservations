@@ -1,13 +1,11 @@
 require 'net/ldap'
 
 class User < ActiveRecord::Base
-  # Include cas devise module
+  # Include authentication modules
   if ENV['CAS_AUTH']
-    devise :cas_authenticatable
+    devise :cas_authenticatable, :trackable
   else
-    devise :database_authenticatable # THIS IS BROKEN... we need to heavily
-    # tweak the User resource to get it working w/ Devise and flexible enough
-    # to support other authentication methods
+    devise :database_authenticatable, :trackable
   end
   has_many :reservations, foreign_key: 'reserver_id', dependent: :destroy
   has_and_belongs_to_many :requirements,
