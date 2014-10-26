@@ -1,6 +1,6 @@
-<h2>Forgot your password?</h2>
+<% title "Forgot your password?" %>
 
-<%= simple_form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
+<%= simple_form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, class: "form-horizontal" }) do |f| %>
   <%= f.error_notification %>
 
   <div class="form-inputs">
@@ -9,7 +9,6 @@
 
   <div class="form-actions">
     <%= f.button :submit, "Send me reset password instructions" %>
+    <%= link_to "Log in", new_session_path(resource_name), class: 'btn' %>
   </div>
 <% end %>
-
-<%= render "devise/shared/links" %>
