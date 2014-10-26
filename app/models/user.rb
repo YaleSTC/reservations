@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   if ENV['CAS_AUTH']
     devise :cas_authenticatable, :trackable
   else
-    devise :database_authenticatable, :trackable
+    devise :database_authenticatable, :trackable, :recoverable
   end
   has_many :reservations, foreign_key: 'reserver_id', dependent: :destroy
   has_and_belongs_to_many :requirements,
