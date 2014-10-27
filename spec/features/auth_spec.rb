@@ -162,7 +162,7 @@ describe 'Authentication' do
       end
     end
 
-    context 'with existing user' do
+    context 'login with existing user' do
       before(:each) do
         visit '/'
         click_link 'Sign In', match: :first
@@ -210,6 +210,30 @@ describe 'Authentication' do
         end
 
         it_behaves_like 'login error'
+      end
+    end
+
+    context 'resetting the password' do
+      before(:each) do
+        visit '/'
+        click_link 'Sign In', match: :first
+        click_link 'Forgot your password?'
+      end
+
+      it 'responds with and error for non-existant login' do
+        fill_in 'Email', with: 'badusername@email.com'
+        click_button 'Send me reset password instructions'
+
+        expect(page).to have_content 'Forgot your password?'
+        expect(page).to have_content 'not found'
+      end
+
+      it 'responds correctly with valid login' do
+        fill_in 'Email', with: @user.email
+        click_button 'Send me reset password instructions'
+
+        expect(page).to have_content 'Sign In'
+        expect(page).to have_content 'You will receive an email with instructions on how to reset your password in a few minutes.'
       end
     end
   end
