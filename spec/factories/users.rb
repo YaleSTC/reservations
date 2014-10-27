@@ -18,6 +18,11 @@ FactoryGirl.define do
     role 'normal'
     view_mode 'normal'
 
+    unless ENV['CAS_AUTH']
+      password 'passw0rd'
+      password_confirmation 'passw0rd'
+    end
+
     factory :admin do
       role 'admin'
       view_mode 'admin'

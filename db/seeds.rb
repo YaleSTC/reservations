@@ -199,6 +199,10 @@ unless entered_num == 0
         u.username = (0...3).map{65.+(rand(25)).chr}.join.downcase + r.rand(2..99).to_s
         u.affiliation = 'YC ' + %w{BK BR CC DC ES JE MC PC SM SY TC TD}.sample + ' ' + r.rand(2012..2015).to_s
         u.role = ['normal', 'checkout'].sample
+        unless ENV['CAS_AUTH']
+          u.password = 'password'
+          u.password_confirmation = 'password'
+        end
       end
 
     end
