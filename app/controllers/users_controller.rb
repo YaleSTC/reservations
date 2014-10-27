@@ -153,17 +153,13 @@ class UsersController < ApplicationController
   end
 
   def ban
-    @user.role = "banned"
-    @user.view_mode = "banned"
-    @user.save
+    @user.update_attributes(role: 'banned', view_mode: 'banned')
     flash[:notice] = "#{@user.name} was banned succesfully."
     redirect_to request.referer
   end
 
   def unban
-    @user.role = "normal"
-    @user.view_mode = "normal"
-    @user.save
+    @user.update_attributes(role: 'normal', view_mode: 'normal')
     flash[:notice] = "#{@user.name} was restored to patron status."
     redirect_to request.referer
   end
