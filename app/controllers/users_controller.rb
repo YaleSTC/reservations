@@ -83,9 +83,7 @@ class UsersController < ApplicationController
     if @cas_auth
       @user.username = session[:new_username] unless current_user and can? :manage, Reservation
     else
-      # check for devise methods for checking password match
       @user.username = @user.email
-      @user.password = user_params[:password] if (user_params[:password] == user_params[:password_confirmation]) && !user_params[:password].blank?
     end
     if @user.save
       # delete extra session parameter if we came from CAS hackery

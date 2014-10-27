@@ -27,6 +27,11 @@ class User < ActiveRecord::Base
   validates :email,       presence:    true,
                           uniqueness: true,
                           format:      { with: /\A([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})\z/i }
+  unless ENV['CAS_AUTH']
+    validates :password,  presence: true,
+                          length: { minimum: 8 }, :unless => lambda {|u| u.password.nil? }
+    validates_confirmation_of :password, only: :create
+  end
   validates :nickname,    format:      { with: /\A[^0-9`!@#\$%\^&*+_=]+\z/ },
                           allow_blank: true
   validates :terms_of_service_accepted,
