@@ -95,6 +95,8 @@ You will need to also configure the email config in
 relevant hostname. This will allow links in emails to point to the
 correct places.
 
+If you want to use CAS authentication you must set the `CAS_AUTH` environment variable to some value. Otherwise, the application will default to using email/password authentication.
+
 
 Further Documentation
 ==================
