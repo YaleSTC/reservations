@@ -1,3 +1,4 @@
+# some basic helpers to simulate controller methods in specs
 module ControllerHelpers
   def current_user
     user_session_info = response.request.env["rack.session"]["warden.user.user.key"]

@@ -12,7 +12,6 @@ class ApplicationController < ActionController::Base
   with_options unless: lambda { |u| User.count == 0 } do |c|
     c.before_filter :load_configs
     c.before_filter :seen_app_configs
-    # c.before_filter :first_time_user
     c.before_filter :fix_cart_date
     c.before_filter :set_view_mode
     c.before_filter :check_view_mode
@@ -56,14 +55,6 @@ class ApplicationController < ActionController::Base
       render file: 'application_setup/index', layout: 'application'
     end
   end
-
-  # def first_time_user
-  #   if current_user.nil? && params[:action] != "terms_of_service"
-  #     flash[:notice] = "Hey there! Since this is your first time making a reservation, we'll
-  #       need you to supply us with some basic contact information."
-  #     redirect_to new_user_path
-  #   end
-  # end
 
   def cart
     # make sure we reset the reserver when we log in
@@ -189,6 +180,7 @@ class ApplicationController < ActionController::Base
      guest_user
   end
 
+  # allow CanCanCan to use the guest user when we're not logged in
   def current_ability
     @current_ability ||= Ability.new(current_or_guest_user)
   end
@@ -293,6 +285,7 @@ class ApplicationController < ActionController::Base
   def after_sign_in_path_for(user)
     # CODE FOR CAS LOGIN --> NEW USER
     if ENV['CAS_AUTH'] && current_user && current_user.id.nil? && current_user.username
+      # store username in session since there's a request in between
       session[:new_username] = current_user.username
       new_user_path
     else
