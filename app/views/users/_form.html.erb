@@ -9,10 +9,10 @@
     <% end %>
   <% else %>
     <%= f.input :email, required: true, autofocus: true %>
-    <% if action_name == 'new' %>
+    <% if action_name == 'new' || (action_name == 'create') %>
       <%= f.input :password, required: true %>
       <%= f.input :password_confirmation, required: true %>
-    <% else %>
+    <% elsif @editing_self %>
       <%= f.input :password, autocomplete: "off", hint: "leave it blank if you don't want to change it", required: false %>
       <%= f.input :password_confirmation, required: false %>
       <%= f.input :current_password, hint: "we need your current password to confirm your changes", required: true %>
