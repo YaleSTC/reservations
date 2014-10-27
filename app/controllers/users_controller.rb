@@ -81,8 +81,11 @@ class UsersController < ApplicationController
     @user.view_mode = @user.role
     # if we're using CAS
     if @cas_auth
+      # pull from our CAS hackery unless you're an admin/superuser creating a
+      # new user
       @user.username = session[:new_username] unless current_user and can? :manage, Reservation
     else
+      # if not using CAS, just put the e-mail as the username
       @user.username = @user.email
     end
     if @user.save
@@ -132,18 +135,25 @@ class UsersController < ApplicationController
 
   def edit
     @can_edit_username = can? :edit_username, User
+    # variable to determine whether or not to show the password fields
     @editing_self = current_user.id == params[:id]
   end
 
   def update
     par = user_params
+    # use :update_with_password when we're not using CAS and you're editing
+    # your own profile
     if @cas_auth || ((can? :manage, User) && (@user.id != current_user.id))
       method = :update_attributes
+      # delete the current_password key from the params hash just in case it's
+      # present (and :update_attributes will throw an error)
       par.delete('current_password')
     else
       method = :update_with_password
     end
     if @user.send(method, par)
+      # sign in the user if you've edited yourself since you have a new
+      # password, otherwise don't
       sign_in @user, :bypass => true if (@user.id == current_user.id)
       flash[:notice] = "Successfully updated user."
       redirect_to user_path(@user)

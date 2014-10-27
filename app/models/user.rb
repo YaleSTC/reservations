@@ -2,6 +2,10 @@ require 'net/ldap'
 
 class User < ActiveRecord::Base
   # Include authentication modules
+  # If the CAS_AUTH environment variable is set, we simply include the
+  # :cas_authenticatable module. If not, we implement password authentcation
+  # using the :database_authenticatable module and also allow for password
+  # resets.
   if ENV['CAS_AUTH']
     devise :cas_authenticatable
   else
@@ -27,9 +31,12 @@ class User < ActiveRecord::Base
   validates :email,       presence:    true,
                           uniqueness: true,
                           format:      { with: /\A([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})\z/i }
+  # validations for password authentication
   unless ENV['CAS_AUTH']
+    # only run password validatons if the parameter is present
     validates :password,  presence: true,
                           length: { minimum: 8 }, :unless => lambda {|u| u.password.nil? }
+    # check password confirmations
     validates_confirmation_of :password, only: :create
   end
   validates :nickname,    format:      { with: /\A[^0-9`!@#\$%\^&*+_=]+\z/ },
