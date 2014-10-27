@@ -69,6 +69,9 @@ RSpec.configure do |config|
   # Devise helpers
   config.include Devise::TestHelpers, type: :controller
   config.include ControllerHelpers, type: :controller
+  config.include EnvHelpers, type: :controller
   config.include Warden::Test::Helpers, type: :feature
+  config.include InjectSession, type: :feature
   config.include FeatureHelpers, type: :feature
+  config.include EnvHelpers, type: :feature
 end
