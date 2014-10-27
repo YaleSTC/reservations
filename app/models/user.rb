@@ -76,7 +76,6 @@ class User < ActiveRecord::Base
     self.reservations.collect{ |r| r.equipment_object }.flatten
   end
 
-
   def self.search_ldap(login)
     return nil if login.blank?
 
@@ -97,10 +96,6 @@ class User < ActiveRecord::Base
                                 result[0][:college],
                                 result[0][:class]].select{ |s| s.length > 0 }.join(" ") }
     end
-  end
-
-  def self.search_ldap_email(email)
-    # CODE TO SEARCH BY EMAIL HERE
   end
 
   def self.select_options
