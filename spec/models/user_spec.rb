@@ -1,4 +1,5 @@
 require 'spec_helper'
+include EnvHelpers
 
 describe User, :type => :model do
   it "has a working factory" do
@@ -119,13 +120,29 @@ describe User, :type => :model do
   end
 
   describe ".render_name" do
-    it "should return the nickname, last name, and username id as a string if nickname exists" do
-      @user = FactoryGirl.create(:user, nickname: "Sasha Fierce")
-      expect(@user.render_name).to eq("#{@user.nickname} #{@user.last_name} #{@user.username}")
+    it "should return the nickname, last name, and username id as a string if nickname exists and if using CAS" do
+      env_wrapper('CAS_AUTH' => '1') do
+        @user = FactoryGirl.create(:user, nickname: "Sasha Fierce")
+        expect(@user.render_name).to eq("#{@user.nickname} #{@user.last_name} #{@user.username}")
+      end
     end
-    it "should return the first name, last name, and username id as a string if no nickname" do
-      @no_nickname = FactoryGirl.create(:user)
-      expect(@no_nickname.render_name).to eq("#{@no_nickname.first_name} #{@no_nickname.last_name} #{@no_nickname.username}")
+    it "should return the first name, last name, and username id as a string if no nickname and if using CAS" do
+      env_wrapper('CAS_AUTH' => '1') do
+        @no_nickname = FactoryGirl.create(:user)
+        expect(@no_nickname.render_name).to eq("#{@no_nickname.first_name} #{@no_nickname.last_name} #{@no_nickname.username}")
+      end
+    end
+    it "should return the nickname and last name as a string if nickname exists and not using CAS" do
+      env_wrapper('CAS_AUTH' => nil) do
+        @user = FactoryGirl.create(:user, nickname: "Sasha Fierce")
+        expect(@user.render_name).to eq("#{@user.nickname} #{@user.last_name}")
+      end
+    end
+    it "should return the first name and last name as a string if no nickname and not using CAS" do
+      env_wrapper('CAS_AUTH' => nil) do
+        @no_nickname = FactoryGirl.create(:user)
+        expect(@no_nickname.render_name).to eq("#{@no_nickname.first_name} #{@no_nickname.last_name}")
+      end
     end
   end
 end
