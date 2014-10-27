@@ -48,6 +48,7 @@ Devise.setup do |config|
 
   # ==> devise_cas_authenticatable configuration
 
+  # configure the base URL of your CAS server
   config.cas_base_url = "https://secure.its.yale.edu/cas/"
 
   # you can override these if you need to, but cas_base_url is usually enough
