@@ -12,7 +12,9 @@
   <%#= f.label "Visible To" %>
   <%#= select_tag(:visible_to, options_for_select([['Everyone','everyone'],['Only Admin','admin'],['Only Checkout','checkout']]) %>
 
-  <%= f.input :message %>
+  <%= f.input :message, label: 'Annoucement Message', input_html: {class: 'span6', rows: 7},
+    hint: 'This message will be displayed to all users of the app. You can use markdown in this field.' %>
+  <%= render partial: 'shared/markdown_button' %>
 
   <%= f.button :wrapped, cancel: announcements_path %>
   <% end %>
