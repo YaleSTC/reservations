@@ -6,9 +6,15 @@ shared_examples_for 'valid registration' do
   it { is_expected.to have_link 'Log Out' }
 end
 
-shared_examples_for 'form error' do
+shared_examples_for 'registration error' do
   it { is_expected.to have_content('New User') }
   it { is_expected.to have_content("Please review the problems below:") }
+end
+
+shared_examples_for 'login error' do
+  it { is_expected.to have_content('Sign In') }
+  it { is_expected.to have_content("Invalid email") }
+  it { is_expected.to have_content("or password.") }
 end
 
 describe 'Authentication' do
@@ -85,16 +91,16 @@ describe 'Authentication' do
               click_button 'Create User'
             end
 
-            it_behaves_like 'form error'
+            it_behaves_like 'registration error'
           end
 
-          context 'with missing passwords' do
+          context 'with missing password' do
             before do
               fill_in 'user_password', with: ''
               click_button 'Create User'
             end
 
-            it_behaves_like 'form error'
+            it_behaves_like 'registration error'
           end
 
           context 'with short password' do
@@ -104,19 +110,107 @@ describe 'Authentication' do
               click_button 'Create User'
             end
 
-            it_behaves_like 'form error'
+            it_behaves_like 'registration error'
+          end
+
+          context 'with missing email' do
+            before do
+              fill_in 'user_email', with: ''
+              click_button 'Create User'
+            end
+
+            it_behaves_like 'registration error'
+          end
+
+          context 'with missing first name' do
+            before do
+              fill_in 'user_first_name', with: ''
+              click_button 'Create User'
+            end
+
+            it_behaves_like 'registration error'
+          end
+
+          context 'with missing last name' do
+            before do
+              fill_in 'user_last_name', with: ''
+              click_button 'Create User'
+            end
+
+            it_behaves_like 'registration error'
+          end
+
+          context 'with missing affiliation' do
+            before do
+              fill_in 'user_affiliation', with: ''
+              click_button 'Create User'
+            end
+
+            it_behaves_like 'registration error'
+          end
+
+          context 'with existing user' do
+            before do
+              @user = FactoryGirl.create(:user)
+              fill_in 'user_email', with: @user.email
+              click_button 'Create User'
+            end
+
+            it_behaves_like 'registration error'
           end
         end
       end
     end
-  end
-end
 
-def fill_in_registration
-  fill_in 'Email', with: 'example@example.com'
-  fill_in 'user_password', with: 'passw0rd'
-  fill_in 'user_password_confirmation', with: 'passw0rd'
-  fill_in 'First name', with: 'John'
-  fill_in 'Last name', with: 'Smith'
-  fill_in 'Affiliation', with: 'Yale'
+    context 'with existing user' do
+      before(:each) do
+        visit '/'
+        click_link 'Sign In', match: :first
+        fill_in_login
+      end
+
+      it 'can log in with valid information' do
+        click_button 'Sign in'
+        expect(page).to have_content 'Catalog'
+        expect(page).to have_content 'Signed in successfully.'
+        expect(page).to have_link 'Log Out'
+      end
+
+      context 'with invalid password' do
+        before do
+          fill_in 'Password', with: 'wrongpassword'
+          click_button 'Sign in'
+        end
+
+        it_behaves_like 'login error'
+      end
+
+      context 'with missing password' do
+        before do
+          fill_in 'Password', with: ''
+          click_button 'Sign in'
+        end
+
+        it_behaves_like 'login error'
+      end
+
+      context 'with invalid email' do
+        before do
+          fill_in 'Email', with: 'wrongemail@example.com'
+          click_button 'Sign in'
+        end
+
+        it_behaves_like 'login error'
+      end
+
+      context 'with missing email' do
+        before do
+          fill_in 'Email', with: ''
+          click_button 'Sign in'
+        end
+
+        it_behaves_like 'login error'
+      end
+    end
+  end
 end
