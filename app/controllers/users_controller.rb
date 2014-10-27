@@ -132,12 +132,19 @@ class UsersController < ApplicationController
 
   def edit
     @can_edit_username = can? :edit_username, User
+    @editing_self = current_user.id == params[:id]
   end
 
   def update
-    method = @cas_auth ? :update_attributes : :update_with_password
-    if @user.send(method, user_params)
-      sign_in @user, :bypass => true
+    par = user_params
+    if @cas_auth || ((can? :manage, User) && (@user.id != current_user.id))
+      method = :update_attributes
+      par.delete('current_password')
+    else
+      method = :update_with_password
+    end
+    if @user.send(method, par)
+      sign_in @user, :bypass => true if (@user.id == current_user.id)
       flash[:notice] = "Successfully updated user."
       redirect_to user_path(@user)
     else
