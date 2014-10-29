@@ -17,7 +17,6 @@ before_script:
   - cp config/database.travis.yml config/database.yml
   - bundle exec rake db:create
   - bundle exec rake db:schema:load
-  - bundle exec rake db:test:prepare
 
 # From Travis CI Support: This will route jobs to our beta build environment,
 # which has much faster boot times, making it easier to debug via Travis.
