@@ -90,7 +90,7 @@ You will need to generate a fresh secret key for cookie encryption and signing. 
 You will need to also configure the email config in `config/initializers/setup_mail.rb`. Replace `0.0.0.0:3000` with the relevant hostname. This will allow links in emails to point to the correct places.
 
 Finally, Reservations ships with the default config time set to Eastern Time (US and Canada). To change the time, edit `config/application.rb`
-`config.time_zone = 'Eastern Time (US & Canada)'`
+`config.time_zone = 'Eastern Time (US & Canada)'`.
 
 
 Further Documentation
