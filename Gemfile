@@ -46,7 +46,6 @@ gem 'simple_form'
 gem 'cocoon'
 gem 'redcarpet'
 
-
 # auditting / logging
 gem 'paper_trail', '~> 3.0.5'
 
@@ -66,9 +65,7 @@ group :development, :test do
   gem 'awesome_print'
   gem 'ruby-progressbar'
   gem 'codeclimate-test-reporter'
-  gem 'parallel_tests'
   gem 'database_cleaner'
-  gem 'selenium-webdriver', '~> 2.43.0' # for integration tests w/ JS
 end
 
 # Gems used only for assets and not required
