@@ -8,7 +8,9 @@ function handleDeactivation(e, overbooked) {
   }
   if (c == true) {
     var p = prompt("Write down the reason for deactivation of this equipment object.")
-    if (p != null) {
+    if (p == null) {
+      e.href += "?deactivation_cancelled=1"
+    } else if (p != "") {
       e.href += "?deactivation_reason=" + encodeURIComponent(p)
     }
   }
