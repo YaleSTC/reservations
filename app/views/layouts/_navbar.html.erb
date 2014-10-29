@@ -31,7 +31,7 @@
           <% end %>
         <% end %>
         <%# test if current_user first because if there is no current user (i.e., no login), do not show %>
-        <% if current_user %>
+        <% if can? :create, Reservation %>
           <!-- Reservations Dropdown -->
 
           <li id="my_reservations" class="dropdown">

@@ -55,16 +55,18 @@ module LayoutHelper
 
   def get_role_name role
     case role
-      when 'superuser'
-        'Superuser'
-      when 'admin'
-        'Admin'
-      when 'checkout'
-        'Checkout Person'
-      when 'normal'
-        'Patron'
-      when 'banned'
-        'Banned'
+    when 'superuser'
+      'Superuser'
+    when 'admin'
+      'Admin'
+    when 'checkout'
+      'Checkout Person'
+    when 'normal'
+      'Patron'
+    when 'banned'
+      'Banned'
+    when 'guest'
+      'Guest'
     end
   end
 end

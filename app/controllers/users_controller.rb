@@ -135,8 +135,6 @@ class UsersController < ApplicationController
 
   def edit
     @can_edit_username = can? :edit_username, User
-    # variable to determine whether or not to show the password fields
-    @editing_self = current_user.id.to_s == params[:id]
   end
 
   def update
