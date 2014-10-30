@@ -51,7 +51,7 @@
           <td><%= link_to 'Show', blackout, class: 'btn btn-inverse' %></td>
         <% end %>
         <td><%= link_to 'Edit', edit_blackout_path(blackout), class: 'btn' %></td>
-        <td><%= link_to 'Delete', blackout, confirm: 'Are you sure?', method: :delete, class: 'btn btn-danger' %></td>
+        <td><%= link_to 'Delete', blackout, data: { confirm: 'Are you sure?' }, method: :delete, class: 'btn btn-danger' %></td>
       </tr>
     <% end %>
   </tbody>
