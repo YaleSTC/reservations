@@ -173,6 +173,11 @@ class ApplicationController < ActionController::Base
   # find guest_user object associated with the current session,
   # creating one as needed
   def guest_user
+    # check for leftover guest_user_id in session (shouldn't really be
+    # relevant)
+    if session[:guest_user_id] && User.find_by_id(session[:guest_user_id]) && User.find_by_id(session[:guest_user_id]).role != 'guest'
+      session[:guest_user_id] = nil
+    end
     # Cache the value the first time it's gotten.
     @cached_guest_user ||= User.find(session[:guest_user_id] ||= find_guest_user.id)
 
