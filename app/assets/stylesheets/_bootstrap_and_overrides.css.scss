@@ -1,7 +1,8 @@
+@import "bootstrap-sprockets";
+@import "bootstrap";
+
 // Variable overrides for Bootstrap
 @import "bootstrap_overrides";
-
-@import "bootstrap";
 
 body {
   padding-top: 50px;

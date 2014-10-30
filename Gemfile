@@ -76,7 +76,7 @@ gem 'coffee-rails'
 gem 'uglifier'
 gem 'font-awesome-rails'
 # Bootstrap
-gem 'bootstrap-sass', '~> 3.2.0'
+gem 'bootstrap-sass', '~> 3.3.0'
 gem 'sass-rails', '>= 3.2'
 gem 'autoprefixer-rails'
 
