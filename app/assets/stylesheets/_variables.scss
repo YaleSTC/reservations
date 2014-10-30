@@ -1,2 +1,5 @@
 $h3-line-height: 27px;
 $user_label-size: 1.5;
+
+// Custom Bootstrap 2 to 3 vars
+$btn-warning-bg-highlight: lighten($btn-warning-bg, 10%);

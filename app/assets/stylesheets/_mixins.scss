@@ -1,6 +1,6 @@
 @mixin giant-number {
-	font-size: $baseFontSize * 3;
-	line-height: $baseLineHeight * 3;
+	font-size: $font-size-base * 3;
+	line-height: $line-height-base * 3;
 	margin-bottom: 8px;
 }
 
@@ -41,4 +41,11 @@
 
 @mixin warning-icon-drop-shadow {
   text-shadow: 0 1px 1px lighten(black, 58%);
+}
+
+@mixin border-radius($w) {
+  @include border-top-radius($w);
+  @include border-right-radius($w);
+  @include border-bottom-radius($w);
+  @include border-left-radius($w);
 }

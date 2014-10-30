@@ -10,6 +10,7 @@
 @import "bootstrap/mixins";
 @import "bootstrap/type";
 @import "variables";
+@import "mixins";
 
 
 // Global / general styles
@@ -17,17 +18,17 @@
 
 body {
   font-family: $sansFontFamily;
-  line-height: $baseLineHeight;
+  line-height: $line-height-base;
   background: white;
 }
 
 p {
-  line-height: 1.4 * $baseLineHeight;
+  line-height: 1.4 * $line-height-base;
 }
 
 #header, #sidebar-right, #top_buttons, .form-actions, #pagination_line,
 #add_to_cart, .pagination, .container > hr, a[href="#date_range"], #links_box,
-.nav, .nav-collapse, #res_right_column nav.nav-tabs, #footer_feedback, input,
+.nav, .navbar-collapse, #res_right_column nav.nav-tabs, #footer_feedback, input,
 #people_row i.icon-user, .bar, .bar-dividers, #flashes {
 	display: none;
 }
@@ -56,11 +57,11 @@ img {
 }
 
 .navbar {
-  .brand {
+  .navbar-brand {
     display: block;
-    // Vertically center the text given $navbarHeight
+    // Vertically center the text given $navbar-height
     $elementHeight: 20px;
-    padding: (($navbarHeight - $elementHeight) / 2 - 2) 20px (($navbarHeight - $elementHeight) / 2 + 2);
+    padding: (($navbar-height - $elementHeight) / 2 - 2) 20px (($navbar-height - $elementHeight) / 2 + 2);
     margin-left: -20px; // negative indent to left-align the text down the page
     font-size: 30px;
     font-weight: 200;
@@ -87,7 +88,7 @@ img {
   border: solid 1px black;
   @include border-radius(5px);
   padding: $user_label-size*1px $user_label-size*4px $user_label-size*2px;
-  font-size: $baseFontSize * 1.5;
+  font-size: $font-size-base * 1.5;
   font-weight: bold;
   line-height: 14px;
   margin-right: 10px;

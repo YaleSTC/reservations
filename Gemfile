@@ -68,12 +68,14 @@ group :development, :test do
 end
 
 # Gems used only for assets and not required
-# in production environments by default.
-gem 'sass-rails'
+# in production environments by default
 gem 'coffee-rails'
 gem 'uglifier'
-gem 'bootstrap-sass', '~> 2.0.3'
 gem 'font-awesome-rails'
+# Bootstrap
+gem 'bootstrap-sass', '~> 3.3.0'
+gem 'sass-rails', '>= 3.2'
+gem 'autoprefixer-rails'
 
 group :development do
   gem 'thin'

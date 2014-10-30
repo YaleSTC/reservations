@@ -27,11 +27,6 @@
 // ============================
 @import "autocomplete";
 
-// Fancy select dropdowns
-// ============================
-@import "select2";
-@import "select2_customizations";
-
 // Our Custom Mixins
 // ============================
 @import "mixins";
@@ -43,6 +38,12 @@
 // Global Application Styles
 // ============================
 @import "global";
+
+// Fancy select dropdowns
+// ============================
+@import "select2-bootstrap";
+@import "select2";
+@import "select2_customizations";
 
 // Partial Imports
 // ============================

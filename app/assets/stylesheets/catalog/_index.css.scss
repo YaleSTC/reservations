@@ -1,7 +1,7 @@
 .thumbnail {
   height: 420px;
   position: relative;
-  line-height: $baseLineHeight;
+  line-height: $line-height-base;
   @include box-shadow(#{inset 0px 0px 30px rgba(0,0,0,.1), 0 0 0 rgba(0,0,0,0)});
   @include transition(all .15s ease-out);
 
@@ -44,13 +44,13 @@ a.not-qualified-icon {
 	position: absolute;
 	bottom: 13px;
 	left: 110px;
-	font-size: $baseFontSize * 2;
-	color: $btnWarningBackgroundHighlight;
+	font-size: $font-size-base * 2;
+	color: $btn-warning-bg-highlight;
   @include warning-icon-drop-shadow;
 
 	&:hover, &:active {
 		text-decoration: none;
-		color: $btnWarningBackground;
+		color: $btn-warning-bg;
 	}
 }
 
