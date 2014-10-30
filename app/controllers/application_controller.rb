@@ -160,8 +160,11 @@ class ApplicationController < ActionController::Base
   # https://github.com/plataformatec/devise/wiki/How-To:-Create-a-guest-user
   def current_or_guest_user
     if current_user
+      # if first time called after sign in
       if session[:guest_user_id]
+        # delete guest user id key
         session[:guest_user_id] = nil
+        # update cart reserver
         cart.reserver_id = current_user.id
       end
       current_user
