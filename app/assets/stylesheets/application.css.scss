@@ -18,7 +18,7 @@
 // Twitter Bootstrap and our variable customizations for it
 // ============================
 // @import "bootstrap_and_overrides"; // must be loaded before everything but the webfont
-// @import "bootstrap-sprockets";
+@import "bootstrap-sprockets";
 
 // Custom rolled jQuery UI CSS for integrating with Bootstrap
 // ============================
