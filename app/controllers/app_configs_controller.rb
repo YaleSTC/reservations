@@ -12,6 +12,10 @@ class AppConfigsController < ApplicationController
 
     reset_tos = params[:app_config][:reset_tos_for_users]
 
+    # check for require phone change and update users accordingly
+    User.no_phone.update_all(missing_phone: true) if
+      !@app_config.require_phone && params[:app_config][:require_phone] == '1'
+
     if @app_config.update_attributes(app_config_params)
       if reset_tos == '1'
         User.update_all(['terms_of_service_accepted = ?', false])
@@ -43,8 +47,9 @@ class AppConfigsController < ApplicationController
                   :delete_missed_reservations, :send_notifications_for_deleted_missed_reservations,
                   :deleted_missed_reservation_email_body,
                   :default_per_cat_page, :terms_of_service, :favicon,
-                  :checkout_persons_can_edit, :override_on_create,
-                  :override_at_checkout, :require_phone, :request_text)
+                  :checkout_persons_can_edit, :enable_renewals,
+                  :override_on_create, :override_at_checkout, :require_phone,
+                  :request_text)
   end
 end
 

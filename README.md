@@ -6,6 +6,8 @@
 [![Dependency Status](https://gemnasium.com/YaleSTC/reservations.svg)](https://gemnasium.com/YaleSTC/reservations)
 [![Inline docs](http://inch-ci.org/github/yalestc/reservations.svg)](http://inch-ci.org/github/yalestc/reservations)
 
+![](http://yalestc.github.io/reservations/screenshot.png)
+
 Reservations makes it easy to manage the checking in and out of equipment, much like a library! Here are some of the things Reservations can do:
 
 * manage your inventory of equipment, including storing serial numbers, manuals and other documents, and more.
@@ -85,6 +87,8 @@ CASClient::Frameworks::Rails::Filter.configure(
 Reservations ships with the default config time set to Eastern Time (US and Canada). To change the time, edit `config/application.rb`
 `config.time_zone = 'Eastern Time (US & Canada)'`
 
+**IMPORTANT**
+You will need to generate a fresh secret key for cookie encryption and signing. Run `rake secret` and paste the output into `config/intializers/secret_token.rb`. Do not make this key available to the public, otherwise anyone will be able to sign on as anyone to Reservations.
 
 You will need to also configure the email config in
 `config/environments/production.rb`. Replace `example.com` with the

@@ -51,6 +51,8 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
+    @user.role = 'normal' if user_params[:role].blank?
+    @user.view_mode = @user.role
     @user.login = session[:cas_user] unless current_user and can? :manage, Reservation
     if @user.save
       flash[:notice] = "Successfully created user."
@@ -83,6 +85,7 @@ class UsersController < ApplicationController
 
   def quick_create
     @user = User.new(user_params)
+    @user.role = 'normal' if user_params[:role].blank?
     @user.view_mode = @user.role
     if @user.save
       render action: 'create_success'

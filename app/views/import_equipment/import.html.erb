@@ -5,13 +5,13 @@
 <h3>Columns (must be in the first row of the CSV file)</h3>
 <h5>Categories (Name is mandatory)</h5>
 <%= markdown("
-    name, max_per_user, max_checkout_length, max_renewal_times, max_renewal_length, renewal_days_before_due, sort_order") %>
+    name,max_per_user,max_checkout_length,max_renewal_times,max_renewal_length,renewal_days_before_due,sort_order") %>
 <h5>Equipment Models (Category, Name, Description, Late Fee, and Replacement Fee are mandatory)</h5>
 <%= markdown("
-    category, name, description, late_fee, replacement_fee, max_per_user, max_renewal_length") %>
+    category,name,description,late_fee,replacement_fee,max_per_user,max_renewal_length") %>
 <h5>Equipment Items (Equipment Model and Name are mandatory)</h5>
 <%= markdown("
-    equipment_model, name, serial") %>
+    equipment_model,name,serial") %>
 <h3>Examples</h3>
 <h5>Categories</h5>
 <%= markdown("

@@ -85,6 +85,16 @@ describe AppConfigsController, :type => :controller do
             expect(@user.terms_of_service_accepted).to be_truthy
           end
 
+          it 'correctly sets missing_phone flag for users when toggling :require_phone' do
+            @user = FactoryGirl.create(:no_phone)
+            expect(@user.missing_phone).to be_falsey
+            @params = @params.merge({require_phone: 1})
+            Rails.logger.debug @params
+            post :update, app_config: @params
+            @user.reload
+            expect(@user.missing_phone).to be_truthy
+          end
+
           it 'restores favicon when appropriate'
           # it { should respond_with(:success) }
           # it { should redirect_to(catalog_path) }
