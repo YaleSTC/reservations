@@ -79,6 +79,11 @@ class ReservationsController < ApplicationController
       # there were errors but they didn't fill out the notes
       flash[:error] = "Please give a short justification for this reservation #{requested ? 'request' : 'override'}"
       @notes_required = true
+      if AppConfig.first.request_text.empty?
+        @request_text = "Please give a short justification for this equipment request."
+      else
+        @request_text = AppConfig.first.request_text
+      end
       render :new and return
     end
 
