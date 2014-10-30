@@ -384,6 +384,9 @@ class ReservationsController < ApplicationController
     if params[:archive_note].nil? || params[:archive_note].strip.empty?
       flash[:error] = 'Reason for archiving cannot be empty.'
       redirect_to :back and return
+    elsif params[:archive_note] == 'null'
+      flash[:notice] = 'Reservation archiving cancelled.'
+      redirect_to :back and return
     end
     set_reservation
     if @reservation.checked_in
