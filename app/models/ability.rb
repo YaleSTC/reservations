@@ -12,7 +12,7 @@ class Ability
           cannot :renew, Reservation
         end
         cannot :appoint, :superuser
-        cannot :access, :active_admin
+        cannot :access, :rails_admin
         cannot [:destroy,:update], User, :role => 'superuser'
       when 'checkout'
         can :manage, Reservation
