@@ -103,6 +103,12 @@
               </li>
         <% end %>
 
+        <!-- Rails Admin Link -->
+        <% if can? :access, :rails_admin %>
+          <li class="divider-vertical"></li>
+          <li><%= link_to "Rails Admin", rails_admin_path %></li>
+        <% end %>
+
           <li class="divider-vertical"></li>
       </ul>
 
