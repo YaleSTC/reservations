@@ -162,6 +162,7 @@ class ApplicationController < ActionController::Base
     if current_user
       if session[:guest_user_id]
         session[:guest_user_id] = nil
+        cart.reserver_id = current_user.id
       end
       current_user
     else
