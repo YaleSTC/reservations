@@ -8,7 +8,6 @@
 //= require dataTables/jquery.dataTables
 //= require dataTables/bootstrap/2/jquery.dataTables.bootstrap
 //= require bootstrap-sprockets
-//= require bootstrap-transition
 //= require bootstrap-alert
 //= require bootstrap-button
 //= require bootstrap-collapse
