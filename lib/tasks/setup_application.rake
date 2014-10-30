@@ -12,7 +12,10 @@ namespace :app do
     puts 'and change any configurations that you set from this script. With that'
     puts "in mind, let's get started!"
 
-    if User.all.empty?
+    # ensure no _superusers_ have been created since guest users might have
+    # been
+    if User.where('role = ?', 'superuser').empty?
+      User.destroy_all
       puts ''
       puts 'We need to start by creating a superuser account. Please enter the'
       puts 'following info:'

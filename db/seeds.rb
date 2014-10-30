@@ -125,7 +125,9 @@ if ENV["minimal"]
   puts "Minimal mode activated. Please wait..."
 end
 
-if User.all.empty?
+# check to see if a superuser exists
+if User.where('role = ?', 'superuser').empty?
+  User.destroy_all
   unless ENV["minimal"]
     puts 'We need to create an account for you first. Please enter the following info:'
     puts 'First Name:'
