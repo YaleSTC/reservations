@@ -63,7 +63,7 @@ class EquipmentObjectsController < ApplicationController
 
   # Deactivate and activate extend controller methods in ApplicationController
   def deactivate
-    if params[:deactivation_reason]
+    if params[:deactivation_reason] && !params[:deactivation_cancelled]
       @equipment_object.update_attributes(deactivation_reason: params[:deactivation_reason])
       super
     elsif params[:deactivation_cancelled]
