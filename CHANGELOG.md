@@ -22,6 +22,7 @@ Changelog
 * Majorly refactored the Reservations controller ([#836](https://github.com/YaleSTC/reservations/issues/836), [#882](https://github.com/YaleSTC/reservations/issus/882)).
 * Moved the session from the database to a cookie to improve performance ([#880](https://github.com/YaleSTC/reservations/issues/880)).
 * Added fallback version number derived from CHANGELOG ([#968](https://github.com/YaleSTC/reservations/issues/968)).
+* Added a "Delete" button to the Requirements "show" page ([#803](https://github.com/YaleSTC/reservations/issues/803)).
 
 ### v4.0.0
 *Released on 5 October 2014*
