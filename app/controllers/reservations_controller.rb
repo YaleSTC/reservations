@@ -93,9 +93,9 @@ class ReservationsController < ApplicationController
         start_date = cart.start_date
         reserver = cart.reserver_id
         unless requested
-          flash[:notice] = cart.reserve_all(params[:reservation][:notes])
+          flash[:notice] = cart.reserve_all(current_user, params[:reservation][:notes])
         else
-          flash[:notice] = cart.request_all(params[:reservation][:notes])
+          flash[:notice] = cart.request_all(current_user, params[:reservation][:notes])
         end
 
         redirect_to catalog_path and return if (cannot? :manage, Reservation) || (requested == true)
