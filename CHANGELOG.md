@@ -10,7 +10,7 @@ Changelog
 #### Bug Fixes
 * Fixed an issue where links in the request e-mail were broken ([#1017](https://github.com/YaleSTC/reservations/issues/1017)).
 * Moved the email link hostname back to the environment files ([#1017](https://github.com/YaleSTC/reservations/issues/1017)).
-* Fixed an issue where requiring phone numbers with existing users in the database would cause problems ([#1008](https://github.com/YaleSTC/reservations/issues/1008)).
+* Fixed an issue where requiring phone numbers with existing users in the database would cause problems ([#1008](https://github.com/YaleSTC/reservations/issues/1008), [#675](https://github.com/YaleSTC/reservations/issues/675)).
 * Fixed an issue where some application options defaulted to `nil` instead of `''` and associated problems ([#947](https://github.com/YaleSTC/reservations/issues/947)).
 * Updated `link_to` confirmation syntax for Rails 4 ([#990](https://github.com/YaleSTC/reservations/issues/990)).
 
