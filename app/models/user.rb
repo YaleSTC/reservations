@@ -28,15 +28,24 @@ class User < ActiveRecord::Base
                           if: Proc.new { |u| !u.created_by_admin == "true" }
   validates :role,
             :view_mode,   inclusion: { in: ['admin', 'normal', 'checkout', 'superuser', 'banned'] }
+  validate :view_mode_reset
 
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
   scope :active, lambda { where("role != 'banned'") }
+  scope :no_phone, lambda { where("phone = ? OR phone IS NULL", '') }
 
   # ------- validations -------- #
   def skip_phone_validation?
     return true unless AppConfig.first
     return true unless AppConfig.first.require_phone
+    return true if missing_phone
     return !@csv_import.nil?
+  end
+
+  def view_mode_reset
+    return if role == 'superuser'
+    return if role == 'admin' && view_mode != 'superuser'
+    self.view_mode = role
   end
   # ------- end validations -------- #
 

@@ -1,0 +1,60 @@
+<% title "Import Equipment" %>
+
+<h2>CSV Import Format</h2>
+<p>This form will allow you to import Equipment Categories, Equipment Models, and/or Equipment Items.  You can upload a CSV file for any or all of them and they will be processed in the appropriate order.  Each import type requires a different CSV format, illustrated below.</p>
+<h3>Columns (must be in the first row of the CSV file)</h3>
+<h5>Categories (Name is mandatory)</h5>
+<%= markdown("
+    name,max_per_user,max_checkout_length,max_renewal_times,max_renewal_length,renewal_days_before_due,sort_order") %>
+<h5>Equipment Models (Category, Name, Description, Late Fee, and Replacement Fee are mandatory)</h5>
+<%= markdown("
+    category,name,description,late_fee,replacement_fee,max_per_user,max_renewal_length") %>
+<h5>Equipment Items (Equipment Model and Name are mandatory)</h5>
+<%= markdown("
+    equipment_model,name,serial") %>
+<h3>Examples</h3>
+<h5>Categories</h5>
+<%= markdown("
+    name,max_per_user,max_checkout_length,max_renewal_times,max_renewal_length,renewal_days_before_due,sort_order
+    DSLRs,1,14,1,7,3,47
+    Tripods,,7,2,7,,
+    Power Cables,,,,,,99") %>
+<h5>Equipment Models (ensure that the description contains no commas!)</h5>
+<%= markdown("
+    category,name,description,late_fee,replacement_fee,max_per_user,max_renewal_length
+    DSLRs,Nikon D70,Nikon D70 body,25,500,1,7
+    Tripods,Amazon Basics 60-inch,Amazon Basics 60-inch tripod,10,25,,
+    Power Cables,Three-Pronged Extension Cord,Three-pronged extension cord,0,10,,") %>
+<h5>Equipment Items (you can duplicate item names)</h5>
+<%= markdown("
+    equipment_model,name,serial
+    Nikon D70,Nikon D70,253X52
+    Nikon D70,Nikon D70,243G53
+    Amazon Basics 60-inch,Amazon Basics 60-inch,") %>
+
+<hr />
+
+<%= form_tag equip_imported_path, :multipart => true do %>
+
+  <p>
+    <label>CSV file with Categories to import:</label>
+    <%= file_field_tag 'cat_upload' %>
+  </p>
+  <p>
+    <label>Update existing Categories' information?</label>
+    <%= check_box_tag 'cat_overwrite' %>
+  </p>
+  <p>
+    <label>CSV file with Equipment Models to import:</label>
+    <%= file_field_tag 'model_upload' %>
+  </p>
+  <p>
+    <label>Update existing Equipment Models' information?</label>
+    <%= check_box_tag 'model_overwrite' %>
+  </p>
+  <p>
+    <label>CSV file with Equipment Items to import:</label>
+    <%= file_field_tag 'object_upload' %>
+  </p>
+  <%= submit_tag 'Import Equipment!', :class => 'btn' %>
+<% end %>
