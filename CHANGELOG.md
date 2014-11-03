@@ -10,9 +10,17 @@ Changelog
 #### Bug Fixes
 * Fixed an issue where links in the request e-mail were broken ([#1017](https://github.com/YaleSTC/reservations/issues/1017)).
 * Moved the email link hostname back to the environment files ([#1017](https://github.com/YaleSTC/reservations/issues/1017)).
+* Fixed an issue where requiring phone numbers with existing users in the database would cause problems ([#1008](https://github.com/YaleSTC/reservations/issues/1008)).
+* Fixed an issue where some application options defaulted to `nil` instead of `''` and associated problems ([#947](https://github.com/YaleSTC/reservations/issues/947)).
+* Updated `link_to` confirmation syntax for Rails 4 ([#990](https://github.com/YaleSTC/reservations/issues/990)).
+
+#### New Features
+* Added a confirmation dialog when deactivating an item would cause that model to be overbooked within the coming week ([#983](https://github.com/YaleSTC/reservations/issues/983)).
 
 #### Enhancements
 * Announcements are now rendered in Markdown so they can include links and formatting ([#1027](https://github.com/YaleSTC/reservations/issues/1027)).
+* Majorly refactored the Reservations controller ([#836](https://github.com/YaleSTC/reservations/issues/836), [#882](https://github.com/YaleSTC/reservations/issus/882)).
+* Moved the session from the database to a cookie to improve performance ([#880](https://github.com/YaleSTC/reservations/issues/880)).
 
 ### v4.0.0
 *Released on 5 October 2014*
