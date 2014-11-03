@@ -201,16 +201,10 @@
   <% if can? :edit, @reservation %>
     <%= link_to "Edit", edit_reservation_path(@reservation), class: 'btn' %>
   <% end %>
-  <% if (can? :destroy, @reservation) %>
-    <% if @reservation.checked_in.nil? %>
-      <%= link_to "Cancel Reservation", @reservation, data: {confirm:
-      'This will permanently delete the reservation. Are you sure?'}, method: :delete,
-      class: 'btn btn-danger' %>
-    <% else %>
-      <%= link_to "Delete Reservation", @reservation, data: {confirm:
-      'This will permanently delete the reservation. Are you sure?'}, method: :delete,
-      class: 'btn btn-danger' %>
-    <% end %>
+  <% if can? :destroy, @reservation %>
+    <%= link_to "Cancel Reservation", @reservation, data: { confirm:
+    'This will permanently delete the reservation. Are you sure?' }, method: :delete,
+    class: 'btn btn-danger' %>
   <% end %>
   <% if (can? :archive, @reservation) && @reservation.checked_in.nil? %>
     <%= link_to "Archive Reservation", archive_reservation_path(@reservation), method: :put, class: 'btn btn-danger', onclick: 'getArchiveNote(this);' %>
