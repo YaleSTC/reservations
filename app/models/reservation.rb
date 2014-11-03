@@ -188,6 +188,20 @@ class Reservation < ActiveRecord::Base
     self
   end
 
+  def archive(archiver, note)
+    # set the reservation as checked in if it has been checked out
+    # used for emergency situations or when equipment is deactivated
+    # to preserve database sanity (eg, equipment object is deactivated while
+    # that reseration is checked out)
+    # returns self
+    if self.checked_in.nil?
+      self.checked_in = Time.current
+      self.checked_out = Time.current if self.checked_out.nil?
+      self.notes = self.notes.to_s + "\n\nThis reservation was archived on #{Time.current.to_s(:long)} by #{archiver.name} for the following reason: #{note}. The checkin and checkout dates may reflect the archive date because the reservation was for a nonexistent piece of equipment or otherwise problematic."
+    end
+    self
+  end
+
   def checkout(eq_object, checkout_handler, procedures, new_notes)
     # checks out a reservation with the given eq object, checkout handler
     # and a hash of checkout procedures and any manually entered
@@ -256,7 +270,7 @@ class Reservation < ActiveRecord::Base
           self.notes += "\n#{name} changed from " + old_val + " to " + new_val + "."
         end
       end
-      
+
       self.notes = self.notes.strip
       self
     end
@@ -302,6 +316,5 @@ class Reservation < ActiveRecord::Base
   def markdown_listify(items)
     return '* ' + items.join("\n* ")
   end
-
 
 end

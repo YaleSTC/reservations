@@ -17,4 +17,3 @@ function handleDeactivation(e, overbooked) {
     e.href += "?deactivation_cancelled=1"
   }
 };
-
