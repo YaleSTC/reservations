@@ -78,7 +78,7 @@ class Cart
       errors = r.validate
       unless request
         notes = "### Reservation created on #{Time.current.to_s(:long)} by #{user.name}"
-        notes += "\n\n#### Notes:\n#{res_notes}" unless res_notes.empty?
+        notes += "\n\n#### Notes:\n#{res_notes}" unless (res_notes.nil? || res_notes.empty?)
         r.approval_status = 'auto'
         message << "Reservation for #{r.equipment_model.name} created successfully#{", even though " + errors.to_sentence[0,1].downcase + errors.to_sentence[1..-1] unless errors.empty?}.\n"
       else
