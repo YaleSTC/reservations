@@ -177,7 +177,7 @@ class Reservation < ActiveRecord::Base
         incomplete_procedures << checkin_procedure.step
       end
     end
-    self.make_notes("checked in", new_notes, incomplete_procedures, checkin_handler)
+    self.make_notes("Checked in", new_notes, incomplete_procedures, checkin_handler)
 
     if self.checked_in.to_date > self.due_date.to_date
       # equipment was overdue, send an email confirmati
@@ -197,7 +197,7 @@ class Reservation < ActiveRecord::Base
     if self.checked_in.nil?
       self.checked_in = Time.current
       self.checked_out = Time.current if self.checked_out.nil?
-      self.notes = self.notes.to_s + "\n\n### Reservation archived on #{Time.current.to_s(:long)} by #{archiver.name}\n\n\n#### Reason:\n#{note}\n\n#### The checkin and checkout dates may reflect the archive date because the reservation was for a nonexistent piece of equipment or otherwise problematic."
+      self.notes = self.notes.to_s + "\n\n### Archived on #{Time.current.to_s(:long)} by #{archiver.name}\n\n\n#### Reason:\n#{note}\n\n#### The checkin and checkout dates may reflect the archive date because the reservation was for a nonexistent piece of equipment or otherwise problematic."
     end
     self
   end
@@ -219,7 +219,7 @@ class Reservation < ActiveRecord::Base
         incomplete_procedures << checkout_procedure.step
       end
     end
-    self.make_notes("checked out", new_notes, incomplete_procedures, checkout_handler)
+    self.make_notes("Checked out", new_notes, incomplete_procedures, checkout_handler)
     self
   end
 
@@ -237,7 +237,7 @@ class Reservation < ActiveRecord::Base
       return
     else
       # write notes header
-      header = "### Reservation edited on #{Time.current.to_s(:long)} by #{current_user.name}\n"
+      header = "### Edited on #{Time.current.to_s(:long)} by #{current_user.name}\n"
       self.notes = self.notes ? self.notes + "\n" + header : header
 
       # add notes if they exist
@@ -283,7 +283,7 @@ class Reservation < ActiveRecord::Base
     # procedure_kind
 
     # write notes header
-    header = "### Reservation #{procedure_verb} on #{Time.current.to_s(:long)} by #{current_user.name}\n"
+    header = "### #{procedure_verb} on #{Time.current.to_s(:long)} by #{current_user.name}\n"
     self.notes = self.notes ? self.notes + "\n" + header : header
 
     # If no new notes and no missed procedures, set e-mail flag to false and
