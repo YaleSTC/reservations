@@ -8,7 +8,7 @@ function handleDeactivation(e, reservation_id, overbooked) {
   }
   if (confirmCheckedOut == true && arguments.length > 2 && overbooked.length > 0) {
     var confirmOverbooked = confirm("This equipment will be overbooked " +
-      "over the coming week from"+overbooked[0]+"to" +
+      "over the coming week from"+overbooked[0]+" to" +
       overbooked[overbooked.length-1]+". Are you sure you want to continue?")
   }
   else {
