@@ -32,10 +32,7 @@ class EquipmentObject < ActiveRecord::Base
   end
 
   def current_reservation
-    self.reservations.each do |r|
-      return r if r.checked_out && r.checked_in.nil?
-    end
-    return nil
+    return self.reservations.checked_out.first
   end
 
   def available?
