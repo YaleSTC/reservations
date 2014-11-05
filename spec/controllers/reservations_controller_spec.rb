@@ -266,6 +266,11 @@ describe ReservationsController, :type => :controller do
             expect { @req.call }.to change { Reservation.count }
           end
 
+          it 'sets the reservation notes' do
+            @req.call
+            expect(Reservation.last.notes.empty?).not_to be_truthy
+          end
+
           it 'should redirect' do
             @req.call
             expect(response).to redirect_to(manage_reservations_for_user_path(@user.id))
@@ -286,6 +291,12 @@ describe ReservationsController, :type => :controller do
           it 'affects database' do
             expect { @req.call }.to change { Reservation.count }
           end
+
+          it 'sets the reservation notes' do
+            @req.call
+            expect(Reservation.last.notes.empty?).not_to be_truthy
+          end
+
           it 'redirects to catalog_path' do
             @req.call
             expect(response).to redirect_to(catalog_path)
@@ -311,6 +322,12 @@ describe ReservationsController, :type => :controller do
         it 'saves items into database' do
           expect { @req.call }.to change { Reservation.count }
         end
+
+        it 'sets the reservation notes' do
+          @req.call
+          expect(Reservation.last.notes.empty?).not_to be_truthy
+        end
+
         it 'empties the Cart' do
           @req.call
           expect(response.request.env['rack.session'][:cart].items.count).to eq(0)
@@ -435,6 +452,9 @@ describe ReservationsController, :type => :controller do
           expect(@reservation.start_date.to_time.utc).to eq(Time.current.midnight.utc)
           expect(@reservation.due_date.to_time.utc).to eq((Time.current.midnight + 4*24.hours).utc)
         end
+        it 'updates the reservations notes' do
+          expect{ @reservation.reload }.to change(@reservation, :notes)
+        end
         it { is_expected.to redirect_to(@reservation) }
       end
 
@@ -450,6 +470,9 @@ describe ReservationsController, :type => :controller do
         it 'should update the object on current reservation' do
           expect{ @reservation.reload }.to change{@reservation.equipment_object}
         end
+        it 'updates the reservations notes' do
+          expect{ @reservation.reload }.to change(@reservation, :notes)
+        end
         it { is_expected.to redirect_to(@reservation) }
       end
 
@@ -464,6 +487,10 @@ describe ReservationsController, :type => :controller do
             equipment_object: ''}
         end
         include_examples 'cannot access page'
+
+        it 'does not update the reservations notes' do
+          expect{ @reservation.reload }.not_to change(@reservation, :notes)
+        end
       end
     end
 
@@ -738,6 +765,10 @@ describe ReservationsController, :type => :controller do
         expect(@reservation.checked_out).to_not be_nil
         expect(@reservation.equipment_object).to eq @obj
       end
+
+      it 'updates the reservation notes' do
+        expect{ @reservation.reload }.to change(@reservation, :notes)
+      end
     end
 
     context 'when accessed by admin' do
@@ -892,6 +923,10 @@ describe ReservationsController, :type => :controller do
         @reservation.reload
         expect(@reservation.checkin_handler).to be_a(User)
         expect(@reservation.checked_in).to_not be_nil
+      end
+
+      it 'updates the reservation notes' do
+        expect{ @reservation.reload }.to change(@reservation, :notes)
       end
     end
 
