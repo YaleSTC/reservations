@@ -9,7 +9,7 @@ class AddNotesToEquipmentObjects < ActiveRecord::Migration
       eo.update_attributes(notes: "#### Created at #{eo.created_at.to_s(:long)}")
       # go through all reservations and make notes
       eo.reservations.sort_by(&:checked_out).each do |res|
-        eo.make_reservation_notes('checked_out', res, res.checkout_handler, '', res.checked_out)
+        eo.make_reservation_notes('checked_out', res, res.checkout_handler, '', res.checked_out) if res.checked_out
         eo.make_reservation_notes('checked_in', res, res.checkin_handler, '', res.checked_in) if res.checked_in
       end
     end
