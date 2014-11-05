@@ -173,6 +173,7 @@ class Reservation < ActiveRecord::Base
     # gather all the procedure texts that were not
     # checked, ie not included in the procedures hash
     incomplete_procedures = []
+    procedures = [procedures].flatten # in case of nil procedures
     self.equipment_model.checkin_procedures.each do |checkin_procedure|
       if procedures.exclude?(checkin_procedure.id.to_s)
         incomplete_procedures << checkin_procedure.step
@@ -202,6 +203,7 @@ class Reservation < ActiveRecord::Base
     self.equipment_object_id = eq_object
 
     incomplete_procedures = []
+    procedures = [procedures].flatten
     self.equipment_model.checkout_procedures.each do |checkout_procedure|
       if procedures.exclude?(checkout_procedure.id.to_s)
         incomplete_procedures << checkout_procedure.step
