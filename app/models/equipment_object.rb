@@ -51,8 +51,8 @@ class EquipmentObject < ActiveRecord::Base
     count
   end
 
-  def make_reservation_notes(procedure_verb, reservation, handler, new_notes)
-    new_str = "#### [#{procedure_verb.capitalize}](#{reservation_path(reservation.id)}) by #{handler.md_link} for #{reservation.reserver.md_link} on #{Time.current.to_s(:long)}\n"
+  def make_reservation_notes(procedure_verb, reservation, handler, new_notes, time)
+    new_str = "#### [#{procedure_verb.capitalize}](#{reservation_path(reservation.id)}) by #{handler.md_link} for #{reservation.reserver.md_link} on #{time.to_s(:long)}\n"
     unless new_notes.empty?
       new_str += "##### Notes:\n#{new_notes}\n\n"
     else
