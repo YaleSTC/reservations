@@ -38,7 +38,7 @@ module ApplicationHelper
       end
       link_to "Deactivate", [:deactivate, model_object],
         class: "btn btn-danger", method: :put,
-        onclick: onclick_str ? onclick_str : ''
+        onclick: "#{onclick_str}"
     end
   end
 
