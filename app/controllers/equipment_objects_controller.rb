@@ -53,10 +53,10 @@ class EquipmentObjectsController < ApplicationController
       # Delete deactivation reason when "Disabled?" is toggled
       p[:deactivation_reason] = ""
     end
-
-    if @equipment_object.update_attributes(p)
+    @equipment_object.update(current_user, p)
+    if @equipment_object.save
       flash[:notice] = "Successfully updated equipment object."
-      redirect_to @equipment_object.equipment_model
+      redirect_to @equipment_object
     else
       render action: 'edit'
     end

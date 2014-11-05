@@ -3,7 +3,5 @@
   <%= f.association :equipment_model, placeholder: 'Please select an equipment model...' %>
   <%=f.input :name%>
   <%=f.input :serial%>
-  <%=f.input :deleted_at, :as => :deleted, label: "Disabled"%>
-  <%=f.input :deactivation_reason, label: "Reason for deactivation?"%>
   <%= f.button :wrapped, :cancel => equipment_objects_path %>
 <% end %>

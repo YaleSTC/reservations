@@ -69,4 +69,35 @@ class EquipmentObject < ActiveRecord::Base
     self.update_attributes(notes: "#### Switched by #{handler.md_link} from #{old_res_msg} to #{new_res_msg} on #{Time.current.to_s(:long)}\n\n" + self.notes)
   end
 
+  def update(current_user, new_params)
+    self.assign_attributes(new_params)
+    changes = self.changes
+    if changes.empty?
+      self
+      return
+    else
+      new_notes = "#### Edited at #{Time.current.to_s(:long)} by #{current_user.md_link}\n\n"
+      new_notes += "\n\n#### Changes:"
+      changes.each do |param, diff|
+        case param
+        when 'name'
+          name = 'Name'
+          old_val = diff[0].to_s
+          new_val = diff[1].to_s
+        when 'serial'
+          name = 'Serial'
+          old_val = diff[0].to_s
+          new_val = diff[1].to_s
+        when 'equipment_model_id'
+          name = 'Equipment Model'
+          old_val = diff[0] ? EquipmentModel.find(diff[0]).name : 'nil'
+          new_val = diff[1] ? EquipmentModel.find(diff[1]).name : 'nil'
+        end
+        new_notes += "\n#{name} changed from " + old_val + " to " + new_val + "." if (old_val && new_val)
+      end
+    end
+    new_notes += "\n\n" + self.notes
+    self.notes = new_notes.strip
+    self
+  end
 end
