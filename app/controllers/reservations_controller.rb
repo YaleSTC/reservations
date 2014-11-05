@@ -119,40 +119,46 @@ class ReservationsController < ApplicationController
   def update # for editing reservations; not for checkout or check-in
     message = "Successfully edited reservation."
     res = reservation_params
-
-    # update attributes
+    # add new equipment object id to hash if it's being changed and save old
+    # and new objects for later
     unless params[:equipment_object].blank?
+      res[:equipment_object_id] = params[:equipment_object]
       new_object = EquipmentObject.find(params[:equipment_object])
       old_object = EquipmentObject.find(@reservation.equipment_object_id)
+      # check to see if new object is available
       unless new_object.available?
         r = new_object.current_reservation
         r.equipment_object_id = @reservation.equipment_object_id
-        r.save
-        # clean up this code with a model method?
-        message << " Note equipment item #{r.equipment_object.name} is now assigned to \
-            #{ActionController::Base.helpers.link_to('reservation #' + r.id.to_s, reservation_path(r))} \
-            (#{r.reserver.render_name})"
       end
-      res[:equipment_object_id] = params[:equipment_object]
     end
 
     # save changes to database
     @reservation.update(current_user, res, params[:new_notes])
-    @reservation.save
+    if @reservation.save
+      # code for switching equipment objects
+      unless params[:equipment_object].blank?
+        # if the item was previously assigned to a different reservation
+        if r
+          r.save
+          # clean up this code with a model method?
+          message << " Note equipment item #{r.equipment_object.name} is now assigned to \
+              #{ActionController::Base.helpers.link_to('reservation #' + r.id.to_s, reservation_path(r))} \
+              (#{r.reserver.render_name})"
+        end
 
-    # if equipment object switch happened, make notes
-    # TODO first check for params[:equipment_object].blank as above and then
-    # modify make_switch_notes method to account for cases where either
-    # old_res or new_res are `nil` (i.e. the new equipment object was
-    # available)
-    if r
-      old_object.make_switch_notes(@reservation, r, current_user)
-      new_object.make_switch_notes(r, @reservation, current_user)
+        # update the item history / histories
+        old_object.make_switch_notes(@reservation, r, current_user)
+        new_object.make_switch_notes(r, @reservation, current_user)
+      end
+
+      # flash success and exit
+      flash[:notice] = message
+      redirect_to @reservation
+    else
+      # if it couldn't save
+      flash[:error] = 'There was a problem updating the reservation.'
+      redirect_to :back
     end
-
-    # flash success and exit
-    flash[:notice] = message
-    redirect_to @reservation
   end
 
   def checkout

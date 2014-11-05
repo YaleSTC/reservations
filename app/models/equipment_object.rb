@@ -63,7 +63,10 @@ class EquipmentObject < ActiveRecord::Base
   end
 
   def make_switch_notes(old_res, new_res, handler)
-    self.update_attributes(notes: "#### Switched by #{handler.md_link} from #{old_res.md_link} to #{new_res.md_link} on #{Time.current.to_s(:long)}\n\n" + self.notes)
+    # set text depending on whether or not reservations are passed in
+    old_res_msg = old_res ? old_res.md_link : 'available'
+    new_res_msg = new_res ? new_res.md_link : 'available'
+    self.update_attributes(notes: "#### Switched by #{handler.md_link} from #{old_res_msg} to #{new_res_msg} on #{Time.current.to_s(:long)}\n\n" + self.notes)
   end
 
 end
