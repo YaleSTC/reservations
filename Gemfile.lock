@@ -40,11 +40,14 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.3.6)
     arel (5.0.1.20140414130214)
+    autoprefixer-rails (3.1.2.20141016)
+      execjs
     awesome_print (1.2.0)
     backports (3.6.1)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
-    bootstrap-sass (2.0.4.2)
+    bootstrap-sass (3.3.0.1)
+      sass (~> 3.2)
     builder (3.2.2)
     bullet (4.13.2)
       activesupport (>= 3.0.0)
@@ -383,8 +386,9 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord-session_store
+  autoprefixer-rails
   awesome_print
-  bootstrap-sass (~> 2.0.3)
+  bootstrap-sass (~> 3.3.0)
   bullet
   cancancan
   capistrano
@@ -429,11 +433,11 @@ DEPENDENCIES
   rspec-rails
   ruby-progressbar
   rubycas-client!
-  sass-rails
+  sass-rails (>= 3.2)
   select2-rails
   shoulda-matchers
   simple_form
-  spinjs-rails
+  spinjs-rails (~> 1.3)
   spring
   spring-commands-rspec
   therubyracer
