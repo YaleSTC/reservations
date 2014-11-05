@@ -546,6 +546,7 @@ unless entered_num == 0
         res.checked_in = [nil, time_rand(random_time_in_future, random_time_in_future.next_week,
                           res.equipment_model.category.max_checkout_length).to_datetime].sample
         res.checked_out = res.checked_in.nil? ? [nil, random_time_in_future.to_datetime].sample : random_time_in_future.to_datetime
+        res.equipment_object_id = res.checked_out ? res.equipment_object_id : nil
         res.notes = Faker::HipsterIpsum.paragraph(8)
         res.notes_unsent = [true, false].sample
       end
