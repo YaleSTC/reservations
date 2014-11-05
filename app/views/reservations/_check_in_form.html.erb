@@ -1,4 +1,4 @@
-<div class="span4 checkin">
+<div class="col-md-4 checkin">
   <div class="well">
     <header>
       <span class="title">
@@ -38,7 +38,7 @@
         <% end %>
         <p><h5>New Notes</h5></p>
         <%= text_area_tag "reservations[#{reservation.id}][notes]", "",
-                          class: 'span3', rows: 6 %>
+                          class: 'col-md-3', rows: 6 %>
         <%= render :partial => 'shared/markdown_button' %>
       </p>
 

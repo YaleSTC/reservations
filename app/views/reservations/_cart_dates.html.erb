@@ -16,7 +16,7 @@
           size: 30,
           placeholder: current_user.render_name,
           id_element: "#reserver_id",
-          class: 'submittable span2' %><%= link_to sanitize("<i class=\"fa fa-plus\"></i>"), '#userModal', :class => 'btn', :id => 'modal', :rel => 'tooltip', :title => 'New Reserver', :"data-toggle" => 'modal' %>
+          class: 'submittable col-md-2' %><%= link_to sanitize("<i class=\"fa fa-plus\"></i>"), '#userModal', :class => 'btn', :id => 'modal', :rel => 'tooltip', :title => 'New Reserver', :"data-toggle" => 'modal' %>
       </div>
 
     <% elsif !current_user %>
@@ -29,11 +29,11 @@
     <% end %>
 
       <%= label_tag :start_date, 'Start Date' %>
-      <%= text_field "cart", "start_date_cart", :class => 'autosubmitme span2 date_start', :value => cart.start_date.strftime('%m/%d/%Y') %>
+      <%= text_field "cart", "start_date_cart", :class => 'autosubmitme col-md-2 date_start', :value => cart.start_date.strftime('%m/%d/%Y') %>
       <%= hidden_field_tag "cart[start_date_cart]", cart.start_date, id: 'date_start_alt' %>
 
       <%= label_tag :due_date, 'Due Date' %>
-      <%= text_field "cart", "due_date_cart", :class => 'autosubmitme span2 date_end', :value => cart.due_date.strftime('%m/%d/%Y'), :minDate => cart.start_date.strftime('%m/%d/%Y') %>
+      <%= text_field "cart", "due_date_cart", :class => 'autosubmitme col-md-2 date_end', :value => cart.due_date.strftime('%m/%d/%Y'), :minDate => cart.start_date.strftime('%m/%d/%Y') %>
       <%= hidden_field_tag "cart[due_date_cart]", cart.due_date, id: 'date_end_alt' %>
 
   <% end %>

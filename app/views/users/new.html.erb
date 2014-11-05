@@ -4,8 +4,8 @@
   <%= render partial: 'form' %>
   <%= content_tag(:p, link_to("Back to List", users_path)) if current_user %>
 <% else %>
-  <div class="span5">
+  <div class="col-md-5">
     <%= content_tag(:p, @message) %>
   </div>
-  <div class="span5"></div>
+  <div class="col-md-5"></div>
 <% end %>

@@ -3,7 +3,7 @@
 
 <% if can? :read, User %>
   <div class="row">
-    <div class="span9">
+    <div class="col-md-9">
       <%= render :partial => 'reservations/top_buttons', :locals => {:reserver => @user} %>
     </div>
   </div>
@@ -11,7 +11,7 @@
 <% end %>
 
 <div class="row">
-  <div id="bool_labels" class="span9">
+  <div id="bool_labels" class="col-md-9">
     <% if can? :manage, User %>
       <%= "<span class=\"user_label label-important\">Banned</span>".html_safe if @user.role == 'banned' %>
       <%= "<span class=\"user_label label-success\">Admin</span>".html_safe if @user.role == 'admin' %>
@@ -25,7 +25,7 @@
 <div class="row">
 
 
-  <dl id="user_info" class="dl-horizontal span4">
+  <dl id="user_info" class="dl-horizontal col-md-4">
     <div class="well">
     <dt>Login</dt>
     <dd><%= @user.login %></dd>
@@ -50,12 +50,12 @@
     </div>
   </dl>
 
-  <div id="user_stats" class="span5">
+  <div id="user_stats" class="col-md-5">
 
   <%# @show_equipment has reservation status (:overdue, ...) as key, full
   reservations in question as value %>
   <% @show_equipment.each do |status, reservations| %>
-    <%= content_tag :div, :id => "#{status}_count", :class => 'span2' do %>
+    <%= content_tag :div, :id => "#{status}_count", :class => 'col-md-2' do %>
       <%= content_tag :h4, status.to_s.titleize %>
       <%= content_tag :div, :class => "#{status}_num" do %>
         <%= content_tag :i, nil, :class => stats_icons(status) %>
@@ -70,13 +70,13 @@
 <% unless @user.requirements.empty? %>
 
   <div class="row">
-    <div class="span9">
+    <div class="col-md-9">
       <h2>Equipment Qualifications</h2>
     </div>
   </div>
   <hr />
   <div class="row">
-    <div id="qualif_box" class="span9">
+    <div id="qualif_box" class="col-md-9">
       <ul id="qualifications">
         <% @user.requirements.each do |req| %>
           <li><i class="fa fa-check"></i><%= link_to req.description, req %></li>
@@ -88,7 +88,7 @@
 <% end %>
 
 <div class="row">
-  <div class="span9">
+  <div class="col-md-9">
     <h2>History</h2>
   </div>
 </div>
@@ -96,7 +96,7 @@
 
 
 <div class="row">
-  <div class="tabbable tabs-left span9">
+  <div class="tabbable tabs-left col-md-9">
 
     <ul class="nav nav-tabs">
       <% @show_equipment.each do |status, reservations| %>
