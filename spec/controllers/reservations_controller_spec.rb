@@ -450,7 +450,34 @@ describe ReservationsController, :type => :controller do
         it 'should update the object on current reservation' do
           expect{ @reservation.reload }.to change{@reservation.equipment_object}
         end
+        it 'should update the object notes' do
+          expect{ @new_equipment_object.reload }.to change(@new_equipment_object, :notes)
+        end
         it { is_expected.to redirect_to(@reservation) }
+
+        context 'with existing equipment object' do
+          before(:each) do
+            @old_object = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
+            @new_object = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
+            put :update, { id: @reservation.id,
+              reservation: FactoryGirl.attributes_for(:reservation,
+                start_date: Date.current,
+                due_date: Date.tomorrow),
+              equipment_object: @old_object.id }
+            @old_object.reload
+            @new_object.reload
+            put :update, { id: @reservation.id,
+              reservation: FactoryGirl.attributes_for(:reservation,
+                start_date: Date.current,
+                due_date: Date.tomorrow),
+              equipment_object: @new_object.id }
+          end
+
+          it 'should update both histories' do
+            expect{ @old_object.reload }.to change(@old_object, :notes)
+            expect{ @new_object.reload }.to change(@new_object, :notes)
+          end
+        end
       end
 
       # Unhappy path
@@ -738,6 +765,10 @@ describe ReservationsController, :type => :controller do
         expect(@reservation.checked_out).to_not be_nil
         expect(@reservation.equipment_object).to eq @obj
       end
+
+      it 'updates the equipment item history' do
+        expect{ @obj.reload }.to change(@obj, :notes)
+      end
     end
 
     context 'when accessed by admin' do
@@ -871,6 +902,7 @@ describe ReservationsController, :type => :controller do
     shared_examples 'has successful checkin' do
       before(:each) do
         @reservation = FactoryGirl.create(:checked_out_reservation, reserver: @user)
+        @obj = @reservation.equipment_object
         reservations_params = {@reservation.id.to_s => {notes: "", checkin?: "1"}}
         put :checkin, user_id: @user.id, reservations: reservations_params
       end
@@ -892,6 +924,10 @@ describe ReservationsController, :type => :controller do
         @reservation.reload
         expect(@reservation.checkin_handler).to be_a(User)
         expect(@reservation.checked_in).to_not be_nil
+      end
+
+      it 'updates the equipment item history' do
+        expect{ @obj.reload }.to change(@obj, :notes)
       end
     end
 
