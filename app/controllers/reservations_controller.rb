@@ -124,7 +124,7 @@ class ReservationsController < ApplicationController
     unless params[:equipment_object].blank?
       res[:equipment_object_id] = params[:equipment_object]
       new_object = EquipmentObject.find(params[:equipment_object])
-      old_object = EquipmentObject.find(@reservation.equipment_object_id)
+      old_object = @reservation.equipment_object_id ? EquipmentObject.find(@reservation.equipment_object_id) : nil
       # check to see if new object is available
       unless new_object.available?
         r = new_object.current_reservation
@@ -147,7 +147,7 @@ class ReservationsController < ApplicationController
         end
 
         # update the item history / histories
-        old_object.make_switch_notes(@reservation, r, current_user)
+        old_object.make_switch_notes(@reservation, r, current_user) if old_object
         new_object.make_switch_notes(r, @reservation, current_user)
       end
 
