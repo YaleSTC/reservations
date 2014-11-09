@@ -197,7 +197,9 @@ class Reservation < ActiveRecord::Base
     if self.checked_in.nil?
       self.checked_in = Time.current
       self.checked_out = Time.current if self.checked_out.nil?
-      self.notes = self.notes.to_s + "\n\n### Archived on #{Time.current.to_s(:long)} by #{archiver.name}\n\n\n#### Reason:\n#{note}\n\n#### The checkin and checkout dates may reflect the archive date because the reservation was for a nonexistent piece of equipment or otherwise problematic."
+      self.notes = self.notes.to_s + "\n\n### Archived on #{Time.current.to_s(:long)} by #{archiver.name}\n\n\n#### " +
+      "Reason:\n#{note}\n\n#### The checkin and checkout dates may reflect the archive date because the reservation was "
+      + "for a nonexistent piece of equipment or otherwise problematic."
     end
     self
   end
