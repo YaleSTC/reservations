@@ -16,6 +16,7 @@ class Ability
         cannot [:destroy,:update], User, :role => 'superuser'
       when 'checkout'
         can :manage, Reservation
+        cannot :archive, Reservation
         unless AppConfig.first.enable_renewals
           cannot :renew, Reservation
         end

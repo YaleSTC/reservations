@@ -93,9 +93,9 @@ class ReservationsController < ApplicationController
         start_date = cart.start_date
         reserver = cart.reserver_id
         unless requested
-          flash[:notice] = cart.reserve_all(params[:reservation][:notes])
+          flash[:notice] = cart.reserve_all(current_user, params[:reservation][:notes])
         else
-          flash[:notice] = cart.request_all(params[:reservation][:notes])
+          flash[:notice] = cart.request_all(current_user, params[:reservation][:notes])
         end
 
         redirect_to catalog_path and return if (cannot? :manage, Reservation) || (requested == true)
@@ -309,6 +309,8 @@ class ReservationsController < ApplicationController
 
   def approve_request
     @reservation.approval_status = "approved"
+    @reservation.notes = @reservation.notes.to_s # in case of nil
+    @reservation.notes += "\n\n### Approved on #{Time.current.to_s(:long)} by #{current_user.name}"
     if @reservation.save
       flash[:notice] = "Request successfully approved"
       UserMailer.request_approved_notification(@reservation).deliver
@@ -321,6 +323,8 @@ class ReservationsController < ApplicationController
 
   def deny_request
     @reservation.approval_status = "denied"
+    @reservation.notes = @reservation.notes.to_s # in case of nil
+    @reservation.notes += "\n\n### Denied on #{Time.current.to_s(:long)} by #{current_user.name}"
     if @reservation.save
       flash[:notice] = "Request successfully denied"
       UserMailer.request_denied_notification(@reservation).deliver
@@ -329,6 +333,24 @@ class ReservationsController < ApplicationController
       flash[:error] = "Oops! Something went wrong. Unable to deny reservation. We're not sure what that's all about."
       redirect_to @reservation
     end
+  end
+
+  def archive
+    if params[:archive_note].nil? || params[:archive_note].strip.empty?
+      flash[:error] = 'Reason for archiving cannot be empty.'
+      redirect_to :back and return
+    elsif params[:archive_note] == 'null'
+      flash[:notice] = 'Reservation archiving cancelled.'
+      redirect_to :back and return
+    end
+    set_reservation
+    if @reservation.checked_in
+      flash[:error] = 'Cannot archive checked-in reservation.'
+      redirect_to :back and return
+    end
+    @reservation.archive(current_user, params[:archive_note]).save(validate: false)
+    flash[:notice] = "Reservation successfully archived."
+    redirect_to :back
   end
 
   private

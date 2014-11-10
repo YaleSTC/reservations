@@ -65,6 +65,8 @@ class EquipmentObjectsController < ApplicationController
   def deactivate
     if params[:deactivation_reason] && !params[:deactivation_cancelled]
       @equipment_object.update_attributes(deactivation_reason: params[:deactivation_reason])
+      # archive current reservation if any
+      @equipment_object.current_reservation.archive(current_user, "The equipment item was deactivated for the following reason: **#{params[:deactivation_reason]}**").save(validate: false) if @equipment_object.current_reservation
       super
     elsif params[:deactivation_cancelled]
       flash[:notice] = "Deactivation cancelled."
