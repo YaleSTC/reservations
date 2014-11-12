@@ -1,0 +1,3 @@
+Reservations::Application.configure do
+  config.action_controller.relative_url_root = '_URI_'
+end
