@@ -261,8 +261,8 @@ class Reservation < ActiveRecord::Base
           case param
           when 'reserver_id'
             name = 'Reserver'
-            old_val = diff[0] ? User.find(diff[0]).name : 'nil'
-            new_val = diff[1] ? User.find(diff[1]).name : 'nil'
+            old_val = diff[0] ? User.find(diff[0]).md_link : 'nil'
+            new_val = diff[1] ? User.find(diff[1]).md_link : 'nil'
           when 'start_date'
             name = 'Start Date'
             old_val = diff[0].to_date.to_s(:long)
@@ -273,8 +273,8 @@ class Reservation < ActiveRecord::Base
             new_val = diff[1].to_date.to_s(:long)
           when 'equipment_object_id'
             name = 'Item'
-            old_val = diff[0] ? EquipmentObject.find(diff[0]).name : 'nil'
-            new_val = diff[1] ? EquipmentObject.find(diff[1]).name : 'nil'
+            old_val = diff[0] ? EquipmentObject.find(diff[0]).md_link : 'nil'
+            new_val = diff[1] ? EquipmentObject.find(diff[1]).md_link : 'nil'
           end
           self.notes += "\n#{name} changed from " + old_val + " to " + new_val + "."
         end
