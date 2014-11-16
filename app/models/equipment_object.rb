@@ -3,8 +3,6 @@ class EquipmentObject < ActiveRecord::Base
   include Searchable
   include Rails.application.routes.url_helpers
 
-  has_paper_trail
-
   belongs_to :equipment_model
   has_one :category, through: :equipment_model
   has_many :reservations

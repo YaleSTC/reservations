@@ -3,8 +3,6 @@ class Reservation < ActiveRecord::Base
   include ReservationScopes
   include Rails.application.routes.url_helpers
 
-  has_paper_trail
-
   belongs_to :equipment_model
   belongs_to :equipment_object
   belongs_to :reserver, class_name: 'User'

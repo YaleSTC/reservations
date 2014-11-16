@@ -6,8 +6,6 @@ class EquipmentModel < ActiveRecord::Base
 
   nilify_blanks only: [:deleted_at]
 
-  has_paper_trail
-
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
   scope :active, lambda { where("#{table_name}.deleted_at is null") }
 
