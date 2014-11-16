@@ -141,9 +141,7 @@ class ReservationsController < ApplicationController
         if r
           r.save
           # clean up this code with a model method?
-          message << " Note equipment item #{r.equipment_object.name} is now assigned to \
-              #{ActionController::Base.helpers.link_to('reservation #' + r.id.to_s, reservation_path(r))} \
-              (#{r.reserver.render_name})"
+          message << " Note equipment item #{r.equipment_object.md_link} is now assigned to #{r.md_link} (#{r.reserver.md_link})"
         end
 
         # update the item history / histories
