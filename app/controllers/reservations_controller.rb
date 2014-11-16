@@ -128,7 +128,7 @@ class ReservationsController < ApplicationController
       # check to see if new object is available
       unless new_object.available?
         r = new_object.current_reservation
-        r.equipment_object_id = @reservation.equipment_object_id
+        r.update(current_user, { equipment_object_id: @reservation.equipment_object_id }, '')
       end
     end
 
