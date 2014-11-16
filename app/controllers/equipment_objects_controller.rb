@@ -65,8 +65,11 @@ class EquipmentObjectsController < ApplicationController
   # Deactivate and activate extend controller methods in ApplicationController
 def deactivate
     if params[:deactivation_reason] && !params[:deactivation_cancelled]
+      # update notes and deactivate
       new_notes = "#### Deactivated at #{Time.current.to_s(:long)} by #{current_user.md_link}\n#{params[:deactivation_reason]}\n\n" + @equipment_object.notes
       @equipment_object.update_attributes(deactivation_reason: params[:deactivation_reason], notes: new_notes)
+      # archive current reservation if any
+      @equipment_object.current_reservation.archive(current_user, "The equipment item was deactivated for the following reason: **#{params[:deactivation_reason]}**").save(validate: false) if @equipment_object.current_reservation
       super
     elsif params[:deactivation_cancelled]
       flash[:notice] = "Deactivation cancelled."

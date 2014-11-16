@@ -1,10 +1,10 @@
 Hi <%= @reservation.reserver.name %>,
 <br />
-<p>Your <%= link_to 'reservation request', @reservation %> for <%= @reservation.equipment_model.name %> for <%= @reservation.start_date.to_s(:long) %> has been denied.<p>
+<p>Your <%= link_to 'reservation request', reservation_url(@reservation, only_path: false) %> for <%= @reservation.equipment_model.name %> for <%= @reservation.start_date.to_s(:long) %> has been denied.<p>
 <p>Please contact your department administrators if you have further concerns.</p>
 
 <br />
 Sincerely,
 <%= @app_configs.department_name %>
 <br /><br />
-<%= link_to 'Terms of Service', '/terms_of_service' %>
+<%= link_to 'Terms of Service', tos_url(only_path: false) %>
