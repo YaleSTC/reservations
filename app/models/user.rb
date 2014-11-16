@@ -1,7 +1,7 @@
 require 'net/ldap'
 
 class User < ActiveRecord::Base
-  include Rails.application.routes.url_helpers
+  include Routing
 
   has_many :reservations, foreign_key: 'reserver_id', dependent: :destroy
   has_and_belongs_to_many :requirements,
@@ -91,7 +91,7 @@ class User < ActiveRecord::Base
   end
 
   def md_link
-    "[#{self.name}](#{user_path(self)})"
+    "[#{self.name}](#{user_url(self, only_path: false)})"
   end
 
 

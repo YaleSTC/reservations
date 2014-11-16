@@ -1,7 +1,7 @@
 class EquipmentObject < ActiveRecord::Base
 
   include Searchable
-  include Rails.application.routes.url_helpers
+  include Routing
 
   has_paper_trail
 
@@ -99,5 +99,9 @@ class EquipmentObject < ActiveRecord::Base
     new_notes += "\n\n" + self.notes
     self.notes = new_notes.strip
     self
+  end
+
+  def md_link
+    "[#{self.name}](#{equipment_object_url(self, only_path: false)})"
   end
 end
