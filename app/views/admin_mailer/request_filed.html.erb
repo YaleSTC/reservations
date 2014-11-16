@@ -4,7 +4,7 @@
   <li>Equipment requested: <%= link_to @reservation.equipment_model.name, equipment_model_url(@reservation.equipment_model, only_path: false) %> </li>
   <li>Requested start date: <%= @reservation.start_date.to_date.to_s(:long) %></li>
   <li>Requested end date: <%= @reservation.due_date.to_date.to_s(:long) %></li>
-  <li>Notes: <%= @reservation.notes %></li>
+  <li>Notes: <%= markdown(@reservation.notes) %></li>
 </ul>
 <p>Click <%= link_to "here", review_request_url(@reservation, only_path: false) %> to review this request</p>
 
