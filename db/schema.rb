@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140930233633) do
+ActiveRecord::Schema.define(version: 20141001000934) do
 
   create_table "announcements", force: true do |t|
     t.text     "message"
@@ -132,13 +132,14 @@ ActiveRecord::Schema.define(version: 20140930233633) do
   create_table "equipment_objects", force: true do |t|
     t.string   "name"
     t.string   "serial"
-    t.boolean  "active",              default: true
+    t.boolean  "active",                               default: true
     t.integer  "equipment_model_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "deleted_at"
-    t.boolean  "csv_import",          default: false, null: false
+    t.boolean  "csv_import",                           default: false, null: false
     t.string   "deactivation_reason"
+    t.text     "notes",               limit: 16777215,                 null: false
   end
 
   create_table "requirements", force: true do |t|

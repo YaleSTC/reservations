@@ -8,6 +8,7 @@ FactoryGirl.define do
     serial
     equipment_model factory: :equipment_model
     deactivation_reason nil
+    notes ''
 
     factory :deactivated do
       deactivation_reason "Because I can"

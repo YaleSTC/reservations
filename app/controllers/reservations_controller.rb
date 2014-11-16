@@ -119,28 +119,46 @@ class ReservationsController < ApplicationController
   def update # for editing reservations; not for checkout or check-in
     message = "Successfully edited reservation."
     res = reservation_params
-
-    # update attributes
+    # add new equipment object id to hash if it's being changed and save old
+    # and new objects for later
     unless params[:equipment_object].blank?
-      object = EquipmentObject.find(params[:equipment_object])
-      unless object.available?
-        r = object.current_reservation
-        r.equipment_object_id = @reservation.equipment_object_id
-        r.save
-        message << " Note equipment item #{r.equipment_object.name} is now assigned to \
-            #{ActionController::Base.helpers.link_to('reservation #' + r.id.to_s, reservation_path(r))} \
-            (#{r.reserver.render_name})"
-      end
       res[:equipment_object_id] = params[:equipment_object]
+      new_object = EquipmentObject.find(params[:equipment_object])
+      old_object = @reservation.equipment_object_id ? EquipmentObject.find(@reservation.equipment_object_id) : nil
+      # check to see if new object is available
+      unless new_object.available?
+        r = new_object.current_reservation
+        r.equipment_object_id = @reservation.equipment_object_id
+      end
     end
 
     # save changes to database
     @reservation.update(current_user, res, params[:new_notes])
-    @reservation.save
+    if @reservation.save
+      # code for switching equipment objects
+      unless params[:equipment_object].blank?
+        # if the item was previously assigned to a different reservation
+        if r
+          r.save
+          # clean up this code with a model method?
+          message << " Note equipment item #{r.equipment_object.name} is now assigned to \
+              #{ActionController::Base.helpers.link_to('reservation #' + r.id.to_s, reservation_path(r))} \
+              (#{r.reserver.render_name})"
+        end
 
-    # flash success and exit
-    flash[:notice] = message
-    redirect_to @reservation
+        # update the item history / histories
+        old_object.make_switch_notes(@reservation, r, current_user) if old_object
+        new_object.make_switch_notes(r, @reservation, current_user)
+      end
+
+      # flash success and exit
+      flash[:notice] = message
+      redirect_to @reservation
+    else
+      # if it couldn't save
+      flash[:error] = 'There was a problem updating the reservation.'
+      redirect_to :back
+    end
   end
 
   def checkout
@@ -154,7 +172,7 @@ class ReservationsController < ApplicationController
       r = Reservation.find(r_id)
       checked_out_reservations << r.checkout(r_attrs[:equipment_object_id],
                                              current_user,
-                                             r_attrs[:checkout_procedures],
+                                             Hash.new(r_attrs[:checkout_procedures]),
                                              r_attrs[:notes])
     end
 
