@@ -89,24 +89,6 @@ $(document).ready(function() {
         ]
   });
 
-  // ### LOG JS ### //
-
-  // Ugly hack to avoid reinitializing #table_log with the correct order
-  // try {
-  //   if (wideDataTables[0].id == "table_log") {
-  //     wideDataTables.fnSort([[0, "desc"]]);
-  //   }
-  // } catch (TypeError) {}
-
-  $('.history_table').dataTable({
-    "sDom": "<'row'<l><f>r>t<'row'<'span3'i><p>>",
-    "bLengthChange": false,
-    "sPaginationType": "bootstrap",
-    "aoColumnDefs": [
-          { "bSortable": false, "aTargets": [ "no_sort" ] }
-        ]
-  });
-
   // ### REPORTS JS ### //
 
   $('.report_table').dataTable({
