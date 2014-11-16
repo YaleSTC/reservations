@@ -4,6 +4,11 @@
 
 ## v4.1.0 - 2014-12-01
 ### Added
+* Added an "archive" action for Reservations to deal with unusual circumstances ([#728](https://github.com/YaleSTC/reservations/issues/728)).
+* Added a persistent history for equipment objects / items ([#273](https://github.com/YaleSTC/reservations/issues/273)).
+
+### Changed
+* Deactivating an equipment item now archives its reservation if it's currently checked out ([#288](https://github.com/YaleSTC/reservations/issues/288)).
 
 
 ## v4.0.1 - 2014-11-03
