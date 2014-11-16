@@ -326,7 +326,7 @@ class ReservationsController < ApplicationController
   def approve_request
     @reservation.approval_status = "approved"
     @reservation.notes = @reservation.notes.to_s # in case of nil
-    @reservation.notes += "\n\n### Approved on #{Time.current.to_s(:long)} by #{current_user.name}"
+    @reservation.notes += "\n\n### Approved on #{Time.current.to_s(:long)} by #{current_user.md_link}"
     if @reservation.save
       flash[:notice] = "Request successfully approved"
       UserMailer.request_approved_notification(@reservation).deliver
@@ -340,7 +340,7 @@ class ReservationsController < ApplicationController
   def deny_request
     @reservation.approval_status = "denied"
     @reservation.notes = @reservation.notes.to_s # in case of nil
-    @reservation.notes += "\n\n### Denied on #{Time.current.to_s(:long)} by #{current_user.name}"
+    @reservation.notes += "\n\n### Denied on #{Time.current.to_s(:long)} by #{current_user.md_link}"
     if @reservation.save
       flash[:notice] = "Request successfully denied"
       UserMailer.request_denied_notification(@reservation).deliver

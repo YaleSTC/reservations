@@ -77,14 +77,14 @@ class Cart
     reservations.each do |r|
       errors = r.validate
       unless request
-        notes = "### Reserved on #{Time.current.to_s(:long)} by #{user.name}"
+        notes = "### Reserved on #{Time.current.to_s(:long)} by #{user.md_link}"
         notes += "\n\n#### Notes:\n#{res_notes}" unless (res_notes.nil? || res_notes.empty?)
         r.approval_status = 'auto'
-        message << "Reservation for #{r.equipment_model.name} created successfully#{", even though " + errors.to_sentence[0,1].downcase + errors.to_sentence[1..-1] unless errors.empty?}.\n"
+        message << "Reservation for #{r.equipment_model.md_link} created successfully#{", even though " + errors.to_sentence[0,1].downcase + errors.to_sentence[1..-1] unless errors.empty?}.\n"
       else
-        notes = "### Requested on #{Time.current.to_s(:long)} by #{user.name}\n\n#### Notes:\n#{res_notes}"
+        notes = "### Requested on #{Time.current.to_s(:long)} by #{user.md_link}\n\n#### Notes:\n#{res_notes}"
         r.approval_status = 'requested'
-        message << "Request for #{r.equipment_model.name} filed successfully. #{errors.to_sentence}\n"
+        message << "Request for #{r.equipment_model.md_link} filed successfully. #{errors.to_sentence}\n"
       end
       r.notes = notes
       r.save!
