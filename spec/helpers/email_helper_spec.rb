@@ -4,6 +4,6 @@ def expect_email(email)
   delivered = ActionMailer::Base.deliveries.last
   expected =  email.deliver
 
-  delivered.multipart?.should == expected.multipart?
-  delivered.headers.except("Message-Id").should == expected.headers.except("Message-Id")
+  expect(delivered.multipart?).to eq(expected.multipart?)
+  expect(delivered.headers.except("Message-Id")).to eq(expected.headers.except("Message-Id"))
 end
