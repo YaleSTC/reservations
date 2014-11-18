@@ -160,12 +160,20 @@ class UsersController < ApplicationController
   end
 
   def ban
+    if @user.role == 'guest'
+      flash[:error] = "Cannot ban guest."
+      redirect_to request.referer
+    end
     @user.update_attributes(role: 'banned', view_mode: 'banned')
     flash[:notice] = "#{@user.name} was banned succesfully."
     redirect_to request.referer
   end
 
   def unban
+    if @user.role == 'guest'
+      flash[:error] = "Cannot unban guest."
+      redirect_to request.referer
+    end
     @user.update_attributes(role: 'normal', view_mode: 'normal')
     flash[:notice] = "#{@user.name} was restored to patron status."
     redirect_to request.referer
