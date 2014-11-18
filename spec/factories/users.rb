@@ -38,6 +38,11 @@ FactoryGirl.define do
       view_mode 'banned'
     end
 
+    factory :guest do
+      role 'guest'
+      view_mode 'guest'
+    end
+
     factory :no_phone do
       phone ''
     end

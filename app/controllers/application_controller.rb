@@ -75,7 +75,8 @@ class ApplicationController < ActionController::Base
                         'banned' => 'Banned User',
                         'checkout' => 'Checkout Person',
                         'superuser' => 'Superuser',
-                        'normal' => 'Patron'}
+                        'normal' => 'Patron',
+                        'guest' => 'Guest' }
       if (params[:view_mode] == 'superuser')
         authorize! :view_as, :superuser
       end
