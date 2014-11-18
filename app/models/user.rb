@@ -45,8 +45,9 @@ class User < ActiveRecord::Base
                           acceptance: {accept: true, message: "You must accept the terms of service."},
                           on: :create,
                           if: Proc.new { |u| !u.created_by_admin == "true" }
-  validates :role,
-            :view_mode,   inclusion: { in: ['admin', 'normal', 'checkout', 'superuser', 'banned', 'guest'] }
+  roles = ['admin', 'normal', 'checkout', 'superuser', 'banned']
+  validates :role,        inclusion: { in: roles }
+  validates :view_mode,   inclusion: { in: roles << 'guest' }
   validate :view_mode_reset
 
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
