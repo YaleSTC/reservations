@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe EquipmentObjectsController, :type => :controller do
   before(:all) { @app_config = FactoryGirl.create(:app_config) }
-  before { allow(@controller).to receive(:first_time_user).and_return(:nil) }
   let!(:object) { FactoryGirl.create(:equipment_object) }
   let!(:deactivated_object) { FactoryGirl.create(:deactivated) }
 

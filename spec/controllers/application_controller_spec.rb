@@ -43,7 +43,6 @@ describe TestController, :type => :controller do
     allow(controller).to receive(:app_setup_check)
     allow(controller).to receive(:load_configs)
     allow(controller).to receive(:seen_app_configs)
-    allow(controller).to receive(:first_time_user)
     allow(controller).to receive(:cart)
     allow(controller).to receive(:fix_cart_date)
     allow(controller).to receive(:set_view_mode)
@@ -134,40 +133,6 @@ describe TestController, :type => :controller do
     end
   end
 
-  # describe 'first_time_user' do
-  #   before(:each) do
-  #     @user = FactoryGirl.create(:user)
-  #     sign_in @user
-  #     allow(controller).to receive(:first_time_user).and_call_original
-  #   end
-  #   context 'current_user exists' do
-  #     before(:each) do
-  #       get :index
-  #     end
-  #     it { is_expected.not_to set_the_flash }
-  #     it 'should not redirect' do
-  #       expect(response).not_to be_redirect
-  #     end
-  #   end
-  #   context 'current_user is nil' do
-  #     before(:each) do
-  #       allow(controller).to receive(:current_user).and_return(nil)
-  #       get :index
-  #     end
-  #     context 'params[:action] = "terms_of_service"' do
-  #       before(:each) do
-  #         get :terms_of_service
-  #       end
-  #       it { is_expected.not_to set_the_flash }
-  #       it 'should not redirect' do
-  #         expect(response).not_to be_redirect
-  #       end
-  #     end
-  #     it { is_expected.to set_the_flash }
-  #     it { is_expected.to redirect_to(new_user_path) }
-  #   end
-  # end
-
   describe 'cart' do
     before(:each) do
       allow(controller).to receive(:cart).and_call_original
@@ -228,7 +193,6 @@ describe ApplicationController, :type => :controller do
     allow(controller).to receive(:app_setup_check)
     allow(controller).to receive(:load_configs)
     allow(controller).to receive(:seen_app_configs)
-    allow(controller).to receive(:first_time_user)
     allow(controller).to receive(:cart)
     allow(controller).to receive(:fix_cart_date)
     allow(controller).to receive(:set_view_mode)

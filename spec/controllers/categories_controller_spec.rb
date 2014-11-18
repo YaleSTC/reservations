@@ -5,7 +5,6 @@ describe CategoriesController, :type => :controller do
     @app_config = FactoryGirl.create(:app_config)
   end
   before(:each) do
-    allow(@controller).to receive(:first_time_user).and_return(nil)
     @category = FactoryGirl.create(:category)
   end
   describe 'GET index' do

@@ -27,7 +27,6 @@ describe ReservationsController, :type => :controller do
   before(:each) do
     @cart = FactoryGirl.build(:cart, reserver_id: @user.id)
 
-    allow(@controller).to receive(:first_time_user).and_return(nil)
     sign_in @user
 
     @reservation = FactoryGirl.create(:valid_reservation, reserver: @user)

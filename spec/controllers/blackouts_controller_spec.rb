@@ -14,9 +14,6 @@ describe BlackoutsController, :type => :controller do
   before(:all) {
     @app_config = FactoryGirl.create(:app_config)
   }
-  before {
-    allow(@controller).to receive(:first_time_user).and_return(:nil)
-  }
 
   describe 'with admin' do
     before do

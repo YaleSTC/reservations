@@ -6,7 +6,6 @@ describe CatalogController, :type => :controller do
     @user = FactoryGirl.create(:user)
     @cart = FactoryGirl.build(:cart, reserver_id: @user.id)
     sign_in @user
-    allow(@controller).to receive(:first_time_user).and_return(nil)
     #@controller.stub(:cart).and_return(session[@cart])
     #@controller.stub(:fix_cart_date)
   end

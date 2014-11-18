@@ -5,7 +5,6 @@ class UsersController < ApplicationController
   autocomplete :user, :last_name, extra_data: [:first_name, :username], display_value: :render_name
 
   skip_filter :cart, only: [:new, :create]
-  skip_filter :first_time_user, only: [:new, :create]
   skip_filter :authenticate_user!, only: [:new, :create]
   before_action :set_user, only: [:show, :edit, :update, :destroy, :ban, :unban]
   before_action :check_cas_auth, only: [:new, :create, :edit, :update]

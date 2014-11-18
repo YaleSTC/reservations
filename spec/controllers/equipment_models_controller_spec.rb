@@ -88,7 +88,6 @@ end
 
 describe EquipmentModelsController, :type => :controller do
   before(:all) { @app_config = FactoryGirl.create(:app_config) }
-  before { allow(@controller).to receive(:first_time_user).and_return(:nil) }
   let!(:model) { FactoryGirl.create(:equipment_model) }
 
   describe 'GET index' do

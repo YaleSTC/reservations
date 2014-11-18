@@ -7,7 +7,6 @@ describe RequirementsController, :type => :controller do
     @app_config = FactoryGirl.create(:app_config)
   end
   before(:each) do
-    allow(@controller).to receive(:first_time_user).and_return(nil) # required stub or every test will fail
     @requirement = FactoryGirl.create(:requirement, contact_name: "Adam Bray")
   end
   describe 'GET index' do
