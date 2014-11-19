@@ -49,8 +49,22 @@ set :linked_dirs, %w{log public/system public/attachments vendor/bundle}
 namespace :init do
   namespace :config do
 
+    desc 'Create .env'
+    task :env
+      execute "cp #{release_path}/.env.example #{release_path}/.env"
+    end
+
     desc 'Create database.yml'
-    task
+    task :db
+      execute "cp #{release_path}/config/database.yml.example.production #{release_path}/config/database.yml"
+    end
+
+    desc 'Create party_foul initializer'
+    task :party_foul
+      execute "cp #{release_path}/config/initializers/party_foul.rb.example #{release_path}/config/initializers/party_foul.rb"
+    end
+  end
+end
 
 namespace :deploy do
 
