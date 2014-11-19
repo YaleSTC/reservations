@@ -76,6 +76,14 @@ namespace :deploy do
     end
   end
 
+  after :updated, 'config:env'
+  after :updated, 'config:db'
+  after :updated, 'config:party_foul'
+  # clear crontab if in staging environment
+  if :stage == 'staging'
+    before :restart, 'whenever:clear_crontab'
+  end
+
   after :publishing, :restart
 
   after :restart, :clear_cache do
