@@ -390,7 +390,8 @@ DEPENDENCIES
   bootstrap-sass (~> 2.0.3)
   bullet
   cancancan
-  capistrano-rails (~> 1.1.2)
+  capistrano (~> 3.1)
+  capistrano-rails (~> 1.1)
   capybara
   cocoon
   codeclimate-test-reporter
