@@ -11,7 +11,15 @@ set :branch, "#{ENV['GIT_TAG']}"
 set :deploy_to, "#{ENV['DEPLOY_DIR']}"
 
 # Set Rails environment
-set, :rails_env, 'production'
+# set, :rails_env, 'production'
+
+# Set RVM version
+set :rvm_ruby_version, '2.1.2'
+
+# include whenever recipes
+set :whenever_command, 'bundle exec whenever'
+set :whenever_environment, defer { stage }
+set :whenever_variables, { "rails_root=#{fetch :release_path}&environment=#{fetch :whenever_environment}" }
 
 # Default value for :scm is :git
 # set :scm, :git
