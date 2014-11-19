@@ -91,9 +91,9 @@ Reservations ships with the default config time set to Eastern Time (US and Cana
 You will need to generate a fresh secret key for cookie encryption and signing. Run `rake secret` and paste the output into `config/intializers/secret_token.rb`. Do not make this key available to the public, otherwise anyone will be able to sign on as anyone to Reservations.
 
 You will need to also configure the email config in
-`config/environments/production.rb`. Replace `example.com` with the
-relevant hostname. This will allow links in emails to point to the
-correct places.
+`config/environments/production.rb`. Please set the `RAILS_HOST_NAME` and `RAILS_RELATIVE_URL_ROOT` environment variables (either in `.env` or otherwise) so that links in your e-mails work correctly. See the wiki for more information.
+
+
 
 
 Further Documentation
