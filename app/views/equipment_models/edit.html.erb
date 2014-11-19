@@ -5,5 +5,5 @@
 <p>
   <%= link_to "Show", @equipment_model %> |
   <%= link_to "View All", equipment_models_path %> |
-  <%= link_to "Delete", @equipment_model, :confirm => 'Deleting this Equipment Model will delete all related Equipment Items and Reservations. Are you sure you want to do this?', :method => :delete %>
+  <%= link_to "Delete", @equipment_model, :data => { :confirm => 'Deleting this Equipment Model will delete all related Equipment Items and Reservations. Are you sure you want to do this?' }, :method => :delete %>
 </p>

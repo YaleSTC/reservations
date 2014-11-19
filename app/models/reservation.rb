@@ -1,6 +1,7 @@
 class Reservation < ActiveRecord::Base
   include ReservationValidations
   include ReservationScopes
+  include Rails.application.routes.url_helpers
 
   has_paper_trail
 
@@ -17,8 +18,11 @@ class Reservation < ActiveRecord::Base
 
   nilify_blanks only: [:notes]
 
-  def duration
-    due_date.to_date - start_date.to_date + 1
+  ## Class methods ##
+
+  def self.unique_equipment_objects?(reservations)
+    object_ids = reservations.map(&:equipment_object_id)
+    return object_ids == object_ids.uniq
   end
 
   def self.number_for_model_on_date(date,model_id,source)
@@ -57,28 +61,7 @@ class Reservation < ActiveRecord::Base
   end
 
 
-  def reserver
-    User.find(self.reserver_id)
-  rescue
-    #if user's been deleted, return a dummy user
-    User.new( first_name: "Deleted",
-              last_name: "User",
-              login: "deleted",
-              email: "deleted.user@invalid.address",
-              nickname: "",
-              phone: "555-555-5555",
-              affiliation: "Deleted")
-  end
-
-  def validate
-    # Convert reservation to a cart object and run validations on it
-    # For hard validations, use reservation.valid
-    self.to_cart.validate_all
-  end
-
-  def validate_renew
-    self.to_cart.validate_all(true)
-  end
+  ## Getter style instance methods ##
 
   def status
     if checked_out.nil?
@@ -96,17 +79,31 @@ class Reservation < ActiveRecord::Base
     end
   end
 
-  def self.unique_equipment_objects?(reservations)
-    object_ids = reservations.map(&:equipment_object_id)
-    return object_ids == object_ids.uniq
+  def duration
+    due_date.to_date - start_date.to_date + 1
   end
 
   def late_fee
     self.equipment_model.late_fee.to_f
   end
 
+  def reserver
+    User.find(self.reserver_id)
+  rescue
+    #if user's been deleted, return a dummy user
+    User.new( first_name: "Deleted",
+              last_name: "User",
+              login: "deleted",
+              email: "deleted.user@invalid.address",
+              nickname: "",
+              phone: "555-555-5555",
+              affiliation: "Deleted")
+  end
+
   def fake_reserver_id # this is necessary for autocomplete! delete me not!
   end
+
+  ## Instance method helper/misc  ##
 
   def find_renewal_date
     # determine the max renewal length for a given reservation
@@ -137,16 +134,9 @@ class Reservation < ActiveRecord::Base
     max_renewal_times = self.equipment_model.maximum_renewal_times
 
     max_renewal_days = self.equipment_model.maximum_renewal_days_before_due
-    return ((self.due_date.to_date - Date.current).to_i < max_renewal_days ) &&
-      (self.times_renewed < max_renewal_times)
-  end
-
-  def renew
-    # renew the reservation and return error messages if unsuccessful
-    return "Reservation not eligible for renewal" unless self.is_eligible_for_renew?
-    self.due_date = self.find_renewal_date
-    return "Unable to update reservation dates!" unless self.save
-    return nil
+    return ((self.due_date.to_date - Date.current).to_i < max_renewal_days) &&
+      (self.times_renewed < max_renewal_times) &&
+      self.equipment_model.maximum_renewal_length > 0
   end
 
   def to_cart
@@ -157,4 +147,187 @@ class Reservation < ActiveRecord::Base
     temp_cart.items = { self.equipment_model_id => 1 }
     temp_cart
   end
+
+
+  ## Instance methods that alter the status of a reservation ##
+
+
+  def renew
+    # renew the reservation and return error messages if unsuccessful
+    return "Reservation not eligible for renewal" unless self.is_eligible_for_renew?
+    self.due_date = self.find_renewal_date
+    return "Unable to update reservation dates!" unless self.save
+    return nil
+  end
+
+  def checkin(checkin_handler, procedures, new_notes)
+    # Checks in a reservation with the given checkin handler
+    # and hash of checkin procedures and any manually entered
+    # notes from the checkin
+    #
+    # Returns the unsaved, checked in reservation
+
+    self.checkin_handler = checkin_handler
+    self.checked_in = Time.current
+
+    # gather all the procedure texts that were not
+    # checked, ie not included in the procedures hash
+    incomplete_procedures = []
+    procedures = [procedures].flatten # in case of nil procedures
+    self.equipment_model.checkin_procedures.each do |checkin_procedure|
+      if procedures.exclude?(checkin_procedure.id.to_s)
+        incomplete_procedures << checkin_procedure.step
+      end
+    end
+    self.make_notes("Checked in", new_notes, incomplete_procedures, checkin_handler)
+    # update equipment object notes
+    self.equipment_object.make_reservation_notes("checked in", self, checkin_handler, new_notes, Time.current)
+
+    if self.checked_in.to_date > self.due_date.to_date
+      # equipment was overdue, send an email confirmati
+        AdminMailer.overdue_checked_in_fine_admin(self).deliver
+        UserMailer.overdue_checked_in_fine(self).deliver
+    end
+
+    self
+  end
+
+  def archive(archiver, note)
+    # set the reservation as checked in if it has been checked out
+    # used for emergency situations or when equipment is deactivated
+    # to preserve database sanity (eg, equipment object is deactivated while
+    # that reseration is checked out)
+    # returns self
+    if self.checked_in.nil?
+      self.checked_in = Time.current
+      self.checked_out = Time.current if self.checked_out.nil?
+      self.notes = self.notes.to_s + "\n\n### Archived on #{Time.current.to_s(:long)} by #{archiver.name}\n\n\n#### " +
+        "Reason:\n#{note}\n\n#### The checkin and checkout dates may reflect the archive date because the reservation was " +
+        "for a nonexistent piece of equipment or otherwise problematic."
+    end
+    self
+  end
+
+  def checkout(eq_object, checkout_handler, procedures, new_notes)
+    # checks out a reservation with the given eq object, checkout handler
+    # and a hash of checkout procedures and any manually entered
+    # notes from the checkout.
+    #
+    # Returns the unsaved, checked out reservation
+
+    self.checkout_handler = checkout_handler
+    self.checked_out = Time.current
+    self.equipment_object_id = eq_object
+
+    incomplete_procedures = []
+    procedures = [procedures].flatten
+    self.equipment_model.checkout_procedures.each do |checkout_procedure|
+      if procedures.exclude?(checkout_procedure.id.to_s)
+        incomplete_procedures << checkout_procedure.step
+      end
+    end
+    self.make_notes("Checked out", new_notes, incomplete_procedures, checkout_handler)
+    # update equipment object notes
+    self.equipment_object.make_reservation_notes("checked out", self, checkout_handler, new_notes, Time.current)
+    self
+  end
+
+  def update(current_user, new_params, new_notes)
+    # updates a reservation and records changes in the notes
+    #
+    # takes the current user, the new params from the controller that have
+    # been updated w/ a new equipment object, and the new notes (if any)
+
+    self.assign_attributes(new_params)
+    changes = self.changes
+    new_notes = '' unless new_notes
+    if new_notes.empty? && changes.empty?
+      self
+      return
+    else
+      # write notes header
+      header = "### Edited on #{Time.current.to_s(:long)} by #{current_user.md_link}\n"
+      self.notes = self.notes ? self.notes + "\n" + header : header
+
+      # add notes if they exist
+      unless new_notes.empty?
+        self.notes += "\n\n#### Notes:\n#{new_notes}"
+      end
+
+      # record changes
+      unless changes.empty?
+        self.notes += "\n\n#### Changes:"
+        changes.each do |param, diff|
+          case param
+          when 'reserver_id'
+            name = 'Reserver'
+            old_val = diff[0] ? User.find(diff[0]).name : 'nil'
+            new_val = diff[1] ? User.find(diff[1]).name : 'nil'
+          when 'start_date'
+            name = 'Start Date'
+            old_val = diff[0].to_date.to_s(:long)
+            new_val = diff[1].to_date.to_s(:long)
+          when 'due_date'
+            name = 'Due Date'
+            old_val = diff[0].to_date.to_s(:long)
+            new_val = diff[1].to_date.to_s(:long)
+          when 'equipment_object_id'
+            name = 'Item'
+            old_val = diff[0] ? EquipmentObject.find(diff[0]).name : 'nil'
+            new_val = diff[1] ? EquipmentObject.find(diff[1]).name : 'nil'
+          end
+          self.notes += "\n#{name} changed from " + old_val + " to " + new_val + "."
+        end
+      end
+
+      self.notes = self.notes.strip
+      self
+    end
+  end
+
+  def make_notes(procedure_verb, new_notes, incomplete_procedures, current_user)
+    # handles the reservation notes from the new notes
+    #
+    # takes the new notes and a string, 'checked in' or 'checked out' as the
+    # procedure_kind
+
+    # write notes header
+    header = "### #{procedure_verb} on #{Time.current.to_s(:long)} by #{current_user.md_link}\n"
+    self.notes = self.notes ? self.notes + "\n" + header : header
+
+    # If no new notes and no missed procedures, set e-mail flag to false and
+    # return
+    if new_notes.empty? && incomplete_procedures.empty?
+      self.notes += "\n\nAll procedures were performed!"
+      self.notes_unsent = false
+      return
+    else
+      self.notes_unsent = true
+    end
+
+    # add notes if they exist
+    unless new_notes.empty?
+      self.notes += "\n\n#### Notes:\n#{new_notes}"
+    end
+
+    # record note procedure status
+    if incomplete_procedures.empty?
+      self.notes += "\n\nAll procedures were performed!"
+    else
+      self.notes += "\n\n#### The following procedures were not performed:\n"
+      self.notes += markdown_listify(incomplete_procedures)
+    end
+    self.notes = self.notes.strip
+
+  end
+
+  # returns a string where each item is begun with a '*'
+  def markdown_listify(items)
+    return '* ' + items.join("\n* ")
+  end
+
+  def md_link
+    "[res. \##{self.id.to_s}](#{reservation_path(self)})"
+  end
+
 end

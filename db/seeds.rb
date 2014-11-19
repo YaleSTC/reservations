@@ -99,6 +99,36 @@ No solicitors. No alcohol, dogs or horses. No anchovies unless otherwise specifi
   }
 end
 
+def upcoming_checkin_email_body
+  "Dear @user@,\n\n"\
+  "Hey there, you have equipment due! Please return the following items before 4pm on @return_date@.\n\n"\
+  "@equipment_list@\n\n"\
+  "If you fail to return your equipment on time you will be subject to a late fee of @late_fee@ per day. If you have lost the item you may additioally have to pay a replacement fee of @replacement_fee@.\n"\
+  "Log in to Reservations to see if any of your items are eligible for renewal. If you have further questions feel free to contact an employee of @department_name@.\n\n"\
+  "Your reservation number is @reservation_id@.\n\n"\
+  "Thank you,\n"\
+  "@department_name@\n\n"
+end
+
+def overdue_checkin_email_body
+  "Dear @user@,\n\n"\
+  "It looks like you have overdue equipment!\n\n"\
+  "Please return the following equipment to us as soon as possible. Until then you will be charged a daily late fee of @late_fee@.\n\n"\
+  "@equipment_list@\n\n"\
+  "Failure to return equipment will result in the levying of replacement fees, and potential revocation of borrowing privileges.\n\n"\
+  "Your reservation number is @reservation_id@.\n\n"\
+  "Thank you,\n"\
+  "@department_name@"
+end
+
+def deleted_missed_reservation_email_body
+  "Dear @user@,\n\n"\
+  "Because you have missed a scheduled equipment checkout, your reservation (number @reservation_id@) has been cancelled. If you believe this is in error, please contact an administrator.\n\n"\
+  "@equipment_list@\n\n"\
+  "Thank you,\n"\
+  "@department_name@"
+end
+
 
 # Random object that is used throughout for generating fake data that FFaker can't
 r = Random.new
@@ -237,7 +267,11 @@ if AppConfig.all.empty?
     ac.contact_link_location = contact_link_location
     ac.home_link_text = home_link_text
     ac.home_link_location = home_link_location
+    ac.upcoming_checkin_email_body = upcoming_checkin_email_body
+    ac.overdue_checkin_email_body = overdue_checkin_email_body
+    ac.deleted_missed_reservation_email_body = deleted_missed_reservation_email_body
     ac.default_per_cat_page = 10
+    ac.request_text = ''
   end
 else
   ac = AppConfig.first
@@ -469,6 +503,7 @@ unless entered_num == 0
         eo.serial = (0...8).map{65.+(rand(25)).chr}.join
         eo.active = true
         eo.equipment_model_id = equipment_model.flatten.sample.id
+        eo.notes = ''
       end
     end
     puts "\n#{entered_num} equipment object records successfully created!"
@@ -511,6 +546,7 @@ unless entered_num == 0
         res.checked_in = [nil, time_rand(random_time_in_future, random_time_in_future.next_week,
                           res.equipment_model.category.max_checkout_length).to_datetime].sample
         res.checked_out = res.checked_in.nil? ? [nil, random_time_in_future.to_datetime].sample : random_time_in_future.to_datetime
+        res.equipment_object_id = res.checked_out ? res.equipment_object_id : nil
         res.notes = Faker::HipsterIpsum.paragraph(8)
         res.notes_unsent = [true, false].sample
       end

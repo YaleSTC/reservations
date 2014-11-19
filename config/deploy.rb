@@ -5,10 +5,13 @@ set :application, 'Reservations'
 set :repo_url, 'https://github.com/YaleSTC/reservations.git'
 
 # Default branch is :master
-# ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
+set :branch, "#{ENV['GIT_TAG']}"
 
 # Default deploy_to directory is /var/www/my_app
-# set :deploy_to, '/var/www/my_app'
+set :deploy_to, "#{ENV['DEPLOY_DIR']}"
+
+# Set Rails environment
+set, :rails_env, 'production'
 
 # Default value for :scm is :git
 # set :scm, :git
@@ -34,13 +37,20 @@ set :linked_dirs, %w{log public/system public/attachments vendor/bundle}
 # Default value for keep_releases is 5
 # set :keep_releases, 5
 
+# configuration tasks
+namespace :init do
+  namespace :config do
+
+    desc 'Create database.yml'
+    task
+
 namespace :deploy do
 
   desc 'Restart application'
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do
       # Your restart mechanism here, for example:
-      # execute :touch, release_path.join('tmp/restart.txt')
+      execute :touch, release_path.join('tmp/restart.txt')
     end
   end
 

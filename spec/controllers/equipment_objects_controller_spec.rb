@@ -149,10 +149,12 @@ describe EquipmentObjectsController, :type => :controller do
       context 'with valid attributes' do
         before { post :create, equipment_object: FactoryGirl.attributes_for(:equipment_object,
           serial: "Enter serial # (optional)", equipment_model_id: object.equipment_model.id) }
-        it 'should save object' do
+        it 'should save object with notes' do
           expect{ post :create, equipment_object: FactoryGirl.attributes_for(
             :equipment_object, equipment_model_id: object.equipment_model.id)
             }.to change(EquipmentObject, :count).by(1)
+          expect(EquipmentObject.last.notes).not_to be_nil
+          expect(EquipmentObject.last.notes).not_to be('')
         end
         it { is_expected.to set_the_flash }
         it { is_expected.to redirect_to(EquipmentObject.last.equipment_model) }
@@ -214,7 +216,10 @@ describe EquipmentObjectsController, :type => :controller do
           object.reload
           expect(object.name).to eq('Obj')
         end
-        it { is_expected.to redirect_to(object.equipment_model) }
+        it 'updates notes' do
+          expect{ object.reload }.to change(object, :notes)
+        end
+        it { is_expected.to redirect_to(object) }
       end
       context 'without valid attributes' do
         before { put :update, id: object,
@@ -245,8 +250,12 @@ describe EquipmentObjectsController, :type => :controller do
         object.reload
       end
       it { expect(response).to be_redirect }
-
       it { expect(object.deactivation_reason).to eq ("Because I can") }
+      it 'should change the notes' do
+        new_object = FactoryGirl.create(:equipment_object)
+        put :deactivate, id: new_object, deactivation_reason: 'reason'
+        expect{ new_object.reload }.to change(new_object, :notes)
+      end
     end
 
     context 'with non-admin user' do
@@ -271,6 +280,12 @@ describe EquipmentObjectsController, :type => :controller do
 
       it { expect(response).to be_redirect }
       it { expect(deactivated_object.deactivation_reason).to be_nil }
+
+      it 'should change the notes' do
+        new_object = FactoryGirl.create(:equipment_object)
+        put :activate, id: new_object
+        expect{ new_object.reload }.to change(new_object, :notes)
+      end
     end
 
     context 'with non-admin user' do

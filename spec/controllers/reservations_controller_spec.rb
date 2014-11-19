@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'helpers/email_helper_spec'
 
 describe ReservationsController, :type => :controller do
 
@@ -206,11 +207,13 @@ describe ReservationsController, :type => :controller do
 
       context 'with a non-empty cart' do
         before(:each) do
-          cart = FactoryGirl.build(:cart_with_items, reserver_id: @user.id)
-          get :new, nil, cart: cart
+          @cart = FactoryGirl.build(:cart_with_items, reserver_id: @user.id)
+          get :new, nil, cart: @cart
         end
 
-        it 'should display errors'
+        it 'should display errors' do
+          expect(assigns(:errors)).to eq @cart.validate_all
+        end
         it { is_expected.to render_template(:new) }
       end
     end
@@ -263,6 +266,11 @@ describe ReservationsController, :type => :controller do
             expect { @req.call }.to change { Reservation.count }
           end
 
+          it 'sets the reservation notes' do
+            @req.call
+            expect(Reservation.last.notes.empty?).not_to be_truthy
+          end
+
           it 'should redirect' do
             @req.call
             expect(response).to redirect_to(manage_reservations_for_user_path(@user.id))
@@ -283,6 +291,12 @@ describe ReservationsController, :type => :controller do
           it 'affects database' do
             expect { @req.call }.to change { Reservation.count }
           end
+
+          it 'sets the reservation notes' do
+            @req.call
+            expect(Reservation.last.notes.empty?).not_to be_truthy
+          end
+
           it 'redirects to catalog_path' do
             @req.call
             expect(response).to redirect_to(catalog_path)
@@ -308,6 +322,12 @@ describe ReservationsController, :type => :controller do
         it 'saves items into database' do
           expect { @req.call }.to change { Reservation.count }
         end
+
+        it 'sets the reservation notes' do
+          @req.call
+          expect(Reservation.last.notes.empty?).not_to be_truthy
+        end
+
         it 'empties the Cart' do
           @req.call
           expect(response.request.env['rack.session'][:cart].items.count).to eq(0)
@@ -432,6 +452,9 @@ describe ReservationsController, :type => :controller do
           expect(@reservation.start_date.to_time.utc).to eq(Time.current.midnight.utc)
           expect(@reservation.due_date.to_time.utc).to eq((Time.current.midnight + 4*24.hours).utc)
         end
+        it 'updates the reservations notes' do
+          expect{ @reservation.reload }.to change(@reservation, :notes)
+        end
         it { is_expected.to redirect_to(@reservation) }
       end
 
@@ -447,7 +470,40 @@ describe ReservationsController, :type => :controller do
         it 'should update the object on current reservation' do
           expect{ @reservation.reload }.to change{@reservation.equipment_object}
         end
+
+        it 'should update the object notes' do
+          expect{ @new_equipment_object.reload }.to change(@new_equipment_object, :notes)
+        end
+
+        it 'updates the reservations notes' do
+          expect{ @reservation.reload }.to change(@reservation, :notes)
+        end
+
         it { is_expected.to redirect_to(@reservation) }
+
+        context 'with existing equipment object' do
+          before(:each) do
+            @old_object = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
+            @new_object = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
+            put :update, { id: @reservation.id,
+              reservation: FactoryGirl.attributes_for(:reservation,
+                start_date: Date.current,
+                due_date: Date.tomorrow),
+              equipment_object: @old_object.id }
+            @old_object.reload
+            @new_object.reload
+            put :update, { id: @reservation.id,
+              reservation: FactoryGirl.attributes_for(:reservation,
+                start_date: Date.current,
+                due_date: Date.tomorrow),
+              equipment_object: @new_object.id }
+          end
+
+          it 'should update both histories' do
+            expect{ @old_object.reload }.to change(@old_object, :notes)
+            expect{ @new_object.reload }.to change(@new_object, :notes)
+          end
+        end
       end
 
       # Unhappy path
@@ -461,6 +517,10 @@ describe ReservationsController, :type => :controller do
             equipment_object: ''}
         end
         include_examples 'cannot access page'
+
+        it 'does not update the reservations notes' do
+          expect{ @reservation.reload }.not_to change(@reservation, :notes)
+        end
       end
     end
 
@@ -735,6 +795,15 @@ describe ReservationsController, :type => :controller do
         expect(@reservation.checked_out).to_not be_nil
         expect(@reservation.equipment_object).to eq @obj
       end
+
+      it 'updates the equipment item history' do
+        expect{ @obj.reload }.to change(@obj, :notes)
+      end
+
+      it 'updates the reservation notes' do
+        expect{ @reservation.reload }.to change(@reservation, :notes)
+      end
+
     end
 
     context 'when accessed by admin' do
@@ -768,10 +837,13 @@ describe ReservationsController, :type => :controller do
 
     context 'when tos returns false' do
       before do
+        request.env["HTTP_REFERER"] = 'where_i_came_from'
+        allow(@controller).to receive(:current_user).and_return(@admin)
         allow(@controller).to receive(:check_tos).and_return(false)
-        put :checkout
+        put :checkout, user_id: @user.id, reservations: {}
+
       end
-      it { expect(response).to be_redirect }
+      it { expect(response).to redirect_to 'where_i_came_from' }
     end
 
     context 'when not all procedures are filled out' do
@@ -780,7 +852,7 @@ describe ReservationsController, :type => :controller do
         @obj = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
         @procedure = FactoryGirl.create(:checkout_procedure, equipment_model: @reservation.equipment_model)
         reservations_params = {@reservation.id.to_s => {notes: "", equipment_object_id: @obj.id, checkout_procedures: {}}}
-        put :checkout, user_id: @user.id,  reservations: reservations_params
+        put :checkout, user_id: @user.id, reservations: reservations_params
       end
 
       it { expect(response).to be_success }
@@ -808,12 +880,14 @@ describe ReservationsController, :type => :controller do
     end
 
     context 'no reservations selected' do
-      before(:each) do
+      before do
         reservations_params = {}
+        request.env["HTTP_REFERER"] = 'where_i_came_from'
+        allow(@controller).to receive(:current_user).and_return(@checkout_person)
         put :checkout, user_id: @user.id, reservations: reservations_params
       end
       it { is_expected.to set_the_flash }
-      it { expect(response).to be_redirect }
+      it { expect(response).to redirect_to 'where_i_came_from' }
     end
 
     context 'reserver has overdue reservations' do
@@ -832,7 +906,8 @@ describe ReservationsController, :type => :controller do
       end
       context 'cannot override' do
         before do
-          allow(@controller).to receive(:current_user).and_return(@user)
+          request.env["HTTP_REFERER"] = 'where_i_came_from'
+          allow(@controller).to receive(:current_user).and_return(@checkout_person)
           @obj = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
           reservations_params = {@reservation.id.to_s => {notes: "", equipment_object_id: @obj.id }}
           overdue = FactoryGirl.build(:overdue_reservation, reserver_id: @user.id)
@@ -840,7 +915,8 @@ describe ReservationsController, :type => :controller do
           put :checkout, user_id: @user.id, reservations: reservations_params
         end
         it { is_expected.to set_the_flash }
-        it { expect(response).to be_redirect }
+        it { expect(response).to redirect_to 'where_i_came_from' }
+
       end
 
     end
@@ -861,6 +937,7 @@ describe ReservationsController, :type => :controller do
     shared_examples 'has successful checkin' do
       before(:each) do
         @reservation = FactoryGirl.create(:checked_out_reservation, reserver: @user)
+        @obj = @reservation.equipment_object
         reservations_params = {@reservation.id.to_s => {notes: "", checkin?: "1"}}
         put :checkin, user_id: @user.id, reservations: reservations_params
       end
@@ -882,6 +959,14 @@ describe ReservationsController, :type => :controller do
         @reservation.reload
         expect(@reservation.checkin_handler).to be_a(User)
         expect(@reservation.checked_in).to_not be_nil
+      end
+
+      it 'updates the equipment item history' do
+        expect{ @obj.reload }.to change(@obj, :notes)
+      end
+
+      it 'updates the reservation notes' do
+        expect{ @reservation.reload }.to change(@reservation, :notes)
       end
     end
 
@@ -925,7 +1010,7 @@ describe ReservationsController, :type => :controller do
       end
 
       it { is_expected.to set_the_flash }
-      it { expect(response).to be_redirect }
+      it { expect(response).to redirect_to 'where_i_came_from' }
     end
 
     context 'no reservations to check in' do
@@ -935,7 +1020,7 @@ describe ReservationsController, :type => :controller do
         put :checkin,  user_id: @user.id, reservations: {}
       end
       it { is_expected.to set_the_flash }
-      it { expect(response).to be_redirect }
+      it { expect(response).to redirect_to 'where_i_came_from' }
     end
 
     context 'when not all procedures are filled out' do
@@ -988,7 +1073,7 @@ describe ReservationsController, :type => :controller do
         put :renew, id: @reservation.id
       end
 
-      it { is_expected.to redirect_to(root_path) }
+      it { is_expected.to redirect_to(reservation_path(@reservation)) }
 
       it 'should extend due_date' do
         expect { @reservation.reload }.to change { @reservation.due_date }
@@ -1024,6 +1109,7 @@ describe ReservationsController, :type => :controller do
           put :renew, id: @other_res.id
         end
         it { expect(response).to be_redirect }
+        it { expect { @other_res.reload }.not_to change { @other_res.checked_in } }
       end
 
     end
@@ -1033,11 +1119,186 @@ describe ReservationsController, :type => :controller do
     end
   end
 
+  describe '#archive (PUT /reservations/:id/archive)' do
+    # Access: Admins
+    # Functionality:
+    # - requests note from admin
+    # - sets @reservation
+    # - sets @reservation.checked_in to today
+    # - adds archival comment to note
+    # - redirects to @reservation
+
+    # TODO:
+
+    shared_examples 'cannot archive reservation' do
+      before do
+        request.env["HTTP_REFERER"] = reservation_path(@reservation)
+        put :archive, id: @reservation.id, archive_note: "I can't!"
+      end
+
+      it { expect(response).to redirect_to(root_path) }
+      it 'should not be checked in' do
+        expect { @reservation.reload }.not_to change { @reservation.checked_in }
+      end
+      it 'should not have new notes' do
+        expect { @reservation.reload }.not_to change { @reservation.notes }
+      end
+    end
+
+    context 'for checked-out reservation' do
+      before(:each) do
+        @reservation = FactoryGirl.create(:checked_out_reservation, reserver: @user)
+        request.env["HTTP_REFERER"] = reservation_path(@reservation)
+      end
+
+      context 'when accessed by admin' do
+        before(:each) do
+          allow(@controller).to receive(:current_user).and_return(@admin)
+        end
+
+        context 'with archive note' do
+          before(:each) do
+            put :archive, id: @reservation.id, archive_note: "Because I can"
+          end
+
+          it 'redirects to reservation show view' do
+            expect(response).to redirect_to(reservation_path(@reservation))
+          end
+          it 'should be checked in' do
+            expect { @reservation.reload }.to change { @reservation.checked_in }
+          end
+          it 'should have new notes' do
+            expect { @reservation.reload }.to change { @reservation.notes }
+          end
+        end
+
+        context 'without archive note' do
+          before(:each) do
+            put :archive, id: @reservation.id
+          end
+
+          it 'redirects to reservation show view' do
+            expect(response).to redirect_to(reservation_path(@reservation))
+          end
+          it 'should not be checked in' do
+            expect(@reservation.checked_in).to be_nil
+          end
+          it 'should not have new notes' do
+            expect { @reservation.reload }.not_to change { @reservation.notes }
+          end
+        end
+      end
+
+      context 'when accessed by checkout person' do
+        before(:each) do
+          allow(@controller).to receive(:current_user).and_return(@checkout_person)
+        end
+
+        include_examples 'cannot archive reservation'
+      end
+
+      context 'when accessed by patron' do
+        before(:each) do
+          allow(@controller).to receive(:current_user).and_return(@user)
+        end
+
+        include_examples 'cannot archive reservation'
+      end
+    end
+
+    context 'for checked-in reservations' do
+      before(:each) do
+        allow(@controller).to receive(:current_user).and_return(@admin)
+        @reservation = FactoryGirl.build(:checked_in_reservation, reserver: @user)
+        @reservation.save(validate: false)
+        request.env["HTTP_REFERER"] = reservation_path(@reservation)
+        put :archive, id: @reservation.id, archive_note: "Because I can"
+      end
+
+      it 'redirects to reservation show view' do
+        expect(response).to redirect_to(reservation_path(@reservation))
+      end
+      it 'should not change reservation' do
+        expect { @reservation.reload }.not_to change { @reservation.checked_in }
+        expect { @reservation.reload }.not_to change { @reservation.notes }
+      end
+    end
+
+    it_behaves_like 'inaccessible by banned user' do
+      before do
+        @reservation = FactoryGirl.create(:checked_out_reservation, reserver: @user)
+        put :archive, id: @reservation.id
+      end
+    end
+  end
+
   describe '#checkout_email (GET reservations/checkout_email)' do
     pending 'E-mails get sent'
   end
 
   describe '#checkin_email (GET reservations/checkin_email)' do
     pending 'E-mails get sent'
+  end
+
+  describe '#review GET' do
+    context 'as admin' do
+      before do
+        allow(@controller).to receive(:current_user).and_return(@admin)
+        get :review, id: @reservation.id
+      end
+      it 'should assign all current requests except itself' do
+        expect(assigns(:all_current_requests_by_user)).to eq @reservation.reserver.reservations.requested.reject { |r| r.id == @reservation.id }
+      end
+      it 'should assign errors' do
+        expect(assigns(:errors)).to eq assigns(:reservation).validate
+      end
+    end
+    context 'as checkout' do
+      before do
+        allow(@controller).to receive(:current_user).and_return(@checkout_person)
+        get :review, id: @reservation.id
+      end
+
+    end
+  end
+
+  describe '#approve_request PUT' do
+    before do
+      allow(@controller).to receive(:current_user).and_return(@admin)
+      @requested = FactoryGirl.create(:valid_reservation, approval_status: 'requested')
+      put :approve_request, id: @requested.id
+    end
+    it 'should set the reservation approval status' do
+      expect(assigns(:reservation).approval_status).to eq('approved')
+    end
+    it 'should save the reservation' do
+      expect(@requested.reload.approval_status).to eq('approved')
+    end
+    it 'should send an email' do
+      expect_email(UserMailer.request_approved_notification(@requested))
+    end
+    it 'should redirect to reservations path' do
+      expect(response).to redirect_to(reservations_path(requested: true))
+    end
+  end
+
+  describe '#deny_request PUT' do
+    before do
+      allow(@controller).to receive(:current_user).and_return(@admin)
+      @requested = FactoryGirl.create(:valid_reservation, approval_status: 'requested')
+      put :deny_request, id: @requested.id
+    end
+    it 'should set the reservation approval status to deny' do
+      expect(assigns(:reservation).approval_status).to eq('denied')
+    end
+    it 'should save the reservation' do
+      expect(@requested.reload.approval_status).to eq('denied')
+    end
+    it 'should send an email' do
+      expect_email(UserMailer.request_denied_notification(@requested))
+    end
+    it 'should redurect to reservations path' do
+      expect(response).to redirect_to(reservations_path(requested: true))
+    end
   end
 end

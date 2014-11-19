@@ -34,24 +34,28 @@
       </div>
 
       <%# shows renew button if due_date is today, tomorrow, or the day after %>
-      <% if @reservation.is_eligible_for_renew? %>
-        <div id="renew_box">
-          <p>You are currently eligible to renew the <%= @reservation.equipment_model.name.singularize %>
-          reservation until <strong><%= @reservation.find_renewal_date.to_date.to_s(:long) %></strong>.</p>
+      <% if can? :renew, @reservation %>
+        <% if @reservation.is_eligible_for_renew? %>
+          <div id="renew_box">
+            <p>You are currently eligible to renew the <%= @reservation.equipment_model.name.singularize %>
+            reservation until <strong><%= @reservation.find_renewal_date.to_date.to_s(:long) %></strong>.</p>
+            <hr>
+            <%= manage_reservations_btn %>
+            <%= link_to "Renew Now", renew_reservation_path, :method => :put,  class: 'btn btn-primary' %>
+          </div>
+        <% elsif @reservation.checked_out.nil? or !@reservation.checked_in.nil? %>
+          <%# you can't renew if you haven't checked it out, or if you've already checked it in %>
+          <%= manage_reservations_btn %>
+        <% else %>
+          <p>
+            This item is not currently eligible for renewal. Please remember to
+            return the <%= @reservation.equipment_model.name.singularize %> to our
+            office on <strong><%= @reservation.due_date.to_date.to_s(:long) %></strong>.
+          </p>
           <hr>
           <%= manage_reservations_btn %>
-          <%= link_to "Renew Now", renew_reservation_path, :method => :put, remote: true, class: 'btn btn-primary' %>
-        </div>
-      <% elsif @reservation.checked_out.nil? or !@reservation.checked_in.nil? %>
-        <%# you can't renew if you haven't checked it out, or if you've already checked it in %>
-        <%= manage_reservations_btn %>
+        <% end %>
       <% else %>
-        <p>
-          This item is not currently eligible for renewal. Please remember to
-          return the <%= @reservation.equipment_model.name.singularize %> to our
-          office on <strong><%= @reservation.due_date.to_date.to_s(:long) %></strong>.
-        </p>
-        <hr>
         <%= manage_reservations_btn %>
       <% end %>
     </div>
@@ -198,9 +202,11 @@
     <%= link_to "Edit", edit_reservation_path(@reservation), class: 'btn' %>
   <% end %>
   <% if can? :destroy, @reservation %>
-    <%= link_to "Cancel Reservation", @reservation, confirm:
-    'This will permanently delete the reservation. Are you sure?', method: :delete,
+    <%= link_to "Cancel Reservation", @reservation, data: { confirm:
+    'This will permanently delete the reservation. Are you sure?' }, method: :delete,
     class: 'btn btn-danger' %>
   <% end %>
+  <% if (can? :archive, @reservation) && @reservation.checked_in.nil? %>
+    <%= link_to "Archive Reservation", archive_reservation_path(@reservation), method: :put, class: 'btn btn-danger', onclick: 'getArchiveNote(this);' %>
+<% end %>
 </div>
-

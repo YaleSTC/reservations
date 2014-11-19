@@ -14,7 +14,7 @@
   </tr>
   </thead>
   <tbody>
-    <% @requirements.each do |requirement| %>  
+    <% @requirements.each do |requirement| %>
       <tr>
         <td><%= requirement.description %></td>
         <td><%  requirement.equipment_models.each do |model| %> <%= model.name %>, <br> <% end %></td>
@@ -22,7 +22,7 @@
         <td><%= requirement.contact_info %></td>
         <td><%= link_to 'Show', requirement, class: 'btn' %></td>
         <td><%= link_to 'Edit', edit_requirement_path(requirement), class: 'btn' %></td>
-        <td><%= link_to 'Delete', requirement, class: 'btn btn-danger', :confirm => 'Are you sure?', :method => :delete %></td>
+        <td><%= link_to 'Delete', requirement, class: 'btn btn-danger', :data => { :confirm => 'Are you sure?' }, :method => :delete %></td>
       </tr>
     <% end %>
   </tbody>
@@ -48,20 +48,20 @@
     <th>Equipment Model</th>
   </tr>
 
-<%# Requirement.get_users_with_permissions.each do |user| 
-  
+<%# Requirement.get_users_with_permissions.each do |user|
+
   <tr>
     <td><%#user.name </td>
     <td><%# Requirement.get_all_ems_for_user(user).join(", \n") </td>
     <td><%# link_to 'Show', MetRequirement.where(:user_id => user.id).first  </td>
-    <td><%# link_to 'Edit', edit_met_requirement_path(MetRequirement.where(:user_id => user.id).first) </td>   
+    <td><%# link_to 'Edit', edit_met_requirement_path(MetRequirement.where(:user_id => user.id).first) </td>
   </tr>
-<%# end 
+<%# end
 </table>
 
 
 
 <br />
 
- 
+
 <%# link_to 'New Met Requirement', new_met_requirement_path %>

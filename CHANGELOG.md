@@ -5,6 +5,58 @@ Changelog
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+### v4.0.1
+*Released on 3 November 2014*
+#### Bug Fixes
+* Fixed an issue where links in the request e-mail were broken ([#1017](https://github.com/YaleSTC/reservations/issues/1017)).
+* Moved the email link hostname back to the environment files ([#1017](https://github.com/YaleSTC/reservations/issues/1017)).
+* Fixed an issue where requiring phone numbers with existing users in the database would cause problems ([#675](https://github.com/YaleSTC/reservations/issues/675), [#1008](https://github.com/YaleSTC/reservations/issues/1008)).
+* Fixed an issue where some application options defaulted to `nil` instead of `''` and associated problems ([#947](https://github.com/YaleSTC/reservations/issues/947)).
+* Updated `link_to` confirmation syntax for Rails 4 ([#990](https://github.com/YaleSTC/reservations/issues/990)).
+
+#### New Features
+* Added a confirmation dialog when deactivating an item would cause that model to be overbooked within the coming week ([#983](https://github.com/YaleSTC/reservations/issues/983)).
+
+#### Enhancements
+* Announcements are now rendered in Markdown so they can include links and formatting ([#1027](https://github.com/YaleSTC/reservations/issues/1027)).
+* Majorly refactored the Reservations controller ([#836](https://github.com/YaleSTC/reservations/issues/836), [#882](https://github.com/YaleSTC/reservations/issues/882)).
+* Moved the session from the database to a cookie to improve performance ([#880](https://github.com/YaleSTC/reservations/issues/880)).
+* Added fallback version number derived from CHANGELOG ([#968](https://github.com/YaleSTC/reservations/issues/968)).
+* Added a "Delete" button to the Requirements "show" page ([#803](https://github.com/YaleSTC/reservations/issues/803)).
+
+### v4.0.0
+*Released on 5 October 2014*
+#### Bug Fixes
+* Fixed CodeClimate testing coverage ([#682](https://github.com/YaleSTC/reservations/issues/682)).
+* Fixed unescaped HTML on some views ([#781](https://github.com/YaleSTC/reservations/issues/781), [#860](https://github.com/YaleSTC/reservations/issues/860)).
+* Fixed broken migration due to switch to Rails Admin ([#853](https://github.com/YaleSTC/reservations/issues/853), see below).
+* The 'superuser' option now appears in the View Mode menu from any view mode when logged in as a superuser ([#976](https://github.com/YaleSTC/reservations/issues/976)).
+
+#### New Features
+* Updated to Rails 4.1.4 ([#585](https://github.com/YaleSTC/reservations/issues/585)).
+* The maximum reservation length is now shown on the equipment model page ([#303](https://github.com/YaleSTC/reservations/issues/303)).
+* Users are now notified via e-mail when requests have been processed ([#726](https://github.com/YaleSTC/reservations/issues/726)).
+* Reservation notes are now edited in append mode ([#752](https://github.com/YaleSTC/reservations/issues/752)).
+
+#### Enhancements
+* Switched to Rails Admin from Active Admin ([#691](https://github.com/YaleSTC/reservations/issues/691)).
+* Added equipment model-specific validation parameters ([#749](https://github.com/YaleSTC/reservations/issues/749)).
+* Reorganized all JavaScript files ([#234](https://github.com/YaleSTC/reservations/issues/234)).
+* Added .ruby-version file ([#697](https://github.com/YaleSTC/reservations/issues/697)).
+* Added testing coverage for the Reservations controller ([#874](https://github.com/YaleSTC/reservations/issues/874)).
+* Added persistent flash for superusers in other view modes ([#974](https://github.com/YaleSTC/reservations/issues/974)).
+* Replaced Airbrake with Party Foul ([#501](https://github.com/YaleSTC/reservations/issues/501)).
+* The first user is now created as a superuser ([#753](https://github.com/YaleSTC/reservations/issues/753)).
+
+### v3.4.8
+*Released on 26 October 2014*
+#### Bug Fixes
+* Fixed an issue where links in the request e-mail were broken ([#1017](https://github.com/YaleSTC/reservations/issues/1017)).
+* Moved the email link hostname back to the environment files ([#1017](https://github.com/YaleSTC/reservations/issues/1017)).
+
+#### Enhancements
+* Announcements are now rendered in Markdown so they can include links and formatting ([#1027](https://github.com/YaleSTC/reservations/issues/1027)).
+
 ### v3.4.7
 *Released on 12 October 2014*
 #### Enhancements
@@ -85,6 +137,7 @@ Changelog
 * Reservations checked in on their due-date are no-longer counted as overdue ([#785](https://github.com/YaleSTC/reservations/issues/785))
 * Block patrons from URL-hacking and creating new users ([#823](https://github.com/YaleSTC/reservations/issues/823))
 * Fixed a bug wherewith patrons were unable to edit their own profiles ([#830](https://github.com/YaleSTC/reservations/issues/830))
+* Fixed broken user form ([#787](https://github.com/YaleSTC/reservations/issues/787))
 
 #### New Features
 * Added benchmarking for speed-testing ([#574](https://github.com/YaleSTC/reservations/pull/574))
@@ -94,7 +147,7 @@ Changelog
 * Added reservation notes entry for validation-failing requests
   ([#502](https://github.com/YaleSTC/reservations/issues/502))
 * Blackouts automatically are removed after an admin-configurable period
-  ([#654](https://github.com/YaleSTC/reservations/issues/654))
+  ([#654](https://github.com/YaleSTC/reservations/issues/654), [#242](https://github.com/YaleSTC/reservations/issues/242))
 * User deactivation/reactivation has been changed to user ban/unban
   ([#529](https://github.com/YaleSTC/reservations/issues/529))
 

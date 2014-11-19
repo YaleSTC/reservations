@@ -1,6 +1,8 @@
 require 'net/ldap'
 
 class User < ActiveRecord::Base
+  include Rails.application.routes.url_helpers
+
   has_many :reservations, foreign_key: 'reserver_id', dependent: :destroy
   has_and_belongs_to_many :requirements,
                           class_name: "Requirement",
@@ -28,15 +30,24 @@ class User < ActiveRecord::Base
                           if: Proc.new { |u| !u.created_by_admin == "true" }
   validates :role,
             :view_mode,   inclusion: { in: ['admin', 'normal', 'checkout', 'superuser', 'banned'] }
+  validate :view_mode_reset
 
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
   scope :active, lambda { where("role != 'banned'") }
+  scope :no_phone, lambda { where("phone = ? OR phone IS NULL", '') }
 
   # ------- validations -------- #
   def skip_phone_validation?
     return true unless AppConfig.first
     return true unless AppConfig.first.require_phone
+    return true if missing_phone
     return !@csv_import.nil?
+  end
+
+  def view_mode_reset
+    return if role == 'superuser'
+    return if role == 'admin' && view_mode != 'superuser'
+    self.view_mode = role
   end
   # ------- end validations -------- #
 
@@ -77,6 +88,10 @@ class User < ActiveRecord::Base
 
   def render_name
     "#{name} #{login}"
+  end
+
+  def md_link
+    "[#{self.name}](#{user_path(self)})"
   end
 
 
