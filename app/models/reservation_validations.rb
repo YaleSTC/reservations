@@ -56,4 +56,8 @@ module ReservationValidations
     end
   end
 
+  def not_guest
+    errors.add(:base, "Guest User cannot be the reserver.\n") if reserver.role == 'guest'
+  end
+
 end
