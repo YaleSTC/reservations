@@ -131,11 +131,14 @@ class ReservationsController < ApplicationController
 
     # save changes to database
     @reservation.update(current_user, res, params[:new_notes])
-    @reservation.save
-
-    # flash success and exit
-    flash[:notice] = message
-    redirect_to @reservation
+    if @reservation.save
+      # flash success and exit
+      flash[:notice] = message
+      redirect_to @reservation
+    else
+      flash[:error] = "Unable to update reservation."
+      render 'edit'
+    end
   end
 
   def checkout
