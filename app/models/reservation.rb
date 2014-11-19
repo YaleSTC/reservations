@@ -11,7 +11,9 @@ class Reservation < ActiveRecord::Base
   belongs_to :checkin_handler, class_name: 'User'
 
   validates :equipment_model, :start_date, :due_date, presence: true
-  validates :reserver, :unless => Proc.new { |r| r.reserver.role == 'guest' }
+  validates_each :reserver do |record, attr, value|
+    record.errors.add(attr, 'cannot be a guest') if value.role == 'guest'
+  end
   validate :start_date_before_due_date
   validate :matched_object_and_model
   validate :not_in_past, :available, on: :create
