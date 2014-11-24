@@ -285,14 +285,12 @@ class ApplicationController < ActionController::Base
   end
 
   def create_guest_user
-    username = "guest"
-    u = User.new(
-      username: username,
+    User.new(
+      username: 'guest',
       first_name: 'Guest',
       last_name: 'User',
       role: 'guest',
       view_mode: 'guest')
-    u
   end
 
 

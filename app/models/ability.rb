@@ -2,7 +2,6 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
-    #binding.pry
     if user
       case user.view_mode
       when 'superuser'

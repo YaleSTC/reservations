@@ -38,7 +38,7 @@ describe AppConfigsController, :type => :controller do
     end
     context 'app_config does not exist yet' do
       before(:each) do
-        sign_in FactoryGirl.create(:admin)
+        sign_in FactoryGirl.create(:user)
         get :edit
       end
       it { is_expected.to respond_with(:success) }
