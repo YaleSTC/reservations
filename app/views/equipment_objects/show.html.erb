@@ -18,6 +18,18 @@
   <strong>Status:</strong>
   <%= @equipment_object.status %>
 </p>
+
+<%# NOTES %>
+<div class="row">
+  <div class="span9">
+    <% unless @equipment_object.notes.blank? %>
+      <hr>
+      <h3>Notes</h3>
+      <div class='notes-container'><%= markdown(@equipment_object.notes) %></div>
+    <% end %>
+  </div>
+</div>
+
 <div class="form-actions">
   <%= link_to "Edit", edit_equipment_object_path(@equipment_object), class: 'btn' %>
   <%= make_deactivate_btn :equipment_objects, @equipment_object %>

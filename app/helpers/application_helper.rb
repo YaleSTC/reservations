@@ -25,9 +25,20 @@ module ApplicationHelper
     if model_object.deleted_at
       link_to "Activate", [:activate, model_object], class: "btn btn-success", method: :put
     else
+      # handle equipment object-specific code
+      # this should ideally be in a separate method
+      if model_symbol == :equipment_objects
+        em = model_object.equipment_model
+        res = model_object.current_reservation
+        overbooked_dates = []
+        for date in Date.current..Date.current+7.days
+          overbooked_dates << date.to_s(:short) if em.available_count(date) <= 0
+        end
+        onclick_str = "handleDeactivation(this, #{res ? res.id : 'null'}, #{overbooked_dates});"
+      end
       link_to "Deactivate", [:deactivate, model_object],
         class: "btn btn-danger", method: :put,
-        onclick: model_symbol == :equipment_objects ? 'getDeactivationReason(this);' : ''
+        onclick: "#{onclick_str}"
     end
   end
 

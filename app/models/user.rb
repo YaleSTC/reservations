@@ -1,6 +1,9 @@
 require 'net/ldap'
 
 class User < ActiveRecord::Base
+  
+  include Rails.application.routes.url_helpers
+
   # Include authentication modules
   # If the CAS_AUTH environment variable is set, we simply include the
   # :cas_authenticatable module. If not, we implement password authentcation
@@ -11,6 +14,7 @@ class User < ActiveRecord::Base
   else
     devise :database_authenticatable, :recoverable
   end
+
   has_many :reservations, foreign_key: 'reserver_id', dependent: :destroy
   has_and_belongs_to_many :requirements,
                           class_name: "Requirement",
@@ -105,6 +109,10 @@ class User < ActiveRecord::Base
 
   def render_name
     ENV['CAS_AUTH'] ? "#{name} #{username}" : "#{name}"
+  end
+
+  def md_link
+    "[#{self.name}](#{user_path(self)})"
   end
 
 

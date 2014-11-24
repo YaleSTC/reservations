@@ -81,7 +81,7 @@ class ApplicationController < ActionController::Base
         authorize! :view_as, :superuser
       end
       current_user.view_mode = params[:view_mode]
-      current_user.save!
+      current_user.save!(validate: false)
       flash[:notice] = "Viewing as #{messages_hash[current_user.view_mode]}."
       redirect_to(:back) and return
     end

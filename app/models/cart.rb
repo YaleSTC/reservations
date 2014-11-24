@@ -67,21 +67,22 @@ class Cart
     reservations
   end
 
-  def reserve_all(notes = "" , request = false)
+  def reserve_all(user, res_notes = "", request = false)
     # reserve all the items in the cart!
-    # takes 2 arguments which is whether or not
-    # the equipment should be requested or reserved
+    # takes 3 arguments which is the current user, whether or not
+    # the equipment should be requested or reserved,
     # and what notes the reservations should be initialized with
     reservations = prepare_all
     message = []
     reservations.each do |r|
       errors = r.validate
       unless request
-        notes = "### Reservation notes (#{Time.current.to_s(:long)})\n#{notes}"
+        notes = "### Reserved on #{Time.current.to_s(:long)} by #{user.name}"
+        notes += "\n\n#### Notes:\n#{res_notes}" unless (res_notes.nil? || res_notes.empty?)
         r.approval_status = 'auto'
         message << "Reservation for #{r.equipment_model.name} created successfully#{", even though " + errors.to_sentence[0,1].downcase + errors.to_sentence[1..-1] unless errors.empty?}.\n"
       else
-        notes = "### Request notes (#{Time.current.to_s(:long)})\n#{notes}"
+        notes = "### Requested on #{Time.current.to_s(:long)} by #{user.name}\n\n#### Notes:\n#{res_notes}"
         r.approval_status = 'requested'
         message << "Request for #{r.equipment_model.name} filed successfully. #{errors.to_sentence}\n"
       end
@@ -95,8 +96,8 @@ class Cart
     message.join(" ")
   end
 
-  def request_all(notes = "")
-    reserve_all(notes, true)
+  def request_all(user, notes = "")
+    reserve_all(user, notes, true)
   end
 
   # Returns the cart's duration

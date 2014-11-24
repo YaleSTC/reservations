@@ -64,19 +64,7 @@ Reservations::Application.routes.draw do
       get :checkout_email
       get :checkin_email
       put :renew
-    end
-  end
-
-  get '/blackouts/flash_message' => 'blackouts#flash_message', :as => :flash_message
-  get '/blackouts/new_recurring' => 'blackouts#new_recurring', :as => :new_recurring_blackout
-
-  resources :blackouts do
-    collection do
-      post :create_recurring
-    end
-    member do
-      get :flash_message
-      delete :destroy_recurring
+      put :archive
     end
   end
 
@@ -91,6 +79,19 @@ Reservations::Application.routes.draw do
   # reservation checkout / check-in actions
   put '/reservations/checkout/:user_id' => 'reservations#checkout', :as => :checkout
   put '/reservations/check-in/:user_id' => 'reservations#checkin', :as => :checkin
+  get '/blackouts/flash_message' => 'blackouts#flash_message', :as => :flash_message
+  get '/blackouts/new_recurring' => 'blackouts#new_recurring', :as => :new_recurring_blackout
+
+  resources :blackouts do
+    collection do
+      post :create_recurring
+    end
+    member do
+      get :flash_message
+      delete :destroy_recurring
+    end
+  end
+
 
   put '/catalog/update_view' => 'catalog#update_user_per_cat_page', :as => :update_user_per_cat_page
   get '/catalog' => 'catalog#index', :as => :catalog

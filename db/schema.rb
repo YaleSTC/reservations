@@ -24,23 +24,23 @@ ActiveRecord::Schema.define(version: 20141026050048) do
   create_table "app_configs", force: true do |t|
     t.boolean  "upcoming_checkin_email_active",                      default: true
     t.boolean  "reservation_confirmation_email_active",              default: true
-    t.string   "site_title"
-    t.string   "admin_email"
-    t.string   "department_name"
-    t.string   "contact_link_location"
-    t.string   "home_link_text"
-    t.string   "home_link_location"
+    t.string   "site_title",                                                         null: false
+    t.string   "admin_email",                                                        null: false
+    t.string   "department_name",                                                    null: false
+    t.string   "contact_link_location",                                              null: false
+    t.string   "home_link_text",                                                     null: false
+    t.string   "home_link_location",                                                 null: false
     t.integer  "default_per_cat_page"
-    t.text     "upcoming_checkin_email_body"
-    t.text     "overdue_checkin_email_body"
+    t.text     "upcoming_checkin_email_body",                                        null: false
+    t.text     "overdue_checkin_email_body",                                         null: false
     t.boolean  "overdue_checkin_email_active",                       default: true
-    t.text     "terms_of_service"
+    t.text     "terms_of_service",                                                   null: false
     t.string   "favicon_file_name"
     t.string   "favicon_content_type"
     t.integer  "favicon_file_size"
     t.datetime "favicon_updated_at"
     t.boolean  "delete_missed_reservations",                         default: true
-    t.text     "deleted_missed_reservation_email_body"
+    t.text     "deleted_missed_reservation_email_body",                              null: false
     t.boolean  "send_notifications_for_deleted_missed_reservations", default: true
     t.boolean  "checkout_persons_can_edit",                          default: false
     t.boolean  "require_phone",                                      default: false
@@ -48,7 +48,7 @@ ActiveRecord::Schema.define(version: 20141026050048) do
     t.boolean  "override_on_create",                                 default: false
     t.boolean  "override_at_checkout",                               default: false
     t.integer  "blackout_exp_time"
-    t.text     "request_text"
+    t.text     "request_text",                                                       null: false
     t.boolean  "enable_renewals",                                    default: true
   end
 
@@ -132,13 +132,14 @@ ActiveRecord::Schema.define(version: 20141026050048) do
   create_table "equipment_objects", force: true do |t|
     t.string   "name"
     t.string   "serial"
-    t.boolean  "active",              default: true
+    t.boolean  "active",                               default: true
     t.integer  "equipment_model_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "deleted_at"
-    t.boolean  "csv_import",          default: false, null: false
+    t.boolean  "csv_import",                           default: false, null: false
     t.string   "deactivation_reason"
+    t.text     "notes",               limit: 16777215,                 null: false
   end
 
   create_table "requirements", force: true do |t|

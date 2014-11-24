@@ -1,6 +1,7 @@
 class Reservation < ActiveRecord::Base
   include ReservationValidations
   include ReservationScopes
+  include Rails.application.routes.url_helpers
 
   has_paper_trail
 
@@ -175,19 +176,38 @@ class Reservation < ActiveRecord::Base
     # gather all the procedure texts that were not
     # checked, ie not included in the procedures hash
     incomplete_procedures = []
+    procedures = [procedures].flatten # in case of nil procedures
     self.equipment_model.checkin_procedures.each do |checkin_procedure|
       if procedures.exclude?(checkin_procedure.id.to_s)
         incomplete_procedures << checkin_procedure.step
       end
     end
-    self.make_notes("checked in", new_notes, incomplete_procedures, checkin_handler)
+    self.make_notes("Checked in", new_notes, incomplete_procedures, checkin_handler)
+    # update equipment object notes
+    self.equipment_object.make_reservation_notes("checked in", self, checkin_handler, new_notes, Time.current)
 
     if self.checked_in.to_date > self.due_date.to_date
       # equipment was overdue, send an email confirmati
-        AdminMailer.overdue_checked_in_fine_admin(r).deliver
-        UserMailer.overdue_checked_in_fine(r).deliver
+        AdminMailer.overdue_checked_in_fine_admin(self).deliver
+        UserMailer.overdue_checked_in_fine(self).deliver
     end
 
+    self
+  end
+
+  def archive(archiver, note)
+    # set the reservation as checked in if it has been checked out
+    # used for emergency situations or when equipment is deactivated
+    # to preserve database sanity (eg, equipment object is deactivated while
+    # that reseration is checked out)
+    # returns self
+    if self.checked_in.nil?
+      self.checked_in = Time.current
+      self.checked_out = Time.current if self.checked_out.nil?
+      self.notes = self.notes.to_s + "\n\n### Archived on #{Time.current.to_s(:long)} by #{archiver.name}\n\n\n#### " +
+        "Reason:\n#{note}\n\n#### The checkin and checkout dates may reflect the archive date because the reservation was " +
+        "for a nonexistent piece of equipment or otherwise problematic."
+    end
     self
   end
 
@@ -203,12 +223,15 @@ class Reservation < ActiveRecord::Base
     self.equipment_object_id = eq_object
 
     incomplete_procedures = []
+    procedures = [procedures].flatten
     self.equipment_model.checkout_procedures.each do |checkout_procedure|
       if procedures.exclude?(checkout_procedure.id.to_s)
         incomplete_procedures << checkout_procedure.step
       end
     end
-    self.make_notes("checked out", new_notes, incomplete_procedures, checkout_handler)
+    self.make_notes("Checked out", new_notes, incomplete_procedures, checkout_handler)
+    # update equipment object notes
+    self.equipment_object.make_reservation_notes("checked out", self, checkout_handler, new_notes, Time.current)
     self
   end
 
@@ -226,7 +249,7 @@ class Reservation < ActiveRecord::Base
       return
     else
       # write notes header
-      header = "### Reservation edited at #{Time.current.to_s(:long)} by #{current_user.name}\n"
+      header = "### Edited on #{Time.current.to_s(:long)} by #{current_user.md_link}\n"
       self.notes = self.notes ? self.notes + "\n" + header : header
 
       # add notes if they exist
@@ -272,7 +295,7 @@ class Reservation < ActiveRecord::Base
     # procedure_kind
 
     # write notes header
-    header = "### Reservation #{procedure_verb} at #{Time.current.to_s(:long)} by #{current_user.name}\n"
+    header = "### #{procedure_verb} on #{Time.current.to_s(:long)} by #{current_user.md_link}\n"
     self.notes = self.notes ? self.notes + "\n" + header : header
 
     # If no new notes and no missed procedures, set e-mail flag to false and
@@ -306,5 +329,8 @@ class Reservation < ActiveRecord::Base
     return '* ' + items.join("\n* ")
   end
 
+  def md_link
+    "[res. \##{self.id.to_s}](#{reservation_path(self)})"
+  end
 
 end

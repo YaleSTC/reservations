@@ -79,6 +79,11 @@ class ReservationsController < ApplicationController
       # there were errors but they didn't fill out the notes
       flash[:error] = "Please give a short justification for this reservation #{requested ? 'request' : 'override'}"
       @notes_required = true
+      if AppConfig.first.request_text.empty?
+        @request_text = "Please give a short justification for this equipment request."
+      else
+        @request_text = AppConfig.first.request_text
+      end
       render :new and return
     end
 
@@ -88,9 +93,9 @@ class ReservationsController < ApplicationController
         start_date = cart.start_date
         reserver = cart.reserver_id
         unless requested
-          flash[:notice] = cart.reserve_all(params[:reservation][:notes])
+          flash[:notice] = cart.reserve_all(current_user, params[:reservation][:notes])
         else
-          flash[:notice] = cart.request_all(params[:reservation][:notes])
+          flash[:notice] = cart.request_all(current_user, params[:reservation][:notes])
         end
 
         redirect_to catalog_path and return if (cannot? :manage, Reservation) || (requested == true)
@@ -113,24 +118,38 @@ class ReservationsController < ApplicationController
   def update # for editing reservations; not for checkout or check-in
     message = "Successfully edited reservation."
     res = reservation_params
-
-    # update attributes
+    # add new equipment object id to hash if it's being changed and save old
+    # and new objects for later
     unless params[:equipment_object].blank?
-      object = EquipmentObject.find(params[:equipment_object])
-      unless object.available?
-        r = object.current_reservation
-        r.equipment_object_id = @reservation.equipment_object_id
-        r.save
-        message << " Note equipment item #{r.equipment_object.name} is now assigned to \
-            #{ActionController::Base.helpers.link_to('reservation #' + r.id.to_s, reservation_path(r))} \
-            (#{r.reserver.render_name})"
-      end
       res[:equipment_object_id] = params[:equipment_object]
+      new_object = EquipmentObject.find(params[:equipment_object])
+      old_object = @reservation.equipment_object_id ? EquipmentObject.find(@reservation.equipment_object_id) : nil
+      # check to see if new object is available
+      unless new_object.available?
+        r = new_object.current_reservation
+        r.equipment_object_id = @reservation.equipment_object_id
+      end
     end
 
     # save changes to database
     @reservation.update(current_user, res, params[:new_notes])
     if @reservation.save
+      # code for switching equipment objects
+      unless params[:equipment_object].blank?
+        # if the item was previously assigned to a different reservation
+        if r
+          r.save
+          # clean up this code with a model method?
+          message << " Note equipment item #{r.equipment_object.name} is now assigned to \
+              #{ActionController::Base.helpers.link_to('reservation #' + r.id.to_s, reservation_path(r))} \
+              (#{r.reserver.render_name})"
+        end
+
+        # update the item history / histories
+        old_object.make_switch_notes(@reservation, r, current_user) if old_object
+        new_object.make_switch_notes(r, @reservation, current_user)
+      end
+
       # flash success and exit
       flash[:notice] = message
       redirect_to @reservation
@@ -151,7 +170,7 @@ class ReservationsController < ApplicationController
       r = Reservation.find(r_id)
       checked_out_reservations << r.checkout(r_attrs[:equipment_object_id],
                                              current_user,
-                                             r_attrs[:checkout_procedures],
+                                             Hash.new(r_attrs[:checkout_procedures]),
                                              r_attrs[:notes])
     end
 
@@ -306,6 +325,8 @@ class ReservationsController < ApplicationController
 
   def approve_request
     @reservation.approval_status = "approved"
+    @reservation.notes = @reservation.notes.to_s # in case of nil
+    @reservation.notes += "\n\n### Approved on #{Time.current.to_s(:long)} by #{current_user.name}"
     if @reservation.save
       flash[:notice] = "Request successfully approved"
       UserMailer.request_approved_notification(@reservation).deliver
@@ -318,6 +339,8 @@ class ReservationsController < ApplicationController
 
   def deny_request
     @reservation.approval_status = "denied"
+    @reservation.notes = @reservation.notes.to_s # in case of nil
+    @reservation.notes += "\n\n### Denied on #{Time.current.to_s(:long)} by #{current_user.name}"
     if @reservation.save
       flash[:notice] = "Request successfully denied"
       UserMailer.request_denied_notification(@reservation).deliver
@@ -326,6 +349,24 @@ class ReservationsController < ApplicationController
       flash[:error] = "Oops! Something went wrong. Unable to deny reservation. We're not sure what that's all about."
       redirect_to @reservation
     end
+  end
+
+  def archive
+    if params[:archive_note].nil? || params[:archive_note].strip.empty?
+      flash[:error] = 'Reason for archiving cannot be empty.'
+      redirect_to :back and return
+    elsif params[:archive_note] == 'null'
+      flash[:notice] = 'Reservation archiving cancelled.'
+      redirect_to :back and return
+    end
+    set_reservation
+    if @reservation.checked_in
+      flash[:error] = 'Cannot archive checked-in reservation.'
+      redirect_to :back and return
+    end
+    @reservation.archive(current_user, params[:archive_note]).save(validate: false)
+    flash[:notice] = "Reservation successfully archived."
+    redirect_to :back
   end
 
   private
