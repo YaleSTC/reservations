@@ -7,7 +7,7 @@ class UsersController < ApplicationController
   skip_filter :cart, only: [:new, :create]
   skip_filter :authenticate_user!, only: [:new, :create]
   before_action :set_user, only: [:show, :edit, :update, :destroy, :ban, :unban]
-  before_action :check_cas_auth, only: [:new, :create, :edit, :update]
+  before_action :check_cas_auth, only: [:show, :new, :create, :edit, :update]
 
   include Autocomplete
 
