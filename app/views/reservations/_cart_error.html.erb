@@ -1,0 +1,5 @@
+<%= session[:cart].items.length %>
+
+<% if session[:cart].items.length >= 2 %>
+	<span id="error">Cart limit reached.</span>
+<% end %>

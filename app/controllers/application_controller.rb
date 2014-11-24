@@ -1,6 +1,25 @@
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 
+
+#Notes
+
+#Filters are methods that run before, after, or "around" a controller action
+#"before" filters halt the request cycle
+#For example, before_action :require_login 
+#Means that a person can't perform an action unless logged in
+#can? Determines whether or not the user is authorized to perform certain actions
+
+#Questions:
+
+#1. Whenever it says before_filter :(word), are we calling that method?
+#2. Are all the before filters here to make sure all of the methods are run
+#before anything else happens?
+#3.  What does "helper: layout" do?  helper vs helper_method?
+#4.  How does application_controller.rb know where to look for protect_from_forgery?
+#5.  When is the session hash sent to the application controller?
+
+
 class ApplicationController < ActionController::Base
   helper :layout
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
@@ -68,7 +87,7 @@ class ApplicationController < ActionController::Base
   end
 
   def cart
-    session[:cart] ||= Cart.new
+    session[:cart] ||= Cart.new #Cart is a model, this is referencing the cart model
     if session[:cart].reserver_id.nil?
       session[:cart].reserver_id = current_user.id if current_user
     end
