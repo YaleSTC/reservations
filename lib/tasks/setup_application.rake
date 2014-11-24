@@ -54,8 +54,10 @@ namespace :app do
               u.affiliation = affiliation
               u.role = 'superuser'
               u.view_mode = 'superuser'
-              u.password = password
-              u.password_confirmation = password_confirmation
+              unless ENV['CAS_AUTH']
+                u.password = password
+                u.password_confirmation = password_confirmation
+              end
             end
           rescue Exception => e
             ActiveRecord::Rollback
