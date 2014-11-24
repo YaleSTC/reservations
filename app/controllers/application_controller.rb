@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
     c.before_filter :make_cart_compatible
   end
 
-  helper_method :cart
+  helper_method :cart, :current_or_guest_user
 
   rescue_from CanCan::AccessDenied do |exception|
     flash[:error] = "Sorry, that action or page is restricted."
@@ -162,38 +162,13 @@ class ApplicationController < ActionController::Base
   # if user is logged in, return current_user, else return guest_user
   # https://github.com/plataformatec/devise/wiki/How-To:-Create-a-guest-user
   def current_or_guest_user
-    if current_user
-      # if first time called after sign in
-      if session[:guest_user_id]
-        # delete guest user id key
-        session[:guest_user_id] = nil
-        # update cart reserver
-        cart.reserver_id = current_user.id
-      end
-      current_user
-    else
-      guest_user
-    end
+    current_user ? current_user : guest_user
   end
 
   # find guest_user object associated with the current session,
   # creating one as needed
   def guest_user
-    # check for leftover guest_user_id in session that isn't a 'guest'
-    # (shouldn't really be relevant)
-    if session[:guest_user_id] &&
-      (User.
-        where(id: session[:guest_user_id]).
-        where.not(role: 'guest').count > 0)
-      session[:guest_user_id] = nil
-    end
-    # Cache the value the first time it's gotten.
-    @cached_guest_user ||=
-      User.find(session[:guest_user_id] ||= find_guest_user.id)
-
-  rescue ActiveRecord::RecordNotFound # if session[:guest_user_id] invalid
-     session[:guest_user_id] = nil
-     guest_user
+    @cached_guest ||= create_guest_user
   end
 
   # allow CanCanCan to use the guest user when we're not logged in
@@ -309,38 +284,16 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  # find guest user - looks for existing guest user in the database and
-  # creates a new one if one doesn't exist. The latter should only be called
-  # once PER INSTANCE, and means that we won't clog up our Users table w/
-  # guest records.
-  def find_guest_user
-    guest = User.find_by_role('guest')
-    if guest
-      session[:guest_user_id] = guest.id
-      guest
-    else
-      create_guest_user
-    end
-  end
-
   def create_guest_user
-    username = generate_guest_username
-    # ensure no matches since we index
-    while User.find_by_username(username)
-      username = generate_guest_username
-    end
-    u = User.create(
+    username = "guest"
+    u = User.new(
       username: username,
       first_name: 'Guest',
       last_name: 'User',
-      role: 'guest')
-    u.save!(:validate => false)
-    session[:guest_user_id] = u.id
+      role: 'guest',
+      view_mode: 'guest')
     u
   end
 
-  def generate_guest_username
-    "guest#{rand(100)}"
-  end
 
 end

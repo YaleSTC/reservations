@@ -72,7 +72,7 @@ describe AppConfigsController, :type => :controller do
             @user = FactoryGirl.create(:user)
             @params = @params.merge({reset_tos_for_users: 1})
             Rails.logger.debug @params
-            post :update, app_config: @params
+            put :update, app_config: @params
             @user.reload
             expect(@user.terms_of_service_accepted).to be_falsey
           end

@@ -37,7 +37,7 @@
           <li id="my_reservations" class="dropdown">
             <% if can? :manage, Reservation %>
               <%= link_to "Reservations", reservations_path %>
-            <% else %>
+            <% elsif can? :read, Reservation %>
               <%= link_to sanitize("My Reservations &nbsp;<span class=\"badge\">#{reservations_count}</span> <b class=\"caret\"></b>"), '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' %>
               <ul class="dropdown-menu">
                 <li class="nav-header"><h3>My Current Reservations</h3></li>

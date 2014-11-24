@@ -20,6 +20,7 @@ module CartValidations
     models = self.get_items
 
     errors += check_requirements(models)
+
     source_res = Reservation.not_returned.where(equipment_model_id: self.items.keys).reserved_in_date_range(self.start_date,self.due_date).all
 
     models.each do |model, quantity|
@@ -172,6 +173,7 @@ module CartValidations
   def check_requirements(items = self.get_items)
     # check that the reserver specified in the cart has all the necessary
     # requirements for the equipment models in the cart
+    return [] if self.reserver_id.nil?
 
     user = User.find(self.reserver_id)
     user_reqs = user.requirements
