@@ -172,8 +172,13 @@ if User.where('role = ?', 'superuser').empty?
     affiliation = STDIN.gets.chomp
     if ENV['CAS_AUTH']
       puts 'Username (i.e. NetID):'
+      username = STDIN.gets.chomp
     else
-      puts 'Password'
+      username = email
+      puts 'Password:'
+      password = STDIN.gets.chomp
+      puts 'Confirm Password:'
+      password_confirmation = STDIN.gets.chomp
     end
   else
     first_name = "Donny"
@@ -181,14 +186,14 @@ if User.where('role = ?', 'superuser').empty?
     phone = "6666666666"
     email = "email@email.com"
     affiliation = "Your Mother"
-    puts "Please enter your netID" if ENV['CAS_AUTH']
-  end
-  if ENV['CAS_AUTH']
-    username = STDIN.gets.chomp
-  else
-    username = email
-    password = 'passw0rd'
-    password_confirmation = 'passw0rd'
+    if ENV['CAS_AUTH']
+      puts "Please enter your netID:"
+      username = STDIN.gets.chomp
+    else
+      username = email
+      password = 'passw0rd'
+      password_confirmation = password
+    end
   end
 
   User.create! do |u|

@@ -30,8 +30,16 @@ namespace :app do
         phone = STDIN.gets.chomp
         puts 'Email Address:'
         email = STDIN.gets.chomp
-        puts 'Username (i.e. NetID, please double check that this is correct):'
-        username = STDIN.gets.chomp
+        if ENV['CAS_AUTH']
+          puts 'Username (i.e. NetID, ensure this is correct):'
+          username = STDIN.gets.chomp
+        else
+          username = email
+          puts 'Password:'
+          password = STDIN.gets.chomp
+          puts 'Confirm Password:'
+          password_confirmation = STDIN.gets.chomp
+        end
         puts 'Affiliation (i.e. Yale College):'
         affiliation = STDIN.gets.chomp
 
@@ -46,6 +54,8 @@ namespace :app do
               u.affiliation = affiliation
               u.role = 'superuser'
               u.view_mode = 'superuser'
+              u.password = password
+              u.password_confirmation = password_confirmation
             end
           rescue Exception => e
             ActiveRecord::Rollback
@@ -125,6 +135,8 @@ namespace :app do
         home_link_text = STDIN.gets.chomp
         puts 'Home Link Location (e.g. http://clc.yale.edu):'
         home_link_location = STDIN.gets.chomp
+        puts 'Contact Email (this email address will receive contact form submissions). Leave blank to default to the admin e-mail.'
+        contact_link_location = STDIN.gets.chomp.empty? ? admin_email : STDIN.gets.chomp
 
         ActiveRecord::Base.transaction do
           begin
@@ -146,6 +158,7 @@ namespace :app do
               ac.default_per_cat_page = 20
               ac.viewed = false
               ac.blackout_exp_time = 30
+              ac.contact_link_location = contact_link_location
             end
           rescue Exception => e
             ActiveRecord::Rollback
