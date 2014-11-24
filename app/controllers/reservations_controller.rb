@@ -135,9 +135,8 @@ class ReservationsController < ApplicationController
       flash[:notice] = message
       redirect_to @reservation
     else
-      flash[:error] = "Unable to update reservation."
-      @option_array = @reservation.equipment_model.equipment_objects.collect { |e| [e.name, e.id] }
-      render 'edit'
+      flash[:error] = "Unable to update reservation:\n#{@reservation.errors.full_messages.to_sentence}"
+      redirect_to edit_reservation_path(@reservation)
     end
   end
 
