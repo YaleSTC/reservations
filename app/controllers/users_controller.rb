@@ -147,6 +147,8 @@ class UsersController < ApplicationController
       par.delete('current_password')
     else
       method = :update_with_password
+      # make sure we update the username as well
+      par[:username] = par[:email]
     end
     if @user.send(method, par)
       # sign in the user if you've edited yourself since you have a new
