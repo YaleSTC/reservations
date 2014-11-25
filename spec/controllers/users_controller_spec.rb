@@ -66,6 +66,16 @@ describe UsersController, :type => :controller do
       end
       it_behaves_like 'page success'
       it { is_expected.to render_template(:new) }
+
+      context 'when new user registration is disabled' do
+        before do
+          AppConfig.first.update_attributes(enable_new_users: false)
+          get :new
+        end
+
+        it_behaves_like 'page success'
+        it { is_expected.to render_template(:new) }
+      end
     end
     describe 'POST create' do
       context 'with correct params' do
@@ -87,6 +97,17 @@ describe UsersController, :type => :controller do
         end
       end
 
+      context 'when new user registration is disabled and correct params' do
+        before do
+          AppConfig.first.update_attributes(enable_new_users: false)
+          @user_attributes = FactoryGirl.attributes_for(:user)
+          post :create, user: @user_attributes
+        end
+
+        it 'should save the user' do
+          expect(User.find(assigns(:user))).not_to be_nil
+        end
+      end
     end
     describe 'GET edit' do
       before { get :edit, id: FactoryGirl.create(:user) }
@@ -188,8 +209,36 @@ describe UsersController, :type => :controller do
       it { is_expected.to set_the_flash}
       it { is_expected.to redirect_to("where_i_came_from") }
     end
-
-
   end
+  context 'with checkout person user' do
+    before do
+      sign_in FactoryGirl.create(:checkout_person)
+    end
 
+    describe 'GET new' do
+      before { get :new }
+      context 'possible netid not provided' do
+        it 'should assign @user to a new user' do
+          expect(assigns(:user).attributes).to eq(User.new.attributes)
+        end
+      end
+      it 'should assign @can_edit_username to true' do
+        expect(assigns(:can_edit_username)).to be_truthy
+      end
+      it_behaves_like 'page success'
+      it { is_expected.to render_template(:new) }
+
+      context 'when new user registration is disabled' do
+        before do
+          AppConfig.first.update_attributes(enable_new_users: false)
+          get :new
+        end
+
+        it { is_expected.to set_the_flash }
+        it 'redirects to homepage' do
+          expect(response).to redirect_to(root_url)
+        end
+      end
+    end
+  end
 end
