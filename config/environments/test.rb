@@ -40,8 +40,4 @@ Reservations::Application.configure do
   config.assets.compress = false
   config.assets.debug = false
   config.assets.digest = false
-
-  config.after_initialize do
-    PaperTrail.enabled = false
-  end
 end

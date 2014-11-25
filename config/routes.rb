@@ -9,10 +9,6 @@ Reservations::Application.routes.draw do
 
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
 
-  get "log/index"
-  get "log/version/:id" => "log#version", as: :version_view
-  get "log/history/:object_type/:id" => "log#history", as: :history
-
   get "status/index"
 
   concern :deactivatable do

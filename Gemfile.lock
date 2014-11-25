@@ -194,9 +194,6 @@ GEM
     octokit (3.4.0)
       sawyer (~> 0.5.3)
     orm_adapter (0.5.0)
-    paper_trail (3.0.6)
-      activerecord (>= 3.0, < 5.0)
-      activesupport (>= 3.0, < 5.0)
     paperclip (4.2.0)
       activemodel (>= 3.0.0)
       activesupport (>= 3.0.0)
@@ -407,7 +404,6 @@ DEPENDENCIES
   mysql2
   net-ldap
   nilify_blanks
-  paper_trail (~> 3.0.5)
   paperclip
   party_foul
   permanent_records
