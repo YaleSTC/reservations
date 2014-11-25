@@ -1,8 +1,7 @@
 require 'net/ldap'
 
 class User < ActiveRecord::Base
-  
-  include Rails.application.routes.url_helpers
+  include Routing
 
   # Include authentication modules
   # If the CAS_AUTH environment variable is set, we simply include the
@@ -112,7 +111,7 @@ class User < ActiveRecord::Base
   end
 
   def md_link
-    "[#{self.name}](#{user_path(self)})"
+    "[#{self.name}](#{user_url(self, only_path: false)})"
   end
 
 

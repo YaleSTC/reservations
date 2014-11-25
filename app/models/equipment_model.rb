@@ -1,5 +1,6 @@
 class EquipmentModel < ActiveRecord::Base
   include ApplicationHelper
+  include Routing
 
   include Searchable
   searchable_on(:name, :description)
@@ -203,6 +204,10 @@ class EquipmentModel < ActiveRecord::Base
         .sort_by(&:name)\
         .collect{|item| "<option value=#{item.id}>#{item.name}</option>"}\
         .join.html_safe
+  end
+
+  def md_link
+    "[#{self.name}](#{equipment_model_url(self, only_path: false)})"
   end
 
 end

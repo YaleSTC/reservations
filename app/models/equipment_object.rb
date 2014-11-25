@@ -1,7 +1,7 @@
 class EquipmentObject < ActiveRecord::Base
 
   include Searchable
-  include Rails.application.routes.url_helpers
+  include Routing
 
   belongs_to :equipment_model
   has_one :category, through: :equipment_model
@@ -97,5 +97,9 @@ class EquipmentObject < ActiveRecord::Base
     new_notes += "\n\n" + self.notes
     self.notes = new_notes.strip
     self
+  end
+
+  def md_link
+    "[#{self.name}](#{equipment_object_url(self, only_path: false)})"
   end
 end

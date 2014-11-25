@@ -154,3 +154,8 @@ td a {
 // because it then gives each element its own line
   display: block;
 }
+
+// make p blocks in the flash margin-less
+.alert p:last-child {
+  margin: 0;
+}
