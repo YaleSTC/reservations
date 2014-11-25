@@ -1,7 +1,7 @@
 <table id="table_users" class="datatable-wide table table-striped table-bordered">
   <thead>
   <tr>
-    <th>NetID</th>
+    <th>Username</th>
     <th>First Name</th>
     <th>Nickname</th>
     <th>Last Name</th>
@@ -18,7 +18,7 @@
   <tbody>
   <% for user in users %>
     <tr>
-    <td><%= user.login %></td>
+    <td><%= user.username %></td>
     <td><%= link_to user.first_name, user %></td>
     <td><%= link_to user.nickname, user %></td>
     <td><%= link_to user.last_name, user %></td>

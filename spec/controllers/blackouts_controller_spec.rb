@@ -14,13 +14,10 @@ describe BlackoutsController, :type => :controller do
   before(:all) {
     @app_config = FactoryGirl.create(:app_config)
   }
-  before {
-    allow(@controller).to receive(:first_time_user).and_return(:nil)
-  }
 
   describe 'with admin' do
     before do
-      allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+      sign_in FactoryGirl.create(:admin)
     end
     context 'GET index' do
       before do
@@ -178,7 +175,7 @@ describe BlackoutsController, :type => :controller do
   end
   context 'is not admin' do
     before do
-      allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:user))
+      sign_in FactoryGirl.create(:user)
       @blackout = FactoryGirl.create(:blackout)
       @attributes = FactoryGirl.attributes_for(:blackout)
     end

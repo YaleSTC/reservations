@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141001000934) do
+ActiveRecord::Schema.define(version: 20141026050048) do
 
   create_table "announcements", force: true do |t|
     t.text     "message"
@@ -182,22 +182,25 @@ ActiveRecord::Schema.define(version: 20141001000934) do
   add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at", using: :btree
 
   create_table "users", force: true do |t|
-    t.string   "login"
+    t.string   "username"
     t.string   "first_name"
     t.string   "last_name"
-    t.string   "nickname",                  default: "",       null: false
+    t.string   "nickname",                              default: "",       null: false
     t.string   "phone"
     t.string   "email"
     t.string   "affiliation"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "terms_of_service_accepted"
-    t.string   "view_mode",                 default: "normal"
-    t.string   "role",                      default: "normal"
-    t.boolean  "missing_phone",             default: false
+    t.string   "view_mode",                             default: "normal"
+    t.string   "role",                                  default: "normal"
+    t.boolean  "missing_phone",                         default: false
+    t.string   "encrypted_password",        limit: 128, default: "",       null: false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
   end
 
-  add_index "users", ["login"], name: "index_users_on_login", unique: true, using: :btree
+  add_index "users", ["username"], name: "index_users_on_username", unique: true, using: :btree
 
   create_table "users_requirements", id: false, force: true do |t|
     t.integer "user_id"

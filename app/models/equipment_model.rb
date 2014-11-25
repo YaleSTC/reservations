@@ -180,6 +180,7 @@ class EquipmentModel < ActiveRecord::Base
 
   # Returns true if the reserver is ineligible to checkout the model.
   def model_restricted?(reserver_id)
+    return false if reserver_id.nil?
     reserver = User.find(reserver_id)
     !(self.requirements - reserver.requirements).empty?
   end

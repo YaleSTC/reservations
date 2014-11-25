@@ -12,6 +12,9 @@ class Reservation < ActiveRecord::Base
   belongs_to :checkin_handler, class_name: 'User'
 
   validates :equipment_model, :start_date, :due_date, presence: true
+  validates_each :reserver do |record, attr, value|
+    record.errors.add(attr, 'cannot be a guest') if value.role == 'guest'
+  end
   validate :start_date_before_due_date
   validate :matched_object_and_model
   validate :not_in_past, :available, on: :create
@@ -93,7 +96,7 @@ class Reservation < ActiveRecord::Base
     #if user's been deleted, return a dummy user
     User.new( first_name: "Deleted",
               last_name: "User",
-              login: "deleted",
+              username: "deleted",
               email: "deleted.user@invalid.address",
               nickname: "",
               phone: "555-555-5555",

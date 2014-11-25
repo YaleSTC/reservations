@@ -1,6 +1,7 @@
 class EquipmentModelsController < ApplicationController
   layout 'application_with_sidebar', only: :show
   load_and_authorize_resource
+  skip_before_filter :authenticate_user!, only: [:show, :index]
   before_action :set_equipment_model, only: [:show, :edit, :update, :destroy]
   before_action :set_category_if_possible, only: [:index, :new]
 

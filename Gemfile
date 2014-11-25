@@ -5,13 +5,17 @@ ruby '2.1.2' # Version in .ruby-version must match
 #standard gems
 gem 'rails', '~> 4.1.5'
 gem 'mysql2'
-gem 'rake'
-gem 'rdoc'
+gem 'rake', '~> 10.3.2'
+gem 'rdoc', '~> 4.1.2'
 
-#authentication
-#gem 'rubycas-client-rails'
+# simulate environment variables
+group :development, :test do
+  gem 'dotenv-rails', '~> 1.0.2'
+end
 
-gem 'rubycas-client', :git => 'git://github.com/rubycas/rubycas-client.git'
+# authentication / authorization
+gem 'devise', '~> 3.3.0'
+gem 'devise_cas_authenticatable', '~> 1.3.7'# if ENV['CAS_AUTH']
 gem 'cancancan'
 
 #scheduling
@@ -29,20 +33,18 @@ gem 'permanent_records'
 gem 'nilify_blanks'
 
 #ui
-gem 'jquery-rails'
-gem 'jquery-ui-rails'
+gem 'jquery-rails', '~> 3.1.2'
+gem 'jquery-ui-rails', '~> 5.0.1'
 gem 'jquery-datatables-rails'
 gem 'rails4-autocomplete'
 gem 'select2-rails'
 gem 'kaminari'
-gem 'spinjs-rails', '~> 1.4'
 
 #forms / formatting
 gem 'dynamic_form'
 gem 'simple_form'
 gem 'cocoon'
 gem 'redcarpet'
-
 
 # auditting / logging
 gem 'paper_trail', '~> 3.0.5'
@@ -63,7 +65,6 @@ group :development, :test do
   gem 'awesome_print'
   gem 'ruby-progressbar'
   gem 'codeclimate-test-reporter'
-  gem 'parallel_tests'
   gem 'database_cleaner'
 end
 

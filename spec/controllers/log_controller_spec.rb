@@ -8,8 +8,7 @@ describe LogController, type: :controller, versioning: true do
   end
   before(:each) do
     PaperTrail.enabled = true
-    allow(@controller).to receive(:first_time_user).and_return(FactoryGirl.create(:user))
-    allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+    sign_in FactoryGirl.create(:admin)
     PaperTrail.whodunnit = @controller.current_user
       # Necessary because for some reason, user ID that is responsible for
       # changes is deleted between tests

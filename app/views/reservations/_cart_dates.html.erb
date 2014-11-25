@@ -19,10 +19,7 @@
           class: 'submittable span2' %><%= link_to sanitize("<i class=\"fa fa-plus\"></i>"), '#userModal', :class => 'btn', :id => 'modal', :rel => 'tooltip', :title => 'New Reserver', :"data-toggle" => 'modal' %>
       </div>
 
-    <% elsif !current_user %>
-      <%= label_tag :reserver_id, 'Reserver' %>
-        <p>Please sign in</p> <br />
-    <% else %>
+    <% elsif current_user %>
       <div class="cart_reserver">
         <%= hidden_field_tag 'reserver_id', cart.reserver.id  %>
       </div>

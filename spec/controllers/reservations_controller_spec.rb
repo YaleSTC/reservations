@@ -27,8 +27,7 @@ describe ReservationsController, :type => :controller do
   before(:each) do
     @cart = FactoryGirl.build(:cart, reserver_id: @user.id)
 
-    allow(@controller).to receive(:first_time_user).and_return(nil)
-    allow(@controller).to receive(:current_user).and_return(@user)
+    sign_in @user
 
     @reservation = FactoryGirl.create(:valid_reservation, reserver: @user)
   end
@@ -41,9 +40,8 @@ describe ReservationsController, :type => :controller do
 
   shared_examples 'inaccessible by banned user' do
     before(:each) do
-      banned = FactoryGirl.build(:banned)
-      allow(@controller).to receive(:current_user).and_return(banned)
-      allow(Reservation).to receive(:find).and_return(FactoryGirl.build_stubbed(:reservation, reserver: banned))
+      sign_in @banned
+      allow(Reservation).to receive(:find).and_return(FactoryGirl.build_stubbed(:reservation, reserver: @banned))
     end
     include_examples 'cannot access page'
     it { is_expected.to redirect_to(root_path) }
@@ -97,7 +95,7 @@ describe ReservationsController, :type => :controller do
 
       context 'who is an admin' do
         before(:each) do
-          allow(@controller).to receive(:current_user).and_return(@admin)
+          sign_in @admin
           @filters.each do |trait|
             res = FactoryGirl.build(:valid_reservation, trait,
                                     reserver: [@user, @admin].sample)
@@ -112,7 +110,7 @@ describe ReservationsController, :type => :controller do
 
       context 'who is not an admin' do
         before(:each) do
-          allow(@controller).to receive(:current_user).and_return(@user)
+          sign_in @user
           @filters.each do |trait|
             res = FactoryGirl.build(:valid_reservation, trait,
                                     reserver: [@user,@admin].sample)
@@ -158,7 +156,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@admin)
+        sign_in @admin
       end
 
       it_behaves_like 'can view reservation by patron'
@@ -167,7 +165,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by checkout person' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@checkout_person)
+        sign_in @checkout_person
       end
 
       it_behaves_like 'can view reservation by patron'
@@ -176,7 +174,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by patron' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@user)
+        sign_in @user
       end
 
       it_behaves_like 'can view reservation by patron'
@@ -195,7 +193,7 @@ describe ReservationsController, :type => :controller do
     end
 
     context 'when accessed by a non-banned user' do
-      before(:each) { allow(@controller).to receive(:current_user).and_return(@user) }
+      before(:each) { sign_in @user }
 
       context 'with an empty cart' do
         before(:each) do
@@ -225,7 +223,7 @@ describe ReservationsController, :type => :controller do
     end
 
     context 'when accessed by non-banned user' do
-      before(:each) { allow(@controller).to receive(:current_user).and_return(@user) }
+      before(:each) { sign_in @user }
 
       context 'with validation-failing items in Cart' do
         before(:each) do
@@ -244,7 +242,7 @@ describe ReservationsController, :type => :controller do
 
         context 'no justification provided' do
           before do
-            allow(@controller).to receive(:current_user).and_return(@checkout_person)
+            sign_in @checkout_person
             @req_no_notes.call
           end
 
@@ -259,7 +257,7 @@ describe ReservationsController, :type => :controller do
         context 'and user can override errors' do
           before(:each) do
             AppConfig.first.update_attributes(override_on_create: true)
-            allow(@controller).to receive(:current_user).and_return(@checkout_person)
+            sign_in @checkout_person
           end
 
           it 'affects the database' do
@@ -286,7 +284,7 @@ describe ReservationsController, :type => :controller do
           # request would be filed
           before(:each) do
             AppConfig.first.update_attributes(override_on_create: false)
-            allow(@controller).to receive(:current_user).and_return(@checkout_person)
+            sign_in @checkout_person
           end
           it 'affects database' do
             expect { @req.call }.to change { Reservation.count }
@@ -353,7 +351,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by patron' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@user)
+        sign_in @user
         get 'edit', id: @reservation.id
       end
       include_examples 'cannot access page'
@@ -361,7 +359,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by checkout person disallowed by settings' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@checkout_person)
+        sign_in @checkout_person
         AppConfig.first.update_attributes(checkout_persons_can_edit: false)
         get 'edit', id: @reservation.id
       end
@@ -384,7 +382,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by checkout person allowed by settings' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@checkout_person)
+        sign_in @checkout_person
         AppConfig.first.update_attributes(checkout_persons_can_edit: true)
         get :edit, id: @reservation.id
       end
@@ -393,7 +391,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@admin)
+        sign_in @admin
         AppConfig.first.update_attributes(checkout_persons_can_edit: false)
         get :edit, id: @reservation.id
       end
@@ -421,7 +419,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by patron' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@user)
+        sign_in @user
         put 'update', id: @reservation.id
       end
       include_examples 'cannot access page'
@@ -429,7 +427,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by checkout person disallowed by settings' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@checkout_person)
+        sign_in @checkout_person
         AppConfig.first.update_attributes(checkout_persons_can_edit: false)
         put 'update', id: @reservation.id, reservation: FactoryGirl.attributes_for(:reservation)
       end
@@ -526,7 +524,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by checkout person allowed by settings' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@checkout_person)
+        sign_in @checkout_person
         AppConfig.first.update_attributes(checkout_persons_can_edit: true)
       end
       include_examples 'can access update page'
@@ -534,7 +532,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@admin)
+        sign_in @admin
         AppConfig.first.update_attributes(checkout_persons_can_edit: false)
       end
       include_examples 'can access update page'
@@ -573,7 +571,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@admin)
+        sign_in @admin
       end
 
       include_examples 'can destroy reservation' do
@@ -583,7 +581,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by checkout person' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@checkout_person)
+        sign_in @checkout_person
       end
 
       context 'and the reservation is checked out' do
@@ -601,7 +599,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by patron' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@user)
+        sign_in @user
       end
 
       context 'and the reservation is their own' do
@@ -657,7 +655,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@admin)
+        sign_in @admin
       end
 
       include_examples 'can access #manage'
@@ -665,7 +663,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by checkout person' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@checkout_person)
+        sign_in @checkout_person
       end
 
       include_examples 'can access #manage'
@@ -673,7 +671,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by patron' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@user)
+        sign_in @user
         get :manage, user_id: @user.id
       end
 
@@ -722,7 +720,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@admin)
+        sign_in @admin
       end
 
       include_examples 'can access #current'
@@ -730,7 +728,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by checkout person' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@checkout_person)
+        sign_in @checkout_person
       end
 
       include_examples 'can access #current'
@@ -738,7 +736,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by patron' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@user)
+        sign_in @user
         get :current, user_id: @user.id
       end
 
@@ -808,7 +806,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@admin)
+        sign_in @admin
       end
 
       include_examples 'has successful checkout'
@@ -816,7 +814,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by checkout person' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@checkout_person)
+        sign_in @checkout_person
       end
 
       include_examples 'has successful checkout'
@@ -824,7 +822,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by patron' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@user)
+        sign_in @user
         put :checkout, user_id: @user.id
       end
 
@@ -838,7 +836,7 @@ describe ReservationsController, :type => :controller do
     context 'when tos returns false' do
       before do
         request.env["HTTP_REFERER"] = 'where_i_came_from'
-        allow(@controller).to receive(:current_user).and_return(@admin)
+        sign_in @admin
         allow(@controller).to receive(:check_tos).and_return(false)
         put :checkout, user_id: @user.id, reservations: {}
 
@@ -848,7 +846,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when not all procedures are filled out' do
       before do
-        allow(@controller).to receive(:current_user).and_return(@admin)
+        sign_in @admin
         @obj = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
         @procedure = FactoryGirl.create(:checkout_procedure, equipment_model: @reservation.equipment_model)
         reservations_params = {@reservation.id.to_s => {notes: "", equipment_object_id: @obj.id, checkout_procedures: {}}}
@@ -883,7 +881,7 @@ describe ReservationsController, :type => :controller do
       before do
         reservations_params = {}
         request.env["HTTP_REFERER"] = 'where_i_came_from'
-        allow(@controller).to receive(:current_user).and_return(@checkout_person)
+        sign_in @checkout_person
         put :checkout, user_id: @user.id, reservations: reservations_params
       end
       it { is_expected.to set_the_flash }
@@ -894,7 +892,7 @@ describe ReservationsController, :type => :controller do
 
       context 'can override reservations?' do
         before do
-          allow(@controller).to receive(:current_user).and_return(@admin)
+          sign_in @admin
           @obj = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
           reservations_params = {@reservation.id.to_s => {notes: "", equipment_object_id: @obj.id }}
           overdue = FactoryGirl.build(:overdue_reservation, reserver_id: @user.id)
@@ -907,7 +905,7 @@ describe ReservationsController, :type => :controller do
       context 'cannot override' do
         before do
           request.env["HTTP_REFERER"] = 'where_i_came_from'
-          allow(@controller).to receive(:current_user).and_return(@checkout_person)
+          sign_in @checkout_person
           @obj = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
           reservations_params = {@reservation.id.to_s => {notes: "", equipment_object_id: @obj.id }}
           overdue = FactoryGirl.build(:overdue_reservation, reserver_id: @user.id)
@@ -972,7 +970,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@admin)
+        sign_in @admin
       end
 
       include_examples 'has successful checkin'
@@ -980,7 +978,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by checkout person' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@checkout_person)
+        sign_in @checkout_person
       end
 
       include_examples 'has successful checkin'
@@ -988,7 +986,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by patron' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@user)
+        sign_in @user
         put :checkin, user_id: @user.id
       end
 
@@ -1001,7 +999,7 @@ describe ReservationsController, :type => :controller do
 
     context 'items have already been checked in' do
       before do
-        allow(@controller).to receive(:current_user).and_return(@admin)
+        sign_in @admin
         request.env["HTTP_REFERER"] = 'where_i_came_from'
         @reservation = FactoryGirl.build(:checked_in_reservation, reserver: @user)
         @reservation.save(validate: false)
@@ -1016,7 +1014,7 @@ describe ReservationsController, :type => :controller do
     context 'no reservations to check in' do
       before do
         request.env["HTTP_REFERER"] = 'where_i_came_from'
-        allow(@controller).to receive(:current_user).and_return(@admin)
+        sign_in @admin
         put :checkin,  user_id: @user.id, reservations: {}
       end
       it { is_expected.to set_the_flash }
@@ -1025,7 +1023,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when not all procedures are filled out' do
       before do
-        allow(@controller).to receive(:current_user).and_return(@admin)
+        sign_in @admin
         @reservation = FactoryGirl.create(:checked_out_reservation, reserver: @user)
         @procedure = FactoryGirl.create(:checkin_procedure, equipment_model: @reservation.equipment_model)
         reservations_params = {@reservation.id.to_s => {notes: "", checkin?: "1", checkin_procedures: {}}}
@@ -1082,7 +1080,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@admin)
+        sign_in @admin
       end
 
       include_examples 'can renew reservation'
@@ -1090,7 +1088,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by checkout person' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@checkout_person)
+        sign_in @checkout_person
       end
 
       include_examples 'can renew reservation'
@@ -1098,7 +1096,7 @@ describe ReservationsController, :type => :controller do
 
     context 'when accessed by patron' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(@user)
+        sign_in @user
       end
 
       include_examples 'can renew reservation'
@@ -1243,7 +1241,7 @@ describe ReservationsController, :type => :controller do
   describe '#review GET' do
     context 'as admin' do
       before do
-        allow(@controller).to receive(:current_user).and_return(@admin)
+        sign_in @admin
         get :review, id: @reservation.id
       end
       it 'should assign all current requests except itself' do
@@ -1255,7 +1253,7 @@ describe ReservationsController, :type => :controller do
     end
     context 'as checkout' do
       before do
-        allow(@controller).to receive(:current_user).and_return(@checkout_person)
+        sign_in @checkout_person
         get :review, id: @reservation.id
       end
 
@@ -1264,7 +1262,7 @@ describe ReservationsController, :type => :controller do
 
   describe '#approve_request PUT' do
     before do
-      allow(@controller).to receive(:current_user).and_return(@admin)
+      sign_in @admin
       @requested = FactoryGirl.create(:valid_reservation, approval_status: 'requested')
       put :approve_request, id: @requested.id
     end
@@ -1284,7 +1282,7 @@ describe ReservationsController, :type => :controller do
 
   describe '#deny_request PUT' do
     before do
-      allow(@controller).to receive(:current_user).and_return(@admin)
+      sign_in @admin
       @requested = FactoryGirl.create(:valid_reservation, approval_status: 'requested')
       put :deny_request, id: @requested.id
     end

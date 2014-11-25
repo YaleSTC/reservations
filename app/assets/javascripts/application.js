@@ -1,9 +1,7 @@
 //= require jquery
 //= require jquery_ujs
-//= require jquery.ui.datepicker
-//= require jquery.ui.autocomplete
-//= require spin
-//= require jquery.spin
+//= require jquery-ui/datepicker
+//= require jquery-ui/autocomplete
 //= require cocoon
 //= require autocomplete-rails
 //= require dataTables/jquery.dataTables
@@ -90,6 +88,8 @@ $(document).ready(function() {
   });
 
   // ### LOG JS ### //
+
+  // commented out on 2014/10/12 since it was giving an error for wideDataTables[0]
 
   // Ugly hack to avoid reinitializing #table_log with the correct order
   // try {

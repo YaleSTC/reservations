@@ -4,24 +4,21 @@
 class ApplicationController < ActionController::Base
   helper :layout
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
-  before_filter CASClient::Frameworks::Rails::Filter unless Rails.env.test?
-  #before_filter RubyCAS::Filter unless Rails.env.test?
   before_filter :app_setup_check
-  before_filter :cart
+  before_filter :authenticate_user!, unless: :devise_controller?
+  skip_before_filter :authenticate_user!, only: [:update_cart, :empty_cart, :terms_of_service]
+  before_filter :cart, unless: :devise_controller?
 
-  with_options unless: lambda {|u| User.count == 0 } do |c|
+  with_options unless: lambda { |u| User.count == 0 } do |c|
     c.before_filter :load_configs
     c.before_filter :seen_app_configs
-    c.before_filter :current_user
-    c.before_filter :first_time_user
     c.before_filter :fix_cart_date
     c.before_filter :set_view_mode
     c.before_filter :check_view_mode
     c.before_filter :make_cart_compatible
   end
 
-  helper_method :current_user
-  helper_method :cart
+  helper_method :cart, :current_or_guest_user
 
   rescue_from CanCan::AccessDenied do |exception|
     flash[:error] = "Sorry, that action or page is restricted."
@@ -59,18 +56,14 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def first_time_user
-    if current_user.nil? && params[:action] != "terms_of_service"
-      flash[:notice] = "Hey there! Since this is your first time making a reservation, we'll
-        need you to supply us with some basic contact information."
-      redirect_to new_user_path
-    end
-  end
-
   def cart
+    # make sure we reset the reserver when we log in
+    reserver = current_user ? current_user : current_or_guest_user
     session[:cart] ||= Cart.new
-    if session[:cart].reserver_id.nil?
-      session[:cart].reserver_id = current_user.id if current_user
+    # if there is no cart reserver_id or the old cart reserver was deleted
+    # (i.e. we've logged in and the guest user was destroyed)
+    if session[:cart].reserver_id.nil? || User.find_by_id(session[:cart].reserver_id).nil?
+      session[:cart].reserver_id = reserver.id
     end
     session[:cart]
   end
@@ -82,7 +75,8 @@ class ApplicationController < ActionController::Base
                         'banned' => 'Banned User',
                         'checkout' => 'Checkout Person',
                         'superuser' => 'Superuser',
-                        'normal' => 'Patron'}
+                        'normal' => 'Patron',
+                        'guest' => 'Guest' }
       if (params[:view_mode] == 'superuser')
         authorize! :view_as, :superuser
       end
@@ -92,10 +86,6 @@ class ApplicationController < ActionController::Base
       redirect_to(:back) and return
     end
 
-  end
-
-  def current_user
-    @current_user ||= User.find_by_login(session[:cas_user])
   end
 
   def check_active_admin_permission
@@ -136,7 +126,8 @@ class ApplicationController < ActionController::Base
       cart.start_date = params[:cart][:start_date_cart].to_date
       cart.due_date = params[:cart][:due_date_cart].to_date
       cart.fix_due_date
-      cart.reserver_id = params[:reserver_id].blank? ? current_user.id : params[:reserver_id]
+      cart.reserver_id = params[:reserver_id].blank? ?
+        current_or_guest_user.id : params[:reserver_id]
     rescue ArgumentError
       cart.start_date = Date.current
       flash[:error] = "Please enter a valid start or due date."
@@ -162,10 +153,29 @@ class ApplicationController < ActionController::Base
 
     respond_to do |format|
       format.js{render template: "cart_js/cart_dates_reload"}
-        # guys i really don't like how this is rendering a template for js, but :action doesn't work at all
+        # guys i really don't like how this is rendering a template for js,
+        # but :action doesn't work at all
       format.html{render partial: "reservations/cart_dates"}
     end
   end
+
+  # if user is logged in, return current_user, else return guest_user
+  # https://github.com/plataformatec/devise/wiki/How-To:-Create-a-guest-user
+  def current_or_guest_user
+    current_user ? current_user : guest_user
+  end
+
+  # find guest_user object associated with the current session,
+  # creating one as needed
+  def guest_user
+    @cached_guest ||= create_guest_user
+  end
+
+  # allow CanCanCan to use the guest user when we're not logged in
+  def current_ability
+    @current_ability ||= Ability.new(current_or_guest_user)
+  end
+
 
   def prepare_catalog_index_vars(eq_models = nil)
     # prepare the catalog
@@ -211,14 +221,6 @@ class ApplicationController < ActionController::Base
       format.js{render template: "cart_js/reload_all"}
       format.html{redirect_to root_path}
     end
-  end
-
-  def logout
-    @current_user = nil
-    CASClient::Frameworks::Rails::Filter.logout(self)
-    #RubyCAS::Filter.logout(self)
-    # the above code is used with ruby-cas-client-rails gem
-    # which was removed on 7/21/2014
   end
 
   def require_login
@@ -267,5 +269,29 @@ class ApplicationController < ActionController::Base
     user.terms_of_service_accepted = params[:terms_of_service_accepted].present?
     return user.terms_of_service_accepted ? user.save : (flash[:error] = "You must confirm that the user accepts the Terms of Service.") && false
   end
+
+  private
+
+  # modify redirect after signing in
+  def after_sign_in_path_for(user)
+    # CODE FOR CAS LOGIN --> NEW USER
+    if ENV['CAS_AUTH'] && current_user && current_user.id.nil? && current_user.username
+      # store username in session since there's a request in between
+      session[:new_username] = current_user.username
+      new_user_path
+    else
+      super
+    end
+  end
+
+  def create_guest_user
+    User.new(
+      username: 'guest',
+      first_name: 'Guest',
+      last_name: 'User',
+      role: 'guest',
+      view_mode: 'guest')
+  end
+
 
 end

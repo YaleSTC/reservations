@@ -15,7 +15,11 @@
     <div class="span3" id="cart_buttons">
     <%= link_to "Empty cart".titleize, empty_cart_path, :method => :delete, :class => "btn", :id => 'empty_cart_btn', remote: true %>
     <%# print Make reservation button %>
-    <%= link_to sanitize("#{content_tag :i, nil, class: "fa fa-shopping-cart"} #{"Make reservation".titleize}"), new_reservation_path, :class => "btn btn-success" %>
+    <% if can? :create, Reservation %>
+      <%= link_to sanitize("#{content_tag :i, nil, class: "fa fa-shopping-cart"} #{"Make reservation".titleize}"), new_reservation_path, :class => "btn btn-success" %>
+    <% else %>
+      <%= link_to sanitize("#{content_tag :i, nil, class: "fa fa-sign-in"} #{"Sign in".titleize}"), new_user_session_path, :class => "btn btn-success" %>
+    <% end %>
     </div>
   </div>
 </div>
