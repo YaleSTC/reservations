@@ -4,11 +4,23 @@
 
 ## v4.1.0 - 2014-12-01
 ### Added
-* Added an "archive" action for Reservations to deal with unusual circumstances ([#728](https://github.com/YaleSTC/reservations/issues/728)).
+* Added an "archive" action for reservations to deal with unusual circumstances ([#728](https://github.com/YaleSTC/reservations/issues/728)).
 * Added a persistent history for equipment objects / items ([#273](https://github.com/YaleSTC/reservations/issues/273)).
+* Authentication is now handled by the [Devise](http://devise.plataformatec.com.br/) gem. Added email/password authentication ([#2](https://github.com/YaleSTC/reservations/issues/2)).
+* Equipment switches are now noted in both relevant reservations ([#1022](https://github.com/YaleSTC/reservations/issues/1022)).
+* `secrets.yml` is now used for sensitive settings ([#1018](https://github.com/YaleSTC/reservations/issues/1018)).
+* There is now a link to Rails Admin in the navbar for superusers ([#965](https://github.com/YaleSTC/reservations/issues/965)).
+* The [dotenv](https://github.com/bkeepers/dotenv) gem is now used to spoof environment variables in development ([#694](https://github.com/YaleSTC/reservations/issues/694)).
+* Equipment items are now returned before deactivation ([#288](https://github.com/YaleSTC/reservations/issues/288)).
 
 ### Changed
 * Deactivating an equipment item now archives its reservation if it's currently checked out ([#288](https://github.com/YaleSTC/reservations/issues/288)).
+* Reservation notes have been improved and include links for easier history tracking ([#999](https://github.com/YaleSTC/reservations/issues/999), [#1021](https://github.com/YaleSTC/reservations/issues/1021)).
+* Rails Admin now has proper authorization ([#973](https://github.com/YaleSTC/reservations/issues/973)).
+* `spin.js` has been replaced with a Font Awesome icon for the cart spinner ([#777](https://github.com/YaleSTC/reservations/issues/777)).
+
+### Removed
+* Took out the logging functionality of paper_trail in lieu of recently added reservation and equipment history features ([#1033](https://github.com/YaleSTC/reservations/issues/1033)).
 
 
 ## v4.0.1 - 2014-11-03
