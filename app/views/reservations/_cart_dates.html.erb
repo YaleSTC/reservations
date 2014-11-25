@@ -16,7 +16,7 @@
           size: 30,
           placeholder: current_user.render_name,
           id_element: "#reserver_id",
-          class: 'submittable span2' %><%= link_to sanitize("<i class=\"fa fa-plus\"></i>"), '#userModal', :class => 'btn', :id => 'modal', :rel => 'tooltip', :title => 'New Reserver', :"data-toggle" => 'modal' %>
+          class: 'submittable span2' %><%if AppConfig.first.enable_new_users || (can? :override, :user_creation)%><%= link_to sanitize("<i class=\"fa fa-plus\"></i>"), '#userModal', :class => 'btn', :id => 'modal', :rel => 'tooltip', :title => 'New Reserver', :"data-toggle" => 'modal' %><% end %>
       </div>
 
     <% elsif current_user %>
