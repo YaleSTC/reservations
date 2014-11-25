@@ -127,7 +127,7 @@ class ReservationsController < ApplicationController
       # check to see if new object is available
       unless new_object.available?
         r = new_object.current_reservation
-        r.equipment_object_id = @reservation.equipment_object_id
+        r.update(current_user, { equipment_object_id: @reservation.equipment_object_id }, '')
       end
     end
 
@@ -350,11 +350,11 @@ class ReservationsController < ApplicationController
   end
 
   def archive
-    if params[:archive_note].nil? || params[:archive_note].strip.empty?
-      flash[:error] = 'Reason for archiving cannot be empty.'
-      redirect_to :back and return
-    elsif params[:archive_note] == 'null'
+    if params[:archive_cancelled]
       flash[:notice] = 'Reservation archiving cancelled.'
+      redirect_to :back and return
+    elsif params[:archive_note].nil? || params[:archive_note].strip.empty?
+      flash[:error] = 'Reason for archiving cannot be empty.'
       redirect_to :back and return
     end
     set_reservation

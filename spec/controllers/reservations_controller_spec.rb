@@ -501,6 +501,46 @@ describe ReservationsController, :type => :controller do
             expect{ @old_object.reload }.to change(@old_object, :notes)
             expect{ @new_object.reload }.to change(@new_object, :notes)
           end
+
+          it 'should make the other object available' do
+            @old_object.reload
+            expect(@old_object.status).to eq('available')
+          end
+        end
+
+        context 'with checked out equipment object' do
+          before(:each) do
+            @old_object = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
+            @new_object = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
+            @other_res = FactoryGirl.create(:reservation,
+              reserver: @user, equipment_model: @reservation.equipment_model)
+            put :update, { id: @reservation.id,
+              reservation: FactoryGirl.attributes_for(:reservation,
+                start_date: Date.current,
+                due_date: Date.tomorrow),
+              equipment_object: @old_object.id }
+            put :update, { id: @other_res.id,
+              reservation: FactoryGirl.attributes_for(:reservation,
+                start_date: Date.current,
+                due_date: Date.tomorrow),
+              equipment_object: @new_object.id }
+            @old_object.reload
+            @new_object.reload
+            put :update, { id: @reservation.id,
+              reservation: FactoryGirl.attributes_for(:reservation,
+                start_date: Date.current,
+                due_date: Date.tomorrow),
+              equipment_object: @new_object.id }
+          end
+
+          it 'should update both histories' do
+            expect{ @old_object.reload }.to change(@old_object, :notes)
+            expect{ @new_object.reload }.to change(@new_object, :notes)
+          end
+
+          it 'should be noted in the other reservation' do
+            expect{ @other_res.reload }.to change(@other_res, :notes)
+          end
         end
       end
 
