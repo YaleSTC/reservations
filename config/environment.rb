@@ -17,8 +17,5 @@ unless defined? APP_VERSION
   end
 end
 
-CASClient::Frameworks::Rails::Filter.configure(
-  :cas_base_url => "https://secure.its.yale.edu/cas/"
-)
 # Initialize the rails application
 Reservations::Application.initialize!

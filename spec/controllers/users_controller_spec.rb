@@ -14,14 +14,11 @@ describe UsersController, :type => :controller do
   before(:all) {
     @app_config = FactoryGirl.create(:app_config)
   }
-  before {
-    allow(@controller).to receive(:first_time_user).and_return(:nil)
-  }
   let!(:user) { FactoryGirl.create(:user) }
 
   context 'with admin user' do
     before do
-      allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+      sign_in FactoryGirl.create(:admin)
     end
     describe 'GET index' do
       let!(:banned) { FactoryGirl.create(:banned) }
@@ -64,8 +61,8 @@ describe UsersController, :type => :controller do
           expect(assigns(:user).attributes).to eq(User.new.attributes)
         end
       end
-      it 'should assign @can_edit_login to true' do
-        expect(assigns(:can_edit_login)).to be_truthy
+      it 'should assign @can_edit_username to true' do
+        expect(assigns(:can_edit_username)).to be_truthy
       end
       it_behaves_like 'page success'
       it { is_expected.to render_template(:new) }
@@ -93,8 +90,8 @@ describe UsersController, :type => :controller do
     end
     describe 'GET edit' do
       before { get :edit, id: FactoryGirl.create(:user) }
-      it 'should set @can_edit_login to true' do
-        expect(assigns(:can_edit_login)).to be_truthy
+      it 'should set @can_edit_username to true' do
+        expect(assigns(:can_edit_username)).to be_truthy
       end
       it_behaves_like 'page success'
       it { is_expected.to render_template(:edit) }
@@ -132,11 +129,11 @@ describe UsersController, :type => :controller do
       context 'searched id is blank' do
         context 'valid id' do
           before do
-            FactoryGirl.create(:user, login: "csw3")
+            FactoryGirl.create(:user, username: "csw3")
             put :find, fake_searched_id: "csw3", searched_id: ""
           end
           it 'should assign user correctly' do
-            expect(assigns(:user)).to eq(User.where(login: 'csw3').first)
+            expect(assigns(:user)).to eq(User.where(username: 'csw3').first)
           end
           it { is_expected.to redirect_to(manage_reservations_for_user_path(assigns(:user))) }
         end

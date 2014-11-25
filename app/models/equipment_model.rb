@@ -7,8 +7,6 @@ class EquipmentModel < ActiveRecord::Base
 
   nilify_blanks only: [:deleted_at]
 
-  has_paper_trail
-
   # table_name is needed to resolve ambiguity for certain queries with 'includes'
   scope :active, lambda { where("#{table_name}.deleted_at is null") }
 
@@ -181,6 +179,7 @@ class EquipmentModel < ActiveRecord::Base
 
   # Returns true if the reserver is ineligible to checkout the model.
   def model_restricted?(reserver_id)
+    return false if reserver_id.nil?
     reserver = User.find(reserver_id)
     !(self.requirements - reserver.requirements).empty?
   end

@@ -1,17 +1,21 @@
 require 'spec_helper'
-require 'capybara/rails'
 
-describe "login process", :type => :feature do
+describe "login process" do
   before :each do
     app_setup
     @user = FactoryGirl.create(:admin)
-    sign_in(@user.login)
+    login_as(@user, scope: :user)
   end
 
   it "can allow a user to see the main catalog page" do
     visit "/"
-    save_and_open_page
+    # save_and_open_page
     expect(page).to have_content 'Catalog'
+  end
+
+  it "allows admins to see the users index" do
+    visit '/users'
+    expect(page).to have_content 'Users'
   end
 end
 

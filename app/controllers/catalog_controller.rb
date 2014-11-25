@@ -2,6 +2,7 @@ class CatalogController < ApplicationController
   layout 'application_with_sidebar'
 
   before_filter :set_equipment_model, only: [:add_to_cart, :remove_from_cart]
+  skip_before_filter :authenticate_user!
 
   # --------- before filter methods --------- #
 

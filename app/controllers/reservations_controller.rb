@@ -112,8 +112,7 @@ class ReservationsController < ApplicationController
   end
 
   def edit
-    @option_array = @reservation.equipment_model.equipment_objects.collect { |e|
-    [e.name, e.id] }
+    @option_array = @reservation.equipment_model.equipment_objects.collect { |e| [e.name, e.id] }
   end
 
   def update # for editing reservations; not for checkout or check-in
@@ -153,9 +152,8 @@ class ReservationsController < ApplicationController
       flash[:notice] = message
       redirect_to @reservation
     else
-      # if it couldn't save
-      flash[:error] = 'There was a problem updating the reservation.'
-      redirect_to :back
+      flash[:error] = "Unable to update reservation:\n#{@reservation.errors.full_messages.to_sentence}"
+      redirect_to edit_reservation_path(@reservation)
     end
   end
 
