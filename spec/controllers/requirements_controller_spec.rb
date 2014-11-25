@@ -7,13 +7,12 @@ describe RequirementsController, :type => :controller do
     @app_config = FactoryGirl.create(:app_config)
   end
   before(:each) do
-    allow(@controller).to receive(:first_time_user).and_return(nil) # required stub or every test will fail
     @requirement = FactoryGirl.create(:requirement, contact_name: "Adam Bray")
   end
   describe 'GET index' do
     context 'is admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+        sign_in FactoryGirl.create(:admin)
         get :index
       end
       it { is_expected.to respond_with(:success) }
@@ -25,7 +24,7 @@ describe RequirementsController, :type => :controller do
     end
     context 'not an admin' do
       it 'should redirect to root url if not an admin' do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:user))
+        sign_in FactoryGirl.create(:user)
         get :index
         expect(response).to redirect_to(root_url)
       end
@@ -34,7 +33,7 @@ describe RequirementsController, :type => :controller do
   describe 'GET show' do
     context 'is an admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+        sign_in FactoryGirl.create(:admin)
         get :show, id: @requirement
       end
       it { is_expected.to respond_with(:success) }
@@ -46,7 +45,7 @@ describe RequirementsController, :type => :controller do
     end
     context 'not an admin' do
       it 'should redirect to root url if not an admin' do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:user))
+        sign_in FactoryGirl.create(:user)
         get :show, id: @requirement
         expect(response).to redirect_to(root_url)
       end
@@ -55,7 +54,7 @@ describe RequirementsController, :type => :controller do
   describe 'GET new' do
     context 'is admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+        sign_in FactoryGirl.create(:admin)
         get :new
       end
       it { is_expected.to respond_with(:success) }
@@ -68,7 +67,7 @@ describe RequirementsController, :type => :controller do
     end
     context 'not an admin' do
       it 'should redirect to root url if not an admin' do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:user))
+        sign_in FactoryGirl.create(:user)
         get :new
         expect(response).to redirect_to(root_url)
       end
@@ -77,7 +76,7 @@ describe RequirementsController, :type => :controller do
   describe 'GET edit' do
     context 'is admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+        sign_in FactoryGirl.create(:admin)
         get :edit, id: @requirement
       end
       it 'should set @requirement to the selected requirement' do
@@ -89,7 +88,7 @@ describe RequirementsController, :type => :controller do
     end
     context 'not admin' do
       it 'should redirect to root url if not an admin' do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:user))
+        sign_in FactoryGirl.create(:user)
         get :edit, id: @requirement
         expect(response).to redirect_to(root_url)
       end
@@ -98,7 +97,7 @@ describe RequirementsController, :type => :controller do
   describe 'PUT update' do
     context 'is admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+        sign_in FactoryGirl.create(:admin)
       end
       context 'with valid attributes' do
         before(:each) do
@@ -129,7 +128,7 @@ describe RequirementsController, :type => :controller do
     end
     context 'not admin' do
       it 'should redirect to root url if not an admin' do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:user))
+        sign_in FactoryGirl.create(:user)
         get :update, id: @requirement, requirement: FactoryGirl.attributes_for(:requirement)
         expect(response).to redirect_to(root_url)
       end
@@ -138,7 +137,7 @@ describe RequirementsController, :type => :controller do
   describe 'POST create' do
     context 'is admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+        sign_in FactoryGirl.create(:admin)
       end
       context 'with valid attributes' do
         before(:each) do
@@ -167,7 +166,7 @@ describe RequirementsController, :type => :controller do
     end
     context 'not admin' do
       it 'should redirect to root url if not an admin' do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:user))
+        sign_in FactoryGirl.create(:user)
         post :create, requirement: FactoryGirl.attributes_for(:requirement)
         expect(response).to redirect_to(root_url)
       end
@@ -176,7 +175,7 @@ describe RequirementsController, :type => :controller do
   describe 'DELETE destroy' do
     context 'is admin' do
       before(:each) do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
+        sign_in FactoryGirl.create(:admin)
       end
       it 'assigns the selected requirement to @requirement' do
         delete :destroy, id: @requirement
@@ -194,7 +193,7 @@ describe RequirementsController, :type => :controller do
     end
     context 'not admin' do
       it 'should redirect to root url if not an admin' do
-        allow(@controller).to receive(:current_user).and_return(FactoryGirl.create(:user))
+        sign_in FactoryGirl.create(:user)
         delete :destroy, id: @requirement
         expect(response).to redirect_to(root_url)
       end

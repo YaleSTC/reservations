@@ -1,10 +1,22 @@
 <%= simple_form_for @user, :html => { :class => "form-horizontal" } do |f| %>
   <%= f.error_notification %>
 
-  <% if @can_edit_login %>
-    <%= f.input :login %>
+  <% if @cas_auth %>
+    <% if @can_edit_username %>
+      <%= f.input :username %>
+    <% else %>
+        <%= f.input :username, :readonly => true, :input_html => {:value => @user.username}%>
+    <% end %>
   <% else %>
-      <%= f.input :login, :readonly => true, :input_html => {:value => @user.login}%>
+    <%= f.input :email, required: true, autofocus: true %>
+    <% if ['new', 'create'].include?(action_name) %>
+      <%= f.input :password, required: true %>
+      <%= f.input :password_confirmation, required: true %>
+    <% elsif current_user.id == @user.id %>
+      <%= f.input :password, autocomplete: "off", hint: "leave it blank if you don't want to change it", required: false %>
+      <%= f.input :password_confirmation, required: false %>
+      <%= f.input :current_password, hint: "we need your current password to confirm your changes", required: true %>
+    <% end %>
   <% end %>
 
   <%= f.input :first_name %>
@@ -15,13 +27,13 @@
   <% else %>
     <%= f.input :phone, hint: "format like (555) 555-5555" %>
   <% end %>
-  <%= f.input :email %>
+  <%= f.input :email if @cas_auth %>
   <%= f.input :affiliation, hint: "including college, year, etc"%>
 
   <%= hidden_field_tag(:from_cart, false) %>
   <%= hidden_field_tag(:partial_to_render, 'form') %>
 
-  <%= render partial: 'terms_of_service/user_accepted', locals: {f: f}%>
+  <%= render partial: 'terms_of_service/user_accepted', locals: {f: f} unless action_name == 'new' %>
 
   <% if can? :manage, User %>
       <%# TODO: Make this a fancy box %>

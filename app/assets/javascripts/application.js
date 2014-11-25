@@ -1,9 +1,7 @@
 //= require jquery
 //= require jquery_ujs
-//= require jquery.ui.datepicker
-//= require jquery.ui.autocomplete
-//= require spin
-//= require jquery.spin
+//= require jquery-ui/datepicker
+//= require jquery-ui/autocomplete
 //= require cocoon
 //= require autocomplete-rails
 //= require dataTables/jquery.dataTables

@@ -50,7 +50,7 @@ module CsvImport
   # replaces the keys in the data hash with the ldap data.
   def import_with_ldap(user_data_hash)
     # check LDAP for missing data
-    ldap_user_hash = User.search_ldap(user_data_hash[:login])
+    ldap_user_hash = User.search_ldap(user_data_hash[:username])
 
     # if nothing found via LDAP
     if ldap_user_hash.nil?
@@ -108,8 +108,8 @@ module CsvImport
   # sets the user based on the overwrite parameter
   def set_or_create_user_for_import(user_data)
     # set the user and attempt to save with given data
-    if @overwrite and (User.where("login = ?", user_data[:login]).size > 0)
-      user = User.where("login = ?", user_data[:login]).first
+    if @overwrite and (User.where("username = ?", user_data[:username]).size > 0)
+      user = User.where("username = ?", user_data[:username]).first
     else
       user = User.new(user_data)
     end

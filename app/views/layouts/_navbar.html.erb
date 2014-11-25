@@ -31,13 +31,13 @@
           <% end %>
         <% end %>
         <%# test if current_user first because if there is no current user (i.e., no login), do not show %>
-        <% if current_user %>
-          <!-- Reservations Dropdown -->
+        <% if can? :create, Reservation %>
+          <% # Reservations Dropdown %>
 
           <li id="my_reservations" class="dropdown">
             <% if can? :manage, Reservation %>
               <%= link_to "Reservations", reservations_path %>
-            <% else %>
+            <% elsif can? :read, Reservation %>
               <%= link_to sanitize("My Reservations &nbsp;<span class=\"badge\">#{reservations_count}</span> <b class=\"caret\"></b>"), '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' %>
               <ul class="dropdown-menu">
                 <li class="nav-header"><h3>My Current Reservations</h3></li>
@@ -59,7 +59,7 @@
             <% end %>
           </li>
 
-          <!-- Equipment Dropdown -->
+          <% # Equipment Dropdown %>
           <% if cannot? :manage, Reservation %>
           <li id="my_equipment" class="dropdown">
             <%= link_to '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' do %>
@@ -87,7 +87,7 @@
           <% end %>
         <% end %>
 
-        <!-- Admin Dropdown -->
+        <% # Admin Dropdown %>
         <% if can? :read, :admin_panel %>
           <li class="divider-vertical"></li>
             <li class="dropdown">
@@ -102,24 +102,30 @@
               </li>
         <% end %>
 
+        <% # Rails Admin Link %>
+        <% if can? :access, :rails_admin %>
+          <li class="divider-vertical"></li>
+          <li><%= link_to "Rails Admin", rails_admin_path %></li>
+        <% end %>
+
           <li class="divider-vertical"></li>
       </ul>
 
-      <!-- SEARCH BOX -->
+      <% # SEARCH BOX %>
       <%= form_tag catalog_search_path, class: 'navbar-search pull-left', method: :get do %>
           <%= search_field_tag 'query', (params[:query] unless params[:query].blank?), class: 'search-query span2', placeholder: "&#xf002;  ".html_safe %>
       <% end %>
-      <!-- Current User Dropdown -->
+      <% # Current User Dropdown %>
       <ul class="nav pull-right" id="logged_in">
       <% if current_user.nil? %>
-        <li><%= link_to "Sign In" %></li>
+        <li><%= link_to "Sign In", new_user_session_path %></li>
       <% elsif current_user %>
         <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i>
           <%= current_user.name %>
           <b class="caret"></b></a>
           <ul class="dropdown-menu">
             <li><%= link_to "My Profile", current_user %></li>
-            <li><%= link_to "Log Out", logout_path %></li>
+            <li><%= link_to "Log Out", destroy_user_session_path %></li>
           </ul>
         </li>
       <% end %>
