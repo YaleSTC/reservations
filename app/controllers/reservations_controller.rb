@@ -2,8 +2,6 @@ class ReservationsController < ApplicationController
 
   load_and_authorize_resource
 
-  layout 'application_with_sidebar'
-
   before_action :require_login, only: [:index, :show]
   before_action :set_reservation, only: [:show, :edit, :update, :destroy,
      :checkout_email, :checkin_email, :renew, :review, :approve_request, :deny_request]
