@@ -47,21 +47,25 @@ Devise.setup do |config|
   config.reset_password_within = 6.hours
 
   # ==> devise_cas_authenticatable configuration
+  if ENV['CAS_AUTH']
 
-  # configure the base URL of your CAS server
-  config.cas_base_url = "https://secure.its.yale.edu/cas/"
+    # configure the base URL of your CAS server
+    config.cas_base_url = Rails.application.secrets.cas_base_url
 
-  # you can override these if you need to, but cas_base_url is usually enough
-  # config.cas_login_url = "https://cas.myorganization.com/login"
-  # config.cas_logout_url = "https://cas.myorganization.com/logout"
-  # config.cas_validate_url = "https://cas.myorganization.com/serviceValidate"
+    # you can override these if you need to, but cas_base_url is usually
+    # enough
+    # config.cas_login_url = "https://cas.myorganization.com/login"
+    # config.cas_logout_url = "https://cas.myorganization.com/logout"
+    # config.cas_validate_url = "https://cas.myorganization.com/serviceValidate"
 
-  # By default, devise_cas_authenticatable will create users.  If you would rather
-  # require user records to already exist locally before they can authenticate via
-  # CAS, uncomment the following line.
-  config.cas_create_user = false
+    # By default, devise_cas_authenticatable will create users.  If you would
+    # rather require user records to already exist locally before they can
+    # authenticate via CAS, uncomment the following line.
+    config.cas_create_user = false
 
-  # You can enable Single Sign Out, which by default is disabled.
-  config.cas_enable_single_sign_out = true
+    # You can enable Single Sign Out, which by default is disabled.
+    config.cas_enable_single_sign_out = true
+
+  end
 
 end

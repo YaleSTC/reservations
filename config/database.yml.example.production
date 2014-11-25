@@ -1,19 +1,19 @@
 staging:
   adapter: mysql2
   encoding: utf8
-  database: <%= ENV['RES_DB_NAME']
-  username: <%= ENV['RES_DB_USERNAME']
-  password: <%= ENV['RES_DB_PASSWORD']
-  host: <%= ENV['RES_DB_HOST']
+  database: <%= ENV['RES_DB_NAME'] %>
+  username: <%= ENV['RES_DB_USERNAME'] %>
+  password: <%= ENV['RES_DB_PASSWORD'] %>
+  host: <%= ENV['RES_DB_HOST'] %>
   port: 3306
   pool: 5
 
 production:
   adapter: mysql2
   encoding: utf8
-  database: <%= ENV['RES_DB_NAME']
-  username: <%= ENV['RES_DB_USERNAME']
-  password: <%= ENV['RES_DB_PASSWORD']
-  host: <%= ENV['RES_DB_HOST']
+  database: <%= ENV['RES_DB_NAME'] %>
+  username: <%= ENV['RES_DB_USERNAME'] %>
+  password: <%= ENV['RES_DB_PASSWORD'] %>
+  host: <%= ENV['RES_DB_HOST'] %>
   port: 3306
   pool: 5
