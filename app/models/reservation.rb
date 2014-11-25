@@ -158,7 +158,8 @@ class Reservation < ActiveRecord::Base
     return "Reservation not eligible for renewal" unless self.is_eligible_for_renew?
     self.due_date = self.find_renewal_date
     self.notes += "\n\n### Renewed on #{Time.current.to_s(:long)} by #{user.md_link}\n\nThe new due date is #{self.due_date.to_date.to_s(:long)}."
-    return "Unable to update reservation dates!" unless self.save
+    self.times_renewed += 1
+    return "Unable to update reservation dates." unless self.save
     return nil
   end
 
