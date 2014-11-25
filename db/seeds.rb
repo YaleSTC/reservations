@@ -155,7 +155,9 @@ if ENV["minimal"]
   puts "Minimal mode activated. Please wait..."
 end
 
-if User.all.empty?
+# check to see if a superuser exists
+if User.where('role = ?', 'superuser').empty?
+  User.destroy_all
   unless ENV["minimal"]
     puts 'We need to create an account for you first. Please enter the following info:'
     puts 'First Name:'
@@ -168,25 +170,45 @@ if User.all.empty?
     email = STDIN.gets.chomp
     puts 'Affiliation:'
     affiliation = STDIN.gets.chomp
-    puts 'Login (i.e. NetID):'
+    if ENV['CAS_AUTH']
+      puts 'Username (i.e. NetID):'
+      username = STDIN.gets.chomp
+    else
+      username = email
+      puts 'Password:'
+      password = STDIN.gets.chomp
+      puts 'Confirm Password:'
+      password_confirmation = STDIN.gets.chomp
+    end
   else
     first_name = "Donny"
     last_name = "Darko"
     phone = "6666666666"
     email = "email@email.com"
     affiliation = "Your Mother"
-    puts "Please enter your netID"
+    if ENV['CAS_AUTH']
+      puts "Please enter your netID:"
+      username = STDIN.gets.chomp
+    else
+      username = email
+      password = 'passw0rd'
+      password_confirmation = password
+    end
   end
-  login = STDIN.gets.chomp
+
   User.create! do |u|
     u.first_name = first_name
     u.last_name = last_name
     u.phone = phone
     u.email = email
-    u.login = login
+    u.username = username
     u.affiliation = affiliation
     u.role = 'superuser'
     u.view_mode = 'superuser'
+    unless ENV['CAS_AUTH']
+      u.password = password
+      u.password_confirmation = password_confirmation
+    end
   end
 end
 
@@ -211,9 +233,13 @@ unless entered_num == 0
         u.nickname = Faker::Name.first_name
         u.phone = Faker::PhoneNumber.short_phone_number
         u.email = Faker::Internet.email
-        u.login = (0...3).map{65.+(rand(25)).chr}.join.downcase + r.rand(2..99).to_s
+        u.username = (0...3).map{65.+(rand(25)).chr}.join.downcase + r.rand(2..99).to_s
         u.affiliation = 'YC ' + %w{BK BR CC DC ES JE MC PC SM SY TC TD}.sample + ' ' + r.rand(2012..2015).to_s
         u.role = ['normal', 'checkout'].sample
+        unless ENV['CAS_AUTH']
+          u.password = 'password'
+          u.password_confirmation = 'password'
+        end
       end
 
     end
@@ -570,3 +596,4 @@ unless entered_num == 0
 end
 
 puts "\n***Successfully seeded all records!***\n\n"
+puts "You can log in using the e-mail 'email@email.com' and password 'passw0rd'\n\n" if (!ENV['CAS_AUTH'] && ENV['minimal'])

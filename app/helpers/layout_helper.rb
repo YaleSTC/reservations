@@ -37,14 +37,13 @@ module LayoutHelper
     if can? :manage, Reservation
       count = Reservation.active.size
     else
-      @current_reservations = current_user.reservations.active_or_requested # this variable is called in _navbar.html.erb to list \
-                                                                            # a user's current reservations in the dropdown.
+      @current_reservations = current_or_guest_user.reservations.active_or_requested.includes(:equipment_model) # this variable is called in _navbar.html.erb to list a user's current reservations in the dropdown.
       count = @current_reservations.size
     end
   end
 
   def equipment_count
-    @current_equipment = current_user.reservations.checked_out
+    @current_equipment = current_or_guest_user.reservations.checked_out
     @current_equipment.size
   end
 
@@ -56,16 +55,18 @@ module LayoutHelper
 
   def get_role_name role
     case role
-      when 'superuser'
-        'Superuser'
-      when 'admin'
-        'Admin'
-      when 'checkout'
-        'Checkout Person'
-      when 'normal'
-        'Patron'
-      when 'banned'
-        'Banned'
+    when 'superuser'
+      'Superuser'
+    when 'admin'
+      'Admin'
+    when 'checkout'
+      'Checkout Person'
+    when 'normal'
+      'Patron'
+    when 'banned'
+      'Banned'
+    when 'guest'
+      'Guest'
     end
   end
 end

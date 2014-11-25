@@ -1,9 +1,7 @@
 //= require jquery
 //= require jquery_ujs
-//= require jquery.ui.datepicker
-//= require jquery.ui.autocomplete
-//= require spin
-//= require jquery.spin
+//= require jquery-ui/datepicker
+//= require jquery-ui/autocomplete
 //= require cocoon
 //= require autocomplete-rails
 //= require dataTables/jquery.dataTables
@@ -84,24 +82,6 @@ $(document).ready(function() {
     "sDom": "<'row'<'span5'l><'span7'f>r>t<'row'<'span5'i><'span7'p>>",
     "sPaginationType": "bootstrap",
     "sScrollX": "100%",
-    "aoColumnDefs": [
-          { "bSortable": false, "aTargets": [ "no_sort" ] }
-        ]
-  });
-
-  // ### LOG JS ### //
-
-  // Ugly hack to avoid reinitializing #table_log with the correct order
-  // try {
-  //   if (wideDataTables[0].id == "table_log") {
-  //     wideDataTables.fnSort([[0, "desc"]]);
-  //   }
-  // } catch (TypeError) {}
-
-  $('.history_table').dataTable({
-    "sDom": "<'row'<l><f>r>t<'row'<'span3'i><p>>",
-    "bLengthChange": false,
-    "sPaginationType": "bootstrap",
     "aoColumnDefs": [
           { "bSortable": false, "aTargets": [ "no_sort" ] }
         ]

@@ -10,7 +10,7 @@ ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
 require 'capybara/rspec'
-require 'paper_trail'
+require 'capybara/rails'
 # require 'rspec/autorun'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
@@ -32,7 +32,7 @@ RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
   # Needed in order to do integration tests with capybara
   config.include Capybara::DSL
-  Capybara.asset_host = "http://localhost:3000"
+  Capybara.asset_host = "http://0.0.0.0:3000"
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   # config.fixture_path = "#{::Rails.root}/spec/fixtures"
@@ -65,8 +65,12 @@ RSpec.configure do |config|
     end
   end
 
-  def sign_in(netid)
-    CASClient::Frameworks::Rails::Filter.fake(netid)
-  end
-
+  # Devise helpers
+  config.include Devise::TestHelpers, type: :controller
+  config.include ControllerHelpers, type: :controller
+  config.include EnvHelpers, type: :controller
+  config.include Warden::Test::Helpers, type: :feature
+  config.include InjectSession, type: :feature
+  config.include FeatureHelpers, type: :feature
+  config.include EnvHelpers, type: :feature
 end

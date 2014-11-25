@@ -7,7 +7,7 @@ function pause_cart () {
   $('#cart_due_date_cart').prop('readonly', true);
   $('#cart_buttons').children('a').addClass("disabled"); // disable cart buttons
   $('.add_to_cart_box').children('#add_to_cart').addClass("disabled"); // disable add to cart buttons
-  $('#cartSpinner').spin("large"); // toggle cart spinner
+  $('#cartSpinner').html('<i class="fa fa-circle-o-notch fa-3x fa-spin"></i>'); // toggle cart spinner
 }
 
 // function to unlock cart after update
@@ -19,7 +19,7 @@ function resume_cart () {
   $('#cart_due_date_cart').prop('readonly', false);
   $('#cart_buttons').children('a').removeClass("disabled"); // disable cart buttons
   $('.add_to_cart_box').children('#add_to_cart').removeClass("disabled"); // enable add to cart buttons
-  $('#cartSpinner').spin(false); // turn off cart spinner
+  $('#cartSpinner').html(''); // turn off cart spinner
 }
 // click add to cart button
 $(document).on('click', '.add_to_cart', function () {

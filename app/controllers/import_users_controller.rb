@@ -49,16 +49,16 @@ class ImportUsersController < ApplicationController
         redirect_to :back and return
       end
 
-      # make sure we have login data (otherwise all will always fail)
-      unless imported_users.first.keys.include?(:login)
-        flash[:error] = "Unable to import CSV file. None of the users will be able to log in without specifying 'login' data."
+      # make sure we have username data (otherwise all will always fail)
+      unless imported_users.first.keys.include?(:username)
+        flash[:error] = "Unable to import CSV file. None of the users will be able to log in without specifying 'username' data."
         redirect_to :back and return
       end
 
       # make sure the import went with proper headings / column handling
-      accepted_keys = [:login, :first_name, :last_name, :nickname, :phone, :email, :affiliation]
+      accepted_keys = [:username, :first_name, :last_name, :nickname, :phone, :email, :affiliation]
       unless imported_users.first.keys == accepted_keys
-        flash[:error] = 'Unable to import CSV file. Please ensure that the first line of the file exactly matches the sample input (login, first_name, etc.) Note that headers are case sensitive and must be in the correct order.'
+        flash[:error] = 'Unable to import CSV file. Please ensure that the first line of the file exactly matches the sample input (username, first_name, etc.) Note that headers are case sensitive and must be in the correct order.'
         redirect_to :back and return
       end
       return true

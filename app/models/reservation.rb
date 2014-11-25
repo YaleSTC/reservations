@@ -1,9 +1,7 @@
 class Reservation < ActiveRecord::Base
   include ReservationValidations
   include ReservationScopes
-  include Rails.application.routes.url_helpers
-
-  has_paper_trail
+  include Routing
 
   belongs_to :equipment_model
   belongs_to :equipment_object
@@ -12,6 +10,9 @@ class Reservation < ActiveRecord::Base
   belongs_to :checkin_handler, class_name: 'User'
 
   validates :equipment_model, :start_date, :due_date, presence: true
+  validates_each :reserver do |record, attr, value|
+    record.errors.add(attr, 'cannot be a guest') if value.role == 'guest'
+  end
   validate :start_date_before_due_date
   validate :matched_object_and_model
   validate :not_in_past, :available, on: :create
@@ -93,7 +94,7 @@ class Reservation < ActiveRecord::Base
     #if user's been deleted, return a dummy user
     User.new( first_name: "Deleted",
               last_name: "User",
-              login: "deleted",
+              username: "deleted",
               email: "deleted.user@invalid.address",
               nickname: "",
               phone: "555-555-5555",
@@ -201,7 +202,9 @@ class Reservation < ActiveRecord::Base
     if self.checked_in.nil?
       self.checked_in = Time.current
       self.checked_out = Time.current if self.checked_out.nil?
-      self.notes = self.notes.to_s + "\n\n### Archived on #{Time.current.to_s(:long)} by #{archiver.name}\n\n\n#### " +
+      # archive equipment object if checked out
+      self.equipment_object.make_reservation_notes("archived", self, archiver, "#{note}", Time.current) if self.equipment_object
+      self.notes = self.notes.to_s + "\n\n### Archived on #{Time.current.to_s(:long)} by #{archiver.md_link}\n\n\n#### " +
         "Reason:\n#{note}\n\n#### The checkin and checkout dates may reflect the archive date because the reservation was " +
         "for a nonexistent piece of equipment or otherwise problematic."
     end
@@ -261,8 +264,8 @@ class Reservation < ActiveRecord::Base
           case param
           when 'reserver_id'
             name = 'Reserver'
-            old_val = diff[0] ? User.find(diff[0]).name : 'nil'
-            new_val = diff[1] ? User.find(diff[1]).name : 'nil'
+            old_val = diff[0] ? User.find(diff[0]).md_link : 'nil'
+            new_val = diff[1] ? User.find(diff[1]).md_link : 'nil'
           when 'start_date'
             name = 'Start Date'
             old_val = diff[0].to_date.to_s(:long)
@@ -273,8 +276,8 @@ class Reservation < ActiveRecord::Base
             new_val = diff[1].to_date.to_s(:long)
           when 'equipment_object_id'
             name = 'Item'
-            old_val = diff[0] ? EquipmentObject.find(diff[0]).name : 'nil'
-            new_val = diff[1] ? EquipmentObject.find(diff[1]).name : 'nil'
+            old_val = diff[0] ? EquipmentObject.find(diff[0]).md_link : 'nil'
+            new_val = diff[1] ? EquipmentObject.find(diff[1]).md_link : 'nil'
           end
           self.notes += "\n#{name} changed from " + old_val + " to " + new_val + "."
         end
@@ -327,7 +330,7 @@ class Reservation < ActiveRecord::Base
   end
 
   def md_link
-    "[res. \##{self.id.to_s}](#{reservation_path(self)})"
+    "[res. \##{self.id.to_s}](#{reservation_url(self, only_path: false)})"
   end
 
 end

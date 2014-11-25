@@ -112,8 +112,7 @@ class ReservationsController < ApplicationController
   end
 
   def edit
-    @option_array = @reservation.equipment_model.equipment_objects.collect { |e|
-    [e.name, e.id] }
+    @option_array = @reservation.equipment_model.equipment_objects.collect { |e| [e.name, e.id] }
   end
 
   def update # for editing reservations; not for checkout or check-in
@@ -128,7 +127,7 @@ class ReservationsController < ApplicationController
       # check to see if new object is available
       unless new_object.available?
         r = new_object.current_reservation
-        r.equipment_object_id = @reservation.equipment_object_id
+        r.update(current_user, { equipment_object_id: @reservation.equipment_object_id }, '')
       end
     end
 
@@ -141,9 +140,7 @@ class ReservationsController < ApplicationController
         if r
           r.save
           # clean up this code with a model method?
-          message << " Note equipment item #{r.equipment_object.name} is now assigned to \
-              #{ActionController::Base.helpers.link_to('reservation #' + r.id.to_s, reservation_path(r))} \
-              (#{r.reserver.render_name})"
+          message << " Note equipment item #{r.equipment_object.md_link} is now assigned to #{r.md_link} (#{r.reserver.md_link})"
         end
 
         # update the item history / histories
@@ -155,9 +152,8 @@ class ReservationsController < ApplicationController
       flash[:notice] = message
       redirect_to @reservation
     else
-      # if it couldn't save
-      flash[:error] = 'There was a problem updating the reservation.'
-      redirect_to :back
+      flash[:error] = "Unable to update reservation:\n#{@reservation.errors.full_messages.to_sentence}"
+      redirect_to edit_reservation_path(@reservation)
     end
   end
 
@@ -328,7 +324,7 @@ class ReservationsController < ApplicationController
   def approve_request
     @reservation.approval_status = "approved"
     @reservation.notes = @reservation.notes.to_s # in case of nil
-    @reservation.notes += "\n\n### Approved on #{Time.current.to_s(:long)} by #{current_user.name}"
+    @reservation.notes += "\n\n### Approved on #{Time.current.to_s(:long)} by #{current_user.md_link}"
     if @reservation.save
       flash[:notice] = "Request successfully approved"
       UserMailer.request_approved_notification(@reservation).deliver
@@ -342,7 +338,7 @@ class ReservationsController < ApplicationController
   def deny_request
     @reservation.approval_status = "denied"
     @reservation.notes = @reservation.notes.to_s # in case of nil
-    @reservation.notes += "\n\n### Denied on #{Time.current.to_s(:long)} by #{current_user.name}"
+    @reservation.notes += "\n\n### Denied on #{Time.current.to_s(:long)} by #{current_user.md_link}"
     if @reservation.save
       flash[:notice] = "Request successfully denied"
       UserMailer.request_denied_notification(@reservation).deliver
@@ -354,11 +350,11 @@ class ReservationsController < ApplicationController
   end
 
   def archive
-    if params[:archive_note].nil? || params[:archive_note].strip.empty?
-      flash[:error] = 'Reason for archiving cannot be empty.'
-      redirect_to :back and return
-    elsif params[:archive_note] == 'null'
+    if params[:archive_cancelled]
       flash[:notice] = 'Reservation archiving cancelled.'
+      redirect_to :back and return
+    elsif params[:archive_note].nil? || params[:archive_note].strip.empty?
+      flash[:error] = 'Reason for archiving cannot be empty.'
       redirect_to :back and return
     end
     set_reservation

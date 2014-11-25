@@ -1,6 +1,6 @@
 <thead>
 <tr>
-  <th>Login</th>
+  <th>Username</th>
   <th>Name</th>
   <th>Phone</th>
   <th>Email</th>
@@ -12,7 +12,7 @@
     <% user = user_data.first %>
     <% message = user_data.last %>
     <tr>
-      <td><%= user[:login] %></td>
+      <td><%= user[:username] %></td>
       <td><%= user[:first_name] + ' ' + user[:last_name] %></td>
       <td><%= user[:phone] %></td>
       <td><%= user[:email] %></td>

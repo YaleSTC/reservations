@@ -42,7 +42,7 @@
                 <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
-                <% viewmode_array = ['admin','checkout','normal','banned'] %>
+                <% viewmode_array = ['admin','checkout','normal','banned', 'guest'] %>
                 <% if can? :view_as, :superuser %>
                   <%  viewmode_array.unshift 'superuser' %>
                 <% end %>

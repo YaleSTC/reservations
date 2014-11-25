@@ -2,11 +2,12 @@ class UsersController < ApplicationController
   load_and_authorize_resource
   layout 'application_with_sidebar', only: [:show, :edit]
 
-  autocomplete :user, :last_name, extra_data: [:first_name, :login], display_value: :render_name
+  autocomplete :user, :last_name, extra_data: [:first_name, :username], display_value: :render_name
 
   skip_filter :cart, only: [:new, :create]
-  skip_filter :first_time_user, only: [:new, :create]
+  skip_filter :authenticate_user!, only: [:new, :create]
   before_action :set_user, only: [:show, :edit, :update, :destroy, :ban, :unban]
+  before_action :check_cas_auth, only: [:show, :new, :create, :edit, :update]
 
   include Autocomplete
 
@@ -16,14 +17,18 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
   end
 
+  def check_cas_auth
+    @cas_auth = ENV['CAS_AUTH']
+  end
+
   # ------------ end before filter methods ------------ #
 
 
   def index
     if params[:show_banned]
-      @users = User.order('login ASC')
+      @users = User.order('username ASC')
     else
-      @users = User.active.order('login ASC')
+      @users = User.active.order('username ASC')
     end
   end
 
@@ -38,14 +43,34 @@ class UsersController < ApplicationController
                         past_overdue: @user_reservations.returned_overdue }
   end
 
+  # This needs code added to it to accomodate non-CAS login and reference the
+  # CAS_AUTH environment variable to switch between the two
   def new
-    @can_edit_login = current_user.present? && (can? :create, User) # used in view
-    if current_user.nil?
-      # This is a new user -> create an account for them
-      @user = User.new(User.search_ldap(session[:cas_user]))
-      @user.login = session[:cas_user] #default to current login
+    # if CAS authentication
+    if @cas_auth
+      @can_edit_username = current_user.present? && (can? :create, User) # used in view
+      if current_user.nil? && session[:new_username]
+        # This is a new user -> create an account for them
+        @user = User.new(User.search_ldap(session[:new_username]))
+        @user.username = session[:new_username] #default to current username
+        flash[:notice] = "Hey there! Since this is your first time making a reservation, we'll need you to supply us with some basic contact information."
+      elsif current_user.nil?
+        # we don't have the current session's username
+        # THIS ONLY APPLIES TO CAS
+        flash[:error] = "Something seems to have gone wrong. Please try that again."
+        redirect_to root_path
+      else
+        @user = User.new
+      end
+    # if database authenticatable
     else
+      @can_edit_username = true
       @user = User.new
+      unless current_user
+        flash[:notice] = "Hey there! Since this is your first time making a reservation, we'll need you to supply us with some basic contact information."
+      else
+        @user = User.new
+      end
     end
   end
 
@@ -53,12 +78,24 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     @user.role = 'normal' if user_params[:role].blank?
     @user.view_mode = @user.role
-    @user.login = session[:cas_user] unless current_user and can? :manage, Reservation
+    # if we're using CAS
+    if @cas_auth
+      # pull from our CAS hackery unless you're an admin/superuser creating a
+      # new user
+      @user.username = session[:new_username] unless current_user and can? :manage, Reservation
+    else
+      # if not using CAS, just put the e-mail as the username
+      @user.username = @user.email
+    end
     if @user.save
+      # delete extra session parameter if we came from CAS hackery
+      session.delete(:new_username) if @cas_auth
       flash[:notice] = "Successfully created user."
+      # log in the new user
+      sign_in @user, :bypass => true unless (current_user.present?)
       redirect_to user_path(@user)
     else
-      @can_edit_login = current_user.present? && (can? :create, User) # used in view
+      @can_edit_username = current_user.present? && (can? :create, User) # used in view
       render :new
     end
   end
@@ -75,7 +112,7 @@ class UsersController < ApplicationController
     end
 
     # Is there a user record already?
-    if User.find_by_login(params[:possible_netid])
+    if User.find_by_username(params[:possible_netid])
       @message = 'You cannot create a new user, as the netID you entered
       is already associated with a user. If you would like to reserve for
       them, please select their name from the drop-down options in the cart.'
@@ -96,11 +133,27 @@ class UsersController < ApplicationController
 
 
   def edit
-    @can_edit_login = can? :edit_login, User
+    @can_edit_username = can? :edit_username, User
   end
 
   def update
-    if @user.update_attributes(user_params)
+    par = user_params
+    # use :update_with_password when we're not using CAS and you're editing
+    # your own profile
+    if @cas_auth || ((can? :manage, User) && (@user.id != current_user.id))
+      method = :update_attributes
+      # delete the current_password key from the params hash just in case it's
+      # present (and :update_attributes will throw an error)
+      par.delete('current_password')
+    else
+      method = :update_with_password
+      # make sure we update the username as well
+      par[:username] = par[:email]
+    end
+    if @user.send(method, par)
+      # sign in the user if you've edited yourself since you have a new
+      # password, otherwise don't
+      sign_in @user, :bypass => true if (@user.id == current_user.id)
       flash[:notice] = "Successfully updated user."
       redirect_to user_path(@user)
     else
@@ -109,17 +162,21 @@ class UsersController < ApplicationController
   end
 
   def ban
-    @user.role = "banned"
-    @user.view_mode = "banned"
-    @user.save
+    if @user.role == 'guest'
+      flash[:error] = "Cannot ban guest."
+      redirect_to request.referer and return
+    end
+    @user.update_attributes(role: 'banned', view_mode: 'banned')
     flash[:notice] = "#{@user.name} was banned succesfully."
     redirect_to request.referer
   end
 
   def unban
-    @user.role = "normal"
-    @user.view_mode = "normal"
-    @user.save
+    if @user.role == 'guest'
+      flash[:error] = "Cannot unban guest."
+      redirect_to request.referer and return
+    end
+    @user.update_attributes(role: 'normal', view_mode: 'normal')
     flash[:notice] = "#{@user.name} was restored to patron status."
     redirect_to request.referer
   end
@@ -149,8 +206,11 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    permitted_attributes = [:first_name, :last_name, :nickname, :phone, :email, :affiliation, :terms_of_service_accepted, :created_by_admin]
-    permitted_attributes << :login if (can? :manage, Reservation)
+    permitted_attributes = [:first_name, :last_name, :nickname, :phone,
+      :email, :affiliation, :terms_of_service_accepted, :created_by_admin]
+    permitted_attributes += [:password, :password_confirmation,
+      :current_password] unless @cas_auth
+    permitted_attributes << :username if (can? :manage, Reservation)
     permitted_attributes += [:requirement_ids, :user_ids, :role] if can? :assign, :requirements
     p = params.require(:user).permit(*permitted_attributes)
     p[:view_mode] = p[:role] if p[:role]
