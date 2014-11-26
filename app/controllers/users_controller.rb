@@ -10,8 +10,6 @@ class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy, :ban,
     :unban]
   before_action :check_cas_auth, only: [:show, :new, :create, :edit, :update]
-  before_action :check_new_users_allowed, only: [:new, :create, :quick_new,
-    :quick_create]
 
   include Autocomplete
 
@@ -23,14 +21,6 @@ class UsersController < ApplicationController
 
   def check_cas_auth
     @cas_auth = ENV['CAS_AUTH']
-  end
-
-  # check to make sure user creation is allowed
-  def check_new_users_allowed
-    unless can? :create, User
-      flash[:error] = 'New users cannot be created at this time. Please contact the system administrator.'
-      redirect_to root_path and return
-    end
   end
 
   # ------------ end before filter methods ------------ #
