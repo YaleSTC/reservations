@@ -35,6 +35,23 @@ module ApplicationHelper
           overbooked_dates << date.to_s(:short) if em.available_count(date) <= 0
         end
         onclick_str = "handleDeactivation(this, #{res ? res.id : 'null'}, #{overbooked_dates});"
+      # handle equipment model deactivation... I really don't like where this
+      # is going
+      elsif model_symbol == :equipment_models
+        # find reservations in the next week
+        res = Reservation.for_eq_model(model_object)
+          .reserved_in_date_range(Date.current-1.day, Date.current+7.days)
+          .count
+        onclick_str = "handleBigDeactivation(this, #{res});"
+      elsif model_symbol == :categories
+        # find reservations for models in the category in the next week
+        res = 0
+        model_object.equipment_models.each do |em|
+          res += Reservation.for_eq_model(model_object)
+            .reserved_in_date_range(Date.current-1.day, Date.current+7.days)
+            .count
+        end
+        onclick_str = "handleBigDeactivation(this, #{res});"
       end
       link_to "Deactivate", [:deactivate, model_object],
         class: "btn btn-danger", method: :put,
