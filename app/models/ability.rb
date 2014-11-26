@@ -28,7 +28,7 @@ class Ability
         end
         can [:read,:update,:find,:autocomplete_user_last_name], User
         if AppConfig.first.enable_new_users
-          can :create, User
+          can [:create, :quick_new, :quick_create], User
         end
         can :read, EquipmentObject
         can :read, EquipmentModel
