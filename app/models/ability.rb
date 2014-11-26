@@ -26,7 +26,10 @@ class Ability
         unless AppConfig.first.checkout_persons_can_edit
           cannot :update, Reservation
         end
-        can [:read,:update,:create,:find,:autocomplete_user_last_name], User
+        can [:read,:update,:find,:autocomplete_user_last_name], User
+        if AppConfig.first.enable_new_users
+          can :create, User
+        end
         can :read, EquipmentObject
         can :read, EquipmentModel
         if AppConfig.first.override_on_create
@@ -47,7 +50,9 @@ class Ability
       when 'guest'
         can :read, EquipmentModel
         can :update_cart, :all
-        can :create, User
+        if AppConfig.first.enable_new_users
+          can :create, User
+        end
       when 'banned'
         #cannot :create, Reservation
       end

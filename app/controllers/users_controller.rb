@@ -27,9 +27,7 @@ class UsersController < ApplicationController
 
   # check to make sure user creation is allowed
   def check_new_users_allowed
-    unless AppConfig.first.enable_new_users ||
-      # since superusers and admins can manage all
-      (can? :override, :user_creation)
+    unless can? :create, User
       flash[:error] = 'New users cannot be created at this time. Please contact the system administrator.'
       redirect_to root_path and return
     end
