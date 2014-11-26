@@ -5,7 +5,7 @@ task :delete_missed_reservations => :environment do
   # res exp date is not set
   return if AppConfig.blank? || AppConfig.first.res_exp_time.blank?
   time = AppConfig.first.res_exp_time
-  missed_reservations = Reservation.where("checked_out IS NULL and start_date < ?", Date.current - time.days)
+  missed_reservations = Reservation.where("checked_out IS NULL and due_date < ?", Date.current - time.days)
   Rails.logger.info "Found #{missed_reservations.size} reservations"
 
   if AppConfig.first.send_notifications_for_deleted_missed_reservations
