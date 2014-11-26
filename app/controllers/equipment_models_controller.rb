@@ -106,7 +106,7 @@ class EquipmentModelsController < ApplicationController
       super
     else
       flash[:error] = 'Oops, something went wrong.'
-      redirect_to categories_path
+      redirect_to equipment_models_path
     end
   end
 

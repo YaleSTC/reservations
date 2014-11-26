@@ -26,7 +26,11 @@ module ApplicationHelper
       link_to "Activate", [:activate, model_object], class: "btn btn-success", method: :put
     else
       # handle equipment object-specific code
-      # this should ideally be in a separate method
+      # this should ideally be in a separate method?
+      #
+      # tried sticking this in ApplicationController w/ controller inheritance
+      # but it doesn't work since the controller rendering the view isn't
+      # necessarily the same as the model being deactivated
       if model_symbol == :equipment_objects
         em = model_object.equipment_model
         res = model_object.current_reservation
