@@ -15,12 +15,9 @@ task :delete_missed_reservations => :environment do
       end
     end
 
-    if AppConfig.first.delete_missed_reservations
-
-      missed_reservations.each do |missed_reservation|
-        Rails.logger.info "Deleting reservation:\n #{missed_reservation.inspect}"
-        missed_reservation.destroy
-      end
+    missed_reservations.each do |missed_reservation|
+      Rails.logger.info "Deleting reservation:\n #{missed_reservation.inspect}"
+      missed_reservation.destroy
     end
 
     Rails.logger.info "Finished processing missed reservations."
