@@ -12,6 +12,8 @@
 * There is now a link to Rails Admin in the navbar for superusers ([#965](https://github.com/YaleSTC/reservations/issues/965)).
 * The [dotenv](https://github.com/bkeepers/dotenv) gem is now used to spoof environment variables in development ([#694](https://github.com/YaleSTC/reservations/issues/694)).
 * Equipment items are now returned before deactivation ([#288](https://github.com/YaleSTC/reservations/issues/288)).
+* Admins can now disable user creation by patrons and checkout persons ([#622](https://github.com/YaleSTC/reservations/issues/622)).
+* Reservation renewals are now logged in the reservation notes ([#920](https://github.com/YaleSTC/reservations/issues/920)).
 
 ### Changed
 * Deactivating an equipment item now archives its reservation if it's currently checked out ([#288](https://github.com/YaleSTC/reservations/issues/288)).
@@ -21,6 +23,7 @@
 
 ### Removed
 * Took out the logging functionality of paper_trail in lieu of recently added reservation and equipment history features ([#1033](https://github.com/YaleSTC/reservations/issues/1033)).
+* A number of broken links left over from earlier versions were removed ([#957](https://github.com/YaleSTC/reservations/issues/957)).
 
 
 ## v4.0.1 - 2014-11-03
