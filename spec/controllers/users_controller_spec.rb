@@ -227,17 +227,17 @@ describe UsersController, :type => :controller do
       end
       it_behaves_like 'page success'
       it { is_expected.to render_template(:new) }
+    end
 
-      context 'when new user registration is disabled' do
-        before do
-          AppConfig.first.update_attributes(enable_new_users: false)
-          get :new
-        end
+    describe 'GET new when new user registration is disabled' do
+      before do
+        AppConfig.first.update_attributes(enable_new_users: false)
+        get :new
+      end
 
-        it { is_expected.to set_the_flash }
-        it 'redirects to homepage' do
-          expect(response).to redirect_to(root_url)
-        end
+      it { is_expected.to set_the_flash }
+      it 'redirects to homepage' do
+        expect(response).to redirect_to(root_url)
       end
     end
   end
