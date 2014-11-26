@@ -49,7 +49,7 @@ class AppConfigsController < ApplicationController
                   :default_per_cat_page, :terms_of_service, :favicon,
                   :checkout_persons_can_edit, :enable_renewals,
                   :override_on_create, :override_at_checkout, :require_phone,
-                  :request_text)
+                  :request_text, :res_exp_time, :blackout_exp_time)
   end
 end
 

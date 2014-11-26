@@ -106,8 +106,13 @@
 <fieldset>
   <legend>Blackout Dates</legend>
   <%= f.input :blackout_exp_time, label: 'Days to keep old blackouts',
-      hint: 'Blackout dates a certain number of days old can be automatically deleted. Leave blank to keep
-      all blackouts forever.' %>
+      hint: 'Blackout dates a certain number of days old can be automatically deleted. Leave blank to keep all blackouts forever.' %>
+</fieldset>
+
+<fieldset>
+  <legend>Missed Reservations</legend>
+  <%= f.input :res_exp_time, label: 'Days to keep missed reservations',
+      hint: 'Missed reservations a certain number of days old can be automatically deleted. Leave blank to keep all missed reservations forever.' %>
 </fieldset>
 
 <div class="form-actions">
