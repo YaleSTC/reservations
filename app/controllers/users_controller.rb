@@ -39,7 +39,6 @@ class UsersController < ApplicationController
                         overdue:      @user_reservations.overdue,
                         future:       @user_reservations.reserved,
                         past:         @user_reservations.returned,
-                        missed:       @user_reservations.missed,
                         past_overdue: @user_reservations.returned_overdue }
   end
 
