@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141026050048) do
+ActiveRecord::Schema.define(version: 20141125025619) do
 
   create_table "announcements", force: true do |t|
     t.text     "message"
@@ -50,6 +50,7 @@ ActiveRecord::Schema.define(version: 20141026050048) do
     t.integer  "blackout_exp_time"
     t.text     "request_text",                                                       null: false
     t.boolean  "enable_renewals",                                    default: true
+    t.boolean  "enable_new_users",                                   default: true
   end
 
   create_table "blackouts", force: true do |t|
