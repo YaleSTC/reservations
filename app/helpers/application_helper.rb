@@ -42,7 +42,7 @@ module ApplicationHelper
         res = Reservation.for_eq_model(model_object)
           .reserved_in_date_range(Date.current-1.day, Date.current+7.days)
           .count
-        onclick_str = "handleBigDeactivation(this, #{res});"
+        onclick_str = "handleBigDeactivation(this, #{res}, 'equipment model');"
       elsif model_symbol == :categories
         # find reservations for models in the category in the next week
         res = 0
@@ -51,7 +51,7 @@ module ApplicationHelper
             .reserved_in_date_range(Date.current-1.day, Date.current+7.days)
             .count
         end
-        onclick_str = "handleBigDeactivation(this, #{res});"
+        onclick_str = "handleBigDeactivation(this, #{res}, 'category');"
       end
       link_to "Deactivate", [:deactivate, model_object],
         class: "btn btn-danger", method: :put,
