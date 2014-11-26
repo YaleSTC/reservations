@@ -19,6 +19,7 @@ class ApplicationController < ActionController::Base
   end
 
   helper_method :cart, :current_or_guest_user
+  helper_method :make_deactivate_btn
 
   rescue_from CanCan::AccessDenied do |exception|
     flash[:error] = "Sorry, that action or page is restricted."
@@ -269,6 +270,18 @@ class ApplicationController < ActionController::Base
     user.terms_of_service_accepted = params[:terms_of_service_accepted].present?
     return user.terms_of_service_accepted ? user.save : (flash[:error] = "You must confirm that the user accepts the Terms of Service.") && false
   end
+
+  # model_symbol must be a symbol for the model that is being deactivated, eg --> :equipment_models
+  def make_deactivate_btn(model_symbol, model_object, onclick_str)
+    if model_object.deleted_at
+      view_context.link_to "Activate", [:activate, model_object], class: "btn btn-success", method: :put
+    else
+      view_context.link_to "Deactivate", [:deactivate, model_object],
+        class: "btn btn-danger", method: :put,
+        onclick: "#{onclick_str}"
+    end
+  end
+
 
   private
 

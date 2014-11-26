@@ -93,4 +93,20 @@ class EquipmentObjectsController < ApplicationController
                                              :equipment_model_id,
                                              :deactivation_reason, :notes)
   end
+
+  def make_deactivate_btn(model_symbol, model_object)
+    binding.pry
+    unless model_object.deleted_at
+      em = model_object.equipment_model
+      # look for current reservation
+      res = model_object.current_reservation
+      overbooked_dates = []
+      # check to see if it will be overbooked in the next week
+      for date in Date.current..Date.current+7.days
+        overbooked_dates << date.to_s(:short) if em.available_count(date) <= 0
+      end
+      onclick_str = "handleDeactivation(this, #{res ? res.id : 'null'}, #{overbooked_dates});"
+    end
+    super
+  end
 end
