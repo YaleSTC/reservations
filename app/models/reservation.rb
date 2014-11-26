@@ -153,11 +153,13 @@ class Reservation < ActiveRecord::Base
   ## Instance methods that alter the status of a reservation ##
 
 
-  def renew
+  def renew(user)
     # renew the reservation and return error messages if unsuccessful
     return "Reservation not eligible for renewal" unless self.is_eligible_for_renew?
     self.due_date = self.find_renewal_date
-    return "Unable to update reservation dates!" unless self.save
+    self.notes = "#{self.notes}"+"\n\n### Renewed on #{Time.current.to_s(:long)} by #{user.md_link}\n\nThe new due date is #{self.due_date.to_date.to_s(:long)}."
+    self.times_renewed += 1
+    return "Unable to update reservation dates." unless self.save
     return nil
   end
 

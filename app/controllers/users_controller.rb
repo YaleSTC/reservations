@@ -2,11 +2,13 @@ class UsersController < ApplicationController
   load_and_authorize_resource
   layout 'application_with_sidebar', only: [:show, :edit]
 
-  autocomplete :user, :last_name, extra_data: [:first_name, :username], display_value: :render_name
+  autocomplete :user, :last_name, extra_data: [:first_name, :username],
+    display_value: :render_name
 
   skip_filter :cart, only: [:new, :create]
   skip_filter :authenticate_user!, only: [:new, :create]
-  before_action :set_user, only: [:show, :edit, :update, :destroy, :ban, :unban]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :ban,
+    :unban]
   before_action :check_cas_auth, only: [:show, :new, :create, :edit, :update]
 
   include Autocomplete
@@ -42,8 +44,6 @@ class UsersController < ApplicationController
                         past_overdue: @user_reservations.returned_overdue }
   end
 
-  # This needs code added to it to accomodate non-CAS login and reference the
-  # CAS_AUTH environment variable to switch between the two
   def new
     # if CAS authentication
     if @cas_auth

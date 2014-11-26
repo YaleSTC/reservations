@@ -31,6 +31,11 @@
 </fieldset>
 
 <fieldset>
+  <legend>User Creation</legend>
+  <%= f.input :enable_new_users, label: 'Enable User Creation', hint: 'Allow people to create user accounts.' %>
+</fieldset>
+
+<fieldset>
   <legend>Additional Permissions for Checkout Persons</legend>
   <%= f.input :checkout_persons_can_edit, label: 'Edit reservations', hint: 'Allow checkout persons to edit reservations.' %>
   <%= f.input :override_on_create, label: 'Override on create', hint: 'Give checkout persons admin-level override capability when creating a reservation. For example, they would be able to create a reservation on a blackout date, or for a period longer than the permitted length for that item.' %>

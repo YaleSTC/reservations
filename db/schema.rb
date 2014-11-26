@@ -50,6 +50,7 @@ ActiveRecord::Schema.define(version: 20141126050547) do
     t.integer  "blackout_exp_time"
     t.text     "request_text",                                                       null: false
     t.boolean  "enable_renewals",                                    default: true
+    t.boolean  "enable_new_users",                                   default: true
     t.integer  "res_exp_time"
   end
 

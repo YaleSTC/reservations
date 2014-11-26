@@ -59,7 +59,7 @@ Devise.setup do |config|
   # By default, devise_cas_authenticatable will create users.  If you would rather
   # require user records to already exist locally before they can authenticate via
   # CAS, uncomment the following line.
-  config.cas_create_user = false
+  config.cas_create_user = true
 
   # You can enable Single Sign Out, which by default is disabled.
   config.cas_enable_single_sign_out = true

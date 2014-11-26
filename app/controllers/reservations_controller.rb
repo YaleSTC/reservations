@@ -306,7 +306,7 @@ class ReservationsController < ApplicationController
   end
 
   def renew
-    message = @reservation.renew
+    message = @reservation.renew(current_user)
     if message
       flash[:error] = message
       redirect_to @reservation and return
