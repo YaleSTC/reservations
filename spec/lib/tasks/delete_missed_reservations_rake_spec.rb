@@ -1,3 +1,4 @@
+# see http://robots.thoughtbot.com/test-rake-tasks-like-a-boss
 describe 'delete_missed_reservations' do
   include_context 'rake'
 
