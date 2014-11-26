@@ -63,7 +63,7 @@ class EquipmentObjectsController < ApplicationController
   end
 
   # Deactivate and activate extend controller methods in ApplicationController
-def deactivate
+  def deactivate
     if params[:deactivation_reason] && !params[:deactivation_cancelled]
       # update notes and deactivate
       new_notes = "#### Deactivated at #{Time.current.to_s(:long)} by #{current_user.md_link}\n#{params[:deactivation_reason]}\n\n" + @equipment_object.notes

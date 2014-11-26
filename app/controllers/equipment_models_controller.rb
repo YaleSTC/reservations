@@ -98,6 +98,18 @@ class EquipmentModelsController < ApplicationController
     end
   end
 
+  def deactivate
+    if params[:deactivation_cancelled]
+      flash[:notice] = 'Deactivation cancelled.'
+      redirect_to categories_path
+    elsif params[:deactivation_confirmed]
+      super
+    else
+      flash[:error] = 'Oops, something went wrong.'
+      redirect_to categories_path
+    end
+  end
+
   private
 
     # function to check for deleted checkin/checkout procedures and hard-delete them after equipment model update
