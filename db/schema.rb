@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141126050547) do
+ActiveRecord::Schema.define(version: 20141126061515) do
 
   create_table "announcements", force: true do |t|
     t.text     "message"
@@ -39,7 +39,6 @@ ActiveRecord::Schema.define(version: 20141126050547) do
     t.string   "favicon_content_type"
     t.integer  "favicon_file_size"
     t.datetime "favicon_updated_at"
-    t.boolean  "delete_missed_reservations",                         default: true
     t.text     "deleted_missed_reservation_email_body",                              null: false
     t.boolean  "send_notifications_for_deleted_missed_reservations", default: true
     t.boolean  "checkout_persons_can_edit",                          default: false
