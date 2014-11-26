@@ -49,18 +49,6 @@ class CategoriesController < ApplicationController
     end
   end
 
-  def make_deactivate_btn(model_symbol, model_object)
-    unless model_object.deleted_at
-      res = 0
-      model_object.equipment_models.each do |em|
-        res += Reservation.for_eq_model(model_object)
-          .reserved_in_date_range(Date.current-1.day, Date.current+7.days)
-          .count
-      end
-      onclick_str = "handleBigDeactivation(this, #{res}, 'category');"
-    end
-  end
-
   private
 
   def category_params

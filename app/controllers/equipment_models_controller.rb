@@ -110,17 +110,6 @@ class EquipmentModelsController < ApplicationController
     end
   end
 
-  def make_deactivate_btn(model_symbol, model_object)
-    unless model_object.deleted_at
-      # find reservations in the next week
-      res = Reservation.for_eq_model(model_object)
-        .reserved_in_date_range(Date.current-1.day, Date.current+7.days)
-        .count
-      onclick_str = "handleBigDeactivation(this, #{res}, 'equipment model');"
-    end
-    super(model_symbol, model_object, onclick_str)
-  end
-
   private
 
     # function to check for deleted checkin/checkout procedures and hard-delete them after equipment model update
