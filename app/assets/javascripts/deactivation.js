@@ -33,6 +33,8 @@ function handleBigDeactivation(e, res_count, object_str) {
     var confirmDeactivation = confirm("There is/are currently " +
       res_count + " reservation(s) for this " + object_str + " over the " +
       "coming week. Are you sure you want to continue?")
+  } else {
+    confirmDeactivation = true
   }
   if (confirmDeactivation == true) {
     e.href += "?deactivation_confirmed=1"
