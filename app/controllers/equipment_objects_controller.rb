@@ -1,5 +1,6 @@
 class EquipmentObjectsController < ApplicationController
   load_and_authorize_resource
+  decorates_assigned :equipment_object
   before_action :set_current_equipment_object, only: [:show, :edit, :update, :destroy, :deactivate, :activate]
   before_action :set_equipment_model_if_possible, only: [:index, :new]
 
