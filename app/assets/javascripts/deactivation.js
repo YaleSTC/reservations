@@ -8,7 +8,7 @@ function handleDeactivation(e, reservation_id, overbooked) {
   }
   if (confirmCheckedOut == true && arguments.length > 2 && overbooked.length > 0) {
     var confirmOverbooked = confirm("This equipment will be overbooked " +
-      "over the coming week from"+overbooked[0]+" to" +
+      "over the coming week from "+overbooked[0]+" to " +
       overbooked[overbooked.length-1]+". Are you sure you want to continue?")
   }
   else {
@@ -30,9 +30,9 @@ function handleDeactivation(e, reservation_id, overbooked) {
 
 function handleBigDeactivation(e, res_count, object_str) {
   if (arguments.length > 1 && res_count > 0) {
-    var confirmDeactivation = confirm("There are currently " +
-      res_count + " reservations for this " + object_str + ". " +
-      "Are you sure you want to continue?")
+    var confirmDeactivation = confirm("There is/are currently " +
+      res_count + " reservation(s) for this " + object_str + " over the " +
+      "coming week. Are you sure you want to continue?")
   }
   if (confirmDeactivation == true) {
     e.href += "?deactivation_confirmed=1"
