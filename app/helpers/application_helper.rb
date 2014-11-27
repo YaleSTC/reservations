@@ -20,49 +20,6 @@ module ApplicationHelper
     end
   end
 
-  # model_symbol must be a symbol for the model that is being deactivated, eg --> :equipment_models
-  def make_deactivate_btn(model_symbol, model_object)
-    if model_object.deleted_at
-      link_to "Activate", [:activate, model_object], class: "btn btn-success", method: :put
-    else
-      # handle equipment object-specific code
-      # this should ideally be in a separate method?
-      #
-      # tried sticking this in ApplicationController w/ controller inheritance
-      # but it doesn't work since the controller rendering the view isn't
-      # necessarily the same as the model being deactivated
-      if model_symbol == :equipment_objects
-        em = model_object.equipment_model
-        res = model_object.current_reservation
-        overbooked_dates = []
-        for date in Date.current..Date.current+7.days
-          overbooked_dates << date.to_s(:short) if em.available_count(date) <= 0
-        end
-        onclick_str = "handleDeactivation(this, #{res ? res.id : 'null'}, #{overbooked_dates});"
-      # handle equipment model deactivation... I really don't like where this
-      # is going
-      elsif model_symbol == :equipment_models
-        # find reservations in the next week
-        res = Reservation.for_eq_model(model_object)
-          .reserved_in_date_range(Date.current-1.day, Date.current+7.days)
-          .count
-        onclick_str = "handleBigDeactivation(this, #{res}, 'equipment model');"
-      elsif model_symbol == :categories
-        # find reservations for models in the category in the next week
-        res = 0
-        model_object.equipment_models.each do |em|
-          res += Reservation.for_eq_model(model_object)
-            .reserved_in_date_range(Date.current-1.day, Date.current+7.days)
-            .count
-        end
-        onclick_str = "handleBigDeactivation(this, #{res}, 'category');"
-      end
-      link_to "Deactivate", [:deactivate, model_object],
-        class: "btn btn-danger", method: :put,
-        onclick: "#{onclick_str}"
-    end
-  end
-
   def intify(integer)
     return 'unrestricted' if integer.nil? || integer == Float::INFINITY
     integer
