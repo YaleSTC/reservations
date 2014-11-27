@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/JackDanger/permanent_records.git
+  revision: ea027de935e7dc2c386b77e0d6f5fcb29e21185b
+  ref: ea027de9
+  specs:
+    permanent_records (3.1.6)
+      activerecord (>= 3.0.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -206,8 +214,6 @@ GEM
       mime-types
     party_foul (1.5.4)
       octokit (~> 3.1)
-    permanent_records (3.1.6)
-      activerecord (>= 3.0.0)
     pry (0.10.1)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -413,7 +419,7 @@ DEPENDENCIES
   nilify_blanks
   paperclip
   party_foul
-  permanent_records
+  permanent_records!
   pry
   pry-byebug
   pry-rails
