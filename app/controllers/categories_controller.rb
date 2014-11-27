@@ -56,9 +56,11 @@ class CategoriesController < ApplicationController
       flash[:notice] = 'Deactivation cancelled.'
       redirect_to @category
     elsif params[:deactivation_confirmed]
-      Reservation.for_eq_model(@category.equipment_models).each do |r|
-        r.archive(current_user, "The category was deactivated.")
-          .save(validate: false)
+      @category.equipment_models.each do |em|
+        Reservation.for_eq_model(em).each do |r|
+          r.archive(current_user, "The category was deactivated.")
+            .save(validate: false)
+        end
       end
       super
     else
