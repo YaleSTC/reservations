@@ -195,7 +195,7 @@
 <div class="form-actions">
   <% if can? :manage, EquipmentModel %>
     <%= link_to "Edit "+@equipment_model.name.truncate(30), edit_equipment_model_path(@equipment_model), :class => 'btn' %>
-    <%= make_deactivate_btn :equipment_models, @equipment_model %>
+    <%= equipment_model.make_deactivate_btn %>
   <% end %>
   <%= link_to "View All "+ Category.find(@equipment_model.category_id)
 .name.pluralize.truncate(30), category_equipment_models_path(Category.find(@equipment_model.category_id)), :class => 'btn view_all' %>

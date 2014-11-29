@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/JackDanger/permanent_records.git
+  revision: ea027de935e7dc2c386b77e0d6f5fcb29e21185b
+  ref: ea027de9
+  specs:
+    permanent_records (3.1.6)
+      activerecord (>= 3.0.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -92,6 +100,11 @@ GEM
     dotenv (1.0.2)
     dotenv-rails (1.0.2)
       dotenv (= 1.0.2)
+    draper (1.4.0)
+      actionpack (>= 3.0)
+      activemodel (>= 3.0)
+      activesupport (>= 3.0)
+      request_store (~> 1.0)
     dynamic_form (1.1.4)
     em-websocket (0.5.1)
       eventmachine (>= 0.12.9)
@@ -201,8 +214,6 @@ GEM
       mime-types
     party_foul (1.5.4)
       octokit (~> 3.1)
-    permanent_records (3.1.6)
-      activerecord (>= 3.0.0)
     pry (0.10.1)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -269,6 +280,7 @@ GEM
     redcarpet (3.1.2)
     ref (1.0.5)
     remotipart (1.2.1)
+    request_store (1.1.0)
     rspec (3.1.0)
       rspec-core (~> 3.1.0)
       rspec-expectations (~> 3.1.0)
@@ -388,6 +400,7 @@ DEPENDENCIES
   devise (~> 3.3.0)
   devise_cas_authenticatable (~> 1.3.7)
   dotenv-rails (~> 1.0.2)
+  draper (~> 1.3)
   dynamic_form
   factory_girl_rails
   ffaker
@@ -406,7 +419,7 @@ DEPENDENCIES
   nilify_blanks
   paperclip
   party_foul
-  permanent_records
+  permanent_records!
   pry
   pry-byebug
   pry-rails

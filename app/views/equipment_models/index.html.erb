@@ -19,9 +19,7 @@
       <%= ("<td>" + (link_to equipment_model.category.name.singularize, equipment_model.category) + "</td>").html_safe unless @category %>
       <% if can? :manage, EquipmentModel %>
         <td><%= link_to "Edit", edit_equipment_model_path(equipment_model), :class => "btn" %></td>
-        <td>
-          <%= make_deactivate_btn(:equipment_models,equipment_model) %>
-        </td>
+        <td><%= equipment_model.decorate.make_deactivate_btn %></td>
       <% end %>
     </tr>
   <% end %>

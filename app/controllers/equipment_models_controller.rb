@@ -1,8 +1,10 @@
 class EquipmentModelsController < ApplicationController
   layout 'application_with_sidebar', only: :show
   load_and_authorize_resource
+  decorates_assigned :equipment_model
   skip_before_filter :authenticate_user!, only: [:show, :index]
-  before_action :set_equipment_model, only: [:show, :edit, :update, :destroy]
+  before_action :set_equipment_model, only: [:show, :edit, :update, :destroy,
+    :deactivate]
   before_action :set_category_if_possible, only: [:index, :new]
 
   include ActivationHelper
@@ -95,6 +97,22 @@ class EquipmentModelsController < ApplicationController
       redirect_to @equipment_model
     else
       render action: 'edit'
+    end
+  end
+
+  def deactivate
+    if params[:deactivation_cancelled]
+      flash[:notice] = 'Deactivation cancelled.'
+      redirect_to @equipment_model
+    elsif params[:deactivation_confirmed]
+      Reservation.for_eq_model(@equipment_model).each do |r|
+        r.archive(current_user, "The equipment model was deactivated.")
+          .save(validate: false)
+      end
+      super
+    else
+      flash[:error] = 'Oops, something went wrong.'
+      redirect_to @equipment_model
     end
   end
 
