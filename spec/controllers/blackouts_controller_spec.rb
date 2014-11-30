@@ -99,9 +99,17 @@ describe BlackoutsController, :type => :controller do
         it { is_expected.to render_template("new_recurring") }
       end
       context 'with conflicting reservation' do
-        # write these - create conflicting reservation yet correct params and
-        # then test to see that it renders the correct view and doesn't save
-        # a reservation
+        before do
+          @res = FactoryGirl.create(:valid_reservation, due_date: Date.tomorrow)
+          @attributes = FactoryGirl.attributes_for(:blackout, days: ["#{Date.tomorrow.wday}"])
+          post :create_recurring, blackout: @attributes
+        end
+
+        it { is_expected.to set_the_flash }
+        it { is_expected.to render_template("new_recurring") }
+        it 'should not save the blackouts' do
+          expect{ post :create_recurring, blackout: @attributes }.not_to change{ Blackout.all.count }
+        end
       end
     end
     context 'POST create' do
@@ -131,9 +139,17 @@ describe BlackoutsController, :type => :controller do
         it { is_expected.to render_template(:new) }
       end
       context 'with conflicting reservation' do
-        # write these - create conflicting reservation yet correct params and
-        # then test to see that it renders the correct view and doesn't save
-        # a reservation
+        before do
+          @res = FactoryGirl.create(:valid_reservation, due_date: Date.tomorrow)
+          @attributes = FactoryGirl.attributes_for(:blackout, start_date: Date.current, end_date: Date.current+2.days)
+          post :create, blackout: @attributes
+        end
+
+        it { is_expected.to set_the_flash }
+        it { is_expected.to render_template(:new) }
+        it 'should not save the blackout' do
+          expect{ post :create, blackout: @attributes }.not_to change{ Blackout.all.count }
+        end
       end
     end
     context 'PUT update' do
