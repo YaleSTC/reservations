@@ -66,10 +66,23 @@ class BlackoutsController < ApplicationController
     p[:created_by] = current_user.id
     @blackout = Blackout.new(p)
 
+    # check for conflicts
+    res = Reservation.ends_on_days(p[:start_date], p[:end_date])
+
     # save and exit
-    if @blackout.save
+    if res.empty? && @blackout.save
       redirect_to @blackout, notice: 'Blackout was successfully created.'
     else
+      unless res.empty?
+        msg = "The following reservations will be unable to be returned:"
+        res.each do |res|
+          "\n#{res.md_link}"
+        end
+      else
+        msg = "Oops, something went wrong. Please try again."
+      end
+
+      flash[:error] = msg
       render action: 'new'
     end
   end
