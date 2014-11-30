@@ -78,7 +78,7 @@ For a general guide to setting up your web and application servers, including ho
 By default, Reservations uses e-mail addresses and passwords to authenticate users. It also supports the CAS authentication system, using the gem [devise_cas_authenticatable](https://github.com/nbudin/devise_cas_authenticatable). If you want to use CAS authentication you must set the `CAS_AUTH` environment variable to some value. Attempting to switch between authentication methods after initial setup is highly discouraged and will likely fail. If this is necessary, you may need to install a fresh copy of the application and manually migrate over user data (see our [wiki](https://github.com/YaleSTC/reservations/wiki/Authentication) for more details).
 
 To point the gem to the correct CAS server, modify the following setting in your app's `config/initializers/devise.rb` (near the bottom of the file):
-```
+```ruby
   # configure the base URL of your CAS server
   config.cas_base_url = "https://secure.its.yale.edu/cas/"
 ```
