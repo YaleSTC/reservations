@@ -98,6 +98,11 @@ describe BlackoutsController, :type => :controller do
         it { is_expected.to set_the_flash }
         it { is_expected.to render_template("new_recurring") }
       end
+      context 'with conflicting reservation' do
+        # write these - create conflicting reservation yet correct params and
+        # then test to see that it renders the correct view and doesn't save
+        # a reservation
+      end
     end
     context 'POST create' do
       context 'with correct params' do
@@ -124,6 +129,11 @@ describe BlackoutsController, :type => :controller do
           post :create, blackout: @attributes
         end
         it { is_expected.to render_template(:new) }
+      end
+      context 'with conflicting reservation' do
+        # write these - create conflicting reservation yet correct params and
+        # then test to see that it renders the correct view and doesn't save
+        # a reservation
       end
     end
     context 'PUT update' do
