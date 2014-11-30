@@ -22,6 +22,8 @@
 * Reservation notes have been improved and include links for easier history tracking ([#999](https://github.com/YaleSTC/reservations/issues/999), [#1021](https://github.com/YaleSTC/reservations/issues/1021)).
 * Rails Admin now has proper authorization ([#973](https://github.com/YaleSTC/reservations/issues/973)).
 * `spin.js` has been replaced with a Font Awesome icon for the cart spinner ([#777](https://github.com/YaleSTC/reservations/issues/777)).
+* The number of days after which a missed reservation is deleted can now be defined by admins ([#594](https://github.com/YaleSTC/reservations/issues/594)).
+* Blackout dates can no longer be created when the due dates of existing reservations would conflict with said blackout date ([#562](https://github.com/YaleSTC/reservations/issues/562)).
 
 ### Removed
 * Took out the logging functionality of paper_trail in lieu of recently added reservation and equipment history features ([#1033](https://github.com/YaleSTC/reservations/issues/1033)).
