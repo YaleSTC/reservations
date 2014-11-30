@@ -74,10 +74,11 @@ class BlackoutsController < ApplicationController
       redirect_to @blackout, notice: 'Blackout was successfully created.'
     else
       unless res.empty?
-        msg = "The following reservations will be unable to be returned:"
+        msg = "The following reservation(s) will be unable to be returned: "
         res.each do |res|
-          "\n#{res.md_link}"
+          msg += "#{res.md_link}, "
         end
+        msg = msg[0, msg.length-2] + ". Please update their due dates and try again."
       else
         msg = "Oops, something went wrong. Please try again."
       end
