@@ -14,6 +14,8 @@
 * Equipment items are now returned before deactivation ([#288](https://github.com/YaleSTC/reservations/issues/288)).
 * Admins can now disable user creation by patrons and checkout persons ([#622](https://github.com/YaleSTC/reservations/issues/622)).
 * Reservation renewals are now logged in the reservation notes ([#920](https://github.com/YaleSTC/reservations/issues/920)).
+* Admins are now warned if deactivating a category or equipment model with current or future reservations (within the next week) ([#1040](https://github.com/YaleSTC/reservations/issues/1040)).
+* Reservations whose equipment's category or equipment model are deactivated will be automatically archived ([#1040](https://github.com/YaleSTC/reservations/issues/1040)).
 
 ### Changed
 * Deactivating an equipment item now archives its reservation if it's currently checked out ([#288](https://github.com/YaleSTC/reservations/issues/288)).
@@ -24,6 +26,7 @@
 ### Removed
 * Took out the logging functionality of paper_trail in lieu of recently added reservation and equipment history features ([#1033](https://github.com/YaleSTC/reservations/issues/1033)).
 * A number of broken links left over from earlier versions were removed ([#957](https://github.com/YaleSTC/reservations/issues/957)).
+* The cart was removed from a number of views ([#776](https://github.com/YaleSTC/reservations/issues/776)).
 
 
 ## v4.0.1 - 2014-11-03
