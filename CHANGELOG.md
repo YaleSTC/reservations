@@ -54,7 +54,7 @@
 
 ## v4.0.0 - 2014-10-05
 ### Important
-* This release includes an upgrade to Rails 4 and a large number of other changes; it has not been tested under production conditions. We recommend waiting for a release that has undergone more testing.*
+*This release includes an upgrade to Rails 4 and a large number of other changes; it has not been tested under production conditions. We recommend waiting for a release that has undergone more testing.*
 
 ### Fixed
 * Fixed CodeClimate testing coverage ([#682](https://github.com/YaleSTC/reservations/issues/682)).
