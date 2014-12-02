@@ -23,9 +23,7 @@
       <td><%= category.sort_order %></td>
       <% if can? :manage, Category %>
        <td><%= link_to "Edit", edit_category_path(category), :class => "btn" %></td>
-       <td>
-         <%= make_deactivate_btn(:categories,category) %>
-       </td>
+       <td><%= category.decorate.make_deactivate_btn %></td>
       <% end %>
     </tr>
   <% end %>

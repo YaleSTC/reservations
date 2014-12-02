@@ -1,7 +1,9 @@
 class CategoriesController < ApplicationController
 
   load_and_authorize_resource
-  before_filter :set_current_category, only: [:show, :edit, :update, :destroy]
+  decorates_assigned :category
+  before_filter :set_current_category, only: [:show, :edit, :update, :destroy,
+    :deactivate]
 
   include ActivationHelper
 
@@ -48,6 +50,25 @@ class CategoriesController < ApplicationController
       render action: 'edit'
     end
   end
+
+  def deactivate
+    if params[:deactivation_cancelled]
+      flash[:notice] = 'Deactivation cancelled.'
+      redirect_to @category
+    elsif params[:deactivation_confirmed]
+      @category.equipment_models.each do |em|
+        Reservation.for_eq_model(em).each do |r|
+          r.archive(current_user, "The category was deactivated.")
+            .save(validate: false)
+        end
+      end
+      super
+    else
+      flash[:error] = 'Oops, something went wrong.'
+      redirect_to @category
+    end
+  end
+
 
   private
 

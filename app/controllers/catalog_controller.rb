@@ -51,6 +51,18 @@ class CatalogController < ApplicationController
     end
   end
 
+  def deactivate
+    if params[:deactivation_cancelled]
+      flash[:notice] = 'Deactivation cancelled.'
+      redirect_to categories_path
+    elsif params[:deactivation_confirmed]
+      super
+    else
+      flash[:error] = 'Oops, something went wrong.'
+      redirect_to categories_path
+    end
+  end
+
   private
     # this method is called to either add or remove an item from the cart
     # it takes either :add_item or :remove_item as an action variable,

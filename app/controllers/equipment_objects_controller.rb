@@ -1,5 +1,6 @@
 class EquipmentObjectsController < ApplicationController
   load_and_authorize_resource
+  decorates_assigned :equipment_object
   before_action :set_current_equipment_object, only: [:show, :edit, :update, :destroy, :deactivate, :activate]
   before_action :set_equipment_model_if_possible, only: [:index, :new]
 
@@ -63,7 +64,7 @@ class EquipmentObjectsController < ApplicationController
   end
 
   # Deactivate and activate extend controller methods in ApplicationController
-def deactivate
+  def deactivate
     if params[:deactivation_reason] && !params[:deactivation_cancelled]
       # update notes and deactivate
       new_notes = "#### Deactivated at #{Time.current.to_s(:long)} by #{current_user.md_link}\n#{params[:deactivation_reason]}\n\n" + @equipment_object.notes
