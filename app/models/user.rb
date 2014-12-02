@@ -83,28 +83,45 @@ class User < ActiveRecord::Base
   def self.search_ldap(login)
     return nil if login.blank?
     return nil unless ENV['USE_LDAP']
+
     if ENV['CAS_AUTH']
       filter_param = Rails.application.secrets.ldap_login
     else
       filter_param = Rails.application.secrets.ldap_email
     end
 
-    ldap = Net::LDAP.new(host: "directory.yale.edu", port: 389)
+    # set up LDAP object and filter parameters
+    ldap = Net::LDAP.new(host: Rails.application.secrets.ldap_host,
+      port: Rails.application.secrets.ldap_port)
     filter = Net::LDAP::Filter.eq(filter_param, login)
-    attrs = ["givenname", "sn", "eduPersonNickname", "telephoneNumber", "uid",
-             "mail", "collegename", "curriculumshortname", "college", "class"]
-    result = ldap.search(base: "ou=People,o=yale.edu", filter: filter, attributes: attrs)
+
+    # set up attributes hash based on configuration
+    attrs = [Rails.application.secrets.ldap_login,
+      Rails.application.secrets.ldap_email,
+      Rails.application.secrets.ldap_first_name,
+      Rails.application.secrets.ldap_last_name,
+      Rails.application.secrets.ldap_nickname]
+
+    # actually look up query
+    result = ldap.search(base: Rails.application.secrets.ldap_base, filter: filter, attributes: attrs)
+
     unless result.empty?
-      return { first_name:  result[0][:givenname][0],
-               last_name:   result[0][:sn][0],
-               nickname:    result[0][:eduPersonNickname][0],
-               # :phone     => result[0][:telephoneNumber][0],
-               # Above line removed because the phone number in the Yale phonebook is always wrong
-               username:       result[0][:uid][0],
-               email:       result[0][:mail][0],
-               affiliation: [result[0][:curriculumshortname],
-                                result[0][:college],
-                                result[0][:class]].select{ |s| s.length > 0 }.join(" ") }
+      # store output hash
+      out = {}
+      out[:first_name] = result[0][Rails.application.secrets.ldap_first_name.to_sym][0]
+      out[:last_name] = result[0][Rails.application.secrets.ldap_last_name.to_sym][0]
+      out[:nickname] = result[0][Rails.application.secrets.ldap_nickname.to_sym][0]
+      out[:email] = result[0][Rails.application.secrets.ldap_email.to_sym][0]
+
+      # define username based on authentication method
+      if ENV['CAS_AUTH']
+        out[:username] = result[0][Rails.application.secrets.ldap_login.to_sym][0]
+      else
+        out[:username] = out[:email]
+      end
+
+      # return hash
+      return out
     end
   end
 
