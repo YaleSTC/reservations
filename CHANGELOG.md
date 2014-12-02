@@ -15,10 +15,9 @@
 * Admins can now disable user creation by patrons and checkout persons ([#622](https://github.com/YaleSTC/reservations/issues/622)).
 * Reservation renewals are now logged in the reservation notes ([#920](https://github.com/YaleSTC/reservations/issues/920)).
 * Admins are now warned if deactivating a category or equipment model with current or future reservations (within the next week) ([#1040](https://github.com/YaleSTC/reservations/issues/1040)).
-* Reservations whose equipment's category or equipment model are deactivated will be automatically archived ([#1040](https://github.com/YaleSTC/reservations/issues/1040)).
 
 ### Changed
-* Deactivating an equipment item now archives its reservation if it's currently checked out ([#288](https://github.com/YaleSTC/reservations/issues/288)).
+* Deactivating an equipment item, equipment model, or category now archives relevant reservations if they're currently checked out ([#288](https://github.com/YaleSTC/reservations/issues/288), [#1040](https://github.com/YaleSTC/reservations/issues/1040)).
 * Reservation notes have been improved and include links for easier history tracking ([#999](https://github.com/YaleSTC/reservations/issues/999), [#1021](https://github.com/YaleSTC/reservations/issues/1021)).
 * Rails Admin now has proper authorization ([#973](https://github.com/YaleSTC/reservations/issues/973)).
 * `spin.js` has been replaced with a Font Awesome icon for the cart spinner ([#777](https://github.com/YaleSTC/reservations/issues/777)).
