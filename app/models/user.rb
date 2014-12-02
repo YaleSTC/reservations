@@ -82,9 +82,15 @@ class User < ActiveRecord::Base
 
   def self.search_ldap(login)
     return nil if login.blank?
+    return nil unless ENV['USE_LDAP']
+    if ENV['CAS_AUTH']
+      filter_param = Rails.application.secrets.ldap_login
+    else
+      filter_param = Rails.application.secrets.ldap_email
+    end
 
     ldap = Net::LDAP.new(host: "directory.yale.edu", port: 389)
-    filter = Net::LDAP::Filter.eq("uid", login)
+    filter = Net::LDAP::Filter.eq(filter_param, login)
     attrs = ["givenname", "sn", "eduPersonNickname", "telephoneNumber", "uid",
              "mail", "collegename", "curriculumshortname", "college", "class"]
     result = ldap.search(base: "ou=People,o=yale.edu", filter: filter, attributes: attrs)
