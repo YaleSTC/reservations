@@ -24,7 +24,8 @@ class ReservationsController < ApplicationController
     @reservations_source = (can? :manage, Reservation) ? Reservation : current_user.reservations
     default_filter = (can? :manage, Reservation) ? :upcoming : :reserved
 
-    filters = [:reserved, :checked_out, :overdue, :missed, :returned, :upcoming, :requested, :approved_requests, :denied_requests]
+    filters = [:reserved, :checked_out, :overdue, :returned, :upcoming, :requested, :approved_requests, :denied_requests]
+    filters << :missed unless AppConfig.first.res_exp_time
     #if the filter is defined in the params, store those reservations
     filters.each do |filter|
       if params[filter]

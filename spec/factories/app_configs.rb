@@ -19,7 +19,6 @@ FactoryGirl.define do
     favicon_content_type "image/vnd.microsoft.icon"
     favicon_file_size 15
     favicon_updated_at "2013-06-24 14:02:01"
-    delete_missed_reservations true
     deleted_missed_reservation_email_body "MyText"
     send_notifications_for_deleted_missed_reservations true
     checkout_persons_can_edit false

@@ -86,9 +86,8 @@
               hint: 'When enabled, patrons who have overdue equipment will get an email informing them about late fees and other consequences.' %>
   <%= f.input :overdue_checkin_email_body, input_html: { class: 'span6' } %>
   <hr />
-
-  <%= f.input :delete_missed_reservations, label: 'Delete missed reservations?',
-              hint: 'When enabled, reservations will be deleted the day after they were due to be checked out.' %>
+  <%= f.input :res_exp_time, label: 'Days to keep missed reservations',
+      hint: 'Missed reservations a certain number of days old can be automatically deleted. Leave blank to keep all missed reservations forever.' %>
   <%= f.input :send_notifications_for_deleted_missed_reservations, label: 'Send notifications?',
               hint: 'When enabled, patrons will be notified that their reservations were deleted.' %>
   <%= f.input :deleted_missed_reservation_email_body, input_html: { class: 'span6' } %>
@@ -111,8 +110,7 @@
 <fieldset>
   <legend>Blackout Dates</legend>
   <%= f.input :blackout_exp_time, label: 'Days to keep old blackouts',
-      hint: 'Blackout dates a certain number of days old can be automatically deleted. Leave blank to keep
-      all blackouts forever.' %>
+      hint: 'Blackout dates a certain number of days old can be automatically deleted. Leave blank to keep all blackouts forever.' %>
 </fieldset>
 
 <div class="form-actions">

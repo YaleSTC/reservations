@@ -34,6 +34,9 @@ FactoryGirl.define do
     trait :missed do
       start_date { Date.yesterday - 1 }
       due_date { Date.yesterday }
+      to_create do |instance|
+        instance.save(validate: false)
+      end
     end
 
     trait :returned do

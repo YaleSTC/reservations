@@ -15,8 +15,10 @@
 			:class => (params[:checked_out] ? "btn disabled" : "btn") %>
     <%= link_to "Overdue (#{@reservations_source.overdue.size})", reservations_path(:overdue => true),
 			:class => (params[:overdue] ? "btn disabled" : "btn") %>
-  	<%= link_to "Missed (#{@reservations_source.missed.size})", reservations_path(:missed => true),
-			:class => (params[:missed] ? "btn disabled" : "btn") %>
+    <% unless AppConfig.first.res_exp_time %>
+      <%= link_to "Missed (#{@reservations_source.missed.size})", reservations_path(:missed => true),
+        :class => (params[:missed] ? "btn disabled" : "btn") %>
+    <% end %>
    	<%= link_to "Returned (#{@reservations_source.returned.size})", reservations_path(:returned => true),
 			:class => (params[:returned] ? "btn disabled" : "btn") %>
     <%= link_to "Approved (#{@reservations_source.approved_requests.size})", reservations_path(:approved_requests => true),
