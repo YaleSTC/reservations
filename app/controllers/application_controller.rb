@@ -219,12 +219,10 @@ class ApplicationController < ActionController::Base
     # build the hash using class methods that use 0 queries
     eq_models.each do |em|
       @availability_hash[em.id] =
-        [EquipmentObject.for_eq_model(em.id,
-                                      eq_objects)\
-        - Reservation.number_overdue_for_eq_model(em.id,
-                                                  source_reservations)\
-        - em.num_reserved(cart.start_date,
-                          cart.due_date, source_reservations), 0].max
+        [EquipmentObject.for_eq_model(em.id, eq_objects)\
+        - Reservation.number_overdue_for_eq_model(em.id, source_reservations)\
+        - em.num_reserved(cart.start_date, cart.due_date, source_reservations)\
+        - cart.items[em.id].to_i, 0].max
     end
     @page_eq_models_by_category = eq_models
   end
@@ -234,7 +232,10 @@ class ApplicationController < ActionController::Base
     session[:cart].purge_all if session[:cart]
     flash[:notice] = 'Cart emptied.'
     respond_to do |format|
-      format.js { render template: 'cart_js/reload_all' }
+      format.js do
+        prepare_catalog_index_vars
+        render template: 'cart_js/reload_all'
+      end
       format.html { redirect_to root_path }
     end
   end

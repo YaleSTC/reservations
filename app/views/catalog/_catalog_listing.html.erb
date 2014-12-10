@@ -6,7 +6,7 @@
         <ul class="thumbnails">
         <% equipment_models.each do |equipment_model| %>
           <li class="span3">
-          <%= render partial: 'equipment_model_div', locals: { equipment_model: equipment_model,
+          <%= render partial: 'catalog/equipment_model_div', locals: { equipment_model: equipment_model,
                                                                availability_hash: availability_hash,
                                                                available_string: available_string,
                                                               } %>

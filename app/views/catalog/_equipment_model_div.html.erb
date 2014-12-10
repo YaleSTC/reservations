@@ -20,14 +20,14 @@
     </p>
   </div>
 
-  <div class = "add_to_cart_box">
+  <div class = "add_to_cart_box" id="add_to_cart_<%= equipment_model.id %>">
     <% @restricted = equipment_model.model_restricted?(cart.reserver_id) %>
     <% if @restricted %>
       <%= button_tag "Add to Cart", class: "btn disabled add_to_cart_disabled"%>
       <%= link_to "#qualifications_modal", class: 'not-qualified-icon', rel: "tooltip", title: "Not Qualified (click for more info)", :"data-toggle" => 'modal' do %>
         <i class="fa fa-exclamation-triangle"></i>
       <% end %>
-      <% elsif availability_hash[equipment_model.id] > 0 %>
+    <% elsif availability_hash[equipment_model.id] > 0 %>
       <%= link_to "Add to Cart", add_to_cart_path(equipment_model), :method => :put, :remote => true, :class => "btn add_to_cart" %>
     <% else %>
       <%= button_tag "Add to Cart", :class => "btn disabled add_to_cart_disabled"%>
