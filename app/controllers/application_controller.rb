@@ -237,7 +237,8 @@ class ApplicationController < ActionController::Base
 
   # activate and deactivate are overridden in the users controller because users are activated and deactivated differently
   def deactivate
-    authorize! :be, :admin
+    authorize! :deactivate, :objects
+    binding.pry
     @objects_class2 = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (EM, EO, Category)
     @objects_class2.destroy #Deactivate the model you had originally intended to deactivate
     flash[:notice] = "Successfully deactivated " + params[:controller].singularize.titleize + ". Any related equipment has been deactivated as well."
@@ -245,7 +246,7 @@ class ApplicationController < ActionController::Base
   end
 
   def activate
-    authorize! :be, :admin
+    authorize! :activate, :objects
     @model_to_activate = params[:controller].singularize.titleize.delete(' ').constantize.find(params[:id]) #Finds the current model (EM, EO, Category)
     activate_parents(@model_to_activate)
     @model_to_activate.revive
