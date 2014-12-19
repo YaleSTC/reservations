@@ -31,8 +31,9 @@
 </fieldset>
 
 <fieldset>
-  <legend>User Creation</legend>
+  <legend>Unregistered Users</legend>
   <%= f.input :enable_new_users, label: 'Enable User Creation', hint: 'Allow people to create user accounts.' %>
+  <%= f.input :enable_guests, label: 'Enable Guest Access', hint: 'Allow people to browse the catalog without signing in.' %>
 </fieldset>
 
 <fieldset>

@@ -7,9 +7,7 @@ class ApplicationController < ActionController::Base
   # See ActionController::RequestForgeryProtection for details
   protect_from_forgery
   before_action :app_setup_check
-  before_action :authenticate_user!, unless: :devise_controller?
-  skip_before_action :authenticate_user!,
-                     only: [:update_cart, :empty_cart, :terms_of_service]
+  before_action :authenticate_user!, unless: :skip_authentication?
   before_action :cart, unless: :devise_controller?
 
   with_options unless: ->(_u) { User.count == 0 } do |c|
@@ -123,6 +121,20 @@ class ApplicationController < ActionController::Base
   def make_cart_compatible
     return if session[:cart].items.is_a? Hash
     session[:cart] = Cart.new
+  end
+
+  # check to see if the guest user functionality is disabled
+  def guests_disabled?
+    AppConfig.first && !AppConfig.first.enable_guests
+  end
+
+  # check to see if we should skip authentication; either looks to see if the
+  # Devise controller is running or if we're utilizing one of the guest-
+  # accessible routes with guests disabled
+  def skip_authentication?
+    devise_controller? ||
+      (%w(update_cart empty_cart terms_of_service)
+      .include?(params[:action]) && !guests_disabled?)
   end
 
   #-------- end before_filter methods --------#

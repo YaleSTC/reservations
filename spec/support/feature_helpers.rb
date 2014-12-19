@@ -2,8 +2,9 @@ module FeatureHelpers
   # make sure we have a working app
   def app_setup
     @app_config = FactoryGirl.create(:app_config)
+    @category = FactoryGirl.create(:category)
     @equipment_model_with_object =
-      FactoryGirl.create(:equipment_model_with_object)
+      FactoryGirl.create(:equipment_model_with_object, category: @category)
     @admin = FactoryGirl.create(:admin)
     @user = FactoryGirl.create(:user)
   end
