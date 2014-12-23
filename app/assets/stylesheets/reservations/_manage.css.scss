@@ -1,28 +1,28 @@
 .well-em-manage {
-  background-color: darken(desaturate($bodyBackground, 10%), 12%);
+  background-color: darken(desaturate($body-bg, 10%), 12%);
   text-align: center;
 
   a {
-    color: darken($navbarLinkColor, 50%);
+    color: darken($navbar-default-link-color, 50%);
 
     > img {
       background: white;
-      @include img-outline(desaturate(darken($bodyBackground, 20%), 30%));
+      @include img-outline(desaturate(darken($body-bg, 20%), 30%));
     }
   }
 }
 
-.checkin-click:hover{
-  background-color: darken(desaturate($bodyBackground, 10%), 17%);
+.checkin-click:hover {
+  background-color: darken(desaturate($body-bg, 10%), 17%);
   cursor: pointer;
 }
 
 .selected {
-  background-color: adjust-hue(darken($bodyBackground, 12%), 45deg);
+  background-color: adjust-hue(darken($body-bg, 12%), 45deg);
 }
 
 .selected-overdue {
-  //background-color: adjust-hue(darken($bodyBackground, 12%), -25deg);
+  //background-color: adjust-hue(darken($body-bg, 12%), -25deg);
   //commented out red background but we may want to save it for later,
   // possibly for unselected checkin procedures
 }
@@ -46,7 +46,7 @@
 }
 
 .c-box:hover {
-  background-color: darken($bodyBackground,5%);
+  background-color: darken($body-bg, 5%);
 }
 
 .checkin, .checkout {

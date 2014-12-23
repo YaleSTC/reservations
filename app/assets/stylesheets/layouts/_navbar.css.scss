@@ -10,7 +10,7 @@
 
 .navbar-search .search-query {
   @include box-shadow(#{inset 0 0 10px rgba(0,0,0,.5), 0 1px 0 rgba(255,255,255,.15)});
-	@include placeholder-extended($navbarSearchPlaceholderColor);
+	@include placeholder-extended($navbar-search-placeholder-color);
   @include transition(#{background .2s ease-in-out, text-shadow .2s ease-in-out, box-shadow .2s ease-in-out});
 }
 
@@ -88,15 +88,15 @@
 
   // this is currently broken in FF, apparently :after doesn't work
   &::-moz-placeholder:after {
-    font-family: $sansFontFamily;
+    font-family: $font-family-sans-serif;
     content: "Search the catalog";
   }
   &:-ms-input-placeholder:after {
-    font-family: $sansFontFamily;
+    font-family: $font-family-sans-serif;
     content: "Search the catalog";
   }
   &::-webkit-input-placeholder:after {
-    font-family: $sansFontFamily;
+    font-family: $font-family-sans-serif;
     content: "Search the catalog";
   }
 }

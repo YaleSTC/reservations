@@ -3,22 +3,22 @@
 // -----------------------------------------------------------------------------
 
 .select2-results .select2-highlighted {
-  background: $dropdownLinkBackgroundHover;
+  background: $dropdown-link-hover-bg;
 }
 
 .select2-drop {
-  border: 1px solid $inputBorder;
+  border: 1px solid $input-border;
   border-top: 0;
 }
 
 .select2-container div {
-  border-left: 1px solid $inputBorder;
+  border-left: 1px solid $input-border;
 }
 
 .select2-search input {
-  background-color: $inputBackground;
-  border: 1px solid $inputBorder;
-  @include border-radius($inputBorderRadius);
+  background-color: $input-bg;
+  border: 1px solid $input-border;
+  border-radius: $input-border-radius;
 }
 
 //
@@ -27,7 +27,7 @@
 
 .select2-container-multi .select2-choices, .select2-container-multi.select2-container-active .select2-choices {
   padding-right: 5px;
-  @include border-radius($inputBorderRadius);
+  border-radius: $input-border-radius;
   @include box-shadow(inset 0 1px 1px rgba(0,0,0,.075));
   @include transition(#{border linear .2s, box-shadow linear .2s});
 }
@@ -40,8 +40,8 @@
 }
 
 .select2-container-multi .select2-choices {
-  background-color: $inputBackground;
-  border: 1px solid $inputBorder;
+  background-color: $input-bg;
+  border: 1px solid $input-border;
 }
 
 //
@@ -49,12 +49,12 @@
 // =============================================================================
 
 .select2-container .select2-choice {
-  background-color: $inputBackground;
-  border: 1px solid $inputBorder;
+  background-color: $input-bg;
+  border: 1px solid $input-border;
 }
 
 .select2-dropdown-open .select2-choice {
-  @include border-radius($inputBorderRadius);
+  border-radius: $input-border-radius;
   @include box-shadow(inset 0 1px 1px rgba(0,0,0,.075));
   @include transition(#{border linear .2s, box-shadow linear .2s});
 }

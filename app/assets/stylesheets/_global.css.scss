@@ -13,7 +13,7 @@
   margin-left: 0px;
 }
 
-.well { background-color: darken(desaturate($bodyBackground, 10%), 3%); }
+.well { background-color: darken(desaturate($body-bg, 10%), 3%); }
 
 // Make labels semi-bold
 // =============================================================================
@@ -29,8 +29,8 @@ label {
 // Form actions background change
 
 .form-actions {
-  background-color: darken(desaturate($bodyBackground, 10%), 6%);
-  border-top: 1px solid darken(desaturate($bodyBackground, 10%), 15%);
+  background-color: darken(desaturate($body-bg, 10%), 6%);
+  border-top: 1px solid darken(desaturate($body-bg, 10%), 15%);
 }
 
 // Change alert margins to account for body padding
@@ -51,7 +51,7 @@ label {
 // Make background color for hovering on nav links relative to body background
 // =============================================================================
 .nav > li > a:hover {
-  background-color: darken(desaturate($bodyBackground, 10%), 7%);
+  background-color: darken(desaturate($body-bg, 10%), 7%);
 }
 
 // List styles
@@ -59,7 +59,7 @@ label {
 
 // Ordered list
 // ------------
-$rectangle-list-li-background: darken($bodyBackground, 10%);
+$rectangle-list-li-background: darken($body-bg, 10%);
 
 ol.rectangle-list {
   counter-reset: li; // Initiate a counter
@@ -80,7 +80,7 @@ ol.rectangle-list {
     *padding: .4em;
     margin: .6em 0 .5em .7em;
     background: $rectangle-list-li-background;
-    @include border-radius(3px);
+    border-radius: 3px;
     @include transition(background .3s ease-out);
 
     &:hover {
@@ -88,7 +88,7 @@ ol.rectangle-list {
 
       &:after {
         left: -.5em;
-        border-left-color: lighten($linkColor, 18%);
+        border-left-color: lighten($link-color, 18%);
       }
     }
 
@@ -99,13 +99,13 @@ ol.rectangle-list {
       left: -2.5em;
       top: 50%;
       margin-top: -1em;
-      background: lighten($linkColor, 18%);
+      background: lighten($link-color, 18%);
       height: 2em;
       width: 2em;
       line-height: 2em;
       text-align: center;
       font-weight: bold;
-      @include border-radius(3px);
+      border-radius: 3px;
       color: black;
     }
 
@@ -141,7 +141,7 @@ ul.rounded-list {
     *padding: .4em;
     margin: .5em 0;
     background: $rectangle-list-li-background;
-    @include border-radius(.3em);
+    border-radius: .3em;
     @include transition(all .3s ease-out);
 
     &:hover {
@@ -158,14 +158,14 @@ ul.rounded-list {
       left: -1.3em;
       top: 50%;
       margin-top: -1.3em;
-      background: lighten($linkColor, 18%);
+      background: lighten($link-color, 18%);
       height: 2em;
       width: 2em;
       line-height: 2em;
       border: .3em solid #fff;
       text-align: center;
       font-weight: bold;
-      @include border-radius(2em);
+      border-radius: 2em;
       @include transition(all .3s ease-out);
     }
   }
@@ -218,6 +218,6 @@ td > a, td > div.dropdown {
   padding: 10px;
   margin-top: 5px;
   margin-bottom: 5px;
-  background-color: darken($bodyBackground, 5%);
+  background-color: darken($body-bg, 5%);
   border-radius: 5px;
 }

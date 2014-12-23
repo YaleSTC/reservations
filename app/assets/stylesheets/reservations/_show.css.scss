@@ -2,16 +2,16 @@
   text-align: center;
 
   .fa-user {
-    font-size: $baseFontSize * 7;
-    line-height: $baseLineHeight * 4;
-    color: lighten($textColor, 50%);
+    font-size: $font-size-base * 7;
+    line-height: $line-height-base * 4;
+    color: lighten($text-color, 50%);
     @include transition(color .3s ease);
 
 
 
     &:hover, &:active {
       text-decoration: none;
-      color: $textColor;
+      color: $text-color;
       @include transition(none);
 
     }
@@ -50,7 +50,7 @@ ul.bar-dividers {
     }
     span {
       position: relative;
-      bottom: $baseLineHeight;
+      bottom: $line-height-base;
       z-index: 4;
       font-weight: bold;
     }
