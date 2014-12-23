@@ -72,7 +72,9 @@ end
 gem 'sass-rails'
 gem 'coffee-rails'
 gem 'uglifier'
-gem 'bootstrap-sass', '~> 2.0.3'
+
+gem 'bootstrap-sass', '~> 3.3.1'
+
 gem 'font-awesome-rails'
 
 group :development do
