@@ -42,13 +42,13 @@
   }
 }
 
-.navbar-inner {
-  @include box-shadow(#{0 2px 20px rgba(0, 0, 0, 0.4), inset 0 0 14px rgba(0,0,0,.5)});
+#navigation_bar {
+  @include box-shadow(#{0 2px 20px rgba(0, 0, 0, 0.3), inset 0 0 14px rgba(0,0,0,.5)});
 }
 
 .navbar .nav > li
 > a {
-  @include gradient-radial-extended(lighten(rgba($right-1-color, 1), 20%), rgba(0,0,0,0), center, 100%);
+  // @include gradient-radial-extended(lighten(rgba($right-1-color, 1), 20%), rgba(0,0,0,0), center, 100%);
   @include transition(all .17s ease-out);
   background-position: 0 44px;
 
