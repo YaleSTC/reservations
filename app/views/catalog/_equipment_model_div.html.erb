@@ -7,20 +7,20 @@
   </h3>
   <div class="caption_cat">
     <hr class ="special-hr"/>
-    <span class="giant-numbers span1" id="availability_<%= equipment_model.id %>">
+    <span class="giant-numbers col-md-1" id="availability_<%= equipment_model.id %>">
       <%= availability_hash[equipment_model.id] %>
     </span>
     <p class="model_availability">
       <%= available_string %>
     </p>
-    <hr class ="special-hr"/>
+    <hr class="special-hr"/>
     <p class="equipment_descr">
       <%= markdown_to_plain_text(equipment_model.description) %><br/>
       <%= link_to "More Info", equipment_model, class: 'more_info' %>
     </p>
   </div>
 
-  <div class = "add_to_cart_box">
+  <div class="add_to_cart_box">
     <% @restricted = equipment_model.model_restricted?(cart.reserver_id) %>
     <% if @restricted %>
       <%= button_tag "Add to Cart", class: "btn disabled add_to_cart_disabled"%>
