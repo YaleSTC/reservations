@@ -41,9 +41,9 @@
               <% if can? :manage, Reservation %>
                 <%= link_to "Reservations", reservations_path %>
               <% elsif can? :read, Reservation %>
-                <%= link_to sanitize("My Reservations &nbsp;<span class=\"badge\">#{reservations_count}</span> <b class=\"caret\"></b>"), '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' %>
-                <ul class="dropdown-menu">
-                  <li class="nav-header"><h3>My Current Reservations</h3></li>
+                <%= link_to sanitize("My Reservations &nbsp;<span class=\"badge\">#{reservations_count}</span> <span class=\"caret\"></span>"), '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' %>
+                <ul class="dropdown-menu" role="menu">
+                  <li class="dropdown-header">My Current Reservations</li>
                   <% unless @current_reservations.blank? %>
                     <% @current_reservations.each do |res| %>
                       <li>
@@ -56,13 +56,13 @@
                     <li class="divider"></li>
                     <li><%= link_to "See More...", reservations_path %></li>
                   <% else %>
-                    <li><div class="none-text">(none)</div></li>
+                    <li class="disabled"><a href="#">(none)</a></li>
                   <% end %>
                 </ul>
               <% end %>
             </li>
 
-          <% # Equipment Dropdown %>
+          <%# Equipment Dropdown %>
           <% if cannot? :manage, Reservation %>
           <li id="my_equipment" class="dropdown">
             <%= link_to '#', class: 'dropdown-toggle', :"data-toggle" => 'dropdown' do %>
@@ -72,7 +72,7 @@
             <% end %>
             <% equipment_count %>
             <ul class="dropdown-menu">
-              <li class="nav-header"><h3>My Current Equipment</h3></li>
+              <li class="dropdown-header">My Current Equipment</li>
               <% unless @current_equipment.blank? %>
                 <% @current_equipment.each do |res| %>
                 <li>
@@ -83,7 +83,7 @@
                 <li><%= link_to "See More...", reservations_path %></li>
                 <% end %>
               <% else %>
-                <li><div class="none-text">(none)</div></li>
+                <li class="disabled"><a href="#">(none)</a></li>
               <% end %>
             </ul>
           </li>
@@ -116,7 +116,7 @@
       <%# SEARCH BOX %>
       <%= form_tag catalog_search_path, class: 'navbar-form navbar-left', role: 'search', method: :get do %>
         <div class="form-group">
-          <%= search_field_tag 'query', (params[:query] unless params[:query].blank?), class: 'form-control', placeholder: "&#xf002;  ".html_safe %>
+          <%= search_field_tag 'query', (params[:query] unless params[:query].blank?), class: 'form-control search-query', placeholder: "&#xf002; ".html_safe %>
         </div>
       <% end %>
       <%# Current User Dropdown %>
