@@ -5,7 +5,7 @@
   <%= render partial: 'no_equipment' %>
 <% else %>
     <div class="row">
-      <div id="pagination_line" class="span9">
+      <div id="pagination_line" class="col-md-9">
         <%# for kaminari pagination %>
         <%= paginate @page_eq_models_by_category,
               params: {controller: 'catalog', action: 'index' } %>
@@ -15,7 +15,7 @@
           <%= label_tag "Items per page:" %>
           <%= select_tag :items_per_page,
                 options_for_select(@per_page_opts, session[:items_per_page]),
-                :class => 'span1 autosubmitme' %>
+                :class => 'col-md-3 autosubmitme' %>
         <% end %>
       </div>
     </div>
