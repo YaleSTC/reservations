@@ -43,7 +43,7 @@
 }
 
 #navigation_bar {
-  @include box-shadow(#{0 2px 20px rgba(0, 0, 0, 0.3), inset 0 0 14px rgba(0,0,0,.5)});
+  @include box-shadow(#{0 2px 5px rgba(0, 0, 0, 0.3), inset 0 0 14px rgba(0,0,0,.5)});
 }
 
 .navbar .nav > li
