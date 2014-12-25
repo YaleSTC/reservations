@@ -6,19 +6,19 @@
     <h2>Cart</h2><br />
   <% end %>
   <%# allow user to set start/end dates %>
-  <%= render :partial => 'reservations/cart_dates' %>
+  <%= render partial: 'reservations/cart_dates' %>
   <h3>Items</h3>
   <%# list items in cart %>
-  <%= render :partial => 'reservations/list_items_in_cart' %>
+  <%= render partial: 'reservations/list_items_in_cart' %>
   <hr />
   <div class="row">
     <div class="span3" id="cart_buttons">
-    <%= link_to "Empty cart".titleize, empty_cart_path, :method => :delete, :class => "btn", :id => 'empty_cart_btn', remote: true %>
+    <%= link_to "Empty cart".titleize, empty_cart_path, method: :delete, class: "btn btn-default", id: 'empty_cart_btn', remote: true %>
     <%# print Make reservation button %>
     <% if can? :create, Reservation %>
-      <%= link_to sanitize("#{content_tag :i, nil, class: "fa fa-shopping-cart"} #{"Make reservation".titleize}"), new_reservation_path, :class => "btn btn-success" %>
+      <%= link_to sanitize("#{content_tag :i, nil, class: "fa fa-shopping-cart"} #{"Make reservation".titleize}"), new_reservation_path, class: "btn btn-success" %>
     <% else %>
-      <%= link_to sanitize("#{content_tag :i, nil, class: "fa fa-sign-in"} #{"Sign in".titleize}"), new_user_session_path, :class => "btn btn-success" %>
+      <%= link_to sanitize("#{content_tag :i, nil, class: "fa fa-sign-in"} #{"Sign in".titleize}"), new_user_session_path, class: "btn btn-success" %>
     <% end %>
     </div>
   </div>
