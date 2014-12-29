@@ -23,6 +23,7 @@ module ReservationScopes
       scope :upcoming, lambda { where("start_date = ?", Date.current.to_time).reserved.user_sort }
       scope :checkoutable, lambda { where("start_date <= ?", Date.current.to_time).reserved }
       scope :starts_on_days, lambda { |start_date, end_date|  where(start_date: start_date..end_date) }
+      scope :ends_on_days, lambda { |start_date, end_date|  where(due_date: start_date..end_date) }
       scope :reserved_on_date, lambda { |date|  where("start_date <= ? and due_date >= ?", Time.zone.parse(date.to_s), Time.zone.parse(date.to_s)).finalized }
       scope :for_eq_model, lambda { |eq_model| where(equipment_model_id: eq_model.id).finalized }
       scope :active_or_requested, lambda { where("checked_in IS NULL and approval_status != ?", 'denied').recent }

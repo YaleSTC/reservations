@@ -41,8 +41,8 @@ class UsersController < ApplicationController
                         overdue:      @user_reservations.overdue,
                         future:       @user_reservations.reserved,
                         past:         @user_reservations.returned,
-                        missed:       @user_reservations.missed,
                         past_overdue: @user_reservations.returned_overdue }
+    @show_equipment[:missed] = @user_reservations.missed unless AppConfig.first.res_exp_time
   end
 
   def new
