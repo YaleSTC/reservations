@@ -3,7 +3,7 @@
         <h2 class="catalog">
           <%= link_to category.name, category_equipment_models_path(category) %>
         </h2>
-        <div class="thumbnails">
+        <div class="thumbnails row">
         <% equipment_models.each do |equipment_model| %>
           <div class="col-md-4">
           <%= render partial: 'equipment_model_div', locals: { equipment_model: equipment_model,

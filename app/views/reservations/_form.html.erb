@@ -45,5 +45,5 @@
   <%= text_area_tag :new_notes, "", rows: 5, class: 'span4' %>
   <br />
   <%= render :partial => 'shared/markdown_button' %>
-  <%= f.button :wrapped, :cancel => reservations_path %>
+  <%= f.button :submit, :cancel => reservations_path %>
 <% end %>

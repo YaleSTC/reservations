@@ -42,9 +42,9 @@
   <% end %>
 
   <% if @user %>
-    <%= f.button :wrapped, cancel: @user %>
+    <%= f.button :submit, cancel: @user %>
   <% else %>
-    <%= f.button :wrapped, cancel: root_path %>
+    <%= f.button :submit, cancel: root_path %>
   <% end %>
 
 <% end %>
