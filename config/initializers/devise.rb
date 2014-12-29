@@ -26,25 +26,27 @@ Devise.setup do |config|
   config.skip_session_storage = [:http_auth]
 
   # ==> Configuration for :database_authenticatable
-  # For bcrypt, this is the cost for hashing the password and defaults to 10. If
-  # using other encryptors, it sets how many times you want the password re-encrypted.
-  #
-  # Limiting the stretches to just one in testing will increase the performance of
-  # your test suite dramatically. However, it is STRONGLY RECOMMENDED to not use
-  # a value less than 10 in other environments. Note that, for bcrypt (the default
-  # encryptor), the cost increases exponentially with the number of stretches (e.g.
-  # a value of 20 is already extremely slow: approx. 60 seconds for 1 calculation).
-  config.stretches = Rails.env.test? ? 1 : 10
+  unless ENV['CAS_AUTH']
+    # For bcrypt, this is the cost for hashing the password and defaults to 10. If
+    # using other encryptors, it sets how many times you want the password re-encrypted.
+    #
+    # Limiting the stretches to just one in testing will increase the performance of
+    # your test suite dramatically. However, it is STRONGLY RECOMMENDED to not use
+    # a value less than 10 in other environments. Note that, for bcrypt (the default
+    # encryptor), the cost increases exponentially with the number of stretches (e.g.
+    # a value of 20 is already extremely slow: approx. 60 seconds for 1 calculation).
+    config.stretches = Rails.env.test? ? 1 : 10
 
-  # Setup a pepper to generate the encrypted password.
-  config.pepper = Rails.application.secrets.devise_pepper
+    # Setup a pepper to generate the encrypted password.
+    config.pepper = Rails.application.secrets.devise_pepper
 
-  # ==> Configuration for :recoverable
+    # ==> Configuration for :recoverable
 
-  # Time interval you can reset your password with a reset password key.
-  # Don't put a too small interval or your users won't have the time to
-  # change their passwords.
-  config.reset_password_within = 6.hours
+    # Time interval you can reset your password with a reset password key.
+    # Don't put a too small interval or your users won't have the time to
+    # change their passwords.
+    config.reset_password_within = 6.hours
+  end
 
   # ==> devise_cas_authenticatable configuration
   if ENV['CAS_AUTH']
