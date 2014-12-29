@@ -10,7 +10,7 @@ ActionMailer::Base.smtp_settings = {
 
 # with these disabled, the server must be connected to the yale network for
 # email to work
-if ENV['RES_SMTP_AUTHENTICATION']
+if ENV['RES_SMTP_AUTH']
   ActionMailer::Base.smtp_settings[:authentication] = :login
   ActionMailer::Base.smtp_settings[:user_name] =
     Rails.application.secrets.smtp_username
