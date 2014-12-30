@@ -87,6 +87,7 @@ group :development do
   gem 'rack-mini-profiler'
   gem 'bullet'
   gem 'travis'
+  gem 'rubocop', require: false
 end
 
 group :production, :staging do
