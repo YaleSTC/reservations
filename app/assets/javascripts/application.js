@@ -16,6 +16,7 @@
 //= require bootstrap/tab
 //= require bootstrap/tooltip
 //= require bootstrap/popover
+//= require bootstrap/affix
 //= require variables.js
 //= require select2
 //= require_tree
@@ -104,7 +105,15 @@ $(document).ready(function() {
 
   // make the sidebar follow you down the page
   if ($(window).width() > 767) {
-    $("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
+    // $("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
+    $("#sidebarbottom").affix({
+      offset: {
+        top: 50,
+        bottom: function() {
+          return (this.bottom = $('#footer').outerHeight(true));
+        }
+      }
+    });
   }
 
   // truncate catalog descriptions

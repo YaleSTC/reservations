@@ -1,4 +1,4 @@
-.is-sticky { @extend .span3; }
+#sidebarbottom.affix { @extend #sidebarbottom; }
 
 #list_items_in_cart {
   max-height: 150px;
