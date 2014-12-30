@@ -10,18 +10,18 @@ shared_examples_for 'access denied' do
   it { is_expected.to set_the_flash }
 end
 
-describe AnnouncementsController, :type => :controller do
-  before(:all) {
+describe AnnouncementsController, type: :controller do
+  before(:all) do
     @app_config = FactoryGirl.create(:app_config)
-  }
+  end
 
- describe 'with admin' do
+  describe 'with admin' do
     before do
       sign_in FactoryGirl.create(:admin)
     end
     context 'GET index' do
       before do
-        get:index
+        get :index
       end
       it_behaves_like 'page success'
       it { is_expected.to render_template(:index) }
@@ -75,7 +75,7 @@ describe AnnouncementsController, :type => :controller do
     context 'PUT update' do
       before do
         @new_attributes = FactoryGirl.attributes_for(:announcement)
-        @new_attributes[:message] = "New Message!!"
+        @new_attributes[:message] = 'New Message!!'
         put :update, id: FactoryGirl.create(:announcement), announcement: @new_attributes
       end
       it 'updates the announcement' do

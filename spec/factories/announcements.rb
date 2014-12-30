@@ -2,7 +2,7 @@
 
 FactoryGirl.define do
   factory :announcement do
-    message "MyText"
+    message 'MyText'
     starts_at Date.current
     ends_at Date.tomorrow
   end

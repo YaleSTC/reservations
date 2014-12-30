@@ -26,8 +26,7 @@ module CsvImport
   # the overwrite boolean, and the user type. The safe defaults are specified here.
   # It first tries to save or update the user with the data specified in the csv. If that
   # fails, it tries ldap. If both fail, the user is returned as part of the array of failures.
-  def import_users(array_of_user_data, overwrite=false, user_type='normal')
-
+  def import_users(array_of_user_data, overwrite = false, user_type = 'normal')
     @array_of_success = [] # will contain user-objects
     @array_of_fail = [] # will contain user_data hashes and error messages
     @overwrite = overwrite
@@ -43,7 +42,7 @@ module CsvImport
       end
     end
 
-    hash_of_statuses = {success: @array_of_success, fail: @array_of_fail}
+    hash_of_statuses = { success: @array_of_success, fail: @array_of_fail }
   end
 
   # attempts to import with LDAP, returns nil if the login is not found, otherwise it
@@ -59,13 +58,12 @@ module CsvImport
 
     # fill-in missing key-values with LDAP data
     user_data_hash.keys.each do |key|
-      if user_data_hash[key].blank? and !ldap_user_hash[key].blank?
+      if user_data_hash[key].blank? && !ldap_user_hash[key].blank?
         user_data_hash[key] = ldap_user_hash[key]
       end
     end
     user_data_hash
   end
-
 
   # tries to save using only the csv data. This method will return
   # false if the data specified in the csv is invalid on the user model.
@@ -108,11 +106,11 @@ module CsvImport
   # sets the user based on the overwrite parameter
   def set_or_create_user_for_import(user_data)
     # set the user and attempt to save with given data
-    if @overwrite and (User.where("username = ?", user_data[:username]).size > 0)
-      user = User.where("username = ?", user_data[:username]).first
+    if @overwrite && (User.where('username = ?', user_data[:username]).size > 0)
+      user = User.where('username = ?', user_data[:username]).first
     else
       user = User.new(user_data)
     end
-    return user
+    user
   end
 end

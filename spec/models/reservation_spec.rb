@@ -3,7 +3,7 @@
 
 require 'spec_helper'
 
-describe Reservation, :type => :model do
+describe Reservation, type: :model do
   subject(:reservation) { FactoryGirl.build(:valid_reservation) }
 
   it { is_expected.to belong_to(:equipment_model) }
@@ -11,18 +11,18 @@ describe Reservation, :type => :model do
   it { is_expected.to belong_to(:equipment_object) }
   it { is_expected.to belong_to(:checkout_handler) }
   it { is_expected.to belong_to(:checkin_handler) }
-  #it { should validate_presence_of(:reserver) } #fails because of the deleted reserver
+  # it { should validate_presence_of(:reserver) } #fails because of the deleted reserver
   it { is_expected.to validate_presence_of(:equipment_model) }
-  #it { should validate_presence_of(:start_date) } #fails because validations can't run if nil (?)
-  #it { should validate_presence_of(:due_date) } #fails because validations can't run if nil (?)
+  # it { should validate_presence_of(:start_date) } #fails because validations can't run if nil (?)
+  # it { should validate_presence_of(:due_date) } #fails because validations can't run if nil (?)
   #
 
   describe '.find renewal length' do
-    subject(:reservation) {
+    subject(:reservation) do
       r = FactoryGirl.create(:valid_reservation)
       FactoryGirl.create(:equipment_object, equipment_model_id: r.equipment_model_id)
       r
-    }
+    end
     context 'when no other reservations around' do
       it 'should set the correct renewal length' do
         expect(reservation.find_renewal_date).to eq(reservation.due_date + reservation.equipment_model.max_renewal_length.days)
@@ -30,34 +30,33 @@ describe Reservation, :type => :model do
     end
     context 'with a blackout date overlapping with the max renewal length' do
       it 'should set the correct renewal length' do
-       blackout = FactoryGirl.create(:blackout, start_date: reservation.due_date + 2.day,
-                                      end_date: reservation.due_date + reservation.equipment_model.max_renewal_length.days + 1.day)
-       expect(reservation.find_renewal_date).to eq(reservation.due_date + 1.day)
+        blackout = FactoryGirl.create(:blackout, start_date: reservation.due_date + 2.day,
+                                                 end_date: reservation.due_date + reservation.equipment_model.max_renewal_length.days + 1.day)
+        expect(reservation.find_renewal_date).to eq(reservation.due_date + 1.day)
       end
     end
     context 'with a blackout date going right up to the max renewal length' do
       it 'should set a length of 0' do
         FactoryGirl.create(:blackout, start_date: reservation.due_date + 1.day,
-                end_date: reservation.due_date + reservation.equipment_model.max_renewal_length.days + 1.day)
+                                      end_date: reservation.due_date + reservation.equipment_model.max_renewal_length.days + 1.day)
         expect(reservation.find_renewal_date).to eq(reservation.due_date)
       end
     end
     context 'with another reservation starting in the middle of the max renewal length' do
       it 'should set the correct renewal length' do
         r = FactoryGirl.create(:reservation, equipment_model: reservation.equipment_model, start_date: reservation.due_date + 3.days,
-                           due_date: reservation.due_date + reservation.equipment_model.max_renewal_length.days + 5.days)
+                                             due_date: reservation.due_date + reservation.equipment_model.max_renewal_length.days + 5.days)
         r.equipment_model.equipment_objects.last.destroy
         expect(reservation.find_renewal_date).to eq(reservation.due_date + 2.days)
       end
     end
-
   end
 
-  context "when valid" do
+  context 'when valid' do
     it { is_expected.to be_valid }
     it 'should have a valid reserver' do
       expect(reservation.reserver).not_to be_nil
-      expect(reservation.reserver.first_name).not_to eq("Deleted")
+      expect(reservation.reserver.first_name).not_to eq('Deleted')
     end
     it { expect(reservation.equipment_model).to_not be_nil }
     it { expect(reservation.start_date).to_not be_nil }
@@ -85,7 +84,7 @@ describe Reservation, :type => :model do
 
   context 'when not checked out' do
     it { expect(reservation.status).to eq('reserved') }
-    it { expect(reservation).to_not be_is_eligible_for_renew } #currently returns true; doesn't check for checked out
+    it { expect(reservation).to_not be_is_eligible_for_renew } # currently returns true; doesn't check for checked out
   end
 
   context 'when checked out' do
@@ -106,15 +105,15 @@ describe Reservation, :type => :model do
     subject(:reservation) { FactoryGirl.build(:overdue_reservation) }
 
     it { expect(reservation.status).to eq('overdue') }
-    it { is_expected.to be_is_eligible_for_renew } #should this be true?
+    it { is_expected.to be_is_eligible_for_renew } # should this be true?
   end
 
-   context 'when missed' do
-     subject(:reservation) { FactoryGirl.build(:missed_reservation) }
+  context 'when missed' do
+    subject(:reservation) { FactoryGirl.build(:missed_reservation) }
 
-     it { expect(reservation.status).to eq('missed') }
-   #  it { should_not be_is_eligible_for_renew} #returns true; should it?
-   end
+    it { expect(reservation.status).to eq('missed') }
+    #  it { should_not be_is_eligible_for_renew} #returns true; should it?
+  end
 
   context 'when empty' do
     subject(:reservation) { FactoryGirl.build(:reservation, equipment_model: nil) }
@@ -212,7 +211,7 @@ describe Reservation, :type => :model do
 
     it 'should have a deleted user' do
       expect(reservation.reserver).not_to be_nil
-      expect(reservation.reserver.first_name).to eq("Deleted")
+      expect(reservation.reserver.first_name).to eq('Deleted')
     end
     it { is_expected.to be_valid }
   end
@@ -220,11 +219,11 @@ describe Reservation, :type => :model do
   context 'when user has overdue reservation' do
     subject(:reservation) { FactoryGirl.build(:valid_reservation) }
     let(:overdue_reserver) { reservation.reserver }
-    let!(:overdue) {
+    let!(:overdue) do
       o = FactoryGirl.build(:overdue_reservation, reserver: overdue_reserver)
       o.save(validate: false)
       o
-    }
+    end
 
     it { is_expected.to be_valid }
     it 'should not save' do
@@ -240,7 +239,7 @@ describe Reservation, :type => :model do
       expect(reservation.validate).not_to eq([])
     end
     it 'passes other custom validations' do
-       expect(reservation.start_date_before_due_date).to be_nil
+      expect(reservation.start_date_before_due_date).to be_nil
       expect(reservation.not_empty).to be_nil
       expect(reservation.matched_object_and_model).to be_nil
       expect(reservation.available).to be_nil
@@ -272,11 +271,11 @@ describe Reservation, :type => :model do
   end
 
   context 'with equipment object/model matching problems' do
-     subject(:reservation) {
-       r = FactoryGirl.build(:valid_reservation)
-       r.equipment_object = FactoryGirl.create(:equipment_object)
-       r
-     }
+    subject(:reservation) do
+      r = FactoryGirl.build(:valid_reservation)
+      r.equipment_object = FactoryGirl.create(:equipment_object)
+      r
+    end
 
     it { is_expected.not_to be_valid }
     it 'should not save' do
@@ -291,7 +290,7 @@ describe Reservation, :type => :model do
       expect(reservation.matched_object_and_model).not_to be_nil
     end
     it 'passes other custom validations' do
-     expect(reservation.start_date_before_due_date).to be_nil
+      expect(reservation.start_date_before_due_date).to be_nil
       expect(reservation.not_empty).to be_nil
       expect(reservation.not_in_past).to be_nil
       expect(reservation.validate).to eq([])
@@ -299,13 +298,13 @@ describe Reservation, :type => :model do
   end
 
   context 'with duration problems' do
-    subject(:reservation) {
+    subject(:reservation) do
       r = FactoryGirl.build(:valid_reservation)
       r.equipment_model.category.max_checkout_length = 1
       r.equipment_model.category.save
       r.due_date = Date.tomorrow + 2
       r
-    }
+    end
 
     it { is_expected.to be_valid }
     it 'should save' do
@@ -320,7 +319,7 @@ describe Reservation, :type => :model do
       expect(reservation.validate).not_to eq([])
     end
     it 'passes other custom validations' do
-       expect(reservation.start_date_before_due_date).to be_nil
+      expect(reservation.start_date_before_due_date).to be_nil
       expect(reservation.not_empty).to be_nil
       expect(reservation.matched_object_and_model).to be_nil
       expect(reservation.available).to be_nil
@@ -329,7 +328,7 @@ describe Reservation, :type => :model do
   end
 
   context 'with category quantity problems' do
-    subject(:reservation) {
+    subject(:reservation) do
       r = FactoryGirl.create(:valid_reservation)
       r.equipment_model.category.max_per_user = 1
       r.equipment_model.max_per_user = 2
@@ -339,8 +338,7 @@ describe Reservation, :type => :model do
       FactoryGirl.create(:equipment_object, equipment_model: r.equipment_model)
       FactoryGirl.create(:reservation, equipment_model: r.equipment_model, reserver: r.reserver)
       r
-    }
-
+    end
 
     it { is_expected.to be_valid }
     it 'should save' do
@@ -355,7 +353,7 @@ describe Reservation, :type => :model do
       expect(reservation.validate).not_to eq([])
     end
     it 'passes other custom validations' do
-       expect(reservation.start_date_before_due_date).to be_nil
+      expect(reservation.start_date_before_due_date).to be_nil
       expect(reservation.not_empty).to be_nil
       expect(reservation.matched_object_and_model).to be_nil
       expect(reservation.available).to be_nil
@@ -364,7 +362,7 @@ describe Reservation, :type => :model do
   end
 
   context 'with equipment model quantity problems' do
-    subject(:reservation) {
+    subject(:reservation) do
       r = FactoryGirl.create(:valid_reservation)
       r.equipment_model.category.max_per_user = 1
       r.equipment_model.max_per_user = 1
@@ -374,7 +372,7 @@ describe Reservation, :type => :model do
       FactoryGirl.create(:equipment_object, equipment_model: r.equipment_model)
       FactoryGirl.create(:valid_reservation, equipment_model: r.equipment_model, reserver: r.reserver)
       r
-    }
+    end
 
     it { is_expected.to be_valid }
     it 'should save' do
@@ -389,7 +387,7 @@ describe Reservation, :type => :model do
       expect(reservation.validate).not_to eq([])
     end
     it 'passes other custom validations' do
-       expect(reservation.start_date_before_due_date).to be_nil
+      expect(reservation.start_date_before_due_date).to be_nil
       expect(reservation.not_empty).to be_nil
       expect(reservation.matched_object_and_model).to be_nil
       expect(reservation.available).to be_nil

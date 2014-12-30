@@ -13,7 +13,7 @@ class Ability
         end
         cannot :appoint, :superuser
         cannot :access, :rails_admin
-        cannot [:destroy,:update], User, :role => 'superuser'
+        cannot [:destroy, :update], User, role: 'superuser'
       when 'checkout'
         can :manage, Reservation
         cannot :archive, Reservation
@@ -21,12 +21,12 @@ class Ability
           cannot :renew, Reservation
         end
         cannot :destroy, Reservation do |r|
-           r.checked_out != nil
+          !r.checked_out.nil?
         end
         unless AppConfig.first.checkout_persons_can_edit
           cannot :update, Reservation
         end
-        can [:read,:update,:find,:autocomplete_user_last_name], User
+        can [:read, :update, :find, :autocomplete_user_last_name], User
         if AppConfig.first.enable_new_users
           can [:create, :quick_new, :quick_create], User
         end
@@ -39,12 +39,12 @@ class Ability
           can :override, :checkout_errors
         end
       when 'normal' || 'checkout'
-        can [:update,:show], User, :id => user.id
+        can [:update, :show], User, id: user.id
         can :read, EquipmentModel
-        can [:read,:create], Reservation, :reserver_id => user.id
-        can :destroy, Reservation, :reserver_id => user.id, :checked_out => nil
+        can [:read, :create], Reservation, reserver_id: user.id
+        can :destroy, Reservation, reserver_id: user.id, checked_out: nil
         if AppConfig.first.enable_renewals
-          can :renew, Reservation, :reserver_id => user.id
+          can :renew, Reservation, reserver_id: user.id
         end
         can :update_cart, :all
       when 'guest'
@@ -54,7 +54,7 @@ class Ability
           can :create, User
         end
       when 'banned'
-        #cannot :create, Reservation
+        # cannot :create, Reservation
       end
       case user.role
       when 'superuser'
@@ -64,7 +64,7 @@ class Ability
         can :change, :views
         cannot :view_as, :superuser
       end
-      cannot :change, :views unless ['admin', 'superuser'].include?(user.role)
+      cannot :change, :views unless %w(admin superuser).include?(user.role)
     else
       can :create, User
     end

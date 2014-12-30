@@ -14,7 +14,7 @@ describe 'User profile' do
 
       context 'visiting own profile edit page' do
         before do
-          visit '/users/'+@user.id.to_s
+          visit '/users/' + @user.id.to_s
           click_link 'Edit Information'
         end
 
@@ -78,7 +78,7 @@ describe 'User profile' do
 
       context 'trying to edit a different user' do
         before do
-          visit '/users/'+@admin.id.to_s
+          visit '/users/' + @admin.id.to_s
         end
 
         it 'redirects to home page' do
@@ -93,7 +93,7 @@ describe 'User profile' do
 
       context 'visiting own profile edit page' do
         before do
-          visit '/users/'+@admin.id.to_s
+          visit '/users/' + @admin.id.to_s
           click_link 'Edit Information'
         end
 
@@ -157,7 +157,7 @@ describe 'User profile' do
 
       context 'trying to edit a different user' do
         before do
-          visit '/users/'+@user.id.to_s
+          visit '/users/' + @user.id.to_s
           click_link 'Edit Information'
         end
 
@@ -189,7 +189,7 @@ describe 'User profile' do
 
       context 'visiting own profile edit page' do
         before do
-          visit '/users/'+@user.id.to_s
+          visit '/users/' + @user.id.to_s
           click_link 'Edit Information'
         end
 
@@ -211,7 +211,7 @@ describe 'User profile' do
 
       context 'trying to edit a different user' do
         before do
-          visit '/users/'+@admin.id.to_s
+          visit '/users/' + @admin.id.to_s
         end
 
         it 'redirects to home page' do
@@ -226,7 +226,7 @@ describe 'User profile' do
 
       context 'visiting own profile edit page' do
         before do
-          visit '/users/'+@admin.id.to_s
+          visit '/users/' + @admin.id.to_s
           click_link 'Edit Information'
         end
 
@@ -248,7 +248,7 @@ describe 'User profile' do
 
       context 'trying to edit a different user' do
         before do
-          visit '/users/'+@user.id.to_s
+          visit '/users/' + @user.id.to_s
           click_link 'Edit Information'
         end
 

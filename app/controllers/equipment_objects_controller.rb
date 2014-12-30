@@ -18,12 +18,12 @@ class EquipmentObjectsController < ApplicationController
 
   # ---------- end before filter methods ---------- #
 
-  #I'm not sure if there's ever a way @equipment_model could be set?
+  # I'm not sure if there's ever a way @equipment_model could be set?
   def index
     if params[:show_deleted]
-      @equipment_objects = ( @equipment_model  ? @equipment_model.equipment_objects : EquipmentObject.all )
+      @equipment_objects = (@equipment_model  ? @equipment_model.equipment_objects : EquipmentObject.all)
     else
-      @equipment_objects = ( @equipment_model  ? @equipment_model.equipment_objects.active : EquipmentObject.active )
+      @equipment_objects = (@equipment_model  ? @equipment_model.equipment_objects.active : EquipmentObject.active)
     end
   end
 
@@ -52,11 +52,11 @@ class EquipmentObjectsController < ApplicationController
     p = equipment_object_params
     if p[:deleted_at].blank?
       # Delete deactivation reason when "Disabled?" is toggled
-      p[:deactivation_reason] = ""
+      p[:deactivation_reason] = ''
     end
     @equipment_object.update(current_user, p)
     if @equipment_object.save
-      flash[:notice] = "Successfully updated equipment object."
+      flash[:notice] = 'Successfully updated equipment object.'
       redirect_to @equipment_object
     else
       render action: 'edit'
@@ -73,7 +73,7 @@ class EquipmentObjectsController < ApplicationController
       @equipment_object.current_reservation.archive(current_user, "The equipment item was deactivated for the following reason: **#{params[:deactivation_reason]}**").save(validate: false) if @equipment_object.current_reservation
       super
     elsif params[:deactivation_cancelled]
-      flash[:notice] = "Deactivation cancelled."
+      flash[:notice] = 'Deactivation cancelled.'
       redirect_to @equipment_object.equipment_model
     else
       flash[:error] = 'Please enter a deactivation reason.'

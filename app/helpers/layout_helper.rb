@@ -8,7 +8,7 @@ module LayoutHelper
     @show_title = show_title
   end
 
-  def subtitle (page_subtitle, show_subtitle = true)
+  def subtitle(page_subtitle, show_subtitle = true)
     content_for(:subtitle) { page_subtitle.to_s }
     @show_subtitle = show_subtitle
   end
@@ -30,7 +30,7 @@ module LayoutHelper
   end
 
   def favicon_path
-    @favicon_path = "favicon.ico"
+    @favicon_path = 'favicon.ico'
   end
 
   def reservations_count
@@ -47,13 +47,13 @@ module LayoutHelper
     @current_equipment.size
   end
 
-  def navigation_active controller_path
+  def navigation_active(controller_path)
     if current_page?(controller_path)
       @active = 'class=active'
     end
   end
 
-  def get_role_name role
+  def get_role_name(role)
     case role
     when 'superuser'
       'Superuser'

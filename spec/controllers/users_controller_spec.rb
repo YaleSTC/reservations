@@ -10,10 +10,10 @@ shared_examples_for 'access denied' do
   it { is_expected.to set_the_flash }
 end
 
-describe UsersController, :type => :controller do
-  before(:all) {
+describe UsersController, type: :controller do
+  before(:all) do
     @app_config = FactoryGirl.create(:app_config)
-  }
+  end
   let!(:user) { FactoryGirl.create(:user) }
 
   context 'with admin user' do
@@ -24,7 +24,7 @@ describe UsersController, :type => :controller do
       let!(:banned) { FactoryGirl.create(:banned) }
       let!(:other_user) { FactoryGirl.create(:user) }
       before { get :index }
-      it_behaves_like "page success"
+      it_behaves_like 'page success'
       it { is_expected.to render_template(:index) }
       context 'without show banned' do
         it 'should assign users to all active users' do
@@ -41,7 +41,7 @@ describe UsersController, :type => :controller do
     end
     describe 'GET show' do
       before { get :show, id: user }
-      it_behaves_like "page success"
+      it_behaves_like 'page success'
       it { is_expected.to render_template(:show) }
     end
 
@@ -89,7 +89,7 @@ describe UsersController, :type => :controller do
       end
       context 'with incorrect params' do
         before do
-          @bad_attributes = FactoryGirl.attributes_for(:user, first_name: "")
+          @bad_attributes = FactoryGirl.attributes_for(:user, first_name: '')
           post :create, user: @bad_attributes
         end
         it 'should not save the user' do
@@ -120,38 +120,38 @@ describe UsersController, :type => :controller do
     describe 'PUT update' do
       context 'with nice params' do
         before do
-          @new_attributes = FactoryGirl.attributes_for(:user, first_name: "Lolita")
+          @new_attributes = FactoryGirl.attributes_for(:user, first_name: 'Lolita')
           put :update, user: @new_attributes, id: user
         end
         it 'should update the user' do
-          expect(User.find(user)[:first_name]).to eq("Lolita")
+          expect(User.find(user)[:first_name]).to eq('Lolita')
         end
         it { is_expected.to set_the_flash }
       end
       context 'without nice params' do
         before do
-          @bad_attributes = FactoryGirl.attributes_for(:user, first_name: "Lolita", last_name: "")
+          @bad_attributes = FactoryGirl.attributes_for(:user, first_name: 'Lolita', last_name: '')
           put :update, user: @bad_attributes, id: user
         end
         it 'should not save' do
-          expect(User.find(user)[:first_name]).not_to eq("Lolita")
+          expect(User.find(user)[:first_name]).not_to eq('Lolita')
         end
       end
     end
     describe 'PUT find' do
       context 'fake searched id is blank' do
         before do
-          request.env["HTTP_REFERER"] = "where_i_came_from"
-          put :find, fake_searched_id: ""
+          request.env['HTTP_REFERER'] = 'where_i_came_from'
+          put :find, fake_searched_id: ''
         end
         it { is_expected.to set_the_flash }
-        it { is_expected.to redirect_to("where_i_came_from") }
+        it { is_expected.to redirect_to('where_i_came_from') }
       end
       context 'searched id is blank' do
         context 'valid id' do
           before do
-            FactoryGirl.create(:user, username: "csw3")
-            put :find, fake_searched_id: "csw3", searched_id: ""
+            FactoryGirl.create(:user, username: 'csw3')
+            put :find, fake_searched_id: 'csw3', searched_id: ''
           end
           it 'should assign user correctly' do
             expect(assigns(:user)).to eq(User.where(username: 'csw3').first)
@@ -160,28 +160,26 @@ describe UsersController, :type => :controller do
         end
         context 'invalid id' do
           before do
-            request.env["HTTP_REFERER"] = "where_i_came_from"
-            put :find, fake_searched_id: "not_a_real_id3", searched_id: ""
+            request.env['HTTP_REFERER'] = 'where_i_came_from'
+            put :find, fake_searched_id: 'not_a_real_id3', searched_id: ''
           end
           it { is_expected.to set_the_flash }
-          it { is_expected.to redirect_to("where_i_came_from") }
+          it { is_expected.to redirect_to('where_i_came_from') }
         end
       end
       context 'searched id is not blank' do
         before do
-          put :find, searched_id: user.id, fake_searched_id: "csw3"
+          put :find, searched_id: user.id, fake_searched_id: 'csw3'
         end
         it 'should assign user' do
           expect(assigns(:user)).to eq(user)
         end
-        it { is_expected.to redirect_to(manage_reservations_for_user_path(assigns(:user)))}
-
-
+        it { is_expected.to redirect_to(manage_reservations_for_user_path(assigns(:user))) }
       end
     end
     describe 'PUT ban' do
       before do
-        request.env["HTTP_REFERER"] = 'where_i_came_from'
+        request.env['HTTP_REFERER'] = 'where_i_came_from'
         @user = FactoryGirl.create(:user)
         put :ban, id: @user.id
       end
@@ -191,11 +189,11 @@ describe UsersController, :type => :controller do
         expect(@user.view_mode).to eq('banned')
       end
       it { is_expected.to set_the_flash }
-      it { is_expected.to redirect_to("where_i_came_from") }
+      it { is_expected.to redirect_to('where_i_came_from') }
     end
     describe 'PUT unban' do
       before do
-        request.env["HTTP_REFERER"] = 'where_i_came_from'
+        request.env['HTTP_REFERER'] = 'where_i_came_from'
         @user = FactoryGirl.create(:banned)
         put :unban, id: @user.id
       end
@@ -206,8 +204,8 @@ describe UsersController, :type => :controller do
         expect(@user.view_mode).to eq('normal')
       end
 
-      it { is_expected.to set_the_flash}
-      it { is_expected.to redirect_to("where_i_came_from") }
+      it { is_expected.to set_the_flash }
+      it { is_expected.to redirect_to('where_i_came_from') }
     end
   end
   context 'with checkout person user' do

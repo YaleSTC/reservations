@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe EquipmentObjectsController, :type => :controller do
+describe EquipmentObjectsController, type: :controller do
   before(:all) { @app_config = FactoryGirl.create(:app_config) }
   let!(:object) { FactoryGirl.create(:equipment_object) }
   let!(:deactivated_object) { FactoryGirl.create(:deactivated) }
@@ -16,12 +16,14 @@ describe EquipmentObjectsController, :type => :controller do
       it { is_expected.not_to set_the_flash }
       context 'without show deleted' do
         let!(:obj_other_cat_active) { FactoryGirl.create(:equipment_object) }
-        let!(:obj_other_cat_inactive) { FactoryGirl.create(:equipment_object,
-          deleted_at: Date.current) }
+        let!(:obj_other_cat_inactive) do
+          FactoryGirl.create(:equipment_object,
+                             deleted_at: Date.current)
+        end
         context 'with @equipment_model set' do
           it 'should populate an array of all active model-type equipment objects' do
             obj_same_cat_inactive = FactoryGirl.create(:equipment_object,
-              equipment_model: object.equipment_model, deleted_at: Date.current)
+                                                       equipment_model: object.equipment_model, deleted_at: Date.current)
             get :index, equipment_model_id: object.equipment_model
             expect(assigns(:equipment_objects).include?(object)).to be_truthy
             expect(assigns(:equipment_objects).include?(obj_other_cat_active)).not_to be_truthy
@@ -41,12 +43,14 @@ describe EquipmentObjectsController, :type => :controller do
       end
       context 'with show deleted' do
         let!(:obj_other_cat_active) { FactoryGirl.create(:equipment_object) }
-        let!(:obj_other_cat_inactive) { FactoryGirl.create(:equipment_object,
-          deleted_at: Date.current) }
+        let!(:obj_other_cat_inactive) do
+          FactoryGirl.create(:equipment_object,
+                             deleted_at: Date.current)
+        end
         context 'with @equipment_model set' do
           it 'should populate an array of all model-type equipment objects' do
             obj_same_cat_inactive = FactoryGirl.create(:equipment_object,
-              equipment_model: object.equipment_model, deleted_at: Date.current)
+                                                       equipment_model: object.equipment_model, deleted_at: Date.current)
             get :index, equipment_model_id: object.equipment_model, show_deleted: true
             expect(assigns(:equipment_objects).include?(object)).to be_truthy
             expect(assigns(:equipment_objects).include?(obj_other_cat_active)).not_to be_truthy
@@ -146,12 +150,15 @@ describe EquipmentObjectsController, :type => :controller do
     context 'with admin user' do
       before { sign_in FactoryGirl.create(:admin) }
       context 'with valid attributes' do
-        before { post :create, equipment_object: FactoryGirl.attributes_for(:equipment_object,
-          serial: "Enter serial # (optional)", equipment_model_id: object.equipment_model.id) }
+        before do
+          post :create, equipment_object: FactoryGirl.attributes_for(:equipment_object,
+                                                                     serial: 'Enter serial # (optional)', equipment_model_id: object.equipment_model.id)
+        end
         it 'should save object with notes' do
-          expect{ post :create, equipment_object: FactoryGirl.attributes_for(
+          expect do
+            post :create, equipment_object: FactoryGirl.attributes_for(
             :equipment_object, equipment_model_id: object.equipment_model.id)
-            }.to change(EquipmentObject, :count).by(1)
+          end.to change(EquipmentObject, :count).by(1)
           expect(EquipmentObject.last.notes).not_to be_nil
           expect(EquipmentObject.last.notes).not_to be('')
         end
@@ -159,13 +166,17 @@ describe EquipmentObjectsController, :type => :controller do
         it { is_expected.to redirect_to(EquipmentObject.last.equipment_model) }
       end
       context 'without valid attributes' do
-        before { post :create, equipment_object: FactoryGirl.attributes_for(
-          :equipment_object, name: nil) }
+        before do
+          post :create, equipment_object: FactoryGirl.attributes_for(
+          :equipment_object, name: nil)
+        end
         it { is_expected.not_to set_the_flash }
         it { is_expected.to render_template(:new) }
         it 'should not save' do
-          expect{ post :create, equipment_object: FactoryGirl.attributes_for(
-            :equipment_object, name: nil) }.not_to change(EquipmentObject, :count)
+          expect do
+            post :create, equipment_object: FactoryGirl.attributes_for(
+            :equipment_object, name: nil)
+          end.not_to change(EquipmentObject, :count)
         end
         it { is_expected.to render_template(:new) }
       end
@@ -205,8 +216,10 @@ describe EquipmentObjectsController, :type => :controller do
     context 'with admin user' do
       before { sign_in FactoryGirl.create(:admin) }
       context 'with valid attributes' do
-        before { put :update, id: object,
-          equipment_object: FactoryGirl.attributes_for(:equipment_object, name: 'Obj') }
+        before do
+          put :update, id: object,
+                       equipment_object: FactoryGirl.attributes_for(:equipment_object, name: 'Obj')
+        end
         it { is_expected.to set_the_flash }
         it 'sets @equipment_object to selected object' do
           expect(assigns(:equipment_object)).to eq(object)
@@ -216,13 +229,15 @@ describe EquipmentObjectsController, :type => :controller do
           expect(object.name).to eq('Obj')
         end
         it 'updates notes' do
-          expect{ object.reload }.to change(object, :notes)
+          expect { object.reload }.to change(object, :notes)
         end
         it { is_expected.to redirect_to(object) }
       end
       context 'without valid attributes' do
-        before { put :update, id: object,
-          equipment_object: FactoryGirl.attributes_for(:equipment_object, name: nil) }
+        before do
+          put :update, id: object,
+                       equipment_object: FactoryGirl.attributes_for(:equipment_object, name: nil)
+        end
         it { is_expected.not_to set_the_flash }
         it 'should not update attributes' do
           object.reload
@@ -245,15 +260,15 @@ describe EquipmentObjectsController, :type => :controller do
     context 'with admin user' do
       before do
         sign_in FactoryGirl.create(:admin)
-        put :deactivate, id: object, deactivation_reason: "Because I can"
+        put :deactivate, id: object, deactivation_reason: 'Because I can'
         object.reload
       end
       it { expect(response).to be_redirect }
-      it { expect(object.deactivation_reason).to eq ("Because I can") }
+      it { expect(object.deactivation_reason).to eq ('Because I can') }
       it 'should change the notes' do
         new_object = FactoryGirl.create(:equipment_object)
         put :deactivate, id: new_object, deactivation_reason: 'reason'
-        expect{ new_object.reload }.to change(new_object, :notes)
+        expect { new_object.reload }.to change(new_object, :notes)
       end
     end
 
@@ -283,7 +298,7 @@ describe EquipmentObjectsController, :type => :controller do
       it 'should change the notes' do
         new_object = FactoryGirl.create(:equipment_object)
         put :activate, id: new_object
-        expect{ new_object.reload }.to change(new_object, :notes)
+        expect { new_object.reload }.to change(new_object, :notes)
       end
     end
 

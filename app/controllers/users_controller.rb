@@ -3,12 +3,12 @@ class UsersController < ApplicationController
   layout 'application_with_sidebar', only: [:show, :edit]
 
   autocomplete :user, :last_name, extra_data: [:first_name, :username],
-    display_value: :render_name
+                                  display_value: :render_name
 
   skip_filter :cart, only: [:new, :create]
   skip_filter :authenticate_user!, only: [:new, :create]
   before_action :set_user, only: [:show, :edit, :update, :destroy, :ban,
-    :unban]
+                                  :unban]
   before_action :check_cas_auth, only: [:show, :new, :create, :edit, :update]
 
   include Autocomplete
@@ -24,7 +24,6 @@ class UsersController < ApplicationController
   end
 
   # ------------ end before filter methods ------------ #
-
 
   def index
     if params[:show_banned]
@@ -52,12 +51,12 @@ class UsersController < ApplicationController
       if current_user.nil? && session[:new_username]
         # This is a new user -> create an account for them
         @user = User.new(User.search_ldap(session[:new_username]))
-        @user.username = session[:new_username] #default to current username
+        @user.username = session[:new_username] # default to current username
         flash[:notice] = "Hey there! Since this is your first time making a reservation, we'll need you to supply us with some basic contact information."
       elsif current_user.nil?
         # we don't have the current session's username
         # THIS ONLY APPLIES TO CAS
-        flash[:error] = "Something seems to have gone wrong. Please try that again."
+        flash[:error] = 'Something seems to have gone wrong. Please try that again.'
         redirect_to root_path
       else
         @user = User.new
@@ -82,7 +81,7 @@ class UsersController < ApplicationController
     if @cas_auth
       # pull from our CAS hackery unless you're an admin/superuser creating a
       # new user
-      @user.username = session[:new_username] unless current_user and can? :manage, Reservation
+      @user.username = session[:new_username] unless current_user && can?(:manage, Reservation)
     else
       # if not using CAS, just put the e-mail as the username
       @user.username = @user.email
@@ -90,9 +89,9 @@ class UsersController < ApplicationController
     if @user.save
       # delete extra session parameter if we came from CAS hackery
       session.delete(:new_username) if @cas_auth
-      flash[:notice] = "Successfully created user."
+      flash[:notice] = 'Successfully created user.'
       # log in the new user
-      sign_in @user, :bypass => true unless (current_user.present?)
+      sign_in @user, bypass: true unless current_user.present?
       redirect_to user_path(@user)
     else
       @can_edit_username = current_user.present? && (can? :create, User) # used in view
@@ -108,7 +107,7 @@ class UsersController < ApplicationController
     if ldap_result.nil?
       @message = 'Sorry, the netID that you entered does not exist.
       You cannot create a user profile without a valid netID.'
-      render :quick_new and return
+      render(:quick_new) && return
     end
 
     # Is there a user record already?
@@ -116,7 +115,7 @@ class UsersController < ApplicationController
       @message = 'You cannot create a new user, as the netID you entered
       is already associated with a user. If you would like to reserve for
       them, please select their name from the drop-down options in the cart.'
-      render :quick_new and return
+      render(:quick_new) && return
     end
   end
 
@@ -130,7 +129,6 @@ class UsersController < ApplicationController
       render action: 'load_form_errors'
     end
   end
-
 
   def edit
     @can_edit_username = can? :edit_username, User
@@ -153,8 +151,8 @@ class UsersController < ApplicationController
     if @user.send(method, par)
       # sign in the user if you've edited yourself since you have a new
       # password, otherwise don't
-      sign_in @user, :bypass => true if (@user.id == current_user.id)
-      flash[:notice] = "Successfully updated user."
+      sign_in @user, bypass: true if (@user.id == current_user.id)
+      flash[:notice] = 'Successfully updated user.'
       redirect_to user_path(@user)
     else
       render :edit
@@ -163,8 +161,8 @@ class UsersController < ApplicationController
 
   def ban
     if @user.role == 'guest'
-      flash[:error] = "Cannot ban guest."
-      redirect_to request.referer and return
+      flash[:error] = 'Cannot ban guest.'
+      redirect_to(request.referer) && return
     end
     @user.update_attributes(role: 'banned', view_mode: 'banned')
     flash[:notice] = "#{@user.name} was banned succesfully."
@@ -173,8 +171,8 @@ class UsersController < ApplicationController
 
   def unban
     if @user.role == 'guest'
-      flash[:error] = "Cannot unban guest."
-      redirect_to request.referer and return
+      flash[:error] = 'Cannot unban guest.'
+      redirect_to(request.referer) && return
     end
     @user.update_attributes(role: 'normal', view_mode: 'normal')
     flash[:notice] = "#{@user.name} was restored to patron status."
@@ -183,8 +181,8 @@ class UsersController < ApplicationController
 
   def find
     if params[:fake_searched_id].blank?
-      flash[:alert] = "Search field cannot be blank"
-      redirect_to :back and return
+      flash[:alert] = 'Search field cannot be blank'
+      redirect_to(:back) && return
     elsif params[:searched_id].blank?
       # this code is a hack to allow hitting enter in the search box to go direclty to the first user
       # and still user the rails3-jquery-autocomplete gem for the search box. Unfortunately the feature
@@ -192,14 +190,14 @@ class UsersController < ApplicationController
       users = get_autocomplete_items(term: params[:fake_searched_id])
       if !users.blank?
         @user = users.first
-        redirect_to manage_reservations_for_user_path(@user.id) and return
+        redirect_to(manage_reservations_for_user_path(@user.id)) && return
       else
-        flash[:alert] = "Please select a valid user"
-        redirect_to :back and return
+        flash[:alert] = 'Please select a valid user'
+        redirect_to(:back) && return
       end
     else
       @user = User.find(params[:searched_id])
-      redirect_to manage_reservations_for_user_path(@user.id) and return
+      redirect_to(manage_reservations_for_user_path(@user.id)) && return
     end
   end
 
@@ -207,14 +205,13 @@ class UsersController < ApplicationController
 
   def user_params
     permitted_attributes = [:first_name, :last_name, :nickname, :phone,
-      :email, :affiliation, :terms_of_service_accepted, :created_by_admin]
+                            :email, :affiliation, :terms_of_service_accepted, :created_by_admin]
     permitted_attributes += [:password, :password_confirmation,
-      :current_password] unless @cas_auth
-    permitted_attributes << :username if (can? :manage, Reservation)
+                             :current_password] unless @cas_auth
+    permitted_attributes << :username if can? :manage, Reservation
     permitted_attributes += [:requirement_ids, :user_ids, :role] if can? :assign, :requirements
     p = params.require(:user).permit(*permitted_attributes)
     p[:view_mode] = p[:role] if p[:role]
     p
   end
-
 end

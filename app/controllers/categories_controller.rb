@@ -1,9 +1,8 @@
 class CategoriesController < ApplicationController
-
   load_and_authorize_resource
   decorates_assigned :category
-  before_filter :set_current_category, only: [:show, :edit, :update, :destroy,
-    :deactivate]
+  before_action :set_current_category, only: [:show, :edit, :update, :destroy,
+                                              :deactivate]
 
   include ActivationHelper
 
@@ -14,7 +13,7 @@ class CategoriesController < ApplicationController
   # --------- end before filter methods -------- #
 
   def index
-    if (params[:show_deleted])
+    if params[:show_deleted]
       @categories = Category.all
     else
       @categories = Category.active
@@ -31,10 +30,10 @@ class CategoriesController < ApplicationController
   def create
     @category = Category.new(category_params)
     if @category.save
-      flash[:notice] = "Successfully created category."
+      flash[:notice] = 'Successfully created category.'
       redirect_to @category
     else
-      flash[:error] = "Oops! Something went wrong with creating the category."
+      flash[:error] = 'Oops! Something went wrong with creating the category.'
       render action: 'new'
     end
   end
@@ -44,7 +43,7 @@ class CategoriesController < ApplicationController
 
   def update
     if @category.update_attributes(category_params)
-      flash[:notice] = "Successfully updated category."
+      flash[:notice] = 'Successfully updated category.'
       redirect_to @category
     else
       render action: 'edit'
@@ -58,7 +57,7 @@ class CategoriesController < ApplicationController
     elsif params[:deactivation_confirmed]
       @category.equipment_models.each do |em|
         Reservation.for_eq_model(em).each do |r|
-          r.archive(current_user, "The category was deactivated.")
+          r.archive(current_user, 'The category was deactivated.')
             .save(validate: false)
         end
       end
@@ -69,7 +68,6 @@ class CategoriesController < ApplicationController
     end
   end
 
-
   private
 
   def category_params
@@ -77,5 +75,4 @@ class CategoriesController < ApplicationController
                                      :deleted_at, :max_renewal_times, :max_renewal_length,
                                      :renewal_days_before_due, :sort_order)
   end
-
 end

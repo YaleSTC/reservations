@@ -13,10 +13,10 @@ class Category < ActiveRecord::Base
             :max_renewal_times,
             :renewal_days_before_due,
             :sort_order,
-                                  numericality: {
-                                    allow_nil: true,
-                                    integer_only: true,
-                                    greater_than_or_equal_to: 0 }
+            numericality: {
+              allow_nil: true,
+              integer_only: true,
+              greater_than_or_equal_to: 0 }
 
   nilify_blanks only: [:deleted_at]
 
@@ -42,5 +42,4 @@ class Category < ActiveRecord::Base
   def maximum_checkout_length
     max_checkout_length || Float::INFINITY
   end
-
 end

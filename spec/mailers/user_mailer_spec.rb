@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-shared_examples_for "valid user email" do
-  it "sends to the reserver" do
+shared_examples_for 'valid user email' do
+  it 'sends to the reserver' do
     expect(@mail.to.size).to eq(1)
     expect(@mail.to.first).to eq(reserver.email)
   end
-  it "sends an email" do
+  it 'sends an email' do
     expect(ActionMailer::Base.deliveries.count).to eq(1)
   end
   # FIXME: Workaround for #398 disables this functionality for RSpec testing
@@ -15,10 +15,10 @@ shared_examples_for "valid user email" do
   # end
 end
 
-describe UserMailer, :type => :mailer do
-  before(:all) {
+describe UserMailer, type: :mailer do
+  before(:all) do
     @app_config = FactoryGirl.create(:app_config)
-  }
+  end
   before(:each) do
     ActionMailer::Base.delivery_method = :test
     ActionMailer::Base.perform_deliveries = true
@@ -31,7 +31,7 @@ describe UserMailer, :type => :mailer do
       @res.save(validate: false)
       @mail = UserMailer.checkin_receipt(@res).deliver
     end
-    it_behaves_like "valid user email"
+    it_behaves_like 'valid user email'
   end
   describe 'checkout_receipt' do
     before do
@@ -39,7 +39,7 @@ describe UserMailer, :type => :mailer do
       @res.save(validate: false)
       @mail = UserMailer.checkout_receipt(@res).deliver
     end
-    it_behaves_like "valid user email"
+    it_behaves_like 'valid user email'
   end
   describe 'missed_reservation_deleted_notification' do
     before do
@@ -47,7 +47,7 @@ describe UserMailer, :type => :mailer do
       @res.save(validate: false)
       @mail = UserMailer.missed_reservation_deleted_notification(@res).deliver
     end
-    it_behaves_like "valid user email"
+    it_behaves_like 'valid user email'
   end
   describe 'overdue_checkin_notification' do
     before do
@@ -55,7 +55,7 @@ describe UserMailer, :type => :mailer do
       @res.save(validate: false)
       @mail = UserMailer.overdue_checkin_notification(@res).deliver
     end
-    it_behaves_like "valid user email"
+    it_behaves_like 'valid user email'
   end
   describe 'overdue_checked_in_fine' do
     before do
@@ -63,21 +63,20 @@ describe UserMailer, :type => :mailer do
       @res.save(validate: false)
       @mail = UserMailer.overdue_checked_in_fine(@res).deliver
     end
-    it_behaves_like "valid user email"
+    it_behaves_like 'valid user email'
   end
   describe 'reservation_confirmation' do
     before do
       @res = [] << FactoryGirl.create(:valid_reservation, reserver: reserver)
       @mail = UserMailer.reservation_confirmation(@res).deliver
     end
-    it_behaves_like "valid user email"
+    it_behaves_like 'valid user email'
   end
   describe 'upcoming_checkin_notification' do
     before do
       @res = FactoryGirl.create(:valid_reservation, reserver: reserver)
       @mail = UserMailer.upcoming_checkin_notification(@res).deliver
     end
-    it_behaves_like "valid user email"
+    it_behaves_like 'valid user email'
   end
-
 end

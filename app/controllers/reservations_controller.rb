@@ -1,10 +1,9 @@
 class ReservationsController < ApplicationController
-
   load_and_authorize_resource
 
   before_action :require_login, only: [:index, :show]
   before_action :set_reservation, only: [:show, :edit, :update, :destroy,
-     :checkout_email, :checkin_email, :renew, :review, :approve_request, :deny_request]
+                                         :checkout_email, :checkin_email, :renew, :review, :approve_request, :deny_request]
   before_action :set_user, only: [:manage, :current, :checkout]
 
   private
@@ -20,13 +19,13 @@ class ReservationsController < ApplicationController
   public
 
   def index
-    #define our source of reservations depending on user status
+    # define our source of reservations depending on user status
     @reservations_source = (can? :manage, Reservation) ? Reservation : current_user.reservations
     default_filter = (can? :manage, Reservation) ? :upcoming : :reserved
 
     filters = [:reserved, :checked_out, :overdue, :returned, :upcoming, :requested, :approved_requests, :denied_requests]
     filters << :missed unless AppConfig.first.res_exp_time
-    #if the filter is defined in the params, store those reservations
+    # if the filter is defined in the params, store those reservations
     filters.each do |filter|
       if params[filter]
         @reservations_set = @reservations_source.send(filter)
@@ -34,7 +33,7 @@ class ReservationsController < ApplicationController
     end
 
     @default = false
-    #if no filter is defined
+    # if no filter is defined
     if @reservations_set.nil?
       @default = true
       @reservations_set = @reservations_source.send(default_filter)
@@ -46,7 +45,7 @@ class ReservationsController < ApplicationController
 
   def new
     if cart.items.empty?
-      flash[:error] = "You need to add items to your cart before making a reservation."
+      flash[:error] = 'You need to add items to your cart before making a reservation.'
       redirect_to catalog_path
     else
       # error handling
@@ -57,7 +56,7 @@ class ReservationsController < ApplicationController
         else
           flash[:error] = 'Please review the errors below. If uncorrected, any reservations with errors will be filed as a request, and subject to administrator approval.'
           if AppConfig.first.request_text.empty?
-            @request_text = "Please give a short justification for this equipment request."
+            @request_text = 'Please give a short justification for this equipment request.'
           else
             @request_text = AppConfig.first.request_text
           end
@@ -79,11 +78,11 @@ class ReservationsController < ApplicationController
       flash[:error] = "Please give a short justification for this reservation #{requested ? 'request' : 'override'}"
       @notes_required = true
       if AppConfig.first.request_text.empty?
-        @request_text = "Please give a short justification for this equipment request."
+        @request_text = 'Please give a short justification for this equipment request.'
       else
         @request_text = AppConfig.first.request_text
       end
-      render :new and return
+      render(:new) && return
     end
 
     Reservation.transaction do
@@ -97,14 +96,14 @@ class ReservationsController < ApplicationController
           flash[:notice] = cart.request_all(current_user, params[:reservation][:notes])
         end
 
-        redirect_to catalog_path and return if (cannot? :manage, Reservation) || (requested == true)
+        redirect_to(catalog_path) && return if (cannot? :manage, Reservation) || (requested == true)
         if start_date.to_date == Date.current
-          flash[:notice] += " Are you simultaneously checking out equipment for someone? Note that "\
+          flash[:notice] += ' Are you simultaneously checking out equipment for someone? Note that '\
                              "only the reservation has been made. Don't forget to continue to checkout."
         end
-        redirect_to manage_reservations_for_user_path(reserver) and return
+        redirect_to(manage_reservations_for_user_path(reserver)) && return
       rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid => e
-        redirect_to catalog_path, flash: {error: "Oops, something went wrong with making your reservation.<br/> #{e.message}".html_safe}
+        redirect_to catalog_path, flash: { error: "Oops, something went wrong with making your reservation.<br/> #{e.message}".html_safe }
         raise ActiveRecord::Rollback
       end
     end
@@ -115,7 +114,7 @@ class ReservationsController < ApplicationController
   end
 
   def update # for editing reservations; not for checkout or check-in
-    message = "Successfully edited reservation."
+    message = 'Successfully edited reservation.'
     res = reservation_params
     # add new equipment object id to hash if it's being changed and save old
     # and new objects for later
@@ -173,16 +172,16 @@ class ReservationsController < ApplicationController
 
     ## Basic-logic checks, only need to be done once
 
-    redirect_to :back and return unless check_tos(@user)
+    redirect_to(:back) && return unless check_tos(@user)
 
     if checked_out_reservations.empty?
-      flash[:error] = "No reservation selected."
-      redirect_to :back and return
+      flash[:error] = 'No reservation selected.'
+      redirect_to(:back) && return
     end
     unless Reservation.unique_equipment_objects?(checked_out_reservations)
       flash[:error] = "The same equipment item cannot be simultaneously checked
         out in multiple reservations."
-      redirect_to :back and return
+      redirect_to(:back) && return
     end
 
     # Overdue validation
@@ -195,14 +194,14 @@ class ReservationsController < ApplicationController
         # Everyone else is redirected
         flash[:error] = 'Could not check out the equipment, because the reserver
         has reservations that are overdue.'
-        redirect_to :back and return
+        redirect_to(:back) && return
       end
     end
 
     ## Save reservations
     Reservation.transaction do
       begin
-        checked_out_reservations.each { |r| r.save! }
+        checked_out_reservations.each(&:save!)
       rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid => e
         flash[:error] = "Checking out your reservation failed: #{e.message}"
         redirect_to manage_reservations_for_user_path(@user)
@@ -213,7 +212,7 @@ class ReservationsController < ApplicationController
     # prep for receipt page and exit
     @check_in_set = []
     @check_out_set = checked_out_reservations
-    render 'receipt' and return
+    render('receipt') && return
   end
 
   def checkin
@@ -226,7 +225,7 @@ class ReservationsController < ApplicationController
       if r.checked_in
         flash[:error] = 'One of the items you tried to check in has already been
         checked in.'
-        redirect_to :back and return
+        redirect_to(:back) && return
       end
 
       checked_in_reservations << r.checkin(current_user,
@@ -235,14 +234,14 @@ class ReservationsController < ApplicationController
     end
 
     if checked_in_reservations.empty?
-      flash[:error] = "No reservation selected!"
-      redirect_to :back and return
+      flash[:error] = 'No reservation selected!'
+      redirect_to(:back) && return
     end
 
     ## Save reservations
     Reservation.transaction do
       begin
-        checked_in_reservations.each { |r| r.save! }
+        checked_in_reservations.each(&:save!)
       rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid => e
         flash[:error] = "Checking in your reservation failed: #{e.message}"
         redirect_to :back
@@ -254,17 +253,17 @@ class ReservationsController < ApplicationController
     @user = checked_in_reservations.first.reserver
     @check_in_set = checked_in_reservations
     @check_out_set = []
-    render 'receipt' and return
+    render('receipt') && return
   end
 
   def destroy
     @reservation.destroy
-    flash[:notice] = "Successfully destroyed reservation."
+    flash[:notice] = 'Successfully destroyed reservation.'
     redirect_to reservations_url
   end
 
   def upcoming
-    @reservations_set = [Reservation.upcoming].delete_if{|a| a.empty?}
+    @reservations_set = [Reservation.upcoming].delete_if(&:empty?)
   end
 
   def manage # initializer
@@ -275,10 +274,10 @@ class ReservationsController < ApplicationController
   end
 
   def current
-    @user_overdue_reservations_set = [Reservation.overdue.for_reserver(@user)].delete_if{|a| a.empty?}
-    @user_checked_out_today_reservations_set = [Reservation.checked_out_today.for_reserver(@user)].delete_if{|a| a.empty?}
-    @user_checked_out_previous_reservations_set = [Reservation.checked_out_previous.for_reserver(@user)].delete_if{|a| a.empty?}
-    @user_reserved_reservations_set = [Reservation.reserved.for_reserver(@user)].delete_if{|a| a.empty?}
+    @user_overdue_reservations_set = [Reservation.overdue.for_reserver(@user)].delete_if(&:empty?)
+    @user_checked_out_today_reservations_set = [Reservation.checked_out_today.for_reserver(@user)].delete_if(&:empty?)
+    @user_checked_out_previous_reservations_set = [Reservation.checked_out_previous.for_reserver(@user)].delete_if(&:empty?)
+    @user_reserved_reservations_set = [Reservation.reserved.for_reserver(@user)].delete_if(&:empty?)
 
     render 'current_reservations'
   end
@@ -287,20 +286,20 @@ class ReservationsController < ApplicationController
   def checkout_email
     if UserMailer.checkout_receipt(@reservation).deliver
       redirect_to :back
-      flash[:notice] = "Successfully delivered receipt email."
+      flash[:notice] = 'Successfully delivered receipt email.'
     else
       redirect_to @reservation
-      flash[:error] = "Unable to deliver receipt email. Please contact administrator for more support. "
+      flash[:error] = 'Unable to deliver receipt email. Please contact administrator for more support. '
     end
   end
 
   def checkin_email
     if UserMailer.checkin_receipt(@reservation).deliver
       redirect_to :back
-      flash[:notice] = "Successfully delivered receipt email."
+      flash[:notice] = 'Successfully delivered receipt email.'
     else
       redirect_to @reservation
-      flash[:error] = "Unable to deliver receipt email. Please contact administrator for more support. "
+      flash[:error] = 'Unable to deliver receipt email. Please contact administrator for more support. '
     end
   end
 
@@ -308,7 +307,7 @@ class ReservationsController < ApplicationController
     message = @reservation.renew(current_user)
     if message
       flash[:error] = message
-      redirect_to @reservation and return
+      redirect_to(@reservation) && return
     else
       flash[:notice] = "Your reservation has been renewed until #{@reservation.due_date.to_date.to_s(:long)}."
       redirect_to @reservation
@@ -316,30 +315,30 @@ class ReservationsController < ApplicationController
   end
 
   def review
-    @all_current_requests_by_user = @reservation.reserver.reservations.requested.reject{|res| res.id == @reservation.id}
+    @all_current_requests_by_user = @reservation.reserver.reservations.requested.reject { |res| res.id == @reservation.id }
     @errors = @reservation.validate
   end
 
   def approve_request
-    @reservation.approval_status = "approved"
+    @reservation.approval_status = 'approved'
     @reservation.notes = @reservation.notes.to_s # in case of nil
     @reservation.notes += "\n\n### Approved on #{Time.current.to_s(:long)} by #{current_user.md_link}"
     if @reservation.save
-      flash[:notice] = "Request successfully approved"
+      flash[:notice] = 'Request successfully approved'
       UserMailer.request_approved_notification(@reservation).deliver
       redirect_to reservations_path(requested: true)
     else
-      flash[:error] = "Oops! Something went wrong. Unable to approve reservation."
+      flash[:error] = 'Oops! Something went wrong. Unable to approve reservation.'
       redirect_to @reservation
     end
   end
 
   def deny_request
-    @reservation.approval_status = "denied"
+    @reservation.approval_status = 'denied'
     @reservation.notes = @reservation.notes.to_s # in case of nil
     @reservation.notes += "\n\n### Denied on #{Time.current.to_s(:long)} by #{current_user.md_link}"
     if @reservation.save
-      flash[:notice] = "Request successfully denied"
+      flash[:notice] = 'Request successfully denied'
       UserMailer.request_denied_notification(@reservation).deliver
       redirect_to reservations_path(requested: true)
     else
@@ -351,18 +350,18 @@ class ReservationsController < ApplicationController
   def archive
     if params[:archive_cancelled]
       flash[:notice] = 'Reservation archiving cancelled.'
-      redirect_to :back and return
+      redirect_to(:back) && return
     elsif params[:archive_note].nil? || params[:archive_note].strip.empty?
       flash[:error] = 'Reason for archiving cannot be empty.'
-      redirect_to :back and return
+      redirect_to(:back) && return
     end
     set_reservation
     if @reservation.checked_in
       flash[:error] = 'Cannot archive checked-in reservation.'
-      redirect_to :back and return
+      redirect_to(:back) && return
     end
     @reservation.archive(current_user, params[:archive_note]).save(validate: false)
-    flash[:notice] = "Reservation successfully archived."
+    flash[:notice] = 'Reservation successfully archived.'
     redirect_to :back
   end
 
@@ -370,11 +369,10 @@ class ReservationsController < ApplicationController
 
   def reservation_params
     params.require(:reservation)
-          .permit(:checkout_handler_id, :checkin_handler_id, :approval_status,
-                  :checked_out, :checked_in, :equipment_object,
-                  :equipment_object_id, :notes, :notes_unsent, :times_renewed,
-                  :reserver_id, :reserver, :start_date, :due_date,
-                  :equipment_model_id)
-
+      .permit(:checkout_handler_id, :checkin_handler_id, :approval_status,
+              :checked_out, :checked_in, :equipment_object,
+              :equipment_object_id, :notes, :notes_unsent, :times_renewed,
+              :reserver_id, :reserver, :start_date, :due_date,
+              :equipment_model_id)
   end
 end

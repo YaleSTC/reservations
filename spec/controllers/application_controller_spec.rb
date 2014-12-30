@@ -8,35 +8,43 @@ class TestController < ApplicationController
   before_filter :require_user, only: [:method_requiring_user]
 
   def index
-    render :text => 'hello world'
+    render text: 'hello world'
   end
+
   def terms_of_service
-    render :text => 'terms_of_service'
+    render text: 'terms_of_service'
   end
+
   def activate
-    render :text => 'one of two methods requiring the admin before_filter'
+    render text: 'one of two methods requiring the admin before_filter'
   end
+
   def deactivate
-    render :text => 'the second of two methods requiring the admin before_filter'
+    render text: 'the second of two methods requiring the admin before_filter'
   end
+
   def method_requiring_admin
-    render :text => 'admin required!'
+    render text: 'admin required!'
   end
+
   def method_requiring_checkout_person
-    render :text => 'checkout person required!'
+    render text: 'checkout person required!'
   end
+
   def method_requiring_login
-    render :text => 'you must be logged in!'
+    render text: 'you must be logged in!'
   end
+
   def method_requiring_user_or_checkout_person
-    render :text => 'are you a user or a checkout person?'
+    render text: 'are you a user or a checkout person?'
   end
+
   def method_requiring_user
-    render :text => 'you are a user, congrats.'
+    render text: 'you are a user, congrats.'
   end
 end
 
-describe TestController, :type => :controller do
+describe TestController, type: :controller do
   before(:each) do
     @app_config = FactoryGirl.create(:app_config)
     @first_user = FactoryGirl.create(:user) # this is to ensure that all before_filters are run
@@ -140,7 +148,7 @@ describe TestController, :type => :controller do
     it 'makes a new cart record for session[:cart] if !cart' do
       get :index
       expect(session[:cart]).to be_new_record
-      expect(session[:cart].kind_of?(Cart)).to be_truthy
+      expect(session[:cart].is_a?(Cart)).to be_truthy
     end
     it 'returns session[:cart] if cart.reserver_id' do
       session[:cart] = Cart.new
@@ -183,10 +191,9 @@ describe TestController, :type => :controller do
       expect(session[:cart].start_date).not_to eq(Date.current)
     end
   end
-
 end
 
-describe ApplicationController, :type => :controller do
+describe ApplicationController, type: :controller do
   before(:each) do
     @app_config = FactoryGirl.create(:app_config)
     @first_user = FactoryGirl.create(:user) # this is to ensure that all before_filters are run
@@ -200,14 +207,13 @@ describe ApplicationController, :type => :controller do
     sign_in FactoryGirl.create(:user)
   end
 
-  #TODO - This may involve rewriting the method somewhat
+  # TODO - This may involve rewriting the method somewhat
   describe 'PUT update_cart' do
     before(:each) do
       session[:cart] = Cart.new
       session[:cart].reserver_id = @first_user.id
       session[:cart].start_date = (Date.current + 1.day)
       session[:cart].due_date = (Date.current + 2.days)
-
 
       equipment_model = FactoryGirl.create(:equipment_model, category: FactoryGirl.create(:category))
       session[:cart].add_item(equipment_model)
@@ -219,7 +225,7 @@ describe ApplicationController, :type => :controller do
         new_start = Date.current + 3.days
         new_end = Date.current + 4.days
 
-        put :update_cart, cart: {start_date_cart: new_start, due_date_cart: new_end}, reserver_id: @new_reserver.id
+        put :update_cart, cart: { start_date_cart: new_start, due_date_cart: new_end }, reserver_id: @new_reserver.id
 
         expect(session[:cart].start_date).to eq(new_start)
         expect(session[:cart].due_date).to eq(new_end)
@@ -236,11 +242,11 @@ describe ApplicationController, :type => :controller do
         new_start = Date.current - 300.days
         new_end = Date.current + 4000.days
 
-        put :update_cart, cart: {start_date_cart: new_start.strftime('%m/%d/%Y'), due_date_cart: new_end.strftime('%m/%d/%Y')}, reserver_id: @new_reserver.id
+        put :update_cart, cart: { start_date_cart: new_start.strftime('%m/%d/%Y'), due_date_cart: new_end.strftime('%m/%d/%Y') }, reserver_id: @new_reserver.id
 
         expect(flash).not_to be_empty
-     end
-   end
+      end
+    end
   end
 
   describe 'DELETE empty_cart' do

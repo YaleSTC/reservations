@@ -2,12 +2,12 @@ require 'spec_helper'
 
 # note, these tests are complex in order to test the admin security features -- namely, it was necessary
 # to test two contexts for each method: the user being an admin, and not.
-describe RequirementsController, :type => :controller do
+describe RequirementsController, type: :controller do
   before(:all) do
     @app_config = FactoryGirl.create(:app_config)
   end
   before(:each) do
-    @requirement = FactoryGirl.create(:requirement, contact_name: "Adam Bray")
+    @requirement = FactoryGirl.create(:requirement, contact_name: 'Adam Bray')
   end
   describe 'GET index' do
     context 'is admin' do
@@ -62,7 +62,7 @@ describe RequirementsController, :type => :controller do
       it { is_expected.not_to set_the_flash }
       it 'assigns a new requirement to @requirement' do
         expect(assigns(:requirement)).to be_new_record
-        expect(assigns(:requirement).kind_of?(Requirement)).to be_truthy
+        expect(assigns(:requirement).is_a?(Requirement)).to be_truthy
       end
     end
     context 'not an admin' do
@@ -101,26 +101,26 @@ describe RequirementsController, :type => :controller do
       end
       context 'with valid attributes' do
         before(:each) do
-          put :update, id: @requirement, requirement: FactoryGirl.attributes_for(:requirement, contact_name: "John Doe")
+          put :update, id: @requirement, requirement: FactoryGirl.attributes_for(:requirement, contact_name: 'John Doe')
         end
         it 'should set @requirement to the correct requirement' do
           expect(assigns(:requirement)).to eq(@requirement)
         end
         it 'should update the attributes of @requirement' do
           @requirement.reload
-          expect(@requirement.contact_name).to eq("John Doe")
+          expect(@requirement.contact_name).to eq('John Doe')
         end
         it { is_expected.to redirect_to(@requirement) }
         it { is_expected.to set_the_flash }
       end
       context 'with invalid attributes' do
         before(:each) do
-          put :update, id: @requirement, requirement: FactoryGirl.attributes_for(:requirement, contact_name: "")
+          put :update, id: @requirement, requirement: FactoryGirl.attributes_for(:requirement, contact_name: '')
         end
         it 'should not update the attributes of @requirement' do
           @requirement.reload
-          expect(@requirement.contact_name).not_to eq("")
-          expect(@requirement.contact_name).to eq("Adam Bray")
+          expect(@requirement.contact_name).not_to eq('')
+          expect(@requirement.contact_name).to eq('Adam Bray')
         end
         it { is_expected.to render_template(:edit) }
         it { is_expected.not_to set_the_flash }
@@ -144,9 +144,9 @@ describe RequirementsController, :type => :controller do
           post :create, requirement: FactoryGirl.attributes_for(:requirement)
         end
         it 'saves a new requirement' do
-          expect{
+          expect do
             post :create, requirement: FactoryGirl.attributes_for(:requirement)
-          }.to change(Requirement,:count).by(1)
+          end.to change(Requirement, :count).by(1)
         end
         it { is_expected.to redirect_to(Requirement.last) }
         it { is_expected.to set_the_flash }
@@ -156,9 +156,9 @@ describe RequirementsController, :type => :controller do
           post :create, requirement: FactoryGirl.attributes_for(:requirement, contact_name: nil)
         end
         it 'fails to save a new requirment' do
-          expect{
+          expect do
             post :create, requirement: FactoryGirl.attributes_for(:requirement, contact_name: nil)
-          }.not_to change(Requirement,:count)
+          end.not_to change(Requirement, :count)
         end
         it { is_expected.not_to set_the_flash }
         it { is_expected.to render_template(:new) }
@@ -182,9 +182,9 @@ describe RequirementsController, :type => :controller do
         expect(assigns(:requirement)).to eq(@requirement)
       end
       it 'removes @requirement from the database' do
-        expect{
-            delete :destroy, id: @requirement
-          }.to change(Requirement,:count).by(-1)
+        expect do
+          delete :destroy, id: @requirement
+        end.to change(Requirement, :count).by(-1)
       end
       it 'should redirect to the requirements index page' do
         delete :destroy, id: @requirement

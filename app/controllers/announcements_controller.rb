@@ -25,7 +25,6 @@ class AnnouncementsController < ApplicationController
     @announcement = Announcement.new(starts_at: Date.current, ends_at: Date.tomorrow)
   end
 
-
   def create
     @announcement = Announcement.new(announcement_params)
     if @announcement.save
@@ -56,5 +55,4 @@ class AnnouncementsController < ApplicationController
   def announcement_params
     params.require(:announcement).permit(:message, :ends_at, :starts_at)
   end
-
 end

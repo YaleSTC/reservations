@@ -8,13 +8,13 @@ end
 
 shared_examples_for 'registration error' do
   it { is_expected.to have_content('New User') }
-  it { is_expected.to have_content("Please review the problems below:") }
+  it { is_expected.to have_content('Please review the problems below:') }
 end
 
 shared_examples_for 'login error' do
   it { is_expected.to have_content('Sign In') }
-  it { is_expected.to have_content("Invalid email") }
-  it { is_expected.to have_content("or password.") }
+  it { is_expected.to have_content('Invalid email') }
+  it { is_expected.to have_content('or password.') }
 end
 
 describe 'Authentication' do

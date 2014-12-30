@@ -2,14 +2,14 @@ class ImportEquipmentController < ApplicationController
   include CsvImport
   include EquipmentImport
 
-  authorize_resource :class => false
+  authorize_resource class: false
 
   # modeled after the ImportUsersController
   def import
-  	# initialize, we take up to three CSV files, now we have to check each
-  	cat_file = params[:cat_upload]
-  	model_file = params[:model_upload]
-  	object_file = params[:object_upload]
+    # initialize, we take up to three CSV files, now we have to check each
+    cat_file = params[:cat_upload]
+    model_file = params[:model_upload]
+    object_file = params[:object_upload]
 
     # if the user uploaded a category CSV file
     if cat_file
@@ -25,7 +25,7 @@ class ImportEquipmentController < ApplicationController
         # create categories
         @cat_statuses = import_cats(processed_cats, cat_overwrite)
       else
-        redirect_to :back and return
+        redirect_to(:back) && return
       end
     end
 
@@ -43,7 +43,7 @@ class ImportEquipmentController < ApplicationController
         # create EquipmentModels
         @model_statuses = import_models(processed_models, model_overwrite)
       else
-        redirect_to :back and return
+        redirect_to(:back) && return
       end
     end
 
@@ -57,7 +57,7 @@ class ImportEquipmentController < ApplicationController
       if valid_object_import?(processed_objects, object_file)
         @object_statuses = import_objects(processed_objects)
       else
-        redirect_to :back and return
+        redirect_to(:back) && return
       end
     end
 
@@ -66,7 +66,6 @@ class ImportEquipmentController < ApplicationController
   end
 
   def import_page
-  	render 'import'
+    render 'import'
   end
-
 end

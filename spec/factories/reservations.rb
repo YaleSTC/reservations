@@ -59,7 +59,6 @@ FactoryGirl.define do
         mod = EquipmentModel.find(res.equipment_model)
         res.equipment_object = mod.equipment_objects.first
       end
-
     end
 
     factory :valid_reservation, traits: [:valid]
