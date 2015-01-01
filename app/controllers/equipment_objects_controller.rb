@@ -1,7 +1,9 @@
 class EquipmentObjectsController < ApplicationController
   load_and_authorize_resource
   decorates_assigned :equipment_object
-  before_action :set_current_equipment_object, only: [:show, :edit, :update, :destroy, :deactivate, :activate]
+  before_action :set_current_equipment_object,
+                only: [:show, :edit, :update, :destroy, :deactivate,
+                       :activate]
   before_action :set_equipment_model_if_possible, only: [:index, :new]
 
   include ActivationHelper
@@ -13,17 +15,18 @@ class EquipmentObjectsController < ApplicationController
   end
 
   def set_equipment_model_if_possible
-    @equipment_model = EquipmentModel.find(params[:equipment_model_id]) if params[:equipment_model_id]
+    return unless params[:equipment_model_id]
+    @equipment_model = EquipmentModel.find(params[:equipment_model_id])
   end
 
   # ---------- end before filter methods ---------- #
 
-  # I'm not sure if there's ever a way @equipment_model could be set?
   def index
-    if params[:show_deleted]
-      @equipment_objects = (@equipment_model  ? @equipment_model.equipment_objects : EquipmentObject.all)
+    method = params[:show_deleted] ? :all : :active
+    if @equipment_model
+      @equipment_objects = @equipment_model.equipment_objects.send(method)
     else
-      @equipment_objects = (@equipment_model  ? @equipment_model.equipment_objects.active : EquipmentObject.active)
+      @equipment_objects = EquipmentObject.send(method)
     end
   end
 
@@ -36,9 +39,11 @@ class EquipmentObjectsController < ApplicationController
 
   def create
     @equipment_object = EquipmentObject.new(equipment_object_params)
-    @equipment_object.notes = "#### Created at #{Time.current.to_s(:long)} by #{current_user.md_link}"
+    @equipment_object.notes = "#### Created at #{Time.current.to_s(:long)} "\
+      "by #{current_user.md_link}."
     if @equipment_object.save
-      flash[:notice] = "Successfully created equipment object. #{@equipment_object.serial}"
+      flash[:notice] = 'Successfully created equipment object. '\
+        "#{@equipment_object.serial}"
       redirect_to @equipment_object.equipment_model
     else
       render action: 'new'
@@ -64,14 +69,23 @@ class EquipmentObjectsController < ApplicationController
   end
 
   # Deactivate and activate extend controller methods in ApplicationController
-  def deactivate
+  def deactivate # rubocop:disable MethodLength, AbcSize
     if params[:deactivation_reason] && !params[:deactivation_cancelled]
       # update notes and deactivate
-      new_notes = "#### Deactivated at #{Time.current.to_s(:long)} by #{current_user.md_link}\n#{params[:deactivation_reason]}\n\n" + @equipment_object.notes
-      @equipment_object.update_attributes(deactivation_reason: params[:deactivation_reason], notes: new_notes)
+      new_notes = "#### Deactivated at #{Time.current.to_s(:long)} by "\
+        "#{current_user.md_link}\n#{params[:deactivation_reason]}\n\n"\
+        + @equipment_object.notes
+      @equipment_object.update_attributes(
+        deactivation_reason: params[:deactivation_reason],
+        notes: new_notes)
       # archive current reservation if any
-      @equipment_object.current_reservation.archive(current_user, "The equipment item was deactivated for the following reason: **#{params[:deactivation_reason]}**").save(validate: false) if @equipment_object.current_reservation
-      super
+      if @equipment_object.current_reservation
+        @equipment_object.current_reservation.archive(
+          current_user,
+          'The equipment item was deactivated for the following reason: '\
+          "**#{params[:deactivation_reason]}**").save(validate: false)
+        super
+      end
     elsif params[:deactivation_cancelled]
       flash[:notice] = 'Deactivation cancelled.'
       redirect_to @equipment_object.equipment_model
@@ -83,15 +97,17 @@ class EquipmentObjectsController < ApplicationController
 
   def activate
     super
-    new_notes = "#### Reactivated at #{Time.current.to_s(:long)} by #{current_user.md_link}\n\n" + @equipment_object.notes
-    @equipment_object.update_attributes(deactivation_reason: nil, notes: new_notes)
+    new_notes = "#### Reactivated at #{Time.current.to_s(:long)} by "\
+      "#{current_user.md_link}\n\n" + @equipment_object.notes
+    @equipment_object.update_attributes(deactivation_reason: nil,
+                                        notes: new_notes)
   end
 
   private
 
   def equipment_object_params
-    params.require(:equipment_object).permit(:name, :serial, :deleted_at,
-                                             :equipment_model_id,
-                                             :deactivation_reason, :notes)
+    params.require(:equipment_object)
+      .permit(:name, :serial, :deleted_at, :equipment_model_id,
+              :deactivation_reason, :notes)
   end
 end
