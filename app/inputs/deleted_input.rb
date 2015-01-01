@@ -4,6 +4,10 @@ class DeletedInput < SimpleForm::Inputs::BooleanInput
   end
 
   def build_check_box(_unchecked_value = '')
-    @builder.check_box(attribute_name,  (@builder.object.deleted_at.blank? ? { checked: false } : { checked: true }), Time.current, '')
+    box_val =
+      @builder.object.deleted_at.blank? ? { checked: false } : { checked: true }
+    @builder.check_box(attribute_name,
+                       box_val,
+                       Time.current, '')
   end
 end
