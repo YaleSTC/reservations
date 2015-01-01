@@ -22,13 +22,15 @@ class AnnouncementsController < ApplicationController
   end
 
   def new
-    @announcement = Announcement.new(starts_at: Date.current, ends_at: Date.tomorrow)
+    @announcement = Announcement.new(starts_at: Date.current,
+                                     ends_at: Date.tomorrow)
   end
 
   def create
     @announcement = Announcement.new(announcement_params)
     if @announcement.save
-      redirect_to(announcements_url, notice: 'Announcement was successfully created.')
+      redirect_to(announcements_url,
+                  notice: 'Announcement was successfully created.')
     else
       render action: 'new'
     end
@@ -39,7 +41,8 @@ class AnnouncementsController < ApplicationController
 
   def update
     if  @announcement.update_attributes(announcement_params)
-      redirect_to(announcements_url, notice: 'Announcement was successfully updated.')
+      redirect_to(announcements_url,
+                  notice: 'Announcement was successfully updated.')
     else
       render action: 'edit'
     end
