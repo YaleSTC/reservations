@@ -1,0 +1,5 @@
+{
+  "preset": "airbnb",
+  "excludeFiles": ["!(app|lib)"],
+  "maxErrors": 50
+}
