@@ -18,6 +18,7 @@ before_install:
   - npm install -g npm
   - echo "$(npm --version) (after npm upgrade)"
   - npm install -g jshint jscs
+  - npm install jshint-stylish
   - 'echo ''gem: --no-ri --no-rdoc'' > ~/.gemrc'
 
 bundler_args: --without=production staging development
@@ -29,7 +30,7 @@ before_script:
 
 script:
   - jscs .
-  - jshint .
+  - jshint --reporter=node_modules/jshint-stylish/stylish.js .
   - bundle exec rubocop -D
   - bundle exec rake
 
