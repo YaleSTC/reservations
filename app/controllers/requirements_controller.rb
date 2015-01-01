@@ -47,9 +47,8 @@ class RequirementsController < ApplicationController
   private
 
   def requirement_params
-    params.require(:requirement).permit(:user_id, :user_ids, :description,
-                                        :equipment_model_id,
-                                        :equipment_model_ids, :notes,
-                                        :contact_info, :contact_name)
+    params.require(:requirement)
+      .permit(:user_id, :user_ids, :description, :equipment_model_id,
+              :equipment_model_ids, :notes, :contact_info, :contact_name)
   end
 end
