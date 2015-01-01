@@ -18,3 +18,5 @@ MethodLength:
 #   http://codereview.stackexchange.com/a/69806
 AbcSize:
   Max: 30
+TrivialAccessors:
+  AllowPredicates: true

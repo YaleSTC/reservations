@@ -1,4 +1,5 @@
-# These helper methods can be called in your template to set variables to be used in the layout
+# These helper methods can be called in your template to set variables to be
+# used in the layout
 # This module should be included in all views globally,
 # to do so you may need to add this line to your ApplicationController
 #   helper :layout
@@ -33,14 +34,19 @@ module LayoutHelper
     @favicon_path = 'favicon.ico'
   end
 
+  # rubocop:disable UselessAssignment
   def reservations_count
     if can? :manage, Reservation
       count = Reservation.active.size
     else
-      @current_reservations = current_or_guest_user.reservations.active_or_requested.includes(:equipment_model) # this variable is called in _navbar.html.erb to list a user's current reservations in the dropdown.
+      # this variable is called in _navbar.html.erb to list a user's current
+      # reservations in the dropdown.
+      @current_reservations = current_or_guest_user.reservations
+                              .active_or_requested.includes(:equipment_model)
       count = @current_reservations.size
     end
   end
+  # rubocop:enable UselessAssignment
 
   def equipment_count
     @current_equipment = current_or_guest_user.reservations.checked_out
@@ -48,12 +54,11 @@ module LayoutHelper
   end
 
   def navigation_active(controller_path)
-    if current_page?(controller_path)
-      @active = 'class=active'
-    end
+    return unless current_page?(controller_path)
+    @active = 'class=active'
   end
 
-  def get_role_name(role)
+  def get_role_name(role) # rubocop:disable CyclomaticComplexity
     case role
     when 'superuser'
       'Superuser'

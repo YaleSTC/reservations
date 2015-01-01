@@ -10,8 +10,6 @@ module ReportsHelper
   end
 
   def reports_active_tab(key)
-    if key == :total
-      return 'active'
-    end
+    return 'active' if key == :total
   end
 end
