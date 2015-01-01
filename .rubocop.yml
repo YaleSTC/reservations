@@ -8,3 +8,5 @@ AllCops:
     - 'config/**/*'
     - 'script/**/*'
     - 'vendor/**/*'
+Documentation:
+  Enabled: false
