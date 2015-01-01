@@ -14,7 +14,8 @@ class EquipmentModelDecorator < ApplicationDecorator
     unless object.deleted_at
       # find reservations in the next week
       res = Reservation.for_eq_model(object)
-            .reserved_in_date_range(Date.current - 1.day, Date.current + 7.days)
+            .reserved_in_date_range(
+                Date.current - 1.day, Date.current + 7.days)
             .not_returned.count
       onclick_str = "handleBigDeactivation(this, #{res}, 'equipment model');"
     end

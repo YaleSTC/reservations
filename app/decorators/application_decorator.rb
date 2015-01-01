@@ -3,7 +3,8 @@ class ApplicationDecorator < Draper::Decorator
 
   def make_deactivate_btn(onclick_str = nil)
     if object.deleted_at
-      link_to 'Activate', [:activate, object], class: 'btn btn-success', method: :put
+      link_to 'Activate', [:activate, object], class: 'btn btn-success',
+                                               method: :put
     else
       link_to 'Deactivate', [:deactivate, object],
               class: 'btn btn-danger', method: :put,
