@@ -31,7 +31,9 @@ class CatalogController < ApplicationController
   end
 
   def update_user_per_cat_page
-    session[:items_per_page] = params[:items_per_page] unless params[:items_per_page].blank?
+    unless params[:items_per_page].blank?
+      session[:items_per_page] = params[:items_per_page]
+    end
     respond_to do |format|
       format.html { redirect_to root_path }
       format.js { render action: 'cat_pagination' }
@@ -42,9 +44,11 @@ class CatalogController < ApplicationController
     if params[:query].blank?
       redirect_to(root_path) && return
     else
-      @equipment_model_results = EquipmentModel.active.catalog_search(params[:query])
+      @equipment_model_results =
+        EquipmentModel.active.catalog_search(params[:query])
       @category_results = Category.catalog_search(params[:query])
-      @equipment_object_results = EquipmentObject.catalog_search(params[:query])
+      @equipment_object_results =
+        EquipmentObject.catalog_search(params[:query])
       prepare_catalog_index_vars(@equipment_model_results)
       render('search_results') && return
     end
@@ -65,10 +69,10 @@ class CatalogController < ApplicationController
   private
 
   # this method is called to either add or remove an item from the cart
-  # it takes either :add_item or :remove_item as an action variable,
-  # and adds or removes the equipment_model set from params{} in the before_filter.
-  # Finally, it renders the root page and runs the javascript to update the cart
-  # (or displays the appropriate errors)
+  # it takes either :add_item or :remove_item as an action variable and adds
+  # or removes the equipment_model set from params{} in the before_filter.
+  # Finally, it renders the root page and runs the javascript to update the
+  # cart (or displays the appropriate errors)
   def change_cart(action, item)
     cart.send(action, item)
     errors = cart.validate_all
