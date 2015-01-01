@@ -1,8 +1,8 @@
 class CategoriesController < ApplicationController
   load_and_authorize_resource
   decorates_assigned :category
-  before_action :set_current_category, only: [:show, :edit, :update, :destroy,
-                                              :deactivate]
+  before_action :set_current_category,
+                only: [:show, :edit, :update, :destroy, :deactivate]
 
   include ActivationHelper
 
@@ -71,8 +71,9 @@ class CategoriesController < ApplicationController
   private
 
   def category_params
-    params.require(:category).permit(:name, :max_per_user, :max_checkout_length,
-                                     :deleted_at, :max_renewal_times, :max_renewal_length,
-                                     :renewal_days_before_due, :sort_order)
+    params.require(:category)
+      .permit(:name, :max_per_user, :max_checkout_length, :deleted_at,
+              :max_renewal_times, :max_renewal_length, :sort_order,
+              :renewal_days_before_due)
   end
 end
