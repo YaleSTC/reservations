@@ -1,3 +1,4 @@
+# rubocop:disable ClassLength
 class UsersController < ApplicationController
   load_and_authorize_resource
   layout 'application_with_sidebar', only: [:show, :edit]
@@ -7,8 +8,8 @@ class UsersController < ApplicationController
 
   skip_filter :cart, only: [:new, :create]
   skip_filter :authenticate_user!, only: [:new, :create]
-  before_action :set_user, only: [:show, :edit, :update, :destroy, :ban,
-                                  :unban]
+  before_action :set_user,
+                only: [:show, :edit, :update, :destroy, :ban, :unban]
   before_action :check_cas_auth, only: [:show, :new, :create, :edit, :update]
 
   include Autocomplete
@@ -41,22 +42,27 @@ class UsersController < ApplicationController
                         future:       @user_reservations.reserved,
                         past:         @user_reservations.returned,
                         past_overdue: @user_reservations.returned_overdue }
-    @show_equipment[:missed] = @user_reservations.missed unless AppConfig.first.res_exp_time
+    @show_equipment[:missed] =
+      @user_reservations.missed unless AppConfig.first.res_exp_time
   end
 
-  def new
+  def new # rubocop:disable all
     # if CAS authentication
     if @cas_auth
-      @can_edit_username = current_user.present? && (can? :create, User) # used in view
+      # variable used in view
+      @can_edit_username = current_user.present? && (can? :create, User)
       if current_user.nil? && session[:new_username]
         # This is a new user -> create an account for them
         @user = User.new(User.search_ldap(session[:new_username]))
         @user.username = session[:new_username] # default to current username
-        flash[:notice] = "Hey there! Since this is your first time making a reservation, we'll need you to supply us with some basic contact information."
+        flash[:notice] = 'Hey there! Since this is your first time making a '\
+          'reservation, we\'ll need you to supply us with some basic '\
+          'contact information.'
       elsif current_user.nil?
         # we don't have the current session's username
         # THIS ONLY APPLIES TO CAS
-        flash[:error] = 'Something seems to have gone wrong. Please try that again.'
+        flash[:error] = 'Something seems to have gone wrong. Please try '\
+          'that again.'
         redirect_to root_path
       else
         @user = User.new
@@ -65,15 +71,17 @@ class UsersController < ApplicationController
     else
       @can_edit_username = true
       @user = User.new
-      unless current_user
-        flash[:notice] = "Hey there! Since this is your first time making a reservation, we'll need you to supply us with some basic contact information."
-      else
+      if current_user
         @user = User.new
+      else
+        flash[:notice] = 'Hey there! Since this is your first time making a '\
+          'reservation, we\'ll need you to supply us with some basic '\
+          'contact information.'
       end
     end
   end
 
-  def create
+  def create # rubocop:disable all
     @user = User.new(user_params)
     @user.role = 'normal' if user_params[:role].blank?
     @user.view_mode = @user.role
@@ -81,7 +89,9 @@ class UsersController < ApplicationController
     if @cas_auth
       # pull from our CAS hackery unless you're an admin/superuser creating a
       # new user
-      @user.username = session[:new_username] unless current_user && can?(:manage, Reservation)
+      unless current_user && can?(:manage, Reservation)
+        @user.username = session[:new_username]
+      end
     else
       # if not using CAS, just put the e-mail as the username
       @user.username = @user.email
@@ -94,7 +104,8 @@ class UsersController < ApplicationController
       sign_in @user, bypass: true unless current_user.present?
       redirect_to user_path(@user)
     else
-      @can_edit_username = current_user.present? && (can? :create, User) # used in view
+      # variable used in view
+      @can_edit_username = current_user.present? && (can? :create, User)
       render :new
     end
   end
@@ -111,12 +122,11 @@ class UsersController < ApplicationController
     end
 
     # Is there a user record already?
-    if User.find_by_username(params[:possible_netid])
-      @message = 'You cannot create a new user, as the netID you entered
-      is already associated with a user. If you would like to reserve for
-      them, please select their name from the drop-down options in the cart.'
-      render(:quick_new) && return
-    end
+    return unless User.find_by_username(params[:possible_netid])
+    @message = 'You cannot create a new user, as the netID you entered is '\
+      'already associated with a user. If you would like to reserve for '\
+      'them, please select their name from the drop-down options in the cart.'
+    render(:quick_new) && return
   end
 
   def quick_create
@@ -134,7 +144,7 @@ class UsersController < ApplicationController
     @can_edit_username = can? :edit_username, User
   end
 
-  def update
+  def update # rubocop:disable PerceivedComplexity
     par = user_params
     # use :update_with_password when we're not using CAS and you're editing
     # your own profile
@@ -179,14 +189,15 @@ class UsersController < ApplicationController
     redirect_to request.referer
   end
 
-  def find
+  def find # rubocop:disable CyclomaticComplexity, PerceivedComplexity
     if params[:fake_searched_id].blank?
       flash[:alert] = 'Search field cannot be blank'
       redirect_to(:back) && return
     elsif params[:searched_id].blank?
-      # this code is a hack to allow hitting enter in the search box to go direclty to the first user
-      # and still user the rails3-jquery-autocomplete gem for the search box. Unfortunately the feature
-      # isn't built into the gem.
+      # this code is a hack to allow hitting enter in the search box to go
+      # direclty to the first user and still user the
+      # rails3-jquery-autocomplete gem for the search box. Unfortunately the
+      # feature isn't built into the gem.
       users = get_autocomplete_items(term: params[:fake_searched_id])
       if !users.blank?
         @user = users.first
@@ -205,11 +216,14 @@ class UsersController < ApplicationController
 
   def user_params
     permitted_attributes = [:first_name, :last_name, :nickname, :phone,
-                            :email, :affiliation, :terms_of_service_accepted, :created_by_admin]
+                            :email, :affiliation, :terms_of_service_accepted,
+                            :created_by_admin]
     permitted_attributes += [:password, :password_confirmation,
                              :current_password] unless @cas_auth
     permitted_attributes << :username if can? :manage, Reservation
-    permitted_attributes += [:requirement_ids, :user_ids, :role] if can? :assign, :requirements
+    if can? :assign, :requirements
+      permitted_attributes += [:requirement_ids, :user_ids, :role]
+    end
     p = params.require(:user).permit(*permitted_attributes)
     p[:view_mode] = p[:role] if p[:role]
     p
