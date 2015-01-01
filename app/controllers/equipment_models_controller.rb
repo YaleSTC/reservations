@@ -1,10 +1,11 @@
+# rubocop:disable ClassLength
 class EquipmentModelsController < ApplicationController
   layout 'application_with_sidebar', only: :show
   load_and_authorize_resource
   decorates_assigned :equipment_model
   skip_before_action :authenticate_user!, only: [:show, :index]
-  before_action :set_equipment_model, only: [:show, :edit, :update, :destroy,
-                                             :deactivate]
+  before_action :set_equipment_model,
+                only: [:show, :edit, :update, :destroy, :deactivate]
   before_action :set_category_if_possible, only: [:index, :new]
 
   include ActivationHelper
@@ -21,22 +22,28 @@ class EquipmentModelsController < ApplicationController
 
   def index
     if params[:show_deleted]
-      @equipment_models = (@category ? @category.equipment_models : EquipmentModel.all)
+      @equipment_models =
+        @category ? @category.equipment_models : EquipmentModel.all
     else
-      @equipment_models = (@category ? @category.equipment_models.active : EquipmentModel.active)
+      @equipment_models =
+        @category ? @category.equipment_models.active : EquipmentModel.active
     end
   end
 
-  def show
-    @associated_equipment_models = @equipment_model.associated_equipment_models.sample(6)
+  # I don't like disabling the AbcSize cop for this method since it's pretty
+  # close to passing, but since we require so many instance variables for the
+  # calendar JS I think we just have to leave it.
+  def show # rubocop:disable AbcSize
+    @associated_equipment_models =
+      @equipment_model.associated_equipment_models.sample(6)
 
     calendar_length = 1.month
 
     @reservation_data = []
     Reservation.active.for_eq_model(@equipment_model).each do |r|
-      @reservation_data << {
-        start: r.start_date,
-        end: (r.status == 'overdue' ? Date.current + calendar_length : r.due_date) }
+      end_date =
+        r.status == 'overdue' ? Date.current + calendar_length : r.due_date
+      @reservation_data << { start: r.start_date, end: end_date }
       # the above code mimics the current available? setup to show overdue
       # equipment as permanently 'out'.
     end
@@ -72,15 +79,19 @@ class EquipmentModelsController < ApplicationController
   end
 
   def delete_files
-    # for a given filetype affected by param value, the file in question is saved in path contained value
-    types = { 'clear_documentation' => 'documentations', 'clear_photo' => 'photos' }
+    # for a given filetype affected by param value, the file in question is
+    # saved in path contained value
+    types = { 'clear_documentation' => 'documentations',
+              'clear_photo' => 'photos' }
 
     # only keep pairs that occur as keys with non-nil values in params
     types.select! { |k, v| params.keys.member?((k)) && !v.nil? }
     types.each do |_k, path|
       # TODO: investigate a way to do this without hard-coded paths
       # recursively remove files from filesystem
-      file_location = Rails.root.to_s + '/public/attachments/equipment_models/' + path + '/' + @equipment_model.id.to_s + '/original/'
+      file_location = Rails.root.to_s\
+                    + '/public/attachments/equipment_models/' + path + '/'\
+                    + @equipment_model.id.to_s + '/original/'
       FileUtils.rm_r file_location
       @equipment_model.documentation_file_name = NIL
     end
@@ -118,15 +129,15 @@ class EquipmentModelsController < ApplicationController
 
   private
 
-  # function to check for deleted checkin/checkout procedures and hard-delete them after equipment model update
+  # function to check for deleted checkin/checkout procedures and hard-delete
+  # them after equipment model update
   def delete_procedures(params, phase)
     # phase needs to be equal to either "checkout" or "checkin"
     phase_params = params[:equipment_model][:"#{phase}_procedures_attributes"]
-    unless phase_params.nil?
-      phase_params.each do |k, v|
-        if v['id'] && v['_destroy'] != 'false'
-          @equipment_model.send(:"#{phase}_procedures")[k.to_i].destroy(:force)
-        end
+    return if phase_params.nil?
+    phase_params.each do |k, v|
+      if v['id'] && v['_destroy'] != 'false'
+        @equipment_model.send(:"#{phase}_procedures")[k.to_i].destroy(:force)
       end
     end
   end
@@ -140,8 +151,8 @@ class EquipmentModelsController < ApplicationController
               :replacement_fee, :max_per_user, :document_attributes,
               :deleted_at, :photo, :documentation, :max_renewal_times,
               :max_renewal_length, :renewal_days_before_due,
-              { associated_equipment_model_ids: [] },
-              :requirement_ids, :requirements, :max_checkout_length)
+              { associated_equipment_model_ids: [] }, :requirement_ids,
+              :requirements, :max_checkout_length)
       .tap do |whitelisted|
       whitelisted[:checkin_procedures_attributes] =
         params[:equipment_model][:checkin_procedures_attributes] if
