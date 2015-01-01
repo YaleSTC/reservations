@@ -5,7 +5,8 @@ class ImportEquipmentController < ApplicationController
   authorize_resource class: false
 
   # modeled after the ImportUsersController
-  def import
+  # rubocop disabled pending refactoring
+  def import # rubocop:disable all
     # initialize, we take up to three CSV files, now we have to check each
     cat_file = params[:cat_upload]
     model_file = params[:model_upload]
