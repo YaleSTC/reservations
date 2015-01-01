@@ -8,5 +8,13 @@ AllCops:
     - 'config/**/*'
     - 'script/**/*'
     - 'vendor/**/*'
+# disable the documentation check at the start of classes / modules
 Documentation:
   Enabled: false
+# increase the max method length
+MethodLength:
+  Max: 20
+# increase the max ABC (Assignment Branch Condition) size, see:
+#   http://codereview.stackexchange.com/a/69806
+AbcSize:
+  Max: 30
