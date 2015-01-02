@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Cart, type: :model do
-  before (:each) do
+  before(:each) do
     @cart = FactoryGirl.build(:cart)
     @cart.items = {} # Needed to avoid db flushing problems
   end
@@ -39,7 +39,7 @@ describe Cart, type: :model do
   end
 
   describe 'Item handling' do
-    before (:each) do
+    before(:each) do
       @equipment_model = FactoryGirl.create(:equipment_model)
     end
 
@@ -56,7 +56,7 @@ describe Cart, type: :model do
     end
 
     describe '.remove_item' do
-      before (:each) do
+      before(:each) do
         @cart.purge_all
         @cart.add_item(@equipment_model)
       end

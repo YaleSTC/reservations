@@ -10,7 +10,8 @@ describe Category, type: :model do
 
   it { is_expected.to have_many(:equipment_models) }
 
-  # validate numericality for :max_renewal_length, :max_renewal_times, :renewal_days_before_due, :max_per_user, :sort_order, :max_checkout_length
+  # validate numericality for :max_renewal_length, :max_renewal_times,
+  # :renewal_days_before_due, :max_per_user, :sort_order, :max_checkout_length
   # this includes integer_only, and greater_than_or_equal_to => 0
 
   # :max_renewal_length
@@ -124,7 +125,8 @@ describe Category, type: :model do
   # custom scope to return active categories
   describe '.active' do
     before(:each) do
-      @deactivated = FactoryGirl.create(:category, deleted_at: '2013-01-01 00:00:00')
+      @deactivated = FactoryGirl.create(:category,
+                                        deleted_at: '2013-01-01 00:00:00')
       @category.save
     end
 
@@ -141,7 +143,8 @@ describe Category, type: :model do
     before(:each) do
       @category.max_per_user = 1
       @category.save
-      @unrestrected_category = FactoryGirl.create(:category, max_per_user: nil)
+      @unrestrected_category = FactoryGirl.create(:category,
+                                                  max_per_user: nil)
     end
     it 'Should return maximum_per_user if defined' do
       expect(@category.maximum_per_user).to eq(1)
@@ -155,7 +158,8 @@ describe Category, type: :model do
     before(:each) do
       @category.max_renewal_length = 5
       @category.save
-      @unrestrected_category = FactoryGirl.create(:category, max_renewal_length: nil)
+      @unrestrected_category = FactoryGirl.create(:category,
+                                                  max_renewal_length: nil)
     end
     it 'Should return maximum_renewal_length if defined' do
       expect(@category.maximum_renewal_length).to eq(5)
@@ -169,13 +173,15 @@ describe Category, type: :model do
     before(:each) do
       @category.max_renewal_times = 1
       @category.save
-      @unrestrected_category = FactoryGirl.create(:category, max_renewal_times: nil)
+      @unrestrected_category = FactoryGirl.create(:category,
+                                                  max_renewal_times: nil)
     end
     it 'Should return maximum_renewal_times if defined' do
       expect(@category.maximum_renewal_times).to eq(1)
     end
     it 'Default to infinity if not defined' do
-      expect(@unrestrected_category.maximum_renewal_times).to eq(Float::INFINITY)
+      expect(@unrestrected_category.maximum_renewal_times).to\
+        eq(Float::INFINITY)
     end
   end
 
@@ -183,13 +189,15 @@ describe Category, type: :model do
     before(:each) do
       @category.renewal_days_before_due = 1
       @category.save
-      @unrestrected_category = FactoryGirl.create(:category, renewal_days_before_due: nil)
+      @unrestrected_category = FactoryGirl.create(:category,
+                                                  renewal_days_before_due: nil)
     end
     it 'Should return maximum_renewal_days_before_due if defined' do
       expect(@category.maximum_renewal_days_before_due).to eq(1)
     end
     it 'Default to infinity if not defined' do
-      expect(@unrestrected_category.maximum_renewal_days_before_due).to eq(Float::INFINITY)
+      expect(@unrestrected_category.maximum_renewal_days_before_due).to\
+        eq(Float::INFINITY)
     end
   end
 
@@ -197,13 +205,15 @@ describe Category, type: :model do
     before(:each) do
       @category.max_checkout_length = 5
       @category.save
-      @unrestrected_category = FactoryGirl.create(:category, max_checkout_length: nil)
+      @unrestrected_category = FactoryGirl.create(:category,
+                                                  max_checkout_length: nil)
     end
     it 'Should return maximum_checkout_length if defined' do
       expect(@category.maximum_checkout_length).to eq(5)
     end
     it 'Default to infinity if not defined' do
-      expect(@unrestrected_category.maximum_checkout_length).to eq(Float::INFINITY)
+      expect(@unrestrected_category.maximum_checkout_length).to\
+        eq(Float::INFINITY)
     end
   end
 
@@ -211,15 +221,20 @@ describe Category, type: :model do
     before(:each) do
       @category.name = 'Tumblr hipster instagram sustainable'
       @category.save
-      @hipster = FactoryGirl.create(:category, name: 'Tumblr starbucks PBR slackline music hipster')
+      @hipster =
+        FactoryGirl.create(:category,
+                           name: 'Tumblr starbucks PBR slackline music hipster')
     end
     it 'Should return names matching all of the query words' do
       expect(Category.catalog_search('Tumblr')).to eq([@category, @hipster])
-      expect(Category.catalog_search('Tumblr hipster')).to eq([@category, @hipster])
+      expect(Category.catalog_search('Tumblr hipster')).to\
+        eq([@category, @hipster])
     end
-    it 'Should not return any categories without every query word in the name' do
+    it 'Should not return any categories without every query word in the '\
+      'name' do
       expect(Category.catalog_search('starbucks')).to eq([@hipster])
-      expect(Category.catalog_search('Tumblr instagram sustainable')).to eq([@category])
+      expect(Category.catalog_search('Tumblr instagram sustainable')).to\
+        eq([@category])
     end
   end
 end

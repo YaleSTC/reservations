@@ -13,10 +13,17 @@ describe Blackout, type: :model do
 
   describe 'get_notices_for_date' do
     before do
-      @soft = FactoryGirl.create(:blackout, blackout_type: 'soft', notice: 'soft_notice')
+      @soft = FactoryGirl.create(:blackout,
+                                 blackout_type: 'soft',
+                                 notice: 'soft_notice')
       @hard = FactoryGirl.create(:blackout)
-      @other_soft = FactoryGirl.create(:blackout, start_date: (Date.current + 3.day), blackout_type: 'soft', notice: 'other notice')
-      @other_hard = FactoryGirl.create(:blackout, start_date: (Date.current + 3.day), notice: 'other notice again')
+      @other_soft = FactoryGirl.create(:blackout,
+                                       start_date: (Date.current + 3.day),
+                                       blackout_type: 'soft',
+                                       notice: 'other notice')
+      @other_hard = FactoryGirl.create(:blackout,
+                                       start_date: (Date.current + 3.day),
+                                       notice: 'other notice again')
     end
     after(:all) do
       Blackout.delete_all

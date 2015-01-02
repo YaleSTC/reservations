@@ -13,7 +13,8 @@ describe EquipmentObject, type: :model do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:equipment_model) }
 
-    # this test passes even without the nilify_blanks call in the model, maybe delete the call?
+    # this test passes even without the nilify_blanks call in the model, maybe
+    # delete the call?
     it 'saves an empty string value as nil for deleted_at field' do
       @object.deleted_at = '   '
       @object.save
@@ -41,26 +42,34 @@ describe EquipmentObject, type: :model do
       @object = FactoryGirl.create(:equipment_object, deleted_at: Date.current)
       expect(@object.status).to eq('Deactivated')
     end
-    it "returns 'available' if the object is active and not currently checked out" do
+    it "returns 'available' if the object is active and not currently "\
+      'checked out' do
       @object = FactoryGirl.create(:equipment_object)
       expect(@object.status).to eq('available')
       @reservation = FactoryGirl.create(:valid_reservation)
-      @reserved_object = EquipmentObject.find_by_equipment_model_id(@reservation.equipment_model.id)
+      @reserved_object =
+        EquipmentObject
+        .find_by_equipment_model_id(@reservation.equipment_model.id)
       expect(@reserved_object.status).to eq('available')
     end
-    it 'returns a description of the reservation that it is currently associated with if it is active and checked out' do
+    it 'returns a description of the reservation that it is currently '\
+      'associated with if it is active and checked out' do
       @reservation = FactoryGirl.create(:checked_out_reservation)
       @checked_out_object = @reservation.equipment_object
-      expect(@checked_out_object.status).to eq("checked out by #{@reservation.reserver.name} through #{@reservation.due_date.strftime('%b %d')}")
+      expect(@checked_out_object.status).to\
+        eq("checked out by #{@reservation.reserver.name} through "\
+          "#{@reservation.due_date.strftime('%b %d')}")
     end
   end
 
   describe '.current_reservation' do
-    it 'returns nil if the equipment object does not have an associted reservation' do
+    it 'returns nil if the equipment object does not have an associated '\
+      'reservation' do
       @object = FactoryGirl.create(:equipment_object)
       expect(@object.current_reservation).to be_nil
     end
-    it 'returns the reservation object currently holding this equipment_object if there is one that does' do
+    it 'returns the reservation object currently holding this '\
+      'equipment_object if there is one that does' do
       @reservation = FactoryGirl.create(:checked_out_reservation)
       @reserved_object = @reservation.equipment_object
       expect(@reserved_object.current_reservation).to eq(@reservation)
