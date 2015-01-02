@@ -1,0 +1,9 @@
+Dear @user@,\n\n
+  Hey there, you have equipment due! Please return the following items before 4pm on Return_date@.\n\n\
+  @equipment_list@\n\n\
+  If you fail to return your equipment on time you will be subject to a late fee of @late_fee@ per day. If you have lost the item you may additioally have to pay a replacement fee of Replacement_fee@.\n\
+  Log in to Reservations to see if any of your items are eligible for renewal. If you have further questions feel free to contact an employee of @department_name@.\n\n\
+  Your reservation number is Reservation_id@.\n\n\
+  Thank you,\n\
+  @department_name@\n\n
+
