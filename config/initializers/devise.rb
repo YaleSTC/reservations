@@ -13,7 +13,7 @@ Devise.setup do |config|
   if AppConfig.table_exists? && !AppConfig.first.nil?
     config.mailer_sender = AppConfig.first.admin_email
   else
-    'admin@reservations.app'
+    config.mailer_sender = 'admin@reservations.app'
   end
 
   # ==> ORM configuration
