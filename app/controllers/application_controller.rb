@@ -223,13 +223,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def require_login
-    if current_user.nil?
-      flash[:error] = "Sorry, that action requires you to log in."
-      redirect_to root_path
-    end
-  end
-
   def terms_of_service
     @tos = @app_configs.terms_of_service
     render 'terms_of_service/index'
