@@ -1,25 +1,21 @@
 class Ability
   include CanCan::Ability
 
-  def initialize(user)
+  def initialize(user) # rubocop:disable all
     if user
       case user.view_mode
       when 'superuser'
         can :manage, :all
       when 'admin'
         can :manage, :all
-        unless AppConfig.first.enable_renewals
-          cannot :renew, Reservation
-        end
+        cannot :renew, Reservation unless AppConfig.first.enable_renewals
         cannot :appoint, :superuser
         cannot :access, :rails_admin
         cannot [:destroy, :update], User, role: 'superuser'
       when 'checkout'
         can :manage, Reservation
         cannot :archive, Reservation
-        unless AppConfig.first.enable_renewals
-          cannot :renew, Reservation
-        end
+        cannot :renew, Reservation unless AppConfig.first.enable_renewals
         cannot :destroy, Reservation do |r|
           !r.checked_out.nil?
         end
@@ -32,12 +28,8 @@ class Ability
         end
         can :read, EquipmentObject
         can :read, EquipmentModel
-        if AppConfig.first.override_on_create
-          can :override, :reservation_errors
-        end
-        if AppConfig.first.override_at_checkout
-          can :override, :checkout_errors
-        end
+        can :override, :reservation_errors if AppConfig.first.override_on_create
+        can :override, :checkout_errors if AppConfig.first.override_at_checkout
       when 'normal' || 'checkout'
         can [:update, :show], User, id: user.id
         can :read, EquipmentModel
@@ -50,9 +42,7 @@ class Ability
       when 'guest'
         can :read, EquipmentModel
         can :update_cart, :all
-        if AppConfig.first.enable_new_users
-          can :create, User
-        end
+        can :create, User if AppConfig.first.enable_new_users
       when 'banned'
         # cannot :create, Reservation
       end

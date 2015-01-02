@@ -7,13 +7,15 @@ class Blackout < ActiveRecord::Base
             :end_date, presence: true
 
   validate :validate_end_date_before_start_date
-  # this only matters if a user tries to inject into params because the datepicker
-  # doesn't allow form submission of invalid dates
+  # this only matters if a user tries to inject into params because the
+  # datepicker doesn't allow form submission of invalid dates
 
-  scope :active, lambda { where('end_date >= ?', Date.current) }
-  scope :for_date, lambda { |date| where('end_date >= ? and start_date <= ?', date, date) }
-  scope :hard, lambda { where(blackout_type: 'hard') }
-  scope :soft, lambda { where(blackout_type: 'soft') }
+  scope :active, ->() { where('end_date >= ?', Date.current) }
+  scope :for_date, lambda { |date|
+    where('end_date >= ? and start_date <= ?', date, date)
+  }
+  scope :hard, ->() { where(blackout_type: 'hard') }
+  scope :soft, ->() { where(blackout_type: 'soft') }
 
   def self.get_notices_for_date(date, type = :all)
     # get a string of all notices for a given date
@@ -32,24 +34,26 @@ class Blackout < ActiveRecord::Base
     messages.to_sentence
   end
 
-  def self.create_blackout_set(params_hash, days)
-    # generate a unique id for this blackout date set, make sure that nil reads as 0 for the first blackout
+  def self.create_blackout_set(params_hash, days) # rubocop:disable all
+    # generate a unique id for this blackout date set, make sure that nil
+    # reads as 0 for the first blackout
     last_blackout = Blackout.last
     params_hash[:set_id] = last_blackout ? (last_blackout.id.to_i + 1) : 0
-    date_range = params_hash[:start_date].to_date..params_hash[:end_date].to_date
+    date_range =
+      params_hash[:start_date].to_date..params_hash[:end_date].to_date
 
     # initialize arrays for query dates and blackout objects
     res_dates = []
     blackouts_tmp = []
     date_range.each do |date|
-      if days.include?(date.wday.to_s) # because it's passed as a string
-        @blackout = Blackout.new(params_hash)
-        @blackout.start_date = date
-        @blackout.end_date = date
-        # save dates for conflict checking and blackout objects
-        res_dates << DateTime.parse(date.to_s)
-        blackouts_tmp << @blackout
-      end
+      # because it's passed as a string
+      next unless days.include?(date.wday.to_s)
+      @blackout = Blackout.new(params_hash)
+      @blackout.start_date = date
+      @blackout.end_date = date
+      # save dates for conflict checking and blackout objects
+      res_dates << DateTime.parse(date.to_s)
+      blackouts_tmp << @blackout
     end
     # conflict checking
     query = Reservation.all
@@ -59,32 +63,33 @@ class Blackout < ActiveRecord::Base
     end
     # stick em all together and find conflicting reservations
     res = Reservation.where(query.where_values.inject(:or))
-    # if conflicts exist, generate appropriate flash message
-    unless res.empty?
-      msg = 'The following reservation(s) will be unable to be returned: '
-      res.each do |res|
-        msg += "#{res.md_link}, "
-      end
-      return msg[0, msg.length - 2] + '. Please update their due dates and try again.'
-    # otherwise, try to save all of the blackouts
-    else
+    if res.empty?
+      # try to save all of the blackouts
       successful_save = nil
       blackouts_tmp.each do |blackout|
         successful_save = blackout.save
       end
+    else
+      # if conflicts exist, generate appropriate flash message
+      msg = 'The following reservation(s) will be unable to be returned: '
+      res.each do |res2|
+        msg += "#{res2.md_link}, "
+      end
+      return msg[0, msg.length - 2] + '. Please update their due dates and '\
+        'try again.'
     end
 
     unless successful_save
-      return 'The combination of days and dates chosen did not produce any valid blackout dates. Please change your selection and try again.'
+      return 'The combination of days and dates chosen did not produce any '\
+        'valid blackout dates. Please change your selection and try again.'
     end
   end
 
   private
 
   def validate_end_date_before_start_date
-    if end_date && start_date
-      errors.add(:end_date, 'Start date must be before end date.') if end_date < start_date
-    end
+    return unless end_date && start_date && (end_date < start_date)
+    errors.add(:end_date, 'Start date must be before end date.')
   end
 
   # end private methods
