@@ -77,7 +77,7 @@ class EquipmentObject < ActiveRecord::Base
     assign_attributes(new_params)
     changes = self.changes
     if changes.empty?
-      self
+      return self
     else
       new_notes = "#### Edited at #{Time.current.to_s(:long)} by "\
         "#{current_user.md_link}\n\n"
