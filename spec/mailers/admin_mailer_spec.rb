@@ -32,7 +32,9 @@ describe AdminMailer, type: :mailer do
       @mail = AdminMailer.notes_reservation_notification(@res1, @res2).deliver
     end
     it 'renders the subject' do
-      expect(@mail.subject).to eq('[Reservations] Notes for ' + (Date.yesterday.midnight).strftime('%m/%d/%y'))
+      expect(@mail.subject).to\
+        eq('[Reservations] Notes for '\
+          + (Date.yesterday.midnight).strftime('%m/%d/%y'))
     end
     it_behaves_like 'a valid admin email'
   end
@@ -40,7 +42,9 @@ describe AdminMailer, type: :mailer do
     before do
       @model = FactoryGirl.create(:equipment_model)
       @object = FactoryGirl.create(:equipment_object, equipment_model: @model)
-      @res1 = FactoryGirl.build(:checked_in_reservation, equipment_model: @model, equipment_object: @object)
+      @res1 = FactoryGirl.build(:checked_in_reservation,
+                                equipment_model: @model,
+                                equipment_object: @object)
       @res1.save(validate: false)
       @mail = AdminMailer.overdue_checked_in_fine_admin(@res1).deliver
     end
