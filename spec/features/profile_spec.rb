@@ -33,7 +33,8 @@ describe 'User profile' do
             click_button 'Update User'
 
             expect(page).to have_content('Senor')
-            expect(page.find('.alert')).to have_content('Successfully updated user.')
+            expect(page.find('.alert')).to\
+              have_content('Successfully updated user.')
           end
 
           it 'does not update with invalid password' do
@@ -62,7 +63,8 @@ describe 'User profile' do
               click_button 'Update User'
 
               expect(page).to have_content('Senor')
-              expect(page.find('.alert')).to have_content('Successfully updated user.')
+              expect(page.find('.alert')).to\
+                have_content('Successfully updated user.')
             end
 
             it 'does not update with invalid confirmation' do
@@ -83,7 +85,8 @@ describe 'User profile' do
 
         it 'redirects to home page' do
           expect(page).to have_content('Catalog')
-          expect(page.find('.alert')).to have_content('Sorry, that action or page is restricted.')
+          expect(page.find('.alert')).to\
+            have_content('Sorry, that action or page is restricted.')
         end
       end
     end
@@ -112,7 +115,8 @@ describe 'User profile' do
             click_button 'Update User'
 
             expect(page).to have_content('Senor')
-            expect(page.find('.alert')).to have_content('Successfully updated user.')
+            expect(page.find('.alert')).to\
+              have_content('Successfully updated user.')
           end
 
           it 'does not update with invalid password' do
@@ -141,7 +145,8 @@ describe 'User profile' do
               click_button 'Update User'
 
               expect(page).to have_content('Senor')
-              expect(page.find('.alert')).to have_content('Successfully updated user.')
+              expect(page.find('.alert')).to\
+                have_content('Successfully updated user.')
             end
 
             it 'does not update with invalid confirmation' do
@@ -173,7 +178,8 @@ describe 'User profile' do
           click_button 'Update User'
 
           expect(page).to have_content('Senor')
-          expect(page.find('.alert')).to have_content('Successfully updated user.')
+          expect(page.find('.alert')).to\
+            have_content('Successfully updated user.')
         end
       end
     end
@@ -205,7 +211,8 @@ describe 'User profile' do
           click_button 'Update User'
 
           expect(page).to have_content('Senor')
-          expect(page.find('.alert')).to have_content('Successfully updated user.')
+          expect(page.find('.alert')).to\
+            have_content('Successfully updated user.')
         end
       end
 
@@ -216,7 +223,8 @@ describe 'User profile' do
 
         it 'redirects to home page' do
           expect(page).to have_content('Catalog')
-          expect(page.find('.alert')).to have_content('Sorry, that action or page is restricted.')
+          expect(page.find('.alert')).to\
+            have_content('Sorry, that action or page is restricted.')
         end
       end
     end
@@ -242,7 +250,8 @@ describe 'User profile' do
           click_button 'Update User'
 
           expect(page).to have_content('Senor')
-          expect(page.find('.alert')).to have_content('Successfully updated user.')
+          expect(page.find('.alert')).to\
+            have_content('Successfully updated user.')
         end
       end
 
@@ -264,7 +273,8 @@ describe 'User profile' do
           click_button 'Update User'
 
           expect(page).to have_content('Senor')
-          expect(page.find('.alert')).to have_content('Successfully updated user.')
+          expect(page.find('.alert')).to\
+            have_content('Successfully updated user.')
         end
       end
     end
