@@ -9,6 +9,7 @@ AllCops:
     # check config files to ensure initializers / environment files are
     # cleanly written
     # - 'config/**/*'
+    - 'lib/**/*.erb'
     - 'script/**/*'
     - 'vendor/**/*'
 # disable the documentation check at the start of classes / modules
