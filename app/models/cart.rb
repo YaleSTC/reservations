@@ -19,12 +19,13 @@ class Cart
 
   ## Item methods
 
-  def get_items
+  def get_items # rubocop:disable AccessorMethodName
     # Used in cart_validations
     # Return items where the key is the full equipment model object
     # uses 1 database call and eager loads the categories
     full_hash = {}
-    EquipmentModel.includes(:category, :requirements).find(items.keys).each do |em|
+    EquipmentModel
+      .includes(:category, :requirements).find(items.keys).each do |em|
       full_hash[em] = items[em.id]
     end
     full_hash
@@ -67,7 +68,7 @@ class Cart
     reservations
   end
 
-  def reserve_all(user, res_notes = '', request = false)
+  def reserve_all(user, res_notes = '', request = false) # rubocop:disable all
     # reserve all the items in the cart!
     # takes 3 arguments which is the current user, whether or not
     # the equipment should be requested or reserved,
@@ -76,15 +77,21 @@ class Cart
     message = []
     reservations.each do |r|
       errors = r.validate
-      unless request
-        notes = "### Reserved on #{Time.current.to_s(:long)} by #{user.md_link}"
-        notes += "\n\n#### Notes:\n#{res_notes}" unless res_notes.nil? || res_notes.empty?
-        r.approval_status = 'auto'
-        message << "Reservation for #{r.equipment_model.md_link} created successfully#{', even though ' + errors.to_sentence[0, 1].downcase + errors.to_sentence[1..-1] unless errors.empty?}.\n"
-      else
-        notes = "### Requested on #{Time.current.to_s(:long)} by #{user.md_link}\n\n#### Notes:\n#{res_notes}"
+      if request
+        notes = "### Requested on #{Time.current.to_s(:long)} by "\
+          "#{user.md_link}\n\n#### Notes:\n#{res_notes}"
         r.approval_status = 'requested'
-        message << "Request for #{r.equipment_model.md_link} filed successfully. #{errors.to_sentence}\n"
+        message << "Request for #{r.equipment_model.md_link} filed "\
+          "successfully. #{errors.to_sentence}\n"
+      else
+        notes = "### Reserved on #{Time.current.to_s(:long)} by "\
+          "#{user.md_link}"
+        notes += "\n\n#### Notes:\n#{res_notes}" unless res_notes.nil? ||
+                                                        res_notes.empty?
+        r.approval_status = 'auto'
+        message << "Reservation for #{r.equipment_model.md_link} created "\
+          "successfully#{', even though ' + errors.to_sentence[0, 1].downcase\
+          + errors.to_sentence[1..-1] unless errors.empty?}.\n"
       end
       r.notes = notes
       r.save!
@@ -111,8 +118,7 @@ class Cart
   end
 
   def fix_due_date
-    if @start_date > @due_date
-      @due_date = @start_date + 1.day
-    end
+    return unless @start_date > @due_date
+    @due_date = @start_date + 1.day
   end
 end
