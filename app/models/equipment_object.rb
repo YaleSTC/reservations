@@ -11,8 +11,9 @@ class EquipmentObject < ActiveRecord::Base
 
   nilify_blanks only: [:deleted_at]
 
-  # table_name is needed to resolve ambiguity for certain queries with 'includes'
-  scope :active, lambda { where("#{table_name}.deleted_at is null") }
+  # table_name is needed to resolve ambiguity for certain queries with
+  # 'includes'
+  scope :active, ->() { where("#{table_name}.deleted_at is null") }
 
   searchable_on(:name, :serial)
 
@@ -21,8 +22,9 @@ class EquipmentObject < ActiveRecord::Base
       "Deactivated (#{deactivation_reason})"
     elsif self.deleted?
       'Deactivated'
-    elsif r = current_reservation
-      "checked out by #{r.reserver.name} through #{r.due_date.strftime('%b %d')}"
+    elsif r == current_reservation
+      "checked out by #{r.reserver.name} through "\
+        "#{r.due_date.strftime('%b %d')}"
     else
       'available'
     end
@@ -48,12 +50,15 @@ class EquipmentObject < ActiveRecord::Base
     count
   end
 
-  def make_reservation_notes(procedure_verb, reservation, handler, new_notes, time)
-    new_str = "#### [#{procedure_verb.capitalize}](#{reservation_path(reservation.id)}) by #{handler.md_link} for #{reservation.reserver.md_link} on #{time.to_s(:long)}\n"
-    unless new_notes.empty?
-      new_str += "##### Notes:\n#{new_notes}\n\n"
-    else
+  def make_reservation_notes(procedure_verb, reservation, handler, new_notes,
+                             time)
+    new_str = "#### [#{procedure_verb.capitalize}]("\
+      "#{reservation_path(reservation.id)}) by #{handler.md_link} for "\
+      "#{reservation.reserver.md_link} on #{time.to_s(:long)}\n"
+    if new_notes.empty?
       new_str += "\n"
+    else
+      new_str += "##### Notes:\n#{new_notes}\n\n"
     end
     new_str += notes
     update_attributes(notes: new_str)
@@ -63,17 +68,19 @@ class EquipmentObject < ActiveRecord::Base
     # set text depending on whether or not reservations are passed in
     old_res_msg = old_res ? old_res.md_link : 'available'
     new_res_msg = new_res ? new_res.md_link : 'available'
-    update_attributes(notes: "#### Switched by #{handler.md_link} from #{old_res_msg} to #{new_res_msg} on #{Time.current.to_s(:long)}\n\n" + notes)
+    update_attributes(notes: "#### Switched by #{handler.md_link} from "\
+      "#{old_res_msg} to #{new_res_msg} on "\
+      "#{Time.current.to_s(:long)}\n\n" + notes)
   end
 
-  def update(current_user, new_params)
+  def update(current_user, new_params) # rubocop:disable all
     assign_attributes(new_params)
     changes = self.changes
     if changes.empty?
       self
-      return
     else
-      new_notes = "#### Edited at #{Time.current.to_s(:long)} by #{current_user.md_link}\n\n"
+      new_notes = "#### Edited at #{Time.current.to_s(:long)} by "\
+        "#{current_user.md_link}\n\n"
       new_notes += "\n\n#### Changes:"
       changes.each do |param, diff|
         case param
@@ -90,7 +97,8 @@ class EquipmentObject < ActiveRecord::Base
           old_val = diff[0] ? EquipmentModel.find(diff[0]).name : 'nil'
           new_val = diff[1] ? EquipmentModel.find(diff[1]).name : 'nil'
         end
-        new_notes += "\n#{name} changed from " + old_val + ' to ' + new_val + '.' if old_val && new_val
+        new_notes += "\n#{name} changed from " + old_val + ' to ' + new_val\
+          + '.' if old_val && new_val
       end
     end
     new_notes += "\n\n" + notes
