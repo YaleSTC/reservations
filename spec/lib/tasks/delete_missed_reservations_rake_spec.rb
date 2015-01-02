@@ -5,7 +5,8 @@ describe 'delete_missed_reservations' do
   before(:each) do
     @app_configs = FactoryGirl.create(:app_config)
     @missed = FactoryGirl.create(:missed_reservation,
-                                 start_date: Date.current - 11.days, due_date: Date.current - 10.days)
+                                 start_date: Date.current - 11.days,
+                                 due_date: Date.current - 10.days)
     @not_missed = FactoryGirl.create(:valid_reservation)
   end
 
