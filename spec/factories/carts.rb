@@ -21,7 +21,11 @@ FactoryGirl.define do
       end
 
       start_date Date.current
-      due_date { Date.tomorrow + EquipmentModel.find(items.keys.first).category.max_checkout_length + 1.day }
+      due_date do
+        Date.tomorrow\
+        + EquipmentModel.find(items.keys.first).category.max_checkout_length\
+        + 1.day
+      end
     end
   end
 end
