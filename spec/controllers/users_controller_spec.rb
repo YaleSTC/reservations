@@ -49,7 +49,8 @@ describe UsersController, type: :controller do
       context 'possible netid provided' do
         before { post :quick_new, possible_netid: 'csw3' }
         it 'should assign @user to the possible netid' do
-          expect(assigns(:user).attributes).to eq(User.new(User.search_ldap('csw3')).attributes)
+          expect(assigns(:user).attributes).to\
+            eq(User.new(User.search_ldap('csw3')).attributes)
         end
       end
     end
@@ -120,7 +121,8 @@ describe UsersController, type: :controller do
     describe 'PUT update' do
       context 'with nice params' do
         before do
-          @new_attributes = FactoryGirl.attributes_for(:user, first_name: 'Lolita')
+          @new_attributes = FactoryGirl.attributes_for(:user,
+                                                       first_name: 'Lolita')
           put :update, user: @new_attributes, id: user
         end
         it 'should update the user' do
@@ -130,7 +132,9 @@ describe UsersController, type: :controller do
       end
       context 'without nice params' do
         before do
-          @bad_attributes = FactoryGirl.attributes_for(:user, first_name: 'Lolita', last_name: '')
+          @bad_attributes = FactoryGirl.attributes_for(:user,
+                                                       first_name: 'Lolita',
+                                                       last_name: '')
           put :update, user: @bad_attributes, id: user
         end
         it 'should not save' do
@@ -156,7 +160,10 @@ describe UsersController, type: :controller do
           it 'should assign user correctly' do
             expect(assigns(:user)).to eq(User.where(username: 'csw3').first)
           end
-          it { is_expected.to redirect_to(manage_reservations_for_user_path(assigns(:user))) }
+          it do
+            is_expected.to\
+              redirect_to(manage_reservations_for_user_path(assigns(:user)))
+          end
         end
         context 'invalid id' do
           before do
@@ -174,7 +181,10 @@ describe UsersController, type: :controller do
         it 'should assign user' do
           expect(assigns(:user)).to eq(user)
         end
-        it { is_expected.to redirect_to(manage_reservations_for_user_path(assigns(:user))) }
+        it do
+          is_expected.to\
+            redirect_to(manage_reservations_for_user_path(assigns(:user)))
+        end
       end
     end
     describe 'PUT ban' do

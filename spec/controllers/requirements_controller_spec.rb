@@ -1,7 +1,8 @@
 require 'spec_helper'
 
-# note, these tests are complex in order to test the admin security features -- namely, it was necessary
-# to test two contexts for each method: the user being an admin, and not.
+# note, these tests are complex in order to test the admin security features
+# -- namely, it was necessary to test two contexts for each method: the user
+# being an admin, and not.
 describe RequirementsController, type: :controller do
   before(:all) do
     @app_config = FactoryGirl.create(:app_config)
@@ -101,7 +102,10 @@ describe RequirementsController, type: :controller do
       end
       context 'with valid attributes' do
         before(:each) do
-          put :update, id: @requirement, requirement: FactoryGirl.attributes_for(:requirement, contact_name: 'John Doe')
+          put :update,
+              id: @requirement,
+              requirement: FactoryGirl.attributes_for(:requirement,
+                                                      contact_name: 'John Doe')
         end
         it 'should set @requirement to the correct requirement' do
           expect(assigns(:requirement)).to eq(@requirement)
@@ -115,7 +119,10 @@ describe RequirementsController, type: :controller do
       end
       context 'with invalid attributes' do
         before(:each) do
-          put :update, id: @requirement, requirement: FactoryGirl.attributes_for(:requirement, contact_name: '')
+          put :update,
+              id: @requirement,
+              requirement: FactoryGirl.attributes_for(:requirement,
+                                                      contact_name: '')
         end
         it 'should not update the attributes of @requirement' do
           @requirement.reload
@@ -129,7 +136,9 @@ describe RequirementsController, type: :controller do
     context 'not admin' do
       it 'should redirect to root url if not an admin' do
         sign_in FactoryGirl.create(:user)
-        get :update, id: @requirement, requirement: FactoryGirl.attributes_for(:requirement)
+        get :update,
+            id: @requirement,
+            requirement: FactoryGirl.attributes_for(:requirement)
         expect(response).to redirect_to(root_url)
       end
     end
@@ -153,11 +162,15 @@ describe RequirementsController, type: :controller do
       end
       context 'with invalid attributes' do
         before(:each) do
-          post :create, requirement: FactoryGirl.attributes_for(:requirement, contact_name: nil)
+          post :create,
+               requirement: FactoryGirl.attributes_for(:requirement,
+                                                       contact_name: nil)
         end
         it 'fails to save a new requirment' do
           expect do
-            post :create, requirement: FactoryGirl.attributes_for(:requirement, contact_name: nil)
+            post :create,
+                 requirement: FactoryGirl.attributes_for(:requirement,
+                                                         contact_name: nil)
           end.not_to change(Requirement, :count)
         end
         it { is_expected.not_to set_the_flash }

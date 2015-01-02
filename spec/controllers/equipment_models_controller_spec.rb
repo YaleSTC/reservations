@@ -22,7 +22,8 @@ shared_examples_for 'GET show success' do
     mod5 = FactoryGirl.create(:equipment_model)
     mod6 = FactoryGirl.create(:equipment_model)
     mod7 = FactoryGirl.create(:equipment_model)
-    model.associated_equipment_models = [mod1, mod2, mod3, mod4, mod5, mod6, mod7]
+    model.associated_equipment_models =
+      [mod1, mod2, mod3, mod4, mod5, mod6, mod7]
     get :show, id: model
     expect(assigns(:associated_equipment_models).size).to eq(6)
   end
@@ -39,22 +40,29 @@ shared_examples_for 'GET index success' do
                          deleted_at: Date.current)
     end
     context 'with @category set' do
-      it 'should populate an array of of active category-type equipment models' do
-        mod_same_cat_inactive = FactoryGirl.create(:equipment_model,
-                                                   category: model.category, deleted_at: Date.current)
+      it 'should populate an array of of active category-type equipment '\
+        'models' do
+        mod_same_cat_inactive =
+          FactoryGirl.create(:equipment_model, category: model.category,
+                                               deleted_at: Date.current)
         get :index, category_id: model.category
         expect(assigns(:equipment_models).include?(model)).to be_truthy
-        expect(assigns(:equipment_models).include?(mod_other_cat_active)).not_to be_truthy
-        expect(assigns(:equipment_models).include?(mod_same_cat_inactive)).not_to be_truthy
-        expect(assigns(:equipment_models).include?(mod_other_cat_inactive)).not_to be_truthy
+        expect(assigns(:equipment_models).include?(mod_other_cat_active))
+          .not_to be_truthy
+        expect(assigns(:equipment_models).include?(mod_same_cat_inactive))
+          .not_to be_truthy
+        expect(assigns(:equipment_models).include?(mod_other_cat_inactive))
+          .not_to be_truthy
         expect(assigns(:equipment_models).size).to eq(1)
       end
     end
     context 'without @category set' do
       it 'should populate an array of all active equipment models' do
         expect(assigns(:equipment_models).include?(model)).to be_truthy
-        expect(assigns(:equipment_models).include?(mod_other_cat_active)).to be_truthy
-        expect(assigns(:equipment_models).include?(mod_other_cat_inactive)).not_to be_truthy
+        expect(assigns(:equipment_models).include?(mod_other_cat_active))
+          .to be_truthy
+        expect(assigns(:equipment_models).include?(mod_other_cat_inactive))
+          .not_to be_truthy
         expect(assigns(:equipment_models).size).to eq(2)
       end
     end
@@ -67,13 +75,17 @@ shared_examples_for 'GET index success' do
     end
     context 'with @category set' do
       it 'should populate an array of category-type equipment models' do
-        mod_same_cat_inactive = FactoryGirl.create(:equipment_model,
-                                                   category: model.category, deleted_at: Date.current)
+        mod_same_cat_inactive =
+          FactoryGirl.create(:equipment_model, category: model.category,
+                                               deleted_at: Date.current)
         get :index, category_id: model.category, show_deleted: true
         expect(assigns(:equipment_models).include?(model)).to be_truthy
-        expect(assigns(:equipment_models).include?(mod_other_cat_active)).not_to be_truthy
-        expect(assigns(:equipment_models).include?(mod_same_cat_inactive)).to be_truthy
-        expect(assigns(:equipment_models).include?(mod_other_cat_inactive)).not_to be_truthy
+        expect(assigns(:equipment_models).include?(mod_other_cat_active))
+          .not_to be_truthy
+        expect(assigns(:equipment_models).include?(mod_same_cat_inactive))
+          .to be_truthy
+        expect(assigns(:equipment_models).include?(mod_other_cat_inactive))
+          .not_to be_truthy
         expect(assigns(:equipment_models).size).to eq(2)
       end
     end
@@ -81,8 +93,10 @@ shared_examples_for 'GET index success' do
       it 'should populate an array of all equipment models' do
         get :index, show_deleted: true
         expect(assigns(:equipment_models).include?(model)).to be_truthy
-        expect(assigns(:equipment_models).include?(mod_other_cat_active)).to be_truthy
-        expect(assigns(:equipment_models).include?(mod_other_cat_inactive)).to be_truthy
+        expect(assigns(:equipment_models).include?(mod_other_cat_active))
+          .to be_truthy
+        expect(assigns(:equipment_models).include?(mod_other_cat_inactive))
+          .to be_truthy
         expect(assigns(:equipment_models).size).to eq(3)
       end
     end
@@ -217,7 +231,8 @@ describe EquipmentModelsController, type: :controller do
     context 'with non-admin user' do
       before { sign_in FactoryGirl.create(:user) }
       it 'should redirect to root' do
-        post :create, equipment_model: FactoryGirl.attributes_for(:equipment_model)
+        post :create,
+             equipment_model: FactoryGirl.attributes_for(:equipment_model)
         expect(response).to redirect_to(root_url)
       end
     end
@@ -259,7 +274,9 @@ describe EquipmentModelsController, type: :controller do
     context 'with non-admin user' do
       before { sign_in FactoryGirl.create(:user) }
       it 'should redirect to root' do
-        put :update, id: model, equipment_model: FactoryGirl.attributes_for(:equipment_model)
+        put :update,
+            id: model,
+            equipment_model: FactoryGirl.attributes_for(:equipment_model)
         expect(response).to redirect_to(root_url)
       end
     end

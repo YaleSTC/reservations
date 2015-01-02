@@ -34,8 +34,10 @@ describe AnnouncementsController, type: :controller do
         get :new
       end
       it 'sets the default announcement' do
-        expect(assigns(:announcement)[:starts_at]).to eq(Time.current.midnight)
-        expect(assigns(:announcement)[:ends_at]).to eq(Time.current.midnight + 24.hours)
+        expect(assigns(:announcement)[:starts_at]).to\
+          eq(Time.current.midnight)
+        expect(assigns(:announcement)[:ends_at]).to\
+          eq(Time.current.midnight + 24.hours)
       end
       it_behaves_like 'page success'
       it { is_expected.to render_template(:new) }
@@ -57,8 +59,10 @@ describe AnnouncementsController, type: :controller do
           expect(Announcement.find(assigns(:announcement))).not_to be_nil
         end
         it 'should pass the correct params' do
-          expect(assigns(:announcement)[:starts_at].to_date).to eq(@attributes[:starts_at].to_date)
-          expect(assigns(:announcement)[:ends_at].to_date).to eq(@attributes[:ends_at].to_date)
+          expect(assigns(:announcement)[:starts_at].to_date).to\
+            eq(@attributes[:starts_at].to_date)
+          expect(assigns(:announcement)[:ends_at].to_date).to\
+            eq(@attributes[:ends_at].to_date)
         end
         it { is_expected.to redirect_to(announcements_path) }
         it { is_expected.to set_the_flash }
@@ -76,10 +80,12 @@ describe AnnouncementsController, type: :controller do
       before do
         @new_attributes = FactoryGirl.attributes_for(:announcement)
         @new_attributes[:message] = 'New Message!!'
-        put :update, id: FactoryGirl.create(:announcement), announcement: @new_attributes
+        put :update, id: FactoryGirl.create(:announcement),
+                     announcement: @new_attributes
       end
       it 'updates the announcement' do
-        expect(assigns(:announcement)[:message]).to eq(@new_attributes[:message])
+        expect(assigns(:announcement)[:message]).to\
+          eq(@new_attributes[:message])
       end
     end
     context 'DELETE destroy' do

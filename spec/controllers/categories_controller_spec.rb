@@ -9,7 +9,8 @@ describe CategoriesController, type: :controller do
   end
   describe 'GET index' do
     before(:each) do
-      @inactive_category = FactoryGirl.create(:category, deleted_at: Date.current - 1)
+      @inactive_category =
+        FactoryGirl.create(:category, deleted_at: Date.current - 1)
     end
     context 'user is admin' do
       before(:each) do
@@ -20,7 +21,8 @@ describe CategoriesController, type: :controller do
         get :index, show_deleted: true
         expect(assigns(:categories)).to eq([@category, @inactive_category])
       end
-      it 'should populate an array of active categories if show deleted is nil or false' do
+      it 'should populate an array of active categories if show deleted is '\
+        'nil or false' do
         expect(assigns(:categories)).to eq([@category])
       end
       it { is_expected.to respond_with(:success) }
@@ -100,11 +102,13 @@ describe CategoriesController, type: :controller do
       end
       context 'with invalid attributes' do
         before(:each) do
-          post :create, category: FactoryGirl.attributes_for(:category, name: nil)
+          post :create,
+               category: FactoryGirl.attributes_for(:category, name: nil)
         end
         it 'fails to save a new category' do
           expect do
-            post :create, category: FactoryGirl.attributes_for(:category, name: nil)
+            post :create,
+                 category: FactoryGirl.attributes_for(:category, name: nil)
           end.not_to change(Category, :count)
         end
         it { is_expected.to set_the_flash }
@@ -147,7 +151,9 @@ describe CategoriesController, type: :controller do
       end
       context 'with valid attributes' do
         before(:each) do
-          put :update, id: @category, category: FactoryGirl.attributes_for(:category, name: 'Updated')
+          put :update,
+              id: @category,
+              category: FactoryGirl.attributes_for(:category, name: 'Updated')
         end
         it 'should set @category to the correct category' do
           expect(assigns(:category)).to eq(@category)
@@ -161,7 +167,11 @@ describe CategoriesController, type: :controller do
       end
       context 'with invalid attributes' do
         before(:each) do
-          put :update, id: @category, category: FactoryGirl.attributes_for(:category, name: nil, max_per_user: 10)
+          put :update,
+              id: @category,
+              category: FactoryGirl.attributes_for(:category,
+                                                   name: nil,
+                                                   max_per_user: 10)
         end
         it 'should not update attributes of @category in the database' do
           @category.reload

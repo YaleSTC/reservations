@@ -50,7 +50,8 @@ describe BlackoutsController, type: :controller do
       it_behaves_like 'page success'
       context 'recurring blackout' do
         it 'should display the correct set' do
-          expect(assigns(:blackout_set).uniq.sort).to eq(@blackout_set.uniq.sort)
+          expect(assigns(:blackout_set).uniq.sort).to\
+            eq(@blackout_set.uniq.sort)
         end
         # the above code doesn't work; i'm too much of an rspec newbie
       end
@@ -101,14 +102,17 @@ describe BlackoutsController, type: :controller do
       context 'with conflicting reservation' do
         before do
           @res = FactoryGirl.create(:valid_reservation, due_date: Date.tomorrow)
-          @attributes = FactoryGirl.attributes_for(:blackout, days: ["#{Date.tomorrow.wday}"])
+          @attributes =
+            FactoryGirl.attributes_for(:blackout,
+                                       days: ["#{Date.tomorrow.wday}"])
           post :create_recurring, blackout: @attributes
         end
 
         it { is_expected.to set_the_flash }
         it { is_expected.to render_template('new_recurring') }
         it 'should not save the blackouts' do
-          expect { post :create_recurring, blackout: @attributes }.not_to change { Blackout.all.count }
+          expect { post :create_recurring, blackout: @attributes }.not_to \
+            change { Blackout.all.count }
         end
       end
     end
@@ -123,9 +127,11 @@ describe BlackoutsController, type: :controller do
         end
         it 'should pass the correct params' do
           expect(assigns(:blackout)[:notice]).to eq(@attributes[:notice])
-          expect(assigns(:blackout)[:start_date]).to eq(@attributes[:start_date])
+          expect(assigns(:blackout)[:start_date]).to\
+            eq(@attributes[:start_date])
           expect(assigns(:blackout)[:end_date]).to eq(@attributes[:end_date])
-          expect(assigns(:blackout)[:blackout_type]).to eq(@attributes[:blackout_type])
+          expect(assigns(:blackout)[:blackout_type]).to\
+            eq(@attributes[:blackout_type])
         end
         it { is_expected.to redirect_to(blackout_path(assigns(:blackout))) }
         it { is_expected.to set_the_flash }
@@ -141,14 +147,18 @@ describe BlackoutsController, type: :controller do
       context 'with conflicting reservation' do
         before do
           @res = FactoryGirl.create(:valid_reservation, due_date: Date.tomorrow)
-          @attributes = FactoryGirl.attributes_for(:blackout, start_date: Date.current, end_date: Date.current + 2.days)
+          @attributes =
+            FactoryGirl.attributes_for(:blackout,
+                                       start_date: Date.current,
+                                       end_date: Date.current + 2.days)
           post :create, blackout: @attributes
         end
 
         it { is_expected.to set_the_flash }
         it { is_expected.to render_template(:new) }
         it 'should not save the blackout' do
-          expect { post :create, blackout: @attributes }.not_to change { Blackout.all.count }
+          expect { post :create, blackout: @attributes }.not_to\
+            change { Blackout.all.count }
         end
       end
     end
@@ -157,7 +167,8 @@ describe BlackoutsController, type: :controller do
         before do
           @new_attributes = FactoryGirl.attributes_for(:blackout)
           @new_attributes[:notice] = 'New Message!!'
-          put :update, id: FactoryGirl.create(:blackout), blackout: @new_attributes
+          put :update, id: FactoryGirl.create(:blackout),
+                       blackout: @new_attributes
         end
         it 'updates the blackout' do
           expect(assigns(:blackout)[:notice]).to eq(@new_attributes[:notice])
@@ -167,7 +178,8 @@ describe BlackoutsController, type: :controller do
         before do
           @new_attributes = FactoryGirl.attributes_for(:blackout)
           @new_attributes[:notice] = 'New Message!!'
-          put :update, id: FactoryGirl.create(:blackout, set_id: 1), blackout: @new_attributes
+          put :update, id: FactoryGirl.create(:blackout, set_id: 1),
+                       blackout: @new_attributes
         end
         it 'updates the blackout' do
           expect(assigns(:blackout)[:notice]).to eq(@new_attributes[:notice])

@@ -21,7 +21,7 @@ class ReservationsController < ApplicationController
 
   public
 
-  def index
+  def index # rubocop:disable CyclomaticComplexity
     # define our source of reservations depending on user status
     @reservations_source =
       (can? :manage, Reservation) ? Reservation : current_user.reservations
@@ -100,7 +100,6 @@ class ReservationsController < ApplicationController
 
     Reservation.transaction do
       begin
-
         start_date = cart.start_date
         reserver = cart.reserver_id
         if requested

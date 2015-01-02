@@ -2,9 +2,11 @@ require 'spec_helper'
 
 class TestController < ApplicationController
   before_filter :require_admin, only: [:method_requiring_admin]
-  before_filter :require_checkout_person, only: [:method_requiring_checkout_person]
+  before_filter :require_checkout_person,
+                only: [:method_requiring_checkout_person]
   before_filter :require_login, only: [:method_requiring_login]
-  before_filter :require_user_or_checkout_person, only: [:method_requiring_user_or_checkout_person]
+  before_filter :require_user_or_checkout_person,
+                only: [:method_requiring_user_or_checkout_person]
   before_filter :require_user, only: [:method_requiring_user]
 
   def index
@@ -47,7 +49,8 @@ end
 describe TestController, type: :controller do
   before(:each) do
     @app_config = FactoryGirl.create(:app_config)
-    @first_user = FactoryGirl.create(:user) # this is to ensure that all before_filters are run
+    # this is to ensure that all before_filters are run
+    @first_user = FactoryGirl.create(:user)
     allow(controller).to receive(:app_setup_check)
     allow(controller).to receive(:load_configs)
     allow(controller).to receive(:seen_app_configs)
@@ -156,12 +159,14 @@ describe TestController, type: :controller do
       get :index
       expect(session[:cart].reserver_id).to eq(@user.id)
     end
-    it 'sets the session[:cart].reserver_id to current_user.id if !cart.reserver_id && current_user' do
+    it 'sets the session[:cart].reserver_id to current_user.id if '\
+      '!cart.reserver_id && current_user' do
       session[:cart] = Cart.new
       get :index
       expect(session[:cart].reserver_id).to eq(@user.id)
     end
-    it 'returns session[:cart] without a reserver_id if !cart.reserver_id && !current_user' do
+    it 'returns session[:cart] without a reserver_id if !cart.reserver_id '\
+      '&& !current_user' do
       sign_out @user
       session[:cart] = Cart.new
       get :index
@@ -196,7 +201,8 @@ end
 describe ApplicationController, type: :controller do
   before(:each) do
     @app_config = FactoryGirl.create(:app_config)
-    @first_user = FactoryGirl.create(:user) # this is to ensure that all before_filters are run
+    # this is to ensure that all before_filters are run
+    @first_user = FactoryGirl.create(:user)
     allow(controller).to receive(:app_setup_check)
     allow(controller).to receive(:load_configs)
     allow(controller).to receive(:seen_app_configs)
@@ -207,7 +213,7 @@ describe ApplicationController, type: :controller do
     sign_in FactoryGirl.create(:user)
   end
 
-  # TODO - This may involve rewriting the method somewhat
+  # TODO: This may involve rewriting the method somewhat
   describe 'PUT update_cart' do
     before(:each) do
       session[:cart] = Cart.new
@@ -215,7 +221,9 @@ describe ApplicationController, type: :controller do
       session[:cart].start_date = (Date.current + 1.day)
       session[:cart].due_date = (Date.current + 2.days)
 
-      equipment_model = FactoryGirl.create(:equipment_model, category: FactoryGirl.create(:category))
+      equipment_model =
+        FactoryGirl.create(:equipment_model,
+                           category: FactoryGirl.create(:category))
       session[:cart].add_item(equipment_model)
       @new_reserver = FactoryGirl.create(:user)
     end
@@ -225,7 +233,9 @@ describe ApplicationController, type: :controller do
         new_start = Date.current + 3.days
         new_end = Date.current + 4.days
 
-        put :update_cart, cart: { start_date_cart: new_start, due_date_cart: new_end }, reserver_id: @new_reserver.id
+        put :update_cart, cart: { start_date_cart: new_start,
+                                  due_date_cart: new_end },
+                          reserver_id: @new_reserver.id
 
         expect(session[:cart].start_date).to eq(new_start)
         expect(session[:cart].due_date).to eq(new_end)
@@ -242,7 +252,10 @@ describe ApplicationController, type: :controller do
         new_start = Date.current - 300.days
         new_end = Date.current + 4000.days
 
-        put :update_cart, cart: { start_date_cart: new_start.strftime('%m/%d/%Y'), due_date_cart: new_end.strftime('%m/%d/%Y') }, reserver_id: @new_reserver.id
+        put :update_cart,
+            cart: { start_date_cart: new_start.strftime('%m/%d/%Y'),
+                    due_date_cart: new_end.strftime('%m/%d/%Y') },
+            reserver_id: @new_reserver.id
 
         expect(flash).not_to be_empty
       end
@@ -275,7 +288,8 @@ describe ApplicationController, type: :controller do
   end
 
   describe 'PUT deactivate' do
-    it 'should assign @objects_class2 to the object and controller specified by params'
+    it 'should assign @objects_class2 to the object and controller '\
+      'specified by params'
     it 'should delete @objects_class2'
     it 'should set the flash'
     it 'should redirect to request.referer'
@@ -294,6 +308,7 @@ describe ApplicationController, type: :controller do
       get :markdown_help
     end
     it { is_expected.to render_template('shared/_markdown_help') }
-    # TODO: not sure how to make sure that the js template is being rendered as well.
+    # TODO: not sure how to make sure that the js template is being rendered
+    # as well.
   end
 end

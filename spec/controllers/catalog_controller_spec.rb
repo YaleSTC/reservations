@@ -11,7 +11,8 @@ describe CatalogController, type: :controller do
   end
   describe 'GET index' do
     before(:each) do
-      get :index, {} # , { cart: @cart } # the first hash passed here is params[] and the second is session[]
+      # the first hash passed here is params[] and the second is session[]
+      get :index, {} # , { cart: @cart }
     end
     it 'sets @reserver_id to the current cart.reserver_id' do
       expect(assigns(:reserver_id)).to eq(@user.id)
@@ -40,13 +41,16 @@ describe CatalogController, type: :controller do
     end
     context 'invalid equipment_model selected' do
       before(:each) do
-        put :add_to_cart,  id: 1  # there are no equipment models in the db so this is invalid
+        # there are no equipment models in the db so this is invalid
+        put :add_to_cart, id: 1
       end
       it { is_expected.to redirect_to(root_path) }
       it { is_expected.to set_the_flash }
       it 'should add logger error' do
-        expect(Rails.logger).to receive(:error).with("Attempt to add invalid equipment model #{1}")
-        put :add_to_cart,  id: 1  # this call has to come after the previous line
+        expect(Rails.logger).to\
+          receive(:error).with('Attempt to add invalid equipment model 1')
+        # this call has to come after the previous line
+        put :add_to_cart, id: 1
       end
     end
   end
@@ -63,8 +67,12 @@ describe CatalogController, type: :controller do
           put :remove_from_cart, id: @equipment_model.id
         end.to change { session[:cart].items.size }.by(-1)
       end
-      it 'should set flash[:error] to the result of Reservation.validate_set if exists' do
-        allow(Reservation).to receive(:validate_set).with(session[:cart].reserver, session[:cart].prepare_all).and_return('test')
+      it 'should set flash[:error] to the result of '\
+        'Reservation.validate_set if exists' do
+        allow(Reservation).to\
+          receive(:validate_set).with(session[:cart].reserver,
+                                      session[:cart].prepare_all)
+          .and_return('test')
         expect(flash[:error]).not_to be_nil
       end
       it { is_expected.to redirect_to(root_path) }
@@ -76,7 +84,8 @@ describe CatalogController, type: :controller do
       it { is_expected.to redirect_to(root_path) }
       it { is_expected.to set_the_flash }
       it 'should add logger error' do
-        expect(Rails.logger).to receive(:error).with("Attempt to add invalid equipment model #{1}")
+        expect(Rails.logger).to\
+          receive(:error).with('Attempt to add invalid equipment model 1')
         put :remove_from_cart, id: 1
       end
     end
@@ -85,11 +94,13 @@ describe CatalogController, type: :controller do
     before(:each) do
       put :update_user_per_cat_page
     end
-    it 'should set session[:items_per_page] to params[items_per_page] if exists' do
+    it 'should set session[:items_per_page] to params[items_per_page] '\
+      'if exists' do
       put :update_user_per_cat_page, items_per_page: 20
       expect(session[:items_per_page]).to eq('20')
     end
-    it 'should not alter session[:items_per_page] if params[:items_per_page] is nil' do
+    it 'should not alter session[:items_per_page] if '\
+      'params[:items_per_page] is nil' do
       session[:items_per_page] = '15'
       put :update_user_per_cat_page, items_per_page: nil
       expect(session[:items_per_page]).not_to eq(nil)
@@ -98,8 +109,8 @@ describe CatalogController, type: :controller do
     it { is_expected.to redirect_to(root_path) }
   end
 
-  # I don't like that this test is actually searching the database, but unfortunately
-  # I couldn't get the model methods to stub correctly
+  # I don't like that this test is actually searching the database, but
+  # unfortunately I couldn't get the model methods to stub correctly
   describe 'PUT search' do
     context 'query is blank' do
       before(:each) do
@@ -108,15 +119,21 @@ describe CatalogController, type: :controller do
       it { is_expected.to redirect_to(root_path) }
     end
     context 'query is not blank' do
-      it 'should call catalog_search on EquipmentModel and return active equipment models' do
-        @equipment_model = FactoryGirl.create(:equipment_model, active: true, description: 'query')
-        # EquipmentModel.stub(:catelog_search).with('query').and_return(@equipment_model)
+      it 'should call catalog_search on EquipmentModel and return active '\
+        'equipment models' do
+        @equipment_model = FactoryGirl.create(:equipment_model,
+                                              active: true,
+                                              description: 'query')
+        # EquipmentModel.stub(:catelog_search).with('query')
+        #   .and_return(@equipment_model)
         put :search,  query: 'query'
         expect(assigns(:equipment_model_results)).to eq([@equipment_model])
       end
       it 'should call catalog_search on EquipmentObject' do
-        @equipment_object = FactoryGirl.create(:equipment_object, serial: 'query')
-        # EquipmentObject.stub(:catelog_search).with('query').and_return(@equipment_object)
+        @equipment_object =
+          FactoryGirl.create(:equipment_object, serial: 'query')
+        # EquipmentObject.stub(:catelog_search).with('query')
+        #   .and_return(@equipment_object)
         put :search,  query: 'query'
         expect(assigns(:equipment_object_results)).to eq([@equipment_object])
       end

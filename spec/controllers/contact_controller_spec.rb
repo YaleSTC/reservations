@@ -29,7 +29,8 @@ describe ContactController, type: :controller do
         post :create, message: FactoryGirl.attributes_for(:message)
       end
       it 'sends a message' do
-        expect(ActionMailer::Base.deliveries.last.subject).to eq('[Reservations Specs] ' + FactoryGirl.build(:message).subject)
+        expect(ActionMailer::Base.deliveries.last.subject).to\
+          eq('[Reservations Specs] ' + FactoryGirl.build(:message).subject)
       end
       it { is_expected.to redirect_to(root_path) }
       it { is_expected.to set_the_flash }
