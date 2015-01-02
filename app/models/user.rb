@@ -27,25 +27,28 @@ class User < ActiveRecord::Base
   validates :first_name,
             :last_name,
             :affiliation, presence: true
-  validates :phone,       presence:    true,
-                          format:      { with: /\A\S[0-9\+\/\(\)\s\-]*\z/i },
-                          length:      { minimum: 10 }, unless: lambda { |x| x.skip_phone_validation? }
+  validates :phone, presence: true,
+                    format: { with: /\A\S[0-9\+\/\(\)\s\-]*\z/i },
+                    length: { minimum: 10 },
+                    unless: ->(u) { u.skip_phone_validation? }
 
-  validates :email,       presence:    true,
-                          uniqueness: true,
-                          format:      { with: /\A([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})\z/i }
+  validates :email,
+            presence: true, uniqueness: true,
+            format: { with: /\A([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})\z/i }
   # validations for password authentication
   unless ENV['CAS_AUTH']
     # only run password validatons if the parameter is present
     validates :password,  presence: true,
-                          length: { minimum: 8 }, unless: lambda { |u| u.password.nil? }
+                          length: { minimum: 8 },
+                          unless: ->(u) { u.password.nil? }
     # check password confirmations
     validates_confirmation_of :password, only: :create
   end
   validates :nickname,    format:      { with: /\A[^0-9`!@#\$%\^&*+_=]+\z/ },
                           allow_blank: true
   validates :terms_of_service_accepted,
-            acceptance: { accept: true, message: 'You must accept the terms of service.' },
+            acceptance: { accept: true,
+                          message: 'You must accept the terms of service.' },
             on: :create,
             if: proc { |u| !u.created_by_admin == 'true' }
   roles = %w(admin normal checkout superuser banned)
@@ -53,9 +56,10 @@ class User < ActiveRecord::Base
   validates :view_mode,   inclusion: { in: roles << 'guest' }
   validate :view_mode_reset
 
-  # table_name is needed to resolve ambiguity for certain queries with 'includes'
-  scope :active, lambda { where("role != 'banned'") }
-  scope :no_phone, lambda { where('phone = ? OR phone IS NULL', '') }
+  # table_name is needed to resolve ambiguity for certain queries with
+  # 'includes'
+  scope :active, ->() { where("role != 'banned'") }
+  scope :no_phone, ->() { where('phone = ? OR phone IS NULL', '') }
 
   # ------- validations -------- #
   def skip_phone_validation?
@@ -80,29 +84,33 @@ class User < ActiveRecord::Base
     reservations.collect(&:equipment_object).flatten
   end
 
-  def self.search_ldap(login)
+  def self.search_ldap(login) # rubocop:disable AbcSize
     return nil if login.blank?
 
     ldap = Net::LDAP.new(host: 'directory.yale.edu', port: 389)
     filter = Net::LDAP::Filter.eq('uid', login)
-    attrs = %w(givenname sn eduPersonNickname telephoneNumber uid mail collegename curriculumshortname college class)
-    result = ldap.search(base: 'ou=People,o=yale.edu', filter: filter, attributes: attrs)
+    attrs = %w(givenname sn eduPersonNickname telephoneNumber uid mail \
+               collegename curriculumshortname college class)
+    result = ldap.search(base: 'ou=People,o=yale.edu', filter: filter,
+                         attributes: attrs)
     unless result.empty?
       return { first_name:  result[0][:givenname][0],
                last_name:   result[0][:sn][0],
                nickname:    result[0][:eduPersonNickname][0],
                # :phone     => result[0][:telephoneNumber][0],
-               # Above line removed because the phone number in the Yale phonebook is always wrong
+               # Above line removed because the phone number in the Yale
+               # phonebook is always wrong
                username:       result[0][:uid][0],
                email:       result[0][:mail][0],
-               affiliation: [result[0][:curriculumshortname],
-                             result[0][:college],
-                             result[0][:class]].select { |s| s.length > 0 }.join(' ') }
+               affiliation:
+                [result[0][:curriculumshortname], result[0][:college],
+                 result[0][:class]].select { |s| s.length > 0 }.join(' ') }
     end
   end
 
   def self.select_options
-    User.order('last_name ASC').all.collect { |item| ["#{item.last_name}, #{item.first_name}", item.id] }
+    User.order('last_name ASC').all
+      .collect { |item| ["#{item.last_name}, #{item.first_name}", item.id] }
   end
 
   def render_name
