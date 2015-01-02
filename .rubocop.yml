@@ -3,10 +3,12 @@ AllCops:
   Include:
     - '**/Rakefile'
     - '**/config.ru'
-    - 'lib/tasks/*'
+    - 'lib/**/*'
   Exclude:
     - 'db/**/*'
-    - 'config/**/*'
+    # check config files to ensure initializers / environment files are
+    # cleanly written
+    # - 'config/**/*'
     - 'script/**/*'
     - 'vendor/**/*'
 # disable the documentation check at the start of classes / modules
