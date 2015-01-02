@@ -18,5 +18,9 @@ MethodLength:
 #   http://codereview.stackexchange.com/a/69806
 AbcSize:
   Max: 30
+# allow for accessor-like method ending in ?
 TrivialAccessors:
   AllowPredicates: true
+# allow has_and_belongs_to_many
+HasAndBelongsToMany:
+  Enabled: false
