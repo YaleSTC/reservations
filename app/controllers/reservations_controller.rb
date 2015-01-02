@@ -38,7 +38,7 @@ class ReservationsController < ApplicationController
     @default = false
     # if no filter is defined
     return unless @reservations_set.nil?
-    @default = trueif AppConfig.first.request_text.empty?
+    @default = true if AppConfig.first.request_text.empty?
     @reservations_set = @reservations_source.send(default_filter)
   end
 

@@ -42,7 +42,7 @@ class User < ActiveRecord::Base
                           length: { minimum: 8 },
                           unless: ->(u) { u.password.nil? }
     # check password confirmations
-    validates :password, confirmation: :true, only: :create
+    validates :password, confirmation: :true, on: :create
   end
   validates :nickname,    format:      { with: /\A[^0-9`!@#\$%\^&*+_=]+\z/ },
                           allow_blank: true
