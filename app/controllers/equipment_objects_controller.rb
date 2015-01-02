@@ -84,8 +84,8 @@ class EquipmentObjectsController < ApplicationController
           current_user,
           'The equipment item was deactivated for the following reason: '\
           "**#{params[:deactivation_reason]}**").save(validate: false)
-        super
       end
+      super
     elsif params[:deactivation_cancelled]
       flash[:notice] = 'Deactivation cancelled.'
       redirect_to @equipment_object.equipment_model

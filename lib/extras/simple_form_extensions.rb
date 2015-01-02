@@ -11,7 +11,8 @@ module WrappedButton
         [loading, options[:"data-loading-text"]].compact
       options[:class] = ['btn', options[:class]].compact
       args << options
-      if cancel == options.delete(:cancel)
+      # rubocop:disable AssignmentInCondition
+      if cancel = options.delete(:cancel)
         submit(*args, &block) + ' '\
         + template.link_to(
           template.button_tag(I18n.t('simple_form.buttons.cancel'),
@@ -19,6 +20,7 @@ module WrappedButton
       else
         submit(*args, &block)
       end
+      # rubocop:enable AssignmentInCondition
     end
   end
 end

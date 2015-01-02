@@ -22,7 +22,7 @@ class EquipmentObject < ActiveRecord::Base
       "Deactivated (#{deactivation_reason})"
     elsif self.deleted?
       'Deactivated'
-    elsif r == current_reservation
+    elsif r = current_reservation # rubocop:disable AssignmentInCondition
       "checked out by #{r.reserver.name} through "\
         "#{r.due_date.strftime('%b %d')}"
     else
