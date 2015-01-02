@@ -4,7 +4,6 @@ class TestController < ApplicationController
   before_filter :require_admin, only: [:method_requiring_admin]
   before_filter :require_checkout_person,
                 only: [:method_requiring_checkout_person]
-  before_filter :require_login, only: [:method_requiring_login]
   before_filter :require_user_or_checkout_person,
                 only: [:method_requiring_user_or_checkout_person]
   before_filter :require_user, only: [:method_requiring_user]
@@ -31,10 +30,6 @@ class TestController < ApplicationController
 
   def method_requiring_checkout_person
     render text: 'checkout person required!'
-  end
-
-  def method_requiring_login
-    render text: 'you must be logged in!'
   end
 
   def method_requiring_user_or_checkout_person
