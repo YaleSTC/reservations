@@ -1,5 +1,6 @@
 module CsvImport
-  # method used to convert a csv filepath to an array of objects specified by the file
+  # method used to convert a csv filepath to an array of objects specified by
+  # the file
   def csv_import(filepath)
     # initialize
     imported_objects = []
@@ -12,9 +13,7 @@ module CsvImport
 
       # make all nil values blank
       object_hash.keys.each do |key|
-        if object_hash[key].nil?
-          object_hash[key] = ''
-        end
+        object_hash[key] = '' if object_hash[key].nil?
       end
       imported_objects << object_hash
     end
@@ -22,10 +21,11 @@ module CsvImport
     imported_objects
   end
 
-  # The main import method. Pass in the array of imported objects from csv_import,
-  # the overwrite boolean, and the user type. The safe defaults are specified here.
-  # It first tries to save or update the user with the data specified in the csv. If that
-  # fails, it tries ldap. If both fail, the user is returned as part of the array of failures.
+  # The main import method. Pass in the array of imported objects from
+  # csv_import, the overwrite boolean, and the user type. The safe defaults
+  # are specified here. It first tries to save or update the user with the
+  # data specified in the csv. If that fails, it tries ldap. If both fail,
+  # the user is returned as part of the array of failures.
   def import_users(array_of_user_data, overwrite = false, user_type = 'normal')
     @array_of_success = [] # will contain user-objects
     @array_of_fail = [] # will contain user_data hashes and error messages
@@ -42,19 +42,19 @@ module CsvImport
       end
     end
 
+    # rubocop:disable UnusedLocalVariable, UselessAssignment
     hash_of_statuses = { success: @array_of_success, fail: @array_of_fail }
+    # rubocop:enable UnusedLocalVariable, UselessAssignment
   end
 
-  # attempts to import with LDAP, returns nil if the login is not found, otherwise it
-  # replaces the keys in the data hash with the ldap data.
+  # attempts to import with LDAP, returns nil if the login is not found,
+  # otherwise it replaces the keys in the data hash with the ldap data.
   def import_with_ldap(user_data_hash)
     # check LDAP for missing data
     ldap_user_hash = User.search_ldap(user_data_hash[:username])
 
     # if nothing found via LDAP
-    if ldap_user_hash.nil?
-      return
-    end
+    return if ldap_user_hash.nil?
 
     # fill-in missing key-values with LDAP data
     user_data_hash.keys.each do |key|
@@ -71,7 +71,8 @@ module CsvImport
     user = set_or_create_user_for_import(user_data)
 
     user.update_attributes(user_data)
-    # if the updated or new user is valid, save to database and add to array of successful imports
+    # if the updated or new user is valid, save to database and add to array
+    # of successful imports
     if user.valid?
       user.save
       @array_of_success << user
@@ -87,7 +88,9 @@ module CsvImport
     if ldap_hash
       user_data = ldap_hash
     else
-      @array_of_fail << [user_data, 'Incomplete user information. Unable to find user in online directory (LDAP).']
+      @array_of_fail << [user_data,
+                         'Incomplete user information. Unable to find user '\
+                         'in online directory (LDAP).']
       return
     end
 
@@ -98,12 +101,15 @@ module CsvImport
       @array_of_success << user
       return
     else
-      @array_of_fail << [user_data, user.errors.full_messages.to_sentence.capitalize + '.']
+      @array_of_fail << [user_data,
+                         user.errors.full_messages.to_sentence.capitalize\
+                         + '.']
       return
     end
   end
 
   # sets the user based on the overwrite parameter
+  # rubocop:disable AccessorMethodName
   def set_or_create_user_for_import(user_data)
     # set the user and attempt to save with given data
     if @overwrite && (User.where('username = ?', user_data[:username]).size > 0)
@@ -113,4 +119,5 @@ module CsvImport
     end
     user
   end
+  # rubocop:enable AccessorMethodName
 end

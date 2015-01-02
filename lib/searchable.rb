@@ -1,5 +1,5 @@
 module Searchable
-  def self.included(base)
+  def self.included(base) # rubocop:disable MethodLength
     def base.searchable_on(*args)
       @searchable_attrs = args
     end
@@ -13,10 +13,12 @@ module Searchable
         query.split.each do |q|
           query_results = []
           @searchable_attrs.each do |attribute|
-            query_results << active.where("#{attribute} LIKE :query", query: "%#{q}%")
+            query_results << active.where("#{attribute} LIKE :query",
+                                          query: "%#{q}%")
           end
           # remove duplicate items in case they were added more than once
-          # e.g. a term match in both name and description results in an item being added twice
+          # e.g. a term match in both name and description results in an item
+          # being added twice
           query_results.uniq!
           # flatten all elements associated with one query word into a 1D array
           query_results.flatten!
