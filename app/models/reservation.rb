@@ -1,3 +1,4 @@
+# rubocop:disable ClassLength
 class Reservation < ActiveRecord::Base
   include ReservationValidations
   include ReservationScopes
@@ -34,7 +35,10 @@ class Reservation < ActiveRecord::Base
     # this code is used largely in validations because it uses 0 queries
     count = 0
     source.each do |r|
-      count += 1 if r.start_date.to_date <= date && r.due_date.to_date >= date && r.equipment_model_id == model_id
+      if r.start_date.to_date <= date && r.due_date.to_date >= date &&
+         r.equipment_model_id == model_id
+        count += 1
+      end
     end
     count
   end
@@ -42,7 +46,10 @@ class Reservation < ActiveRecord::Base
   def self.number_for_category_on_date(date, category_id, reservations)
     count = 0
     reservations.each do |r|
-      count += 1 if r.start_date.to_date <= date && r.due_date.to_date >= date && r.equipment_model.category_id == category_id
+      if r.start_date.to_date <= date && r.due_date.to_date >= date &&
+         r.equipment_model.category_id == category_id
+        count += 1
+      end
     end
     count
   end
@@ -63,14 +70,15 @@ class Reservation < ActiveRecord::Base
 
   ## Getter style instance methods ##
 
-  def status
+  def status # rubocop:disable CyclomaticComplexity, PerceivedComplexity
     if checked_out.nil?
       if approval_status == 'auto' || approval_status == 'approved'
         due_date >= Date.current ? 'reserved' : 'missed'
       elsif approval_status
         approval_status
       else
-        '?' # ... is this just in case an admin does something absurd in the database?
+        # just in case an admin does something absurd in the database?
+        '?'
       end
     elsif checked_in.nil?
       due_date < Date.current ? 'overdue' : 'checked out'
@@ -115,20 +123,20 @@ class Reservation < ActiveRecord::Base
 
     eq_model.maximum_renewal_length.downto(1).each do |r|
       renew_extension.due_date = orig_due_date + r.days
-      if renew_extension.validate_renew.empty?
-        return renew_extension.due_date
-      end
+      return renew_extension.due_date if renew_extension.validate_renew.empty?
     end
     due_date
   end
 
-  def is_eligible_for_renew?
-    # determines if a reservation is eligible for renewal, based on how many days before the due
-    # date it is and the max number of times one is allowed to renew
+  def eligible_for_renew?
+    # determines if a reservation is eligible for renewal, based on how many
+    # days before the due date it is and the max number of times one is
+    # allowed to renew
     #
     self.times_renewed ||= 0
 
-    # you can't renew a checked in reservation, or one without an equipment model
+    # you can't renew a checked in reservation, or one without an equipment
+    # model
     return false if checked_in || equipment_object.nil?
 
     max_renewal_times = equipment_model.maximum_renewal_times
@@ -152,9 +160,13 @@ class Reservation < ActiveRecord::Base
 
   def renew(user)
     # renew the reservation and return error messages if unsuccessful
-    return 'Reservation not eligible for renewal' unless self.is_eligible_for_renew?
+    unless self.eligible_for_renew?
+      return 'Reservation not eligible for renewal'
+    end
     self.due_date = find_renewal_date
-    self.notes = "#{notes}" + "\n\n### Renewed on #{Time.current.to_s(:long)} by #{user.md_link}\n\nThe new due date is #{due_date.to_date.to_s(:long)}."
+    self.notes = "#{notes}" + "\n\n### Renewed on "\
+      "#{Time.current.to_s(:long)} by #{user.md_link}\n\nThe new due date "\
+      "is  #{due_date.to_date.to_s(:long)}."
     self.times_renewed += 1
     return 'Unable to update reservation dates.' unless save
     nil
@@ -181,7 +193,9 @@ class Reservation < ActiveRecord::Base
     end
     make_notes('Checked in', new_notes, incomplete_procedures, checkin_handler)
     # update equipment object notes
-    equipment_object.make_reservation_notes('checked in', self, checkin_handler, new_notes, Time.current)
+    equipment_object.make_reservation_notes('checked in', self,
+                                            checkin_handler, new_notes,
+                                            Time.current)
 
     if checked_in.to_date > due_date.to_date
       # equipment was overdue, send an email confirmati
@@ -202,10 +216,15 @@ class Reservation < ActiveRecord::Base
       self.checked_in = Time.current
       self.checked_out = Time.current if checked_out.nil?
       # archive equipment object if checked out
-      equipment_object.make_reservation_notes('archived', self, archiver, "#{note}", Time.current) if equipment_object
-      self.notes = notes.to_s + "\n\n### Archived on #{Time.current.to_s(:long)} by #{archiver.md_link}\n\n\n#### " \
-        "Reason:\n#{note}\n\n#### The checkin and checkout dates may reflect the archive date because the reservation was " \
-        'for a nonexistent piece of equipment or otherwise problematic.'
+      if equipment_object
+        equipment_object.make_reservation_notes('archived', self, archiver,
+                                                "#{note}", Time.current)
+      end
+      self.notes = notes.to_s + "\n\n### Archived on "\
+        "#{Time.current.to_s(:long)} by #{archiver.md_link}\n\n\n#### " \
+        "Reason:\n#{note}\n\n#### The checkin and checkout dates may "\
+        'reflect the archive date because the reservation was for a '\
+        'nonexistent piece of equipment or otherwise problematic.'
     end
     self
   end
@@ -228,13 +247,16 @@ class Reservation < ActiveRecord::Base
         incomplete_procedures << checkout_procedure.step
       end
     end
-    make_notes('Checked out', new_notes, incomplete_procedures, checkout_handler)
+    make_notes('Checked out', new_notes, incomplete_procedures,
+               checkout_handler)
     # update equipment object notes
-    equipment_object.make_reservation_notes('checked out', self, checkout_handler, new_notes, Time.current)
+    equipment_object.make_reservation_notes('checked out', self,
+                                            checkout_handler, new_notes,
+                                            Time.current)
     self
   end
 
-  def update(current_user, new_params, new_notes)
+  def update(current_user, new_params, new_notes) # rubocop:disable all
     # updates a reservation and records changes in the notes
     #
     # takes the current user, the new params from the controller that have
@@ -244,19 +266,18 @@ class Reservation < ActiveRecord::Base
     changes = self.changes
     new_notes = '' unless new_notes
     if new_notes.empty? && changes.empty?
-      self
-      return
+      return self
     else
       # write notes header
-      header = "### Edited on #{Time.current.to_s(:long)} by #{current_user.md_link}\n"
+      header = "### Edited on #{Time.current.to_s(:long)} by "\
+        "#{current_user.md_link}\n"
       self.notes = notes ? notes + "\n" + header : header
 
       # add notes if they exist
-      unless new_notes.empty?
-        self.notes += "\n\n#### Notes:\n#{new_notes}"
-      end
+      self.notes += "\n\n#### Notes:\n#{new_notes}" unless new_notes.empty?
 
       # record changes
+      # rubocop:disable BlockNesting
       unless changes.empty?
         self.notes += "\n\n#### Changes:"
         changes.each do |param, diff|
@@ -278,23 +299,28 @@ class Reservation < ActiveRecord::Base
             old_val = diff[0] ? EquipmentObject.find(diff[0]).md_link : 'nil'
             new_val = diff[1] ? EquipmentObject.find(diff[1]).md_link : 'nil'
           end
-          self.notes += "\n#{name} changed from " + old_val + ' to ' + new_val + '.'
+          self.notes += "\n#{name} changed from " + old_val + ' to '\
+            + new_val + '.'
         end
       end
+      # rubocop:enable BlockNesting
 
       self.notes = self.notes.strip
       self
     end
   end
 
-  def make_notes(procedure_verb, new_notes, incomplete_procedures, current_user)
+  # rubocop:disable PerceivedComplexity
+  def make_notes(procedure_verb, new_notes, incomplete_procedures,
+                 current_user)
     # handles the reservation notes from the new notes
     #
     # takes the new notes and a string, 'checked in' or 'checked out' as the
     # procedure_kind
 
     # write notes header
-    header = "### #{procedure_verb} on #{Time.current.to_s(:long)} by #{current_user.md_link}\n"
+    header = "### #{procedure_verb} on #{Time.current.to_s(:long)} by "\
+      "#{current_user.md_link}\n"
     self.notes = self.notes ? self.notes + "\n" + header : header
 
     # If no new notes and no missed procedures, set e-mail flag to false and
@@ -308,9 +334,7 @@ class Reservation < ActiveRecord::Base
     end
 
     # add notes if they exist
-    unless new_notes.empty?
-      self.notes += "\n\n#### Notes:\n#{new_notes}"
-    end
+    self.notes += "\n\n#### Notes:\n#{new_notes}" unless new_notes.empty?
 
     # record note procedure status
     if incomplete_procedures.empty?
@@ -321,6 +345,7 @@ class Reservation < ActiveRecord::Base
     end
     self.notes = self.notes.strip
   end
+  # rubocop:enable PerceivedComplexity
 
   # returns a string where each item is begun with a '*'
   def markdown_listify(items)
