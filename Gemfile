@@ -65,6 +65,7 @@ group :development, :test do
   gem 'ruby-progressbar'
   gem 'codeclimate-test-reporter'
   gem 'database_cleaner'
+  gem 'rubocop', require: false
 end
 
 # Gems used only for assets and not required
@@ -87,7 +88,6 @@ group :development do
   gem 'rack-mini-profiler'
   gem 'bullet'
   gem 'travis'
-  gem 'rubocop', require: false
 end
 
 group :production, :staging do
