@@ -181,7 +181,7 @@ module CartValidations
     user_reservations.each do |r|
       next unless r.equipment_model_id == model.id &&
                   r.due_date == start_date &&
-                  r.is_eligible_for_renew?
+                  r.eligible_for_renew?
       errors << "#{model.name.titleize} should be renewed instead of "\
           're-checked out.'
     end
