@@ -5,5 +5,6 @@ def expect_email(email)
   expected =  email.deliver
 
   expect(delivered.multipart?).to eq(expected.multipart?)
-  expect(delivered.headers.except('Message-Id')).to eq(expected.headers.except('Message-Id'))
+  expect(delivered.headers.except('Message-Id')).to\
+    eq(expected.headers.except('Message-Id'))
 end
