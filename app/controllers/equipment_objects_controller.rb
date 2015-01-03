@@ -26,7 +26,8 @@ class EquipmentObjectsController < ApplicationController
     if @equipment_model
       @equipment_objects = @equipment_model.equipment_objects.send(method)
     else
-      @equipment_objects = EquipmentObject.send(method)
+      @equipment_objects = EquipmentObject.includes(:equipment_model)
+                            .send(method)
     end
   end
 
