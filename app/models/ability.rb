@@ -39,6 +39,8 @@ class Ability
           can :renew, Reservation, reserver_id: user.id
         end
         can :update_cart, :all
+        can :update_index_dates, Reservation
+        can :view_all_dates, Reservation
       when 'guest'
         # rubocop:disable BlockNesting
         if AppConfig.first.enable_guests

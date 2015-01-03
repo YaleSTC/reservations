@@ -18,27 +18,82 @@ class ReservationsController < ApplicationController
     @reservation = Reservation.find(params[:id])
   end
 
+  def set_index_dates
+    session[:index_start_date] ||= Date.today - 7.days
+    session[:index_end_date] ||= Date.today + 7.days
+    @start_date = session[:index_start_date]
+    @end_date = session[:index_end_date]
+  end
+
+  def set_filter
+    # set the filter for #index action, pulling from session, then
+    # params, then falling back to default
+
+    f = (can? :manage, Reservation) ? :upcoming : :reserved
+
+    @filters = [:reserved, :checked_out, :overdue, :returned, :upcoming,
+                :requested, :approved_requests, :denied_requests]
+    @filters << :missed unless AppConfig.first.res_exp_time
+
+    # if filter in session set it
+    if session[:filter]
+      f = session[:filter]
+      session[:filter] = nil
+    else
+      # if the filter is defined in the params, store those reservations
+      @filters.each do |filter|
+        next unless params[filter]
+        f = filter
+        break
+      end
+    end
+    f
+  end
+
+  def set_counts(source, with_time)
+    @all_counts = {}
+    @time_counts = {}
+    @filters.each do |f|
+      @all_counts[f] = source.send(f).count
+      @time_counts[f] = with_time.send(f).count
+    end
+  end
+
   public
 
-  def index # rubocop:disable CyclomaticComplexity
-    # define our source of reservations depending on user status
-    @reservations_source =
-      (can? :manage, Reservation) ? Reservation : current_user.reservations
-    default_filter = (can? :manage, Reservation) ? :upcoming : :reserved
+  def index
+    set_index_dates
+    @filter = set_filter
+    @view_all = session[:all_dates]
 
-    filters = [:reserved, :checked_out, :overdue, :returned, :upcoming,
-               :requested, :approved_requests, :denied_requests]
-    filters << :missed unless AppConfig.first.res_exp_time
-    # if the filter is defined in the params, store those reservations
-    filters.each do |filter|
-      @reservations_set = @reservations_source.send(filter) if params[filter]
+    if can? :manage, Reservation
+      source = Reservation
+    else
+      source = current_user.reservations
     end
 
-    @default = false
-    # if no filter is defined
-    return unless @reservations_set.nil?
-    @default = true if AppConfig.first.request_text.empty?
-    @reservations_set = @reservations_source.send(default_filter)
+    if session[:all_dates]
+      time = source
+    else
+      time = source.starts_on_days(@start_date, @end_date)
+    end
+
+    set_counts(source, time)
+
+    @reservations_set = time.send(@filter)
+  end
+
+  def update_index_dates
+    session[:all_dates] = false
+    session[:index_start_date] = params[:list][:start_date].to_date
+    session[:index_end_date] = params[:list][:end_date].to_date
+    session[:filter] = params[:list][:filter].to_sym
+    redirect_to action: 'index'
+  end
+
+  def view_all_dates
+    session[:all_dates] = true
+    redirect_to action: 'index'
   end
 
   def show

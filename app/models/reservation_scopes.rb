@@ -12,7 +12,6 @@ module ReservationScopes
       # TODO: grep codebase for active and replace with not_returned or
       # figure out a better way to give the same scope two names
       scope :untouched, ->() { where('checked_out IS NULL').not_returned }
-
       scope :reserved, lambda {
         where('due_date >= ?', Date.current.to_time).untouched.recent
       }

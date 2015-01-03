@@ -47,6 +47,44 @@ describe ReservationsController, type: :controller do
     it { is_expected.to redirect_to(root_path) }
   end
 
+  describe '#update_index_dates (PUT)' do
+    subject do
+      put :update_index_dates, list: { start_date: Date.today.to_s,
+                                       end_date: Date.tomorrow.to_s,
+                                       filter: :reserved.to_s }
+    end
+    it { is_expected.to be_redirect }
+    before(:each) do
+      @start = Date.today
+      @end = Date.tomorrow
+      @filter = :reserved
+      put :update_index_dates, list: { start_date: @start.to_s,
+                                       end_date: @end.to_s,
+                                       filter: @filter.to_s }
+    end
+    it 'disables all_date viewing' do
+      expect(session[:all_dates]).to be_falsey
+    end
+    it 'sets the session dates' do
+      expect(session[:index_start_date]).to eq(@start)
+      expect(session[:index_end_date]).to eq(@end)
+    end
+    it 'sets the session filter' do
+      expect(session[:filter]).to eq(@filter)
+    end
+  end
+
+  describe '#view_all_dates (PUT)' do
+    subject { put :view_all_dates }
+    it { is_expected.to be_redirect }
+    before(:each) do
+      put :view_all_dates
+    end
+    it 'enables all_date viewing' do
+      expect(session[:all_dates]).to be_truthy
+    end
+  end
+
   ## Controller method tests
   describe '#index (GET /reservations/)' do
     # check params[:filter]
@@ -73,24 +111,25 @@ describe ReservationsController, type: :controller do
         # Assertion and expectation
         @filters.each do |f|
           get :index, f => true
-          expect(assigns(:reservations_set).uniq.sort).to \
-           eq(Reservation.send(f).uniq.sort)
+          expect(assigns(:reservations_set).uniq.sort).to eq(Reservation.send(f)
+               .starts_on_days(assigns(:start_date), assigns(:end_date))
+               .uniq.sort)
         end
       end
+      it 'populates with respect to session[:filter] first' do
+        @filters.each do |trait|
+          res = FactoryGirl.build(:valid_reservation, trait, reserver: @user)
+          res.save(validate: false)
+        end
 
-      it 'passes @default as false if valid params[filter] is provided' do
-        get :index, reserved: true
-        expect(assigns(:default)).to eq(false)
-      end
-
-      it 'passes @default as true if valid params[filter] is not provided' do
-        get :index
-        expect(assigns(:default)).to eq(true)
-      end
-
-      it 'passes @default as true if invalid params[filter] is provided' do
-        get :index, absurd_and_nonexistent: true
-        expect(assigns(:default)).to eq(true)
+        # Assertion and expectation
+        @filters.each do |f|
+          session[:filter] = f.to_s
+          get :index, @filters.sample => true
+          expect(assigns(:reservations_set).uniq.sort).to eq(Reservation.send(f)
+               .starts_on_days(assigns(:start_date), assigns(:end_date))
+               .uniq.sort)
+        end
       end
 
       context 'who is an admin' do
