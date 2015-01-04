@@ -22,41 +22,40 @@ class ReportsController < ApplicationController
   # reservations, and for each reservation collect details from associated
   # tables, and the reservation table
 
+  # INDEX
+  #   get all reservations that start in the given date range
+  #   build an array of ResRelation objects with the default relations hash
+  #   add to this array a User Count ResRelation object whose params are a thing
+  #
+  #   Now get all the equipment models in the set
+  #   Make an array of ResSetInfo objects (eq_model_info)
+  #   Make a hash of category_em_ids
+  #   For every model in the set, add a new ResSetInfo object
+  #   For every model in the set, add its ID to the category hash
+  #     key: category ID
+  #     value: model ID
+  #   Get all the categories and do the same thing, making an array 
+  #   of ResSetInfo structs
+  #   
+  #
+
   def index # rubocop:disable MethodLength, AbcSize
     @res_stat_sets = []
     @start_date = start_date
     @end_date = end_date
 
-    full_set =
-      Reservation.starts_on_days(@start_date,
-                                 @end_date).includes(:equipment_model)
-    res_rels = default_relations(full_set)
+    full_set = Reservation.starts_on_days(@start_date, @end_date)
+                .includes(:equipment_model)
+    res_rels = build_relations_set(full_set)
     res_rels << ResRelation.new('User Count', full_set,
                                 id_type: :equipment_model_id,
                                 stat_type: :count, secondary_id: :reserver_id)
 
     # should this be redone?  Mostly done in two parts to only collect the
     # uniq ids collecting the arrays of ids for each table
-    eq_model_ids = full_set.collect(&:equipment_model_id).uniq
-    eq_models = EquipmentModel.includes(:category).find(eq_model_ids)
-
-    eq_model_info = []
-
-    cat_em_ids = {}
-    eq_models.each do |em|
-      eq_model_info << ResSetInfo.new(em.name, :equipment_model_id, [em.id],
-                                      for_model_report_path(id: em.id))
-      if cat_em_ids[em.category.id]
-        cat_em_ids[em.category.id] << em.id
-      else
-        cat_em_ids[em.category.id] = [em.id]
-      end
-    end
-    categories = Category.find(cat_em_ids.keys)
-    category_info = categories.collect do|cat|
-      ResSetInfo.new(cat.name, :equipment_model_id, cat_em_ids[cat.id],
-                     for_model_set_reports_path(ids: cat_em_ids[cat.id]))
-    end
+    category_info = []
+    eq_model_info = equipment_info(full_set, category_info)
+    category_info = category_info.flatten
 
     ### commented out for speed, the problem is pagination, not the queries
     ### also should probably give it a separate res_rels, because it doesn't
@@ -130,27 +129,57 @@ class ReportsController < ApplicationController
 
   private
 
-  def start_date
-    if session[:report_start_date]
-      date = session[:report_start_date]
-    else
-      date = Date.current.beginning_of_year
+  def user_info reservations
+    # given a set of reservations, get info on reserver
+    reserver_ids = reservations.collect(&:reserver_id).uniq
+    users = User.find(reserver_ids)
+    users.collect do |user|
+      ResSetInfo.new(user.name, :reserver_id, [user.id],
+                     user_path(id: user.id))
     end
-    date
+  end
+
+  def equipment_info(reservations, category_info=nil)
+    # given a set of reservations, return info on equipment models
+    # return category info in array referenced in arg 
+
+    eq_model_info = []
+    cat_em_ids = {}
+    em_ids = reservations.collect(&:equipment_model_id).uniq
+    eq_models = EquipmentModel.includes(:category).find(em_ids)
+    eq_models.each do |em|
+      eq_model_info << ResSetInfo.new(em.name, :equipment_model_id, [em.id],
+                                      for_model_report_path(id: em.id))
+      if cat_em_ids[em.category.id]
+        cat_em_ids[em.category.id] << em.id
+      else
+        cat_em_ids[em.category.id] = [em.id]
+      end
+    end
+    if category_info == []
+      categories = Category.find(cat_em_ids.keys)
+      c = categories.collect do |cat|
+        ResSetInfo.new(cat.name, :equipment_model_id, cat_em_ids[cat.id],
+                       for_model_set_reports_path(ids: cat_em_ids[cat.id]))
+      end
+      category_info << c
+    end
+    eq_model_info
+  end
+
+  def start_date
+    session[:report_start_date].present? ?
+      session[:report_start_date] : Date.current - 1.year
   end
 
   def end_date
-    if session[:report_end_date]
-      date = session[:report_end_date]
-    else
-      date = Date.current
-    end
-    date
+    session[:report_end_date].present? ?
+      session[:report_end_date] : Date.current
   end
 
   # forms a set of relations with the default settings, or a set of relations
   # with the same options
-  def default_relations(res_set, rel_hash = nil, options = nil)
+  def build_relations_set(res_set, rel_hash = nil, options = nil)
     # reservation relations for each of the scopes
     rel_hash ||= { :"Total" => nil, :"Reserved" => :reserved,
                    :"Checked Out" => :checked_out, :"Overdue" => :overdue,
@@ -169,13 +198,15 @@ class ReportsController < ApplicationController
     res_rels
   end
 
+  
+
   # build the canned report for a model/set of models
   # rubocop:disable MultilineOperationIndentation, MethodLength, AbcSize
   def models_subreport(ids, start_date, end_date, eq_models)
     res_set = Reservation.includes(:equipment_model, :equipment_object)
                          .starts_on_days(start_date, end_date)
                          .where(equipment_model_id: ids)
-    res_rels = default_relations(res_set)
+    res_rels = build_relations_set(res_set)
     res_rels << ResRelation.new('Avg Planned Duration', res_set,
                                 id_type: :equipment_model_id,
                                 stat_type: :duration,
