@@ -11,9 +11,9 @@ env:
       secure: IHUYMK2spxorl9lUeAbAfT6btuP2qRT615bUnEuUDgYrXf9y1CdQprYWJaygou/+6aWmLL0NnxYSpOxi40bHgMKeUQnTjXVbkkqQ1Tml3cMSsjkBrx7CNUygHvDDzCQCEC6m9uZjUKMZAVzVSWlOQhSMKR7MtdsSvMCrKIgA2pM=
 
 before_install:
+  - convert -version
+  - gs -v
   # these are all for JS linters, uncomment when they are to be used
-  # - convert -version
-  # - gs -v
   # - npm --version
   # - node --version
   # - npm install -g npm
