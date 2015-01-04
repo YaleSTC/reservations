@@ -8,8 +8,7 @@ ActionMailer::Base.smtp_settings = {
 
 }
 
-# with these disabled, the server must be connected to the yale network for
-# email to work
+# optional server authentication
 if ENV['RES_SMTP_AUTH']
   ActionMailer::Base.smtp_settings[:authentication] = :login
   ActionMailer::Base.smtp_settings[:user_name] =
