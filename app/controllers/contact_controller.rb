@@ -1,5 +1,5 @@
 class ContactController < ApplicationController
-  skip_before_filter :authenticate_user!
+  skip_before_action :authenticate_user!
 
   def new
     @message = Message.new
@@ -9,11 +9,10 @@ class ContactController < ApplicationController
     @message = Message.new(params[:message])
     if @message.valid?
       NotificationsMailer.new_message(@message).deliver
-      redirect_to(root_path, notice: "Message was successfully sent.")
+      redirect_to(root_path, notice: 'Message was successfully sent.')
     else
-      flash[:error] = "Please fill all fields."
+      flash[:error] = 'Please fill all fields.'
       render :new
     end
   end
-
 end

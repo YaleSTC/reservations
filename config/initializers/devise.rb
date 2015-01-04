@@ -10,7 +10,11 @@ Devise.setup do |config|
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
-  config.mailer_sender = AppConfig.table_exists? && !AppConfig.first.nil? ? AppConfig.first.admin_email : 'admin@example.com'
+  if AppConfig.table_exists? && !AppConfig.first.nil?
+    config.mailer_sender = AppConfig.first.admin_email
+  else
+    config.mailer_sender = 'admin@reservations.app'
+  end
 
   # ==> ORM configuration
   # Load and configure the ORM. Supports :active_record (default) and
@@ -27,14 +31,16 @@ Devise.setup do |config|
 
   # ==> Configuration for :database_authenticatable
   unless ENV['CAS_AUTH']
-    # For bcrypt, this is the cost for hashing the password and defaults to 10. If
-    # using other encryptors, it sets how many times you want the password re-encrypted.
+    # For bcrypt, this is the cost for hashing the password and defaults to 10.
+    # If using other encryptors, it sets how many times you want the password
+    # re-encrypted.
     #
-    # Limiting the stretches to just one in testing will increase the performance of
-    # your test suite dramatically. However, it is STRONGLY RECOMMENDED to not use
-    # a value less than 10 in other environments. Note that, for bcrypt (the default
-    # encryptor), the cost increases exponentially with the number of stretches (e.g.
-    # a value of 20 is already extremely slow: approx. 60 seconds for 1 calculation).
+    # Limiting the stretches to just one in testing will increase the
+    # performance of your test suite dramatically. However, it is STRONGLY
+    # RECOMMENDED to not use a value less than 10 in other environments. Note
+    # that, for bcrypt (the default encryptor), the cost increases
+    # exponentially with the number of stretches (e.g. a value of 20 is
+    # already extremely slow: approx. 60 seconds for 1 calculation).
     config.stretches = Rails.env.test? ? 1 : 10
 
     # Setup a pepper to generate the encrypted password.
@@ -50,7 +56,6 @@ Devise.setup do |config|
 
   # ==> devise_cas_authenticatable configuration
   if ENV['CAS_AUTH']
-
     # configure the base URL of your CAS server
     config.cas_base_url = Rails.application.secrets.cas_base_url
 
@@ -69,5 +74,4 @@ Devise.setup do |config|
     config.cas_enable_single_sign_out = true
 
   end
-
 end

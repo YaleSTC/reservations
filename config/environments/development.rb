@@ -1,5 +1,6 @@
 Reservations::Application.configure do
-  # Settings specified here will take precedence over those in config/application.rb
+  # Settings specified here will take precedence over those in config/
+  # application.rb
 
   # In the development environment your application's code is reloaded on
   # every request.  This slows down response time but is perfect for development
@@ -20,8 +21,12 @@ Reservations::Application.configure do
   config.action_mailer.raise_delivery_errors = true
 
   # Use letter_opener for development mail testing
-  config.action_mailer.delivery_method = ENV['USER'] == 'vagrant' ? :letter_opener_web : :letter_opener
-  config.action_mailer.default_url_options = { host: "0.0.0.0:3000" }
+  if ENV['USER'] == 'vagrant'
+    config.action_mailer.delivery_method = :letter_opener_web
+  else
+    config.action_mailer.delivery_method = :letter_opener
+  end
+  config.action_mailer.default_url_options = { host: '0.0.0.0:3000' }
 
   # Print deprecation notices to the Rails logger
   config.active_support.deprecation = :log
@@ -29,7 +34,7 @@ Reservations::Application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
-  #Rails 3 assets
+  # Rails 3 assets
   config.assets.compile = true
   config.assets.compress = false
   config.assets.js_compressor = :uglifier

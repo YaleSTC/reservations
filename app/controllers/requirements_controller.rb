@@ -1,7 +1,7 @@
 class RequirementsController < ApplicationController
-
   load_and_authorize_resource
-  before_action :set_current_requirement, only: [:show, :edit, :update, :destroy]
+  before_action :set_current_requirement,
+                only: [:show, :edit, :update, :destroy]
 
   # ------------- before filter methods ------------- #
   def set_current_requirement
@@ -48,9 +48,8 @@ class RequirementsController < ApplicationController
   private
 
   def requirement_params
-    params.require(:requirement).permit(:user_id, :user_ids, :description,
-                                        :equipment_model_id,
-                                        :equipment_model_ids, :notes,
-                                        :contact_info, :contact_name)
+    params.require(:requirement)
+      .permit(:user_id, :user_ids, :description, :equipment_model_id,
+              :equipment_model_ids, :notes, :contact_info, :contact_name)
   end
 end

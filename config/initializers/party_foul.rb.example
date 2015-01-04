@@ -1,7 +1,8 @@
 PartyFoul.configure do |config|
   # The collection of exceptions PartyFoul should not be allowed to handle
   # The constants here *must* be represented as strings
-  config.blacklisted_exceptions = ['ActiveRecord::RecordNotFound', 'ActionController::RoutingError']
+  config.blacklisted_exceptions =
+    ['ActiveRecord::RecordNotFound', 'ActionController::RoutingError']
 
   # The OAuth token for the account that is opening the issues on GitHub
   config.oauth_token            = ENV['PARTY_FOUL_TOKEN']
