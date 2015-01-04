@@ -245,12 +245,12 @@ class ApplicationController < ActionController::Base
 
   # activate and deactivate are overridden in the users controller because
   # users are activated and deactivated differently
-  # rubocop:disable MultilineOperationIndentation
   def deactivate
-    authorize! :be, :admin
+    authorize! :deactivate, :objects
     # Finds the current model (EM, EO, Category)
-    @objects_class2 = params[:controller].singularize.titleize.delete(' ')
-                                         .constantize.find(params[:id])
+    @objects_class2 =
+      params[:controller].singularize.titleize.delete(' ')
+      .constantize.find(params[:id])
     # Deactivate the model you had originally intended to deactivate
     @objects_class2.destroy
     flash[:notice] = 'Successfully deactivated '\
@@ -260,10 +260,11 @@ class ApplicationController < ActionController::Base
   end
 
   def activate
-    authorize! :be, :admin
+    authorize! :activate, :objects
     # Finds the current model (EM, EO, Category)
-    @model_to_activate = params[:controller].singularize.titleize.delete(' ')
-                                            .constantize.find(params[:id])
+    @model_to_activate =
+      params[:controller].singularize.titleize.delete(' ')
+      .constantize.find(params[:id])
     activate_parents(@model_to_activate)
     @model_to_activate.revive
     flash[:notice] = 'Successfully reactivated '\
@@ -271,7 +272,6 @@ class ApplicationController < ActionController::Base
                    + '. Any related equipment has been reactivated as well.'
     redirect_to request.referer # Or use redirect_to(back)
   end
-  # rubocop:enable MultilineOperationIndentation
 
   def markdown_help
     respond_to do |format|
