@@ -9,6 +9,9 @@ AllCops:
     # check config files to ensure initializers / environment files are
     # cleanly written
     # - 'config/**/*'
+    # 2015/01/04 - skipping Capistrano deploy.rb file for now, remove the
+    # following line once #1074 is resolved
+    - 'config/deploy.rb'
     - 'lib/**/*.erb'
     - 'script/**/*'
     - 'vendor/**/*'
