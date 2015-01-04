@@ -6,8 +6,8 @@ CodeClimate::TestReporter.start
 require 'rubygems'
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-ENV["RAILS_ENV"] ||= 'test'
-require File.expand_path("../../config/environment", __FILE__)
+ENV['RAILS_ENV'] ||= 'test'
+require File.expand_path('../../config/environment', __FILE__)
 require 'rspec/rails'
 require 'capybara/rspec'
 require 'capybara/rails'
@@ -15,7 +15,7 @@ require 'capybara/rails'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
-Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
+Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
 ActiveRecord::Migration.maintain_test_schema!
 
@@ -32,7 +32,7 @@ RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
   # Needed in order to do integration tests with capybara
   config.include Capybara::DSL
-  Capybara.asset_host = "http://0.0.0.0:3000"
+  Capybara.asset_host = 'http://0.0.0.0:3000'
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   # config.fixture_path = "#{::Rails.root}/spec/fixtures"
@@ -51,7 +51,7 @@ RSpec.configure do |config|
   # order dependency and want to debug it, you can fix the order by providing
   # the seed, which is printed after each run.
   #     --seed 1234
-  config.order = "random"
+  config.order = 'random'
 
   # DatabaseCleaner setup
   config.before(:suite) do

@@ -14,7 +14,7 @@ describe 'User profile' do
 
       context 'visiting own profile edit page' do
         before do
-          visit '/users/'+@user.id.to_s
+          visit '/users/' + @user.id.to_s
           click_link 'Edit Information'
         end
 
@@ -33,7 +33,8 @@ describe 'User profile' do
             click_button 'Update User'
 
             expect(page).to have_content('Senor')
-            expect(page.find('.alert')).to have_content('Successfully updated user.')
+            expect(page.find('.alert')).to\
+              have_content('Successfully updated user.')
           end
 
           it 'does not update with invalid password' do
@@ -62,7 +63,8 @@ describe 'User profile' do
               click_button 'Update User'
 
               expect(page).to have_content('Senor')
-              expect(page.find('.alert')).to have_content('Successfully updated user.')
+              expect(page.find('.alert')).to\
+                have_content('Successfully updated user.')
             end
 
             it 'does not update with invalid confirmation' do
@@ -78,12 +80,13 @@ describe 'User profile' do
 
       context 'trying to edit a different user' do
         before do
-          visit '/users/'+@admin.id.to_s
+          visit '/users/' + @admin.id.to_s
         end
 
         it 'redirects to home page' do
           expect(page).to have_content('Catalog')
-          expect(page.find('.alert')).to have_content('Sorry, that action or page is restricted.')
+          expect(page.find('.alert')).to\
+            have_content('Sorry, that action or page is restricted.')
         end
       end
     end
@@ -93,7 +96,7 @@ describe 'User profile' do
 
       context 'visiting own profile edit page' do
         before do
-          visit '/users/'+@admin.id.to_s
+          visit '/users/' + @admin.id.to_s
           click_link 'Edit Information'
         end
 
@@ -112,7 +115,8 @@ describe 'User profile' do
             click_button 'Update User'
 
             expect(page).to have_content('Senor')
-            expect(page.find('.alert')).to have_content('Successfully updated user.')
+            expect(page.find('.alert')).to\
+              have_content('Successfully updated user.')
           end
 
           it 'does not update with invalid password' do
@@ -141,7 +145,8 @@ describe 'User profile' do
               click_button 'Update User'
 
               expect(page).to have_content('Senor')
-              expect(page.find('.alert')).to have_content('Successfully updated user.')
+              expect(page.find('.alert')).to\
+                have_content('Successfully updated user.')
             end
 
             it 'does not update with invalid confirmation' do
@@ -157,7 +162,7 @@ describe 'User profile' do
 
       context 'trying to edit a different user' do
         before do
-          visit '/users/'+@user.id.to_s
+          visit '/users/' + @user.id.to_s
           click_link 'Edit Information'
         end
 
@@ -173,7 +178,8 @@ describe 'User profile' do
           click_button 'Update User'
 
           expect(page).to have_content('Senor')
-          expect(page.find('.alert')).to have_content('Successfully updated user.')
+          expect(page.find('.alert')).to\
+            have_content('Successfully updated user.')
         end
       end
     end
@@ -189,7 +195,7 @@ describe 'User profile' do
 
       context 'visiting own profile edit page' do
         before do
-          visit '/users/'+@user.id.to_s
+          visit '/users/' + @user.id.to_s
           click_link 'Edit Information'
         end
 
@@ -205,18 +211,20 @@ describe 'User profile' do
           click_button 'Update User'
 
           expect(page).to have_content('Senor')
-          expect(page.find('.alert')).to have_content('Successfully updated user.')
+          expect(page.find('.alert')).to\
+            have_content('Successfully updated user.')
         end
       end
 
       context 'trying to edit a different user' do
         before do
-          visit '/users/'+@admin.id.to_s
+          visit '/users/' + @admin.id.to_s
         end
 
         it 'redirects to home page' do
           expect(page).to have_content('Catalog')
-          expect(page.find('.alert')).to have_content('Sorry, that action or page is restricted.')
+          expect(page.find('.alert')).to\
+            have_content('Sorry, that action or page is restricted.')
         end
       end
     end
@@ -226,7 +234,7 @@ describe 'User profile' do
 
       context 'visiting own profile edit page' do
         before do
-          visit '/users/'+@admin.id.to_s
+          visit '/users/' + @admin.id.to_s
           click_link 'Edit Information'
         end
 
@@ -242,13 +250,14 @@ describe 'User profile' do
           click_button 'Update User'
 
           expect(page).to have_content('Senor')
-          expect(page.find('.alert')).to have_content('Successfully updated user.')
+          expect(page.find('.alert')).to\
+            have_content('Successfully updated user.')
         end
       end
 
       context 'trying to edit a different user' do
         before do
-          visit '/users/'+@user.id.to_s
+          visit '/users/' + @user.id.to_s
           click_link 'Edit Information'
         end
 
@@ -264,7 +273,8 @@ describe 'User profile' do
           click_button 'Update User'
 
           expect(page).to have_content('Senor')
-          expect(page.find('.alert')).to have_content('Successfully updated user.')
+          expect(page.find('.alert')).to\
+            have_content('Successfully updated user.')
         end
       end
     end

@@ -11,12 +11,32 @@ env:
       secure: IHUYMK2spxorl9lUeAbAfT6btuP2qRT615bUnEuUDgYrXf9y1CdQprYWJaygou/+6aWmLL0NnxYSpOxi40bHgMKeUQnTjXVbkkqQ1Tml3cMSsjkBrx7CNUygHvDDzCQCEC6m9uZjUKMZAVzVSWlOQhSMKR7MtdsSvMCrKIgA2pM=
 
 before_install:
+  - convert -version
+  - gs -v
+  # these are all for JS linters, uncomment when they are to be used
+  # - npm --version
+  # - node --version
+  # - npm install -g npm
+  # - echo "$(npm --version) (after npm upgrade)"
+  # - npm install -g jshint jscs
+  # - npm install jshint-stylish
   - 'echo ''gem: --no-ri --no-rdoc'' > ~/.gemrc'
+
+bundler_args: --without=production staging development
 
 before_script:
   - cp config/database.travis.yml config/database.yml
+  - cp config/secrets.yml.example config/secrets.yml
   - bundle exec rake db:create
   - bundle exec rake db:schema:load
+
+script:
+  # JS linters, uncomment once code passes
+  # - jscs .
+  # - jshint --reporter=node_modules/jshint-stylish/stylish.js .
+  # rubocop Ruby / Rails linter
+  - bundle exec rubocop -D
+  - bundle exec rake
 
 # From Travis CI Support: This will route jobs to our beta build environment,
 # which has much faster boot times, making it easier to debug via Travis.

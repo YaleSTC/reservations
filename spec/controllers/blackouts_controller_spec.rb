@@ -10,10 +10,10 @@ shared_examples_for 'access denied' do
   it { is_expected.to set_the_flash }
 end
 
-describe BlackoutsController, :type => :controller do
-  before(:all) {
+describe BlackoutsController, type: :controller do
+  before(:all) do
     @app_config = FactoryGirl.create(:app_config)
-  }
+  end
 
   describe 'with admin' do
     before do
@@ -21,7 +21,7 @@ describe BlackoutsController, :type => :controller do
     end
     context 'GET index' do
       before do
-        get:index
+        get :index
       end
       it_behaves_like 'page success'
       it { is_expected.to render_template(:index) }
@@ -37,7 +37,7 @@ describe BlackoutsController, :type => :controller do
       it { is_expected.to render_template(:show) }
       context 'single blackout' do
         it 'should not display a set' do
-          expect(assigns(:blackout_set) == nil)
+          expect(assigns(:blackout_set).nil?)
         end
       end
     end
@@ -50,7 +50,8 @@ describe BlackoutsController, :type => :controller do
       it_behaves_like 'page success'
       context 'recurring blackout' do
         it 'should display the correct set' do
-          expect(assigns(:blackout_set).uniq.sort).to eq(@blackout_set.uniq.sort)
+          expect(assigns(:blackout_set).uniq.sort).to\
+            eq(@blackout_set.uniq.sort)
         end
         # the above code doesn't work; i'm too much of an rspec newbie
       end
@@ -80,7 +81,7 @@ describe BlackoutsController, :type => :controller do
       context 'with correct params' do
         before do
           @new_set_id = Blackout.last ? Blackout.last.id + 1 : 0
-          @attributes = FactoryGirl.attributes_for(:blackout, days: ["1",""])
+          @attributes = FactoryGirl.attributes_for(:blackout, days: ['1', ''])
           post :create_recurring, blackout: @attributes
         end
         it 'should create a set' do
@@ -91,24 +92,27 @@ describe BlackoutsController, :type => :controller do
       end
       context 'with incorrect params' do
         before do
-          request.env["HTTP_REFERER"] = "where_i_came_from"
-          @attributes = FactoryGirl.attributes_for(:blackout, days: [""])
+          request.env['HTTP_REFERER'] = 'where_i_came_from'
+          @attributes = FactoryGirl.attributes_for(:blackout, days: [''])
           post :create_recurring, blackout: @attributes
         end
         it { is_expected.to set_the_flash }
-        it { is_expected.to render_template("new_recurring") }
+        it { is_expected.to render_template('new_recurring') }
       end
       context 'with conflicting reservation' do
         before do
           @res = FactoryGirl.create(:valid_reservation, due_date: Date.tomorrow)
-          @attributes = FactoryGirl.attributes_for(:blackout, days: ["#{Date.tomorrow.wday}"])
+          @attributes =
+            FactoryGirl.attributes_for(:blackout,
+                                       days: ["#{Date.tomorrow.wday}"])
           post :create_recurring, blackout: @attributes
         end
 
         it { is_expected.to set_the_flash }
-        it { is_expected.to render_template("new_recurring") }
+        it { is_expected.to render_template('new_recurring') }
         it 'should not save the blackouts' do
-          expect{ post :create_recurring, blackout: @attributes }.not_to change{ Blackout.all.count }
+          expect { post :create_recurring, blackout: @attributes }.not_to \
+            change { Blackout.all.count }
         end
       end
     end
@@ -123,9 +127,11 @@ describe BlackoutsController, :type => :controller do
         end
         it 'should pass the correct params' do
           expect(assigns(:blackout)[:notice]).to eq(@attributes[:notice])
-          expect(assigns(:blackout)[:start_date]).to eq(@attributes[:start_date])
+          expect(assigns(:blackout)[:start_date]).to\
+            eq(@attributes[:start_date])
           expect(assigns(:blackout)[:end_date]).to eq(@attributes[:end_date])
-          expect(assigns(:blackout)[:blackout_type]).to eq(@attributes[:blackout_type])
+          expect(assigns(:blackout)[:blackout_type]).to\
+            eq(@attributes[:blackout_type])
         end
         it { is_expected.to redirect_to(blackout_path(assigns(:blackout))) }
         it { is_expected.to set_the_flash }
@@ -141,14 +147,18 @@ describe BlackoutsController, :type => :controller do
       context 'with conflicting reservation' do
         before do
           @res = FactoryGirl.create(:valid_reservation, due_date: Date.tomorrow)
-          @attributes = FactoryGirl.attributes_for(:blackout, start_date: Date.current, end_date: Date.current+2.days)
+          @attributes =
+            FactoryGirl.attributes_for(:blackout,
+                                       start_date: Date.current,
+                                       end_date: Date.current + 2.days)
           post :create, blackout: @attributes
         end
 
         it { is_expected.to set_the_flash }
         it { is_expected.to render_template(:new) }
         it 'should not save the blackout' do
-          expect{ post :create, blackout: @attributes }.not_to change{ Blackout.all.count }
+          expect { post :create, blackout: @attributes }.not_to\
+            change { Blackout.all.count }
         end
       end
     end
@@ -156,8 +166,9 @@ describe BlackoutsController, :type => :controller do
       context 'single blackout' do
         before do
           @new_attributes = FactoryGirl.attributes_for(:blackout)
-          @new_attributes[:notice] = "New Message!!"
-          put :update, id: FactoryGirl.create(:blackout), blackout: @new_attributes
+          @new_attributes[:notice] = 'New Message!!'
+          put :update, id: FactoryGirl.create(:blackout),
+                       blackout: @new_attributes
         end
         it 'updates the blackout' do
           expect(assigns(:blackout)[:notice]).to eq(@new_attributes[:notice])
@@ -166,8 +177,9 @@ describe BlackoutsController, :type => :controller do
       context 'recurring blackout' do
         before do
           @new_attributes = FactoryGirl.attributes_for(:blackout)
-          @new_attributes[:notice] = "New Message!!"
-          put :update, id: FactoryGirl.create(:blackout, set_id: 1), blackout: @new_attributes
+          @new_attributes[:notice] = 'New Message!!'
+          put :update, id: FactoryGirl.create(:blackout, set_id: 1),
+                       blackout: @new_attributes
         end
         it 'updates the blackout' do
           expect(assigns(:blackout)[:notice]).to eq(@new_attributes[:notice])
@@ -188,7 +200,7 @@ describe BlackoutsController, :type => :controller do
     end
     context 'DELETE destroy recurring' do
       before do
-        #create an extra instance to test that the whole set was deleted
+        # create an extra instance to test that the whole set was deleted
         @extra = FactoryGirl.create(:blackout, set_id: 1)
         delete :destroy_recurring, id: FactoryGirl.create(:blackout, set_id: 1)
       end
@@ -248,6 +260,5 @@ describe BlackoutsController, :type => :controller do
       end
       it_behaves_like 'access denied'
     end
-
   end
 end

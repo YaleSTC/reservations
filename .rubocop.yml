@@ -1,0 +1,33 @@
+AllCops:
+  RunRailsCops: true
+  Include:
+    - '**/Rakefile'
+    - '**/config.ru'
+    - 'lib/**/*'
+  Exclude:
+    - 'db/**/*'
+    # check config files to ensure initializers / environment files are
+    # cleanly written
+    # - 'config/**/*'
+    # 2015/01/04 - skipping Capistrano deploy.rb file for now, remove the
+    # following line once #1074 is resolved
+    - 'config/deploy.rb'
+    - 'lib/**/*.erb'
+    - 'script/**/*'
+    - 'vendor/**/*'
+# disable the documentation check at the start of classes / modules
+Documentation:
+  Enabled: false
+# increase the max method length
+MethodLength:
+  Max: 20
+# increase the max ABC (Assignment Branch Condition) size, see:
+#   http://codereview.stackexchange.com/a/69806
+AbcSize:
+  Max: 30
+# allow for accessor-like method ending in ?
+TrivialAccessors:
+  AllowPredicates: true
+# allow has_and_belongs_to_many
+HasAndBelongsToMany:
+  Enabled: false

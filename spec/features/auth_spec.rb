@@ -8,13 +8,13 @@ end
 
 shared_examples_for 'registration error' do
   it { is_expected.to have_content('New User') }
-  it { is_expected.to have_content("Please review the problems below:") }
+  it { is_expected.to have_content('Please review the problems below:') }
 end
 
 shared_examples_for 'login error' do
   it { is_expected.to have_content('Sign In') }
-  it { is_expected.to have_content("Invalid email") }
-  it { is_expected.to have_content("or password.") }
+  it { is_expected.to have_content('Invalid email') }
+  it { is_expected.to have_content('or password.') }
 end
 
 describe 'Authentication' do
@@ -233,7 +233,8 @@ describe 'Authentication' do
         click_button 'Send me reset password instructions'
 
         expect(page).to have_content 'Sign In'
-        expect(page).to have_content 'You will receive an email with instructions on how to reset your password in a few minutes.'
+        expect(page).to have_content 'You will receive an email with '\
+          'instructions on how to reset your password in a few minutes.'
       end
     end
   end

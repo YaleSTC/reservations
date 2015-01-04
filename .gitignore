@@ -11,6 +11,7 @@ log/*.log
 tmp/
 config/database.yml
 config/database.yml~
+config/secrets.yml
 public/system/equipment_models/
 public/equipment_models/
 public/system
