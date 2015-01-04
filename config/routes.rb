@@ -120,13 +120,10 @@ Reservations::Application.routes.draw do
   # put '/cart/update' => 'application#update_cart', :as => :update_cart
 
   get '/reports/index' => 'reports#index', :as => :reports
-  get '/reports/:id/for_model' => 'reports#for_model', :as => :for_model_report
-
-  get '/reports/for_model_set' => 'reports#for_model_set',
-      :as => :for_model_set_reports # what http request? old match
-  post '/reports/update' => 'reports#update_dates',
-       :as => :update_dates # what http request? old match
-  post '/reports/generate' => 'reports#generate', :as => :generate_report
+  get '/reports/subreport/:class/:id' => 'reports#subreport',
+      as: :subreport
+  put '/reports/update' => 'reports#update_dates',
+      :as => :update_dates
 
   get '/terms_of_service' => 'application#terms_of_service',
       :as => :tos

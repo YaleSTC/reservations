@@ -91,6 +91,10 @@ class Reservation < ActiveRecord::Base
     due_date.to_date - start_date.to_date + 1
   end
 
+  def time_checked_out
+    checked_in.to_date - checked_out.to_date + 1 if checked_out && checked_in
+  end
+
   def late_fee
     equipment_model.late_fee.to_f
   end
