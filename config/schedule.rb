@@ -23,20 +23,19 @@
 time = Time.new
 
 # define cron strings
-nightly_cron_str = time.min.to_s + " 5 * * *"
-hourly_cron_str = time.min.to_s + " * * * *"
+nightly_cron_str = time.min.to_s + ' 5 * * *'
+hourly_cron_str = time.min.to_s + ' * * * *'
 
 # every night around 5 AM
 every nightly_cron_str do
-  rake "send_upcoming_checkin_reminder"
-  rake "send_overdue_checkin_reminder"
-  rake "delete_missed_reservations"
-  rake "deny_missed_requests"
-  rake "delete_old_blackouts"
+  rake 'send_upcoming_checkin_reminder'
+  rake 'send_overdue_checkin_reminder'
+  rake 'delete_missed_reservations'
+  rake 'deny_missed_requests'
+  rake 'delete_old_blackouts'
 end
 
 # every hour (except five AM)
 every hourly_cron_str do
-  rake "send_reservation_notes"
+  rake 'send_reservation_notes'
 end
-

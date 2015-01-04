@@ -1,23 +1,23 @@
 require 'spec_helper'
 
-shared_examples_for "a valid admin email" do
-  it "sends to the admin" do
+shared_examples_for 'a valid admin email' do
+  it 'sends to the admin' do
     expect(@mail.to.size).to eq(1)
     expect(@mail.to.first).to eq(@app_config.admin_email)
   end
-  it "is from no-reply@reservations.app" do
+  it 'is from no-reply@reservations.app' do
     expect(@mail.from.size).to eq(1)
-    expect(@mail.from.first).to eq("no-reply@reservations.app")
+    expect(@mail.from.first).to eq('no-reply@reservations.app')
   end
-  it "should actually send the email" do
+  it 'should actually send the email' do
     expect(ActionMailer::Base.deliveries.count).to eq(1)
   end
 end
 
-describe AdminMailer, :type => :mailer do
-  before(:all) {
+describe AdminMailer, type: :mailer do
+  before(:all) do
     @app_config = FactoryGirl.create(:app_config)
-  }
+  end
   before(:each) do
     ActionMailer::Base.delivery_method = :test
     ActionMailer::Base.perform_deliveries = true
@@ -29,26 +29,28 @@ describe AdminMailer, :type => :mailer do
     before do
       @res1 = FactoryGirl.create(:valid_reservation)
       @res2 = FactoryGirl.create(:valid_reservation)
-      @mail = AdminMailer.notes_reservation_notification(@res1,@res2).deliver
+      @mail = AdminMailer.notes_reservation_notification(@res1, @res2).deliver
     end
     it 'renders the subject' do
-      expect(@mail.subject).to eq("[Reservations] Notes for " + (Date.yesterday.midnight).strftime("%m/%d/%y"))
+      expect(@mail.subject).to\
+        eq('[Reservations] Notes for '\
+          + (Date.yesterday.midnight).strftime('%m/%d/%y'))
     end
-    it_behaves_like "a valid admin email"
-
+    it_behaves_like 'a valid admin email'
   end
   describe 'overdue_checked_in_fine_admin' do
     before do
       @model = FactoryGirl.create(:equipment_model)
       @object = FactoryGirl.create(:equipment_object, equipment_model: @model)
-      @res1 = FactoryGirl.build(:checked_in_reservation, equipment_model: @model, equipment_object: @object)
+      @res1 = FactoryGirl.build(:checked_in_reservation,
+                                equipment_model: @model,
+                                equipment_object: @object)
       @res1.save(validate: false)
       @mail = AdminMailer.overdue_checked_in_fine_admin(@res1).deliver
     end
-    it_behaves_like "a valid admin email"
+    it_behaves_like 'a valid admin email'
     it 'renders the subject' do
-      expect(@mail.subject).to eq("[Reservations] Overdue equipment fine")
+      expect(@mail.subject).to eq('[Reservations] Overdue equipment fine')
     end
-
   end
 end
