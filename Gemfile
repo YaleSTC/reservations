@@ -60,7 +60,10 @@ group :development, :test do
   gem 'guard-livereload'
   gem 'yajl-ruby'
   gem 'ffaker'
-  gem 'capistrano'
+  gem 'capistrano',  '~> 3.1'
+  gem 'capistrano-bundler', '~> 1.1.2'
+  gem 'capistrano-rails', '~> 1.1'
+  gem 'capistrano-rvm'
   gem 'awesome_print'
   gem 'ruby-progressbar'
   gem 'codeclimate-test-reporter'
@@ -93,4 +96,5 @@ end
 group :production, :staging do
   gem 'therubyracer', require: 'v8'
   gem 'party_foul'
+  gem 'dotenv-deployment'
 end

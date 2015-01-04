@@ -44,7 +44,8 @@ Reservations::Application.configure do
 
   # mailer host: replace 'example.com' with your root url
   # this will allow links in email text to function correctly
-  config.action_mailer.default_url_options = { host: 'example.com' }
+  config.action_mailer.default_url_options =
+    { host: "#{ENV['RAILS_HOST_NAME']}#{ENV['RAILS_RELATIVE_URL_ROOT']}" }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation can not be found)

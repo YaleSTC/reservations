@@ -30,43 +30,48 @@ Devise.setup do |config|
   config.skip_session_storage = [:http_auth]
 
   # ==> Configuration for :database_authenticatable
-  # For bcrypt, this is the cost for hashing the password and defaults to 10.
-  # If using other encryptors, it sets how many times you want the password
-  # re-encrypted.
-  #
-  # Limiting the stretches to just one in testing will increase the
-  # performance of your test suite dramatically. However, it is STRONGLY
-  # RECOMMENDED to not use a value less than 10 in other environments. Note
-  # that, for bcrypt (the default encryptor), the cost increases exponentially
-  # with the number of stretches (e.g. a value of 20 is already extremely
-  # slow: approx. 60 seconds for 1 calculation).
-  config.stretches = Rails.env.test? ? 1 : 10
+  unless ENV['CAS_AUTH']
+    # For bcrypt, this is the cost for hashing the password and defaults to 10.
+    # If using other encryptors, it sets how many times you want the password
+    # re-encrypted.
+    #
+    # Limiting the stretches to just one in testing will increase the
+    # performance of your test suite dramatically. However, it is STRONGLY
+    # RECOMMENDED to not use a value less than 10 in other environments. Note
+    # that, for bcrypt (the default encryptor), the cost increases
+    # exponentially with the number of stretches (e.g. a value of 20 is
+    # already extremely slow: approx. 60 seconds for 1 calculation).
+    config.stretches = Rails.env.test? ? 1 : 10
 
-  # Setup a pepper to generate the encrypted password.
-  config.pepper = Rails.application.secrets.devise_pepper
+    # Setup a pepper to generate the encrypted password.
+    config.pepper = Rails.application.secrets.devise_pepper
 
-  # ==> Configuration for :recoverable
+    # ==> Configuration for :recoverable
 
-  # Time interval you can reset your password with a reset password key.
-  # Don't put a too small interval or your users won't have the time to
-  # change their passwords.
-  config.reset_password_within = 6.hours
+    # Time interval you can reset your password with a reset password key.
+    # Don't put a too small interval or your users won't have the time to
+    # change their passwords.
+    config.reset_password_within = 6.hours
+  end
 
   # ==> devise_cas_authenticatable configuration
+  if ENV['CAS_AUTH']
+    # configure the base URL of your CAS server
+    config.cas_base_url = Rails.application.secrets.cas_base_url
 
-  # configure the base URL of your CAS server
-  config.cas_base_url = 'https://secure.its.yale.edu/cas/'
+    # you can override these if you need to, but cas_base_url is usually
+    # enough
+    # config.cas_login_url = "https://cas.myorganization.com/login"
+    # config.cas_logout_url = "https://cas.myorganization.com/logout"
+    # config.cas_validate_url = "https://cas.myorganization.com/serviceValidate"
 
-  # you can override these if you need to, but cas_base_url is usually enough
-  # config.cas_login_url = "https://cas.myorganization.com/login"
-  # config.cas_logout_url = "https://cas.myorganization.com/logout"
-  # config.cas_validate_url = "https://cas.myorganization.com/serviceValidate"
+    # By default, devise_cas_authenticatable will create users.  If you would
+    # rather require user records to already exist locally before they can
+    # authenticate via CAS, uncomment the following line.
+    # config.cas_create_user = false
 
-  # By default, devise_cas_authenticatable will create users.  If you would
-  # rather require user records to already exist locally before they can
-  # authenticate via CAS, uncomment the following line.
-  config.cas_create_user = true
+    # You can enable Single Sign Out, which by default is disabled.
+    config.cas_enable_single_sign_out = true
 
-  # You can enable Single Sign Out, which by default is disabled.
-  config.cas_enable_single_sign_out = true
+  end
 end
