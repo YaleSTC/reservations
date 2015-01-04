@@ -5,9 +5,9 @@ FactoryGirl.define do
 
   factory :equipment_model do
     name
-    description "This is a model"
-    late_fee "37.50"
-    replacement_fee "20"
+    description 'This is a model'
+    late_fee '37.50'
+    replacement_fee '20'
     max_per_user 10
     category
     max_renewal_times 10
@@ -17,8 +17,6 @@ FactoryGirl.define do
     factory :restricted_equipment_model do
       category { FactoryGirl.create(:category, max_per_user: 1) }
     end
-
-
 
     factory :equipment_model_with_object do
       after(:create) do |model|

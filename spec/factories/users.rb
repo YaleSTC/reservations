@@ -1,18 +1,17 @@
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do
-
   sequence :username do |n|
     "abc#{n}"
   end
 
   factory :user, aliases: [:reserver, :checkout_handler, :checkin_handler] do
     sequence(:username) { |n| "netid#{n}" }
-    first_name "First"
-    last_name "Last"
-    affiliation "Yale"
+    first_name 'First'
+    last_name 'Last'
+    affiliation 'Yale'
     email { "#{username}@example.edu".downcase }
-    phone "555-555-5555"
+    phone '555-555-5555'
     terms_of_service_accepted true
     created_by_admin false
     role 'normal'

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-shared_examples_for "GET show success" do
+shared_examples_for 'GET show success' do
   it { is_expected.to respond_with(:success) }
   it { is_expected.to render_template(:show) }
   it { is_expected.not_to set_the_flash }
@@ -22,71 +22,88 @@ shared_examples_for "GET show success" do
     mod5 = FactoryGirl.create(:equipment_model)
     mod6 = FactoryGirl.create(:equipment_model)
     mod7 = FactoryGirl.create(:equipment_model)
-    model.associated_equipment_models = [mod1, mod2, mod3, mod4, mod5, mod6, mod7]
+    model.associated_equipment_models =
+      [mod1, mod2, mod3, mod4, mod5, mod6, mod7]
     get :show, id: model
     expect(assigns(:associated_equipment_models).size).to eq(6)
   end
 end
 
-shared_examples_for "GET index success" do
-it { is_expected.to respond_with(:success) }
-      it { is_expected.to render_template(:index) }
-      it { is_expected.not_to set_the_flash }
-      context 'without show deleted' do
-        let!(:mod_other_cat_active) { FactoryGirl.create(:equipment_model) }
-        let!(:mod_other_cat_inactive) { FactoryGirl.create(:equipment_model,
-          deleted_at: Date.current) }
-        context 'with @category set' do
-          it 'should populate an array of of active category-type equipment models' do
-            mod_same_cat_inactive = FactoryGirl.create(:equipment_model,
-              category: model.category, deleted_at: Date.current)
-            get :index, category_id: model.category
-            expect(assigns(:equipment_models).include?(model)).to be_truthy
-            expect(assigns(:equipment_models).include?(mod_other_cat_active)).not_to be_truthy
-            expect(assigns(:equipment_models).include?(mod_same_cat_inactive)).not_to be_truthy
-            expect(assigns(:equipment_models).include?(mod_other_cat_inactive)).not_to be_truthy
-            expect(assigns(:equipment_models).size).to eq(1)
-          end
-        end
-        context 'without @category set' do
-          it 'should populate an array of all active equipment models' do
-            expect(assigns(:equipment_models).include?(model)).to be_truthy
-            expect(assigns(:equipment_models).include?(mod_other_cat_active)).to be_truthy
-            expect(assigns(:equipment_models).include?(mod_other_cat_inactive)).not_to be_truthy
-            expect(assigns(:equipment_models).size).to eq(2)
-          end
-        end
+shared_examples_for 'GET index success' do
+  it { is_expected.to respond_with(:success) }
+  it { is_expected.to render_template(:index) }
+  it { is_expected.not_to set_the_flash }
+  context 'without show deleted' do
+    let!(:mod_other_cat_active) { FactoryGirl.create(:equipment_model) }
+    let!(:mod_other_cat_inactive) do
+      FactoryGirl.create(:equipment_model,
+                         deleted_at: Date.current)
+    end
+    context 'with @category set' do
+      it 'should populate an array of of active category-type equipment '\
+        'models' do
+        mod_same_cat_inactive =
+          FactoryGirl.create(:equipment_model, category: model.category,
+                                               deleted_at: Date.current)
+        get :index, category_id: model.category
+        expect(assigns(:equipment_models).include?(model)).to be_truthy
+        expect(assigns(:equipment_models).include?(mod_other_cat_active))
+          .not_to be_truthy
+        expect(assigns(:equipment_models).include?(mod_same_cat_inactive))
+          .not_to be_truthy
+        expect(assigns(:equipment_models).include?(mod_other_cat_inactive))
+          .not_to be_truthy
+        expect(assigns(:equipment_models).size).to eq(1)
       end
-      context 'with show deleted' do
-        let!(:mod_other_cat_active) { FactoryGirl.create(:equipment_model) }
-        let!(:mod_other_cat_inactive) { FactoryGirl.create(:equipment_model,
-          deleted_at: Date.current) }
-        context 'with @category set' do
-          it 'should populate an array of category-type equipment models' do
-            mod_same_cat_inactive = FactoryGirl.create(:equipment_model,
-              category: model.category, deleted_at: Date.current)
-            get :index, category_id: model.category, show_deleted: true
-            expect(assigns(:equipment_models).include?(model)).to be_truthy
-            expect(assigns(:equipment_models).include?(mod_other_cat_active)).not_to be_truthy
-            expect(assigns(:equipment_models).include?(mod_same_cat_inactive)).to be_truthy
-            expect(assigns(:equipment_models).include?(mod_other_cat_inactive)).not_to be_truthy
-            expect(assigns(:equipment_models).size).to eq(2)
-          end
-        end
-        context 'without @category set' do
-          it 'should populate an array of all equipment models' do
-            get :index, show_deleted: true
-            expect(assigns(:equipment_models).include?(model)).to be_truthy
-            expect(assigns(:equipment_models).include?(mod_other_cat_active)).to be_truthy
-            expect(assigns(:equipment_models).include?(mod_other_cat_inactive)).to be_truthy
-            expect(assigns(:equipment_models).size).to eq(3)
-          end
-        end
+    end
+    context 'without @category set' do
+      it 'should populate an array of all active equipment models' do
+        expect(assigns(:equipment_models).include?(model)).to be_truthy
+        expect(assigns(:equipment_models).include?(mod_other_cat_active))
+          .to be_truthy
+        expect(assigns(:equipment_models).include?(mod_other_cat_inactive))
+          .not_to be_truthy
+        expect(assigns(:equipment_models).size).to eq(2)
       end
-
+    end
+  end
+  context 'with show deleted' do
+    let!(:mod_other_cat_active) { FactoryGirl.create(:equipment_model) }
+    let!(:mod_other_cat_inactive) do
+      FactoryGirl.create(:equipment_model,
+                         deleted_at: Date.current)
+    end
+    context 'with @category set' do
+      it 'should populate an array of category-type equipment models' do
+        mod_same_cat_inactive =
+          FactoryGirl.create(:equipment_model, category: model.category,
+                                               deleted_at: Date.current)
+        get :index, category_id: model.category, show_deleted: true
+        expect(assigns(:equipment_models).include?(model)).to be_truthy
+        expect(assigns(:equipment_models).include?(mod_other_cat_active))
+          .not_to be_truthy
+        expect(assigns(:equipment_models).include?(mod_same_cat_inactive))
+          .to be_truthy
+        expect(assigns(:equipment_models).include?(mod_other_cat_inactive))
+          .not_to be_truthy
+        expect(assigns(:equipment_models).size).to eq(2)
+      end
+    end
+    context 'without @category set' do
+      it 'should populate an array of all equipment models' do
+        get :index, show_deleted: true
+        expect(assigns(:equipment_models).include?(model)).to be_truthy
+        expect(assigns(:equipment_models).include?(mod_other_cat_active))
+          .to be_truthy
+        expect(assigns(:equipment_models).include?(mod_other_cat_inactive))
+          .to be_truthy
+        expect(assigns(:equipment_models).size).to eq(3)
+      end
+    end
+  end
 end
 
-describe EquipmentModelsController, :type => :controller do
+describe EquipmentModelsController, type: :controller do
   before(:all) { @app_config = FactoryGirl.create(:app_config) }
   let!(:model) { FactoryGirl.create(:equipment_model) }
 
@@ -96,7 +113,7 @@ describe EquipmentModelsController, :type => :controller do
         sign_in FactoryGirl.create(:admin)
         get :index
       end
-      it_behaves_like "GET index success"
+      it_behaves_like 'GET index success'
     end
     context 'with non-admin user' do
       before { sign_in FactoryGirl.create(:user) }
@@ -113,14 +130,14 @@ describe EquipmentModelsController, :type => :controller do
         sign_in FactoryGirl.create(:admin)
         get :show, id: model
       end
-      it_behaves_like "GET show success"
+      it_behaves_like 'GET show success'
     end
     context 'with non-admin user' do
       before do
         sign_in FactoryGirl.create(:user)
         get :show, id: model
       end
-      it_behaves_like "GET show success"
+      it_behaves_like 'GET show success'
     end
   end
 
@@ -181,24 +198,32 @@ describe EquipmentModelsController, :type => :controller do
     context 'with admin user' do
       before { sign_in FactoryGirl.create(:admin) }
       context 'with valid attributes' do
-        before { post :create, equipment_model: FactoryGirl.attributes_for(
-          :equipment_model, category_id: model.category) }
+        before do
+          post :create, equipment_model: FactoryGirl.attributes_for(
+          :equipment_model, category_id: model.category)
+        end
         it 'should save model' do
-          expect{ post :create, equipment_model: FactoryGirl.attributes_for(
-            :equipment_model, category_id: model.category) }.to change(EquipmentModel, :count).by(1)
+          expect do
+            post :create, equipment_model: FactoryGirl.attributes_for(
+            :equipment_model, category_id: model.category)
+          end.to change(EquipmentModel, :count).by(1)
         end
         it { is_expected.to set_the_flash }
         it { is_expected.to redirect_to(EquipmentModel.last) }
       end
 
       context 'without valid attributes' do
-        before { post :create, equipment_model: FactoryGirl.attributes_for(
-          :equipment_model, name: nil) }
+        before do
+          post :create, equipment_model: FactoryGirl.attributes_for(
+          :equipment_model, name: nil)
+        end
         it { is_expected.to set_the_flash }
         it { is_expected.to render_template(:new) }
         it 'should not save' do
-          expect{ post :create, equipment_model: FactoryGirl.attributes_for(
-            :equipment_model, name: nil) }.not_to change(EquipmentModel, :count)
+          expect do
+            post :create, equipment_model: FactoryGirl.attributes_for(
+            :equipment_model, name: nil)
+          end.not_to change(EquipmentModel, :count)
         end
         it { is_expected.to render_template(:new) }
       end
@@ -206,7 +231,8 @@ describe EquipmentModelsController, :type => :controller do
     context 'with non-admin user' do
       before { sign_in FactoryGirl.create(:user) }
       it 'should redirect to root' do
-        post :create, equipment_model: FactoryGirl.attributes_for(:equipment_model)
+        post :create,
+             equipment_model: FactoryGirl.attributes_for(:equipment_model)
         expect(response).to redirect_to(root_url)
       end
     end
@@ -216,8 +242,10 @@ describe EquipmentModelsController, :type => :controller do
     context 'with admin user' do
       before { sign_in FactoryGirl.create(:admin) }
       context 'with valid attributes' do
-        before { put :update, id: model, equipment_model:
-          FactoryGirl.attributes_for(:equipment_model, name: 'Mod') }
+        before do
+          put :update, id: model, equipment_model:
+          FactoryGirl.attributes_for(:equipment_model, name: 'Mod')
+        end
         it { is_expected.to set_the_flash }
         it 'sets @equipment_model to selected model' do
           expect(assigns(:equipment_model)).to eq(model)
@@ -230,8 +258,10 @@ describe EquipmentModelsController, :type => :controller do
       end
 
       context 'without valid attributes' do
-        before { put :update, id: model, equipment_model:
-          FactoryGirl.attributes_for(:equipment_model, name: nil) }
+        before do
+          put :update, id: model, equipment_model:
+          FactoryGirl.attributes_for(:equipment_model, name: nil)
+        end
         it { is_expected.not_to set_the_flash }
         it 'should not update attributes' do
           model.reload
@@ -244,7 +274,9 @@ describe EquipmentModelsController, :type => :controller do
     context 'with non-admin user' do
       before { sign_in FactoryGirl.create(:user) }
       it 'should redirect to root' do
-        put :update, id: model, equipment_model: FactoryGirl.attributes_for(:equipment_model)
+        put :update,
+            id: model,
+            equipment_model: FactoryGirl.attributes_for(:equipment_model)
         expect(response).to redirect_to(root_url)
       end
     end

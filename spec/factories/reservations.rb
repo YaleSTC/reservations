@@ -9,7 +9,8 @@ FactoryGirl.define do
 
     trait :valid do
       after(:build) do |res|
-        # for some reason this code is required instead of just calling it on res.equipment_model
+        # for some reason this code is required instead of just calling it on
+        # res.equipment_model
         mod = EquipmentModel.find(res.equipment_model)
         if mod.equipment_objects.empty?
           FactoryGirl.create(:equipment_object, equipment_model: mod)
@@ -59,7 +60,6 @@ FactoryGirl.define do
         mod = EquipmentModel.find(res.equipment_model)
         res.equipment_object = mod.equipment_objects.first
       end
-
     end
 
     factory :valid_reservation, traits: [:valid]

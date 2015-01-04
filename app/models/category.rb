@@ -4,8 +4,7 @@ class Category < ActiveRecord::Base
 
   has_many :equipment_models, dependent: :destroy
 
-  validates :name,                presence: true,
-                                  uniqueness: true
+  validates :name, presence: true, uniqueness: true
 
   validates :max_per_user,
             :max_checkout_length,
@@ -13,15 +12,16 @@ class Category < ActiveRecord::Base
             :max_renewal_times,
             :renewal_days_before_due,
             :sort_order,
-                                  numericality: {
-                                    allow_nil: true,
-                                    integer_only: true,
-                                    greater_than_or_equal_to: 0 }
+            numericality: {
+              allow_nil: true,
+              integer_only: true,
+              greater_than_or_equal_to: 0 }
 
   nilify_blanks only: [:deleted_at]
 
-  # table_name is needed to resolve ambiguity for certain queries with 'includes'
-  scope :active, lambda { where("#{table_name}.deleted_at is null") }
+  # table_name is needed to resolve ambiguity for certain queries with
+  # 'includes'
+  scope :active, ->() { where("#{table_name}.deleted_at is null") }
 
   def maximum_per_user
     max_per_user || Float::INFINITY
@@ -42,5 +42,4 @@ class Category < ActiveRecord::Base
   def maximum_checkout_length
     max_checkout_length || Float::INFINITY
   end
-
 end

@@ -1,8 +1,7 @@
 class BlackoutsController < ApplicationController
-
   load_and_authorize_resource
-  before_action :set_current_blackout, only: [:edit, :show, :update, :destroy, :destroy_recurring]
-
+  before_action :set_current_blackout,
+                only: [:edit, :show, :update, :destroy, :destroy_recurring]
 
   # ---------- before filter methods ------------ #
 
@@ -17,9 +16,8 @@ class BlackoutsController < ApplicationController
   end
 
   def show
-    unless @blackout.set_id.nil?
-      @blackout_set = Blackout.where("set_id = ?", @blackout.set_id)
-    end
+    return if @blackout.set_id.nil?
+    @blackout_set = Blackout.where('set_id = ?', @blackout.set_id)
   end
 
   def new
@@ -41,11 +39,12 @@ class BlackoutsController < ApplicationController
     @blackout = Blackout.new(blackout_params) # for the form if there are errors
 
     if params[:blackout][:days].first.blank?
-      flash[:error] = 'You must select at least one day of the week for any recurring blackouts to be created.'
-      render 'new_recurring' and return
+      flash[:error] = 'You must select at least one day of the week for any '\
+      'recurring blackouts to be created.'
+      render('new_recurring') && return
     end
 
-    render 'new_recurring' and return unless @blackout.valid?
+    render('new_recurring') && return unless @blackout.valid?
 
     p = blackout_params
     p[:created_by] = current_user.id
@@ -73,14 +72,15 @@ class BlackoutsController < ApplicationController
     if res.empty? && @blackout.save
       redirect_to @blackout, notice: 'Blackout was successfully created.'
     else
-      unless res.empty?
-        msg = "The following reservation(s) will be unable to be returned: "
-        res.each do |res|
-          msg += "#{res.md_link}, "
-        end
-        msg = msg[0, msg.length-2] + ". Please update their due dates and try again."
+      if res.empty?
+        msg = 'Oops, something went wrong. Please try again.'
       else
-        msg = "Oops, something went wrong. Please try again."
+        msg = 'The following reservation(s) will be unable to be returned: '
+        res.each do |res2|
+          msg += "#{res2.md_link}, "
+        end
+        msg = msg[0, msg.length - 2]\
+            + '. Please update their due dates and try again.'
       end
 
       flash[:error] = msg
@@ -103,16 +103,19 @@ class BlackoutsController < ApplicationController
   end
 
   def destroy_recurring
-    blackout_set = Blackout.where("set_id = ?", @blackout.set_id)
+    blackout_set = Blackout.where('set_id = ?', @blackout.set_id)
     blackout_set.each do |blackout|
       blackout.destroy(:force)
     end
-    flash[:notice] = "All blackouts in the set were successfully destroyed."
-    redirect_to blackouts_path and return
+    flash[:notice] = 'All blackouts in the set were successfully destroyed.'
+    redirect_to(blackouts_path) && return
   end
 
   private
-    def blackout_params
-      params.require(:blackout).permit(:start_date, :end_date, :notice, :blackout_type, :created_by, :set_id)
-    end
+
+  def blackout_params
+    params.require(:blackout)
+      .permit(:start_date, :end_date, :notice, :blackout_type, :created_by,
+              :set_id)
+  end
 end
