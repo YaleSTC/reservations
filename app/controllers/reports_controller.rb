@@ -51,31 +51,18 @@ class ReportsController < ApplicationController
                                 id_type: :equipment_model_id,
                                 stat_type: :count, secondary_id: :reserver_id)
 
-    # should this be redone?  Mostly done in two parts to only collect the
-    # uniq ids collecting the arrays of ids for each table
     category_info = []
     eq_model_info = equipment_info(full_set, category_info)
     category_info = category_info.flatten
-
-    ### commented out for speed, the problem is pagination, not the queries
-    ### also should probably give it a separate res_rels, because it doesn't
-    ### need user count
-    # reserver_ids = full_set.collect(&reserver_id).uniq
-    # reservers = User.find(reserver_ids)
-    # reserver_info = reservers.collect do |user|
-    #   ResSetInfo.new(user.name, :reserver_id, [user.id],
-    #                  user_path(id: user.id))
-    # end
+    reserver_info = user_info(full_set)
 
     # take all the sets of reservations and get stats on them
     # sets of reservations are passed in by name then models associated
     all_models = [ResSetInfo.new('All Models', :equipment_model_id)]
 
     ### commented out for speed see above
-    # res_sets = { total: all_models, users: reserver_info,
-    #              categories: category_info, equipment_models: eq_model_info }
-    res_sets = { total: all_models, categories: category_info,
-                 equipment_models: eq_model_info }
+    res_sets = { total: all_models, users: reserver_info,
+                  categories: category_info, equipment_models: eq_model_info }
     @data_tables = {}
     res_sets.each do |name, info_struct|
       @data_tables[name] = collect_stat_set(info_struct, res_rels)
