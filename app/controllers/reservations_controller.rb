@@ -101,6 +101,7 @@ class ReservationsController < ApplicationController
       begin
         start_date = cart.start_date
         reserver = cart.reserver_id
+        notes = format_errors(@errors) + notes.to_s
         if requested
           flash[:notice] = cart.request_all(current_user,
                                             params[:reservation][:notes])
@@ -415,5 +416,10 @@ class ReservationsController < ApplicationController
               :checked_out, :checked_in, :equipment_object, :due_date,
               :equipment_object_id, :notes, :notes_unsent, :times_renewed,
               :reserver_id, :reserver, :start_date, :equipment_model_id)
+  end
+  
+  def format_errors errors
+    return "" if errors.blank?
+    "*Validations violated:* #{errors.to_sentence}\n*Justification: *"
   end
 end
