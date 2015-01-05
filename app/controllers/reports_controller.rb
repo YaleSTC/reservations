@@ -2,14 +2,14 @@
 class ReportsController < ApplicationController
   authorize_resource class: false
   # relations to build data columns ()
-  ResRelation = Struct.new(:name, :relation, :params)
+  ColumnBuilder = Struct.new(:name, :relation, :params)
   # output structure (name = string, data = array, link_path = link for first
   # element in row)
   StatRow = Struct.new(:name, :data, :link_path)
   # info for a reservation set (building rows of data).
   # Pass in the array of ids and what type of ids the row of reservation is
   # collected by.  The link path is passed to the stat row
-  ResSetInfo = Struct.new(:name, :id_type, :ids, :link_path)
+  RowBuilder = Struct.new(:name, :id_type, :ids, :link_path)
   # stores the info for building columns (for the details on the reservations)
   DetailInfo = Struct.new(:name, :table, :params)
   SCOPES = { :"Total" => nil, :"Reserved" => :reserved,
@@ -38,21 +38,22 @@ class ReportsController < ApplicationController
   class Reservation::ActiveRecord_Relation
     include Rails.application.routes.url_helpers
     
-    def user_info
+    def reserver_row_builders
       reservers = self.collect(&:reserver).uniq
       reservers.collect do |user|
-        ResSetInfo.new(user.name, :reserver_id, [user.id],
+        RowBuilder.new(user.name, :reserver_id, [user.id],
                        user_path(id: user.id))
       end
+      reservers
     end
 
-    def equipment_info
+    def equipment_row_builders
       eq_model_info = []
       cat_em_ids = {}
       em_ids = self.collect(&:equipment_model_id).uniq
       eq_models = EquipmentModel.includes(:category).find(em_ids)
       eq_models.each do |em|
-        eq_model_info << ResSetInfo.new(em.name, :equipment_model_id, [em.id],
+        eq_model_info << RowBuilder.new(em.name, :equipment_model_id, [em.id],
                                         for_model_report_path(id: em.id))
         if cat_em_ids[em.category.id]
           cat_em_ids[em.category.id] << em.id
@@ -62,7 +63,7 @@ class ReportsController < ApplicationController
       end
       categories = Category.find(cat_em_ids.keys)
       category_info = categories.collect do |cat|
-        ResSetInfo.new(cat.name, :equipment_model_id, cat_em_ids[cat.id],
+        RowBuilder.new(cat.name, :equipment_model_id, cat_em_ids[cat.id],
                        for_model_set_reports_path(ids: cat_em_ids[cat.id]))
       end
       return eq_model_info, category_info
@@ -73,8 +74,8 @@ class ReportsController < ApplicationController
       def_options = { stat_type: :count }
       res_rels = []
       SCOPES.each do |key, value|
-        rel = value ? res_set.send(value) : res_set
-        res_rels << ResRelation.new(key.to_s, rel, def_options)
+        rel = value ? self.send(value) : self
+        res_rels << ColumnBuilder.new(key.to_s, rel, def_options)
       end
       res_rels
     end
@@ -84,7 +85,7 @@ class ReportsController < ApplicationController
   # The idea I had behind reports was to be able to have relatively flexible
   # report building capabilities without a lot of queries
   #
-  # collect_stat_set
+  # build_table
   # builds a table in rows where each row is a set of reservations and the
   # relation filters the data again by column - it's useful for subgrouping
   # the reservations, and params lets you alter what kind of data you're
@@ -93,52 +94,91 @@ class ReportsController < ApplicationController
   # assoc_details and collect_res_details take the set of
   # reservations, and for each reservation collect details from associated
   # tables, and the reservation table
-
-  # INDEX
-  #   get all reservations that start in the given date range
-  #   build an array of ResRelation objects with the default relations hash
-  #   add to this array a User Count ResRelation object whose params are a thing
   #
-  #   Now get all the equipment models in the set
-  #   Make an array of ResSetInfo objects (eq_model_info)
-  #   Make a hash of category_em_ids
-  #   For every model in the set, add a new ResSetInfo object
-  #   For every model in the set, add its ID to the category hash
-  #     key: category ID
-  #     value: model ID
-  #   Get all the categories and do the same thing, making an array 
-  #   of ResSetInfo structs
-  #   
+  # ColumnBuilder should really be renamed ColumnBuilder. It has a few fields:
+  # Title ; the text displayed at the head of the data column
+  # Relation ; the ActiveRecord::Relation instance of the reservations
+  #   that the column cares about
+  # Options ; a cheap trick to get in multiple arguments at the end here.
+  #   I want to rearchitect this to be stat_type instead. The logic will go,
+  #   'duration, time_out, count' are special keywords
+  #   any other word will assume it is counting the field
   #
-  # I suspect that ResRelation.params[id_type] is never actually used..?
+  #
+  # Properties of a table; how best to organize them?
+  # (Full) Set of Reservations
+  #   - Criteria for filtering; eg category, EM, user, EO, etc.
+  # Column headers
+  #   - for each column, how to filter the reservations (relation)
+  #   - for each row, how to display the data
+  # Row headers
+  #   - what are the rows (id_type)
+  #   - for each row, what object is it (this is a full table metadata)
+  # So..
+  #
+  # Struct TableBuilder
+  #   - Name
+  #   - AR relation for 'all reservations'
+  #   - RowObject type
+  #   - Array of ColRelationDisplays
+  #   - Array of RowObjects
+  #
+  # Struct ColRelationDisplay (name subject to change)
+  #   - Name
+  #   - AR relation
+  #   - Display type
+  #
+  # Struct RowObject
+  #   - Name
+  #   - Link path
+  #   - Object ID
+  #
+  # Building the table
+  # 1x query to get the TableBuilder AR
+  # n-columns x queries to get ARs for each column
+  # that's it; when building rows use Array.select to match the ids
+  #
+  #  Struct Table
+  #   - Array of column headings (strings)
+  #   - Array of Rows
+  #  Struct Row
+  #   - Name
+  #   - Link path (these can be copied from Row Object)
+  #   - Array of data (strings or ints)
+  #
 
   def index # rubocop:disable MethodLength, AbcSize
     @res_stat_sets = []
     @start_date = start_date
     @end_date = end_date
 
+    # filter reservations by date
     reservations = Reservation.starts_on_days(@start_date, @end_date)
                 .includes(:equipment_model)
-    res_rels = reservations.build_relations_set
-    res_rels << ResRelation.new('User Count', reservations,
+
+    # build ColumnBuilders array; these are the columns of the data table
+    columns = reservations.build_relations_set
+    columns << ColumnBuilder.new('User Count', reservations,
                                 stat_type: :count, 
                                 secondary_id: :reserver_id)
 
-    # take all the sets of reservations and get stats on them
-    equipment_info = reservations.equipment_info
-    eq_model_info = equipment_info[0]
-    category_info = equipment_info[1]
-    #reserver_info = full_set.user_info
+    # Get RowBuilder array data from the reservation sets; these are 
+    # basically the rows for each data table 
+    equipment_row_builders = reservations.equipment_row_builders
+    eq_models = equipment_row_builders[0]
+    categories = equipment_row_builders[1]
+    #reserver_info = reservations.user_row_builders
 
     # sets of reservations are passed in by name then models associated
-    all_models = [ResSetInfo.new('All Models', :equipment_model_id)]
+    all_models = [RowBuilder.new('All Models', :equipment_model_id)]
 
-    res_sets = { total: all_models, #users: reserver_info,
-                  categories: category_info, equipment_models: eq_model_info }
+    table_types = { total: all_models, #users: reserver_info,
+                  categories: categories, equipment_models: eq_models }
     @data_tables = {}
-    res_sets.each do |name, info_struct|
-      @data_tables[name] = collect_stat_set(info_struct, res_rels)
+    table_types.each do |name, rows|
+      @data_tables[name] = build_table(rows, columns)
     end
+
     respond_to do |format|
       format.html
       format.csv { render layout: false }
@@ -210,32 +250,32 @@ class ReportsController < ApplicationController
                          .starts_on_days(start_date, end_date)
                          .where(equipment_model_id: ids)
     res_rels = build_relations_set(res_set)
-    res_rels << ResRelation.new('Avg Planned Duration', res_set,
+    res_rels << ColumnBuilder.new('Avg Planned Duration', res_set,
                                 stat_type: :duration)
-    res_rels << ResRelation.new('Avg Duration Checked Out', res_set,
+    res_rels << ColumnBuilder.new('Avg Duration Checked Out', res_set,
                                 stat_type: :time_checked_out)
 
     em_info = eq_models.collect do |em|
       em_link = ids.size > 1 ? for_model_report_path(id: em.id) : nil
-      ResSetInfo.new(em.name, :equipment_model_id, [em.id], em_link)
+      RowBuilder.new(em.name, :equipment_model_id, [em.id], em_link)
     end
-    em_stats = collect_stat_set(em_info, res_rels)
+    em_stats = build_table(em_info, res_rels)
 
     # collect data for users table
     reserver_ids = res_set.collect(&:reserver_id).uniq
     users = User.find(reserver_ids)
     user_info = users.collect do |user|
-      ResSetInfo.new(user.name, :reserver_id, [user.id],
+      RowBuilder.new(user.name, :reserver_id, [user.id],
                      user_path(id: user.id))
     end
-    user_stats = collect_stat_set(user_info, res_rels)
+    user_stats = build_table(user_info, res_rels)
 
     # collect data by equipment object
     eq_objects = EquipmentObject.where(equipment_model_id: ids)
     obj_info = eq_objects.collect do |obj|
-      ResSetInfo.new(obj.name, :equipment_object_id, [obj.id])
+      RowBuilder.new(obj.name, :equipment_object_id, [obj.id])
     end
-    obj_stats = collect_stat_set(obj_info, res_rels)
+    obj_stats = build_table(obj_info, res_rels)
 
     det_structs = [DetailInfo.new('Reserver', users,
                                   secondary_id: :reserver_id,
@@ -276,7 +316,7 @@ class ReportsController < ApplicationController
     end
   end
 
-  def collect_stat_set(info_struct, res_rels) # rubocop:disable all
+  def build_table(info_struct, res_rels) # rubocop:disable all
     # iterate by row
     # takes 2 args; an array of ResInfo structs 
     # and an array of Resrelations
