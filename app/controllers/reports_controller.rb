@@ -12,26 +12,32 @@ class ReportsController < ApplicationController
   ResSetInfo = Struct.new(:name, :id_type, :ids, :link_path)
   # stores the info for building columns (for the details on the reservations)
   DetailInfo = Struct.new(:name, :table, :params)
+  SCOPES = { :"Total" => nil, :"Reserved" => :reserved,
+               :"Checked Out" => :checked_out, :"Overdue" => :overdue,
+               :"Returned On Time" => :returned_on_time,
+               :"Returned Overdue" => :returned_overdue,
+               :"Missed" => :missed }
 
-  class Array 
-    def average2
-      if size == 0
-        'N/A'
-      else
-        (self.inject { |r, e| r + e }.to_f / size).round(2)
-      end
+
+  def average2 arr
+    if arr.size == 0
+      'N/A'
+    else
+      (arr.inject { |r, e| r + e }.to_f / arr.size).round(2)
     end
+  end
+    
+  def avg_duration res_set
+    average2(res_set.collect { |r| r.duration })
+  end
+
+  def avg_time_out res_set
+    average2(res_set.collect { |r| r.time_checked_out })
   end
 
   class Reservation::ActiveRecord_Relation
     include Rails.application.routes.url_helpers
-    def avg_duration
-      self.collect { |r| r.duration }.average2
-    end
-    def avg_time_out
-      self.collect { |r| r.time_checked_out }.average2
-    end
-
+    
     def user_info
       reservers = self.collect(&:reserver).uniq
       reservers.collect do |user|
@@ -62,6 +68,16 @@ class ReportsController < ApplicationController
       return eq_model_info, category_info
     end
 
+    def build_relations_set
+      # reservation relations for each of the scopes
+      def_options = { stat_type: :count }
+      res_rels = []
+      SCOPES.each do |key, value|
+        rel = value ? res_set.send(value) : res_set
+        res_rels << ResRelation.new(key.to_s, rel, def_options)
+      end
+      res_rels
+    end
 
   end
  
@@ -101,16 +117,15 @@ class ReportsController < ApplicationController
     @start_date = start_date
     @end_date = end_date
 
-    full_set = Reservation.starts_on_days(@start_date, @end_date)
+    reservations = Reservation.starts_on_days(@start_date, @end_date)
                 .includes(:equipment_model)
-    res_rels = build_relations_set(full_set)
-    res_rels << ResRelation.new('User Count', full_set,
-                                id_type: :equipment_model_id,
+    res_rels = reservations.build_relations_set
+    res_rels << ResRelation.new('User Count', reservations,
                                 stat_type: :count, 
                                 secondary_id: :reserver_id)
 
     # take all the sets of reservations and get stats on them
-    equipment_info = full_set.equipment_info
+    equipment_info = reservations.equipment_info
     eq_model_info = equipment_info[0]
     category_info = equipment_info[1]
     #reserver_info = full_set.user_info
@@ -187,25 +202,7 @@ class ReportsController < ApplicationController
 
   # forms a set of relations with the default settings, or a set of relations
   # with the same options
-  def build_relations_set(res_set, rel_hash = nil, options = nil)
-    # reservation relations for each of the scopes
-    rel_hash ||= { :"Total" => nil, :"Reserved" => :reserved,
-                   :"Checked Out" => :checked_out, :"Overdue" => :overdue,
-                   :"Returned On Time" => :returned_on_time,
-                   :"Returned Overdue" => :returned_overdue,
-                   :"Missed" => :missed }
-
-    def_options = { stat_type: :count }
-    def_options.merge!(options) if options
-
-    res_rels = []
-    rel_hash.each do |key, value|
-      rel = value ? res_set.send(value) : res_set
-      res_rels << ResRelation.new(key.to_s, rel, def_options)
-    end
-    res_rels
-  end
-
+  
   # build the canned report for a model/set of models
   # rubocop:disable MultilineOperationIndentation, MethodLength, AbcSize
   def models_subreport(ids, start_date, end_date, eq_models)
@@ -214,10 +211,8 @@ class ReportsController < ApplicationController
                          .where(equipment_model_id: ids)
     res_rels = build_relations_set(res_set)
     res_rels << ResRelation.new('Avg Planned Duration', res_set,
-                                id_type: :equipment_model_id,
                                 stat_type: :duration)
     res_rels << ResRelation.new('Avg Duration Checked Out', res_set,
-                                id_type: :equipment_model_id,
                                 stat_type: :time_checked_out)
 
     em_info = eq_models.collect do |em|
@@ -275,9 +270,9 @@ class ReportsController < ApplicationController
       end
       return ids.uniq.count
     when :duration
-      return res_set.avg_duration
+      return avg_duration res_set
     when :time_checked_out
-      return res_set.time_checked_out
+      return avg_time_out res_set
     end
   end
 
