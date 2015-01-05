@@ -5,7 +5,10 @@ AllCops:
     - '**/config.ru'
     - 'lib/**/*'
   Exclude:
-    - 'db/**/*'
+    # exclude all files in db/ except for db/seeds.rb
+    - 'db/schema.rb'
+    - 'db/migrate/*'
+    - 'db/seed_images/*'
     # check config files to ensure initializers / environment files are
     # cleanly written
     # - 'config/**/*'
