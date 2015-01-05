@@ -51,17 +51,16 @@ class ReportsController < ApplicationController
                                 id_type: :equipment_model_id,
                                 stat_type: :count, secondary_id: :reserver_id)
 
+    # take all the sets of reservations and get stats on them
     category_info = []
     eq_model_info = equipment_info(full_set, category_info)
     category_info = category_info.flatten
-    reserver_info = user_info(full_set)
+    #reserver_info = user_info(full_set)
 
-    # take all the sets of reservations and get stats on them
     # sets of reservations are passed in by name then models associated
     all_models = [ResSetInfo.new('All Models', :equipment_model_id)]
 
-    ### commented out for speed see above
-    res_sets = { total: all_models, users: reserver_info,
+    res_sets = { total: all_models, #users: reserver_info,
                   categories: category_info, equipment_models: eq_model_info }
     @data_tables = {}
     res_sets.each do |name, info_struct|
@@ -184,8 +183,6 @@ class ReportsController < ApplicationController
     end
     res_rels
   end
-
-  
 
   # build the canned report for a model/set of models
   # rubocop:disable MultilineOperationIndentation, MethodLength, AbcSize
