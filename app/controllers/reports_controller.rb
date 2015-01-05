@@ -14,10 +14,68 @@ class ReportsController < ApplicationController
   DetailInfo = Struct.new(:name, :table, :params)
 
   class Array 
-    def avg
-      self.inject { |r, e| r + e }.to_f / size
+    def average2
+      if size == 0
+        'N/A'
+      else
+        (self.inject { |r, e| r + e }.to_f / size).round(2)
+      end
     end
   end
+
+  class Reservation::ActiveRecord_Relation
+    def avg_duration
+      self.collect { |r| r.duration }.average2
+    end
+    def avg_time_out
+      self.collect { |r| r.time_checked_out }.average2
+    end
+
+    def user_info
+      reservers = self.collect(&:reserver).uniq
+      reservers.collect do |user|
+        ResSetInfo.new(user.name, :reserver_id, [user.id],
+                       user_path(id: user.id))
+      end
+    end
+
+    def equipment_info
+      eq_model_info = []
+      cat_em_ids = {}
+      em_ids = self.collect(&:equipment_model_id).uniq
+      eq_models = EquipmentModel.includes(:category).find(em_ids)
+      eq_models.each do |em|
+        eq_model_info << ResSetInfo.new(em.name, :equipment_model_id, [em.id],
+                                        for_model_report_path(id: em.id))
+        if cat_em_ids[em.category.id]
+          cat_em_ids[em.category.id] << em.id
+        else
+          cat_em_ids[em.category.id] = [em.id]
+        end
+      end
+      categories = Category.find(cat_em_ids.keys)
+      category_info = categories.collect do |cat|
+        ResSetInfo.new(cat.name, :equipment_model_id, cat_em_ids[cat.id],
+                       for_model_set_reports_path(ids: cat_em_ids[cat.id]))
+      end
+      return eq_model_info, category_info
+    end
+
+
+  end
+ 
+  def get_duration(res, date_hash)
+    start = res.send(date_hash[:start])
+    finish = res.send(date_hash[:finish])
+    start ||= date_hash[:catch1]
+    finish ||= date_hash[:catch2]
+    if start && finish
+      return finish.to_date - start.to_date
+    else
+      return nil
+    end
+  end
+
 
   # The idea I had behind reports was to be able to have relatively flexible
   # report building capabilities without a lot of queries
@@ -63,10 +121,10 @@ class ReportsController < ApplicationController
                                 secondary_id: :reserver_id)
 
     # take all the sets of reservations and get stats on them
-    category_info = []
-    eq_model_info = equipment_info(full_set, category_info)
-    category_info = category_info.flatten
-    #reserver_info = user_info(full_set)
+    equipment_info = full_set.equipment_info
+    eq_model_info = equipment_info[0]
+    category_info = equipment_info[1]
+    #reserver_info = full_set.user_info
 
     # sets of reservations are passed in by name then models associated
     all_models = [ResSetInfo.new('All Models', :equipment_model_id)]
@@ -126,44 +184,8 @@ class ReportsController < ApplicationController
 
   private
 
-  def user_info reservations
-    # given a set of reservations, get info on reserver
-    reserver_ids = reservations.collect(&:reserver_id).uniq
-    users = User.find(reserver_ids)
-    users.collect do |user|
-      ResSetInfo.new(user.name, :reserver_id, [user.id],
-                     user_path(id: user.id))
-    end
-  end
-
-  def equipment_info(reservations, category_info=nil)
-    # given a set of reservations, return info on equipment models
-    # return category info in array referenced in arg 
-
-    eq_model_info = []
-    cat_em_ids = {}
-    em_ids = reservations.collect(&:equipment_model_id).uniq
-    eq_models = EquipmentModel.includes(:category).find(em_ids)
-    eq_models.each do |em|
-      eq_model_info << ResSetInfo.new(em.name, :equipment_model_id, [em.id],
-                                      for_model_report_path(id: em.id))
-      if cat_em_ids[em.category.id]
-        cat_em_ids[em.category.id] << em.id
-      else
-        cat_em_ids[em.category.id] = [em.id]
-      end
-    end
-    if category_info == []
-      categories = Category.find(cat_em_ids.keys)
-      c = categories.collect do |cat|
-        ResSetInfo.new(cat.name, :equipment_model_id, cat_em_ids[cat.id],
-                       for_model_set_reports_path(ids: cat_em_ids[cat.id]))
-      end
-      category_info << c
-    end
-    eq_model_info
-  end
-
+  
+ 
   def start_date
     session[:report_start_date].present? ?
       session[:report_start_date] : Date.current - 1.year
@@ -204,15 +226,10 @@ class ReportsController < ApplicationController
     res_rels = build_relations_set(res_set)
     res_rels << ResRelation.new('Avg Planned Duration', res_set,
                                 id_type: :equipment_model_id,
-                                stat_type: :duration,
-                                secondary_id: { start: :start_date,
-                                                finish: :due_date })
+                                stat_type: :duration)
     res_rels << ResRelation.new('Avg Duration Checked Out', res_set,
                                 id_type: :equipment_model_id,
-                                stat_type: :duration,
-                                secondary_id: { start: :checked_out,
-                                                finish: :checked_in,
-                                                catch2: Date.current })
+                                stat_type: :time_checked_out)
 
     em_info = eq_models.collect do |em|
       em_link = ids.size > 1 ? for_model_report_path(id: em.id) : nil
@@ -259,18 +276,21 @@ class ReportsController < ApplicationController
   end
   # rubocop:enable MultilineOperationIndentation, MethodLength, AbcSize
 
-  def get_duration(res, date_hash)
-    start = res.send(date_hash[:start])
-    finish = res.send(date_hash[:finish])
-    start ||= date_hash[:catch1]
-    finish ||= date_hash[:catch2]
-    if start && finish
-      return finish.to_date - start.to_date
-    else
-      return nil
+ 
+  def build_data(res_set, params)
+    case params[:stat_type]
+    when :count
+      return res_set.count unless params[:secondary_id]
+      ids = res_set.collect do |res|
+        res.send(params[:secondary_id])
+      end
+      return ids.uniq.count
+    when :duration
+      return res_set.avg_duration
+    when :time_checked_out
+      return res_set.time_checked_out
     end
   end
-
 
   def collect_stat_set(info_struct, res_rels) # rubocop:disable all
     # iterate by row
@@ -307,26 +327,7 @@ class ReportsController < ApplicationController
         else
           res_set = rel.all
         end
-        case params[:stat_type]
-        when :count
-          if params[:secondary_id] # count how many unique
-            stat_row.data << res_set.collect do |res|
-              res.send(params[:secondary_id])
-            end.uniq.count
-          else
-            stat_row.data << res_set.count
-          end
-        when :duration
-          durations = res_set.collect do |res|
-            get_duration(res, params[:secondary_id])
-          end
-          durations.compact!
-          if durations.count > 0
-            stat_row.data << durations.avg.round(2)
-          else
-            stat_row.data << 'N/A'
-          end
-        end
+        stat_row.data << build_data(res_set, params)
       end
       stat_set[:rows] << stat_row
     end
