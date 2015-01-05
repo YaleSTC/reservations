@@ -206,8 +206,8 @@ class ReservationsController < ApplicationController
       redirect_to(:back) && return
     end
     unless Reservation.unique_equipment_objects?(checked_out_reservations)
-      flash[:error] = "The same equipment item cannot be simultaneously checked
-        out in multiple reservations."
+      flash[:error] = 'The same equipment item cannot be simultaneously '\
+        'checked out in multiple reservations.'
       redirect_to(:back) && return
     end
 
@@ -215,12 +215,12 @@ class ReservationsController < ApplicationController
     if @user.overdue_reservations?
       if can? :override, :checkout_errors
         # Admins can ignore this
-        flash[:notice] = 'Admin Override: Equipment has been checked out
-        successfully, even though the reserver has overdue equipment.'
+        flash[:notice] = 'Admin Override: Equipment has been checked out '\
+          'successfully, even though the reserver has overdue equipment.'
       else
         # Everyone else is redirected
-        flash[:error] = 'Could not check out the equipment, because the reserver
-        has reservations that are overdue.'
+        flash[:error] = 'Could not check out the equipment, because the '\
+          'reserver has reservations that are overdue.'
         redirect_to(:back) && return
       end
     end
@@ -250,8 +250,8 @@ class ReservationsController < ApplicationController
       next if r_attrs[:checkin?].blank?
       r = Reservation.find(r_id)
       if r.checked_in
-        flash[:error] = 'One of the items you tried to check in has already been
-        checked in.'
+        flash[:error] = 'One of the items you tried to check in has already '\
+          'been checked in.'
         redirect_to(:back) && return
       end
 
@@ -417,9 +417,9 @@ class ReservationsController < ApplicationController
               :equipment_object_id, :notes, :notes_unsent, :times_renewed,
               :reserver_id, :reserver, :start_date, :equipment_model_id)
   end
-  
-  def format_errors errors
-    return "" if errors.blank?
+
+  def format_errors(errors)
+    return '' if errors.blank?
     "*Validations violated:* #{errors.to_sentence}\n*Justification: *"
   end
 end
