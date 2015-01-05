@@ -13,12 +13,22 @@ class ReportsController < ApplicationController
   # stores the info for building columns (for the details on the reservations)
   DetailInfo = Struct.new(:name, :table, :params)
 
+  class Array 
+    def avg
+      self.inject { |r, e| r + e }.to_f / size
+    end
+  end
+
   # The idea I had behind reports was to be able to have relatively flexible
-  # report building capabilities without a lot of queries collect_stat_set
+  # report building capabilities without a lot of queries
+  #
+  # collect_stat_set
   # builds a table in rows where each row is a set of reservations and the
   # relation filters the data again by column - it's useful for subgrouping
   # the reservations, and params lets you alter what kind of data you're
-  # looking for assoc_details and collect_res_details take the set of
+  # looking for
+  #
+  # assoc_details and collect_res_details take the set of
   # reservations, and for each reservation collect details from associated
   # tables, and the reservation table
 
@@ -49,7 +59,8 @@ class ReportsController < ApplicationController
     res_rels = build_relations_set(full_set)
     res_rels << ResRelation.new('User Count', full_set,
                                 id_type: :equipment_model_id,
-                                stat_type: :count, secondary_id: :reserver_id)
+                                stat_type: :count, 
+                                secondary_id: :reserver_id)
 
     # take all the sets of reservations and get stats on them
     category_info = []
@@ -194,13 +205,13 @@ class ReportsController < ApplicationController
     res_rels << ResRelation.new('Avg Planned Duration', res_set,
                                 id_type: :equipment_model_id,
                                 stat_type: :duration,
-                                secondary_id: { date_type1: :start_date,
-                                                date_type2: :due_date })
+                                secondary_id: { start: :start_date,
+                                                finish: :due_date })
     res_rels << ResRelation.new('Avg Duration Checked Out', res_set,
                                 id_type: :equipment_model_id,
                                 stat_type: :duration,
-                                secondary_id: { date_type1: :checked_out,
-                                                date_type2: :checked_in,
+                                secondary_id: { start: :checked_out,
+                                                finish: :checked_in,
                                                 catch2: Date.current })
 
     em_info = eq_models.collect do |em|
@@ -248,8 +259,37 @@ class ReportsController < ApplicationController
   end
   # rubocop:enable MultilineOperationIndentation, MethodLength, AbcSize
 
+  def get_duration(res, date_hash)
+    start = res.send(date_hash[:start])
+    finish = res.send(date_hash[:finish])
+    start ||= date_hash[:catch1]
+    finish ||= date_hash[:catch2]
+    if start && finish
+      return finish.to_date - start.to_date
+    else
+      return nil
+    end
+  end
+
+
   def collect_stat_set(info_struct, res_rels) # rubocop:disable all
     # iterate by row
+    # takes 2 args; an array of ResInfo structs 
+    # and an array of Resrelations
+    # returns a hash of rows and column names?
+    #
+    # the column names are the relation names, eg 'upcoming' etc.
+    # for each item in the info struct (eg each equipment model)
+    #   make a new stat row object with the model type, link path and empty data set
+    #   for each type of reservation filter
+    #     select the reservations that match the criteria res.send(info.id_type) that are in res_rels
+    #     then update the data of the stat_row object
+    #
+    #     For count; count all the unique objects in res_set
+    #       If there's a secondary id, count all the unique res.send(secondary_id)
+    #     For duration; 
+    #
+    # 
     stat_set = {}
     stat_set[:rows] = []
     stat_set[:col_names] = res_rels.collect { |res| res[:name] }
@@ -277,30 +317,12 @@ class ReportsController < ApplicationController
             stat_row.data << res_set.count
           end
         when :duration
-          # get an average duration for the set of reservations, catch1 &&
-          # catch2 are used if date1 and date2 are NULL. Put the dates in
-          # chronological order, e.g. :date_type1 => :start_date, :date_type2
-          # => :due_date and secondary_id becomes a hash to hold the 2 types,
-          # and 2 escape types
-          date_type1 = params[:secondary_id][:date_type1]
-          date_type2 = params[:secondary_id][:date_type2]
           durations = res_set.collect do |res|
-            date1 = res.send(date_type1)
-            if params[:secondary_id][:catch1]
-              date1 ||=  params[:secondary_id][:catch1]
-            end
-            date2 = res.send(date_type2)
-            if params[:secondary_id][:catch2]
-              date2 ||=  params[:secondary_id][:catch2]
-            end
-
-            date1 && date2 ? date2.to_date - date1.to_date : nil
+            get_duration(res, params[:secondary_id])
           end
           durations.compact!
           if durations.count > 0
-            stat_row.data <<
-              (durations.inject { |a, e| a + e }.to_f / durations.count)
-                .round(2) # avg planned duration
+            stat_row.data << durations.avg.round(2)
           else
             stat_row.data << 'N/A'
           end
