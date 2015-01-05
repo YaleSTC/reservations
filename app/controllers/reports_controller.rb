@@ -24,6 +24,7 @@ class ReportsController < ApplicationController
   end
 
   class Reservation::ActiveRecord_Relation
+    include Rails.application.routes.url_helpers
     def avg_duration
       self.collect { |r| r.duration }.average2
     end
@@ -64,19 +65,6 @@ class ReportsController < ApplicationController
 
   end
  
-  def get_duration(res, date_hash)
-    start = res.send(date_hash[:start])
-    finish = res.send(date_hash[:finish])
-    start ||= date_hash[:catch1]
-    finish ||= date_hash[:catch2]
-    if start && finish
-      return finish.to_date - start.to_date
-    else
-      return nil
-    end
-  end
-
-
   # The idea I had behind reports was to be able to have relatively flexible
   # report building capabilities without a lot of queries
   #
@@ -106,6 +94,7 @@ class ReportsController < ApplicationController
   #   of ResSetInfo structs
   #   
   #
+  # I suspect that ResRelation.params[id_type] is never actually used..?
 
   def index # rubocop:disable MethodLength, AbcSize
     @res_stat_sets = []
