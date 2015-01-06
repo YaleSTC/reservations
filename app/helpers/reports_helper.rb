@@ -10,6 +10,6 @@ module ReportsHelper
   end
 
   def reports_active_tab(key)
-    return 'active' if key == :total
+    return 'active' if key == 'Equipment Models'
   end
 end
