@@ -1,14 +1,14 @@
 <table class="report_table table table-striped table-bordered">
   <thead>
     <tr>
-      <th><%= key.to_s.titleize.singularize %></th>
-      <% res_stat_set[:col_names].each do |name| %>
-      <th><%= name %></th>
+      <th><%= name.to_s.titleize.singularize %></th>
+      <% res_stat_set.columns.each do |col| %>
+      <th><%= col.name %></th>
       <% end %>
     </tr>
   </thead>
   <tbody>
-    <%= render :partial => "report_row", :collection => res_stat_set[:rows] %>
+    <%= render :partial => "report_row", :collection => res_stat_set.rows %>
   </tbody>
 </table>
-<%= link_to "Export to CSV", request.parameters.merge({:format => :csv, :key => key}), class: 'btn' %>
+<%= link_to "Export to CSV", request.parameters.merge({:format => :csv, :key => name}), class: 'btn' %>
