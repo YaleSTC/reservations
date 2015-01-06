@@ -1,5 +1,4 @@
 class Report
-  include Rails.application.routes.url_helpers
   attr_accessor :name, :reservations,
     :columns, :row_item_type, :rows
   DEFAULT_COLUMNS = [ ['Total', :all, :count],
@@ -110,10 +109,10 @@ class Report
       r = Row.new
       r.name = item.name
       r.item_id = item.id
-      r.link_path = send(path_method, id: r.item_id) if path_method
+      r.link_path = Rails.application.routes.url_helpers.send(path_method, id: r.item_id) if path_method
       r
     end
-
+    report.populate_data
     report
   end
     

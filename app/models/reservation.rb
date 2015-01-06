@@ -87,6 +87,10 @@ class Reservation < ActiveRecord::Base
     end
   end
 
+  def category_id
+    equipment_model.category_id
+  end
+
   def duration
     due_date.to_date - start_date.to_date + 1
   end
