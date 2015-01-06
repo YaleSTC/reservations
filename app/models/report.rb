@@ -109,7 +109,11 @@ class Report
     items = get_class(row_item_type).find(item_ids)
     report.rows = items.collect do |item|
       r = Row.new
-      r.name = item.name
+      begin
+        r.name = item.name
+      rescue
+        r.name = item.id
+      end
       r.item_id = item.id
       r.link_path = Rails.application.routes.url_helpers.send(path_method, id: r.item_id) if path_method
       r

@@ -57,7 +57,6 @@ class ReportsController < ApplicationController
     redirect_to request.referrer
   end
 
-  # sub report for a particular model
   def for_model
     @equipment_model = EquipmentModel.find(params[:id])
     @start_date = start_date
@@ -65,7 +64,14 @@ class ReportsController < ApplicationController
     reservations = Reservation.starts_on_days(@start_date, @end_date)
                 .where(equipment_model: @equipment_model)
                 .includes(:equipment_model)
+    @data_tables = build_subreports reservations
+       
+  end
 
+  def for_category
+  end
+
+  def build_subreports reservations
     @data_tables = {}
     @data_tables[:equipment_models] = Report.build_new('Equipment Model',
                                                        :equipment_model_id,
@@ -82,17 +88,9 @@ class ReportsController < ApplicationController
                                             :user_path,
                                             reservations,
                                             MODEL_COLUMNS)
-    #@data_tables[:reservations] = Report.build_new('Reservations',
-     #                                              :id,
-      #                                             nil,
-       #                                            reservations,
-        #                                           MODEL_COLUMNS)
-    
+    @data_tables
   end
 
-  # should probably 
-  def for_category
-  end
 
   private
  
