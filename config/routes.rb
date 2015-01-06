@@ -113,8 +113,8 @@ Reservations::Application.routes.draw do
   get '/reports/index' => 'reports#index', :as => :reports
   get '/reports/:id/for_model' => 'reports#for_model', :as => :for_model_report
 
-  get '/reports/for_model_set' => 'reports#for_model_set',
-      :as => :for_model_set_reports # what http request? old match
+  get '/reports/for_category' => 'reports#for_category',
+      :as => :for_category_report
   post '/reports/update' => 'reports#update_dates',
        :as => :update_dates # what http request? old match
   post '/reports/generate' => 'reports#generate', :as => :generate_report
