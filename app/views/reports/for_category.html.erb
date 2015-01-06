@@ -4,10 +4,10 @@
     <%= link_to "Reports", reports_path %>
     <span class="divider">/</span>
     </li>
-    <li class="active">Equipment Model Set</li>
+    <li class="active"><%= @category.name %></li>
 </ul>
 <%= render :partial => 'reports/report_generator'%>
 
-<h2>Set of Equipment Models</h2>
+<h2><%= @category.name %></h2>
 
 <%= render :partial => "data_tables" , :object => @data_tables%>

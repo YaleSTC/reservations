@@ -22,7 +22,7 @@ class ReportsController < ApplicationController
                 .includes(:equipment_model)
     eq_models = Report.build_new("Equipment Models", :equipment_model_id,
                                 :for_model_report_path, reservations)
-    categories = Report.build_new("Categories", :category_id, nil, 
+    categories = Report.build_new("Categories", :category_id, 
                                 :for_category_report_path,  reservations)
     @data_tables = {}
     @data_tables[:equipment_models] = eq_models
@@ -69,6 +69,15 @@ class ReportsController < ApplicationController
   end
 
   def for_category
+    @category = Category.find(params[:id])
+    @start_date = start_date
+    @end_date = end_date
+    ids = EquipmentModel.where(category_id: params[:id]).collect(&:id)
+    reservations = Reservation.starts_on_days(@start_date, @end_date)
+                .where(equipment_model_id: ids)
+                .includes(:equipment_model)
+    @data_tables = build_subreports reservations
+
   end
 
   def build_subreports reservations
