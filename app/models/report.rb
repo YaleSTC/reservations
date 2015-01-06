@@ -69,6 +69,8 @@ class Report
   
   def self.get_class(symbol)
     # convert a symbol id field to a class, eg :user_id -> User
+    return Reservation if symbol == :id
+    return User if symbol == :reserver_id
     symbol.to_s[0...-3].camelize.constantize
   end
 

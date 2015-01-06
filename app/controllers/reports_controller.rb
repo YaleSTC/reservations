@@ -2,6 +2,15 @@
 class ReportsController < ApplicationController
   authorize_resource class: false
   DetailInfo = Struct.new(:name, :table, :params)
+  MODEL_COLUMNS = [ ['Total', :all, :count],
+                      ['Reserved', :reserved, :count],
+                      ['Checked Out', :checked_out, :count],
+                      ['Overdue', :overdue, :count],
+                      ['Returned On Time', :returned_on_time, :count],
+                      ['Returned Overdue', :returned_overdue, :count],
+                      ['Avg Planned Duration', :all, :duration],
+                      ['Time Checked Out', :all, :time_checked_out]
+  ]
 
   def index # rubocop:disable MethodLength, AbcSize
     @res_stat_sets = []
@@ -14,16 +23,10 @@ class ReportsController < ApplicationController
     eq_models = Report.build_new("Equipment Models", :equipment_model_id,
                                 :for_model_report_path, reservations)
     categories = Report.build_new("Categories", :category_id, nil, 
-                                  reservations)
-    table_hash = {}
-    table_hash[:rows] = eq_models.rows
-    table_hash[:col_names] = eq_models.columns.collect { |c| c.name }
-    cat_hash = {}
-    cat_hash[:rows] = categories.rows
-    cat_hash[:col_names] = categories.columns.collect { |c| c.name }
+                                :for_category_report_path,  reservations)
     @data_tables = {}
-    @data_tables[eq_models.name] = table_hash
-    @data_tables["Categories"] = cat_hash
+    @data_tables[:equipment_models] = eq_models
+    @data_tables[:categories] = categories
 
     respond_to do |format|
       format.html
@@ -59,7 +62,32 @@ class ReportsController < ApplicationController
     @equipment_model = EquipmentModel.find(params[:id])
     @start_date = start_date
     @end_date = end_date
-    binding.pry
+    reservations = Reservation.starts_on_days(@start_date, @end_date)
+                .where(equipment_model: @equipment_model)
+                .includes(:equipment_model)
+
+    @data_tables = {}
+    @data_tables[:equipment_models] = Report.build_new('Equipment Model',
+                                                       :equipment_model_id,
+                                                       :equipment_model_path,
+                                                       reservations, 
+                                                       MODEL_COLUMNS)
+    @data_tables[:equipment_objects] = Report.build_new('',
+                                                 :equipment_object_id,
+                                                 :equipment_object_path,
+                                                 reservations,
+                                                 MODEL_COLUMNS)
+    @data_tables[:users] = Report.build_new('Users',
+                                            :reserver_id,
+                                            :user_path,
+                                            reservations,
+                                            MODEL_COLUMNS)
+    #@data_tables[:reservations] = Report.build_new('Reservations',
+     #                                              :id,
+      #                                             nil,
+       #                                            reservations,
+        #                                           MODEL_COLUMNS)
+    
   end
 
   # should probably 
