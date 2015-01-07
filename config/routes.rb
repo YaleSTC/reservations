@@ -113,9 +113,8 @@ Reservations::Application.routes.draw do
   get '/reports/index' => 'reports#index', :as => :reports
   get '/reports/subreport/:class/:id' => 'reports#subreport', 
     as: :subreport
-  post '/reports/update' => 'reports#update_dates',
-       :as => :update_dates # what http request? old match
-  post '/reports/generate' => 'reports#generate', :as => :generate_report
+  put '/reports/update' => 'reports#update_dates',
+       :as => :update_dates
 
   get '/terms_of_service' => 'application#terms_of_service',
       :as => :tos

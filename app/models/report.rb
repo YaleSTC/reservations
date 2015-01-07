@@ -7,14 +7,20 @@ class Report
                       ['Returned On Time', :returned_on_time, :count],
                       ['Returned Overdue', :returned_overdue, :count],
                       ['User Count', :all, :count, :reserver_id] ]
-  RES_COLUMNS = [ ['Reserver', :all, :name, :reserver],
-                  ['Equipment Model', :all, :name, :equipment_model],
-                  ['Equipment Object', :all, :name, :equipment_object],
-                  ['Status', :all, :display, :status],
-                  ['Start Date', :all, :display, :start_date],
-                  ['Checked Out', :all, :display, :checked_out],
-                  ['Due Date', :all, :display, :due_date],
-                  ['Checked In', :all, :display, :checked_in] ]
+
+  # Reports are extremely powerful 2D reservation statistics tables
+  # See #build_new for the main constructor method used in the controller.
+  #
+
+  # The Column class contains all the information needed to build the
+  # columns (obviously I should hope!). Simple arrays can be made into
+  # Column objects if their elements are in the right order.
+  #
+  #   name:       human readable name
+  #   filter:     filtering scope to apply to Reservations
+  #   data_type:  how to display the data
+  #   data_field: what field of data to use
+  #   res_set:    ActiveRecord::Relation holding all relevant reservations
 
   class Column
     attr_accessor :name, :res_set, :data_type, :filter, :data_field
@@ -27,6 +33,14 @@ class Report
       c
     end
   end
+
+  # Rows correspond to singular objects like equipment models or users.
+  # You can even construct a row skeleton with one of these objects
+  #
+  #   name:      human readable name
+  #   link_path: clickable link path
+  #   item_id:   the id of the ite
+  #   data:      an array of the row's data
 
   class Row
     attr_accessor :name, :link_path, :item_id, :data
@@ -44,11 +58,11 @@ class Report
       r.item_id = item.id
       r
     end
-
   end
 
   # -- Private class helper methods -- #
 
+  # get the average of an array of values, discounting nil values
   def self.average2 arr
     arr = arr.reject { |e| e.nil? }
     if arr.size == 0
@@ -66,17 +80,18 @@ class Report
     average2(res_set.collect { |r| r.time_checked_out })
   end
 
+  # count the # of occurences of unique <type>s in the reservation set,
+  # eg how many unique reservers there are in the set
   def self.count_unique(res_set, type)
-    # count the # of occurences of unique <type>s in the reservation set,
-    # eg how many unique reservers there are in the set
     items = res_set.collect do |res|
       res.send(type)
     end
     items.uniq.count
   end
 
+  # given the narrowed set of reservations, calculate the value
+  # according to type and optional field
   def self.calculate(res_set, type, field = nil)
-    # given an array of reservations, calculate some data
     case type
     when :count
       return res_set.count if field.nil?
@@ -93,22 +108,25 @@ class Report
     end
   end
   
+  # convert a symbol id field to a class, eg :user_id -> User
   def self.get_class(symbol)
-    # convert a symbol id field to a class, eg :user_id -> User
     return Reservation if symbol == :id
     return User if symbol == :reserver_id
     symbol.to_s[0...-3].camelize.constantize
   end
 
   
-  # build the skeleton of the report.
-  # name is used for display, row_item_type must be a symbol
-  # of an ID field that the reservation can respond to (eg, :reserver_id)
-  # path_method is the method that should be used on the links
-  # reservations is the ActiveRecord::Relation of the reservations to consider
-  # columns is an array of 3 element arrays used to build the column objects
-  # this is so that code outside of the model can interface with this method
-  # without having to use a custom data structure
+  # Create a new report using an item_type (this is a symbol like
+  #   :equipment_model_id
+  # a set of reservations (do all your date filtering and stuff here)
+  # and an array of columns. Each column object in the array is not
+  # actually an instance of the Column class (this method does the 
+  # conversion) but a 3 or 4 element array literal. See DEFAULT_COLUMNS
+  # for an example and Column.arr_to_col for the conversion specifics
+  #
+  # I wrote the code this way so that we don't need to expose the 
+  # Column class and because the const array literal declarations
+  # are pretty easy to read
 
   def self.build_new(row_item_type, reservations = Reservation.all,
                      columns = DEFAULT_COLUMNS)

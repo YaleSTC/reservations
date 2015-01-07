@@ -19,8 +19,7 @@ class ReportsController < ApplicationController
                   ['Due Date', :all, :display, :due_date],
                   ['Checked In', :all, :display, :checked_in] ]
 
-  before_action :set_dates, only: [:index, :subreport, :for_user, :for_model,
-                                   :for_category]
+  before_action :set_dates, only: [:index, :subreport]
 
   def set_dates
     @start_date = start_date
@@ -50,18 +49,8 @@ class ReportsController < ApplicationController
     session[:report_end_date] = @end_date
 
     respond_to do |format|
-      format.js { render template: 'reports/report_dates_reload' }
-      # guys i really don't like how this is rendering a template for js, but
-      # :action doesn't work at all
-      format.html { render partial: 'reports/report_dates' } # delete this
-      # line? replace with redirect_to root_path ? otherwise it's not doing
-      # any harm
+      format.js { render inline 'location.reload();' }
     end
-  end
-
-  # needs to be expanded later
-  def generate
-    redirect_to request.referrer
   end
 
   def subreport
@@ -83,7 +72,7 @@ class ReportsController < ApplicationController
     reservations = Reservation.starts_on_days(@start_date, @end_date)
                 .where(id_symbol => id)
 
-    @data_tables = build_subreports reservations
+    @tables = build_subreports reservations
 
     respond_to do |format|
       format.html
