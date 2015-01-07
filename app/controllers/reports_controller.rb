@@ -34,6 +34,7 @@ class ReportsController < ApplicationController
     @tables[:equipment_models] = Report.build_new(:equipment_model_id,
                                                         reservations)
     @tables[:categories] = Report.build_new(:category_id, reservations)
+    @data_tables = @tables
 
     respond_to do |format|
       format.html
@@ -54,13 +55,11 @@ class ReportsController < ApplicationController
   end
 
   def subreport
-    if params[:class] == 'reserver'
-      resource = User
-    else
-      resource = params[:class].camelize.constantize
-    end
+    id_symbol = (params[:class] + '_id').to_sym
+    resource = params[:class].camelize.constantize
+    
+    id_symbol = :reserver_id if resource == User
 
-    id_symbol = params[:class] + '_id'
     id = params[:id]
     @object = resource.find params[:id]
     
@@ -72,7 +71,7 @@ class ReportsController < ApplicationController
     reservations = Reservation.starts_on_days(@start_date, @end_date)
                 .where(id_symbol => id)
 
-    @tables = build_subreports reservations
+    @data_tables = build_subreports reservations
 
     respond_to do |format|
       format.html

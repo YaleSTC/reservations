@@ -45,15 +45,13 @@ class Report
   class Row
     attr_accessor :name, :link_path, :item_id, :data
     def self.item_to_row item
-      include Rails.application.routes.url_helpers
       r = Row.new
+      r.link_path = Rails.application.routes.url_helpers.subreport_path(id: item.id, class: item.class.to_s)
       begin
         r.name = item.name
-        r.link_path = subreport_path(id: item.id, 
-                                     class: row_item_type[0...-3])
-      rescue # only item without name are reservations
+            rescue NoMethodError # only item without name are reservations
         r.name = item.id
-        r.link_path = reservation_path(id: item.id)
+        r.link_path = Rails.application.routes.url_helpers.reservation_path(id: item.id)
       end
       r.item_id = item.id
       r

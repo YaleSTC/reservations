@@ -5,28 +5,29 @@ describe Report, type: :model do
     @report = Report.new
   end
 
-  describe Column do
+  describe Report::Column do
     it 'can be constructed from arrays' do
-      column = Column.arr_to_col ['Name', :scope, :type, :field]
+      column = Report::Column.arr_to_col ['Name', :scope, :type, :field]
       expect(column.name).to eq('Name')
       expect(column.filter).to eq(:scope)
       expect(column.data_type).to eq(:type)
       expect(column.data_field).to eq(:field)
     end
   end
-  describe Row do
+  describe Report::Row do
     it 'can be constructed from Equipment Models' do
-      em = FactoryGirl.build(:equipment_model)
-      row = Row.item_to_row em
+      em = FactoryGirl.create(:equipment_model)
+      row = Report::Row.item_to_row em
       expect(row.name).to eq(em.name)
       expect(row.item_id).to eq(em.id)
       expect(row.link_path).to eq(Rails.application.routes.url_helpers
                                   .subreport_path(id: em.id, 
-                                                  class: 'equipment_model'))
+                                                  class: 'EquipmentModel'))
     end
     it 'can be constructed from Reservations' do
       u = FactoryGirl.build(:reservation)
-      row = Row.item_to_row u
+      u.save(validate: false)
+      row = Report::Row.item_to_row u
       expect(row.name).to eq(u.id)
       expect(row.item_id).to eq(u.id)
       expect(row.link_path).to eq(Rails.application.routes.url_helpers
