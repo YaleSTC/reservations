@@ -1,6 +1,5 @@
 class ReportsController < ApplicationController
   authorize_resource class: false
-  DetailInfo = Struct.new(:name, :table, :params)
   MODEL_COLUMNS = [['Total', :all, :count],
                    ['Reserved', :reserved, :count],
                    ['Checked Out', :checked_out, :count],
