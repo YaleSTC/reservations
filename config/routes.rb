@@ -147,7 +147,7 @@ Reservations::Application.routes.draw do
 
   get 'status' => 'status#index'
 
-  get ':controller(/:action(/:id(.:format)))' # wtf match is this
+  get ':controller(/:action(/:id(.:format)))' # generalized matcher
 
   # this is a fix for running letter opener inside vagrant
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
