@@ -1,4 +1,3 @@
-# rubocop:disable ClassLength
 class ReportsController < ApplicationController
   authorize_resource class: false
   DetailInfo = Struct.new(:name, :table, :params)
@@ -9,24 +8,25 @@ class ReportsController < ApplicationController
                       ['Returned On Time', :returned_on_time, :count],
                       ['Returned Overdue', :returned_overdue, :count],
                       ['Avg Planned Duration', :all, :duration],
-                      ['Time Checked Out', :all, :time_checked_out]
+                      ['Avg Time Checked Out', :all, :time_checked_out]
   ]
 
-  def index # rubocop:disable MethodLength, AbcSize
-    @res_stat_sets = []
+  before_action :set_dates, only: [:index, :subreport, :for_user, :for_model,
+                                   :for_category]
+
+  def set_dates
     @start_date = start_date
     @end_date = end_date
+  end
 
+  def index 
     # filter reservations by date
     reservations = Reservation.starts_on_days(@start_date, @end_date)
                 .includes(:equipment_model)
-    eq_models = Report.build_new("Equipment Models", :equipment_model_id,
-                                :for_model_report_path, reservations)
-    categories = Report.build_new("Categories", :category_id, 
-                                :for_category_report_path,  reservations)
-    @data_tables = {}
-    @data_tables[:equipment_models] = eq_models
-    @data_tables[:categories] = categories
+    @tables = {}
+    @tables[:equipment_models] = Report.build_new(:equipment_model_id,
+                                                        reservations)
+    @tables[:categories] = Report.build_new(:category_id, reservations)
 
     respond_to do |format|
       format.html
@@ -49,7 +49,6 @@ class ReportsController < ApplicationController
       # line? replace with redirect_to root_path ? otherwise it's not doing
       # any harm
     end
-    # @end_date = (Date.strptime(params[:report][:end_date],'%m/%d/%Y'))
   end
 
   # needs to be expanded later
@@ -57,49 +56,43 @@ class ReportsController < ApplicationController
     redirect_to request.referrer
   end
 
-  def for_model
-    @equipment_model = EquipmentModel.find(params[:id])
-    @start_date = start_date
-    @end_date = end_date
-    reservations = Reservation.starts_on_days(@start_date, @end_date)
-                .where(equipment_model: @equipment_model)
-                .includes(:equipment_model)
-    @data_tables = build_subreports reservations
-       
-  end
+  def subreport
+    if params[:class] == 'reserver'
+      resource = User
+    else
+      resource = params[:class].camelize.constantize
+    end
 
-  def for_category
-    @category = Category.find(params[:id])
-    @start_date = start_date
-    @end_date = end_date
-    ids = EquipmentModel.where(category_id: params[:id]).collect(&:id)
+    id_symbol = params[:class] + '_id'
+    id = params[:id]
+    @object = resource.find params[:id]
+    
+    if resource == Category
+      id = EquipmentModel.where(category_id: id).collect(&:id)
+      id_symbol = :equipment_model_id
+    end
+
     reservations = Reservation.starts_on_days(@start_date, @end_date)
-                .where(equipment_model_id: ids)
-                .includes(:equipment_model)
+                .where(id_symbol => id)
+
     @data_tables = build_subreports reservations
+
+    respond_to do |format|
+      format.html
+      format.csv { render layout: false }
+    end
 
   end
 
   def build_subreports reservations
-    @data_tables = {}
-    @data_tables[:equipment_models] = Report.build_new('Equipment Model',
-                                                       :equipment_model_id,
-                                                       :equipment_model_path,
-                                                       reservations, 
-                                                       MODEL_COLUMNS)
-    @data_tables[:equipment_objects] = Report.build_new('',
-                                                 :equipment_object_id,
-                                                 :equipment_object_path,
-                                                 reservations,
-                                                 MODEL_COLUMNS)
-    @data_tables[:users] = Report.build_new('Users',
-                                            :reserver_id,
-                                            :user_path,
-                                            reservations,
-                                            MODEL_COLUMNS)
-    @data_tables
+    tables = {}
+    tables[:equipment_models] = Report.build_new(:equipment_model_id,
+                                                reservations, MODEL_COLUMNS)
+    tables[:equipment_objects] = Report.build_new(:equipment_object_id,
+                                                 reservations, MODEL_COLUMNS)
+    tables[:users] = Report.build_new(:reserver_id, reservations, MODEL_COLUMNS)
+    tables
   end
-
 
   private
  

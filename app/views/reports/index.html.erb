@@ -1,4 +1,4 @@
-<% title ("Overall Report for " + @start_date.strftime("%b %d, %Y") + " to " + @end_date.strftime("%b %d, %Y")) %>
+<% title ("Overall Reservation Report for " + @start_date.strftime("%b %d, %Y") + " to " + @end_date.strftime("%b %d, %Y")) %>
 
 <div class="row">
   <div class="span3">
@@ -12,4 +12,4 @@
   </div>
 </div>
 
-<%= render :partial => "data_tables" , :object => @data_tables %>
+<%= render :partial => "data_tables" , :object => @tables %>

@@ -1,15 +1,12 @@
 class Report
-  attr_accessor :name, :reservations,
-    :columns, :row_item_type, :rows
+  attr_accessor :columns, :row_item_type, :rows
   DEFAULT_COLUMNS = [ ['Total', :all, :count],
                       ['Reserved', :reserved, :count],
                       ['Checked Out', :checked_out, :count],
                       ['Overdue', :overdue, :count],
                       ['Returned On Time', :returned_on_time, :count],
                       ['Returned Overdue', :returned_overdue, :count],
-                      ['User Count', :all, :reserver_id],
-  ]
-
+                      ['User Count', :all, :reserver_id] ]
 
   class Column
     attr_accessor :name, :res_set, :data_type, :filter
@@ -29,6 +26,7 @@ class Report
   # -- Private class helper methods -- #
 
   def self.average2 arr
+    arr = arr.reject { |e| e.nil? }
     if arr.size == 0
       'N/A'
     else
@@ -84,12 +82,9 @@ class Report
   # this is so that code outside of the model can interface with this method
   # without having to use a custom data structure
 
-  def self.build_new(name, row_item_type, path_method = nil,
-                     reservations = Reservation.all,
+  def self.build_new(row_item_type, reservations = Reservation.all,
                      columns = DEFAULT_COLUMNS)
     report = self.new
-    report.name = name
-    report.reservations = reservations
     report.row_item_type = row_item_type
 
     # convert array of column attributes into column objects
@@ -115,7 +110,8 @@ class Report
         r.name = item.id
       end
       r.item_id = item.id
-      r.link_path = Rails.application.routes.url_helpers.send(path_method, id: r.item_id) if path_method
+      r.link_path = Rails.application.routes.url_helpers.subreport_path(
+        id: r.item_id, class: row_item_type[0...-3])
       r
     end
     report.populate_data
