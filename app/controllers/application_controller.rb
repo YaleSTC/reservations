@@ -76,6 +76,7 @@ class ApplicationController < ActionController::Base
        User.find_by_id(session[:cart].reserver_id).nil?
       session[:cart].reserver_id = reserver.id
     end
+    session[:cart].fix_items
     session[:cart]
   end
 
