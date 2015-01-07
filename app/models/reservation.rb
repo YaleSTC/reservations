@@ -87,20 +87,14 @@ class Reservation < ActiveRecord::Base
     end
   end
 
-  def category_id
-    equipment_model.category_id
-  end
+  delegate :category_id, to: :equipment_model
 
   def duration
     due_date.to_date - start_date.to_date + 1
   end
 
   def time_checked_out
-    if checked_out && checked_in
-      checked_in.to_date - checked_out.to_date + 1
-    else
-      nil
-    end
+    checked_in.to_date - checked_out.to_date + 1 if checked_out && checked_in
   end
 
   def late_fee
