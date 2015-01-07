@@ -30,6 +30,7 @@ class Cart
     end
     full_hash
   end
+
   # Adds equipment model id to items hash
   def add_item(equipment_model)
     return if equipment_model.nil?
@@ -120,5 +121,12 @@ class Cart
   def fix_due_date
     return unless @start_date > @due_date
     @due_date = @start_date + 1.day
+  end
+
+  # make sure that we don't have any non-existant models in our cart that
+  # would cause errors when rendering
+  def fix_items
+    valid_items = EquipmentModel.where(id: items.keys).collect(&:id)
+    self.items = items.select { |em, _count| valid_items.include? em }
   end
 end

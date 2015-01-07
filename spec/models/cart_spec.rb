@@ -145,4 +145,13 @@ describe Cart, type: :model do
       expect(@cart.empty?).to be_falsey
     end
   end
+
+  describe 'fix_items' do
+    it 'removes meaningless items' do
+      @em = FactoryGirl.create(:equipment_model)
+      @cart.add_item(@em)
+      @em.destroy(:force)
+      expect { @cart.fix_items }.to change { @cart.items.length }.by(-1)
+    end
+  end
 end
