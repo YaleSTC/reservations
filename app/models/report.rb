@@ -1,12 +1,12 @@
 class Report
   attr_accessor :columns, :row_item_type, :rows
-  DEFAULT_COLUMNS = [ ['Total', :all, :count],
-                      ['Reserved', :reserved, :count],
-                      ['Checked Out', :checked_out, :count],
-                      ['Overdue', :overdue, :count],
-                      ['Returned On Time', :returned_on_time, :count],
-                      ['Returned Overdue', :returned_overdue, :count],
-                      ['User Count', :all, :count, :reserver_id] ]
+  DEFAULT_COLUMNS = [['Total', :all, :count],
+                     ['Reserved', :reserved, :count],
+                     ['Checked Out', :checked_out, :count],
+                     ['Overdue', :overdue, :count],
+                     ['Returned On Time', :returned_on_time, :count],
+                     ['Returned Overdue', :returned_overdue, :count],
+                     ['User Count', :all, :count, :reserver_id]]
 
   # Reports are extremely powerful 2D reservation statistics tables
   # See #build_new for the main constructor method used in the controller.
@@ -24,8 +24,8 @@ class Report
 
   class Column
     attr_accessor :name, :res_set, :data_type, :filter, :data_field
-    def self.arr_to_col arr
-      c = self.new
+    def self.arr_to_col(arr)
+      c = new
       c.name = arr[0]
       c.filter = arr[1]
       c.data_type = arr[2]
@@ -44,14 +44,16 @@ class Report
 
   class Row
     attr_accessor :name, :link_path, :item_id, :data
-    def self.item_to_row item
+    def self.item_to_row(item)
       r = Row.new
-      r.link_path = Rails.application.routes.url_helpers.subreport_path(id: item.id, class: item.class.to_s)
+      r.link_path = Rails.application.routes.url_helpers.subreport_path(
+        id: item.id, class: item.class.to_s)
       begin
         r.name = item.name
             rescue NoMethodError # only item without name are reservations
-        r.name = item.id
-        r.link_path = Rails.application.routes.url_helpers.reservation_path(id: item.id)
+              r.name = item.id
+              r.link_path = Rails.application.routes.url_helpers
+                .reservation_path(id: item.id)
       end
       r.item_id = item.id
       r
@@ -61,21 +63,21 @@ class Report
   # -- Private class helper methods -- #
 
   # get the average of an array of values, discounting nil values
-  def self.average2 arr
-    arr = arr.reject { |e| e.nil? }
+  def self.average2(arr)
+    arr = arr.reject(&:nil?)
     if arr.size == 0
       'N/A'
     else
-      (arr.inject { |r, e| r + e }.to_f / arr.size).round(2)
+      (arr.inject { |a, e| a + e }.to_f / arr.size).round(2)
     end
   end
-    
-  def self.avg_duration res_set
-    average2(res_set.collect { |r| r.duration })
+
+  def self.avg_duration(res_set)
+    average2(res_set.collect(&:duration))
   end
 
-  def self.avg_time_out res_set
-    average2(res_set.collect { |r| r.time_checked_out })
+  def self.avg_time_out(res_set)
+    average2(res_set.collect(&:time_checked_out))
   end
 
   # count the # of occurences of unique <type>s in the reservation set,
@@ -93,19 +95,19 @@ class Report
     case type
     when :count
       return res_set.count if field.nil?
-      return count_unique(res_set, field)
+      count_unique(res_set, field)
     when :duration
-      return avg_duration res_set
+      avg_duration res_set
     when :time_checked_out
-      return avg_time_out res_set
+      avg_time_out res_set
     when :display
-      return res_set[0].send(field)
+      res_set[0].send(field)
     when :name
       item = res_set[0].send(field)
-      return item.nil? ? nil : item.name
+      item.nil? ? nil : item.name
     end
   end
-  
+
   # convert a symbol id field to a class, eg :user_id -> User
   def self.get_class(symbol)
     return Reservation if symbol == :id
@@ -113,22 +115,21 @@ class Report
     symbol.to_s[0...-3].camelize.constantize
   end
 
-  
   # Create a new report using an item_type (this is a symbol like
   #   :equipment_model_id
   # a set of reservations (do all your date filtering and stuff here)
   # and an array of columns. Each column object in the array is not
-  # actually an instance of the Column class (this method does the 
+  # actually an instance of the Column class (this method does the
   # conversion) but a 3 or 4 element array literal. See DEFAULT_COLUMNS
   # for an example and Column.arr_to_col for the conversion specifics
   #
-  # I wrote the code this way so that we don't need to expose the 
+  # I wrote the code this way so that we don't need to expose the
   # Column class and because the const array literal declarations
   # are pretty easy to read
 
   def self.build_new(row_item_type, reservations = Reservation.all,
                      columns = DEFAULT_COLUMNS)
-    report = self.new
+    report = new
     report.row_item_type = row_item_type
 
     # convert array of column attributes into column objects
@@ -142,7 +143,7 @@ class Report
     end
 
     # set the row objects
-    item_ids = reservations.collect(&row_item_type).reject { |e| e.nil? } 
+    item_ids = reservations.collect(&row_item_type).reject(&:nil?)
     items = get_class(row_item_type).find(item_ids)
 
     report.rows = items.collect do |item|
@@ -152,11 +153,11 @@ class Report
     report.populate_data
     report
   end
-    
+
   # -- Instance methods -- #
 
   def populate_data
-    # populate the reports' rows.data 
+    # populate the reports' rows.data
     # iterate by row
     @rows.each do |row|
       row.data = []
@@ -171,5 +172,4 @@ class Report
       end
     end
   end
-
 end

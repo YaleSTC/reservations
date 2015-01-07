@@ -1,23 +1,23 @@
 class ReportsController < ApplicationController
   authorize_resource class: false
   DetailInfo = Struct.new(:name, :table, :params)
-  MODEL_COLUMNS = [ ['Total', :all, :count],
-                      ['Reserved', :reserved, :count],
-                      ['Checked Out', :checked_out, :count],
-                      ['Overdue', :overdue, :count],
-                      ['Returned On Time', :returned_on_time, :count],
-                      ['Returned Overdue', :returned_overdue, :count],
-                      ['Avg Planned Duration', :all, :duration],
-                      ['Avg Time Checked Out', :all, :time_checked_out]
-  ]
-  RES_COLUMNS = [ ['Reserver', :all, :name, :reserver],
-                  ['Equipment Model', :all, :name, :equipment_model],
-                  ['Equipment Object', :all, :name, :equipment_object],
-                  ['Status', :all, :display, :status],
-                  ['Start Date', :all, :display, :start_date],
-                  ['Checked Out', :all, :display, :checked_out],
-                  ['Due Date', :all, :display, :due_date],
-                  ['Checked In', :all, :display, :checked_in] ]
+  MODEL_COLUMNS = [['Total', :all, :count],
+                   ['Reserved', :reserved, :count],
+                   ['Checked Out', :checked_out, :count],
+                   ['Overdue', :overdue, :count],
+                   ['Returned On Time', :returned_on_time, :count],
+                   ['Returned Overdue', :returned_overdue, :count],
+                   ['Avg Planned Duration', :all, :duration],
+                   ['Avg Time Checked Out', :all, :time_checked_out]
+                  ]
+  RES_COLUMNS = [['Reserver', :all, :name, :reserver],
+                 ['Equipment Model', :all, :name, :equipment_model],
+                 ['Equipment Object', :all, :name, :equipment_object],
+                 ['Status', :all, :display, :status],
+                 ['Start Date', :all, :display, :start_date],
+                 ['Checked Out', :all, :display, :checked_out],
+                 ['Due Date', :all, :display, :due_date],
+                 ['Checked In', :all, :display, :checked_in]]
 
   before_action :set_dates, only: [:index, :subreport]
 
@@ -26,13 +26,13 @@ class ReportsController < ApplicationController
     @end_date = end_date
   end
 
-  def index 
+  def index
     # filter reservations by date
     reservations = Reservation.starts_on_days(@start_date, @end_date)
-                .includes(:equipment_model)
+                   .includes(:equipment_model)
     @tables = {}
     @tables[:equipment_models] = Report.build_new(:equipment_model_id,
-                                                        reservations)
+                                                  reservations)
     @tables[:categories] = Report.build_new(:category_id, reservations)
     @data_tables = @tables
 
@@ -57,19 +57,19 @@ class ReportsController < ApplicationController
   def subreport
     id_symbol = (params[:class] + '_id').to_sym
     resource = params[:class].camelize.constantize
-    
+
     id_symbol = :reserver_id if resource == User
 
     id = params[:id]
     @object = resource.find params[:id]
-    
+
     if resource == Category
       id = EquipmentModel.where(category_id: id).collect(&:id)
       id_symbol = :equipment_model_id
     end
 
     reservations = Reservation.starts_on_days(@start_date, @end_date)
-                .where(id_symbol => id)
+                   .where(id_symbol => id)
 
     @data_tables = build_subreports reservations
 
@@ -77,30 +77,34 @@ class ReportsController < ApplicationController
       format.html
       format.csv { render layout: false }
     end
-
   end
 
-  def build_subreports reservations
+  def build_subreports(reservations)
     tables = {}
     tables[:equipment_models] = Report.build_new(:equipment_model_id,
-                                                reservations, MODEL_COLUMNS)
-    tables[:equipment_objects] = Report.build_new(:equipment_object_id,
                                                  reservations, MODEL_COLUMNS)
+    tables[:equipment_objects] = Report.build_new(:equipment_object_id,
+                                                  reservations, MODEL_COLUMNS)
     tables[:users] = Report.build_new(:reserver_id, reservations, MODEL_COLUMNS)
     tables[:reservations] = Report.build_new(:id, reservations, RES_COLUMNS)
     tables
   end
 
   private
- 
+
   def start_date
-    session[:report_start_date].present? ?
-      session[:report_start_date] : Date.current - 1.year
+    if session[:report_start_date].present?
+      session[:report_start_date]
+    else
+      Date.current - 1.year
+    end
   end
 
   def end_date
-    session[:report_end_date].present? ?
-      session[:report_end_date] : Date.current
+    if session[:report_end_date].present?
+      session[:report_end_date]
+    else
+      Date.current
+    end
   end
-
 end
