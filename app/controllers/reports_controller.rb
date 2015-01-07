@@ -10,6 +10,14 @@ class ReportsController < ApplicationController
                       ['Avg Planned Duration', :all, :duration],
                       ['Avg Time Checked Out', :all, :time_checked_out]
   ]
+  RES_COLUMNS = [ ['Reserver', :all, :name, :reserver],
+                  ['Equipment Model', :all, :name, :equipment_model],
+                  ['Equipment Object', :all, :name, :equipment_object],
+                  ['Status', :all, :display, :status],
+                  ['Start Date', :all, :display, :start_date],
+                  ['Checked Out', :all, :display, :checked_out],
+                  ['Due Date', :all, :display, :due_date],
+                  ['Checked In', :all, :display, :checked_in] ]
 
   before_action :set_dates, only: [:index, :subreport, :for_user, :for_model,
                                    :for_category]
@@ -91,6 +99,7 @@ class ReportsController < ApplicationController
     tables[:equipment_objects] = Report.build_new(:equipment_object_id,
                                                  reservations, MODEL_COLUMNS)
     tables[:users] = Report.build_new(:reserver_id, reservations, MODEL_COLUMNS)
+    tables[:reservations] = Report.build_new(:id, reservations, RES_COLUMNS)
     tables
   end
 

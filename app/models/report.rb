@@ -6,21 +6,45 @@ class Report
                       ['Overdue', :overdue, :count],
                       ['Returned On Time', :returned_on_time, :count],
                       ['Returned Overdue', :returned_overdue, :count],
-                      ['User Count', :all, :reserver_id] ]
+                      ['User Count', :all, :count, :reserver_id] ]
+  RES_COLUMNS = [ ['Reserver', :all, :name, :reserver],
+                  ['Equipment Model', :all, :name, :equipment_model],
+                  ['Equipment Object', :all, :name, :equipment_object],
+                  ['Status', :all, :display, :status],
+                  ['Start Date', :all, :display, :start_date],
+                  ['Checked Out', :all, :display, :checked_out],
+                  ['Due Date', :all, :display, :due_date],
+                  ['Checked In', :all, :display, :checked_in] ]
 
   class Column
-    attr_accessor :name, :res_set, :data_type, :filter
+    attr_accessor :name, :res_set, :data_type, :filter, :data_field
     def self.arr_to_col arr
       c = self.new
       c.name = arr[0]
       c.filter = arr[1]
       c.data_type = arr[2]
+      c.data_field = arr[3]
       c
     end
   end
 
   class Row
     attr_accessor :name, :link_path, :item_id, :data
+    def self.item_to_row item
+      include Rails.application.routes.url_helpers
+      r = Row.new
+      begin
+        r.name = item.name
+        r.link_path = subreport_path(id: item.id, 
+                                     class: row_item_type[0...-3])
+      rescue # only item without name are reservations
+        r.name = item.id
+        r.link_path = reservation_path(id: item.id)
+      end
+      r.item_id = item.id
+      r
+    end
+
   end
 
   # -- Private class helper methods -- #
@@ -51,17 +75,21 @@ class Report
     items.uniq.count
   end
 
-  def self.calculate(res_set, type)
+  def self.calculate(res_set, type, field = nil)
     # given an array of reservations, calculate some data
     case type
     when :count
-      return res_set.count
+      return res_set.count if field.nil?
+      return count_unique(res_set, field)
     when :duration
       return avg_duration res_set
     when :time_checked_out
       return avg_time_out res_set
-    else
-      return count_unique(res_set, type)
+    when :display
+      return res_set[0].send(field)
+    when :name
+      item = res_set[0].send(field)
+      return item.nil? ? nil : item.name
     end
   end
   
@@ -98,22 +126,13 @@ class Report
     end
 
     # set the row objects
-    item_ids = reservations.collect do |res|
-      res.send(row_item_type)
-    end
+    item_ids = reservations.collect(&row_item_type).reject { |e| e.nil? } 
     items = get_class(row_item_type).find(item_ids)
+
     report.rows = items.collect do |item|
-      r = Row.new
-      begin
-        r.name = item.name
-      rescue
-        r.name = item.id
-      end
-      r.item_id = item.id
-      r.link_path = Rails.application.routes.url_helpers.subreport_path(
-        id: r.item_id, class: row_item_type[0...-3])
-      r
+      Row.item_to_row item
     end
+
     report.populate_data
     report
   end
@@ -132,7 +151,7 @@ class Report
           row.item_id == res.send(@row_item_type)
         end
         # add the datum to the array
-        row.data << Report.calculate(res_set, col.data_type)
+        row.data << Report.calculate(res_set, col.data_type, col.data_field)
       end
     end
   end
