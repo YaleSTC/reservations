@@ -49,7 +49,7 @@ DELETED_MISSED_RES_EMAIL = File.read(File.join(DEFAULT_MSGS,
                                                'deleted_missed_email'))
 
 # max number of attempts to build valid record before quitting
-MAX_TRIES = 50 
+MAX_TRIES = 50
 
 # ratio of old reservations to new
 PAST_CHANCE = 0.7
@@ -80,8 +80,12 @@ def ask_for_records(model)
 
   puts "\nHow many #{formatted_model} records would you like to generate?" \
     '(please enter a number)'
-  n = STDIN.gets.chomp.to_i
-  unless n.integer? && n >= 0
+  n = STDIN.gets.chomp
+  # set n to 0 if blank, otherwise try to convert to an int.
+  # if that fails re-prompt
+  n = 0 if n == ''
+  n = Integer(n) rescue nil # rubocop:disable RescueModifier
+  if n.nil? || n < 0
     puts "Please enter a whole number\n"
     return ask_for_records(model)
   end
@@ -240,12 +244,12 @@ end
 def mark_checked_in(res, checkout_length)
   return unless res.checked_out
   if rand < OVERDUE_CHANCE
-    res.checked_in = nil 
+    res.checked_in = nil
   else
     res.checked_in = time_rand(res.checked_out, res.checked_out.next_week,
-                                   checkout_length).to_datetime
+                               checkout_length).to_datetime
     res.checkin_handler_id = User.where('role = ? OR role = ? OR role = ?',
-                                      'checkout', 'admin', 'superuser'
+                                        'checkout', 'admin', 'superuser'
                                      ).all.sample.id
   end
 end
@@ -271,10 +275,10 @@ def throw_into_past(res)
   res.save(validate: false)
 end
 
-# rubocop:disable AbcSize
+# rubocop:disable AbcSize, MethodLength
 def generate_reservation
   count = 0
-  while count < MAX_TRIES do
+  while count < MAX_TRIES
     res = Reservation.new
     res.reserver_id = User.all.sample.id
     res.equipment_model = EquipmentModel.all.sample
@@ -286,7 +290,7 @@ def generate_reservation
     res.notes = Faker::HipsterIpsum.paragraph(8)
     res.notes_unsent = [true, false].sample
     if rand < PAST_CHANCE
-      throw_into_past res 
+      throw_into_past res
       return
     end
     try_again = false
@@ -314,7 +318,6 @@ end
 # START SCRIPT
 # ============
 #
-
 
 puts 'Minimal mode activated. Please wait...' if MINIMAL
 
@@ -354,7 +357,7 @@ if User.where('role = ?', 'superuser').empty?
     prompt_field(u, :email)
     prompt_field(u, :affiliation)
     if ENV['CAS_AUTH']
-      printf '(NetID)'
+      printf 'CAS '
       prompt_field(u, :username)
     else
       u.username = u.email
