@@ -3,7 +3,7 @@ task delete_missed_reservations: :environment do
   # remove all missed reservations older than the current day
   # do not delete if appconfig isn't set up or if
   # res exp date is not set
-  unless AppConfig.blank? || AppConfig.first.res_exp_time.blank?
+  unless AppConfig.first.blank? || AppConfig.first.res_exp_time.blank?
     time = AppConfig.first.res_exp_time
     missed_reservations = Reservation.where(
       'checked_out IS NULL and due_date < ?', Date.current - time.days)
