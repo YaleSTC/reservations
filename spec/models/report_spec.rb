@@ -21,7 +21,7 @@ describe Report, type: :model do
       expect(row.name).to eq(em.name)
       expect(row.item_id).to eq(em.id)
       expect(row.link_path).to eq(Rails.application.routes.url_helpers
-                                  .subreport_path(id: em.id, 
+                                  .subreport_path(id: em.id,
                                                   class: 'EquipmentModel'))
     end
     it 'can be constructed from Reservations' do
@@ -43,10 +43,10 @@ describe Report, type: :model do
       expect(Report.average2 [nil, nil]).to eq('N/A')
     end
     it 'calculates averages correctly' do
-      expect(Report.average2 [1,2,3]).to eq(2)
+      expect(Report.average2 [1, 2, 3]).to eq(2)
     end
     it 'throws out nils' do
-      expect(Report.average2 [1,2,3,nil]).to eq(2)
+      expect(Report.average2 [1, 2, 3, nil]).to eq(2)
     end
     it 'rounds to 2 decimal places' do
       expect(Report.average2 [0.12, 1.799, 4.3]).to eq(2.07)
@@ -55,7 +55,7 @@ describe Report, type: :model do
 
   describe '.get_class' do
     it 'converts equipment_object_id to EquipmentObject' do
-      expect(Report.get_class(:equipment_object_id)).to eq (EquipmentObject)
+      expect(Report.get_class(:equipment_object_id)).to eq(EquipmentObject)
     end
     it 'works on :reserver_id' do
       expect(Report.get_class(:reserver_id)).to eq(User)

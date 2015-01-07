@@ -111,10 +111,10 @@ Reservations::Application.routes.draw do
   put '/cart/update' => 'application#update_cart', :as => :update_cart
 
   get '/reports/index' => 'reports#index', :as => :reports
-  get '/reports/subreport/:class/:id' => 'reports#subreport', 
-    as: :subreport
+  get '/reports/subreport/:class/:id' => 'reports#subreport',
+      as: :subreport
   put '/reports/update' => 'reports#update_dates',
-       :as => :update_dates
+      :as => :update_dates
 
   get '/terms_of_service' => 'application#terms_of_service',
       :as => :tos
