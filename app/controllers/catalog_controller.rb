@@ -81,7 +81,13 @@ class CatalogController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to root_path }
-      format.js { render template: 'cart_js/update_cart' }
+      format.js do
+        # this isn't necessary for EM show page updates but not sure how to
+        # check for catalog views since it's always in the catalog controller
+        prepare_catalog_index_vars([item])
+        @item = item
+        render template: 'cart_js/update_cart'
+      end
     end
   end
 
