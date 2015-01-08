@@ -11,6 +11,7 @@ class EquipmentObjectDecorator < ApplicationDecorator
   #   end
 
   def make_deactivate_btn
+    return if params[:controller] == 'equipment_objects'
     unless object.deleted_at
       em = object.equipment_model
       res = object.current_reservation
