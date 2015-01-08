@@ -32,12 +32,12 @@ describe Requirement, type: :model do
       'have been met.' do
       req_message = 'This model requires proper training before it can be '\
         "reserved. Please contact #{@requirement.contact_name} and "\
-        "#{@another_requirement.contact_name} at "\
+        "#{@another_requirement.contact_name} respectively at "\
         "#{@requirement.contact_info} and "\
         "#{@another_requirement.contact_info} about becoming certified."
       expect(Requirement.list_requirement_admins(@user_with_unmet_requirement,
-                                                 @equipment_model)).to\
-        eq(req_message)
+                                                 @equipment_model)
+            .include?(req_message)).to be_truthy
     end
 
     it 'should return a list of met requirements, followed by unmet '\
@@ -49,7 +49,8 @@ describe Requirement, type: :model do
         "#{@another_requirement.contact_info} about becoming certified."
       expect(Requirement
         .list_requirement_admins(@user_that_meets_some_requirements,
-                                 @equipment_model)).to eq(req_message)
+                                 @equipment_model)
+        .include?(req_message)).to be_truthy
     end
   end
 end

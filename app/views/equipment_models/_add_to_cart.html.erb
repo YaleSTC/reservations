@@ -1,27 +1,28 @@
-  <% if @restricted %>
-    <%= link_to "#qualifications_modal",
-      class: 'not-qualified-icon-em',
-      rel: "tooltip",
-      title: 'Not Qualified (click for more info)',
-      :"data-toggle" => 'modal' do %>
-        <span class="fa fa-exclamation-triangle"></span>
-     <% end %>
-     <%= button_tag "Add to Cart", remote: true, class: 'btn btn-primary btn-large disabled' %>
-     <div id="qualifications_modal" class="modal hide fade">
-       <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">×</button>
-          <h3><%= "Qualification Required" %></h3>
-       </div>
-       <div class="modal-body">
-         <p>
-           <%= Requirement.list_requirement_admins(current_user, @equipment_model)%>
-         </p>
-      </div>
+<% if @equipment_model.deleted_at %>
+  <%= button_tag "Deactivated", remote: true, class: 'btn btn-danger btn-large disabled' %>
+<% elsif @restricted %>
+  <%= link_to "#qualifications_modal",
+    class: '',
+    rel: "tooltip",
+    title: 'Not Qualified (click for more info)',
+    :"data-toggle" => 'modal' do %>
+  <%= button_tag "Not Qualified", remote: true, class: 'btn btn-warning btn-large' %>
+  <% end %>
+  <div id="qualifications_modal" class="modal hide fade">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">×</button>
+      <h3><%= "Qualification Required" %></h3>
     </div>
-   <% else %>
+    <div class="modal-body">
+      <p>
+        <%= Requirement.list_requirement_admins(current_user, @equipment_model).html_safe %>
+      </p>
+    </div>
+  </div>
+<% else %>
 
-     <%= link_to "Add to Cart", {:url => add_to_cart_path(@equipment_model)},
-                                 :href => add_to_cart_path(@equipment_model),
-                                 :method => :put, :remote => true, :class => 'btn btn-primary btn-large' %>
-   <% end %>
+  <%= link_to "Add to Cart", {:url => add_to_cart_path(@equipment_model)},
+                             :href => add_to_cart_path(@equipment_model),
+                             :method => :put, :remote => true, :class => 'btn btn-primary btn-large' %>
+<% end %>
 
