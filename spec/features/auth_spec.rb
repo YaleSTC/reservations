@@ -1,26 +1,26 @@
 require 'spec_helper'
 
-shared_examples_for 'valid registration' do
-  it { is_expected.to have_content 'Successfully created user.' }
-  it { is_expected.to have_content 'John Smith' }
-  it { is_expected.to have_link 'Log Out' }
-end
-
-shared_examples_for 'registration error' do
-  it { is_expected.to have_content('New User') }
-  it { is_expected.to have_content('Please review the problems below:') }
-end
-
-shared_examples_for 'login error' do
-  it { is_expected.to have_content('Sign In') }
-  it { is_expected.to have_content('Invalid email') }
-  it { is_expected.to have_content('or password.') }
-end
-
 describe 'Authentication' do
   subject { page }
   before(:each) do
     app_setup
+  end
+
+  shared_examples_for 'valid registration' do
+    it { is_expected.to have_content 'Successfully created user.' }
+    it { is_expected.to have_content 'John Smith' }
+    it { is_expected.to have_link 'Log Out' }
+  end
+
+  shared_examples_for 'registration error' do
+    it { is_expected.to have_content('New User') }
+    it { is_expected.to have_content('Please review the problems below:') }
+  end
+
+  shared_examples_for 'login error' do
+    it { is_expected.to have_content('Sign In') }
+    it { is_expected.to have_content('Invalid email') }
+    it { is_expected.to have_content('or password.') }
   end
 
   describe 'using CAS' do

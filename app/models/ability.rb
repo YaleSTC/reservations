@@ -40,10 +40,14 @@ class Ability
         end
         can :update_cart, :all
       when 'guest'
-        can :read, EquipmentModel
-        can :empty_cart, :all
-        can :update_cart, :all
-        can :create, User if AppConfig.first.enable_new_users
+        # rubocop:disable BlockNesting
+        if AppConfig.first.enable_guests
+          can :read, EquipmentModel
+          can :empty_cart, :all
+          can :update_cart, :all
+          can :create, User if AppConfig.first.enable_new_users
+        end
+        # rubocop:enable BlockNesting
       when 'banned'
         # cannot :create, Reservation
       end
