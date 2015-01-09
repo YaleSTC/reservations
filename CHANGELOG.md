@@ -2,6 +2,34 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+## v5.0.0 - 2015-01-12
+### Important
+*This release fundamentally changes how Reservations is configured (see the ([wiki](https://github.com/YaleSTC/reservations/wiki/Configuration)) for more details). You will likely have to rework how Reservations is deployed and hosted for it to work properly when updating to this version.*
+
+### Fixed
+* Two intermittently failing tests have been commented out and a third has been fixed ([#1059](https://github.com/YaleSTC/reservations/issues/1059)).
+* Changing the cart dates now updates the catalog availability descriptions ([#1060](https://github.com/YaleSTC/reservations/issues/1060)).
+
+### Added
+* Fleshed out and polished guest user functionality ([#175](https://github.com/YaleSTC/reservations/issues/175)).
+* Adding or removing an item from the cart now updates the availability count in the catalog ([#718](https://github.com/YaleSTC/reservations/issues/718)).
+* Carts are now limited to **100** items to avoid cookie overflow ([#997](https://github.com/YaleSTC/reservations/issues/997)).
+* The equipment model page now renders the 'Add to Cart' button differently depending on model status ([#1053](https://github.com/YaleSTC/reservations/issues/1053)).
+* Reservation notes now indicate if failed validations were overriden during reservation creation ([#1054](https://github.com/YaleSTC/reservations/issues/1054)).
+* Code quality tools (currently [`rubocop`](https://github.com/bbatsov/rubocop) with support for JS linters as well) have been added to the TravisCI build ([#1075](https://github.com/YaleSTC/reservations/issues/1075)).
+* The cart is now checked for equipment models that have been destroyed in between requests to avoid rendering issues ([#1085](https://github.com/YaleSTC/reservations/issues/1085)).
+
+### Changed
+* Environment variables are now used to configure Reservations. These can be spoofed using the [`dotenv-deployment`](https://github.com/bkeepers/dotenv-deployment) gem if desired ([#683](https://github.com/YaleSTC/reservations/issues/683)).
+* The reservations index view has been overhauled and now is date-restricted; this resolves the issue where loading the 'Returned' reservations table would hang the browser on instances with large numbers of reservations ([#708](https://github.com/YaleSTC/reservations/issues/708)).
+* The reports code has been completely refactored and heavily improved ([#994](https://github.com/YaleSTC/reservations/issues/994)).
+* The seed script has been completely refactored; it now includes several modes of operation and has been heavily optimized ([#629](https://github.com/YaleSTC/reservations/issues/629), [#1071](https://github.com/YaleSTC/reservations/issues/1071)).
+* The authorization statements used to restrict equipment activation / deactivation have been rewritten for legibility ([#1019](https://github.com/YaleSTC/reservations/issues/1019)).
+
+### Removed
+* The Yale dependencies in the LDAP configuration have been removed to allow for the use of any LDAP server. ([#653](https://github.com/YaleSTC/reservations/issues/653)).
+* An unnecessary `before_filter` has been removed from the `ApplicationController` ([#1072](https://github.com/YaleSTC/reservations/issues/1072)).
+
 ## v4.1.0 - 2014-12-01
 ### Added
 * Added an "archive" action for reservations to deal with unusual circumstances ([#728](https://github.com/YaleSTC/reservations/issues/728)).
