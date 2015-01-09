@@ -1,4 +1,14 @@
 module ReservationsHelper
+  def filter_message(set, source, filter, view_all)
+    if view_all
+      "Viewing all #{filter} reservations"
+    else
+      "#{set[filter]} of #{source[filter]} "\
+      "#{filter.to_s.humanize.downcase} reservations begin between "\
+      'the specified dates'
+    end
+  end
+
   def reservation_length
     @reservation_length =
       (@reservation.due_date.to_date - @reservation.start_date.to_date).to_i

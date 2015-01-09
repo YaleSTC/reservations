@@ -282,11 +282,11 @@ def generate_reservation
     res = Reservation.new
     res.reserver_id = User.all.sample.id
     res.equipment_model = EquipmentModel.all.sample
-    res.start_date = time_rand(Time.now, Time.now + FUTURE_RANGE).to_datetime
+    res.start_date = time_rand(Time.now, Time.now + FUTURE_RANGE).to_date
 
     checkout_length = res.equipment_model.category.max_checkout_length
     res.due_date = time_rand(res.start_date, res.start_date.next_week,
-                             checkout_length.days).to_datetime
+                             checkout_length.days).to_date
     res.notes = Faker::HipsterIpsum.paragraph(8)
     res.notes_unsent = [true, false].sample
     if rand < PAST_CHANCE
