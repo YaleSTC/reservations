@@ -4,7 +4,7 @@
 [![Code Climate](https://codeclimate.com/github/YaleSTC/reservations/badges/gpa.svg)](https://codeclimate.com/github/YaleSTC/reservations)
 [![Test Coverage](https://codeclimate.com/github/YaleSTC/reservations/badges/coverage.svg)](https://codeclimate.com/github/YaleSTC/reservations)
 [![Dependency Status](https://gemnasium.com/YaleSTC/reservations.svg)](https://gemnasium.com/YaleSTC/reservations)
-[![Inline docs](http://inch-ci.org/github/yalestc/reservations.svg)](http://inch-ci.org/github/yalestc/reservations)
+[![Inline docs](http://inch-ci.org/github/yalestc/reservations.svg?branch=master&style=flat)](http://inch-ci.org/github/yalestc/reservations)
 
 ![](http://yalestc.github.io/reservations/screenshot.png)
 
