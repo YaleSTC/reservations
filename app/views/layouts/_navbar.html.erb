@@ -133,7 +133,7 @@
         <% end %>
       </ul>
       <% if current_user.nil? %>
-        <%= button_to 'Sign In', new_user_session_path, class: 'btn btn-primary navbar-btn navbar-right btn-sign-in' %>
+        <%= link_to 'Sign In', new_user_session_path, class: 'btn btn-primary navbar-btn navbar-right btn-sign-in' %>
       <% end %>
     </div>
   </div>
