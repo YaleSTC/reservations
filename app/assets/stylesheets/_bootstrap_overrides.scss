@@ -36,3 +36,4 @@ $navbar-default-link-hover-color: lighten(desaturate($left-2-color, 40%), 60%);
 $navbar-search-bg: lighten(desaturate($left-2-color, 40%), 30%);
 $navbar-search-placeholder-color: darken(desaturate($navbar-default-bg, 30%), 30%);
 // $navbarBrandColor
+$navbar-default-brand-hover-color: lighten($right-1-color, 60%);
