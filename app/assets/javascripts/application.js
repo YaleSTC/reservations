@@ -25,7 +25,7 @@
 function truncate() {
   if ($(".caption_cat").length) {
     $(".caption_cat").dotdotdot({
-      height: 50,
+      height: 100,
       after: ".more_info",
       watch: 'window'
     });
