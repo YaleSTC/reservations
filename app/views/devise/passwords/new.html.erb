@@ -1,12 +1,9 @@
-<% title "Forgot your password?" %>
+<% title 'Forgot your password?' %>
 
 <%= simple_form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, class: 'form-horizontal' },
 wrapper: :horizontal_form) do |f| %>
   <%= f.error_notification %>
-
-  <div class="form-inputs">
-    <%= f.input :email, required: true, autofocus: true %>
-  </div>
-  <%= f.button :submit, "Send me reset password instructions" %>
-  <%= link_to "Log in", new_session_path(resource_name), class: 'btn' %>
+  <%= f.input :email, required: true, autofocus: true %>
+  <%= f.button :submit, 'Send me reset password instructions', class: 'btn-primary' %>
+  <%= link_to 'Sign in', new_session_path(resource_name), class: 'btn btn-default' %>
 <% end %>
