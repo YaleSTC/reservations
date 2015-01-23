@@ -41,12 +41,12 @@
 .caption_cat { padding: 0px 9px 0px 9px; }
 
 a.not-qualified-icon {
-	position: absolute;
-	bottom: 13px;
-	left: 110px;
-	font-size: $font-size-base * 2;
+  float: right;
+  font-size: $font-size-base * 2;
 	color: $btn-warning-bg;
   @include warning-icon-drop-shadow;
+  // position: relative;
+  // bottom: 13px;
 
 	&:hover, &:active {
 		text-decoration: none;
