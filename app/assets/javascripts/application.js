@@ -71,7 +71,7 @@ $(document).ready(function() {
 
   // For DataTables and Bootstrap
   $('.datatable').dataTable({
-    "sDom": "<'row'<'span4'l><'span5'f>r>t<'row'<'span3'i><'span6'p>>",
+    "sDom": "<'row'<'col-md-4'l><'col-md-5'f>r>t<'row'<'col-md-3'i><'col-md-6'p>>",
     "sPaginationType": "bootstrap",
     "sScrollX": "100%",
     "aoColumnDefs": [
@@ -80,7 +80,7 @@ $(document).ready(function() {
   });
 
   wideDataTables = $('.datatable-wide').dataTable({
-    "sDom": "<'row'<'span5'l><'span7'f>r>t<'row'<'span5'i><'span7'p>>",
+    "sDom": "<'row'<'col-md-5'l><'col-md-7'f>r>t<'row'<'col-md-5'i><'col-md-7'p>>",
     "sPaginationType": "bootstrap",
     "sScrollX": "100%",
     "aoColumnDefs": [
@@ -91,7 +91,7 @@ $(document).ready(function() {
   // ### REPORTS JS ### //
 
   $('.report_table').dataTable({
-    "sDom": "<'row'<'span3'l>fr>t<'row'<'span3'i><p>>",
+    "sDom": "<'row'<'col-md-3'l>fr>t<'row'<'col-md-3'i><p>>",
     "sPaginationType": "bootstrap",
     "iDisplayLength" : 25,
     "aLengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
