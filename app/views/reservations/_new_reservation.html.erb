@@ -1,7 +1,11 @@
-<% title "Create Reservation" %>
+<% title 'Create Reservation' %>
+
 <% unless @errors.empty? %>
   <p>
-    <h3><i class="fa fa-exclamation-triangle warning-icon"></i> Please be aware of the following errors:</h3>
+    <h3>
+      <i class="fa fa-exclamation-triangle warning-icon"></i>
+      Please be aware of the following errors:
+    </h3>
   </p>
   <% @errors.each do |msg| %>
     <ul>
@@ -40,6 +44,6 @@
 
   <div class="form-actions">
     <%= f.button :submit, "Finalize Reservation" %>
-    <%= link_to "Return to Catalog", catalog_path, class: 'btn' %>
+    <%= link_to "Return to Catalog", catalog_path, class: 'btn btn-default' %>
   </div>
 <% end %>

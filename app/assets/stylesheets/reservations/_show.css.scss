@@ -3,7 +3,7 @@
 
   .fa-user {
     font-size: $font-size-base * 7;
-    line-height: $line-height-base * 4;
+    line-height: 1em;
     color: lighten($text-color, 50%);
     @include transition(color .3s ease);
 
