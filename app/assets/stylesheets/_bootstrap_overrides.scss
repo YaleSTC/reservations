@@ -17,6 +17,7 @@ $body-bg: desaturate(lighten($left-2-color, 65%), 30%); // @white  Page backgrou
 $text-color: desaturate(darken($base-color, 1%), 5%);  // @grayDark Default text color for entire body, headings, and more
 $link-color: lighten($right-2-color, 35%);  // #08c  Default link text color
 $headings-font-weight: 600;
+$font-size-base: 13px;
 
 // Tables
 // =============================================================================

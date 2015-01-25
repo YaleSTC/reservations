@@ -1,3 +1,17 @@
+// Hacks to have separate base font size for the navbar – remove if / when we
+// move to 14px base font size
+
+.navbar {
+	font-size: $navbar-font-size-base;
+
+	.navbar-brand { font-size: ceil(($navbar-font-size-base * 1.25)); }
+	.dropdown-menu { font-size: inherit; }
+	.form-control { font-size: inherit; }
+}
+
+
+
+// Dropdown stuff
 .dropdown-menu {
 //	max-height: 440px;
 //	overflow-y: auto;
