@@ -1,26 +1,23 @@
 <% url = request.fullpath %>
-<p>
-  <div class="btn-group">
+<div class="btn-group">
 
-    <% if url == user_path(reserver) %>
-      <%= link_to "#{reserver.first_name}'s Profile", reserver, :class => 'btn btn-inverse disabled' %>  
+  <% if url == user_path(reserver) %>
+    <%= link_to "#{reserver.first_name}'s Profile", reserver, :class => 'btn btn-default disabled' %>
+  <% else %>
+    <%= link_to "#{reserver.first_name}'s Profile", reserver, :class => 'btn btn-default' %>
+  <% end %>
+  <% if can? :manage, Reservation %>
+    <% if url == manage_reservations_for_user_path(reserver) %>
+      <%= link_to "Check in/out", manage_reservations_for_user_path(reserver), :class => 'btn btn-default disabled' %>
     <% else %>
-      <%= link_to "#{reserver.first_name}'s Profile", reserver, :class => 'btn btn-inverse' %>  
+      <%= link_to "Check in/out", manage_reservations_for_user_path(reserver), :class => 'btn btn-default' %>
     <% end %>
-    <% if can? :manage, Reservation %>
-      <% if url == manage_reservations_for_user_path(reserver) %>
-        <%= link_to "Check in/out", manage_reservations_for_user_path(reserver), :class => 'btn btn-inverse disabled' %>
-      <% else %>
-        <%= link_to "Check in/out", manage_reservations_for_user_path(reserver), :class => 'btn btn-inverse' %>
-      <% end %>
-    <% end %>
-    
-    <% if url == current_reservations_for_user_path(reserver) %>
-      <%= link_to "#{reserver.first_name}'s Reservations", current_reservations_for_user_path(reserver), :class => 'btn btn-inverse disabled' %>
-    <% else %>
-      <%= link_to "#{reserver.first_name}'s Reservations", current_reservations_for_user_path(reserver), :class => 'btn btn-inverse' %>
-    <% end %>
+  <% end %>
 
-  </div>
+  <% if url == current_reservations_for_user_path(reserver) %>
+    <%= link_to "#{reserver.first_name}'s Reservations", current_reservations_for_user_path(reserver), :class => 'btn btn-default disabled' %>
+  <% else %>
+    <%= link_to "#{reserver.first_name}'s Reservations", current_reservations_for_user_path(reserver), :class => 'btn btn-default' %>
+  <% end %>
 
-</p>
+</div>
