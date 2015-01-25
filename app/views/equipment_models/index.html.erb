@@ -26,29 +26,28 @@
   </tbody>
 </table>
 
-<div class="form-actions">
-  <% if can? :manage, EquipmentModel %>
-    <% if @category %>
-      <%= link_to "New #{@category.name.singularize}", new_category_equipment_model_path(@category), :class => 'btn btn-primary' %>
-      <%= link_to "View All Equipment Models", equipment_models_path, :class => 'btn btn-default' %>
+<hr>
+<% if can? :manage, EquipmentModel %>
+  <% if @category %>
+    <%= link_to "New #{@category.name.singularize}", new_category_equipment_model_path(@category), :class => 'btn btn-primary' %>
+    <%= link_to "View All Equipment Models", equipment_models_path, :class => 'btn btn-default' %>
+  <% else %>
+    <%= link_to "New Equipment Model", new_equipment_model_path, :class => "btn btn-primary" %>
+  <%= link_to "Import Equipment Models", equip_import_page_path, :class => "btn btn-default" %>
+  <% end %>
+  <% if params[:show_deleted] %>
+    <% if (@category.nil?) %>
+      <%= link_to "Hide Deactivated Models", equipment_models_path, :class => "btn btn-default" %>
     <% else %>
-      <%= link_to "New Equipment Model", new_equipment_model_path, :class => "btn btn-primary" %>
-    <%= link_to "Import Equipment Models", equip_import_page_path, :class => "btn btn-default" %>
-    <% end %>
-    <% if params[:show_deleted] %>
-      <% if (@category.nil?) %>
-        <%= link_to "Hide Deactivated Models", equipment_models_path, :class => "btn btn-default" %>
-      <% else %>
-        <%= link_to "Hide Deactivated Models", category_equipment_models_path(@category), :class => "btn btn-default" %>
-      <% end %>
-    <% else %>
-      <% if (@category.nil?) %>
-        <%= link_to "Show Deactivated Models", equipment_models_path(show_deleted: true), :class => "btn btn-default" %>
-      <% else %>
-        <%= link_to "Show Deactivated Models", category_equipment_models_path(@category, show_deleted: true), :class => "btn btn-default" %>
-      <% end %>
+      <%= link_to "Hide Deactivated Models", category_equipment_models_path(@category), :class => "btn btn-default" %>
     <% end %>
   <% else %>
-    <%= link_to "Return to Catalog", catalog_path, :class => 'btn btn-default' %>
+    <% if (@category.nil?) %>
+      <%= link_to "Show Deactivated Models", equipment_models_path(show_deleted: true), :class => "btn btn-default" %>
+    <% else %>
+      <%= link_to "Show Deactivated Models", category_equipment_models_path(@category, show_deleted: true), :class => "btn btn-default" %>
+    <% end %>
   <% end %>
-</div>
+<% else %>
+  <%= link_to "Return to Catalog", catalog_path, :class => 'btn btn-default' %>
+<% end %>

@@ -5,7 +5,7 @@
   <tr>
     <th>Equipment Model</th>
     <th>Item Name</th>
-    <th>Serial (optional)</th>
+    <th>Serial</th>
     <th>Status</th>
 <%# these blank TH's necessary for the sort function %>
   <% if can? :manage, EquipmentObject %>
@@ -31,31 +31,29 @@
       </td>
 
       <% if can? :manage, EquipmentObject %>
-        <td><%= link_to "Edit", edit_equipment_object_path(equipment_object), :class => "btn" %></td>
+        <td><%= link_to "Edit", edit_equipment_object_path(equipment_object), :class => "btn btn-default" %></td>
         <td><%= equipment_object.decorate.make_deactivate_btn %></td>
       <% end %>
     </tr>
   <% end %>
   </tbody>
 </table>
-<hr />
 
 <% if can? :manage, EquipmentObject %>
+  <hr />
 
-  <div class="form-actions">
-    <% if @equipment_model %>
-     <%= link_to ("New "+@equipment_model.name.singularize), new_equipment_model_equipment_object_path(@equipment_model) %>
-     <%= link_to "View All Equipment Items", equipment_objects_path %>
-    <% else %>
-      <%= link_to "New Equipment Item", new_equipment_object_path, :class => "btn btn-primary" %>
-    <%= link_to "Import Equipment Item", equip_import_page_path, :class => "btn" %>
-    <% end %>
+  <% if @equipment_model %>
+   <%= link_to ("New "+@equipment_model.name.singularize), new_equipment_model_equipment_object_path(@equipment_model) %>
+   <%= link_to "View All Equipment Items", equipment_objects_path %>
+  <% else %>
+    <%= link_to "New Equipment Item", new_equipment_object_path, :class => "btn btn-primary" %>
+  <%= link_to "Import Equipment Item", equip_import_page_path, :class => "btn btn-default" %>
+  <% end %>
 
-    <% if params[:show_deleted] %>
-      <%= link_to "Hide Deactivated Items", equipment_objects_path, :class => "btn" %>
-    <% else %>
-      <%= link_to "Show Deactivated Items", equipment_objects_path(:show_deleted => true), :class => "btn" %>
-    <% end %>
-  </div>
+  <% if params[:show_deleted] %>
+    <%= link_to "Hide Deactivated Items", equipment_objects_path, :class => "btn btn-default" %>
+  <% else %>
+    <%= link_to "Show Deactivated Items", equipment_objects_path(:show_deleted => true), :class => "btn btn-default" %>
+  <% end %>
 
 <% end %>

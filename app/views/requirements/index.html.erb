@@ -1,6 +1,5 @@
 <% title "Requirements" %>
 
-
 <table class="datatable-wide table table-stripped table-bordered">
   <thead>
   <tr>
@@ -20,23 +19,17 @@
         <td><%  requirement.equipment_models.each do |model| %> <%= model.name %>, <br> <% end %></td>
         <td><%= requirement.contact_name %></td>
         <td><%= requirement.contact_info %></td>
-        <td><%= link_to 'Show', requirement, class: 'btn' %></td>
-        <td><%= link_to 'Edit', edit_requirement_path(requirement), class: 'btn' %></td>
+        <td><%= link_to 'Show', requirement, class: 'btn btn-default' %></td>
+        <td><%= link_to 'Edit', edit_requirement_path(requirement), class: 'btn btn-default' %></td>
         <td><%= link_to 'Delete', requirement, class: 'btn btn-danger', :data => { :confirm => 'Are you sure?' }, :method => :delete %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<br />
+<hr />
 
-<div class="form-actions">
-  <%= link_to 'New Requirement', new_requirement_path, class: 'btn btn-primary' %>
-</div>
-
-<br />
-
-
+<%= link_to 'New Requirement', new_requirement_path, class: 'btn btn-primary' %>
 
 <%# In the past, a list of all users who had been granted special permissions was inlcuded here. This feature has been removed since version 3.0.0 %>
 <%#
