@@ -1,11 +1,11 @@
 //= require jquery
 //= require jquery_ujs
+//= require dataTables/jquery.dataTables
+//= require dataTables/bootstrap/3/jquery.dataTables.bootstrap
 //= require jquery-ui/datepicker
 //= require jquery-ui/autocomplete
 //= require cocoon
 //= require autocomplete-rails
-//= require dataTables/jquery.dataTables
-//= require dataTables/bootstrap/2/jquery.dataTables.bootstrap
 //= require bootstrap/transition
 //= require bootstrap/alert
 //= require bootstrap/button
@@ -71,36 +71,33 @@ $(document).ready(function() {
 
   // For DataTables and Bootstrap
   $('.datatable').dataTable({
-    "sDom": "<'row'<'col-md-4'l><'col-md-5'f>r>t<'row'<'col-md-3'i><'col-md-6'p>>",
-    "sPaginationType": "bootstrap",
-    "sScrollX": "100%",
-    "aoColumnDefs": [
-          { "bSortable": false, "aTargets": [ "no_sort" ] }
-        ]
+    "pagingType": "full_numbers",
+    "scrollX": false,
+    "columnDefs": [
+      { "orderable": false, "targets": [ "no_sort" ] }
+    ]
   });
 
-  wideDataTables = $('.datatable-wide').dataTable({
-    "sDom": "<'row'<'col-md-5'l><'col-md-7'f>r>t<'row'<'col-md-5'i><'col-md-7'p>>",
-    "sPaginationType": "bootstrap",
-    "sScrollX": "100%",
-    "aoColumnDefs": [
-          { "bSortable": false, "aTargets": [ "no_sort" ] }
-        ]
+  var wideDataTables = $('.datatable-wide').dataTable({
+    "pagingType": "full_numbers",
+    "scrollX": false,
+    "columnDefs": [
+      { "orderable": false, "targets": [ "no_sort" ] }
+    ]
   });
 
   // ### REPORTS JS ### //
 
   $('.report_table').dataTable({
-    "sDom": "<'row'<'col-md-3'l>fr>t<'row'<'col-md-3'i><p>>",
-    "sPaginationType": "bootstrap",
-    "iDisplayLength" : 25,
-    "aLengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
-    "aoColumnDefs": [{ "bSortable": false, "aTargets": [ "no_sort" ] }]
+    "pagingType": "full_numbers",
+    "pageLength": 25,
+    "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
+    "columnDefs": [{ "orderable": false, "targets": [ "no_sort" ] }]
   });
 
   // For fading out flash notices
   $(".alert .close").click( function() {
-       $(this).parent().addClass("fade");
+    $(this).parent().addClass("fade");
   });
 
   // make the sidebar follow you down the page
