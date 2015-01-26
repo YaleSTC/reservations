@@ -12,7 +12,7 @@
         <%= form_tag update_user_per_cat_page_path,
               id: 'items_per_form', class: 'form-inline pull-right',
               remote: true, method: 'put' do %>
-          <%= label_tag 'Items per page:' %>
+          <%= label_tag :items_per_page, 'Items per page:' %>
           <%= select_tag :items_per_page,
                 options_for_select(@per_page_opts, session[:items_per_page]),
                 class: 'autosubmitme form-control' %>
