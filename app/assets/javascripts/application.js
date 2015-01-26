@@ -119,6 +119,7 @@ $(document).ready(function() {
   $(".btn#modal").tooltip();
   $(".not-qualified-icon").tooltip();
   $(".not-qualified-icon-em").tooltip();
+  $('[data-toggle="tooltip"]').tooltip();
 
   $('.associated_em_box img').popover({ placement: 'bottom' });
   $("#my_reservations .dropdown-menu a").popover({ placement: 'bottom' });
