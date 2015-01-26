@@ -5,7 +5,10 @@
     <table id="table_list_items" class="table table-bordered table-striped table-condensed table-hover">
       <% cart.items.each do |model_id, quantity| %>
         <tr>
-          <td colspan="2"><%= quantity %> x
+          <td class="cart-items-quantity">
+            <%= quantity %>
+          </td>
+          <td>
             <div id="remove_button">
               <%= link_to remove_from_cart_path(EquipmentModel.find(model_id)),
               method: :put, remote: true, :'data-toggle' => 'tooltip', title: 'Remove', class: 'btn btn-default btn-xs' do %>
