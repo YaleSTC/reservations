@@ -15,7 +15,6 @@
   <h3>Equipment requested:</h3>
 </p>
 <%= simple_form_for @reservation do |f| %>
-  <%= f.error_messages %>
   <p>
     The following equipment will be requested for
     <%= User.find(cart.reserver_id).name %>
