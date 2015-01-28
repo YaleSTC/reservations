@@ -1,4 +1,4 @@
-<%= simple_form_for @app_config, wrapper: :bootstrap, html: { multipart: true, class: "form-horizontal" } do |f| %>
+<%= simple_form_for @app_config, html: { multipart: true, class: 'form-horizontal' } do |f| %>
 
   <%= f.error_notification %>
 
@@ -47,7 +47,7 @@
 
   <fieldset>
     <legend>Reservation requests</legend><br />
-    <%= f.input :request_text, label: 'Reservation request text', input_html: {class: 'span6', rows: 7},
+    <%= f.input :request_text, label: 'Reservation request text', input_html: {rows: 10},
       hint: 'This message will be displayed to users who are about to file a reservation request for invalid reservations.
              You can use markdown in this field' %>
     <%= render partial: 'shared/markdown_button' %>
@@ -81,18 +81,18 @@
     <hr />
     <%= f.input :upcoming_checkin_email_active, label: 'Send equipment check-in reminders?',
                 hint: 'When enabled, patrons will get an email reminding them that reservation(s) are due.' %>
-    <%= f.input :upcoming_checkin_email_body, input_html: { class: 'span6' } %>
+    <%= f.input :upcoming_checkin_email_body, input_html: {rows: 10} %>
     <hr />
 
     <%= f.input :overdue_checkin_email_active, label: 'Send overdue check-in reminders?',
                 hint: 'When enabled, patrons who have overdue equipment will get an email informing them about late fees and other consequences.' %>
-    <%= f.input :overdue_checkin_email_body, input_html: { class: 'span6' } %>
+    <%= f.input :overdue_checkin_email_body, input_html: {rows: 10} %>
     <hr />
     <%= f.input :res_exp_time, label: 'Days to keep missed reservations',
         hint: 'Missed reservations a certain number of days old can be automatically deleted. Leave blank to keep all missed reservations forever.' %>
     <%= f.input :send_notifications_for_deleted_missed_reservations, label: 'Send notifications?',
                 hint: 'When enabled, patrons will be notified that their reservations were deleted.' %>
-    <%= f.input :deleted_missed_reservation_email_body, input_html: { class: 'span6' } %>
+    <%= f.input :deleted_missed_reservation_email_body, input_html: {rows: 10} %>
     <hr />
 
     <%#= f.input :reservation_confirmation_email_active, label: 'Enable reservation confirmation?',
@@ -103,9 +103,9 @@
   </fieldset>
   <fieldset>
     <legend>Terms of Service</legend>
-    <%= f.input :terms_of_service, input_html: { class: 'span6' } %>
+    <%= f.input :terms_of_service, input_html: {rows: 20} %>
     <% unless params[:controller] == "application_setup" %>
-      <%= f.input :reset_tos_for_users, input_html: {type: "checkbox", value: '1'} , label: "Force all patrons to accept the TOS again?", :hint => "i.e., if patrons need to be aware that the terms of service have changed." %>
+      <%= f.input :reset_tos_for_users, input_html: {type: 'checkbox', value: '1'} , label: "Force all patrons to accept the TOS again?", :hint => "i.e., if patrons need to be aware that the terms of service have changed." %>
     <% end %>
   </fieldset>
 
