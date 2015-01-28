@@ -15,3 +15,12 @@
 #   end
 # end
 # SimpleForm::FormBuilder.send :include, WrappedButton
+module ButtonComponents
+  def submit_button(*args, &block)
+    options = args.extract_options!
+    options[:class] = ['btn-primary', options[:class]].compact
+    args << options
+    submit(*args, &block)
+  end
+end
+SimpleForm::FormBuilder.send :include, ButtonComponents
