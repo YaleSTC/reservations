@@ -160,7 +160,6 @@ $(document).ready(function() {
 
   $('#modal').click(function() {
     $('#userModal div.modal-body').load(new_user, {possible_netid: $('#fake_reserver_id').val() }); // new_user defined in variables.js.erb
-    console.log(new_user);
   });
 
   load_datepicker();
