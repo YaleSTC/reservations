@@ -1,5 +1,5 @@
 <div id="cart_dates">
-  <%= form_tag url_for(controller: 'application', action: 'update_cart'), :remote => true, :class => "form-vertical", :id => "cart_form", method: :put do %>
+  <%= form_tag url_for(controller: 'application', action: 'update_cart'), remote: true, class: "form-vertical", id: "cart_form", method: :put do %>
 
     <%= hidden_field_tag 'page', params[:page] %>
     <%# to preserve pagination %>
@@ -41,11 +41,15 @@
   <% end %>
 </div>
 
-<div class="modal hide fade" id="userModal">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal">×</button>
-    <h3>Quick Create New User</h3></br>
-  </div>
-  <div class="modal-body">
+<div class="modal fade" id="userModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h4>Quick Create New User</h4></br>
+      </div>
+      <div class="modal-body">
+      </div>
+    </div>
   </div>
 </div>
