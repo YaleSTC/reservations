@@ -8,13 +8,17 @@
       <%= link_to "#image_modal", :"data-toggle" => 'modal' do %>
         <%= image_tag @equipment_model.photo.url(:large), class: 'img-responsive' %>
       <% end %>
-      <div id="image_modal" class="modal hide fade">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">×</button>
-          <h4><%= @equipment_model.name %></h4>
-        </div>
-        <div class="modal-body">
-          <%= image_tag @equipment_model.photo.url(:original) %>
+      <div id="image_modal" class="modal fade">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">×</button>
+              <h4 class="modal-title"><%= @equipment_model.name %></h4>
+            </div>
+            <div class="modal-body">
+              <%= image_tag @equipment_model.photo.url(:original), class: 'img-responsive' %>
+            </div>
+          </div>
         </div>
       </div>
     </div>
