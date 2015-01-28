@@ -6,7 +6,7 @@
     <% if @equipment_model.photo.exists? %>
     <div class="image_box">
       <%= link_to "#image_modal", :"data-toggle" => 'modal' do %>
-        <%= image_tag @equipment_model.photo.url(:large) %>
+        <%= image_tag @equipment_model.photo.url(:large), class: 'img-responsive' %>
       <% end %>
       <div id="image_modal" class="modal hide fade">
         <div class="modal-header">
@@ -20,7 +20,7 @@
     </div>
 
     <% else %>
-        <%= image_tag "no-image-260.gif" %>
+      <%= image_tag "no-image-260.gif", class: 'img-responsive' %>
     <% end %>
   </div>
 
@@ -36,7 +36,7 @@
 
     <div class="associated_em_box">
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
           <% unless @associated_equipment_models.empty? %>
             <h3>You Might Also Like:</h3>
           <% end %>
@@ -44,10 +44,11 @@
       </div>
       <div class="row">
         <% @associated_equipment_models.each do |em| %>
-          <div class="col-md-1">
+          <div class="col-md-2">
             <%= link_to em do %>
               <%= image_tag evaluate_img_presence(em), rel: 'popover',
-                title: em.name, :"data-content" => em.description.truncate(100) %>
+                title: em.name, :"data-content" => em.description.truncate(100),
+                class: 'img-responsive' %>
             <% end %>
           </div>
         <% end %>
