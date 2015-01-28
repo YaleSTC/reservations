@@ -11,7 +11,7 @@
       <div id="image_modal" class="modal hide fade">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">×</button>
-          <h3><%= @equipment_model.name %></h3>
+          <h4><%= @equipment_model.name %></h4>
         </div>
         <div class="modal-body">
           <%= image_tag @equipment_model.photo.url(:original) %>
@@ -38,7 +38,7 @@
       <div class="row">
         <div class="col-md-12">
           <% unless @associated_equipment_models.empty? %>
-            <h3>You Might Also Like:</h3>
+            <h4>You Might Also Like:</h4>
           <% end %>
         </div>
       </div>

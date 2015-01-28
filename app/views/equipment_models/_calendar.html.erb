@@ -1,9 +1,9 @@
-<h3>Availability</h3>
+<h4>Availability</h4>
 
 <div id="reservation-calendar">
   <%= content_tag "div", id: "res-data", data:{url:@reservation_data, blackouts:@blackouts, today:@date.to_s, max:@max, date_max: @date_max.to_s} do %>
   <% end %>
-  <div class="month"><h4></h4></div>
+  <div class="month"><h5></h5></div>
 
   <ul id="calendar-ul">
     <li class = "calendar_cell" id ="<%= cart.start_date.to_date %>">

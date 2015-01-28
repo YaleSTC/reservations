@@ -10,9 +10,10 @@ $border-att: 1px solid darken($body-bg, 20%);
 }
 
 #calendar-ul {
-  margin-left: 0px;
+  margin-left: 0;
   margin-bottom: 3px;
   margin-top: 3px;
+  padding-left: 0;
 }
 
 .calendar_cell {
