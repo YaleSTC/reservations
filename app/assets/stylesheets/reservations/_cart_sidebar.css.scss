@@ -7,7 +7,12 @@
 #sidebarbottom.affix {
   // Important flag fixes weird affix affix-bottom bug where the affixed thing
   // stays position: relative
-  width: col-width(3, $container-lg);
+  @media (min-width: $screen-lg-min) {
+    width: col-width(3, $container-lg);
+  }
+  @media (min-width: $screen-md-min) {
+    width: col-width(3, $container-md);
+  }
   position: fixed !important;
 }
 
