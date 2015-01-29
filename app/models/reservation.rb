@@ -125,6 +125,8 @@ class Reservation < ActiveRecord::Base
   def find_renewal_date
     # determine the max renewal length for a given reservation
     # O(n) queries
+
+    # FIXME: this is broken too...
     due_date = due_date.to_date
     renew_extension = dup
     renew_extension.start_date = due_date + 1.day
