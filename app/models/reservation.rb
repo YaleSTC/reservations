@@ -73,6 +73,8 @@ class Reservation < ActiveRecord::Base
   ## Getter style instance methods ##
 
   def status # rubocop:disable CyclomaticComplexity, PerceivedComplexity
+    return if due_date.nil?
+    # somehow it gets into this with due_date = nil... not sure how
     due_date = due_date.to_date
     if checked_out.nil?
       if approval_status == 'auto' || approval_status == 'approved'
