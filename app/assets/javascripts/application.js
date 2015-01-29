@@ -102,7 +102,6 @@ $(document).ready(function() {
 
   // make the sidebar follow you down the page
   if ($(window).width() > 767) {
-    // $("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
     $("#sidebarbottom").affix({
       offset: {
         top: 0,
