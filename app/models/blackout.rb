@@ -10,9 +10,9 @@ class Blackout < ActiveRecord::Base
   # this only matters if a user tries to inject into params because the
   # datepicker doesn't allow form submission of invalid dates
 
-  scope :active, ->() { where('end_date >= ?', Date.current) }
+  scope :active, ->() { where('end_date >= ?', Time.zone.today) }
   scope :for_date, lambda { |date|
-    where('end_date >= ? and start_date <= ?', date, date)
+    where('end_date >= ? and start_date <= ?', date.to_date, date.to_date)
   }
   scope :hard, ->() { where(blackout_type: 'hard') }
   scope :soft, ->() { where(blackout_type: 'soft') }
@@ -20,6 +20,7 @@ class Blackout < ActiveRecord::Base
   def self.get_notices_for_date(date, type = :all)
     # get a string of all notices for a given date
     # default to all blackouts
+    date = date.to_date
     if type == :soft
       blackouts = Blackout.soft.for_date(date)
     elsif type == :hard

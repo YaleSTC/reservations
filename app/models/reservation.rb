@@ -33,23 +33,25 @@ class Reservation < ActiveRecord::Base
     # a specific model id
     #
     # this code is used largely in validations because it uses 0 queries
+    date = date.to_date
     count = 0
     source.each do |r|
-      if r.start_date.to_date <= date && r.due_date.to_date >= date &&
-         r.equipment_model_id == model_id
-        count += 1
-      end
+      next unless r.start_date.to_date <= date &&
+                  r.due_date.to_date >= date &&
+                  r.equipment_model_id == model_id
+      count += 1
     end
     count
   end
 
   def self.number_for_category_on_date(date, category_id, reservations)
+    date = date.to_date
     count = 0
     reservations.each do |r|
-      if r.start_date.to_date <= date && r.due_date.to_date >= date &&
-         r.equipment_model.category_id == category_id
-        count += 1
-      end
+      next unless r.start_date.to_date <= date &&
+                  r.due_date.to_date >= date &&
+                  r.equipment_model.category_id == category_id
+      count += 1
     end
     count
   end
@@ -71,9 +73,10 @@ class Reservation < ActiveRecord::Base
   ## Getter style instance methods ##
 
   def status # rubocop:disable CyclomaticComplexity, PerceivedComplexity
+    due_date = due_date.to_date
     if checked_out.nil?
       if approval_status == 'auto' || approval_status == 'approved'
-        due_date >= Date.current ? 'reserved' : 'missed'
+        due_date >= Time.zone.today ? 'reserved' : 'missed'
       elsif approval_status
         approval_status
       else
@@ -81,7 +84,7 @@ class Reservation < ActiveRecord::Base
         '?'
       end
     elsif checked_in.nil?
-      due_date < Date.current ? 'overdue' : 'checked out'
+      due_date < Time.zone.today ? 'overdue' : 'checked out'
     else
       due_date < checked_in.to_date ? 'returned overdue' : 'returned on time'
     end
@@ -120,6 +123,7 @@ class Reservation < ActiveRecord::Base
   def find_renewal_date
     # determine the max renewal length for a given reservation
     # O(n) queries
+    due_date = due_date.to_date
     renew_extension = dup
     renew_extension.start_date = due_date + 1.day
     orig_due_date = due_date
@@ -146,15 +150,15 @@ class Reservation < ActiveRecord::Base
     max_renewal_times = equipment_model.maximum_renewal_times
 
     max_renewal_days = equipment_model.maximum_renewal_days_before_due
-    ((due_date.to_date - Date.current).to_i < max_renewal_days) &&
+    ((due_date.to_date - Time.zone.today).to_i < max_renewal_days) &&
       (self.times_renewed < max_renewal_times) &&
       equipment_model.maximum_renewal_length > 0
   end
 
   def to_cart
     temp_cart = Cart.new
-    temp_cart.start_date = start_date
-    temp_cart.due_date = due_date
+    temp_cart.start_date = Time.zone.parse(start_date.to_s)
+    temp_cart.due_date = Time.zone.parse(due_date.to_s)
     temp_cart.reserver_id = reserver_id
     temp_cart.items = { equipment_model_id => 1 }
     temp_cart
