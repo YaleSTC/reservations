@@ -105,7 +105,7 @@ $(document).ready(function() {
     // $("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
     $("#sidebarbottom").affix({
       offset: {
-        top: 50,
+        top: 0,
         bottom: function() {
           return (this.bottom = $('#footer').outerHeight(true));
         }
