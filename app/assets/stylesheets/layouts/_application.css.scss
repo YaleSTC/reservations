@@ -23,6 +23,7 @@
     margin-left: auto;
     padding-left: 15px;
     padding-right: 15px;
+    @include box-shadow(#{0 2px 5px rgba(0, 0, 0, 0.2)});
   }
   .subnav .nav > li:first-child > a,
   .subnav .nav > li:first-child > a:hover {
