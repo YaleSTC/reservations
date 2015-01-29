@@ -11,8 +11,6 @@
     <%= f.input :password_confirmation, label: "Confirm your new password", required: true %>
   </div>
 
-  <div class="form-actions">
-    <%= f.button :submit, "Change my password" %>
-    <%= link_to "Log in", new_session_path(resource_name), class: 'btn' %>
-  </div>
+  <%= f.button :submit, "Change my password" %>
+  <%= link_to "Log in", new_session_path(resource_name), class: 'btn btn-default' %>
 <% end %>

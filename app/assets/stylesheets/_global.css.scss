@@ -28,10 +28,10 @@ label {
 
 // Form actions background change
 
-.form-actions {
-  background-color: darken(desaturate($body-bg, 10%), 6%);
-  border-top: 1px solid darken(desaturate($body-bg, 10%), 15%);
-}
+// .form-actions {
+//   background-color: darken(desaturate($body-bg, 10%), 6%);
+//   border-top: 1px solid darken(desaturate($body-bg, 10%), 15%);
+// }
 
 // Change alert margins to account for body padding
 // =============================================================================
@@ -42,7 +42,7 @@ label {
 
 // Make all view-all buttons float to the right
 // =============================================================================
-.form-actions .view_all { float: right; }
+// .form-actions .view_all { float: right; }
 
 // Fix for popovers to display over dropdowns
 // =============================================================================
