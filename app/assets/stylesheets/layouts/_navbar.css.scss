@@ -9,7 +9,8 @@
 	.form-control { font-size: inherit; }
 }
 
-
+// Fixes #1111 – navbar will be correct height
+.navbar-fixed-top { border-width: 0; }
 
 // Dropdown stuff
 .dropdown-menu {
