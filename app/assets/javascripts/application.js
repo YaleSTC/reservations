@@ -176,8 +176,7 @@ $(document).ready(function() {
     newMsg = ($('.select2-choice > .select2-chosen').text() == $('#equipment_object').attr('placeholder'))
       ? ""
       : "Be aware that changing the reservation equipment item may have an effect on another reservation. If you set this reservation's equipment item to an item that has already been checked out, the reservations will be swapped.";
-    $('.form-actions').children('input').data('confirm', newMsg);
+    $('input[type="submit"]').data('confirm', newMsg);
   });
-
 
 });
