@@ -1,5 +1,5 @@
-<% title ((can? :manage, Reservation) ? "" : "My ")+"Reservations" %>
+<% title ((can? :manage, Reservation) ? "" : "My ") + "Reservations" %>
 
 <%= render :partial => "main_page_nav_buttons" %>
-
+<hr>
 <%= render :partial => "reservations_list", locals: {reservations_set: @reservations_set} %>
