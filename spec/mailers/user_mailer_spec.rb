@@ -41,11 +41,11 @@ describe UserMailer, type: :mailer do
     end
     it_behaves_like 'valid user email'
   end
-  describe 'missed_reservation_deleted_notification' do
+  describe 'missed_reservation_notification' do
     before do
       @res = FactoryGirl.build(:missed_reservation, reserver: reserver)
       @res.save(validate: false)
-      @mail = UserMailer.missed_reservation_deleted_notification(@res).deliver
+      @mail = UserMailer.missed_reservation_notification(@res).deliver
     end
     it_behaves_like 'valid user email'
   end
