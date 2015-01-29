@@ -30,8 +30,7 @@
   </div>
 </div>
 
-<div class="form-actions">
-  <%= link_to "Edit", edit_equipment_object_path(@equipment_object), class: 'btn' %>
-  <%= equipment_object.make_deactivate_btn %>
-  <%= link_to "View All", equipment_objects_path, class: 'btn' %>
-</div>
+<hr>
+<%= link_to "Edit", edit_equipment_object_path(@equipment_object), class: 'btn btn-default' %>
+<%= equipment_object.make_deactivate_btn %>
+<%= link_to "View All", equipment_objects_path, class: 'btn btn-default' %>
