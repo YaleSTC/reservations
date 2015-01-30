@@ -18,7 +18,9 @@
 
   <%= f.input :name %>
 
-  <%= f.input :description, as: :text, hint: "#{render :partial => 'shared/markdown_button'}".html_safe %>
+  <%= f.input :description, as: :text,
+  hint: "#{render :partial => 'shared/markdown_button'}".html_safe,
+  input_html: { rows: 10 } %>
 
   <%= f.input :late_fee, wrapper: :horizontal_input_group do %>
     <%= content_tag :span, "$", class: "input-group-addon" %>
