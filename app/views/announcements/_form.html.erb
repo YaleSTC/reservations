@@ -1,4 +1,4 @@
-<%= simple_form_for @announcement , html: { multipart: true}  do |f| %>
+<%= simple_form_for @announcement , html: { multipart: true }  do |f| %>
   <%= f.error_notification %>
 
   <%= f.label "Starts At:" %>
@@ -12,7 +12,7 @@
   <%#= f.label "Visible To" %>
   <%#= select_tag(:visible_to, options_for_select([['Everyone','everyone'],['Only Admin','admin'],['Only Checkout','checkout']]) %>
 
-  <%= f.input :message, label: 'Annoucement Message', input_html: {class: 'span6', rows: 7},
+  <%= f.input :message, label: 'Annoucement Message', input_html: {class: 'form-control', rows: 7},
     hint: 'This message will be displayed to all users of the app. You can use markdown in this field.' %>
   <%= render partial: 'shared/markdown_button' %>
 
