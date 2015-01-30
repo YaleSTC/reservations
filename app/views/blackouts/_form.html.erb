@@ -1,12 +1,19 @@
 
   <%= f.input :blackout_type, label: 'Blackout Type', collection: [['Blackout',"hard"],['Notice Only',"soft"]] %>
-
-  <%= label_tag :start_date, 'Start of Blackout' %>
-  <%= f.text_field :start_date, class: 'date_start form-control', :value => @blackout[:start_date].strftime('%m/%d/%Y') %>
-  <%= f.input :start_date, as: :hidden, input_html: {id: 'date_start_alt'} %>
-  <%= label_tag :end_date, 'End of Blackout' %>
-  <%= f.text_field :end_date, :class => 'date_end form-control', :value => @blackout[:end_date].strftime('%m/%d/%Y') %>
-  <%= f.input :end_date, as: :hidden, input_html: {id: 'date_end_alt'} %>
+  <div class="form-group">
+    <%= label_tag :start_date, 'Start of Blackout', class: 'col-sm-2 control-label' %>
+    <div class="col-sm-8">
+      <%= f.text_field :start_date, class: 'date_start form-control', :value => @blackout[:start_date].strftime('%m/%d/%Y') %>
+      <%= f.input :start_date, as: :hidden, input_html: {id: 'date_start_alt'} %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= label_tag :end_date, 'End of Blackout', class: 'col-sm-2 control-label' %>
+    <div class="col-sm-8">
+      <%= f.text_field :end_date, :class => 'date_end form-control', :value => @blackout[:end_date].strftime('%m/%d/%Y') %>
+      <%= f.input :end_date, as: :hidden, input_html: {id: 'date_end_alt'} %>
+    </div>
+  </div>
 
   <%= f.input :notice, hint: 'This message will be displayed to users if they attempt to make a reservation on a blackout date' %>
 </div>
