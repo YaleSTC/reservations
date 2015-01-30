@@ -30,7 +30,11 @@
         </div>
         <div class="panel-body">
           <%= link_to @reservation.equipment_model do %>
-            <%= image_tag @reservation.equipment_model.photo.url(:large) %>
+            <% if @reservation.equipment_model.photo.exists? %>
+              <%= image_tag @reservation.equipment_model.photo.url(:large), class: 'img-responsive' %>
+            <% else %>
+              <%= image_tag 'no-image-260.gif', class: 'img-responsive' %>
+            <% end %>
           <% end %>
         </div>
         <div class="panel-footer">

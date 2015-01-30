@@ -7,8 +7,6 @@
     color: lighten($text-color, 50%);
     @include transition(color .3s ease);
 
-
-
     &:hover, &:active {
       text-decoration: none;
       color: $text-color;
@@ -16,6 +14,10 @@
 
     }
   }
+}
+
+#res_left_column .panel-body img {
+  margin: 0 auto;
 }
 
 ul.bar-dividers {
