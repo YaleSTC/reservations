@@ -78,7 +78,6 @@ gem 'coffee-rails'
 gem 'uglifier'
 
 gem 'bootstrap-sass', '~> 3.3.1'
-
 gem 'font-awesome-rails'
 
 group :development do
@@ -90,7 +89,7 @@ group :development do
   gem 'pry-remote'
   gem 'letter_opener'
   gem 'letter_opener_web'
-  # gem 'rack-mini-profiler'
+  gem 'rack-mini-profiler'
   gem 'bullet'
   gem 'travis'
 end
