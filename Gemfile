@@ -1,8 +1,5 @@
 source 'https://rubygems.org'
 
-ruby '2.1.2' # Version in .ruby-version must match
-
-#standard gems
 gem 'rails', '~> 4.1.5'
 gem 'mysql2'
 gem 'rake', '~> 10.3.2'
