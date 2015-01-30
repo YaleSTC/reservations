@@ -1,4 +1,26 @@
-#sidebarbottom.affix { @extend #sidebarbottom; }
+// Calculates column width based on the container size - used for preserving
+// the column width of affixed components
+@function col-width($n, $container) {
+  @return $container / $grid-columns * $n - $grid-gutter-width;
+}
+
+#sidebarbottom.affix {
+  // Important flag fixes weird affix affix-bottom bug where the affixed thing
+  // stays position: relative
+  @media (min-width: $screen-lg-min) {
+    width: col-width(3, $container-lg);
+  }
+  @media (min-width: $screen-md-min) and (max-width: $screen-lg-min) {
+    width: col-width(3, $container-md);
+  }
+  position: fixed !important;
+}
+
+#sidebarbottom.affix-top {
+  // Important flag fixes weird affix affix-bottom bug where the affixed thing
+  // stays position: relative
+  position: static !important;
+}
 
 #list_items_in_cart {
   max-height: 150px;

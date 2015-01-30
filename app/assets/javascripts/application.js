@@ -102,10 +102,9 @@ $(document).ready(function() {
 
   // make the sidebar follow you down the page
   if ($(window).width() > 767) {
-    // $("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
     $("#sidebarbottom").affix({
       offset: {
-        top: 50,
+        top: 0,
         bottom: function() {
           return (this.bottom = $('#footer').outerHeight(true));
         }
@@ -177,8 +176,7 @@ $(document).ready(function() {
     newMsg = ($('.select2-choice > .select2-chosen').text() == $('#equipment_object').attr('placeholder'))
       ? ""
       : "Be aware that changing the reservation equipment item may have an effect on another reservation. If you set this reservation's equipment item to an item that has already been checked out, the reservations will be swapped.";
-    $('.form-actions').children('input').data('confirm', newMsg);
+    $('input[type="submit"]').data('confirm', newMsg);
   });
-
 
 });

@@ -42,8 +42,6 @@
     <%= f.input_field :notes, class: 'span6', rows: 5 %>
   </div>
 
-  <div class="form-actions">
-    <%= f.button :submit, "Finalize Reservation" %>
-    <%= link_to "Return to Catalog", catalog_path, class: 'btn btn-default' %>
-  </div>
+  <%= f.button :submit, "Finalize Reservation" %>
+  <%= link_to "Return to Catalog", catalog_path, class: 'btn btn-default' %>
 <% end %>
