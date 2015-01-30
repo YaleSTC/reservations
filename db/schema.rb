@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141126061515) do
+ActiveRecord::Schema.define(version: 20141219172429) do
 
   create_table "announcements", force: true do |t|
     t.text     "message"
@@ -51,6 +51,7 @@ ActiveRecord::Schema.define(version: 20141126061515) do
     t.boolean  "enable_renewals",                                    default: true
     t.boolean  "enable_new_users",                                   default: true
     t.integer  "res_exp_time"
+    t.boolean  "enable_guests",                                      default: true
   end
 
   create_table "blackouts", force: true do |t|

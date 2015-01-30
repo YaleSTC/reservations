@@ -1,0 +1,10 @@
+<li class='<%= 'active' if @filter == filter %>'>
+  <a href=<%= reservations_path(filter => true) %>>
+    <%= text %>
+    <span class='badge pull-right <%= 'badge-info' if @filter == filter %>'>
+      <%= "#{@time_counts[filter]}/#{@all_counts[filter]}" %>
+    </span>
+  </a>
+</li>
+
+

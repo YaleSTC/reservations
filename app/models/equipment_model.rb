@@ -1,3 +1,4 @@
+# rubocop:disable ClassLength
 class EquipmentModel < ActiveRecord::Base
   include ApplicationHelper
   include Routing
@@ -7,8 +8,9 @@ class EquipmentModel < ActiveRecord::Base
 
   nilify_blanks only: [:deleted_at]
 
-  # table_name is needed to resolve ambiguity for certain queries with 'includes'
-  scope :active, lambda { where("#{table_name}.deleted_at is null") }
+  # table_name is needed to resolve ambiguity for certain queries with
+  # 'includes'
+  scope :active, ->() { where("#{table_name}.deleted_at is null") }
 
   ##################
   ## Associations ##
@@ -26,12 +28,14 @@ class EquipmentModel < ActiveRecord::Base
   accepts_nested_attributes_for :checkout_procedures, \
                                 reject_if: :all_blank, allow_destroy: true
 
-  # Equipment Models are associated with other equipment models to help us recommend items that go together.
-  # Ex: a camera, camera lens, and tripod
+  # Equipment Models are associated with other equipment models to help us
+  # recommend items that go together. Ex: a camera, camera lens, and tripod
   has_and_belongs_to_many :associated_equipment_models,
-    class_name: "EquipmentModel",
-    association_foreign_key: "associated_equipment_model_id",
-    join_table: "equipment_models_associated_equipment_models"
+                          class_name: 'EquipmentModel',
+                          association_foreign_key:
+                            'associated_equipment_model_id',
+                          join_table:
+                            'equipment_models_associated_equipment_models'
 
   ##################
   ## Validations  ##
@@ -42,80 +46,92 @@ class EquipmentModel < ActiveRecord::Base
             :category,     presence: true
   validates :name,         uniqueness: true
   validates :late_fee,     :replacement_fee,
-                           numericality: { greater_than_or_equal_to: 0 }
+            numericality: { greater_than_or_equal_to: 0 }
   validates :max_per_user,
             :max_checkout_length, numericality: { allow_nil: true, \
-                                              only_integer: true, \
-                                              greater_than_or_equal_to: 1 }
+                                                  only_integer: true, \
+                                                  greater_than_or_equal_to: 1 }
   validates :max_renewal_length,
             :max_renewal_times,
-            :renewal_days_before_due,  numericality: { allow_nil: true, only_integer: true, greater_than_or_equal_to: 0 }
+            :renewal_days_before_due,
+            numericality: { allow_nil: true, only_integer: true,
+                            greater_than_or_equal_to: 0 }
 
   validate :not_associated_with_self
 
   def not_associated_with_self
-    unless self.associated_equipment_models.where(id: self.id).blank?
-      errors.add(:associated_equipment_models, "You cannot associate a model with itself. Please deselect " + self.name)
-    end
+    return if associated_equipment_models.where(id: id).blank?
+    errors.add(:associated_equipment_models,
+               'You cannot associate a model with itself. Please deselect '\
+                 + name)
   end
 
   #################
   ## Paperclip   ##
   #################
 
-  has_attached_file :photo, #generates profile picture
-      styles: {
-        large: { geometry: "500x500", format: "png" },
-        medium: { geometry: "250x250", format: "png" },
-        small: { geometry: "150x150", format: "png" },
-        thumbnail: { geometry: "260x180", format: "png" } },
-      convert_options: {
-        large: '-background none -gravity center -extent 500x500',
-        medium: '-background none -gravity center -extent 250x250',
-        small: '-background none -gravity center -extent 150x150',
-        thumbnail: '-background none -gravity center -extent 260x180' },
-      url:  "/attachments/equipment_models/:attachment/:id/:style/:basename.:extension",
-      path: ":rails_root/public/attachments/equipment_models/:attachment/:id/:style/:basename.:extension",
-      default_url: "/fat_cat.jpeg",
-      preserve_files: true
+  has_attached_file :photo, # generates profile picture
+                    styles: {
+                      large: { geometry: '500x500', format: 'png' },
+                      medium: { geometry: '250x250', format: 'png' },
+                      small: { geometry: '150x150', format: 'png' },
+                      thumbnail: { geometry: '260x180', format: 'png' } },
+                    convert_options: {
+                      large:
+                        '-background none -gravity center -extent 500x500',
+                      medium:
+                        '-background none -gravity center -extent 250x250',
+                      small:
+                        '-background none -gravity center -extent 150x150',
+                      thumbnail:
+                        '-background none -gravity center -extent 260x180' },
+                    url: '/attachments/equipment_models/:attachment/:id/'\
+                      ':style/:basename.:extension',
+                    path: ':rails_root/public/attachments/equipment_models/'\
+                      ':attachment/:id/:style/:basename.:extension',
+                    default_url: '/fat_cat.jpeg',
+                    preserve_files: true
 
-
-  has_attached_file :documentation, #generates document
-      content_type: 'application/pdf',
-      url: "/attachments/equipment_models/:attachment/:id/:style/:basename.:extension",
-      path: ":rails_root/public/attachments/equipment_models/:attachment/:id/:style/:basename.:extension",
-      preserve_files: true
+  has_attached_file :documentation, # generates document
+                    content_type: 'application/pdf',
+                    url: '/attachments/equipment_models/:attachment/:id/'\
+                      ':style/:basename.:extension',
+                    path: ':rails_root/public/attachments/equipment_models/'\
+                      ':attachment/:id/:style/:basename.:extension',
+                    preserve_files: true
 
   validates_attachment_content_type :photo,
-      content_type: ["image/jpg", "image/png", "image/jpeg"],
-      message: "must be jpeg, jpg, or png."
-  validates_attachment_size         :photo,
-      less_than: 1.megabytes,
-      message: "must be less than 1 MB in size"
-  validates_attachment :documentation, content_type: { content_type: "application/pdf" }
+                                    content_type: ['image/jpg', 'image/png',
+                                                   'image/jpeg'],
+                                    message: 'must be jpeg, jpg, or png.'
+  validates_attachment_size :photo,
+                            less_than: 1.megabytes,
+                            message: 'must be less than 1 MB in size'
+  validates_attachment :documentation,
+                       content_type: { content_type: 'application/pdf' }
 
-  Paperclip.interpolates :normalized_photo_name do |attachment, style|
+  Paperclip.interpolates :normalized_photo_name do |attachment, _style|
     attachment.instance.normalized_photo_name
   end
 
   def normalized_photo_name
-    "#{self.id}-#{self.photo_file_name.gsub( /[^a-zA-Z0-9_\.]/, '_')}"
+    "#{id}-#{photo_file_name.gsub(/[^a-zA-Z0-9_\.]/, '_')}"
   end
 
   ###################
   ## Class Methods ##
   ###################
 
-  #TODO: this appears to be dead code - verify and remove
+  # TODO: this appears to be dead code - verify and remove
   def self.select_options
-    self.order('name ASC').collect{|item| [item.name, item.id]}
+    order('name ASC').collect { |item| [item.name, item.id] }
   end
 
   ######################
   ## Instance Methods ##
   ######################
 
-  #inherits from category if not defined
+  # inherits from category if not defined
 
   def maximum_checkout_length
     max_checkout_length || category.maximum_checkout_length
@@ -150,12 +166,11 @@ class EquipmentModel < ActiveRecord::Base
     # items yourself
     max_reserved = 0
     start_date.to_date.upto(due_date.to_date) do |d|
-      reserved = Reservation.number_for_model_on_date(d,self.id,source_reservations)
-      if reserved > max_reserved
-        max_reserved = reserved
-      end
+      reserved = Reservation.number_for_model_on_date(d, id,
+                                                      source_reservations)
+      max_reserved = reserved if reserved > max_reserved
     end
-    return max_reserved
+    max_reserved
   end
 
   def num_available_from_source(start_date, due_date, source_reservations)
@@ -163,17 +178,19 @@ class EquipmentModel < ActiveRecord::Base
     # take an array of reservations instead of using a database call
     # for database query optimization purposes
     # 2 queries to calculate max_num
-    max_num = self.equipment_objects.active.count - number_overdue
-    available = max_num - num_reserved(start_date,due_date, source_reservations)
-    return available < 0 ? 0 : available
+    max_num = equipment_objects.active.count - number_overdue
+    available = max_num - num_reserved(start_date, due_date,
+                                       source_reservations)
+    available < 0 ? 0 : available
   end
 
   def num_available(start_date, due_date)
     # for if you just want the number available, 1 query to get
     # relevant reservations
-    relevant_reservations = Reservation.for_eq_model(self).
-      reserved_in_date_range(start_date.to_datetime, due_date.to_datetime).
-      not_returned.all
+    relevant_reservations = Reservation.for_eq_model(self)
+                            .reserved_in_date_range(start_date.to_datetime,
+                                                    due_date.to_datetime)
+                            .not_returned.all
     num_available_from_source(start_date, due_date, relevant_reservations)
   end
 
@@ -181,7 +198,7 @@ class EquipmentModel < ActiveRecord::Base
   def model_restricted?(reserver_id)
     return false if reserver_id.nil?
     reserver = User.find(reserver_id)
-    !(self.requirements - reserver.requirements).empty?
+    !(requirements - reserver.requirements).empty?
   end
 
   # Returns the number of overdue objects for a given model,
@@ -190,24 +207,23 @@ class EquipmentModel < ActiveRecord::Base
     Reservation.overdue.for_eq_model(self).size
   end
 
-
   def available_count(date)
-    # get the total number of objects of this kind
-    # then subtract the total quantity currently reserved, checked-out, and overdue
+    # get the total number of objects of this kind then subtract the total
+    # quantity currently reserved, checked-out, and overdue
     total = equipment_objects.active.count
-    reserved = Reservation.reserved_on_date(date).not_returned.for_eq_model(self).count
+    reserved = Reservation.reserved_on_date(date)
+               .not_returned.for_eq_model(self).count
     total - reserved - number_overdue
   end
 
   def available_object_select_options
-    self.equipment_objects.includes(:reservations).active.select{|e| e.available?}\
-        .sort_by(&:name)\
-        .collect{|item| "<option value=#{item.id}>#{item.name}</option>"}\
-        .join.html_safe
+    equipment_objects.includes(:reservations).active.select(&:available?)\
+      .sort_by(&:name)\
+      .collect { |item| "<option value=#{item.id}>#{item.name}</option>" }\
+      .join.html_safe
   end
 
   def md_link
-    "[#{self.name}](#{equipment_model_url(self, only_path: false)})"
+    "[#{name}](#{equipment_model_url(self, only_path: false)})"
   end
-
 end

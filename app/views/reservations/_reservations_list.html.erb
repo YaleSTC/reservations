@@ -1,4 +1,4 @@
-<table id="table_woo" class="datatable-wide table table-striped table-bordered">
+<table id="table_woo" class="datatable table table-striped table-bordered">
   <thead>
   <tr>
     <th>#</th>
@@ -20,11 +20,11 @@
         <td>
         <div class="dropdown">
             <%= link_to reservation.reserver.name, '#', :"data-toggle" => 'dropdown' %>
-            <% if (can? :manage, Reservation) && reservation.reserver.id %>
+            <% if reservation.reserver_id %>
               <ul class="dropdown-menu">
                 <li><%= link_to 'Profile', reservation.reserver %></li>
-                <li><%= link_to "Manage reservations", manage_reservations_for_user_path(reservation.reserver.id) %></li>
-                <li><%= link_to "Current reservations", current_reservations_for_user_path(reservation.reserver.id) %></li>
+                <li><%= link_to "Manage reservations", manage_reservations_for_user_path(reservation.reserver_id) %></li>
+                <li><%= link_to "Current reservations", current_reservations_for_user_path(reservation.reserver_id) %></li>
               </ul>
             <% end %>
           </div>
@@ -32,8 +32,8 @@
       <% end %>
       <td><%= link_to reservation.equipment_model.name, reservation.equipment_model %></td>
       <td>
-        <% if !reservation.equipment_object.nil? %>
-          <%= reservation.equipment_object.name %>
+        <% if reservation.equipment_object_id %>
+          <%= link_to reservation.equipment_object.name, reservation.equipment_object %>
         <% end %>
       </td>
       <td><%= reservation.start_date.to_date.to_s(:long) %></td>

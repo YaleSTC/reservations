@@ -1,25 +1,25 @@
-<div class="row">
+<div id="report_container" class="row">
   <div class="tabbable tabs-left col-md-12">
     <hr>
     <ul class="nav nav-tabs">
-      <% data_tables.each do |key, value| %>
-        <%= content_tag :li, :class => reports_active_tab(key) do %>
-          <%= link_to "##{key.to_s}", :class => 'tab-text', :"data-toggle" => 'tab' do %>
-            <%= key.to_s.titleize %>
-            <%= content_tag :span, value[:rows].size, :class => 'badge tab-badge' %>
+      <% data_tables.each do |name, table| %>
+        <%= content_tag :li, :class => reports_active_tab(name) do %>
+          <%= link_to "##{name.to_s}", :class => 'tab-text', :"data-toggle" => 'tab' do %>
+            <%= name.to_s.titleize %>
+            <%= content_tag :span, table.rows.size, :class => 'badge tab-badge' %>
           <% end %>
         <% end %>
       <% end %>
     </ul>
     <div class="tab-content">
-      <% data_tables.each do |key, value| %>
-      <p>
-        <%= content_tag :div, {:class => "tab-pane #{reports_active_tab(key)}", :id => key}, false do %>
-          <% unless value.empty? %>
-            <%= render :partial => "res_stat_set" , :object => value, :locals => {:key => key} %>
+      <% data_tables.each do |name, table| %>
+        <p>
+          <%= content_tag :div, {:class => "tab-pane #{reports_active_tab(name)}", :id => name}, false do %>
+            <% unless table.rows.size == 0 %>
+              <%= render :partial => "res_stat_set" , :object => table, :locals => {:name => name} %>
             <% end %>
-        <% end %>
-      </p>
+          <% end %>
+        </p>
       <% end %>
     </div>
   </div>

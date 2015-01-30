@@ -1,12 +1,13 @@
-<% if @restricted %>
+<% if @equipment_model.deleted_at %>
+  <%= button_tag "Deactivated", remote: true, class: 'btn btn-danger btn-large disabled' %>
+<% elsif @restricted %>
   <%= link_to "#qualifications_modal",
-    class: 'not-qualified-icon-em',
+    class: '',
     rel: "tooltip",
     title: 'Not Qualified (click for more info)',
     :"data-toggle" => 'modal' do %>
-      <span class="fa fa-exclamation-triangle"></span>
-   <% end %>
-   <%= button_tag "Add to Cart", remote: true, class: 'btn btn-primary btn-large disabled' %>
+    <%= button_tag "Not Qualified", remote: true, class: 'btn btn-warning btn-large' %>
+  <% end %>
    <div id="qualifications_modal" class="modal fade">
      <div class="modal-dialog">
        <div class="modal-content">
@@ -16,14 +17,13 @@
          </div>
          <div class="modal-body">
            <p>
-             <%= Requirement.list_requirement_admins(current_user, @equipment_model)%>
+             <%= Requirement.list_requirement_admins(current_user, @equipment_model).html_safe %>
            </p>
         </div>
        </div>
      </div>
   </div>
  <% else %>
-
    <%= link_to "Add to Cart", {:url => add_to_cart_path(@equipment_model)},
                                :href => add_to_cart_path(@equipment_model),
                                :method => :put, :remote => true, :class => 'btn btn-primary btn-large' %>

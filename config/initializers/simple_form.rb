@@ -83,10 +83,12 @@ SimpleForm.setup do |config|
   # Series of attempts to detect a default value method for collection.
   # config.collection_value_methods = [ :id, :to_s ]
 
-  # You can wrap a collection of radio/check boxes in a pre-defined tag, defaulting to none.
+  # You can wrap a collection of radio/check boxes in a pre-defined tag,
+  # defaulting to none.
   # config.collection_wrapper_tag = nil
 
-  # You can define the class to use on all collection wrappers. Defaulting to none.
+  # You can define the class to use on all collection wrappers. Defaulting to
+  # none.
   # config.collection_wrapper_class = nil
 
   # You can wrap each item in a collection of radio/check boxes with a tag,

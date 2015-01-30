@@ -47,7 +47,7 @@
 
       <%# shows renew button if due_date is today, tomorrow, or the day after %>
       <% if can? :renew, @reservation %>
-        <% if @reservation.is_eligible_for_renew? %>
+        <% if @reservation.eligible_for_renew? %>
           <div id="renew_box">
             <p>You are currently eligible to renew the <%= @reservation.equipment_model.name.singularize %>
             reservation until <strong><%= @reservation.find_renewal_date.to_date.to_s(:long) %></strong>.</p>

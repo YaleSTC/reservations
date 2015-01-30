@@ -1,17 +1,15 @@
 module ReportsHelper
   require 'csv'
-  def generate_report_csv_helper(table, name = "Reservation Set")
+  def generate_report_csv_helper(table, name = 'Reservation Set')
     CSV.generate do |csv|
-      csv << [name.titleize] + table[:col_names]
-      table[:rows].each do |row|
+      csv << [name.titleize] + table.columns.collect(&:name)
+      table.rows.each do |row|
         csv << [row.name] + row.data
       end
     end
   end
 
   def reports_active_tab(key)
-    if key == :total
-      return 'active'
-    end
+    return 'active' if key == :equipment_models
   end
 end

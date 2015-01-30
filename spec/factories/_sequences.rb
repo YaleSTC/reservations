@@ -7,6 +7,6 @@ FactoryGirl.define do
     "FLKJDSF#{n}"
   end
   sequence :sort_order do |n|
-  	n
+    n
   end
 end

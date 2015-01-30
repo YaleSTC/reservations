@@ -1,0 +1,6 @@
+Dear @user@,\n\n\
+  Because you have missed a scheduled equipment checkout, your reservation (number Reservation_id@) has been cancelled. If you believe this is in error, please contact an administrator.\n\n\
+  @equipment_list@\n\n\
+  Thank you,\n\
+  '@department_name@'
+

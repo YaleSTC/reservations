@@ -10,17 +10,19 @@
   <h3>Items</h3>
   <%# list items in cart %>
   <%= render partial: 'reservations/list_items_in_cart' %>
-  <%# print Make reservation button %>
-  <% if can? :create, Reservation %>
-    <%= link_to new_reservation_path, class: 'btn btn-success' do %>
-      <%= content_tag :i, nil, class: 'fa fa-shopping-cart' %>
-      <%= 'Reserve'.titleize %>
+  <div id="cart_buttons">
+    <%# print Make reservation button %>
+    <% if can? :create, Reservation %>
+      <%= link_to new_reservation_path, class: 'btn btn-success' do %>
+        <%= content_tag :i, nil, class: 'fa fa-shopping-cart' %>
+        <%= 'Reserve'.titleize %>
+      <% end %>
+    <% else %>
+      <%= link_to new_user_session_path, class: 'btn btn-success' do %>
+        <%= content_tag :i, nil, class: 'fa fa-sign-in' %>
+        <%= 'Sign in'.titleize %>
+      <% end %>
     <% end %>
-  <% else %>
-    <%= link_to new_user_session_path, class: 'btn btn-success' do %>
-      <%= content_tag :i, nil, class: 'fa fa-sign-in' %>
-      <%= 'Sign in'.titleize %>
-    <% end %>
-  <% end %>
-  <%= link_to 'Empty cart'.titleize, empty_cart_path, method: :delete, class: 'btn btn-default', id: 'empty_cart_btn', remote: true %>
+    <%= link_to 'Empty cart'.titleize, url_for(controller: params[:controller], action: 'empty_cart'), method: :delete, class: 'btn btn-default', id: 'empty_cart_btn', remote: true %>
+  </div>
 </div>

@@ -74,9 +74,13 @@ function renderCalendar(reservations, week_start, max, blackouts) {
       var color = '#aaaaaa';
     } else {
       var val = parseInt($(this).children('.num').children()[0].innerHTML);
-      var red = Math.min(Math.floor(510 - val*510/max),255).toString();
-      var green = Math.min(Math.floor(val*510/max),255).toString();
-      var color = 'rgba(' + red + ',' + green + ',0,0.3)';
+      if (val == 0) {
+        var color = 'rgba(255,0,0,0.3)'
+      } else {
+        var red = Math.min(Math.floor(510 - val*510/max),255).toString();
+        var green = Math.min(Math.floor(val*510/max),255).toString();
+        var color = 'rgba(' + red + ',' + green + ',0,0.3)';
+      }
     }
     $(this).css("background-color",color);
 

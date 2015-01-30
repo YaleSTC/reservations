@@ -1,10 +1,10 @@
 # Welcome to Reservations
 
 [![Build Status](https://travis-ci.org/YaleSTC/reservations.svg)](https://travis-ci.org/YaleSTC/reservations)
-[![Code Climate](https://img.shields.io/codeclimate/github/YaleSTC/reservations.svg)](https://codeclimate.com/github/YaleSTC/reservations)
-[![Test Coverage](https://codeclimate.com/github/YaleSTC/reservations/coverage.png)](https://codeclimate.com/github/YaleSTC/reservations)
+[![Code Climate](https://codeclimate.com/github/YaleSTC/reservations/badges/gpa.svg)](https://codeclimate.com/github/YaleSTC/reservations)
+[![Test Coverage](https://codeclimate.com/github/YaleSTC/reservations/badges/coverage.svg)](https://codeclimate.com/github/YaleSTC/reservations)
 [![Dependency Status](https://gemnasium.com/YaleSTC/reservations.svg)](https://gemnasium.com/YaleSTC/reservations)
-[![Inline docs](http://inch-ci.org/github/yalestc/reservations.svg)](http://inch-ci.org/github/yalestc/reservations)
+[![Inline docs](http://inch-ci.org/github/yalestc/reservations.svg?branch=master&style=flat)](http://inch-ci.org/github/yalestc/reservations)
 
 ![](http://yalestc.github.io/reservations/screenshot.png)
 
@@ -72,31 +72,31 @@ Reservations is built using [Ruby on Rails](http://rubyonrails.org/), and can be
 
 For a general guide to setting up your web and application servers, including hosting providers, see the [Rails Deployment Guide](http://rubyonrails.org/deploy/).
 
-### Config
+### Configuration
+Reservations uses environment variables for configuration (following the principles of the [Twelve-Factor App](http://12factor.net/config)). The gems [`dotenv`](https://github.com/bkeepers/dotenv) and [`dotenv-deployment`](https://github.com/bkeepers/dotenv-deployment) can be used to simulate system environment variables at runtime.
+
+In the `development` and `test` Rails environments, most of the configuration is set in the `config/secrets.yml` file. **IMPORTANT** You should copy the `config/secrets.yml` file and regenerate all of the secret keys / tokens using `rake secret`. You should also copy over the `config/database.yml.example.*` file relevant to your platform and follow the instructions linked to above to set up your database.
+
+In `production`, the `config/database.yml.example.production` should be used as it will refer to the relevant environment variables. Additionally, you must define most of the configuration environment variables listed [here](https://github.com/YaleSTC/reservations/wiki/Configuration) in order for Reservations to work.
 
 #### Authentication
-By default, Reservations uses e-mail addresses and passwords to authenticate users. It also supports the CAS authentication system, using the gem [devise_cas_authenticatable](https://github.com/nbudin/devise_cas_authenticatable). If you want to use CAS authentication you must set the `CAS_AUTH` environment variable to some value. Attempting to switch between authentication methods after initial setup is highly discouraged and will likely fail. If this is necessary, you may need to install a fresh copy of the application and manually migrate over user data (see our [wiki](https://github.com/YaleSTC/reservations/wiki/Authentication) for more details).
+By default, Reservations uses e-mail addresses and passwords to authenticate users. It also supports the CAS authentication system, using the gem [devise_cas_authenticatable](https://github.com/nbudin/devise_cas_authenticatable). If you want to use CAS authentication you must set the `CAS_AUTH` environment variable to some value (see above). Attempting to switch between authentication methods after initial setup is highly discouraged and will likely fail. If this is necessary, you may need to install a fresh copy of the application and manually migrate over user data (see our [wiki](https://github.com/YaleSTC/reservations/wiki/Authentication) for more details).
 
-To point the gem to the correct CAS server, modify the following setting in your app's `config/initializers/devise.rb` (near the bottom of the file):
-```ruby
-  # configure the base URL of your CAS server
-  config.cas_base_url = "https://secure.its.yale.edu/cas/"
+To point the gem to the correct CAS server in the development and test Rails environments, modify the following setting in your app's `config/secrets.yml` file (see [above](#configuration)):
+```yaml
+  cas_base_url: https://secure.its.yale.edu/cas/
 ```
-Change the `:cas_base_url` value to your CAS server's base URL; also note that many CAS servers are configured with a base URL that looks more like “cas.example.foo/cas”.
+Change the `cas_base_url` parameter to your CAS server's base URL; also note that many CAS servers are configured with a base URL that looks more like “cas.example.com/cas”.
 
-#### IMPORTANT
-You will need to generate a fresh secret key for cookie encryption and signing. Run `rake secret` and paste the output into `config/intializers/secret_token.rb`. Do not make this key available to the public, otherwise anyone will be able to sign on as anyone to Reservations.
-
-You will need to also configure the email config in `config/initializers/setup_mail.rb`. Replace `0.0.0.0:3000` with the relevant hostname. This will allow links in emails to point to the correct places.
-
-Finally, Reservations ships with the default config time set to Eastern Time (US and Canada). To change the time, edit `config/application.rb`
+#### Time Zone
+Reservations ships with the default config time set to Eastern Time (US and Canada). To change the time, edit `config/application.rb`
 `config.time_zone = 'Eastern Time (US & Canada)'`.
 
 
 Further Documentation
 ==================
-* System administrators and end-users may like to review our [help documentation](https://yalestc.github.io/reservations).
-* Developers interested in getting involved with *Reservations* can find information on our [project wiki](https://github.com/YaleSTC/reservations/wiki)
+* Administrators and end-users may like to review our [help documentation](https://yalestc.github.io/reservations).
+* IT System Administrators and developers interested in deploying or getting involved with *Reservations* can find information on our [project wiki](https://github.com/YaleSTC/reservations/wiki)
 
 Suggestions and Issues
 ======================

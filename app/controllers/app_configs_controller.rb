@@ -1,6 +1,6 @@
 class AppConfigsController < ApplicationController
-  authorize_resource :class => false
-  skip_before_filter :seen_app_configs, only: [:edit]
+  authorize_resource class: false
+  skip_before_action :seen_app_configs, only: [:edit]
 
   def edit
     @app_config = AppConfig.first || AppConfig.new
@@ -27,7 +27,7 @@ class AppConfigsController < ApplicationController
         @app_config.save
       end
 
-      flash[:notice] = "Application settings updated successfully."
+      flash[:notice] = 'Application settings updated successfully.'
       redirect_to catalog_path
     else
       # flash[:error] = "Error saving application settings."
@@ -39,17 +39,16 @@ class AppConfigsController < ApplicationController
 
   def app_config_params
     params.require(:app_config)
-          .permit(:site_title, :admin_email, :department_name,
-            :contact_link_location, :home_link_text, :home_link_location,
-            :upcoming_checkin_email_body, :upcoming_checkin_email_active,
-            :overdue_checkin_email_body, :overdue_checkin_email_active,
-            :reservation_confirmation_email_active, :request_text,
-            :enable_new_users, :res_exp_time, :blackout_exp_time,
-            :send_notifications_for_deleted_missed_reservations,
-            :deleted_missed_reservation_email_body,
-            :default_per_cat_page, :terms_of_service, :favicon,
-            :checkout_persons_can_edit, :enable_renewals,
-            :override_on_create, :override_at_checkout, :require_phone)
+      .permit(:site_title, :admin_email, :department_name,
+              :contact_link_location, :home_link_text, :home_link_location,
+              :upcoming_checkin_email_body, :upcoming_checkin_email_active,
+              :overdue_checkin_email_body, :overdue_checkin_email_active,
+              :reservation_confirmation_email_active, :request_text,
+              :enable_new_users, :res_exp_time, :blackout_exp_time,
+              :send_notifications_for_deleted_missed_reservations,
+              :deleted_missed_reservation_email_body, :enable_guests,
+              :default_per_cat_page, :terms_of_service, :favicon,
+              :checkout_persons_can_edit, :enable_renewals,
+              :override_on_create, :override_at_checkout, :require_phone)
   end
 end
-

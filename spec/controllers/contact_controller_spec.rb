@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ContactController, :type => :controller do
+describe ContactController, type: :controller do
   before(:all) do
     @app_config = FactoryGirl.create(:app_config)
   end
@@ -14,7 +14,7 @@ describe ContactController, :type => :controller do
     end
     it 'should assign @message to a new message' do
       expect(assigns(:message)).to be_new_record
-      expect(assigns(:message).kind_of?(Message)).to be_truthy
+      expect(assigns(:message).is_a?(Message)).to be_truthy
     end
     it { is_expected.to respond_with(:success) }
     it { is_expected.to render_template(:new) }
@@ -29,7 +29,8 @@ describe ContactController, :type => :controller do
         post :create, message: FactoryGirl.attributes_for(:message)
       end
       it 'sends a message' do
-        expect(ActionMailer::Base.deliveries.last.subject).to eq('[Reservations Specs] ' + FactoryGirl.build(:message).subject)
+        expect(ActionMailer::Base.deliveries.last.subject).to\
+          eq('[Reservations Specs] ' + FactoryGirl.build(:message).subject)
       end
       it { is_expected.to redirect_to(root_path) }
       it { is_expected.to set_the_flash }

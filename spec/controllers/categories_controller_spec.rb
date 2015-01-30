@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe CategoriesController, :type => :controller do
+describe CategoriesController, type: :controller do
   before(:all) do
     @app_config = FactoryGirl.create(:app_config)
   end
@@ -9,7 +9,8 @@ describe CategoriesController, :type => :controller do
   end
   describe 'GET index' do
     before(:each) do
-      @inactive_category = FactoryGirl.create(:category, deleted_at: Date.current - 1)
+      @inactive_category =
+        FactoryGirl.create(:category, deleted_at: Date.current - 1)
     end
     context 'user is admin' do
       before(:each) do
@@ -20,7 +21,8 @@ describe CategoriesController, :type => :controller do
         get :index, show_deleted: true
         expect(assigns(:categories)).to eq([@category, @inactive_category])
       end
-      it 'should populate an array of active categories if show deleted is nil or false' do
+      it 'should populate an array of active categories if show deleted is '\
+        'nil or false' do
         expect(assigns(:categories)).to eq([@category])
       end
       it { is_expected.to respond_with(:success) }
@@ -70,7 +72,7 @@ describe CategoriesController, :type => :controller do
       it { is_expected.not_to set_the_flash }
       it 'assigns a new category to @category' do
         expect(assigns(:category)).to be_new_record
-        expect(assigns(:category).kind_of?(Category)).to be_truthy
+        expect(assigns(:category).is_a?(Category)).to be_truthy
       end
     end
     context 'not admin' do
@@ -91,21 +93,23 @@ describe CategoriesController, :type => :controller do
           post :create, category: FactoryGirl.attributes_for(:category)
         end
         it 'saves a new category to the database' do
-          expect{
+          expect do
             post :create, category: FactoryGirl.attributes_for(:category)
-          }.to change(Category,:count).by(1)
+          end.to change(Category, :count).by(1)
         end
         it { is_expected.to redirect_to(Category.last) }
         it { is_expected.to set_the_flash }
       end
       context 'with invalid attributes' do
         before(:each) do
-          post :create, category: FactoryGirl.attributes_for(:category, name: nil)
+          post :create,
+               category: FactoryGirl.attributes_for(:category, name: nil)
         end
         it 'fails to save a new category' do
-          expect{
-            post :create, category: FactoryGirl.attributes_for(:category, name: nil)
-          }.not_to change(Category, :count)
+          expect do
+            post :create,
+                 category: FactoryGirl.attributes_for(:category, name: nil)
+          end.not_to change(Category, :count)
         end
         it { is_expected.to set_the_flash }
         it { is_expected.to render_template(:new) }
@@ -147,21 +151,27 @@ describe CategoriesController, :type => :controller do
       end
       context 'with valid attributes' do
         before(:each) do
-          put :update, id: @category, category: FactoryGirl.attributes_for(:category, name: "Updated")
+          put :update,
+              id: @category,
+              category: FactoryGirl.attributes_for(:category, name: 'Updated')
         end
         it 'should set @category to the correct category' do
           expect(assigns(:category)).to eq(@category)
         end
         it 'should successfully save new attributes to the database' do
           @category.reload
-          expect(@category.name).to eq("Updated")
+          expect(@category.name).to eq('Updated')
         end
         it { is_expected.to redirect_to(@category) }
         it { is_expected.to set_the_flash }
       end
       context 'with invalid attributes' do
         before(:each) do
-          put :update, id: @category, category: FactoryGirl.attributes_for(:category, name: nil, max_per_user: 10)
+          put :update,
+              id: @category,
+              category: FactoryGirl.attributes_for(:category,
+                                                   name: nil,
+                                                   max_per_user: 10)
         end
         it 'should not update attributes of @category in the database' do
           @category.reload
