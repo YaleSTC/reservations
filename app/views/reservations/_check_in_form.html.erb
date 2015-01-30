@@ -2,8 +2,8 @@
   <div class="well">
     <header>
       <span class="title">
-        <h3><%= link_to "Reservation ##{reservation.id}", reservation, target:
-        '_blank' %></h3>
+        <h4><%= link_to "Reservation ##{reservation.id}", reservation, target:
+        '_blank' %></h4>
       </span>
       <span class="icons">
         <h4>
@@ -15,19 +15,25 @@
       </span>
     </header>
     <hr>
-      <div class="well well-em-manage checkin-click" title="Click to select me for checkin">
-        <h4><p><%= link_to reservation.equipment_model.name, reservation.equipment_model,
-        target: '_blank' %></p></h4>
-        <p><%= link_to reservation.equipment_model, target: '_blank' do %>
-              <%= image_tag reservation.equipment_model.photo.url(:medium) %>
-            <% end %></p>
-        <%= label_tag "reservations[#{reservation.id}][checkin?]" do %>
-    <i class="fa fa-square-o c-box fa-lg"></i>
-          <%= check_box_tag "reservations[#{reservation.id}][checkin?]", 1, false, class: "checkin-select hidden" %>
-          <%= reservation.equipment_object.name %>
+    <div class="well well-em-manage checkin-click" title="Click to select me for checkin">
+      <h4><p><%= link_to reservation.equipment_model.name, reservation.equipment_model,
+      target: '_blank' %></p></h4>
+      <p>
+        <%= link_to reservation.equipment_model, target: '_blank' do %>
+          <% if reservation.equipment_model.photo.exists? %>
+            <%= image_tag reservation.equipment_model.photo.url(:medium), class: 'img-responsive' %>
+          <% else %>
+            <%= image_tag 'no-image-260.gif', class: 'img-responsive' %>
+          <% end %>
         <% end %>
+      </p>
+      <%= label_tag "reservations[#{reservation.id}][checkin?]" do %>
+      <i class="fa fa-square-o c-box fa-lg"></i>
+        <%= check_box_tag "reservations[#{reservation.id}][checkin?]", 1, false, class: "checkin-select hidden" %>
+        <%= reservation.equipment_object.name %>
+      <% end %>
 
-      </div>
+    </div>
 
       <p>
         <p><h4>Notes</h4></p>
@@ -37,7 +43,7 @@
         <% end %>
         <p><h5>New Notes</h5></p>
         <%= text_area_tag "reservations[#{reservation.id}][notes]", "",
-                          class: 'span3', rows: 6 %>
+                          class: 'form-control', rows: 6 %>
         <%= render :partial => 'shared/markdown_button' %>
       </p>
 
