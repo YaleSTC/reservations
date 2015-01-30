@@ -75,7 +75,7 @@ class Reservation < ActiveRecord::Base
   def status # rubocop:disable CyclomaticComplexity, PerceivedComplexity
     return if due_date.nil?
     # somehow it gets into this with due_date = nil... not sure how
-    due_date = due_date.to_date
+    # due_date = due_date.to_date
     if checked_out.nil?
       if approval_status == 'auto' || approval_status == 'approved'
         due_date >= Time.zone.today ? 'reserved' : 'missed'
@@ -127,7 +127,7 @@ class Reservation < ActiveRecord::Base
     # O(n) queries
 
     # FIXME: this is broken too...
-    due_date = due_date.to_date
+    # due_date = due_date.to_date
     renew_extension = dup
     renew_extension.start_date = due_date + 1.day
     orig_due_date = due_date
