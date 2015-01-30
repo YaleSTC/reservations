@@ -19,14 +19,14 @@
 
   <%= f.input :description, as: :text, hint: "#{render :partial => 'shared/markdown_button'}".html_safe %>
 
-  <%= f.input :late_fee, wrapper: :prepend do %>
-    <%= content_tag :span, "$", class: "add-on" %><%= f.input_field :late_fee,
+  <%= f.input :late_fee, wrapper: :horizontal_input_group do %>
+    <%= content_tag :span, "$", class: "input-group-addon" %><%= f.input_field :late_fee,
     class: 'input-small', value: number_with_precision(f.object.late_fee,
     precision: 2), type: 'number', step: 'any' %>
   <% end %>
 
-  <%= f.input :replacement_fee, wrapper: :prepend do %>
-    <%= content_tag :span, "$", class: "add-on" %><%= f.input_field :replacement_fee,
+  <%= f.input :replacement_fee, wrapper: :horizontal_input_group do %>
+    <%= content_tag :span, "$", class: "input-group-addon" %><%= f.input_field :replacement_fee,
     class: 'input-small', value: number_with_precision(f.object.replacement_fee,
     precision: 2), type: 'number', step: 'any' %>
   <% end %>
@@ -43,25 +43,25 @@
     <fieldset>
     <legend>Renewal Options</legend>
     <%= f.input :max_renewal_times, label: 'Maximum number of times this item may be renewed',
-    hint: 'Leave blank to default to category value.', wrapper: :append do %>
+    hint: 'Leave blank to default to category value.', wrapper: :horizontal_input_group do %>
       <%= f.input_field :max_renewal_times, class: 'input-small', type: 'number' %><%=
-      content_tag :span, "times", class: "add-on" %>
+      content_tag :span, "times", class: "input-group-addon" %>
     <% end %>
 
     <%= f.input :max_renewal_length, label: 'Maximum time allotted for each renewal period',
     hint: 'Leave blank to default to category value. Actual renewal period will depend on availability.',
-    wrapper: :append do %>
+    wrapper: :horizontal_input_group do %>
       <%= f.input_field :max_renewal_length, class: 'input-small', type: 'number' %><%=
-      content_tag :span, "days", class: "add-on" %>
+      content_tag :span, "days", class: "input-group-addon" %>
     <% end %>
 
 
 
     <%= f.input :renewal_days_before_due, label:
     'How many days before the due date should the Renew button become available?',
-    hint: 'Leave blank to default to category value.', wrapper: :append do %>
+    hint: 'Leave blank to default to category value.', wrapper: :horizontal_input_group do %>
       <%= f.input_field :renewal_days_before_due, class: 'input-small', type: 'number' %><%=
-      content_tag :span, "days", class: "add-on" %>
+      content_tag :span, "days", class: "input-group-addon" %>
     <% end %>
   </fieldset>
 
@@ -78,7 +78,7 @@
 
   <fieldset>
     <p><legend>Checkin Procedures</legend></p>
-    <%= f.simple_fields_for :checkin_procedures, wrapper: :append do |procedure| %>
+    <%= f.simple_fields_for :checkin_procedures, wrapper: :horizontal_input_group do |procedure| %>
       <%= render 'checkin_procedure_fields', f: procedure %>
     <% end %>
     <div class="links">
