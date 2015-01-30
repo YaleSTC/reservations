@@ -8,9 +8,15 @@
     <div class="well well-em-manage">
       <h4><%= link_to reservation.equipment_model.name, reservation.equipment_model,
       target: '_blank' %></h4>
-      <p><%= link_to reservation.equipment_model, target: '_blank' do %>
-            <%= image_tag reservation.equipment_model.photo.url(:medium) %>
-          <% end %></p>
+      <p>
+        <%= link_to reservation.equipment_model, target: '_blank' do %>
+          <% if reservation.equipment_model.photo.exists? %>
+            <%= image_tag reservation.equipment_model.photo.url(:medium), class: 'img-responsive' %>
+          <% else %>
+            <%= image_tag 'no-image-260.gif', class: 'img-responsive' %>
+          <% end %>
+        <% end %>
+        </p>
       <%= label_tag "reservations[#{reservation.id}][equipment_object_id]",
       'Equipment Item' %>
       <%= select_tag "reservations[#{reservation.id}][equipment_object_id]",
@@ -20,7 +26,7 @@
 
     <p>
       <h5>Notes</h5>
-      <%= text_area_tag "reservations[#{reservation.id}][notes]", "" %>
+      <%= text_area_tag "reservations[#{reservation.id}][notes]", nil, class: 'form-control' %>
       <%= render :partial => 'shared/markdown_button' %>
     </p>
 
