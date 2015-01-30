@@ -1,4 +1,3 @@
-
 $border-att: 1px solid darken($body-bg, 20%);
 
 .num,.head {
@@ -133,9 +132,10 @@ section {
 
 a.not-qualified-icon-em {
 	position: absolute;
-	top: 3px;
+	top: 0;
 	right: 120px;
-	font-size: $font-size-base * 3;
+	font-size: ceil($font-size-base * 2.5);
+  line-height: 1em;
 	color: $btn-warning-bg;
 	@include warning-icon-drop-shadow;
 

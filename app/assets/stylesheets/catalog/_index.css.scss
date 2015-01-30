@@ -45,8 +45,10 @@ a.not-qualified-icon {
   font-size: $font-size-base * 2;
 	color: $btn-warning-bg;
   @include warning-icon-drop-shadow;
-  // position: relative;
-  // bottom: 13px;
+  // Very brittle: FIXME in the future
+  right: 13px;
+  bottom: 8px;
+  position: absolute;
 
 	&:hover, &:active {
 		text-decoration: none;
