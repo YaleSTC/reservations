@@ -1,8 +1,8 @@
-<div id="<%= reservation.id %>" class="col-md-6 checkout">
+<div id="<%= reservation.id %>" class="col-md-4 checkout">
   <div class="well">
     <header>
-      <h3><%= link_to "Reservation ##{reservation.id}", reservation, target:
-      '_blank' %></h3>
+      <h4><%= link_to "Reservation ##{reservation.id}", reservation, target:
+      '_blank' %></h4>
     </header>
     <hr>
     <div class="well well-em-manage">
@@ -19,13 +19,13 @@
     </div>
 
     <p>
-      <h4>Notes</h4>
+      <h5>Notes</h5>
       <%= text_area_tag "reservations[#{reservation.id}][notes]", "" %>
       <%= render :partial => 'shared/markdown_button' %>
     </p>
 
     <p>
-      <h4>Check-Out Procedures</h4>
+      <h5>Check-Out Procedures</h5>
       <ol class="rectangle-list">
         <% if reservation.equipment_model.checkout_procedures.empty? %>
             <li><em>(none)</em></li>

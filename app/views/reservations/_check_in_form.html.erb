@@ -1,20 +1,19 @@
-<div class="span4 checkin">
+<div class="col-md-4 checkin">
   <div class="well">
     <header>
       <span class="title">
         <h3><%= link_to "Reservation ##{reservation.id}", reservation, target:
-    '_blank' %></h3>
-    </span>
+        '_blank' %></h3>
+      </span>
       <span class="icons">
-        <h3>
-    <% if reservation.status == "overdue" %>
-      <i class="fa fa-exclamation-circle fa-lg overdue-icon"></i>
-    <% end %>
-    <i class="fa fa-check hidden check fa-lg"></i>
-</h3>
-</span>
-    </header><br>
-
+        <h4>
+          <% if reservation.status == "overdue" %>
+            <i class="fa fa-exclamation-circle fa-lg overdue-icon"></i>
+          <% end %>
+          <i class="fa fa-check hidden check fa-lg"></i>
+        </h4>
+      </span>
+    </header>
     <hr>
       <div class="well well-em-manage checkin-click" title="Click to select me for checkin">
         <h4><p><%= link_to reservation.equipment_model.name, reservation.equipment_model,

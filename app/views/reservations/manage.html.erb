@@ -2,7 +2,7 @@
 
 <div class="row">
   <div class="col-md-12">
-    <%= render :partial => 'top_buttons', locals: {reserver: @user} %>
+    <%= render partial: 'top_buttons', locals: {reserver: @user} %>
   </div>
 </div>
 <% unless @check_in_set.empty? %>
@@ -42,12 +42,13 @@
     </div>
   </div>
 
-  <%= form_tag( checkout_path, :method => "put" ) do %>
+  <%= form_tag checkout_path, method: 'put' do %>
     <% if !@user.terms_of_service_accepted %>
       <div class="row">
         <div class="col-md-12">
           <div class="well">
-            <p>This user hasn't accepted the <%= link_to('Terms of Service', tos_path, target: '_blank') %>.</p>
+            <p>This user hasn't accepted the
+              <%= link_to('Terms of Service', tos_path, target: '_blank') %>.</p>
             <%= label_tag :terms_of_service_accepted,
             'I certify that I have given a copy of the terms of service, and the user has accepted.' %>
             <%= check_box_tag :terms_of_service_accepted %>
