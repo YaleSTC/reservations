@@ -97,6 +97,9 @@
                 <div class="row">
                   <div class="col-md-12">
                     <div class="progress">
+                      <%= content_tag :div, class: 'progress-bar', style: "width: " << bar_progress_res do %>
+                        <%= content_tag :span, reservation_length_in_words, style: bar_span_positioning_fix %>
+                      <% end %>
                       <%# TODO: extract to a helper method? %>
                       <% unless reservation_length > 31 %>
                         <ul class="bar-dividers">
@@ -105,11 +108,6 @@
                           <% end %>
                         </ul>
                       <% end %>
-
-                      <%= content_tag :div, class: 'bar', style: "width: " << bar_progress_res do %>
-                        <%= content_tag :span, reservation_length_in_words, style: bar_span_positioning_fix %>
-                      <% end %>
-
                     </div>
                   </div>
                 </div>
