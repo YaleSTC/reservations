@@ -11,4 +11,4 @@
     <%= render :partial => "report_row", :collection => res_stat_set[:rows] %>
   </tbody>
 </table>
-<%= link_to "Export to CSV", request.parameters.merge({:format => :csv, :key => key}), class: 'btn' %>
+<%= link_to "Export to CSV", request.parameters.merge({:format => :csv, :key => key}), class: btn btn-default %>

@@ -59,7 +59,7 @@
 <%= link_to "Print this page", "#", onclick: "print();", class: 'btn btn-default' %>
 <%# email buttons disabled because their actions are currently defined only for single reservations %>
 <%# if !@check_out_set.empty? %>
-  <%#= link_to "Email checkout receipt", {:controller => :reservations, :action => "checkout_email", :id => @reservation}, :method => "get", :class => 'btn' %>
+  <%#= link_to "Email checkout receipt", {:controller => :reservations, :action => "checkout_email", :id => @reservation}, :method => "get", :class => btn btn-default %>
 <%# elsif !@check_in_set.empty? %>
-  <%#= link_to "Email return receipt", {:controller => :reservations, :action => "checkin_email", :id => @reservation}, :method => "get", :class => 'btn' %>
+  <%#= link_to "Email return receipt", {:controller => :reservations, :action => "checkin_email", :id => @reservation}, :method => "get", :class => btn btn-default %>
 <%# end %>

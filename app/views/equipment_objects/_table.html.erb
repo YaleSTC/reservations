@@ -27,7 +27,7 @@
       <td><%= link_to_if current_res, equipment_object.status, current_res %></td>
 
       <% if can? :manage, EquipmentObject %>
-        <td><%= link_to "Edit", edit_equipment_object_path(equipment_object), :class => "btn" %></td>
+        <td><%= link_to "Edit", edit_equipment_object_path(equipment_object), :class => btn btn-default %></td>
         <td><%= equipment_object.decorate.make_deactivate_btn %></td>
       <% end %>
     </tr>
