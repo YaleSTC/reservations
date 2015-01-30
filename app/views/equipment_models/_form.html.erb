@@ -2,7 +2,7 @@
   "form-horizontal" } do |f| %>
 
   <%= f.error_notification %>
-  <%= f.association :category, hint: "#{link_to "Add New Category", new_category_path, class: "btn"}".html_safe,
+  <%= f.association :category, hint: "#{link_to "Add New Category", new_category_path, class: "btn btn-default"}".html_safe,
   placeholder: 'Select a Category' %>
 
   <input class="hidden" id="category" name="MODELNAME[category]" type="hidden">
@@ -20,19 +20,21 @@
   <%= f.input :description, as: :text, hint: "#{render :partial => 'shared/markdown_button'}".html_safe %>
 
   <%= f.input :late_fee, wrapper: :horizontal_input_group do %>
-    <%= content_tag :span, "$", class: "input-group-addon" %><%= f.input_field :late_fee,
-    class: 'input-small', value: number_with_precision(f.object.late_fee,
-    precision: 2), type: 'number', step: 'any' %>
+    <%= content_tag :span, "$", class: "input-group-addon" %>
+    <%= f.input_field :late_fee,
+      class: 'form-control', value: number_with_precision(f.object.late_fee,
+      precision: 2), type: 'number', step: 'any' %>
   <% end %>
 
   <%= f.input :replacement_fee, wrapper: :horizontal_input_group do %>
-    <%= content_tag :span, "$", class: "input-group-addon" %><%= f.input_field :replacement_fee,
-    class: 'input-small', value: number_with_precision(f.object.replacement_fee,
-    precision: 2), type: 'number', step: 'any' %>
+    <%= content_tag :span, "$", class: "input-group-addon" %>
+    <%= f.input_field :replacement_fee,
+      class: 'form-control', value: number_with_precision(f.object.replacement_fee,
+      precision: 2), type: 'number', step: 'any' %>
   <% end %>
 
   <%= f.input :max_per_user, label: "Maximum per user", hint:
-  "Leave blank to default to category value.", input_html: {class: 'input-small'} %>
+  "Leave blank to default to category value." %>
 
   <%= f.input :deleted_at, label: "Inactive", as: :deleted, hint:
   'Make this equipment model unavailable for checkout.' %>
@@ -44,23 +46,21 @@
     <legend>Renewal Options</legend>
     <%= f.input :max_renewal_times, label: 'Maximum number of times this item may be renewed',
     hint: 'Leave blank to default to category value.', wrapper: :horizontal_input_group do %>
-      <%= f.input_field :max_renewal_times, class: 'input-small', type: 'number' %><%=
+      <%= f.input_field :max_renewal_times, class: 'form-control', type: 'number' %><%=
       content_tag :span, "times", class: "input-group-addon" %>
     <% end %>
 
     <%= f.input :max_renewal_length, label: 'Maximum time allotted for each renewal period',
     hint: 'Leave blank to default to category value. Actual renewal period will depend on availability.',
     wrapper: :horizontal_input_group do %>
-      <%= f.input_field :max_renewal_length, class: 'input-small', type: 'number' %><%=
+      <%= f.input_field :max_renewal_length, class: 'form-control', type: 'number' %><%=
       content_tag :span, "days", class: "input-group-addon" %>
     <% end %>
-
-
 
     <%= f.input :renewal_days_before_due, label:
     'How many days before the due date should the Renew button become available?',
     hint: 'Leave blank to default to category value.', wrapper: :horizontal_input_group do %>
-      <%= f.input_field :renewal_days_before_due, class: 'input-small', type: 'number' %><%=
+      <%= f.input_field :renewal_days_before_due, class: 'form-control', type: 'number' %><%=
       content_tag :span, "days", class: "input-group-addon" %>
     <% end %>
   </fieldset>
@@ -72,7 +72,7 @@
     <% end %>
     <div class="links">
       <p><%= link_to_add_association 'Add Step', f, :checkout_procedures,
-      class: "btn" %></p>
+      class: "btn btn-default" %></p>
     </div>
   </fieldset>
 
@@ -83,7 +83,7 @@
     <% end %>
     <div class="links">
       <p><%= link_to_add_association 'Add Step', f, :checkin_procedures,
-      class: "btn" %></p>
+      class: "btn btn-default" %></p>
     </div>
   </fieldset>
 
@@ -97,7 +97,7 @@
       <%= f.error :photo_file_size %>
     <% end %>
     <% unless @equipment_model.photo_file_name.nil? %>
-      <div class='control-group'>
+      <div class="control-group">
         <div class="controls">
 
           <%= image_tag @equipment_model.photo.url(:thumbnail) %>

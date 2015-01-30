@@ -1,5 +1,8 @@
 <div class="checkin_procedure nested-fields">
 <%= f.input :step, :wrapper => :horizontal_input_group do %>
-  <%= f.input_field :step %><%= link_to_remove_association "Remove Step", f, :class => "btn btn-default" %>
+  <%= f.input_field :step, class: 'form-control' %>
+  <div class="input-group-btn">
+    <%= link_to_remove_association "Remove Step", f, :class => "btn btn-default" %>
+  </div>
 <% end %>
 </div>
