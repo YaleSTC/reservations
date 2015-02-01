@@ -1,23 +1,38 @@
 <table id="table_equipment_models" class="datatable-wide table table-striped table-bordered">
   <thead>
   <tr>
-    <th>Name</th>
-    <%= "<th>Type</th>".html_safe unless @category %>
-  <%# these blank TH's necessary for the sort function %>
+    <th class="text-center col-md-2">Name</th>
   <% if can? :manage, EquipmentModel %>
-    <th class="no_sort"> </th>
-    <th class="no_sort"> </th>
+    <th class="no_sort text-center">Current Status</th>
+    <th class="text-center">Available</th>
+    <th class="text-center">Reserved</th>
+    <th class="text-center">Checked-Out</th>
+    <th class="text-center">Overdue</th>
+    <th class="text-center">Total Stock</th>
+    <th class="no_sort text-center"> </th>
+    <th class="no_sort text-center"> </th>
   <% end %>
   </tr>
   </thead>
   <tbody>
-  <% for equipment_model in equipment_models %>
+    <% for equipment_model in @equipment_models.includes(:reservations) %>
     <tr>
-      <td><%= link_to equipment_model.name, equipment_model %></td>
-      <%= ("<td>" + (link_to equipment_model.category.name.singularize, equipment_model.category) + "</td>").html_safe unless @category %>
+      <td class="text-center"><%= link_to equipment_model.name, equipment_model %></td>
       <% if can? :manage, EquipmentModel %>
-        <td><%= link_to "Edit", edit_equipment_model_path(equipment_model), :class => 'btn btn-default' %></td>
-        <td><%= equipment_model.decorate.make_deactivate_btn %></td>
+        <% if equipment_model.availability(Time.zone.today) == 'all' %>
+          <td class="text-center"><span class="label label-success">All  Available</span></td>
+        <% elsif equipment_model.availability(Time.zone.today) == 'some' %>
+          <td class="text-center"><span class="label label-warning">Some Available</span></td>
+        <% else %>
+          <td class="text-center"><span class="label label-danger">None Available</span></td>
+        <% end %>
+        <td class="text-center"><%= equipment_model.available_count(Time.zone.today) %></td>
+        <td class="text-center"><%= equipment_model.num_reserved(Time.zone.today, Time.zone.today, equipment_model.reservations)%></td>
+        <td class="text-center"><%= equipment_model.reservations.checked_out.count %></td>
+        <td class="text-center"><%= equipment_model.number_overdue %></td>
+        <td class="text-center"><%= equipment_model.equipment_objects.size %></td>
+        <td class="text-center"><%= link_to "Edit", edit_equipment_model_path(equipment_model), class: "btn btn-default" %></td>
+        <td class="text-center"><%= equipment_model.decorate.make_deactivate_btn %></td>
       <% end %>
     </tr>
   <% end %>
