@@ -33,11 +33,12 @@ class Reservation < ActiveRecord::Base
     # a specific model id
     #
     # this code is used largely in validations because it uses 0 queries
-    date = date.to_date
+    # binding.pry
+    date = Time.zone.parse(date.to_s)
     count = 0
     source.each do |r|
-      next unless r.start_date.to_date <= date &&
-                  r.due_date.to_date >= date &&
+      next unless r.start_date <= date &&
+                  r.due_date >= date &&
                   r.equipment_model_id == model_id
       count += 1
     end
@@ -161,8 +162,8 @@ class Reservation < ActiveRecord::Base
 
   def to_cart
     temp_cart = Cart.new
-    temp_cart.start_date = Time.zone.parse(start_date.to_s)
-    temp_cart.due_date = Time.zone.parse(due_date.to_s)
+    temp_cart.start_date = start_date
+    temp_cart.due_date = due_date
     temp_cart.reserver_id = reserver_id
     temp_cart.items = { equipment_model_id => 1 }
     temp_cart

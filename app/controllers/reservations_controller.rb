@@ -168,7 +168,7 @@ class ReservationsController < ApplicationController
         if (cannot? :manage, Reservation) || (requested == true)
           redirect_to(catalog_path) && return
         end
-        if start_date.to_date == Date.current
+        if start_date == Time.zone.today
           flash[:notice] += ' Are you simultaneously checking out equipment '\
             'for someone? Note that only the reservation has been made. '\
             'Don\'t forget to continue to checkout.'

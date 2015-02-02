@@ -102,8 +102,9 @@ module CartValidations
     # while simultaneously building a hash of category => quantity
     models.each do |model, quantity|
       max_models = model.maximum_per_user
+      binding.pry
 
-      start_date.to_date.upto(due_date.to_date) do |d|
+      start_date.upto(due_date) do |d|
         next unless Reservation.number_for_model_on_date(d, model.id,
                                                          relevant)\
           + quantity > max_models
@@ -120,7 +121,7 @@ module CartValidations
     # similarly check category maxes using a similar method
     category.each do |cat, q|
       max_cat = cat.maximum_per_user
-      start_date.to_date.upto(due_date.to_date) do |d|
+      start_date.upto(due_date) do |d|
         next unless Reservation.number_for_category_on_date(d, cat.id,
                                                             relevant)\
           + q > max_cat

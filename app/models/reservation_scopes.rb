@@ -53,8 +53,7 @@ module ReservationScopes
       }
       scope :reserved_on_date, lambda {
         |date|  where('start_date <= ? and due_date >= ?',
-                      Time.zone.parse(date.to_s),
-                      Time.zone.parse(date.to_s)).finalized
+                      date, date).finalized
       }
       scope :for_eq_model, lambda {
         |eq_model| where(equipment_model_id: eq_model.id).finalized
@@ -80,13 +79,10 @@ module ReservationScopes
       scope :for_reserver, ->(reserver) { where(reserver_id: reserver) }
       scope :reserved_in_date_range, lambda {
         |start_date, end_date| where('start_date <= ? and due_date >= ?',
-                                     Time.zone.parse(end_date.to_s),
-                                     Time.zone.parse(start_date.to_s)).finalized
+                                     end_date, start_date).finalized
       }
       scope :overlaps_with_date, lambda {
-        |date| where('start_date <= ? and due_date >= ?',
-                     Time.zone.parse(date.to_s),
-                     Time.zone.parse(date.to_s))
+        |date| where('start_date <= ? and due_date >= ?', date, date)
       }
       scope :has_notes, ->() { where.not(notes: nil) }
     end

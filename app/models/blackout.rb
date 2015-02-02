@@ -12,7 +12,7 @@ class Blackout < ActiveRecord::Base
 
   scope :active, ->() { where('end_date >= ?', Time.zone.today) }
   scope :for_date, lambda { |date|
-    where('end_date >= ? and start_date <= ?', date.to_date, date.to_date)
+    where('end_date >= ? and start_date <= ?', date, date)
   }
   scope :hard, ->() { where(blackout_type: 'hard') }
   scope :soft, ->() { where(blackout_type: 'soft') }
