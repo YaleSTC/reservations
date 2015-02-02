@@ -8,7 +8,7 @@ permalink: /user-doc/managing-equipment/
 
 Reservations organizes your equipment on three levels: Categories, Equipment Models, and Equipment Items.
 
-**Categories** provide organization to your catalog, making it easy for people to find what they need. Your categories might be "Video Cameras", "Digital SLRs", and "Laptops".
+**Categories** provide organization to your catalog, making it easy for people to find what they need. Your categories might be "Video Cameras", "Digital SLRs", or "Laptops".
 
 **Equipment Models** represent a more-specific type of equipment, such as a Nikon D90. Equipment Models have a name and general description, as well as a photo for the catalog. You can also upload documents related to an Equipment Model (e.g. a user's guide) and set limits on the length of time and number of items a person can check out of this model.
 

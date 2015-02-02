@@ -6,7 +6,7 @@ permalink: /user-doc/managing-app-config/
 
 This guide is a walk-through for the Reservations "Settings" page.
 
-The **Site Title** is the name of the website as displayed in the upper-left corner of the top navigation bar, as well as in the [title bar](https://en.wikipedia.org/wiki/Title_bar) of your web browser. The title should be less than 20 characters in length, in order that the top navigation bar not become too crowded.
+The **Site Title** is the name of the website as displayed in the upper-left corner of the top navigation bar, as well as in the [title bar](https://en.wikipedia.org/wiki/Title_bar) of your web browser. The title should be fewer than 20 characters in length, in order that the top navigation bar not become too crowded.
 
 The **Admin Email** is the email address of the person who receives daily reports from Reservations regarding checkout/checkin irregularities (i.e., if a Checkout Person notes anything wrong with an item or reservation).
 
