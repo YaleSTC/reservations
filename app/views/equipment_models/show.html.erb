@@ -95,29 +95,27 @@
   <div class="row">
     <div class="col-md-4">
       <h4>Late Fee</h4>
+      <div class="giant-numbers">
+        <%= number_to_currency @equipment_model.late_fee %> / day
+      </div>
     </div>
     <div class="col-md-3">
       <h4>Replacement Fee</h4>
+      <div class="giant-numbers">
+        <%= number_to_currency @equipment_model.replacement_fee %>
+      </div>
     </div>
     <div class="col-md-2">
       <h4>Max. Per User</h4>
+      <div class="giant-numbers">
+        <%= intify @equipment_model.maximum_per_user %>
+      </div>
     </div>
     <div class="col-md-3">
       <h4>Max. Checkout Length</h4>
-    </div>
-  </div>
-  <div class="row giant-numbers">
-    <div class="col-md-4">
-      <%= number_to_currency(@equipment_model.late_fee) %> / day
-    </div>
-    <div class="col-md-3">
-      <%= number_to_currency(@equipment_model.replacement_fee) %>
-    </div>
-    <div class="col-md-2">
-      <%= intify @equipment_model.maximum_per_user %>
-    </div>
-    <div class="col-md-3" >
-      <%= dayify @equipment_model.maximum_checkout_length %>
+      <div class="giant-numbers">
+        <%= dayify @equipment_model.maximum_checkout_length %>
+      </div>
     </div>
   </div>
 </section>
