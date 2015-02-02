@@ -66,7 +66,8 @@ class Cart
                                         equipment_model_id: id)
       end
     end
-    reservations
+    reservations # the start_date and due_date somehow become DateTimes...
+                 # ActiveRecord magic...
   end
 
   def reserve_all(user, res_notes = '', request = false) # rubocop:disable all
@@ -75,6 +76,7 @@ class Cart
     # the equipment should be requested or reserved,
     # and what notes the reservations should be initialized with
     reservations = prepare_all
+    binding.pry
     message = []
     reservations.each do |r|
       errors = r.validate

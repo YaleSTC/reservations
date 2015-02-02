@@ -154,7 +154,7 @@ class ReservationsController < ApplicationController
 
     Reservation.transaction do
       begin
-        start_date = cart.start_date
+        start_date = cart.start_date # should be a Date
         reserver = cart.reserver_id
         notes = format_errors(@errors) + notes.to_s
         if requested
@@ -191,6 +191,7 @@ class ReservationsController < ApplicationController
   # for editing reservations; not for checkout or check-in
   def update # rubocop:disable all
     message = 'Successfully edited reservation.'
+    binding.pry
     res = reservation_params
     # add new equipment object id to hash if it's being changed and save old
     # and new objects for later
