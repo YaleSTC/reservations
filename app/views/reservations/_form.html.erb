@@ -1,4 +1,4 @@
-<%= simple_form_for @reservation, html: { multipart: true } do |f| %>
+<%= simple_form_for @reservation, html: { multipart: true }, class: 'form-horizontal' do |f| %>
   <%= f.error_notification %>
 
   <%= f.input :fake_reserver_id, as: :autocomplete,
