@@ -4,9 +4,9 @@ $('#list_items_in_cart').replaceWith('<%= escape_javascript(render :partial => '
   var add_to_cart_btn = $('<%= "#add_to_cart_#{@item.id}" %>').children('.btn')
   $('<%= "#availability_#{@item.id}" %>').html(<%= @availability_hash[@item.id] %>);
   <% if @availability_hash[@item.id] <= 0 %>
-    add_to_cart_btn.replaceWith('<%= button_tag "Add to Cart", :class => "btn disabled add_to_cart_disabled"%>')
+    add_to_cart_btn.replaceWith('<%= button_tag "Add to Cart", :class => "btn btn-default disabled add_to_cart_disabled"%>')
   <% else %>
-    add_to_cart_btn.replaceWith('<%= link_to "Add to Cart", add_to_cart_path(@item), :method => :put, :remote => true, :class => "btn add_to_cart" %>');
+    add_to_cart_btn.replaceWith('<%= link_to "Add to Cart", add_to_cart_path(@item), :method => :put, :remote => true, :class => "btn btn-default add_to_cart" %>');
   <% end %>
 <% end %>
 resume_cart();
