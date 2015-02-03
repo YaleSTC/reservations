@@ -1,0 +1,21 @@
+<table id="table_not_yet_checked_out" class="datatable table table-striped table-bordered">
+  <thead>
+  <tr>
+    <th>Reserver</th>
+    <th>Start Date</th>
+    <th class="no_sort"></th>
+  </tr>
+  </thead>
+  <tbody>
+  <% for reservation in @equipment_model.reservations.where(checked_out: nil) %>
+  <% if reservation.status == "reserved" %>
+      <tr>
+
+        <td><%= link_to reservation.reserver.name, reservation.reserver %></td>
+        <td><%= reservation.start_date %></td>
+        <td><%= link_to "Check Out", reservation, :class => "btn" %></td>
+      </tr>
+    <% end %>
+  <% end %>
+  </tbody>
+</table>
