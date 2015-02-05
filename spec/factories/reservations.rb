@@ -66,6 +66,7 @@ FactoryGirl.define do
     factory :checked_out_reservation, traits: [:valid, :checked_out]
     factory :checked_in_reservation, traits: [:valid, :checked_out, :returned]
     factory :overdue_reservation, traits: [:valid, :overdue]
+    factory :upcoming_reservation, traits: [:valid, :upcoming]
     factory :missed_reservation, traits: [:valid, :missed]
   end
 end

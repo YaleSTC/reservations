@@ -369,27 +369,14 @@ class ReservationsController < ApplicationController
     render 'current_reservations'
   end
 
-  # two paths to create receipt emails for checking in and checking out items.
-  def checkout_email
-    if UserMailer.checkout_receipt(@reservation).deliver
-      redirect_to :back
+  def send_receipt
+    if UserMailer.reservation_status_update(@reservation, true).deliver
       flash[:notice] = 'Successfully delivered receipt email.'
     else
-      redirect_to @reservation
       flash[:error] = 'Unable to deliver receipt email. Please contact '\
         'administrator for more support.'
     end
-  end
-
-  def checkin_email
-    if UserMailer.checkin_receipt(@reservation).deliver
-      redirect_to :back
-      flash[:notice] = 'Successfully delivered receipt email.'
-    else
-      redirect_to @reservation
-      flash[:error] = 'Unable to deliver receipt email. Please contact '\
-        'administrator for more support.'
-    end
+    redirect_to @reservation
   end
 
   def renew
@@ -419,7 +406,7 @@ class ReservationsController < ApplicationController
       "by #{current_user.md_link}"
     if @reservation.save
       flash[:notice] = 'Request successfully approved'
-      UserMailer.request_approved_notification(@reservation).deliver
+      UserMailer.reservation_status_update(@reservation).deliver
       redirect_to reservations_path(requested: true)
     else
       flash[:error] = 'Oops! Something went wrong. Unable to approve '\
@@ -435,7 +422,7 @@ class ReservationsController < ApplicationController
       "#{current_user.md_link}"
     if @reservation.save
       flash[:notice] = 'Request successfully denied'
-      UserMailer.request_denied_notification(@reservation).deliver
+      UserMailer.reservation_status_update(@reservation).deliver
       redirect_to reservations_path(requested: true)
     else
       flash[:error] = 'Oops! Something went wrong. Unable to deny '\
