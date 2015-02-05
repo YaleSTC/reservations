@@ -44,6 +44,8 @@ DEFAULT_MSGS = File.join(Rails.root, 'db', 'default_messages')
 TOS_TEXT = File.read(File.join(DEFAULT_MSGS, 'tos_text'))
 UPCOMING_CHECKIN_RES_EMAIL = File.read(File.join(DEFAULT_MSGS,
                                                  'upcoming_checkin_email'))
+UPCOMING_CHECKOUT_RES_EMAIL = File.read(File.join(DEFAULT_MSGS,
+                                                  'upcoming_checkout_email'))
 OVERDUE_RES_EMAIL_BODY = File.read(File.join(DEFAULT_MSGS, 'overdue_email'))
 DELETED_MISSED_RES_EMAIL = File.read(File.join(DEFAULT_MSGS,
                                                'deleted_missed_email'))
@@ -390,6 +392,7 @@ if AppConfig.count == 0
   ac.default_per_cat_page = 10
   ac.request_text = ''
   ac.upcoming_checkin_email_body = UPCOMING_CHECKIN_RES_EMAIL
+  ac.upcoming_checkout_email_body = UPCOMING_CHECKOUT_RES_EMAIL
   ac.overdue_checkin_email_body = OVERDUE_RES_EMAIL_BODY
   ac.save
 

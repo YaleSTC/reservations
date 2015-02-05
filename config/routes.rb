@@ -65,8 +65,7 @@ Reservations::Application.routes.draw do
 
   resources :reservations do
     member do
-      get :checkout_email
-      get :checkin_email
+      get :send_receipt
       put :renew
       put :archive
     end
