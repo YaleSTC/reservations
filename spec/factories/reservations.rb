@@ -2,8 +2,8 @@
 
 FactoryGirl.define do
   factory :reservation do
-    start_date { Date.today }
-    due_date { Date.tomorrow }
+    start_date { Time.zone.today }
+    due_date { Time.zone.today + 1.day }
     reserver
     equipment_model
 
@@ -18,12 +18,12 @@ FactoryGirl.define do
     end
 
     trait :reserved do
-      start_date { Date.today }
-      due_date { Date.tomorrow }
+      start_date { Time.zone.today }
+      due_date { Time.zone.today + 1.day }
     end
 
     trait :checked_out do
-      checked_out { Date.today }
+      checked_out { Time.zone.today }
       checkout_handler
       after(:build) do |res|
         mod = EquipmentModel.find(res.equipment_model)
@@ -32,26 +32,26 @@ FactoryGirl.define do
     end
 
     trait :missed do
-      start_date { Date.yesterday - 1 }
-      due_date { Date.yesterday }
+      start_date { Time.zone.today - 2.days }
+      due_date { Time.zone.today - 1.day }
     end
 
     trait :returned do
-      start_date { Date.yesterday }
-      due_date { Date.today }
-      checked_out { Date.yesterday }
-      checked_in { Date.today }
+      start_date { Time.zone.today - 1.day }
+      due_date { Time.zone.today }
+      checked_out { Time.zone.today - 1.day }
+      checked_in { Time.zone.today }
       checkin_handler
     end
 
     trait :upcoming do
-      start_date { Date.today }
+      start_date { Time.zone.today }
     end
 
     trait :overdue do
-      start_date { Date.yesterday - 1 }
-      due_date { Date.yesterday }
-      checked_out { Date.yesterday - 1 }
+      start_date { Time.zone.today - 2.days }
+      due_date { Time.zone.today - 1.day }
+      checked_out { Time.zone.today - 2.days }
     end
 
     factory :valid_reservation, traits: [:valid]
