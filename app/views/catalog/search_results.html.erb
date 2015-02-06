@@ -23,21 +23,28 @@
 <% end %>
 
 <% unless @equipment_model_results.empty? %>
-  <% unless @category_results.empty? %>
 
-  <div class="row">
-    <div class="span9">
-      <h2>Equipment Model Results</h2>
+  <% unless @category_results.empty? %>
+    <div class="row">
+      <div class="span9">
+        <h2>Equipment Model Results</h2>
+      </div>
     </div>
-  </div>
   <% end %>
+
   <ul class="thumbnails">
     <% @equipment_model_results.each do |equipment_model| %>
       <li class="span3">
-        <%= render :partial => 'equipment_model_div', :locals => { :equipment_model => equipment_model, availability_hash: @availability_hash, available_string: @available_string } %>
+        <%= render :partial => 'equipment_model_div', :locals => {
+          :equipment_model => equipment_model,
+          :availability_hash => @availability_hash,
+          :available_string => @available_string,
+          :qualifications_hash => @qualifications_hash
+        } %>
       </li>
     <% end %>
   </ul>
+
 <% end %>
 
 <% unless @equipment_object_results.empty? %>
