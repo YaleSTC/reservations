@@ -102,7 +102,7 @@ namespace :app do
       "@equipment_list@\n\n"\
       'If you fail to return your equipment on time you will be subject to '\
       'a late fee of @late_fee@ per day. If you have lost the item you may '\
-      "additinally have to pay a replacement fee of @replacement_fee@.\n"\
+      "additionally have to pay a replacement fee of @replacement_fee@.\n"\
       'Log in to Reservations to see if any of your items are eligible for '\
       'renewal. If you have further questions feel free to contact an '\
       "employee of @department_name@.\n\n"\
