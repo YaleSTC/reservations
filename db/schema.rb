@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150206002111) do
+ActiveRecord::Schema.define(version: 20150206003233) do
 
   create_table "announcements", force: true do |t|
     t.text     "message"
@@ -53,6 +53,7 @@ ActiveRecord::Schema.define(version: 20150206002111) do
     t.integer  "res_exp_time"
     t.boolean  "enable_guests",                                      default: true
     t.boolean  "upcoming_checkout_email_active"
+    t.text     "upcoming_checkout_email_body"
   end
 
   create_table "blackouts", force: true do |t|
