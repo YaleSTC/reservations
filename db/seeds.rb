@@ -44,6 +44,8 @@ DEFAULT_MSGS = File.join(Rails.root, 'db', 'default_messages')
 TOS_TEXT = File.read(File.join(DEFAULT_MSGS, 'tos_text'))
 UPCOMING_CHECKIN_RES_EMAIL = File.read(File.join(DEFAULT_MSGS,
                                                  'upcoming_checkin_email'))
+UPCOMING_CHECKOUT_RES_EMAIL = File.read(File.join(DEFAULT_MSGS,
+                                                  'upcoming_checkout_email'))
 OVERDUE_RES_EMAIL_BODY = File.read(File.join(DEFAULT_MSGS, 'overdue_email'))
 DELETED_MISSED_RES_EMAIL = File.read(File.join(DEFAULT_MSGS,
                                                'deleted_missed_email'))
