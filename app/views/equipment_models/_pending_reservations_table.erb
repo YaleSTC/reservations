@@ -1,28 +1,19 @@
 <table id="table_not_yet_checked_out" class="datatable table table-striped table-bordered">
   <thead>
   <tr>
+    <th>ID</th>
     <th>Reserver</th>
     <th>Start Date</th>
-    <th class="no_sort"></th>
+    <th>Due Date</th>
   </tr>
   </thead>
   <tbody>
-  <% all_reservations =  @equipment_model.reservations.where(checked_out: nil).where("due_date > ?", Time.current)%>
-  <% eligible_reservations = all_reservations.where("start_date <= ?", Time.current) %>
-  <% upcoming_reservations = all_reservations.where("start_date > ?", Time.current) %>
-  <% for reservation in eligible_reservations %>
+  <% for reservation in (@today + @upcoming) %>
     <tr>
-
+      <td><%= link_to reservation.id, reservation %></td>
       <td><%= link_to reservation.reserver.name, reservation.reserver %></td>
-      <td><%= reservation.start_date %></td>
-      <td><%= link_to "Check Out", reservation, :class => "btn" %></td>
-    </tr>
-  <% end %>
-  <% for reservation in upcoming_reservations %>
-    <tr>
-      <td><%= link_to reservation.reserver.name, reservation.reserver %></td>
-      <td><%= reservation.start_date %></td>
-      <td><%= link_to "Check Out", reservation, :class => "btn disabled" %></td>
+      <td><%= reservation.start_date.to_date %></td>
+      <td><%= reservation.due_date.to_date %></td>
     </tr>
   <% end %>
   </tbody>

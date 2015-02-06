@@ -58,6 +58,16 @@ class EquipmentModelsController < ApplicationController
     @max = @equipment_model.equipment_objects.active.count
 
     @restricted = @equipment_model.model_restricted?(cart.reserver_id)
+
+    # for pending reservations table
+
+    @today = Reservation.includes(:reserver)
+      .for_eq_model(@equipment_model).checkoutable
+
+    @upcoming = Reservation.includes(:reserver)
+      .for_eq_model(@equipment_model)
+      .reserved_in_date_range(Time.zone.today + 1.day, Time.zone.today + 8.day)
+      .untouched.future
   end
 
   def new
