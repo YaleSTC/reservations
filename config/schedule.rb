@@ -33,6 +33,7 @@ every nightly_cron_str do
   rake 'delete_missed_reservations'
   rake 'deny_missed_requests'
   rake 'delete_old_blackouts'
+  rake 'email_missed_reservations'
 end
 
 # every hour (except five AM)
