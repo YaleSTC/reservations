@@ -182,11 +182,26 @@
 
   <%# NOTES %>
   <div class="row">
-    <div class="span12">
+    <div class="span7">
       <% unless @reservation.notes.blank? %>
         <hr>
         <h2>Notes</h2>
         <div class='notes-container'><%= markdown(@reservation.notes) %></div>
+      <% end %>
+    </div>
+    <div class="span5">
+      <hr>
+      <%= simple_form_for @reservation do |f| %>
+          <%= f.error_notification %>
+
+          <%= f.input :fake_reserver_id, as: :hidden, input_html: { value: @reservation.reserver.name } %>
+          <%= f.input :reserver_id, as: :hidden %>
+          <%= f.input :start_date, as: :hidden, input_html: { id: "date_start_alt" } %>
+          <%= f.input :due_date, as: :hidden, input_html: { id: 'date_end_alt' } %>
+
+          <h2>Add new notes</h2>
+          <div class='notes-container'><%= text_area_tag :new_notes, "", rows: 5, class: 'span4' %></div>
+          <%= f.submit 'Add note', class: 'btn' %>
       <% end %>
     </div>
   </div>
