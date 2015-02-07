@@ -59,7 +59,7 @@ class EquipmentObjectsController < ApplicationController
       # Delete deactivation reason when "Disabled?" is toggled
       p[:deactivation_reason] = ''
     end
-    @equipment_object.update(current_user, p)
+    @equipment_object.update(current_user, p, params[:new_notes])
     if @equipment_object.save
       flash[:notice] = 'Successfully updated equipment object.'
       redirect_to @equipment_object
