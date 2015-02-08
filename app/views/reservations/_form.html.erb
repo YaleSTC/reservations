@@ -8,17 +8,17 @@
                 input_html: { value: @reservation.reserver.name,
                 class: 'form-control' } %>
   <%= f.input :reserver_id, as: :hidden %>
-  
+
   <div class="form-group">
     <%= f.label :start_date, 'Start date', class: 'col-sm-2 control-label' %>
-    <div class="col-sm-8">
+    <div class="col-sm-7">
       <%= f.text_field :start_date, class: 'date_start form-control', value: @reservation.start_date.strftime('%m/%d/%Y') %>
       <%= f.input :start_date, as: :hidden, input_html: { id: "date_start_alt" } %>
     </div>
   </div>
   <div class="form-group">
     <%= f.label :due_date, 'Due date', class: 'col-sm-2 control-label' %>
-    <div class="col-sm-8">
+    <div class="col-sm-7">
       <%= f.text_field :due_date, class: 'date_end form-control', value: @reservation.due_date.strftime('%m/%d/%Y') %>
       <%= f.input :due_date, as: :hidden, input_html: { id: 'date_end_alt' } %>
     </div>
@@ -28,7 +28,7 @@
   <% if @reservation.equipment_object %>
     <div class="form-group">
       <label class="col-sm-2 control-label">Item</label>
-      <div class="col-sm-8">
+      <div class="col-sm-7">
         <%= select_tag :equipment_object,
             options_for_select(@option_array),
             placeholder: @reservation.equipment_object.name,
@@ -40,7 +40,7 @@
 
   <div class="form-group">
     <%= label_tag :current_notes, 'Current notes', class: 'col-sm-2 control-label' %>
-    <div class="col-sm-8">
+    <div class="col-sm-7">
       <div class="notes-container" id="current_notes">
         <%= markdown @reservation.notes %>
       </div>
@@ -48,7 +48,7 @@
   </div>
   <div class="form-group">
     <%= label_tag :new_notes, 'Add new notes', class: 'col-sm-2 control-label' %>
-    <div class="col-sm-8">
+    <div class="col-sm-7">
       <%= text_area_tag :new_notes, nil, rows: 7, class: 'form-control' %>
       <br />
       <%= render partial: 'shared/markdown_button' %>
