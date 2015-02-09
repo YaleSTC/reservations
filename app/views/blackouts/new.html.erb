@@ -1,6 +1,6 @@
 <% title 'New Blackout' %>
 
-<%= simple_form_for @blackout, html: { class: 'form-horizontal' }, wrapper: :horizontal_form do |f| %>
+<%= simple_form_for @blackout, html: { class: 'form-horizontal' } do |f| %>
   <%= f.error_notification %>
   <%= render partial: 'form', locals: {f: f}%>
 <% end %>

@@ -1,11 +1,6 @@
 <% title 'Edit Blackout' %>
 
-<%= simple_form_for(@blackout) do |f| %>
+<%= simple_form_for @blackout, html: { class: 'form-horizontal' } do |f| %>
   <%= f.error_notification %>
-
-    <div class="form_inputs">
-    <%= render partial: 'form', locals: {f: f} %>
-
+  <%= render partial: 'form', locals: {f: f} %>
 <% end %>
-
-
