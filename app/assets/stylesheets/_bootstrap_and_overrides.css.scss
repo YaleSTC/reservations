@@ -1,7 +1,8 @@
 // Variable overrides for Bootstrap
 @import "bootstrap_overrides";
 
-// "bootstrap-sprockets" must be imported before "bootstrap" and "bootstrap/variables"
+// "bootstrap-sprockets" must be imported before "bootstrap" and
+// "bootstrap/variables"
 @import "bootstrap-sprockets";
 @import "bootstrap";
 
@@ -9,24 +10,5 @@ body {
   padding-top: 50px;
 }
 
-// @import "bootstrap-responsive";
 @import "font-awesome";
 @import "dataTables/bootstrap/3/jquery.dataTables.bootstrap";
-
-//For DataTables sorting styling with Bootstrap
-
-//table.table thead .sorting,
-//table.table thead .sorting_asc,
-//table.table thead .sorting_desc,
-//table.table thead .sorting_asc_disabled,
-//table.table thead .sorting_desc_disabled {
-//    cursor: pointer;
-//    *cursor: hand;
-//}
-//
-//table.table thead .sorting { background: .icon-home no-repeat center right; }
-//table.table thead .sorting_asc { background: url('images/sort_asc.png') no-repeat center right; }
-//table.table thead .sorting_desc { background: url('images/sort_desc.png') no-repeat center right; }
-//
-//table.table thead .sorting_asc_disabled { background: url('images/sort_asc_disabled.png') no-repeat center right; }
-//table.table thead .sorting_desc_disabled { background: url('images/sort_desc_disabled.png') no-repeat center right; }
