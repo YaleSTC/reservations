@@ -1,14 +1,14 @@
-<% title "Contact Us" %>
+<% title 'Contact Us' %>
 
-<%= simple_form_for @message, :url => url_for( :action => "new", :controller => "contact"), :html => { :class => "form-horizontal" } do |f| %>
+<%= simple_form_for @message, url: url_for(action: 'new', controller: 'contact'), html: { class: 'form-horizontal' } do |f| %>
 
-<%= f.error_notification %>
+  <%= f.error_notification %>
 
-<%= f.input :name %>
-<%= f.input :email %>
-<%= f.input :subject %>
-<%= f.input :body, :as => :text, :input_html => { :class => "form-control" } %>
+  <%= f.input :name %>
+  <%= f.input :email %>
+  <%= f.input :subject %>
+  <%= f.input :body, as: :text, input_html: { class: 'form-control' } %>
 
-<%= f.button :submit, "Send Message" %>
+  <%= f.button :submit, 'Send Message' %>
 
 <% end %>
