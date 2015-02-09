@@ -58,6 +58,13 @@ class UserMailer < ActionMailer::Base
          subject: '[Reservations] Reminder: equipment check in')
   end
 
+  def upcoming_checkout_notification(reservation)
+    set_app_config
+    @reservation = reservation
+    mail(to: reservation.reserver.email,
+         subject: '[Reservations] Reminder: equipment check out')
+  end
+
   def request_approved_notification(reservation)
     set_app_config
     @reservation = reservation

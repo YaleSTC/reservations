@@ -3,6 +3,7 @@
 FactoryGirl.define do
   factory :app_config do
     upcoming_checkin_email_active true
+    upcoming_checkout_email_active true
     reservation_confirmation_email_active true
     site_title 'Reservations Specs'
     admin_email 'my@email.com'
@@ -12,6 +13,7 @@ FactoryGirl.define do
     home_link_location 'MyString'
     default_per_cat_page 1
     upcoming_checkin_email_body 'MyText'
+    upcoming_checkout_email_body 'MyText'
     overdue_checkin_email_body 'MyText'
     overdue_checkin_email_active true
     terms_of_service 'TOS'
