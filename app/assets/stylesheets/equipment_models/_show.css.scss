@@ -25,6 +25,7 @@ $border-att: 1px solid darken($bodyBackground, 20%);
   opacity: 0.9;
   padding-top: 3px;
   padding-bottom: 5px;
+  box-sizing: border-box;
  }
 
 .month {
