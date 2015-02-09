@@ -240,7 +240,7 @@ describe EquipmentItemsController, type: :controller do
           put :update,
               id: object,
               equipment_item: FactoryGirl.attributes_for(:equipment_item,
-                                                           name: 'Obj')
+                                                         name: 'Obj')
         end
         it { is_expected.to set_the_flash }
         it 'sets @equipment_item to selected object' do
@@ -260,7 +260,7 @@ describe EquipmentItemsController, type: :controller do
           put :update,
               id: object,
               equipment_item: FactoryGirl.attributes_for(:equipment_item,
-                                                           name: nil)
+                                                         name: nil)
         end
         it { is_expected.not_to set_the_flash }
         it 'should not update attributes' do

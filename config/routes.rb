@@ -22,7 +22,6 @@ Reservations::Application.routes.draw do
 
   resources :equipment_items, concerns: :deactivatable
 
-
   resources :announcements, except: [:show]
 
   resources :categories, concerns: :deactivatable do
@@ -37,8 +36,9 @@ Reservations::Application.routes.draw do
     resources :equipment_items
   end
 
-  get "equipment_objects" => redirect("equipment_items")
-  get "equipment_objects/:command" => redirect(subdomain: "equipment_items", path: '%{command}')
+  get 'equipment_objects' => redirect('equipment_items')
+  get 'equipment_objects/:command' => 
+      redirect(subdomain: 'equipment_items', path: '%{command}')
 
   get '/import_users/import' => 'import_users#import_page',
       :as => :csv_import_page

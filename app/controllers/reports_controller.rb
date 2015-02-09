@@ -82,7 +82,7 @@ class ReportsController < ApplicationController
     tables[:equipment_models] = Report.build_new(:equipment_model_id,
                                                  reservations, MODEL_COLUMNS)
     tables[:equipment_items] = Report.build_new(:equipment_item_id,
-                                                  reservations, MODEL_COLUMNS)
+                                                reservations, MODEL_COLUMNS)
     tables[:users] = Report.build_new(:reserver_id, reservations, MODEL_COLUMNS)
     tables[:reservations] = Report.build_new(:id, reservations, RES_COLUMNS)
     tables
