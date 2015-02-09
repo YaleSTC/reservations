@@ -75,72 +75,72 @@ $border-att: 1px solid darken($body-bg, 20%);
 }
 
 .btn-large {
-	float: right;
+  float: right;
 }
 
 .em_info {
-	position: relative;
+  position: relative;
 }
 
 .associated_em_box {
-	// position: absolute;
-	// bottom: 0;
+  // position: absolute;
+  // bottom: 0;
 
-	img {
-		background: white;
-		@include img-outline;
-	}
+  img {
+    background: white;
+    @include img-outline;
+  }
 }
 
 .document {
-	font-size: $font-size-base * 6;
-	line-height: $font-size-base * 6;
-	color: $text-color;
-	&:hover {
-		text-decoration: none;
-		color: $text-color;
-	}
+  font-size: $font-size-base * 6;
+  line-height: $font-size-base * 6;
+  color: $text-color;
+  &:hover {
+    text-decoration: none;
+    color: $text-color;
+  }
 }
 .image_box {
-	height: 260px;
-	overflow: hidden;
-	background: white;
-	@include img-outline;
+  height: 260px;
+  overflow: hidden;
+  background: white;
+  @include img-outline;
 }
 
 .giant-numbers {
-	@include giant-number;
+  @include giant-number;
 }
 
 .label.label-success.eo-table {
-	font-size: $font-size-base;
-	line-height: $line-height-base;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
 }
 
 .subnav li h4 {
-	padding-top: 0;
-	padding-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
   font-size: $font-size-base + 1px;
-	padding-right: 12px;
-	display: block;
+  padding-right: 12px;
+  display: block;
   a { vertical-align: middle; }
 }
 
 section {
-	padding-top: 86px;
+  padding-top: 86px;
 }
 
 a.not-qualified-icon-em {
-	position: absolute;
-	top: 0;
-	right: 120px;
-	font-size: ceil($font-size-base * 2.5);
+  position: absolute;
+  top: 0;
+  right: 120px;
+  font-size: ceil($font-size-base * 2.5);
   line-height: 1em;
-	color: $btn-warning-bg;
-	@include warning-icon-drop-shadow;
+  color: $btn-warning-bg;
+  @include warning-icon-drop-shadow;
 
-	&:hover, &:active {
-		text-decoration: none;
-		color: $btn-warning-bg;
-	}
+  &:hover, &:active {
+    text-decoration: none;
+    color: $btn-warning-bg;
+  }
 }
