@@ -1,10 +1,12 @@
 <div id="cart" class="well">
   <div id="cartSpinner"></div>
-  <% if cannot? :manage, Reservation %>
-    <h2>My Cart</h2><br />
-  <% else %>
-    <h2>Cart</h2><br />
-  <% end %>
+  <header class="cart-header">
+    <% if cannot? :manage, Reservation %>
+      <h2>My Cart</h2>
+    <% else %>
+      <h2>Cart</h2>
+    <% end %>
+  </header>
   <%# allow user to set start/end dates %>
   <%= render partial: 'reservations/cart_dates' %>
   <h3>Items</h3>
