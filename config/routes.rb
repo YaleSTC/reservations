@@ -37,7 +37,7 @@ Reservations::Application.routes.draw do
   end
 
   get 'equipment_objects' => redirect('equipment_items')
-  get 'equipment_objects/:command' => 
+  get 'equipment_objects/:command' =>
       redirect(subdomain: 'equipment_items', path: '%{command}')
 
   get '/import_users/import' => 'import_users#import_page',
