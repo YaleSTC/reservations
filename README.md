@@ -33,6 +33,9 @@ You'll need the following to run Reservations:
 * a [CAS](http://www.jasig.org/cas) authentication system (optional)
 
 ### Installation
+
+For troubleshooting, see [our wiki](https://github.com/YaleSTC/wiki/wiki).
+
 First, checkout a copy of Reservations using git:
 
 ```
