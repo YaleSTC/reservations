@@ -96,7 +96,7 @@ module EquipmentImport
         EquipmentModel.where('name = ?', object_data[:equipment_model]).first
 
       # create new category
-      object = EquipmentObject.new(object_data)
+      object = EquipmentItem.new(object_data)
       object.update_attributes(object_data)
 
       # if new object is valid, save to database and add to array of success

@@ -221,8 +221,8 @@ class ApplicationController < ActionController::Base
       id_array << em.id
     end
 
-    # 1 query to grab all the active related equipment objects
-    eq_objects = EquipmentObject.active.where(equipment_model_id: id_array).all
+    # 1 query to grab all the active related equipment items
+    eq_items = EquipmentItem.active.where(equipment_model_id: id_array).all
 
     # 1 query to grab all the related reservations
     source_reservations =
@@ -231,7 +231,7 @@ class ApplicationController < ActionController::Base
     # build the hash using class methods that use 0 queries
     eq_models.each do |em|
       @availability_hash[em.id] =
-        [EquipmentObject.for_eq_model(em.id, eq_objects)\
+        [EquipmentItem.for_eq_model(em.id, eq_items)\
         - Reservation.number_overdue_for_eq_model(em.id, source_reservations)\
         - em.num_reserved(cart.start_date, cart.due_date, source_reservations)\
         - cart.items[em.id].to_i, 0].max

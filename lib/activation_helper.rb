@@ -2,7 +2,7 @@ module ActivationHelper
   def activate_parents(current_item)
     # Equipment Objects have EMs and Categories that may need to be
     # reactivated
-    if (current_item.class == EquipmentObject)
+    if (current_item.class == EquipmentItem)
       # Reactivate the current item's category and/or Equipment Model if
       # deactivated
       category = Category.find(

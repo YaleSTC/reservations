@@ -54,8 +54,8 @@ describe Report, type: :model do
   end
 
   describe '.get_class' do
-    it 'converts equipment_object_id to EquipmentObject' do
-      expect(Report.get_class(:equipment_object_id)).to eq(EquipmentObject)
+    it 'converts equipment_item_id to EquipmentItem' do
+      expect(Report.get_class(:equipment_item_id)).to eq(EquipmentItem)
     end
     it 'works on :reserver_id' do
       expect(Report.get_class(:reserver_id)).to eq(User)
@@ -74,8 +74,8 @@ describe Report, type: :model do
                        ['Returned Overdue', :returned_overdue, :count],
                        ['User Count', :all, :count, :reserver_id]]
     before(:each) do
-      @id = :equipment_object_id
-      @class = EquipmentObject
+      @id = :equipment_item_id
+      @class = EquipmentItem
       @report = Report.build_new(@id)
     end
     it 'returns a report object' do

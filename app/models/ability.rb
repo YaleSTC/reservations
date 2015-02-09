@@ -26,7 +26,7 @@ class Ability
         if AppConfig.first.enable_new_users
           can [:create, :quick_new, :quick_create], User
         end
-        can :read, EquipmentObject
+        can :read, EquipmentItem
         can :read, EquipmentModel
         can :override, :reservation_errors if AppConfig.first.override_on_create
         can :override, :checkout_errors if AppConfig.first.override_at_checkout

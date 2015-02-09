@@ -129,13 +129,13 @@ describe CatalogController, type: :controller do
         put :search,  query: 'query'
         expect(assigns(:equipment_model_results)).to eq([@equipment_model])
       end
-      it 'should call catalog_search on EquipmentObject' do
-        @equipment_object =
-          FactoryGirl.create(:equipment_object, serial: 'query')
-        # EquipmentObject.stub(:catelog_search).with('query')
-        #   .and_return(@equipment_object)
+      it 'should call catalog_search on EquipmentItem' do
+        @equipment_item =
+          FactoryGirl.create(:equipment_item, serial: 'query')
+        # EquipmentItem.stub(:catelog_search).with('query')
+        #   .and_return(@equipment_item)
         put :search,  query: 'query'
-        expect(assigns(:equipment_object_results)).to eq([@equipment_object])
+        expect(assigns(:equipment_item_results)).to eq([@equipment_item])
       end
       it 'should call catalog_search on Category' do
         @category = FactoryGirl.create(:category, name: 'query')

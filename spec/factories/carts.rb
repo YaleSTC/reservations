@@ -8,7 +8,7 @@ FactoryGirl.define do
     factory :cart_with_items do
       items do
         e = FactoryGirl.create(:equipment_model)
-        FactoryGirl.create(:equipment_object, equipment_model: e)
+        FactoryGirl.create(:equipment_item, equipment_model: e)
         { e.id => 1 }
       end
     end
@@ -16,7 +16,7 @@ FactoryGirl.define do
     factory :invalid_cart do
       items do
         e = FactoryGirl.create(:equipment_model)
-        FactoryGirl.create(:equipment_object, equipment_model: e)
+        FactoryGirl.create(:equipment_item, equipment_model: e)
         { e.id => 1 }
       end
 

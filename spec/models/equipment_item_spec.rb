@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe EquipmentObject, type: :model do
+describe EquipmentItem, type: :model do
   context 'validations' do
     before(:each) do
-      @object = FactoryGirl.build(:equipment_object)
+      @object = FactoryGirl.build(:equipment_item)
     end
 
     it 'has a working factory' do
@@ -24,38 +24,38 @@ describe EquipmentObject, type: :model do
 
   describe '.active' do
     before(:each) do
-      @active = FactoryGirl.create(:equipment_object)
+      @active = FactoryGirl.create(:equipment_item)
       @deactivated = FactoryGirl.create(:deactivated)
     end
 
-    it 'Should return all active equipment objects' do
-      expect(EquipmentObject.active).to include(@active)
+    it 'Should return all active equipment items' do
+      expect(EquipmentItem.active).to include(@active)
     end
 
-    it 'Should not return inactive equipment objects' do
-      expect(EquipmentObject.active).not_to include(@deactivated)
+    it 'Should not return inactive equipment items' do
+      expect(EquipmentItem.active).not_to include(@deactivated)
     end
   end
 
   describe '.status' do
     it "returns 'Deactivated' if the object has a value for deleted_at" do
-      @object = FactoryGirl.create(:equipment_object, deleted_at: Date.current)
+      @object = FactoryGirl.create(:equipment_item, deleted_at: Date.current)
       expect(@object.status).to eq('Deactivated')
     end
     it "returns 'available' if the object is active and not currently "\
       'checked out' do
-      @object = FactoryGirl.create(:equipment_object)
+      @object = FactoryGirl.create(:equipment_item)
       expect(@object.status).to eq('available')
       @reservation = FactoryGirl.create(:valid_reservation)
       @reserved_object =
-        EquipmentObject
+        EquipmentItem
         .find_by_equipment_model_id(@reservation.equipment_model.id)
       expect(@reserved_object.status).to eq('available')
     end
     it 'returns a description of the reservation that it is currently '\
       'associated with if it is active and checked out' do
       @reservation = FactoryGirl.create(:checked_out_reservation)
-      @checked_out_object = @reservation.equipment_object
+      @checked_out_object = @reservation.equipment_item
       expect(@checked_out_object.status).to\
         eq("checked out by #{@reservation.reserver.name} through "\
           "#{@reservation.due_date.strftime('%b %d')}")
@@ -63,27 +63,27 @@ describe EquipmentObject, type: :model do
   end
 
   describe '.current_reservation' do
-    it 'returns nil if the equipment object does not have an associated '\
+    it 'returns nil if the equipment item does not have an associated '\
       'reservation' do
-      @object = FactoryGirl.create(:equipment_object)
+      @object = FactoryGirl.create(:equipment_item)
       expect(@object.current_reservation).to be_nil
     end
     it 'returns the reservation object currently holding this '\
-      'equipment_object if there is one that does' do
+      'equipment_item if there is one that does' do
       @reservation = FactoryGirl.create(:checked_out_reservation)
-      @reserved_object = @reservation.equipment_object
+      @reserved_object = @reservation.equipment_item
       expect(@reserved_object.current_reservation).to eq(@reservation)
     end
   end
 
   describe '.available?' do
-    it 'returns true if the equipment object is not checked out' do
-      @object = FactoryGirl.create(:equipment_object)
+    it 'returns true if the equipment item is not checked out' do
+      @object = FactoryGirl.create(:equipment_item)
       expect(@object.available?).to be_truthy
     end
-    it 'returns false if the equipment object is currently checked out' do
+    it 'returns false if the equipment item is currently checked out' do
       @reservation = FactoryGirl.create(:checked_out_reservation)
-      @checked_out_object = @reservation.equipment_object
+      @checked_out_object = @reservation.equipment_item
       expect(@checked_out_object.available?).to be_falsey
     end
   end

@@ -1,7 +1,7 @@
-<%= simple_form_for @equipment_object, :html => { :class => "form-horizontal" } do |f| %>
+<%= simple_form_for @equipment_item, :html => { :class => "form-horizontal" } do |f| %>
   <%= f.error_notification %>
   <%= f.association :equipment_model, placeholder: 'Please select an equipment model...' %>
   <%=f.input :name%>
   <%=f.input :serial%>
-  <%= f.button :wrapped, :cancel => equipment_objects_path %>
+  <%= f.button :wrapped, :cancel => equipment_items_path %>
 <% end %>

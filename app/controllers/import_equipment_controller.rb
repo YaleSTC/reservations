@@ -48,9 +48,9 @@ class ImportEquipmentController < ApplicationController
       end
     end
 
-    # finally, import EquipmentObjects
+    # finally, import EquipmentItems
     if object_file
-      # no overwrite paramter since there is no index for EquipmentObjects
+      # no overwrite paramter since there is no index for EquipmentItems
       # store the filepath
       object_filepath = object_file.tempfile.path
       processed_objects = csv_import(object_filepath)

@@ -20,7 +20,7 @@ Reservations::Application.routes.draw do
   resources :documents,
             :requirements
 
-  resources :equipment_objects, concerns: :deactivatable, path: '/equipment_items'
+  resources :equipment_items, concerns: :deactivatable
 
 
   resources :announcements, except: [:show]
@@ -34,7 +34,7 @@ Reservations::Application.routes.draw do
       put 'update_cart'
       delete 'empty_cart'
     end
-    resources :equipment_objects, path: 'equipment_items'
+    resources :equipment_items
   end
 
   get "equipment_objects" => redirect("equipment_items")

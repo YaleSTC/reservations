@@ -29,8 +29,8 @@
             <%= image_tag @reservation.equipment_model.photo.url(:large) %>
           <% end %>
           <hr>
-          <h3><%= link_to @reservation.equipment_object.nil? ? "(unassigned)" :
-          @reservation.equipment_object.name, equipment_model_path(@reservation.equipment_model, anchor: 'items') %></h3>
+          <h3><%= link_to @reservation.equipment_item.nil? ? "(unassigned)" :
+          @reservation.equipment_item.name, equipment_model_path(@reservation.equipment_model, anchor: 'items') %></h3>
       </div>
 
       <%# shows renew button if due_date is today, tomorrow, or the day after %>

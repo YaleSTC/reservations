@@ -1,0 +1,17 @@
+<% #TODO check if this can be removed %>
+<tr class="equipment_item">
+<%= fields_for "equipment_model[equipment_item_attributes][]", equipment_item do |equipment_item_form| %>
+  <td>
+    <%= equipment_item_form.text_field :name %>
+  </td>
+  <td>
+    <%= equipment_item_form.text_field :serial %>
+  </td>
+  <td>
+    new
+  </td>
+  <td>    
+    <%= link_to_function "[remove]", "$(this).parents('.equipment_item').remove()" %>
+  </td>
+<% end %>
+</tr>

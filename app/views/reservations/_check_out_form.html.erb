@@ -11,9 +11,9 @@
       <p><%= link_to reservation.equipment_model, target: '_blank' do %>
             <%= image_tag reservation.equipment_model.photo.url(:medium) %>
           <% end %></p>
-      <%= label_tag "reservations[#{reservation.id}][equipment_object_id]",
+      <%= label_tag "reservations[#{reservation.id}][equipment_item_id]",
       'Equipment Item' %>
-      <%= select_tag "reservations[#{reservation.id}][equipment_object_id]",
+      <%= select_tag "reservations[#{reservation.id}][equipment_item_id]",
       reservation.equipment_model.available_object_select_options, class:
       'dropdown dropselect', placeholder: 'Please select an equipment item...', prompt: '', width: 80 %>
     </div>

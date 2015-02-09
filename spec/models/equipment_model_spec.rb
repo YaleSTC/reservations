@@ -12,7 +12,7 @@ describe EquipmentModel, type: :model do
 
     it { is_expected.to belong_to(:category) }
     it { is_expected.to have_and_belong_to_many(:requirements) }
-    it { is_expected.to have_many(:equipment_objects) }
+    it { is_expected.to have_many(:equipment_items) }
 
     # TODO: figure out how to implement this in order to create a passing
     # test (the model currently works but the test fails)
@@ -291,8 +291,8 @@ describe EquipmentModel, type: :model do
           @reservation =
             FactoryGirl.create(:valid_reservation, equipment_model: @model)
           @extra_object =
-            FactoryGirl.create(:equipment_object, equipment_model: @model)
-          expect(@model.equipment_objects.size).to eq(2)
+            FactoryGirl.create(:equipment_item, equipment_model: @model)
+          expect(@model.equipment_items.size).to eq(2)
           expect(
             @model.num_available(@reservation.start_date,
                                  @reservation.due_date)
@@ -312,8 +312,8 @@ describe EquipmentModel, type: :model do
             FactoryGirl.build(:overdue_reservation, equipment_model: @model)
           @reservation.save(validate: false)
           @extra_object =
-            FactoryGirl.create(:equipment_object, equipment_model: @model)
-          expect(@model.equipment_objects.size).to eq(2)
+            FactoryGirl.create(:equipment_item, equipment_model: @model)
+          expect(@model.equipment_items.size).to eq(2)
           expect(@model.number_overdue).to eq(1)
         end
       end
@@ -322,14 +322,14 @@ describe EquipmentModel, type: :model do
           'reserved, checked-out, and overdue for the given date and return '\
           'the result' do
           4.times do
-            FactoryGirl.create(:equipment_object, equipment_model: @model)
+            FactoryGirl.create(:equipment_item, equipment_model: @model)
           end
           FactoryGirl.create(:valid_reservation, equipment_model: @model)
           FactoryGirl.create(:checked_out_reservation, equipment_model: @model)
           @overdue =
             FactoryGirl.build(:overdue_reservation, equipment_model: @model)
           @overdue.save(validate: false)
-          expect(@model.equipment_objects.size).to eq(4)
+          expect(@model.equipment_items.size).to eq(4)
           expect(@model.available_count(Date.current)).to eq(1)
         end
       end
@@ -339,7 +339,7 @@ describe EquipmentModel, type: :model do
             FactoryGirl.create(:checked_out_reservation,
                                equipment_model: @model)
           @object =
-            FactoryGirl.create(:equipment_object, equipment_model: @model)
+            FactoryGirl.create(:equipment_item, equipment_model: @model)
           expect(@model.available_object_select_options).to\
             eq("<option value=#{@object.id}>#{@object.name}</option>")
         end

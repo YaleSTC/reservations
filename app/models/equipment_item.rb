@@ -1,4 +1,4 @@
-class EquipmentObject < ActiveRecord::Base
+class EquipmentItem < ActiveRecord::Base
   include Searchable
   include Routing
 
@@ -38,13 +38,13 @@ class EquipmentObject < ActiveRecord::Base
     status == 'available'
   end
 
-  def self.for_eq_model(model_id, source_objects)
-    # count the number of equipment objects for a given
+  def self.for_eq_model(model_id, source_items)
+    # count the number of equipment items for a given
     # model out of an array of source objects
     # 0 queries
 
     count = 0
-    source_objects.each do |o|
+    source_items.each do |o|
       count += 1 if o.equipment_model_id == model_id
     end
     count
@@ -107,6 +107,6 @@ class EquipmentObject < ActiveRecord::Base
   end
 
   def md_link
-    "[#{name}](#{equipment_object_url(self, only_path: false)})"
+    "[#{name}](#{equipment_item_url(self, only_path: false)})"
   end
 end

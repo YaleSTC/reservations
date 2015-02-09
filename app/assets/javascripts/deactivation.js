@@ -16,7 +16,7 @@ function handleDeactivation(e, reservation_id, overbooked) {
   }
   if (confirmCheckedOut == true && confirmOverbooked == true) {
     var reason = prompt("Write down the reason for deactivation of this " +
-      "equipment object.")
+      "equipment item.")
     if (reason == null) {
       e.href += "?deactivation_cancelled=1"
     } else if (reason != "") {

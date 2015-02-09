@@ -41,10 +41,10 @@ describe AdminMailer, type: :mailer do
   describe 'overdue_checked_in_fine_admin' do
     before do
       @model = FactoryGirl.create(:equipment_model)
-      @object = FactoryGirl.create(:equipment_object, equipment_model: @model)
+      @object = FactoryGirl.create(:equipment_item, equipment_model: @model)
       @res1 = FactoryGirl.build(:checked_in_reservation,
                                 equipment_model: @model,
-                                equipment_object: @object)
+                                equipment_item: @object)
       @res1.save(validate: false)
       @mail = AdminMailer.overdue_checked_in_fine_admin(@res1).deliver
     end
