@@ -13,13 +13,19 @@ module ButtonComponents
     args << options
     # rubocop:disable AssignmentInCondition
     if cancel = options.delete(:cancel)
-      template.content_tag :div, class: 'col-sm-offset-2' do
-        submit(*args, &block) + ' ' + template.link_to(
-        template.button_tag(I18n.t('simple_form.buttons.cancel'),
-                            type: 'button', class: 'btn btn-default'), cancel)
+      template.content_tag :div, class: 'form-group' do
+        template.content_tag :div, class: 'col-sm-offset-2 col-sm-10' do
+          submit(*args, &block) + ' ' + template.link_to(
+          template.button_tag(I18n.t('simple_form.buttons.cancel'),
+                              type: 'button', class: 'btn btn-default'), cancel)
+        end
       end
     else
-      submit(*args, &block)
+      template.content_tag :div, class: 'form-group' do
+        template.content_tag :div, class: 'col-sm-offset-2 col-sm-10' do
+          submit(*args, &block)
+        end
+      end
     end
     # rubocop:enable AssignmentInCondition
   end
