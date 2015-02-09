@@ -32,6 +32,11 @@ class ApplicationController < ActionController::Base
     redirect_to main_app.root_url
   end
 
+  rescue_from ActiveRecord::RecordNotFound do |_exception|
+    flash[:error] = 'Oops, you tried to go somewhere that doesn\'t exist.'
+    redirect_to main_app.root_url
+  end
+
   # -------- before_filter methods -------- #
 
   def app_setup_check
