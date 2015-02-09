@@ -1,20 +1,29 @@
-<%= simple_form_for @announcement , html: { multipart: true }  do |f| %>
+<%= simple_form_for @announcement , html: { multipart: true, class: 'form-horizontal' }  do |f| %>
   <%= f.error_notification %>
 
-  <%= f.label "Starts At:" %>
-  <%= f.text_field :starts_at, value: @announcement.starts_at.strftime('%m/%d/%Y'), class: 'date_start'%>
-  <%= f.input :starts_at, as: :hidden, input_html: {id: 'date_start_alt'} %>
-
-  <%= f.label "Ends At:" %>
-  <%= f.text_field :ends_at, value: @announcement.ends_at.strftime('%m/%d/%Y'), class: 'date_end' %>
-  <%= f.input :ends_at, as: :hidden, input_html: {id: 'date_end_alt'} %>
+  <div class="form-group">
+    <%= f.label :starts_at, 'Starts At:', class: 'col-sm-2 control-label' %>
+    <div class="col-sm-7">
+      <%= f.text_field :starts_at, value: @announcement.starts_at.strftime('%m/%d/%Y'), class: 'date_start form-control' %>
+      <%= f.input :starts_at, as: :hidden, input_html: {id: 'date_start_alt'} %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :ends_at, 'Ends At:', class: 'col-sm-2 control-label' %>
+    <div class="col-sm-7">
+      <%= f.text_field :ends_at, value: @announcement.ends_at.strftime('%m/%d/%Y'), class: 'date_end form-control' %>
+      <%= f.input :ends_at, as: :hidden, input_html: {id: 'date_end_alt'} %>
+    </div>
+  </div>
 
   <%#= f.label "Visible To" %>
   <%#= select_tag(:visible_to, options_for_select([['Everyone','everyone'],['Only Admin','admin'],['Only Checkout','checkout']]) %>
 
   <%= f.input :message, label: 'Annoucement Message', input_html: {class: 'form-control', rows: 7},
-    hint: 'This message will be displayed to all users of the app. You can use markdown in this field.' %>
-  <%= render partial: 'shared/markdown_button' %>
+    hint: "This message will be displayed to all users. You can use Markdown in this field. <br>
+    #{render :partial => 'shared/markdown_button'}".html_safe %>
+
+  <hr>
 
   <%= f.button :submit, cancel: announcements_path %>
-  <% end %>
+<% end %>
