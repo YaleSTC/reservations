@@ -1,7 +1,6 @@
 <table class="datatable-wide table table-stripped table-bordered">
   <thead>
     <tr>
-      <%# <th>Equipment model</th> %><%# Setting black-outs on a per-model basis has been disabled %>
       <% if request.path == blackouts_path %>
         <th>Start Date</th>
         <th>End Date</th>
@@ -26,7 +25,6 @@
   <tbody>
     <% blackouts.each do |blackout| %>
       <tr>
-        <!-- <td><%# (blackout.equipment_model_id == 0) ? "All Equipment Models" : EquipmentModel.find(blackout.equipment_model_id).name %></td> -->
         <td>
           <% if params[:action] == "show" %>
             <%= link_to blackout[:start_date].strftime('%m/%d/%Y'), blackout %>
