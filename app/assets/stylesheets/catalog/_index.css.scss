@@ -24,13 +24,13 @@
 .add_to_cart_box { @extend .caption; }
 
 .equipment_title {
-	padding: 9px 9px 0px 9px;
-	height: $h3-line-height;
+  padding: 9px 9px 0px 9px;
+  height: $h3-line-height;
 }
 
 .special-hr {
-	margin-top: 4px;
-	margin-bottom: 10px;
+  margin-top: 4px;
+  margin-bottom: 10px;
 }
 
 .model_availability {
@@ -43,26 +43,26 @@
 a.not-qualified-icon {
   float: right;
   font-size: $font-size-base * 2;
-	color: $btn-warning-bg;
+  color: $btn-warning-bg;
   @include warning-icon-drop-shadow;
   // Very brittle: FIXME in the future
   right: 13px;
   bottom: 8px;
   position: absolute;
 
-	&:hover, &:active {
-		text-decoration: none;
-		color: darken($btn-warning-bg, 10%);
-	}
+  &:hover, &:active {
+    text-decoration: none;
+    color: darken($btn-warning-bg, 10%);
+  }
 }
 
 .pagination {
-	float: left;
+  float: left;
 }
 
 #items_per_form {
-	position: relative;
-	top: 18px;
+  position: relative;
+  top: 18px;
 }
 
 // Will need to be changed for responsive
