@@ -78,7 +78,7 @@ $(document).ready(function() {
     ]
   });
 
-  var wideDataTables = $('.datatable-wide').dataTable({
+  $('.datatable-wide').dataTable({
     "pagingType": "full_numbers",
     "scrollX": false,
     "columnDefs": [
