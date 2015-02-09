@@ -1,13 +1,14 @@
 module ButtonComponents
   def submit_button(*args, &block)
     options = args.extract_options!
-    if object.new_record?
-      loading = I18n.t('simple_form.creating')
-    else
-      loading = I18n.t('simple_form.updating')
-    end
-    options[:"data-loading-text"] =
-    [loading, options[:"data-loading-text"]].compact
+    # This was breaking the contact form - better to leave commented for now
+    # if object.new_record?
+    #   loading = I18n.t('simple_form.creating')
+    # else
+    #   loading = I18n.t('simple_form.updating')
+    # end
+    # options[:"data-loading-text"] =
+    # [loading, options[:"data-loading-text"]].compact
     options[:class] = ['btn-primary', options[:class]].compact
     args << options
     # rubocop:disable AssignmentInCondition
