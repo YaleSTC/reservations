@@ -37,6 +37,7 @@ class UserMailer < ActionMailer::Base
   end
 
   def overdue_checked_in_fine(overdue_checked_in)
+    return if overdue_checked_in.equipment_model.late_fee == 0
     set_app_config
     @overdue_checked_in = overdue_checked_in
     mail(to: overdue_checked_in.reserver.email,
