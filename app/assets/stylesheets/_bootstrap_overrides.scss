@@ -19,24 +19,13 @@ $link-color: lighten($right-2-color, 35%);  // #08c  Default link text color
 $headings-font-weight: 600;
 $font-size-base: 13px;
 
-// Tables
-// =============================================================================
-// $tableBackground
-// $tableBackgroundAccent
-// $tableBackgroundHover
-
 // Navbar
 // =============================================================================
 $navbar-default-bg: desaturate($base-color, 10%); // @grayDarker
-// $navbarBackgroundHighlight: lighten($navbarBackground, 8%);  // @grayDark
 $navbar-default-color: lighten(desaturate($left-2-color, 40%), 40%);
 $navbar-default-link-color: lighten(desaturate($left-2-color, 40%), 40%);  // @grayLight
 $navbar-default-link-hover-color: lighten(desaturate($left-2-color, 40%), 60%);
-// $navbarLinkColorActive  // @navbarLinkColorHover
-// $navbarLinkBackgroundHover: @include gradient-vertical;  // transparent
-// $navbarLinkBackgroundActive // @navbarBackground
 $navbar-search-bg: lighten(desaturate($left-2-color, 40%), 30%);
 $navbar-search-placeholder-color: darken(desaturate($navbar-default-bg, 30%), 30%);
-// $navbarBrandColor
 $navbar-default-brand-hover-color: lighten($right-1-color, 60%);
 $navbar-default-link-active-color: $navbar-default-link-hover-color;
