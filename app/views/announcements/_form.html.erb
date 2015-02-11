@@ -16,9 +16,6 @@
     </div>
   </div>
 
-  <%#= f.label "Visible To" %>
-  <%#= select_tag(:visible_to, options_for_select([['Everyone','everyone'],['Only Admin','admin'],['Only Checkout','checkout']]) %>
-
   <%= f.input :message, label: 'Annoucement Message', input_html: {class: 'form-control', rows: 7},
     hint: "This message will be displayed to all users. You can use Markdown in this field. <br>
     #{render :partial => 'shared/markdown_button'}".html_safe %>
