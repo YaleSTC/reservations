@@ -330,7 +330,7 @@ describe EquipmentModel, type: :model do
             FactoryGirl.build(:overdue_reservation, equipment_model: @model)
           @overdue.save(validate: false)
           expect(@model.equipment_objects.size).to eq(4)
-          expect(@model.available_count(Date.current)).to eq(1)
+          expect(@model.available_count(Time.zone.today)).to eq(1)
         end
       end
       describe '.available_object_select_options' do

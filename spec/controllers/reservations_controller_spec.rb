@@ -49,14 +49,14 @@ describe ReservationsController, type: :controller do
 
   describe '#update_index_dates (PUT)' do
     subject do
-      put :update_index_dates, list: { start_date: Date.today.to_s,
-                                       end_date: Date.tomorrow.to_s,
+      put :update_index_dates, list: { start_date: Time.zone.today.to_s,
+                                       end_date: (Time.zone.today + 1.day).to_s,
                                        filter: :reserved.to_s }
     end
     it { is_expected.to be_redirect }
     before(:each) do
-      @start = Date.today
-      @end = Date.tomorrow
+      @start = Time.zone.today
+      @end = (Time.zone.today + 1.day)
       @filter = :reserved
       put :update_index_dates, list: { start_date: @start.to_s,
                                        end_date: @end.to_s,
@@ -356,8 +356,8 @@ describe ReservationsController, type: :controller do
           @valid_cart = FactoryGirl.build(:cart_with_items)
           @req = proc do
             post :create,
-                 { reservation: { start_date: Date.current,
-                                  due_date: Date.tomorrow,
+                 { reservation: { start_date: Time.zone.today,
+                                  due_date: (Time.zone.today + 1.day),
                                   reserver_id: @user.id } },
                  cart: @valid_cart
           end
@@ -496,16 +496,14 @@ describe ReservationsController, type: :controller do
               id: @reservation.id,
               reservation:
                 FactoryGirl.attributes_for(:reservation,
-                                           start_date: Date.current,
-                                           due_date: (Date.tomorrow + 3.days)),
+                                           start_date: Time.zone.today,
+                                           due_date: Time.zone.today + 4.days),
               equipment_object: ''
         end
         it 'should update the reservation details' do
           @reservation.reload
-          expect(@reservation.start_date.to_time.utc).to\
-            eq(Time.current.midnight.utc)
-          expect(@reservation.due_date.to_time.utc).to\
-            eq((Time.current.midnight + 4 * 24.hours).utc)
+          expect(@reservation.start_date).to eq(Time.zone.today)
+          expect(@reservation.due_date).to eq(Time.zone.today + 4.days)
         end
         it 'updates the reservations notes' do
           expect { @reservation.reload }.to change(@reservation, :notes)
@@ -522,8 +520,8 @@ describe ReservationsController, type: :controller do
               id: @reservation.id,
               reservation:
                 FactoryGirl.attributes_for(:reservation,
-                                           start_date: Date.current,
-                                           due_date: Date.tomorrow),
+                                           start_date: Time.zone.today,
+                                           due_date: (Time.zone.today + 1.day)),
               equipment_object: @new_equipment_object.id
         end
         it 'should update the object on current reservation' do
@@ -554,8 +552,8 @@ describe ReservationsController, type: :controller do
                 id: @reservation.id,
                 reservation:
                   FactoryGirl.attributes_for(:reservation,
-                                             start_date: Date.current,
-                                             due_date: Date.tomorrow),
+                                             start_date: Time.zone.today,
+                                             due_date: (Time.zone.today + 1.day)),
                 equipment_object: @old_object.id
             @old_object.reload
             @new_object.reload
@@ -563,8 +561,8 @@ describe ReservationsController, type: :controller do
                 id: @reservation.id,
                 reservation:
                   FactoryGirl.attributes_for(:reservation,
-                                             start_date: Date.current,
-                                             due_date: Date.tomorrow),
+                                             start_date: Time.zone.today,
+                                             due_date: (Time.zone.today + 1.day)),
                 equipment_object: @new_object.id
           end
 
@@ -595,15 +593,15 @@ describe ReservationsController, type: :controller do
                 id: @reservation.id,
                 reservation:
                   FactoryGirl.attributes_for(:reservation,
-                                             start_date: Date.current,
-                                             due_date: Date.tomorrow),
+                                             start_date: Time.zone.today,
+                                             due_date: Time.zone.today + 1.day),
                 equipment_object: @old_object.id
             put :update,
                 id: @other_res.id,
                 reservation:
                   FactoryGirl.attributes_for(:reservation,
-                                             start_date: Date.current,
-                                             due_date: Date.tomorrow),
+                                             start_date: Time.zone.today,
+                                             due_date: Time.zone.today + 1.day),
                 equipment_object: @new_object.id
             @old_object.reload
             @new_object.reload
@@ -611,8 +609,8 @@ describe ReservationsController, type: :controller do
                 id: @reservation.id,
                 reservation:
                   FactoryGirl.attributes_for(:reservation,
-                                             start_date: Date.current,
-                                             due_date: Date.tomorrow),
+                                             start_date: Time.zone.today,
+                                             due_date: Time.zone.today + 1.day),
                 equipment_object: @new_object.id
           end
 
@@ -635,8 +633,8 @@ describe ReservationsController, type: :controller do
               id: @reservation.id,
               reservation:
                 FactoryGirl.attributes_for(:reservation,
-                                           start_date: Date.current,
-                                           due_date: Date.yesterday),
+                                           start_date: Time.zone.today,
+                                           due_date: Time.zone.today - 1.day),
               equipment_object: ''
         end
         include_examples 'cannot access page'

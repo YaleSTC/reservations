@@ -40,7 +40,7 @@ class EquipmentModelsController < ApplicationController
     @reservation_data =
       Reservation.active.for_eq_model(@equipment_model).collect do |r|
         if r.status == 'overdue'
-          end_date = Date.current + calendar_length
+          end_date = Time.zone.today + calendar_length
         else
           end_date = r.due_date
         end
@@ -53,7 +53,7 @@ class EquipmentModelsController < ApplicationController
       { start: b.start_date, end: b.end_date }
     end
 
-    @date = Time.current.to_date
+    @date = Time.zone.today
     @date_max = @date + calendar_length - 1.week
     @max = @equipment_model.equipment_objects.active.count
 

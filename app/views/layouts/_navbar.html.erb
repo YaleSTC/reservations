@@ -45,8 +45,8 @@
                   <% @current_reservations.each do |res| %>
                     <li>
                       <%= link_to "#{res.equipment_model.name}
-                                   (#{res.start_date.to_date.to_s(:long)} &ndash;
-                                   #{res.due_date.to_date.to_s(:long)})".html_safe, res, rel: 'popover',
+                                   (#{res.start_date.to_s(:long)} &ndash;
+                                   #{res.due_date.to_s(:long)})".html_safe, res, rel: 'popover',
                                    title: res.equipment_model.name, :"data-content" => markdown(res.equipment_model.description).truncate(100) %>
                     </li>
                   <% end %>

@@ -101,10 +101,10 @@ describe BlackoutsController, type: :controller do
       end
       context 'with conflicting reservation' do
         before do
-          @res = FactoryGirl.create(:valid_reservation, due_date: Date.tomorrow)
-          @attributes =
-            FactoryGirl.attributes_for(:blackout,
-                                       days: ["#{Date.tomorrow.wday}"])
+          @res = FactoryGirl.create(:valid_reservation,
+                                    due_date: Time.zone.today + 1.day)
+          @attributes = FactoryGirl.attributes_for(
+            :blackout, days: ["#{Time.zone.today + 1.day.wday}"])
           post :create_recurring, blackout: @attributes
         end
 
@@ -139,18 +139,19 @@ describe BlackoutsController, type: :controller do
       context 'with incorrect params' do
         before do
           @attributes = FactoryGirl.attributes_for(:blackout)
-          @attributes[:end_date] = Date.yesterday
+          @attributes[:end_date] = Time.zone.today - 1.day
           post :create, blackout: @attributes
         end
         it { is_expected.to render_template(:new) }
       end
       context 'with conflicting reservation' do
         before do
-          @res = FactoryGirl.create(:valid_reservation, due_date: Date.tomorrow)
+          @res = FactoryGirl.create(:valid_reservation,
+                                    due_date: Time.zone.today + 1.day)
           @attributes =
             FactoryGirl.attributes_for(:blackout,
-                                       start_date: Date.current,
-                                       end_date: Date.current + 2.days)
+                                       start_date: Time.zone.today,
+                                       end_date: Time.zone.today + 2.days)
           post :create, blackout: @attributes
         end
 

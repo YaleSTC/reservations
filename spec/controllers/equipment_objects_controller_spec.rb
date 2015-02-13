@@ -18,7 +18,7 @@ describe EquipmentObjectsController, type: :controller do
         let!(:obj_other_cat_active) { FactoryGirl.create(:equipment_object) }
         let!(:obj_other_cat_inactive) do
           FactoryGirl.create(:equipment_object,
-                             deleted_at: Date.current)
+                             deleted_at: Time.zone.today)
         end
         context 'with @equipment_model set' do
           it 'should populate an array of all active model-type equipment '\
@@ -26,7 +26,7 @@ describe EquipmentObjectsController, type: :controller do
             obj_same_cat_inactive =
               FactoryGirl.create(:equipment_object,
                                  equipment_model: object.equipment_model,
-                                 deleted_at: Date.current)
+                                 deleted_at: Time.zone.today)
             get :index, equipment_model_id: object.equipment_model
             expect(assigns(:equipment_objects).include?(object)).to be_truthy
             expect(assigns(:equipment_objects)
@@ -53,14 +53,14 @@ describe EquipmentObjectsController, type: :controller do
         let!(:obj_other_cat_active) { FactoryGirl.create(:equipment_object) }
         let!(:obj_other_cat_inactive) do
           FactoryGirl.create(:equipment_object,
-                             deleted_at: Date.current)
+                             deleted_at: Time.zone.today)
         end
         context 'with @equipment_model set' do
           it 'should populate an array of all model-type equipment objects' do
             obj_same_cat_inactive =
               FactoryGirl.create(:equipment_object,
                                  equipment_model: object.equipment_model,
-                                 deleted_at: Date.current)
+                                 deleted_at: Time.zone.today)
             get :index, equipment_model_id: object.equipment_model,
                         show_deleted: true
             expect(assigns(:equipment_objects).include?(object)).to be_truthy

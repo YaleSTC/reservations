@@ -5,7 +5,7 @@
 
 <% if !@check_in_set.empty? %>
   <% title "Check-In Receipt for #{@user.name}" %>
-  <h3>The following equipment has been checked in on <%= Date.current.to_s(:long) %> at <%= Time.current.strftime("%I:%M%p") %> by <%= current_user.name %>:</h3>
+  <h3>The following equipment has been checked in on <%= Time.zone.today.to_s(:long) %> at <%= Time.zone.now.strftime("%I:%M%p") %> by <%= current_user.name %>:</h3>
   <hr>
   <div class="row">
     <% @check_in_set.each do |reservation| %>
@@ -24,7 +24,7 @@
 
 <% elsif !@check_out_set.empty? %>
   <% title "Check-Out Receipt for #{@user.name}" %>
-  <h3>The following equipment has been checked out on <%= Date.current.to_s(:long) %> by <%= current_user.name %>:</h3>
+  <h3>The following equipment has been checked out on <%= Time.zone.today.to_s(:long) %> by <%= current_user.name %>:</h3>
   <hr>
   <div class="row">
     <% @check_out_set.each do |reservation| %>

@@ -66,8 +66,7 @@ class Cart
                                         equipment_model_id: id)
       end
     end
-    reservations # the start_date and due_date somehow become DateTimes...
-                 # ActiveRecord magic...
+    reservations
   end
 
   def reserve_all(user, res_notes = '', request = false) # rubocop:disable all
@@ -80,13 +79,13 @@ class Cart
     reservations.each do |r|
       errors = r.validate
       if request
-        notes = "### Requested on #{Time.current.to_s(:long)} by "\
+        notes = "### Requested on #{Time.zone.now.to_s(:long)} by "\
           "#{user.md_link}\n\n#### Notes:\n#{res_notes}"
         r.approval_status = 'requested'
         message << "Request for #{r.equipment_model.md_link} filed "\
           "successfully. #{errors.to_sentence}\n"
       else
-        notes = "### Reserved on #{Time.current.to_s(:long)} by "\
+        notes = "### Reserved on #{Time.zone.now.to_s(:long)} by "\
           "#{user.md_link}"
         notes += "\n\n#### Notes:\n#{res_notes}" unless res_notes.nil? ||
                                                         res_notes.empty?
@@ -111,7 +110,7 @@ class Cart
 
   # Returns the cart's duration
   def duration # in days
-    @due_date.to_date - @start_date.to_date + 1
+    @due_date - @start_date + 1
   end
 
   # Returns the reserver

@@ -84,7 +84,7 @@ describe Reservation, type: :model do
       expect(Reservation.all.first).to eq(reservation)
     end
     it 'can be updated' do
-      reservation.due_date = Date.tomorrow + 1
+      reservation.due_date = Time.zone.today + 2.days
       expect(reservation.save).to be_truthy
     end
     it 'passes custom validations' do
@@ -144,7 +144,7 @@ describe Reservation, type: :model do
       expect(Reservation.all.size).to eq(0)
     end
     it 'cannot be updated' do
-      reservation.start_date = Date.tomorrow
+      reservation.start_date = Time.zone.today + 1.day
       expect(reservation.save).to be_falsey
     end
     # it 'fails appropriate validations' do
@@ -188,7 +188,7 @@ describe Reservation, type: :model do
       expect(Reservation.all.size).to eq(0)
     end
     it 'cannot be updated' do
-      reservation.start_date = Date.tomorrow
+      reservation.start_date = Time.zone.today + 1.day
       expect(reservation.save).to be_falsey
     end
     it 'fails appropriate validations' do
@@ -202,7 +202,7 @@ describe Reservation, type: :model do
       expect(reservation.validate).to eq([])
     end
     it 'updates with fixed date' do
-      reservation.due_date = Date.tomorrow + 1.day
+      reservation.due_date = Time.zone.today + 2.days
       expect(reservation.save).to be_truthy
       expect(reservation).to be_valid
       expect(Reservation.all.size).to eq(1)
@@ -222,7 +222,7 @@ describe Reservation, type: :model do
       expect(Reservation.all.size).to eq(1)
     end
     it 'can be updated' do
-      reservation.start_date = Date.tomorrow
+      reservation.start_date = Time.zone.today + 1.day
       expect(reservation.save).to be_truthy
     end
     it 'fails appropriate validations' do
@@ -265,7 +265,7 @@ describe Reservation, type: :model do
       expect(Reservation.all.first).to eq(overdue)
     end
     it 'can be updated' do
-      reservation.start_date = Date.tomorrow
+      reservation.start_date = Time.zone.today + 1.day
       expect(reservation.save).to be_truthy
     end
     it 'fails appropriate validations' do
@@ -293,7 +293,7 @@ describe Reservation, type: :model do
     #   Reservation.all.size.should == 0
     # end
     # it 'cannot be updated' do #fails
-    #   reservation.start_date = Date.tomorrow
+    #   reservation.start_date = Time.zone.today + 1.day
     #   reservation.save.should be_falsey
     # end
     # it 'fails appropriate validations' do # fails
@@ -321,7 +321,7 @@ describe Reservation, type: :model do
       expect(Reservation.all.size).to eq(0)
     end
     it 'cannot be updated' do
-      reservation.start_date = Date.tomorrow
+      reservation.start_date = Time.zone.today + 1.day
       expect(reservation.save).to be_falsey
     end
     it 'fails appropriate validations' do
@@ -340,7 +340,7 @@ describe Reservation, type: :model do
       r = FactoryGirl.build(:valid_reservation)
       r.equipment_model.category.max_checkout_length = 1
       r.equipment_model.category.save
-      r.due_date = Date.tomorrow + 2
+      r.due_date = Time.zone.today + 3.days
       r
     end
 
@@ -350,7 +350,7 @@ describe Reservation, type: :model do
       expect(Reservation.all.size).to eq(1)
     end
     it 'can update' do
-      reservation.start_date = Date.tomorrow
+      reservation.start_date = Time.zone.today + 1.day
       expect(reservation.save).to be_truthy
     end
     it 'fails appropriate validations' do
@@ -386,7 +386,7 @@ describe Reservation, type: :model do
       expect(Reservation.all.size).to eq(2)
     end
     it 'can be updated' do
-      reservation.start_date = Date.tomorrow
+      reservation.start_date = Time.zone.today + 1.day
       expect(reservation.save).to be_truthy
     end
     it 'fails appropriate validations' do
@@ -422,7 +422,7 @@ describe Reservation, type: :model do
       expect(Reservation.all.size).to eq(2)
     end
     it 'can be updated' do
-      reservation.start_date = Date.tomorrow
+      reservation.start_date = Time.zone.today + 1.day
       expect(reservation.save).to be_truthy
     end
     it 'fails appropriate validations' do

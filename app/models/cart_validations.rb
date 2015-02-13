@@ -40,8 +40,7 @@ module CartValidations
     errors = []
     if Blackout.hard.for_date(start_date).count > 0
       errors << "#{Blackout.get_notices_for_date(start_date, :hard)} "\
-        '(a reservation cannot start on '\
-        "#{start_date.to_date.strftime('%m/%d')})"
+        "(a reservation cannot start on #{start_date.strftime('%m/%d')})"
     end
     errors
   end
@@ -52,8 +51,7 @@ module CartValidations
     errors = []
     if Blackout.hard.for_date(due_date).count > 0
       errors << "#{Blackout.get_notices_for_date(due_date, :hard)} "\
-        '(a reservation cannot end on '\
-        "#{due_date.to_date.strftime('%m/%d')})"
+        "(a reservation cannot end on #{due_date.strftime('%m/%d')})"
     end
     errors
   end

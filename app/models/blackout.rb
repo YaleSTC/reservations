@@ -20,7 +20,6 @@ class Blackout < ActiveRecord::Base
   def self.get_notices_for_date(date, type = :all)
     # get a string of all notices for a given date
     # default to all blackouts
-    date = date.to_date
     if type == :soft
       blackouts = Blackout.soft.for_date(date)
     elsif type == :hard

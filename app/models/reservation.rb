@@ -33,12 +33,9 @@ class Reservation < ActiveRecord::Base
     # a specific model id
     #
     # this code is used largely in validations because it uses 0 queries
-    # binding.pry
-    date = Time.zone.parse(date.to_s)
     count = 0
     source.each do |r|
-      next unless r.start_date <= date &&
-                  r.due_date >= date &&
+      next unless r.start_date <= date && r.due_date >= date &&
                   r.equipment_model_id == model_id
       count += 1
     end
@@ -46,11 +43,9 @@ class Reservation < ActiveRecord::Base
   end
 
   def self.number_for_category_on_date(date, category_id, reservations)
-    date = date.to_date
     count = 0
     reservations.each do |r|
-      next unless r.start_date.to_date <= date &&
-                  r.due_date.to_date >= date &&
+      next unless r.start_date <= date && r.due_date >= date &&
                   r.equipment_model.category_id == category_id
       count += 1
     end
@@ -75,8 +70,6 @@ class Reservation < ActiveRecord::Base
 
   def status # rubocop:disable CyclomaticComplexity, PerceivedComplexity
     return if due_date.nil?
-    # somehow it gets into this with due_date = nil... not sure how
-    # due_date = due_date.to_date
     if checked_out.nil?
       if approval_status == 'auto' || approval_status == 'approved'
         due_date >= Time.zone.today ? 'reserved' : 'missed'
@@ -94,7 +87,7 @@ class Reservation < ActiveRecord::Base
   end
 
   def duration
-    due_date.to_date - start_date.to_date + 1
+    due_date - start_date + 1
   end
 
   def time_checked_out
@@ -127,8 +120,6 @@ class Reservation < ActiveRecord::Base
     # determine the max renewal length for a given reservation
     # O(n) queries
 
-    # FIXME: this is broken too...
-    # due_date = due_date.to_date
     renew_extension = dup
     renew_extension.start_date = due_date + 1.day
     orig_due_date = due_date
@@ -155,7 +146,7 @@ class Reservation < ActiveRecord::Base
     max_renewal_times = equipment_model.maximum_renewal_times
 
     max_renewal_days = equipment_model.maximum_renewal_days_before_due
-    ((due_date.to_date - Time.zone.today).to_i < max_renewal_days) &&
+    ((due_date - Time.zone.today).to_i < max_renewal_days) &&
       (self.times_renewed < max_renewal_times) &&
       equipment_model.maximum_renewal_length > 0
   end
@@ -178,8 +169,8 @@ class Reservation < ActiveRecord::Base
     end
     self.due_date = find_renewal_date
     self.notes = "#{notes}" + "\n\n### Renewed on "\
-      "#{Time.current.to_s(:long)} by #{user.md_link}\n\nThe new due date "\
-      "is  #{due_date.to_date.to_s(:long)}."
+      "#{Time.zone.now.to_s(:long)} by #{user.md_link}\n\nThe new due date "\
+      "is  #{due_date.to_s(:long)}."
     self.times_renewed += 1
     return 'Unable to update reservation dates.' unless save
     nil
@@ -193,7 +184,7 @@ class Reservation < ActiveRecord::Base
     # Returns the unsaved, checked in reservation
 
     self.checkin_handler = checkin_handler
-    self.checked_in = Time.current
+    self.checked_in = Time.zone.now
 
     # gather all the procedure texts that were not
     # checked, ie not included in the procedures hash
@@ -208,9 +199,9 @@ class Reservation < ActiveRecord::Base
     # update equipment object notes
     equipment_object.make_reservation_notes('checked in', self,
                                             checkin_handler, new_notes,
-                                            Time.current)
+                                            checked_in)
 
-    if checked_in.to_date > due_date.to_date
+    if checked_in.to_date > due_date
       # equipment was overdue, send an email confirmati
       AdminMailer.overdue_checked_in_fine_admin(self).deliver
       UserMailer.overdue_checked_in_fine(self).deliver
@@ -226,15 +217,15 @@ class Reservation < ActiveRecord::Base
     # that reseration is checked out)
     # returns self
     if checked_in.nil?
-      self.checked_in = Time.current
-      self.checked_out = Time.current if checked_out.nil?
+      self.checked_in = Time.zone.now
+      self.checked_out = Time.zone.now if checked_out.nil?
       # archive equipment object if checked out
       if equipment_object
         equipment_object.make_reservation_notes('archived', self, archiver,
-                                                "#{note}", Time.current)
+                                                "#{note}", checked_in)
       end
       self.notes = notes.to_s + "\n\n### Archived on "\
-        "#{Time.current.to_s(:long)} by #{archiver.md_link}\n\n\n#### " \
+        "#{checked_in.to_s(:long)} by #{archiver.md_link}\n\n\n#### " \
         "Reason:\n#{note}\n\n#### The checkin and checkout dates may "\
         'reflect the archive date because the reservation was for a '\
         'nonexistent piece of equipment or otherwise problematic.'
@@ -250,7 +241,7 @@ class Reservation < ActiveRecord::Base
     # Returns the unsaved, checked out reservation
 
     self.checkout_handler = checkout_handler
-    self.checked_out = Time.current
+    self.checked_out = Time.zone.now
     self.equipment_object_id = eq_object
 
     incomplete_procedures = []
@@ -265,7 +256,7 @@ class Reservation < ActiveRecord::Base
     # update equipment object notes
     equipment_object.make_reservation_notes('checked out', self,
                                             checkout_handler, new_notes,
-                                            Time.current)
+                                            checked_out)
     self
   end
 
@@ -274,7 +265,6 @@ class Reservation < ActiveRecord::Base
     #
     # takes the current user, the new params from the controller that have
     # been updated w/ a new equipment object, and the new notes (if any)
-
     assign_attributes(new_params)
     changes = self.changes
     new_notes = '' unless new_notes
@@ -282,9 +272,9 @@ class Reservation < ActiveRecord::Base
       return self
     else
       # write notes header
-      header = "### Edited on #{Time.current.to_s(:long)} by "\
+      header = "### Edited on #{Time.zone.now.to_s(:long)} by "\
         "#{current_user.md_link}\n"
-      self.notes = notes ? notes + "\n" + header : header
+      self.notes = notes ? notes + "\n\n" + header : header
 
       # add notes if they exist
       self.notes += "\n\n#### Notes:\n#{new_notes}" unless new_notes.empty?
@@ -301,12 +291,12 @@ class Reservation < ActiveRecord::Base
             new_val = diff[1] ? User.find(diff[1]).md_link : 'nil'
           when 'start_date'
             name = 'Start Date'
-            old_val = diff[0].to_date.to_s(:long)
-            new_val = diff[1].to_date.to_s(:long)
+            old_val = diff[0].to_s(:long)
+            new_val = diff[1].to_s(:long)
           when 'due_date'
             name = 'Due Date'
-            old_val = diff[0].to_date.to_s(:long)
-            new_val = diff[1].to_date.to_s(:long)
+            old_val = diff[0].to_s(:long)
+            new_val = diff[1].to_s(:long)
           when 'equipment_object_id'
             name = 'Item'
             old_val = diff[0] ? EquipmentObject.find(diff[0]).md_link : 'nil'
@@ -332,9 +322,9 @@ class Reservation < ActiveRecord::Base
     # procedure_kind
 
     # write notes header
-    header = "### #{procedure_verb} on #{Time.current.to_s(:long)} by "\
+    header = "### #{procedure_verb} on #{Time.zone.now.to_s(:long)} by "\
       "#{current_user.md_link}\n"
-    self.notes = self.notes ? self.notes + "\n" + header : header
+    self.notes = self.notes ? self.notes + "\n\n" + header : header
 
     # If no new notes and no missed procedures, set e-mail flag to false and
     # return
