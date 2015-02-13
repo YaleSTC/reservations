@@ -102,7 +102,6 @@ module CartValidations
     # while simultaneously building a hash of category => quantity
     models.each do |model, quantity|
       max_models = model.maximum_per_user
-      binding.pry
 
       start_date.upto(due_date) do |d|
         next unless Reservation.number_for_model_on_date(d, model.id,

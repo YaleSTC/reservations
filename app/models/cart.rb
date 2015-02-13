@@ -76,7 +76,6 @@ class Cart
     # the equipment should be requested or reserved,
     # and what notes the reservations should be initialized with
     reservations = prepare_all
-    binding.pry
     message = []
     reservations.each do |r|
       errors = r.validate
