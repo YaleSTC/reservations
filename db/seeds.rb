@@ -115,7 +115,7 @@ def prompt_password(user)
   end
 end
 
-def time_rand(from = 0.0, to = Time.zone, length = 0, options = {})
+def time_rand(from = 0.0, to = Time.zone.now, length = 0, options = {})
   options[:passes_blackout_validations] = true
 
   range = to.to_f - from.to_f
@@ -282,7 +282,7 @@ def generate_reservation
     res = Reservation.new
     res.reserver_id = User.all.sample.id
     res.equipment_model = EquipmentModel.all.sample
-    res.start_date = time_rand(Time.zone, Time.zone + FUTURE_RANGE).to_date
+    res.start_date = time_rand(Time.zone.now, Time.zone.now + FUTURE_RANGE).to_date
 
     checkout_length = res.equipment_model.category.max_checkout_length
     res.due_date = time_rand(res.start_date, res.start_date.next_week,
