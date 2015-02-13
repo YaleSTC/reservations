@@ -34,6 +34,11 @@ module ReservationScopes
         where('checked_in IS NOT NULL and checked_out IS NOT NULL').recent
       }
       scope :checked_in, ->() { returned }
+
+      # TODO: the following two scopes are broken since the due date falls
+      # within the range of allowable return dates (since it's a Date). This
+      # will be fixed by using a :status column that will be changed over time
+      # (see #462)
       scope :returned_on_time, ->() { where('checked_in <= due_date').returned }
       scope :returned_overdue, ->() { where('due_date < checked_in').returned }
       scope :missed, lambda {
