@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150214002159) do
+ActiveRecord::Schema.define(version: 20150214013719) do
 
   create_table "announcements", force: true do |t|
     t.text     "message"
@@ -166,7 +166,7 @@ ActiveRecord::Schema.define(version: 20150214002159) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "equipment_model_id"
-    t.integer  "equipment_object_id"
+    t.integer  "equipment_item_id"
     t.text     "notes"
     t.boolean  "notes_unsent",        default: false
     t.integer  "times_renewed"
