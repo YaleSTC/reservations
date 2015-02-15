@@ -48,11 +48,11 @@ describe UserMailer, type: :mailer do
     end
     it_behaves_like 'valid user email'
   end
-  describe 'missed_reservation_deleted_notification' do
+  describe 'missed_reservation_notification' do
     before do
       @res = FactoryGirl.build(:missed_reservation, reserver: reserver)
       @res.save(validate: false)
-      @mail = UserMailer.missed_reservation_deleted_notification(@res).deliver
+      @mail = UserMailer.missed_reservation_notification(@res).deliver
     end
     it_behaves_like 'valid user email'
   end
@@ -71,6 +71,19 @@ describe UserMailer, type: :mailer do
       @mail = UserMailer.overdue_checked_in_fine(@res).deliver
     end
     it_behaves_like 'valid user email'
+  end
+  describe 'overdue_checked_in_fine with no fine' do
+    before do
+      @em = FactoryGirl.create(:equipment_model, late_fee: 0)
+      @res = FactoryGirl.build(:checked_in_reservation,
+                               reserver: reserver,
+                               equipment_model_id: @em.id)
+      @res.save(validate: false)
+      @mail = UserMailer.overdue_checked_in_fine(@res).deliver
+    end
+    it 'doesn\'t send an email' do
+      expect(ActionMailer::Base.deliveries.count).to eq(0)
+    end
   end
   describe 'reservation_confirmation' do
     before do

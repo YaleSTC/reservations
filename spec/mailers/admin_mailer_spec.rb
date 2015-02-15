@@ -53,4 +53,16 @@ describe AdminMailer, type: :mailer do
       expect(@mail.subject).to eq('[Reservations] Overdue equipment fine')
     end
   end
+  describe 'overdue_checked_in_fine_admin with no fine' do
+    before do
+      @em = FactoryGirl.create(:equipment_model, late_fee: 0)
+      @res = FactoryGirl.build(:checked_in_reservation,
+                               equipment_model_id: @em.id)
+      @res.save(validate: false)
+      @mail = AdminMailer.overdue_checked_in_fine_admin(@res).deliver
+    end
+    it 'doesn\'t send an email' do
+      expect(ActionMailer::Base.deliveries.count).to eq(0)
+    end
+  end
 end

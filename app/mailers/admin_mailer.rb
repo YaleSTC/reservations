@@ -13,6 +13,7 @@ class AdminMailer < ActionMailer::Base
   end
 
   def overdue_checked_in_fine_admin(overdue_checked_in)
+    return if overdue_checked_in.equipment_model.late_fee == 0
     @app_configs = AppConfig.first
     @overdue_checked_in = overdue_checked_in
     mail(to: @app_configs.admin_email,

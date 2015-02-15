@@ -22,12 +22,11 @@ class UserMailer < ActionMailer::Base
          subject: '[Reservations] Your equipment checkout receipt')
   end
 
-  def missed_reservation_deleted_notification(reservation)
+  def missed_reservation_notification(reservation)
     set_app_config
     @reservation = reservation
     mail(to: reservation.reserver.email,
-         subject: '[Reservations] Reservation Deleted (Missed Checkout '\
-           'Deadline)')
+         subject: '[Reservations] Reservation Missed')
   end
 
   def overdue_checkin_notification(reservation)
@@ -38,6 +37,7 @@ class UserMailer < ActionMailer::Base
   end
 
   def overdue_checked_in_fine(overdue_checked_in)
+    return if overdue_checked_in.equipment_model.late_fee == 0
     set_app_config
     @overdue_checked_in = overdue_checked_in
     mail(to: overdue_checked_in.reserver.email,
