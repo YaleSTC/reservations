@@ -56,7 +56,7 @@ module ReservationScopes
       scope :ends_on_days, lambda {
         |start_date, end_date|  where(due_date: start_date..end_date)
       }
-      scope :reserved_on_date, ->() { overlaps_with_date.finalized }
+      scope :reserved_on_date, ->(date) { overlaps_with_date(date).finalized }
       scope :for_eq_model, lambda {
         |eq_model| where(equipment_model_id: eq_model.id).finalized
       }
