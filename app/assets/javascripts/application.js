@@ -122,15 +122,18 @@ $(document).ready(function() {
 
   $('.associated_em_box img').popover({
     placement: 'bottom',
-    trigger: 'hover'
+    trigger: 'hover',
+    html: true
   });
   $("#my_reservations .dropdown-menu a").popover({
     placement: 'bottom',
-    trigger: 'hover'
+    trigger: 'hover',
+    html: true
   });
   $("#my_equipment .dropdown-menu a").popover({
     placement: 'bottom',
-    trigger: 'hover'
+    trigger: 'hover',
+    html: true
   });
 
   // fix sub nav on scroll
