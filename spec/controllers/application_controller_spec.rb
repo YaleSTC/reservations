@@ -180,7 +180,7 @@ describe TestController, type: :controller do
       allow(controller).to receive(:cart).and_return(session[:cart])
     end
     it 'changes cart.start_date to today if date is in the past' do
-      session[:cart].start_date = Date.yesterday
+      session[:cart].start_date = Time.zone.today - 1.day
       get :index
       expect(session[:cart].start_date).to eq(Time.zone.today)
     end

@@ -9,7 +9,7 @@ class AdminMailer < ActionMailer::Base
     @notes_reservations_in = notes_reservations_in
     mail(to: @app_configs.admin_email,
          subject: '[Reservations] Notes for '\
-           + (Date.yesterday.midnight).strftime('%m/%d/%y'))
+           + (Time.zone.today - 1.day).strftime('%m/%d/%y'))
   end
 
   def overdue_checked_in_fine_admin(overdue_checked_in)

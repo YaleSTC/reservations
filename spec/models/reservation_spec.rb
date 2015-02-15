@@ -179,7 +179,7 @@ describe Reservation, type: :model do
 
   context 'with past due date' do
     subject(:reservation) do
-      FactoryGirl.build(:valid_reservation, due_date: Date.yesterday)
+      FactoryGirl.build(:valid_reservation, due_date: Time.zone.today - 1.day)
     end
 
     it { is_expected.not_to be_valid }

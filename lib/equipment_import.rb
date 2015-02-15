@@ -101,7 +101,7 @@ module EquipmentImport
 
       # if new object is valid, save to database and add to array of success
       if object.valid?
-        object.notes = "#### Created at #{Time.current.to_s(:long)} via import"
+        object.notes = "#### Created at #{Time.zone.now.to_s(:long)} via import"
         object.save
         array_of_success << object
       # else, store to array of fail with error messages
