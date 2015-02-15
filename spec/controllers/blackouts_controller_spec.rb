@@ -104,7 +104,7 @@ describe BlackoutsController, type: :controller do
           @res = FactoryGirl.create(:valid_reservation,
                                     due_date: Time.zone.today + 1.day)
           @attributes = FactoryGirl.attributes_for(
-            :blackout, days: ["#{Time.zone.today + 1.day.wday}"])
+            :blackout, days: ["#{(Time.zone.today + 1.day).wday}"])
           post :create_recurring, blackout: @attributes
         end
 
