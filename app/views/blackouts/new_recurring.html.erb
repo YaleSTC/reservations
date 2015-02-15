@@ -1,9 +1,9 @@
-<% title "New Recurring Blackout" %>
+<% title 'New Recurring Blackout' %>
 
 <%= simple_form_for @blackout, url: {controller: 'blackouts', action: 'create_recurring' },
 html: { class: 'form-horizontal' }, wrapper: :horizontal_form do |f| %>
   <%= f.error_notification %>
-  <%= hidden_field_tag "recurring", true %>
+  <%= hidden_field_tag 'recurring', true %>
   <%= f.input :days, collection: days_of_the_week_short_with_index,
     value_method: :first, label_method: :last, as: :check_boxes,
     item_wrapper_class: 'inline', required: true %>
