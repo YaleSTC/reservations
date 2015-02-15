@@ -550,19 +550,19 @@ describe ReservationsController, type: :controller do
                                  equipment_model: @reservation.equipment_model)
             put :update,
                 id: @reservation.id,
-                reservation:
-                  FactoryGirl.attributes_for(:reservation,
-                                             start_date: Time.zone.today,
-                                             due_date: (Time.zone.today + 1.day)),
+                reservation: FactoryGirl
+                  .attributes_for(:reservation,
+                                  start_date: Time.zone.today,
+                                  due_date: (Time.zone.today + 1.day)),
                 equipment_object: @old_object.id
             @old_object.reload
             @new_object.reload
             put :update,
                 id: @reservation.id,
-                reservation:
-                  FactoryGirl.attributes_for(:reservation,
-                                             start_date: Time.zone.today,
-                                             due_date: (Time.zone.today + 1.day)),
+                reservation: FactoryGirl
+                  .attributes_for(:reservation,
+                                  start_date: Time.zone.today,
+                                  due_date: (Time.zone.today + 1.day)),
                 equipment_object: @new_object.id
           end
 
