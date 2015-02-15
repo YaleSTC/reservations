@@ -120,9 +120,18 @@ $(document).ready(function() {
   $(".not-qualified-icon-em").tooltip();
   $('[data-toggle="tooltip"]').tooltip();
 
-  $('.associated_em_box img').popover({ placement: 'bottom' });
-  $("#my_reservations .dropdown-menu a").popover({ placement: 'bottom' });
-  $("#my_equipment .dropdown-menu a").popover({ placement: 'bottom' });
+  $('.associated_em_box img').popover({
+    placement: 'bottom',
+    trigger: 'hover'
+  });
+  $("#my_reservations .dropdown-menu a").popover({
+    placement: 'bottom',
+    trigger: 'hover'
+  });
+  $("#my_equipment .dropdown-menu a").popover({
+    placement: 'bottom',
+    trigger: 'hover'
+  });
 
   // fix sub nav on scroll
   var $win = $(window)
