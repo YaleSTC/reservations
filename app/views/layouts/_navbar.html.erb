@@ -75,13 +75,13 @@
               <li class="dropdown-header">My Current Equipment</li>
               <% unless @current_equipment.blank? %>
                 <% @current_equipment.each do |res| %>
-                <li>
-                  <%= link_to "#{res.equipment_model.name} (#{res.equipment_object.name})", res.equipment_model,
-                  rel: 'popover', title: res.equipment_model.name, :"data-content" => markdown(res.equipment_model.description).truncate(100) %>
-                </li>
+                  <li>
+                    <%= link_to "#{res.equipment_model.name} (#{res.equipment_object.name})", res.equipment_model,
+                    rel: 'popover', title: res.equipment_model.name, :"data-content" => markdown(res.equipment_model.description).truncate(100) %>
+                  </li>
+                <% end %>
                 <li class="divider"></li>
                 <li><%= link_to "See More...", reservations_path %></li>
-                <% end %>
               <% else %>
                 <li class="disabled"><a href="#">(none)</a></li>
               <% end %>
