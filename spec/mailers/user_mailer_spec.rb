@@ -32,6 +32,13 @@ describe UserMailer, type: :mailer do
       @mail = UserMailer.checkin_receipt(@res).deliver
     end
     it_behaves_like 'valid user email'
+    it 'includes overdue information when overdue' do
+      @res.due_date = @res.checked_in.to_date - 1.day
+      @res.save(validate: false)
+      @mail = UserMailer.checkin_receipt(@res).deliver
+
+      expect(@mail.body).to include('late fee')
+    end
   end
   describe 'checkout_receipt' do
     before do
