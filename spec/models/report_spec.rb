@@ -78,8 +78,6 @@ describe Report, type: :model do
       @class = EquipmentModel
       DEFAULT_COLUMNS.each do |col|
         next if col[1] == :all
-        next if col[1] == :returned_on_time
-        next if col[1] == :returned_overdue
         a = FactoryGirl.build(:reservation, col[1])
         a.save(validate: false)
       end

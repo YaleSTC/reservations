@@ -47,6 +47,23 @@ FactoryGirl.define do
       checked_in { Date.current }
       checkin_handler
     end
+    
+    trait :returned_on_time do
+      start_date { Date.yesterday }
+      due_date { Date.current }
+      checked_out { Date.yesterday }
+      checked_in { Date.current }
+      checkin_handler
+    end
+
+    trait :returned_overdue do 
+      start_date { Date.yesterday - 1.day }
+      due_date { Date.current - 1.day }
+      checked_out { Date.yesterday - 1.day }
+      checked_in { Date.current }
+      checkin_handler
+    end
+
 
     trait :upcoming do
       start_date { Date.current }
