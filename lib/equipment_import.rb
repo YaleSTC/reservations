@@ -97,7 +97,7 @@ module EquipmentImport
 
       # create new category
       object = EquipmentObject.new(object_data)
-      object.update_attributes(object_data)
+      object.assign_attributes(object_data)
 
       # if new object is valid, save to database and add to array of success
       if object.valid?
@@ -155,8 +155,8 @@ module EquipmentImport
     # define accepted keys and key error
     # NOTE: this must match the parameters in the database / model!!
     accepted_keys = [:name, :max_per_user, :max_checkout_length,
-                     :max_renewal_times, :max_renewal_length, :sort_order,
-                     :renewal_days_before_due]
+                     :max_renewal_times, :max_renewal_length,
+                     :renewal_days_before_due, :sort_order]
     key_error = 'Unable to import category CSV file. Please ensure that the '\
       'first line of the file exactly matches the sample input (name, '\
       'max_per_user, etc.) Note that headers are case sensitive and must be '\
