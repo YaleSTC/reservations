@@ -260,7 +260,7 @@ class Reservation < ActiveRecord::Base
     self
   end
 
-  def update(current_user, new_params, new_notes) # rubocop:disable all
+  def update(current_user, new_params) # rubocop:disable all
     # updates a reservation and records changes in the notes
     #
     # takes the current user, the new params from the controller that have
@@ -268,17 +268,13 @@ class Reservation < ActiveRecord::Base
 
     assign_attributes(new_params)
     changes = self.changes
-    new_notes = '' unless new_notes
-    if new_notes.empty? && changes.empty?
+    if changes.empty?
       return self
     else
       # write notes header
       header = "### Edited on #{Time.current.to_s(:long)} by "\
         "#{current_user.md_link}\n"
       self.notes = notes ? notes + "\n" + header : header
-
-      # add notes if they exist
-      self.notes += "\n\n#### Notes:\n#{new_notes}" unless new_notes.empty?
 
       # record changes
       # rubocop:disable BlockNesting
@@ -310,6 +306,14 @@ class Reservation < ActiveRecord::Base
       # rubocop:enable BlockNesting
 
       self.notes = self.notes.strip
+      self
+    end
+  end
+
+  def add_notes(current_user, contents)
+    if !contents.empty?
+      new_notes = "### #{current_user.md_link} made a note on #{Time.current.to_s(:long)}:\n\n#{contents}"
+      self.notes += "\n\n" + new_notes.strip
       self
     end
   end

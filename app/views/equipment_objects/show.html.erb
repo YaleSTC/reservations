@@ -36,9 +36,6 @@
     :method => :put do |f| %>
       <%= f.error_notification %>
 
-      
-      
-      <!--<div class='notes-container'><%= f.input :notes, label: false, class: 'span4' %></div>-->
       <div class='notes-container'><%= text_area_tag :new_notes, "", rows: 5, class: 'span4' %></div>
       <%= f.submit 'Add note', class: 'btn' %>
     <% end %>

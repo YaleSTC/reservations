@@ -209,7 +209,7 @@ class ReservationsController < ApplicationController
     end
 
     # save changes to database
-    @reservation.update(current_user, res, params[:new_notes])
+    @reservation.update(current_user, res)
     if @reservation.save
       # code for switching equipment objects
       unless params[:equipment_object].blank?
@@ -236,6 +236,16 @@ class ReservationsController < ApplicationController
         "#{@reservation.errors.full_messages.to_sentence}"
       redirect_to edit_reservation_path(@reservation)
     end
+  end
+
+  def note
+    @reservation.add_notes(current_user, params[:new_notes])
+    if @reservation.save
+      flash[:notice] = 'Successfully added note to equipment object.'
+    else
+      flash[:danger] = 'Failed to add note to equipment object.'
+    end
+    redirect_to @reservation
   end
 
   def checkout # rubocop:disable all
