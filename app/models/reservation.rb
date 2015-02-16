@@ -31,23 +31,18 @@ class Reservation < ActiveRecord::Base
     # count the number of reservations that overlaps a date within
     # a given array of source reservations and that matches
     # a specific model id
-    #
-    # this code is used largely in validations because it uses 0 queries
-    count = 0
-    source.each do |r|
-      if r.start_date.to_date <= date && r.due_date.to_date >= date &&
-         r.equipment_model_id == model_id
-        count += 1
-      end
-    end
-    count
+    number_for(date, model_id, source, :equipment_model_id)
   end
 
   def self.number_for_category_on_date(date, category_id, reservations)
+    number_for(date, category_id, reservations, :category_id)
+  end
+
+  def self.number_for(date, value, source, property)
     count = 0
-    reservations.each do |r|
+    source.each do |r|
       if r.start_date.to_date <= date && r.due_date.to_date >= date &&
-         r.equipment_model.category_id == category_id
+         r.send(property) == value
         count += 1
       end
     end
