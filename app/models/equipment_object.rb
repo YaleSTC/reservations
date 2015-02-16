@@ -73,7 +73,7 @@ class EquipmentObject < ActiveRecord::Base
       "#{Time.current.to_s(:long)}\n\n" + notes)
   end
 
-  def update(current_user, new_params)
+  def update(current_user, new_params) # rubocop:disable all
     assign_attributes(new_params)
     changes = self.changes
     if changes.empty?
