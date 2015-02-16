@@ -100,13 +100,13 @@
       <%= f.error :photo_file_size %>
     <% end %>
     <% unless @equipment_model.photo_file_name.nil? %>
-      <div class="control-group">
-        <div class="controls">
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-7">
 
           <%= image_tag @equipment_model.photo.url(:thumbnail) %>
-          <%= label_tag 'clear_photo' do %>
-            <%= check_box_tag 'clear_photo', nil, false %>
-            <%= 'Delete current photo?' %>
+          <%= label_tag :clear_photo do %>
+            <%= check_box_tag :clear_photo, nil, false %>
+            Delete current photo?
           <% end %>
         </div>
       </div>
@@ -120,22 +120,24 @@
       <%= f.error :documentation_file_size %>
     <% end %>
     <% unless @equipment_model.documentation_file_name.nil? %>
-      <div class='control-group'>
-        <div class="controls">
-
-          <p>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-7">
+          <% if @equipment_model.documentation.exists? %>
             <h4>
-              <%= (link_to @equipment_model.documentation_file_name, @equipment_model.documentation.url, target: "_blank") if @equipment_model.documentation.exists? %>
+              <%= link_to @equipment_model.documentation_file_name, @equipment_model.documentation.url, target: '_blank' %>
             </h4>
-          </p>
-          <%= label_tag 'clear_documentation' do %>
-            <%= check_box_tag 'clear_documentation', nil, false %>
-            <%= 'Delete current documentation?' %>
+          <% end %>
+          <%= label_tag :clear_documentation do %>
+            <%= check_box_tag :clear_documentation, nil, false %>
+            Delete current documentation?
           <% end %>
         </div>
       </div>
     <% end %>
   </fieldset>
-
-  <%= f.button :submit, cancel: equipment_models_path %>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <%= f.button :submit, cancel: equipment_models_path %>
+    </div>
+  </div>
 <% end %>

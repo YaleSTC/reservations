@@ -17,5 +17,10 @@
   </div>
 
   <%= f.input :notice, hint: 'This message will be displayed to users if they attempt to make a reservation on a blackout date' %>
-  <%= f.button :submit, cancel: blackouts_path %>
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <%= f.button :submit, cancel: blackouts_path %>
+    </div>
+  </div>
 <% end %>

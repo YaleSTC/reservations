@@ -21,6 +21,9 @@
     #{render :partial => 'shared/markdown_button'}".html_safe %>
 
   <hr>
-
-  <%= f.button :submit, cancel: announcements_path %>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <%= f.button :submit, cancel: announcements_path %>
+    </div>
+  </div>
 <% end %>

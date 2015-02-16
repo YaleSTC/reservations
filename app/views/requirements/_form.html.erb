@@ -7,6 +7,9 @@
   <%= f.input :contact_name %>
   <%= f.input :contact_info %>
   <%= f.input :notes %>
-
-  <%= f.button :submit, cancel: requirements_path %>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <%= f.button :submit, cancel: requirements_path %>
+    </div>
+  </div>
 <% end %>

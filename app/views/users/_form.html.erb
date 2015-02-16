@@ -40,11 +40,14 @@
     <%= f.association :requirements, collection: Requirement.all.map{|req| [req.description,req.id]}, label: 'Requirements user has satisfied' %>
     <%= f.input :role, collection: (can? :appoint, :superuser) ? ['normal', 'checkout', 'admin', 'superuser', 'banned'] : ['normal', 'checkout', 'admin', 'banned'], placeholder: 'normal' %>
   <% end %>
-
-  <% if @user %>
-    <%= f.button :submit, cancel: @user %>
-  <% else %>
-    <%= f.button :submit, cancel: root_path %>
-  <% end %>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <% if @user %>
+        <%= f.button :submit, cancel: @user %>
+      <% else %>
+        <%= f.button :submit, cancel: root_path %>
+      <% end %>
+    </div>
+  </div>
 
 <% end %>

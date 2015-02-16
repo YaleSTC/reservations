@@ -9,6 +9,9 @@
   <%= f.input :subject %>
   <%= f.input :body, as: :text, input_html: { class: 'form-control' } %>
 
-  <%= f.button :submit, 'Send Message' %>
-
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <%= f.button :submit, 'Send Message' %>
+    </div>
+  </div>
 <% end %>

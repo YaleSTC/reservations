@@ -40,7 +40,7 @@
     </ul>
   </p>
 
-  <div class = "form-group text<%= ' error' if @notes_required %>">
+  <div class="form-group text<%= ' error' if @notes_required %>">
     <%= f.label :notes, "#{@errors.blank? ? 'Optional notes' : 'Justification for error override'} for this reservation:" %>
     <%= f.input_field :notes, class: 'form-control', rows: 5 %>
   </div>

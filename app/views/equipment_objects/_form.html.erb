@@ -1,7 +1,11 @@
-<%= simple_form_for @equipment_object, :html => { :class => "form-horizontal" } do |f| %>
+<%= simple_form_for @equipment_object, html: { class: 'form-horizontal' } do |f| %>
   <%= f.error_notification %>
   <%= f.association :equipment_model, wrapper: :horizontal_select2, placeholder: 'Please select an equipment model...' %>
-  <%=f.input :name%>
-  <%=f.input :serial%>
-  <%= f.button :submit, :cancel => equipment_objects_path %>
+  <%= f.input :name %>
+  <%= f.input :serial %>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <%= f.button :submit, cancel: equipment_objects_path %>
+    </div>
+  </div>
 <% end %>
