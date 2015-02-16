@@ -34,13 +34,12 @@
   <div class="well">
     <%= markdown(@request_text) %>
   </div>
-  <div class = "control-group text <%= 'error' if @notes_required %>">
+  <div class="form-group text <%= 'error' if @notes_required %>">
     <%= f.label "Enter your comments here:" %>
-    <%= f.input_field :notes, class: 'span6', rows: 5 %>
+    <%= f.input_field :notes, class: 'form-control', rows: 5 %>
   </div>
-
-  <div class="form-actions">
+  <div class="form-group">
     <%= f.button :submit, "Submit Request", data: { confirm: "Are you sure? This request is not finalized and will be subject to approval by an administrator. It will not be available for checkout until and unless approved, and the request may be denied for any reason at the sole discretion of the administrator." } %>
-    <%= link_to "Return to Catalog", catalog_path, class: 'btn' %>
+    <%= link_to "Return to Catalog", catalog_path, class: 'btn btn-default' %>
   </div>
 <% end %>

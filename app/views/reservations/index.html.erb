@@ -1,12 +1,11 @@
-<% title ((can? :manage, Reservation) ? "" : "My ")+"Reservations" %>
+<% title ((can? :manage, Reservation) ? "" : "My ") + "Reservations" %>
 
 <div id="date_range" class="row">
-  <div class="span3">
+  <div class="col-md-3">
     <%= render partial: "index_nav" %>
     <%= render partial: "date_filter" %>
   </div>
-  <div class="span9">
+  <div class="col-md-9">
     <%= render partial: "reservations_list", locals: {reservations_set: @reservations_set} %>
   </div>
 </div>
-

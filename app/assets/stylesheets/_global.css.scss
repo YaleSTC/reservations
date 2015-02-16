@@ -13,7 +13,7 @@
   margin-left: 0px;
 }
 
-.well { background-color: darken(desaturate($bodyBackground, 10%), 3%); }
+.well { background-color: darken(desaturate($body-bg, 10%), 3%); }
 
 // Make labels semi-bold
 // =============================================================================
@@ -26,13 +26,6 @@ label {
   }
 }
 
-// Form actions background change
-
-.form-actions {
-  background-color: darken(desaturate($bodyBackground, 10%), 6%);
-  border-top: 1px solid darken(desaturate($bodyBackground, 10%), 15%);
-}
-
 // Change alert margins to account for body padding
 // =============================================================================
 .alert {
@@ -42,7 +35,7 @@ label {
 
 // Make all view-all buttons float to the right
 // =============================================================================
-.form-actions .view_all { float: right; }
+.view_all { float: right; }
 
 // Fix for popovers to display over dropdowns
 // =============================================================================
@@ -51,7 +44,7 @@ label {
 // Make background color for hovering on nav links relative to body background
 // =============================================================================
 .nav > li > a:hover {
-  background-color: darken(desaturate($bodyBackground, 10%), 7%);
+  background-color: darken(desaturate($body-bg, 10%), 7%);
 }
 
 // List styles
@@ -59,7 +52,7 @@ label {
 
 // Ordered list
 // ------------
-$rectangle-list-li-background: darken($bodyBackground, 10%);
+$rectangle-list-li-background: darken($body-bg, 10%);
 
 ol.rectangle-list {
   counter-reset: li; // Initiate a counter
@@ -78,9 +71,9 @@ ol.rectangle-list {
     display: block;
     padding: .4em .4em .4em .8em;
     *padding: .4em;
-    margin: .6em 0 .5em .7em;
+    margin: .6em 0 .5em 2.5em;
     background: $rectangle-list-li-background;
-    @include border-radius(3px);
+    border-radius: 3px;
     @include transition(background .3s ease-out);
 
     &:hover {
@@ -88,7 +81,7 @@ ol.rectangle-list {
 
       &:after {
         left: -.5em;
-        border-left-color: lighten($linkColor, 18%);
+        border-left-color: lighten($link-color, 18%);
       }
     }
 
@@ -99,13 +92,13 @@ ol.rectangle-list {
       left: -2.5em;
       top: 50%;
       margin-top: -1em;
-      background: lighten($linkColor, 18%);
+      background: lighten($link-color, 18%);
       height: 2em;
       width: 2em;
       line-height: 2em;
       text-align: center;
       font-weight: bold;
-      @include border-radius(3px);
+      border-radius: 3px;
       color: black;
     }
 
@@ -141,7 +134,7 @@ ul.rounded-list {
     *padding: .4em;
     margin: .5em 0;
     background: $rectangle-list-li-background;
-    @include border-radius(.3em);
+    border-radius: .3em;
     @include transition(all .3s ease-out);
 
     &:hover {
@@ -158,14 +151,14 @@ ul.rounded-list {
       left: -1.3em;
       top: 50%;
       margin-top: -1.3em;
-      background: lighten($linkColor, 18%);
-      height: 2em;
-      width: 2em;
+      background: lighten($link-color, 18%);
+      height: 2.5em;
+      width: 2.5em;
       line-height: 2em;
       border: .3em solid #fff;
       text-align: center;
       font-weight: bold;
-      @include border-radius(2em);
+      border-radius: 2em;
       @include transition(all .3s ease-out);
     }
   }
@@ -218,6 +211,43 @@ td > a, td > div.dropdown {
   padding: 10px;
   margin-top: 5px;
   margin-bottom: 5px;
-  background-color: darken($bodyBackground, 5%);
+  background-color: darken($body-bg, 5%);
   border-radius: 5px;
+}
+
+// Underline Reveal
+// From https://github.com/IanLunn/Hover/blob/master/css/hover.css#L2652-L2686
+.hvr-underline-reveal {
+  display: inline-block;
+  vertical-align: middle;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+  overflow: hidden;
+}
+.hvr-underline-reveal:before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: lighten(rgba($right-1-color, 0.9), 25%);
+  height: 4px;
+  -webkit-transform: translateY(4px);
+  transform: translateY(4px);
+  -webkit-transition-property: transform;
+  transition-property: transform;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-timing-function: ease-out;
+  transition-timing-function: ease-out;
+}
+.hvr-underline-reveal:hover:before, .hvr-underline-reveal:focus:before, .hvr-underline-reveal:active:before {
+  -webkit-transform: translateY(0);
+  transform: translateY(0);
 }

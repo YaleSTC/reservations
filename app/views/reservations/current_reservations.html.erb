@@ -31,11 +31,10 @@
   <% end %>
 <% end %>
 
-<div class="form-actions">
-  <%= link_to "Print this page", "#", onclick: "print();", class: 'btn' %>
-  <%# if (@reservation.status == "checked out") or (@reservation.status == "overdue") %>
-    <%#= link_to "Email checkout receipt", {:controller => :reservations, :action => "checkout_email", :id => @reservation}, :method => "get", :class => 'btn' %>
-  <%# elsif @reservation.status.include?("returned") %>
-    <%#= link_to "Email return receipt", {:controller => :reservations, :action => "checkin_email", :id => @reservation}, :method => "get", :class => 'btn' %>
-  <%# end %>
-</div>
+<hr>
+<%= link_to "Print this page", "#", onclick: "print();", class: 'btn btn-default' %>
+<%# if (@reservation.status == "checked out") or (@reservation.status == "overdue") %>
+  <%#= link_to "Email checkout receipt", {:controller => :reservations, :action => "checkout_email", :id => @reservation}, :method => "get", :class => 'btn btn-default' %>
+<%# elsif @reservation.status.include?("returned") %>
+  <%#= link_to "Email return receipt", {:controller => :reservations, :action => "checkin_email", :id => @reservation}, :method => "get", :class => 'btn btn-default' %>
+<%# end %>

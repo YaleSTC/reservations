@@ -1,9 +1,6 @@
 <% title "Application Settings" %>
-<h3>You are currently running Reservations <%= APP_VERSION %>.</h3>
+
+<p class="lead">You are currently running Reservations <%= APP_VERSION %>.</p>
 <hr />
 
-<%= simple_form_for @app_config, :html => { multipart: true, :class => "form-horizontal" } do |f| %>
-
-  <%= render :partial => 'form', :locals => {:f => f} %>
-
-<% end %>
+<%= render partial: 'form' %>

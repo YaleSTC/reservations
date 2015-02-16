@@ -2,13 +2,13 @@
 
 <% unless @category_results.empty? %>
   <div class="row">
-    <div class="span9">
+    <div class="col-md-9">
       <h2>Category Results</h2>
     </div>
   </div>
   <div class="row">
     <% @category_results.each do |category| %>
-      <div class="span3">
+      <div class="col-md-3">
         <div class="well">
           <h3 class="catalog">
             <%# print category name %>
@@ -26,23 +26,23 @@
   <% unless @category_results.empty? %>
 
   <div class="row">
-    <div class="span9">
+    <div class="col-md-9">
       <h2>Equipment Model Results</h2>
     </div>
   </div>
   <% end %>
-  <ul class="thumbnails">
+  <div class="thumbnails row">
     <% @equipment_model_results.each do |equipment_model| %>
-      <li class="span3">
-        <%= render :partial => 'equipment_model_div', :locals => { :equipment_model => equipment_model, availability_hash: @availability_hash, available_string: @available_string } %>
-      </li>
+      <div class="col-md-4">
+        <%= render partial: 'equipment_model_div', locals: { equipment_model: equipment_model, availability_hash: @availability_hash, available_string: @available_string } %>
+      </div>
     <% end %>
-  </ul>
+  </div>
 <% end %>
 
 <% unless @equipment_object_results.empty? %>
   <div class="row">
-    <div class="span9">
+    <div class="col-md-9">
       <h2>Equipment Item Results</h2>
     </div>
   </div>
@@ -50,7 +50,7 @@
   <div class="row">
     <% @equipment_object_results.each do |equipment_object| %>
 
-    <div class="span4">
+    <div class="col-md-4">
       <div class="well">
         <p>
           <strong>Model:</strong>

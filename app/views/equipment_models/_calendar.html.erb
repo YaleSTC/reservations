@@ -1,28 +1,29 @@
-  <h3>Availability</h3>
-  <div id="reservation-calendar">
-    <%= content_tag "div", id: "res-data", data:{url:@reservation_data, blackouts:@blackouts, today:@date.to_s, max:@max, date_max: @date_max.to_s} do %>
+<h4>Availability</h4>
+
+<div id="reservation-calendar">
+  <%= content_tag "div", id: "res-data", data:{url:@reservation_data, blackouts:@blackouts, today:@date.to_s, max:@max, date_max: @date_max.to_s} do %>
+  <% end %>
+  <div class="month"><h5></h5></div>
+
+  <ul id="calendar-ul">
+    <li class = "calendar_cell" id ="<%= cart.start_date.to_date %>">
+    <% for d in 0...6 %>
+      <div class="head"><strong></strong><i></i></div>
+      <div class="num"><h2></h2></div>
+      </li>
+      <li class="calendar_cell">
     <% end %>
-    <div class = "month"><h4></h4></div>
+    <div class="head"><strong></strong><i></i></div>
+      <div class="num"><h2></h2></div>
+    </li>
+  </ul>
 
-    <ul id="calendar-ul">
-      <li class = "calendar_cell" id ="<%= cart.start_date.to_date %>">
-        <% for d in 0...6 %>
-          <div class = "head"><strong></strong><i></i></div>
-        <div class = "num"><h2></h2></div>
-      </li>
-      <li class = "calendar_cell">
-      <% end %>
-      <div class = "head"><strong></strong><i></i></div>
-        <div class = "num"><h2></h2></div>
-      </li>
-    </ul>
-
-    <div class = "controls c-left">
-      <i class="fa control fa-angle-double-left fa-2x" change="-7" title="Move back a week"></i>
-      <i class="fa control lite fa-angle-left fa-2x" change="-1" title="Move back a day"></i>
-    </div>
-    <div class = "controls c-right">
-      <i class="fa control lite fa-angle-right fa-2x" change="1" title="Move forward a day"></i>
-      <i class="fa control fa-angle-double-right fa-2x" change="7" title="Move forward a week"></i>
-    </div>
+  <div class="controls c-left">
+    <i class="fa control fa-angle-double-left fa-2x" change="-7" title="Move back a week"></i>
+    <i class="fa control lite fa-angle-left fa-2x" change="-1" title="Move back a day"></i>
+  </div>
+  <div class="controls c-right">
+    <i class="fa control lite fa-angle-right fa-2x" change="1" title="Move forward a day"></i>
+    <i class="fa control fa-angle-double-right fa-2x" change="7" title="Move forward a week"></i>
+  </div>
 </div>

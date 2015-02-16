@@ -1,13 +1,13 @@
 .thumbnail {
   height: 420px;
   position: relative;
-  line-height: $baseLineHeight;
+  line-height: $line-height-base;
   @include box-shadow(#{inset 0px 0px 30px rgba(0,0,0,.1), 0 0 0 rgba(0,0,0,0)});
   @include transition(all .15s ease-out);
 
   &:hover {
     @include box-shadow(#{inset 0 0 0 rgba(0,0,0,0), 0px 0px 14px rgba(0,0,0,.3)});
-    background: lighten($bodyBackground, 10%);
+    background: lighten($body-bg, 10%);
   }
 
   > a > img {
@@ -24,13 +24,13 @@
 .add_to_cart_box { @extend .caption; }
 
 .equipment_title {
-	padding: 9px 9px 0px 9px;
-	height: $h3-line-height;
+  padding: 9px 9px 0px 9px;
+  height: $h3-line-height;
 }
 
 .special-hr {
-	margin-top: 4px;
-	margin-bottom: 10px;
+  margin-top: 4px;
+  margin-bottom: 10px;
 }
 
 .model_availability {
@@ -41,26 +41,28 @@
 .caption_cat { padding: 0px 9px 0px 9px; }
 
 a.not-qualified-icon {
-	position: absolute;
-	bottom: 13px;
-	left: 110px;
-	font-size: $baseFontSize * 2;
-	color: $btnWarningBackgroundHighlight;
+  float: right;
+  font-size: $font-size-base * 2;
+  color: $btn-warning-bg;
   @include warning-icon-drop-shadow;
+  // Very brittle: FIXME in the future
+  right: 13px;
+  bottom: 8px;
+  position: absolute;
 
-	&:hover, &:active {
-		text-decoration: none;
-		color: $btnWarningBackground;
-	}
+  &:hover, &:active {
+    text-decoration: none;
+    color: darken($btn-warning-bg, 10%);
+  }
 }
 
 .pagination {
-	float: left;
+  float: left;
 }
 
 #items_per_form {
-	position: relative;
-	top: 18px;
+  position: relative;
+  top: 18px;
 }
 
 // Will need to be changed for responsive
