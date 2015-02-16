@@ -1,15 +1,15 @@
 <%= simple_form_for @user,
-    url: { controller: 'users', action: 'quick_create' },
-    html: { class: "form-vertical" }, remote: true,
-    wrapper: :vertical_form do |f| %>
-<%= f.error_notification %>
+                    url: { controller: 'users', action: 'quick_create' },
+                    html: { class: 'form-vertical' }, remote: true,
+                    wrapper: :vertical_form do |f| %>
+  <%= f.error_notification %>
 
-<%= f.input :username, as: :hidden %>
-<%= f.input :first_name, readonly: true %>
-<%= f.input :last_name, readonly: true %>
-<%= f.input :phone, hint: "Format like (555) 555-5555" %>
-<%= f.input :email %>
-<%= f.input :affiliation %>
+  <%= f.input :username, as: :hidden %>
+  <%= f.input :first_name, readonly: true %>
+  <%= f.input :last_name, readonly: true %>
+  <%= f.input :phone, hint: 'Format like (555) 555-5555' %>
+  <%= f.input :email %>
+  <%= f.input :affiliation %>
 
-<%= f.button :submit, cancel: root_path %>
+  <%= f.button :submit, cancel: root_path %>
 <% end %>
