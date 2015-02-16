@@ -21,7 +21,7 @@ RES_COLUMNS = [['Reserver', :all, :name, :reserver],
 describe ReportsController, type: :controller do
   context 'with admin user' do
     before do
-      @app_config = FactoryGirl.create(:app_config)
+      @app_config = FactoryGirl.create(:app_config) if AppConfig.first.nil?
 
       sign_in FactoryGirl.create(:admin)
     end
@@ -42,13 +42,13 @@ describe ReportsController, type: :controller do
         FactoryGirl.create(:equipment_model)
       end
       before do
-        get :subreport, class: 'equipment_model', id: 1
+        get :subreport, class: 'equipment_model', id: EquipmentModel.first.id
       end
       it { is_expected.to render_template(:subreport) }
       it 'builds the proper subreports' do
         reservations = Reservation.starts_on_days(assigns(:start_date),
                                                   assigns(:end_date))
-                       .where(equipment_model_id: 1)
+                       .where(equipment_model_id: EquipmentModel.first.id)
         expect(Report).to receive(:build_new).with(:equipment_model_id,
                                                    reservations, MODEL_COLUMNS)
         expect(Report).to receive(:build_new).with(:equipment_object_id,
@@ -57,7 +57,7 @@ describe ReportsController, type: :controller do
                                                    reservations, MODEL_COLUMNS)
         expect(Report).to receive(:build_new).with(:id,
                                                    reservations, RES_COLUMNS)
-        get :subreport, class: 'equipment_model', id: 1
+        get :subreport, class: 'equipment_model', id: EquipmentModel.first.id
       end
     end
   end
