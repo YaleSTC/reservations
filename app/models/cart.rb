@@ -22,10 +22,10 @@ class Cart
   def get_items # rubocop:disable AccessorMethodName
     # Used in cart_validations
     # Return items where the key is the full equipment model object
-    # uses 1 database call and eager loads the categories
+    # uses 1 database call and eager loads the requirements
     full_hash = {}
     EquipmentModel
-      .includes(:category, :requirements).find(items.keys).each do |em|
+      .includes(:requirements).find(items.keys).each do |em|
       full_hash[em] = items[em.id]
     end
     full_hash

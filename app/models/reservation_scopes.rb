@@ -87,6 +87,10 @@ module ReservationScopes
         |date| where('start_date <= ? and due_date >= ?', date, date)
       }
       scope :has_notes, ->() { where.not(notes: nil) }
+      scope :with_categories, lambda {
+        joins(:equipment_model)
+          .select('reservations.*, equipment_models.category_id as category_id')
+      }
     end
   end
 end

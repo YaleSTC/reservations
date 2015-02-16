@@ -1,50 +1,58 @@
 <div class="thumbnail">
   <%= link_to equipment_model do %>
-    <% image_tag (equipment_model.photo.exists? ? equipment_model.photo.url(:thumbnail) : "no-image.gif") %>
+    <% image_tag (equipment_model.photo.exists? ? equipment_model.photo.url(:thumbnail) : 'no-image.gif') %>
   <% end %>
-  <h3 class="equipment_title">
+  <h4 class="equipment_title">
     <%= link_to equipment_model.name, equipment_model, class: 'equipment_title_link', rel: 'tooltip', title: equipment_model.name %>
-  </h3>
-  <div class="caption_cat">
-    <hr class ="special-hr"/>
-    <span class="giant-numbers span1" id="availability_<%= equipment_model.id %>">
-      <%= availability_hash[equipment_model.id] %>
-    </span>
-    <p class="model_availability">
+  </h4>
+
+  <hr class="special-hr"/>
+    <div class="col-md-2">
+      <span class="giant-numbers" id="availability_<%= equipment_model.id %>">
+        <%= availability_hash[equipment_model.id] %>
+      </span>
+    </div>
+
+    <p class="model_availability col-md-10">
       <%= available_string %>
     </p>
-    <hr class ="special-hr"/>
+
+  <hr class="special-hr"/>
+  <div class="caption_cat">
     <p class="equipment_descr">
       <%= markdown_to_plain_text(equipment_model.description) %><br/>
-      <%= link_to "More Info", equipment_model, class: 'more_info' %>
+      <%= link_to 'More Info', equipment_model, class: 'more_info' %>
     </p>
   </div>
 
-  <div class = "add_to_cart_box" id="add_to_cart_<%= equipment_model.id %>">
+  <div class="add_to_cart_box" id="add_to_cart_<%= equipment_model.id %>">
     <% @restricted = equipment_model.model_restricted?(cart.reserver_id) %>
     <% if @restricted %>
-      <%= button_tag "Add to Cart", class: "btn disabled add_to_cart_disabled"%>
-      <%= link_to "#qualifications_modal", class: 'not-qualified-icon', rel: "tooltip", title: "Not Qualified (click for more info)", :"data-toggle" => 'modal' do %>
+      <%= button_tag 'Add to Cart', class: 'btn btn-default disabled add_to_cart_disabled'%>
+      <%= link_to "#qualifications_modal", class: 'not-qualified-icon', rel: 'tooltip', title: 'Not Qualified (click for more info)', :"data-toggle" => 'modal' do %>
         <i class="fa fa-exclamation-triangle"></i>
       <% end %>
-    <% elsif availability_hash[equipment_model.id] > 0 %>
-      <%= link_to "Add to Cart", add_to_cart_path(equipment_model), :method => :put, :remote => true, :class => "btn add_to_cart" %>
+      <% elsif availability_hash[equipment_model.id] > 0 %>
+      <%= link_to 'Add to Cart', add_to_cart_path(equipment_model), :method => :put, :remote => true, :class => "btn btn-default add_to_cart" %>
     <% else %>
-      <%= button_tag "Add to Cart", :class => "btn disabled add_to_cart_disabled"%>
+      <%= button_tag 'Add to Cart', :class => "btn btn-default disabled add_to_cart_disabled"%>
     <% end %>
   </div>
 
   <% if @restricted %>
-  <div id="qualifications_modal" class="modal hide fade">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal">×</button>
-      <h3>Qualification Required</h3>
-    </div>
-    <div class="modal-body">
-      <p><%= Requirement.list_requirement_admins(User.find(cart.reserver_id), equipment_model).html_safe %></p>
-    </div>
-  </div>
+    <div id="qualifications_modal" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Qualification Required</h4>
+          </div>
+          <div class="modal-body">
+            <p><%= Requirement.list_requirement_admins(User.find(cart.reserver_id), equipment_model).html_safe %></p>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
   <% end %>
-
 
 </div>

@@ -1,5 +1,4 @@
-
-$border-att: 1px solid darken($bodyBackground, 20%);
+$border-att: 1px solid darken($body-bg, 20%);
 
 .num,.head {
   text-align:center;
@@ -10,9 +9,10 @@ $border-att: 1px solid darken($bodyBackground, 20%);
 }
 
 #calendar-ul {
-  margin-left: 0px;
+  margin-left: 0;
   margin-bottom: 3px;
   margin-top: 3px;
+  padding-left: 0;
 }
 
 .calendar_cell {
@@ -75,71 +75,72 @@ $border-att: 1px solid darken($bodyBackground, 20%);
 }
 
 .btn-large {
-	float: right;
+  float: right;
 }
 
 .em_info {
-	position: relative;
+  position: relative;
 }
 
 .associated_em_box {
-	position: absolute;
-	bottom: 0;
+  // position: absolute;
+  // bottom: 0;
 
-	img {
-		background: white;
-		@include img-outline;
-	}
+  img {
+    background: white;
+    @include img-outline;
+  }
 }
 
 .document {
-	font-size: $baseFontSize * 6;
-	line-height: $baseFontSize * 6;
-	color: $textColor;
-	&:hover {
-		text-decoration: none;
-		color: $textColor;
-	}
+  font-size: $font-size-base * 6;
+  line-height: $font-size-base * 6;
+  color: $text-color;
+  &:hover {
+    text-decoration: none;
+    color: $text-color;
+  }
 }
 .image_box {
-	height: 260px;
-	overflow: hidden;
-	background: white;
-	@include img-outline;
+  height: 260px;
+  overflow: hidden;
+  background: white;
+  @include img-outline;
 }
 
 .giant-numbers {
-	@include giant-number;
+  @include giant-number;
 }
 
 .label.label-success.eo-table {
-	font-size: $baseFontSize;
-	line-height: $baseLineHeight;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
 }
 
 .subnav li h4 {
-	padding-top: 11px;
-	padding-bottom: 11px;
-	border-right: 1px solid #E5E5E5;
-	padding-right: 12px;
-	display: block;
-	line-height: 14px;
+  padding-top: 0;
+  padding-bottom: 0;
+  font-size: $font-size-base + 1px;
+  padding-right: 12px;
+  display: block;
+  a { vertical-align: middle; }
 }
 
 section {
-	padding-top: 86px;
+  padding-top: 86px;
 }
 
 a.not-qualified-icon-em {
-	position: absolute;
-	top: 3px;
-	right: 120px;
-	font-size: $baseFontSize * 3;
-	color: $btnWarningBackgroundHighlight;
-	@include warning-icon-drop-shadow;
+  position: absolute;
+  top: 0;
+  right: 120px;
+  font-size: ceil($font-size-base * 2.5);
+  line-height: 1em;
+  color: $btn-warning-bg;
+  @include warning-icon-drop-shadow;
 
-	&:hover, &:active {
-		text-decoration: none;
-		color: $btnWarningBackground;
-	}
+  &:hover, &:active {
+    text-decoration: none;
+    color: $btn-warning-bg;
+  }
 }

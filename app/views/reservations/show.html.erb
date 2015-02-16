@@ -4,13 +4,13 @@
   @reservation.reserver.last_name + " | " + @reservation.reserver.username %>
 
   <div class="row">
-    <div id="bool_labels" class="span12">
+    <div id="bool_labels" class="col-md-12">
       <%= "<span class=\"user_label label-success\">Returned</span>".html_safe if @reservation.status == 'returned on time' %>
-      <%= "<span class=\"user_label label-important\">Overdue</span>".html_safe if @reservation.status == 'overdue' %>
+      <%= "<span class=\"user_label label-danger\">Overdue</span>".html_safe if @reservation.status == 'overdue' %>
       <%= "<span class=\"user_label label-warning\">Returned Overdue</span>".html_safe if @reservation.status == 'returned overdue' %>
       <%= "<span class=\"user_label label-info\">Checked Out</span>".html_safe if @reservation.status == 'checked out' %>
-      <%= "<span class=\"user_label\">Missed</span>".html_safe if @reservation.status == 'missed' %>
-      <%= "<span class=\"user_label label-important\">Requested</span>".html_safe if @reservation.approval_status == 'requested' %>
+      <%= "<span class=\"user_label label-default\">Missed</span>".html_safe if @reservation.status == 'missed' %>
+      <%= "<span class=\"user_label label-danger\">Requested</span>".html_safe if @reservation.approval_status == 'requested' %>
       <%= "<span class=\"user_label label-success\">Approved</span>".html_safe if @reservation.approval_status == 'approved' %>
       <%= "<span class=\"user_label label-warning\">Denied</span>".html_safe if @reservation.approval_status == 'denied' %>
       <% unless @reservation.status == 'reserved' %>
@@ -20,17 +20,29 @@
   </div>
   <div class="row">
     <%# left column  %>
-    <div id="res_left_column" class="span4">
-      <div class="well well-inverse">
-        <%# equipment section  %>
-          <h3><%= link_to @reservation.equipment_model.name, @reservation.equipment_model %></h3>
-          <hr>
+    <div id="res_left_column" class="col-md-4">
+      <div class="panel panel-default">
+        <%# equipment section %>
+        <div class="panel-heading">
+          <h3>
+            <%= link_to @reservation.equipment_model.name, @reservation.equipment_model %>
+          </h3>
+        </div>
+        <div class="panel-body">
           <%= link_to @reservation.equipment_model do %>
-            <%= image_tag @reservation.equipment_model.photo.url(:large) %>
+            <% if @reservation.equipment_model.photo.exists? %>
+              <%= image_tag @reservation.equipment_model.photo.url(:large), class: 'img-responsive' %>
+            <% else %>
+              <%= image_tag 'no-image-260.gif', class: 'img-responsive' %>
+            <% end %>
           <% end %>
-          <hr>
-          <h3><%= link_to @reservation.equipment_object.nil? ? "(unassigned)" :
-          @reservation.equipment_object.name, equipment_model_path(@reservation.equipment_model, anchor: 'items') %></h3>
+        </div>
+        <div class="panel-footer">
+          <h3>
+            <%= link_to @reservation.equipment_object.nil? ? "(unassigned)" :
+            @reservation.equipment_object.name, equipment_model_path(@reservation.equipment_model, anchor: 'items') %>
+          </h3>
+        </div>
       </div>
 
       <%# shows renew button if due_date is today, tomorrow, or the day after %>
@@ -60,9 +72,9 @@
     </div>
 
     <%# right column  %>
-    <div id="res_right_column" class="span8">
+    <div id="res_right_column" class="col-md-8">
       <div class="row">
-        <div class="span8">
+        <div class="col-md-12">
           <%# DATE RANGE AND CALENDAR TABS AND CONTENT GO HERE  %>
 
           <div class="tabbable">
@@ -74,16 +86,19 @@
             <div class="tab-content">
               <div id="date_range" class="tab-pane active">
                 <div id="dates_headings" class="row">
-                  <div class="span4">
+                  <div class="col-md-6">
                     <p><h4>Start Date</h4></p>
                   </div>
-                  <div class="span4">
+                  <div class="col-md-6">
                     <p><h4 class="pull-right">Due Date</h4></p>
                   </div>
                 </div>
                 <div class="row">
-                  <div class="span8">
+                  <div class="col-md-12">
                     <div class="progress">
+                      <%= content_tag :div, class: 'progress-bar', style: "width: " << bar_progress_res do %>
+                        <%= content_tag :span, reservation_length_in_words, style: bar_span_positioning_fix %>
+                      <% end %>
                       <%# TODO: extract to a helper method? %>
                       <% unless reservation_length > 31 %>
                         <ul class="bar-dividers">
@@ -92,20 +107,15 @@
                           <% end %>
                         </ul>
                       <% end %>
-
-                      <%= content_tag :div, class: 'bar', style: "width: " << bar_progress_res do %>
-                        <%= content_tag :span, reservation_length_in_words, style: bar_span_positioning_fix %>
-                      <% end %>
-
                     </div>
                   </div>
                 </div>
 
                 <div id="res_dates" class="row">
-                  <div class="span4">
+                  <div class="col-md-6">
                     <p><h4><%= @reservation.start_date.strftime("%a, %b %d, %Y") %></h4></p>
                   </div>
-                  <div class="span4">
+                  <div class="col-md-6">
                     <p><h4 class="pull-right"><%= @reservation.due_date.strftime("%a, %b %d, %Y") %></h4></p>
                   </div>
                 </div>
@@ -123,54 +133,58 @@
 
       <%# PEOPLE INVOLVED WITH THE RESERVATION %>
       <div id= "people_row" class="row">
-        <div class="span3">
+        <div class="col-md-4">
           <%# RESERVED BY %>
-          <div class="well">
-            <header>
-              <h4>Reserved</h4>
-            </header>
-            <hr>
-            <%= link_to @reservation.reserver do %>
-              <i class="fa fa-user"></i>
-            <% end %>
-            <p><h4>by <%= link_to @reservation.reserver.name, @reservation.reserver %></h4></p>
-            <hr>
-            <footer>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Reserved</h3>
+            </div>
+            <div class="panel-body">
+              <%= link_to @reservation.reserver do %>
+                <i class="fa fa-user"></i>
+              <% end %>
+              <p>
+                <h4>
+                  by <%= link_to @reservation.reserver.name, @reservation.reserver %>
+                </h4>
+              </p>
+            </div>
+            <div class="panel-footer">
               <%= @reservation.created_at.strftime("%b %d, %Y at %I:%M%p") %>
-            </footer>
+            </div>
           </div>
         </div>
 
-        <div class="span5">
+        <div class="col-md-8">
           <%# CHECKED OUT BY %>
           <% if @reservation.checked_out %>
-            <div class="well">
-              <header>
+            <div class="panel panel-default">
+              <div class="panel-heading">
                 <h4>
                   Checked Out by <%= link_to @reservation.checkout_handler.nil? ?
-                  "unknown" : @reservation.checkout_handler.name, @reservation.checkout_handler.nil? ?
+                  'Unknown' : @reservation.checkout_handler.name, @reservation.checkout_handler.nil? ?
                   nil : @reservation.checkout_handler %>
                 </h4>
-              </header>
-              <hr>
-              <footer>
+              </div>
+              <div class="panel-body">
                 <%= @reservation.checked_out.strftime("%b %d, %Y at %I:%M%p") %>
-              </footer>
+              </div>
             </div>
           <% end %>
 
           <%# CHECKED IN BY %>
           <% if @reservation.checked_in %>
-            <div class="well">
-              <header>
-                <h4>Checked In by <%= link_to @reservation.checkin_handler.nil? ?
-                "unknown" : @reservation.checkin_handler.name, @reservation.checkin_handler.nil? ?
-                nil : @reservation.checkin_handler %></h4>
-              </header>
-              <hr>
-              <footer>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4>
+                  Checked In by <%= link_to @reservation.checkin_handler.nil? ?
+                  'Unknown' : @reservation.checkin_handler.name, @reservation.checkin_handler.nil? ?
+                  nil : @reservation.checkin_handler %>
+                </h4>
+              </div>
+              <div class="panel-body">
                 <%= @reservation.checked_in.strftime("%b %d, %Y at %I:%M%p") %>
-              </footer>
+              </div>
             </div>
           <% end %>
         </div>
@@ -181,24 +195,24 @@
 
   <%# NOTES %>
   <div class="row">
-    <div class="span12">
+    <div class="col-md-12">
       <% unless @reservation.notes.blank? %>
         <hr>
         <h2>Notes</h2>
-        <div class='notes-container'><%= markdown(@reservation.notes) %></div>
+        <div class="notes-container"><%= markdown(@reservation.notes) %></div>
       <% end %>
     </div>
   </div>
 
-<div class="form-actions">
-  <%= link_to "Print this page", "#", onclick: "print();", class: 'btn' %>
+  <hr>
+  <%= link_to 'Print this page', '#', onclick: 'print();', class: 'btn btn-default' %>
   <%# if (@reservation.status == "checked out") or (@reservation.status == "overdue") %>
-    <%#= link_to "Email checkout receipt", {:controller => :reservations, :action => "checkout_email", :id => @reservation}, :method => "get", :class => 'btn' %>
+    <%#= link_to "Email checkout receipt", {:controller => :reservations, :action => "checkout_email", :id => @reservation}, :method => "get", :class => 'btn btn-default' %>
   <%# elsif @reservation.status.include?("returned") %>
-    <%#= link_to "Email return receipt", {:controller => :reservations, :action => "checkin_email", :id => @reservation}, :method => "get", :class => 'btn' %>
+    <%#= link_to "Email return receipt", {:controller => :reservations, :action => "checkin_email", :id => @reservation}, :method => "get", :class => 'btn btn-default' %>
   <%# end %>
   <% if can? :edit, @reservation %>
-    <%= link_to "Edit", edit_reservation_path(@reservation), class: 'btn' %>
+    <%= link_to "Edit", edit_reservation_path(@reservation), class: 'btn btn-default' %>
   <% end %>
   <% if can? :destroy, @reservation %>
     <%= link_to "Cancel Reservation", @reservation, data: { confirm:
@@ -208,4 +222,3 @@
   <% if (can? :archive, @reservation) && @reservation.checked_in.nil? %>
     <%= link_to "Archive Reservation", archive_reservation_path(@reservation), method: :put, class: 'btn btn-danger', onclick: 'getArchiveNote(this);' %>
 <% end %>
-</div>

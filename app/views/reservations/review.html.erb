@@ -47,8 +47,7 @@
 <div class="notes-container">
   <%= markdown @reservation.notes %>
 </div>
-<div class="form-actions">
-  <%= link_to "Edit Request", edit_reservation_path(@reservation), class: 'btn' %>
-  <%= link_to "Deny", deny_request_path, :method => "put", :class => 'btn btn-danger' %>
-  <%= link_to "Approve", approve_request_path, :method => "put", :class => 'btn btn-success' %>
-</div>
+<hr>
+<%= link_to "Edit Request", edit_reservation_path(@reservation), class: 'btn btn-default' %>
+<%= link_to "Deny", deny_request_path, :method => "put", :class => 'btn btn-danger' %>
+<%= link_to "Approve", approve_request_path, :method => "put", :class => 'btn btn-success' %>

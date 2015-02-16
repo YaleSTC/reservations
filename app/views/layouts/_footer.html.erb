@@ -1,14 +1,14 @@
 <hr />
 <div class="row">
-  <div id="footer" class="span12">
+  <footer id="footer" class="col-md-12">
 
     <div class="well">
       <div class="row">
         <%# INFO SECTION %>
         <% if cannot? :change, :views %>
-          <div class="span8">
+          <div class="col-md-8">
         <% else %>
-          <div class="span5">
+          <div class="col-md-5">
         <% end %>
           Powered by <a href="https://github.com/YaleSTC/reservations">Reservations</a><%= ' (' + APP_VERSION + ')' %>, an open-source app.<br />
           &copy; <%= Time.zone.now.year %> Yale Student Technology Collaborative
@@ -20,7 +20,7 @@
         </div>
 
         <%# LINKS SECTION %>
-        <div class="span3">
+        <div class="col-md-3">
           <ul id="links_box" class="nav nav-list">
             <li class="nav-header">Links</li>
             <% if @app_configs # this is required to ensure that pages will render even if the user hasn't run the app:setup task %>
@@ -32,24 +32,24 @@
         </div>
 
         <%# VIEW AS DROPDOWN %>
-        <div class="span3" id = "view_as">
+        <div class="col-md-3" id = "view_as">
           <% if can? :change, :views %>
           <ul class="nav nav-list">
             <li class="nav-header">View As:</li>
             <div class="btn-group dropup">
-              <a class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#">
+              <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
               <%= get_role_name current_user.view_mode %>
                 <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
-                <% viewmode_array = ['admin','checkout','normal','banned', 'guest'] %>
+                <% viewmode_array = ['admin', 'checkout', 'normal', 'banned', 'guest'] %>
                 <% if can? :view_as, :superuser %>
-                  <%  viewmode_array.unshift 'superuser' %>
+                  <% viewmode_array.unshift 'superuser' %>
                 <% end %>
                 <% viewmode_array.each do |role| %>
                   <% if current_user.view_mode == role %>
-                    <li class = "active">
-                      <%= get_role_name role %>
+                    <li class="disabled">
+                      <a href="#"><%= get_role_name role %></a>
                     </li>
                   <% else %>
                     <li>
