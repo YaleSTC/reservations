@@ -311,12 +311,11 @@ class Reservation < ActiveRecord::Base
   end
 
   def add_notes(current_user, contents)
-    if !contents.empty?
-      new_notes = "### #{current_user.md_link} made a note on "\
-        "#{Time.current.to_s(:long)}:\n\n#{contents}"
-      self.notes += "\n\n" + new_notes.strip
-      self
-    end
+    return self if contents.empty?
+    new_notes = "### #{current_user.md_link} made a note on "\
+      "#{Time.current.to_s(:long)}:\n\n#{contents}"
+    self.notes += "\n\n" + new_notes.strip
+    self
   end
 
   # rubocop:disable PerceivedComplexity
