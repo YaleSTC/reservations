@@ -59,13 +59,23 @@ class EquipmentObjectsController < ApplicationController
       # Delete deactivation reason when "Disabled?" is toggled
       p[:deactivation_reason] = ''
     end
-    @equipment_object.update(current_user, p, params[:new_notes])
+    @equipment_object.update(current_user, p)
     if @equipment_object.save
       flash[:notice] = 'Successfully updated equipment object.'
       redirect_to @equipment_object
     else
       render action: 'edit'
     end
+  end
+
+  def note
+    @equipment_object.add_notes(current_user, params[:new_notes])
+    if @equipment_object.save
+      flash[:notice] = 'Successfully added note to equipment object.'
+    else
+      flash[:danger] = 'Failed to add note to equipment object.'
+    end
+    redirect_to @equipment_object
   end
 
   # Deactivate and activate extend controller methods in ApplicationController

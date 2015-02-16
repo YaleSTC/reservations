@@ -32,11 +32,11 @@
     <hr>
     <h3>Add new notes</h3>
     
-    <%= simple_form_for @equipment_object do |f| %>
+    <%= simple_form_for @equipment_object, :url => add_notes_to_eq_object_path, 
+    :method => :put do |f| %>
       <%= f.error_notification %>
 
-      <%=f.input :name, as: :hidden%>
-      <%=f.input :serial, as: :hidden%>
+      
       
       <!--<div class='notes-container'><%= f.input :notes, label: false, class: 'span4' %></div>-->
       <div class='notes-container'><%= text_area_tag :new_notes, "", rows: 5, class: 'span4' %></div>

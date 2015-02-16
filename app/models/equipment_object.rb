@@ -73,89 +73,47 @@ class EquipmentObject < ActiveRecord::Base
       "#{Time.current.to_s(:long)}\n\n" + notes)
   end
 
-  def update(current_user, new_params, new_notes) # rubocop:disable all
+  def update(current_user, new_params)
     assign_attributes(new_params)
     changes = self.changes
-    new_notes = '' unless new_notes
-    if new_notes.empty? && changes.empty?
+    if changes.empty?
       return self
     else
-      # write notes header
-      header = "### Edited on #{Time.current.to_s(:long)} by "\
-        "#{current_user.md_link}\n"
-      self.notes = notes ? notes + "\n" + header : header
-      # add notes if they exist
-      self.notes += "\n\n#### Notes:\n"\
-      "#{new_notes}" unless new_notes.empty?
-
-      # record changes
-      # rubocop:disable BlockNesting
-      changes = changes.delete_if { |x| x == 'deactivation_reason' }
-      unless changes.empty?
-        self.notes += "\n\n#### Changes:"
-        changes.each do |param, diff|
-          case param
-          when 'name'
-            name = 'Name'
-            old_val = diff[0].to_s
-            new_val = diff[1].to_s
-          when 'serial'
-            name = 'Serial'
-            old_val = diff[0].to_s
-            new_val = diff[1].to_s
-          when 'equipment_model_id'
-            name = 'EquipmentModel'
-            old_val = diff[0] ? EquipmentModel.find(diff[0]).name : 'nil'
-            new_val = diff[1] ? EquipmentModel.find(diff[1]).name : 'nil'
-          end
-          self.notes += "\n#{name} changed from " + old_val + ' to '\
-            + new_val + '.'
+      new_notes = "#### Edited at #{Time.current.to_s(:long)} by "\
+        "#{current_user.md_link}\n\n"
+      new_notes += "\n\n#### Changes:"
+      changes.each do |param, diff|
+        case param
+        when 'name'
+          name = 'Name'
+          old_val = diff[0].to_s
+          new_val = diff[1].to_s
+        when 'serial'
+          name = 'Serial'
+          old_val = diff[0].to_s
+          new_val = diff[1].to_s
+        when 'equipment_model_id'
+          name = 'Equipment Model'
+          old_val = diff[0] ? EquipmentModel.find(diff[0]).name : 'nil'
+          new_val = diff[1] ? EquipmentModel.find(diff[1]).name : 'nil'
         end
+        new_notes += "\n#{name} changed from " + old_val + ' to ' + new_val\
+          + '.' if old_val && new_val
       end
-      # rubocop:enable BlockNesting
-      self.notes = self.notes.strip
+    end
+    new_notes += "\n\n" + notes
+    self.notes = new_notes.strip
+    self
+  end
+
+  def add_notes(current_user, contents)
+    if !contents.empty?
+      new_notes = "### #{current_user.md_link} made a note on #{Time.current.to_s(:long)}:\n\n#{contents}"
+      new_notes += "\n\n" + notes
+      self.notes = new_notes.strip
       self
     end
   end
-
-  # This is the old code for updating. I changed it to the above code
-  # to be more consistent with the logic used in the reservation
-  # controller's update action. This old code seemed incomplete...
-  # Notes were not correctly updated, and in fact the update action was
-  # missing the "new notes" parameter entirely.
-
-  # def update(current_user, new_params)
-  #   assign_attributes(new_params)
-  #   changes = self.changes
-  #   if changes.empty?
-  #     return self
-  #   else
-  #     new_notes = "#### Edited at #{Time.current.to_s(:long)} by "\
-  #       "#{current_user.md_link}\n\n"
-  #     new_notes += "\n\n#### Changes:"
-  #     changes.each do |param, diff|
-  #       case param
-  #       when 'name'
-  #         name = 'Name'
-  #         old_val = diff[0].to_s
-  #         new_val = diff[1].to_s
-  #       when 'serial'
-  #         name = 'Serial'
-  #         old_val = diff[0].to_s
-  #         new_val = diff[1].to_s
-  #       when 'equipment_model_id'
-  #         name = 'Equipment Model'
-  #         old_val = diff[0] ? EquipmentModel.find(diff[0]).name : 'nil'
-  #         new_val = diff[1] ? EquipmentModel.find(diff[1]).name : 'nil'
-  #       end
-  #       new_notes += "\n#{name} changed from " + old_val + ' to ' + new_val\
-  #         + '.' if old_val && new_val
-  #     end
-  #   end
-  #   new_notes += "\n\n" + notes
-  #   self.notes = new_notes.strip
-  #   self
-  # end
 
   def md_link
     "[#{name}](#{equipment_object_url(self, only_path: false)})"

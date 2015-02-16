@@ -72,6 +72,12 @@ Reservations::Application.routes.draw do
     end
   end
 
+  # routes to add notes
+  put '/equipment_objects/:id/note' => 'equipment_objects#note',
+      :as => :add_notes_to_eq_object
+  put '/reservations/:id/note' => 'reservations#note',
+      :as => :add_notes_to_reservation
+
   # reservations views
   get '/reservations/manage/:user_id' => 'reservations#manage',
       :as => :manage_reservations_for_user
