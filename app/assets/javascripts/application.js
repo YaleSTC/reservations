@@ -19,6 +19,7 @@
 //= require bootstrap/affix
 //= require variables.js
 //= require select2
+//= require jquery.sticky.js
 //= require_tree
 //= require_self
 
@@ -102,14 +103,7 @@ $(document).ready(function() {
 
   // make the sidebar follow you down the page
   if ($(window).width() > 767) {
-    $("#sidebarbottom").affix({
-      offset: {
-        top: 0,
-        bottom: function() {
-          return (this.bottom = $('#footer').outerHeight(true));
-        }
-      }
-    });
+    $("#sidebarbottom").sticky({topSpacing: 60, bottomSpacing: 200});
   }
 
   // truncate catalog descriptions
