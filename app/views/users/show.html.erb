@@ -13,10 +13,10 @@
 <div class="row">
   <div id="bool_labels" class="col-md-12">
     <% if can? :manage, User %>
-      <%= "<span class=\"user_label label-important\">Banned</span>".html_safe if @user.role == 'banned' %>
-      <%= "<span class=\"user_label label-success\">Admin</span>".html_safe if @user.role == 'admin' %>
-      <%= "<span class=\"user_label label-success\">Super User</span>".html_safe if @user.role == 'superuser' %>
-      <%= "<span class=\"user_label\">Checkout Person</span>".html_safe if @user.role == 'checkout' %>
+      <%= "<span class=\"user_label label label-important\">Banned</span>".html_safe if @user.role == 'banned' %>
+      <%= "<span class=\"user_label label label-success\">Admin</span>".html_safe if @user.role == 'admin' %>
+      <%= "<span class=\"user_label label label-success\">Super User</span>".html_safe if @user.role == 'superuser' %>
+      <%= "<span class=\"user_label label label-default\">Checkout Person</span>".html_safe if @user.role == 'checkout' %>
     <% end %>
   </div>
 </div>
