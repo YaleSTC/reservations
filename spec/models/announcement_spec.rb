@@ -2,35 +2,33 @@ require 'spec_helper'
 
 describe Announcement, type: :model do
   # pending "add some examples to (or delete) #{__FILE__}"
-  # rubocop:disable UnusedLocalVariable, UselessAssignment
   it 'has current scope' do
-    passed = Announcement.create! starts_at: 1.day.ago,
-                                  ends_at: 1.hour.ago,
-                                  message: 'MyText'
-    current = Announcement.create! starts_at: 1.hour.ago,
-                                   ends_at: 1.day.from_now,
+    _passed = Announcement.create! starts_at: Time.zone.today - 2.days,
+                                   ends_at: Time.zone.today - 1.day,
                                    message: 'MyText'
-    upcoming = Announcement.create! starts_at: 1.hour.from_now,
-                                    ends_at: 1.day.from_now,
+    _current = Announcement.create! starts_at: Time.zone.today - 1.day,
+                                    ends_at: Time.zone.today + 1.day,
                                     message: 'MyText'
+    _upcoming = Announcement.create! starts_at: Time.zone.today + 1.day,
+                                     ends_at: Time.zone.today + 2.days,
+                                     message: 'MyText'
   end
-  # rubocop:enable UnusedLocalVariable, UselessAssignment
 
   it 'does not include ids passed in to current' do
-    current1 = Announcement.create! starts_at: 1.hour.ago,
-                                    ends_at: 1.day.from_now,
+    current1 = Announcement.create! starts_at: Time.zone.today - 1.day,
+                                    ends_at: Time.zone.today + 1.day,
                                     message: 'MyText'
 
-    current2 = Announcement.create! starts_at: 1.hour.ago,
-                                    ends_at: 1.day.from_now,
+    current2 = Announcement.create! starts_at: Time.zone.today - 1.day,
+                                    ends_at: Time.zone.today + 1.day,
                                     message: 'MyText'
 
     expect(Announcement.current([current2.id])).to eq([current1])
   end
 
   it 'includes current when nil is passed in' do
-    current = Announcement.create! starts_at: 1.hour.ago,
-                                   ends_at: 1.day.from_now,
+    current = Announcement.create! starts_at: Time.zone.today - 1.day,
+                                   ends_at: Time.zone.today + 1.day,
                                    message: 'MyText'
 
     expect(Announcement.current(nil)).to eq([current])
