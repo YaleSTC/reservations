@@ -1,49 +1,62 @@
-<%= simple_form_for @reservation, html: { multipart: true } do |f| %>
+<%= simple_form_for @reservation, html: { multipart: true, class: 'form-horizontal' } do |f| %>
   <%= f.error_notification %>
-
   <%= f.input :fake_reserver_id, as: :autocomplete,
                 url: autocomplete_user_last_name_users_path,
                 id_element: '#reservation_reserver_id',
                 label: "Reserver",
                 placeholder: "Start typing a name or username",
-                input_html: { value: @reservation.reserver.name } %>
-
+                input_html: { value: @reservation.reserver.name,
+                class: 'form-control' } %>
   <%= f.input :reserver_id, as: :hidden %>
 
-  <%= f.label 'Start date' %>
-  <%= f.text_field :start_date, class: 'date_start', value: @reservation.start_date.strftime('%m/%d/%Y') %>
-  <%= f.input :start_date, as: :hidden, input_html: { id: "date_start_alt" } %>
-
-  <%= f.label 'Due date' %>
-  <%= f.text_field :due_date, class: 'date_end', value: @reservation.due_date.strftime('%m/%d/%Y') %>
-  <%= f.input :due_date, as: :hidden, input_html: { id: 'date_end_alt' } %>
-
-  <% message = '' %>
-  <% if @reservation.equipment_object %>
-    <div class='control-group'>
-    <label class='control-label'>Item</label>
-    <div class = "controls">
-      <%= select_tag :equipment_object,
-          options_for_select(@option_array),
-          placeholder: @reservation.equipment_object.name,
-          class: 'dropdown dropselect reservation_eq_objects',
-          prompt: '', width: 80 %>
+  <div class="form-group">
+    <%= f.label :start_date, 'Start date', class: 'col-sm-2 control-label' %>
+    <div class="col-sm-7">
+      <%= f.text_field :start_date, class: 'date_start form-control', value: @reservation.start_date.strftime('%m/%d/%Y') %>
+      <%= f.input :start_date, as: :hidden, input_html: { id: "date_start_alt" } %>
     </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :due_date, 'Due date', class: 'col-sm-2 control-label' %>
+    <div class="col-sm-7">
+      <%= f.text_field :due_date, class: 'date_end form-control', value: @reservation.due_date.strftime('%m/%d/%Y') %>
+      <%= f.input :due_date, as: :hidden, input_html: { id: 'date_end_alt' } %>
+    </div>
+  </div>
+
+  <% if @reservation.equipment_object %>
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Item</label>
+      <div class="col-sm-7">
+        <%= select_tag :equipment_object,
+            options_for_select(@option_array),
+            placeholder: @reservation.equipment_object.name,
+            class: 'dropdown dropselect reservation_eq_objects',
+            prompt: '', width: 80 %>
+      </div>
     </div>
   <% end %>
 
-  <%= label_tag "Current notes" %>
-  <div class='row'>
-    <div class='span4'>
-      <div class='notes-container'>
+  <div class="form-group">
+    <%= label_tag :current_notes, 'Current notes', class: 'col-sm-2 control-label' %>
+    <div class="col-sm-7">
+      <div class="notes-container" id="current_notes">
         <%= markdown @reservation.notes %>
       </div>
     </div>
   </div>
-
-  <%= label_tag "Add new notes" %>
-  <%= text_area_tag :new_notes, "", rows: 5, class: 'span4' %>
-  <br />
-  <%= render :partial => 'shared/markdown_button' %>
-  <%= f.button :wrapped, :cancel => reservations_path %>
+  <div class="form-group">
+    <%= label_tag :new_notes, 'Add new notes', class: 'col-sm-2 control-label' %>
+    <div class="col-sm-7">
+      <%= text_area_tag :new_notes, nil, rows: 7, class: 'form-control' %>
+      <br />
+      <%= render partial: 'shared/markdown_button' %>
+    </div>
+  </div>
+  <hr>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <%= f.button :submit, cancel: reservations_path %>
+    </div>
+  </div>
 <% end %>

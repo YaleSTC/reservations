@@ -10,10 +10,11 @@ module CartValidations
     # if passed with true argument doesn't run validations that should be
     # skipped when validating renewals
     errors = []
-    errors += check_start_date_blackout
-    errors += check_due_date_blackout
+    errors += check_date_blackout(start_date, 'start')
+    errors += check_date_blackout(due_date, 'end')
     errors += check_overdue_reservations unless renew
-    errors += check_max_items
+    errors += check_max_ems
+    errors += check_max_cat
     errors += check_cookie_limit
 
     user_reservations = Reservation.for_reserver(reserver_id).not_returned.all
@@ -34,26 +35,14 @@ module CartValidations
     errors.uniq.reject(&:blank?)
   end
 
-  def check_start_date_blackout
+  def check_date_blackout(date, verb)
     # check that the start date is not on a blackout date
     # 1 query
     errors = []
-    if Blackout.hard.for_date(start_date).count > 0
-      errors << "#{Blackout.get_notices_for_date(start_date, :hard)} "\
-        '(a reservation cannot start on '\
-        "#{start_date.to_date.strftime('%m/%d')})"
-    end
-    errors
-  end
-
-  def check_due_date_blackout
-    # check that the due date is not on a blackout date
-    # 1 query
-    errors = []
-    if Blackout.hard.for_date(due_date).count > 0
-      errors << "#{Blackout.get_notices_for_date(due_date, :hard)} "\
-        '(a reservation cannot end on '\
-        "#{due_date.to_date.strftime('%m/%d')})"
+    if Blackout.hard.for_date(date).count > 0
+      errors << "#{Blackout.get_notices_for_date(date, :hard)} "\
+        "(a reservation cannot #{verb} on "\
+        "#{date.to_date.strftime('%m/%d')})."
     end
     errors
   end
@@ -64,7 +53,7 @@ module CartValidations
     errors = []
     if Reservation.for_reserver(reserver_id).overdue.count > 0
       errors << 'This user has overdue reservations that prevent him/her '\
-        'from creating new ones'
+        'from creating new ones.'
     end
     errors
   end
@@ -81,56 +70,49 @@ module CartValidations
     errors
   end
 
-  def check_max_items # rubocop:disable MethodLength, AbcSize
-    # check that the cart items would not cause the reserver to have
-    # more than the max allowed number of the same equipment model
-    # or the max allowed number of the same category item
-    # on any given date
-    #
-    # 4 queries
+  def check_max_items(count_hash, relevant, count_method)
+    # generic method for making sure the count_hash doesn't
+    # contain more than the item max when taking into account
+    # the relevant reservations
+
     errors = []
+    count_hash.each do |item, q|
+      max = item.maximum_per_user
+
+      start_date.to_date.upto(due_date.to_date) do |d|
+        unless Reservation.send(count_method, d, item.id, relevant) + q > max
+          next
+        end
+        errors << "Only #{max} #{item.name.pluralize} "\
+          'can be reserved at a time.'
+      end
+    end
+    errors
+  end
+
+  def check_max_ems
+    # check to make sure that the cart's EMs + the current resever's
+    # EMs doesn't exceed any limits
+
+    count_hash = get_items
     relevant = Reservation.for_reserver(reserver_id).not_returned
                .includes(:equipment_model).all
-    category = {}
+    check_max_items(count_hash, relevant, :number_for_model_on_date)
+  end
 
-    # get hash of model objects and quantities
-    # remember that the get_items method eager loads
-    # the categories
-    models = get_items
+  def check_max_cat
+    # same but for categories. we need to build the counts of the
+    # categories ourselves though
 
-    # check max model count for each day in the range
-    # while simultaneously building a hash of category => quantity
-    models.each do |model, quantity|
-      max_models = model.maximum_per_user
-
-      start_date.to_date.upto(due_date.to_date) do |d|
-        next unless Reservation.number_for_model_on_date(d, model.id,
-                                                         relevant)\
-          + quantity > max_models
-        errors << "Only #{max_models} #{model.name.pluralize} can be "\
-          'reserved at a time.'
-        break
-      end
-      if category.include?(model.category)
-        category[model.category] += quantity
-      else
-        category[model.category] = quantity
-      end
+    cat_hash = {}
+    ems = EquipmentModel.where(id: items.keys).includes(:category)
+    items.each_with_index do |(_em_id, q), index|
+      cat_hash[ems[index].category] ||= 0
+      cat_hash[ems[index].category] += q
     end
-    # similarly check category maxes using a similar method
-    category.each do |cat, q|
-      max_cat = cat.maximum_per_user
-      start_date.to_date.upto(due_date.to_date) do |d|
-        next unless Reservation.number_for_category_on_date(d, cat.id,
-                                                            relevant)\
-          + q > max_cat
-        errors << "Only #{max_cat} #{cat.name.pluralize} "\
-          'can be reserved at a time.'
-        break
-      end
-    end
-
-    errors
+    relevant = Reservation.for_reserver(reserver_id).not_returned
+               .with_categories.all
+    check_max_items(cat_hash, relevant, :number_for_category_on_date)
   end
 
   def check_availability(model = EquipmentModel.find(items.keys.first),
@@ -175,7 +157,7 @@ module CartValidations
     max_length = model.maximum_checkout_length
     if duration > max_length
       errors << "#{model.name.titleize} can only be reserved for "\
-        "#{max_length} days"
+        "#{max_length} days."
     end
     errors
   end

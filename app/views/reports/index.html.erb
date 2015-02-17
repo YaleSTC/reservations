@@ -1,12 +1,12 @@
 <% title ("Overall Reservation Report for " + @start_date.strftime("%b %d, %Y") + " to " + @end_date.strftime("%b %d, %Y")) %>
 
 <div class="row">
-  <div class="span3">
+  <div class="col-md-3">
     <p class="lead">
       Select a date range to generate reports.
     </p>
   </div>
-  <div class="span9">
+  <div class="col-md-9">
     <%= render :partial => 'reports/report_dates'%>
 
   </div>

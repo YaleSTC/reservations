@@ -3,7 +3,7 @@
 
 <% if can? :read, User %>
   <div class="row">
-    <div class="span9">
+    <div class="col-md-12">
       <%= render :partial => 'reservations/top_buttons', :locals => {:reserver => @user} %>
     </div>
   </div>
@@ -11,12 +11,12 @@
 <% end %>
 
 <div class="row">
-  <div id="bool_labels" class="span9">
+  <div id="bool_labels" class="col-md-12">
     <% if can? :manage, User %>
-      <%= "<span class=\"user_label label-important\">Banned</span>".html_safe if @user.role == 'banned' %>
-      <%= "<span class=\"user_label label-success\">Admin</span>".html_safe if @user.role == 'admin' %>
-      <%= "<span class=\"user_label label-success\">Super User</span>".html_safe if @user.role == 'superuser' %>
-      <%= "<span class=\"user_label\">Checkout Person</span>".html_safe if @user.role == 'checkout' %>
+      <%= "<span class=\"user_label label label-important\">Banned</span>".html_safe if @user.role == 'banned' %>
+      <%= "<span class=\"user_label label label-success\">Admin</span>".html_safe if @user.role == 'admin' %>
+      <%= "<span class=\"user_label label label-success\">Super User</span>".html_safe if @user.role == 'superuser' %>
+      <%= "<span class=\"user_label label label-default\">Checkout Person</span>".html_safe if @user.role == 'checkout' %>
     <% end %>
   </div>
 </div>
@@ -24,47 +24,46 @@
 
 <div class="row">
 
-
-  <dl id="user_info" class="dl-horizontal span4">
+  <dl id="user_info" class="dl-horizontal col-md-6">
     <div class="well">
-    <% if @cas_auth %>
-      <dt>Username</dt>
-      <dd><%= @user.username %></dd>
-    <% end %>
+      <% if @cas_auth %>
+        <dt>Username</dt>
+        <dd><%= @user.username %></dd>
+      <% end %>
 
-    <dt>First Name</dt>
-    <dd><%= @user.first_name %></dd>
+      <dt>First Name</dt>
+      <dd><%= @user.first_name %></dd>
 
-    <dt>Last Name</dt>
-    <dd><%= @user.last_name %></dd>
+      <dt>Last Name</dt>
+      <dd><%= @user.last_name %></dd>
 
-    <dt>Nickname</dt>
-    <dd><%= !@user.nickname.blank? ? @user.nickname : "(none)" %></dd>
+      <dt>Nickname</dt>
+      <dd><%= !@user.nickname.blank? ? @user.nickname : "(none)" %></dd>
 
-    <dt>Phone</dt>
-    <dd><%= !@user.phone.blank? ? @user.phone : "(none)" %></dd>
+      <dt>Phone</dt>
+      <dd><%= !@user.phone.blank? ? @user.phone : "(none)" %></dd>
 
-    <dt>Email</dt>
-    <dd><%= mail_to @user.email, @user.email %></dd>
+      <dt>Email</dt>
+      <dd><%= mail_to @user.email, @user.email %></dd>
 
-    <dt>Affiliation</dt>
-    <dd><%= @user.affiliation %></dd>
+      <dt>Affiliation</dt>
+      <dd><%= @user.affiliation %></dd>
     </div>
   </dl>
 
-  <div id="user_stats" class="span5">
+  <div id="user_stats" class="col-md-6">
 
-  <%# @show_equipment has reservation status (:overdue, ...) as key, full
-  reservations in question as value %>
-  <% @show_equipment.each do |status, reservations| %>
-    <%= content_tag :div, :id => "#{status}_count", :class => 'span2' do %>
-      <%= content_tag :h4, status.to_s.titleize %>
-      <%= content_tag :div, :class => "#{status}_num" do %>
-        <%= content_tag :i, nil, :class => stats_icons(status) %>
-        <%= reservations.size %>
+    <%# @show_equipment has reservation status (:overdue, ...) as key, full
+    reservations in question as value %>
+    <% @show_equipment.each do |status, reservations| %>
+      <%= content_tag :div, :id => "#{status}_count", :class => 'col-md-6' do %>
+        <%= content_tag :h4, status.to_s.titleize %>
+        <%= content_tag :div, :class => "#{status}_num" do %>
+          <%= content_tag :i, nil, :class => stats_icons(status) %>
+          <%= reservations.size %>
+        <% end %>
       <% end %>
     <% end %>
-  <% end %>
   </div>
 </div>
 
@@ -72,13 +71,13 @@
 <% unless @user.requirements.empty? %>
 
   <div class="row">
-    <div class="span9">
+    <div class="col-md-12">
       <h2>Equipment Qualifications</h2>
     </div>
   </div>
   <hr />
   <div class="row">
-    <div id="qualif_box" class="span9">
+    <div id="qualif_box" class="col-md-12">
       <ul id="qualifications">
         <% @user.requirements.each do |req| %>
           <li><i class="fa fa-check"></i><%= link_to req.description, req %></li>
@@ -88,19 +87,12 @@
   </div>
 
 <% end %>
-
+<hr>
+<h2>History</h2>
 <div class="row">
-  <div class="span9">
-    <h2>History</h2>
-  </div>
-</div>
-<hr />
+  <div class="col-md-12">
 
-
-<div class="row">
-  <div class="tabbable tabs-left span9">
-
-    <ul class="nav nav-tabs">
+    <ul class="nav nav-tabs" role="tablist">
       <% @show_equipment.each do |status, reservations| %>
         <%= content_tag :li, :class => active_tab(status) do %>
           <%= link_to "##{status.to_s}", :class => 'tab-text', :"data-toggle" => 'tab' do %>
@@ -127,11 +119,9 @@
   </div>
 </div>
 
-
-<div class="form-actions">
-  <%= link_to "Edit Information", edit_user_path(@user), :class => 'btn' %>
-  <% if can? :manage, User %>
-    <%= make_ban_btn @user %>
-    <%= link_to "View All Users", users_path, :class => 'btn', :id => 'view_all_users' %>
-  <% end %>
-</div>
+<hr>
+<%= link_to "Edit Information", edit_user_path(@user), :class => 'btn btn-primary' %>
+<% if can? :manage, User %>
+  <%= make_ban_btn @user %>
+  <%= link_to "View All Users", users_path, :class => 'btn btn-default', :id => 'view_all_users' %>
+<% end %>

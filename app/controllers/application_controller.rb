@@ -167,7 +167,7 @@ class ApplicationController < ActionController::Base
     # validate
     errors = cart.validate_all
     # don't over-write flash if invalid date was set above
-    flash[:error] ||= notices + errors.to_sentence
+    flash[:error] ||= notices + "\n" + errors.join("\n")
     flash[:notice] = 'Cart updated.'
 
     # reload appropriate divs / exit

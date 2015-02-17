@@ -1,30 +1,32 @@
 //= require jquery
 //= require jquery_ujs
+//= require dataTables/jquery.dataTables
+//= require dataTables/bootstrap/3/jquery.dataTables.bootstrap
 //= require jquery-ui/datepicker
 //= require jquery-ui/autocomplete
 //= require cocoon
 //= require autocomplete-rails
-//= require dataTables/jquery.dataTables
-//= require dataTables/bootstrap/2/jquery.dataTables.bootstrap
-//= require bootstrap-transition
-//= require bootstrap-alert
-//= require bootstrap-button
-//= require bootstrap-collapse
-//= require bootstrap-dropdown
-//= require bootstrap-modal
-//= require bootstrap-scrollspy
-//= require bootstrap-tab
-//= require bootstrap-tooltip
-//= require bootstrap-popover
+//= require bootstrap/transition
+//= require bootstrap/alert
+//= require bootstrap/button
+//= require bootstrap/collapse
+//= require bootstrap/dropdown
+//= require bootstrap/modal
+//= require bootstrap/scrollspy
+//= require bootstrap/tab
+//= require bootstrap/tooltip
+//= require bootstrap/popover
+//= require bootstrap/affix
 //= require variables.js
 //= require select2
+//= require jquery.sticky.js
 //= require_tree
 //= require_self
 
 function truncate() {
   if ($(".caption_cat").length) {
     $(".caption_cat").dotdotdot({
-      height: 150,
+      height: 100,
       after: ".more_info",
       watch: 'window'
     });
@@ -70,41 +72,38 @@ $(document).ready(function() {
 
   // For DataTables and Bootstrap
   $('.datatable').dataTable({
-    "sDom": "<'row'<'span4'l><'span5'f>r>t<'row'<'span3'i><'span6'p>>",
-    "sPaginationType": "bootstrap",
-    "sScrollX": "100%",
-    "aoColumnDefs": [
-          { "bSortable": false, "aTargets": [ "no_sort" ] }
-        ]
+    "pagingType": "full_numbers",
+    "scrollX": false,
+    "columnDefs": [
+      { "orderable": false, "targets": [ "no_sort" ] }
+    ]
   });
 
-  wideDataTables = $('.datatable-wide').dataTable({
-    "sDom": "<'row'<'span5'l><'span7'f>r>t<'row'<'span5'i><'span7'p>>",
-    "sPaginationType": "bootstrap",
-    "sScrollX": "100%",
-    "aoColumnDefs": [
-          { "bSortable": false, "aTargets": [ "no_sort" ] }
-        ]
+  $('.datatable-wide').dataTable({
+    "pagingType": "full_numbers",
+    "scrollX": false,
+    "columnDefs": [
+      { "orderable": false, "targets": [ "no_sort" ] }
+    ]
   });
 
   // ### REPORTS JS ### //
 
   $('.report_table').dataTable({
-    "sDom": "<'row'<'span3'l>fr>t<'row'<'span3'i><p>>",
-    "sPaginationType": "bootstrap",
-    "iDisplayLength" : 25,
-    "aLengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
-    "aoColumnDefs": [{ "bSortable": false, "aTargets": [ "no_sort" ] }]
+    "pagingType": "full_numbers",
+    "pageLength": 25,
+    "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
+    "columnDefs": [{ "orderable": false, "targets": [ "no_sort" ] }]
   });
 
   // For fading out flash notices
   $(".alert .close").click( function() {
-       $(this).parent().addClass("fade");
+    $(this).parent().addClass("fade");
   });
 
   // make the sidebar follow you down the page
   if ($(window).width() > 767) {
-    $("#sidebarbottom").sticky({topSpacing: 50, bottomSpacing: 200});
+    $("#sidebarbottom").sticky({topSpacing: 60, bottomSpacing: 200});
   }
 
   // truncate catalog descriptions
@@ -113,10 +112,26 @@ $(document).ready(function() {
   $(".btn#modal").tooltip();
   $(".not-qualified-icon").tooltip();
   $(".not-qualified-icon-em").tooltip();
+  $('[data-toggle="tooltip"]').tooltip();
 
-  $('.associated_em_box img').popover({ placement: 'bottom' });
-  $("#my_reservations .dropdown-menu a").popover({ placement: 'bottom' });
-  $("#my_equipment .dropdown-menu a").popover({ placement: 'bottom' });
+  $('.associated_em_box img').popover({
+    placement: 'bottom',
+    trigger: 'hover',
+    html: true,
+    container: 'body'
+  });
+  $("#my_reservations .dropdown-menu a").popover({
+    placement: 'bottom',
+    trigger: 'hover',
+    html: true,
+    container: 'body'
+  });
+  $("#my_equipment .dropdown-menu a").popover({
+    placement: 'bottom',
+    trigger: 'hover',
+    html: true,
+    container: 'body'
+  });
 
   // fix sub nav on scroll
   var $win = $(window)
@@ -152,7 +167,7 @@ $(document).ready(function() {
   }
 
   $('#modal').click(function() {
-    $('#userModal div.modal-body').load(new_user, {possible_netid : $('#fake_reserver_id').val() }); // new_user defined in variables.js.erb
+    $('#userModal div.modal-body').load(new_user, {possible_netid: $('#fake_reserver_id').val() }); // new_user defined in variables.js.erb
   });
 
   load_datepicker();
@@ -170,13 +185,7 @@ $(document).ready(function() {
     newMsg = ($('.select2-choice > .select2-chosen').text() == $('#equipment_object').attr('placeholder'))
       ? ""
       : "Be aware that changing the reservation equipment item may have an effect on another reservation. If you set this reservation's equipment item to an item that has already been checked out, the reservations will be swapped.";
-    $('.form-actions').children('input').data('confirm', newMsg);
+    $('input[type="submit"]').data('confirm', newMsg);
   });
 
-
 });
-
-
-
-
-
