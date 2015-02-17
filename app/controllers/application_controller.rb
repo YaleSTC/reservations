@@ -241,7 +241,8 @@ class ApplicationController < ActionController::Base
       # have requirements as part of equipment model itself
       restricted = em.model_restricted?(cart.reserver_id)
       if restricted
-        @qualifications_hash[em.id] = Requirement.list_requirement_admins(User.find(cart.reserver_id), em).html_safe
+        @qualifications_hash[em.id] = Requirement.list_requirement_admins(
+          User.find(cart.reserver_id), em).html_safe
       end
     end
 
