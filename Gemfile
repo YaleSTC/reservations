@@ -43,7 +43,6 @@ gem 'kaminari'
 gem 'draper', '~> 1.3'
 
 #forms / formatting
-gem 'dynamic_form'
 gem 'simple_form'
 gem 'cocoon'
 gem 'redcarpet'

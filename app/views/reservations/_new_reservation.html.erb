@@ -19,7 +19,6 @@
 </p>
 
 <%= simple_form_for @reservation do |f| %>
-  <%= f.error_messages %>
   <p>
     The following equipment will be reserved by
     <%= link_to User.find(cart.reserver_id).name, User.find(cart.reserver_id),
