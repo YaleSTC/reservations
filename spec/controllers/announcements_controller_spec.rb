@@ -35,9 +35,9 @@ describe AnnouncementsController, type: :controller do
       end
       it 'sets the default announcement' do
         expect(assigns(:announcement)[:starts_at]).to\
-          eq(Time.current.midnight)
+          eq(Time.zone.today)
         expect(assigns(:announcement)[:ends_at]).to\
-          eq(Time.current.midnight + 24.hours)
+          eq(Time.zone.today + 1.day)
       end
       it_behaves_like 'page success'
       it { is_expected.to render_template(:new) }
@@ -70,7 +70,7 @@ describe AnnouncementsController, type: :controller do
       context 'with incorrect params' do
         before do
           @attributes = FactoryGirl.attributes_for(:announcement)
-          @attributes[:ends_at] = Date.yesterday
+          @attributes[:ends_at] = Time.zone.today - 1.day
           post :create, announcement: @attributes
         end
         it { is_expected.to render_template(:new) }

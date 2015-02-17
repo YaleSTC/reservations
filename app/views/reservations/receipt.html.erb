@@ -7,7 +7,7 @@
   <% title "Check-In Receipt for #{@user.name}" %>
   <p class="lead">
     The following equipment has been checked in on
-    <%= Date.current.to_s(:long) %> at <%= Time.current.strftime("%I:%M%p") %>
+    <%= Time.zone.today.to_s(:long) %> at <%= Time.zone.now.strftime("%I:%M%p") %>
     by <%= link_to current_user.name, current_user, target: '_blank' %>:
   </p>
   <hr>
@@ -30,7 +30,7 @@
   <% title "Check-Out Receipt for #{@user.name}" %>
   <p class="lead">
     The following equipment has been checked out on
-    <%= Date.current.to_s(:long) %> by <%= link_to current_user.name, current_user, target: '_blank' %>:
+    <%= Time.zone.today.to_s(:long) %> by <%= link_to current_user.name, current_user, target: '_blank' %>:
   </p>
   <hr>
   <div class="row">

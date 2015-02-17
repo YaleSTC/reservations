@@ -5,8 +5,7 @@ task send_upcoming_checkin_reminder: :environment do
     upcoming_reservations =
       Reservation.where('checked_out IS NOT NULL and checked_in IS NULL and'\
                           'due_date >= ? and due_date < ?',
-                        Time.current.midnight.utc,
-                        Time.current.midnight.utc + 1.day)
+                        Time.zone.today, Time.zone.today + 1.day)
     puts "Found #{upcoming_reservations.size} reservations due for checkin."\
       'Sending reminder emails...'
     upcoming_reservations.each do |upcoming_reservation|

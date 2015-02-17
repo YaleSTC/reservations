@@ -50,7 +50,7 @@
         <% if @reservation.eligible_for_renew? %>
           <div id="renew_box">
             <p>You are currently eligible to renew the <%= @reservation.equipment_model.name.singularize %>
-            reservation until <strong><%= @reservation.find_renewal_date.to_date.to_s(:long) %></strong>.</p>
+            reservation until <strong><%= @reservation.find_renewal_date.to_s(:long) %></strong>.</p>
             <hr>
             <%= manage_reservations_btn %>
             <%= link_to "Renew Now", renew_reservation_path, :method => :put,  class: 'btn btn-primary' %>
@@ -61,8 +61,7 @@
         <% else %>
           <p>
             This item is not currently eligible for renewal. Please remember to
-            return the <%= @reservation.equipment_model.name.singularize %> to our
-            office on <strong><%= @reservation.due_date.to_date.to_s(:long) %></strong>.
+            return the <%= @reservation.equipment_model.name.singularize %> to our office on <strong><%= @reservation.due_date.to_s(:long) %></strong>.
           </p>
           <hr>
           <%= manage_reservations_btn %>
@@ -114,10 +113,10 @@
 
                 <div id="res_dates" class="row">
                   <div class="col-md-6">
-                    <p><h4><%= @reservation.start_date.to_date.strftime("%a, %b %d, %Y") %></h4></p>
+                    <p><h4><%= @reservation.start_date.strftime("%a, %b %d, %Y") %></h4></p>
                   </div>
                   <div class="col-md-6">
-                    <p><h4 class="pull-right"><%= @reservation.due_date.to_date.strftime("%a, %b %d, %Y") %></h4></p>
+                    <p><h4 class="pull-right"><%= @reservation.due_date.strftime("%a, %b %d, %Y") %></h4></p>
                   </div>
                 </div>
 

@@ -7,8 +7,8 @@
   <ul>
     <li><strong>Reserver:</strong> <%= link_to @reservation.reserver.name, @reservation.reserver %></li>
     <li><strong>Equipment:</strong> <%= link_to @reservation.equipment_model.name, @reservation.equipment_model %></li>
-    <li><strong>Start Date:</strong> <%= @reservation.start_date.to_date.to_s(:long) %></li>
-    <li><strong>End Date:</strong> <%= @reservation.due_date.to_date.to_s(:long) %></li>
+    <li><strong>Start Date:</strong> <%= @reservation.start_date.to_s(:long) %></li>
+    <li><strong>End Date:</strong> <%= @reservation.due_date.to_s(:long) %></li>
   </ul>
 </p>
 
@@ -38,7 +38,7 @@
   <p>
     <% @all_current_requests_by_user.each do |request| %>
       <ul>
-        <li><%= request.equipment_model.name + " from " + request.start_date.to_date.to_s(:long) + " to " + request.due_date.to_date.to_s(:long) + "." %></li>
+        <li><%= request.equipment_model.name + " from " + request.start_date.to_s(:long) + " to " + request.due_date.to_s(:long) + "." %></li>
       </ul>
     <% end %>
   </p>

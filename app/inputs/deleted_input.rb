@@ -8,6 +8,6 @@ class DeletedInput < SimpleForm::Inputs::BooleanInput
       @builder.object.deleted_at.blank? ? { checked: false } : { checked: true }
     @builder.check_box(attribute_name,
                        box_val,
-                       Time.current, '')
+                       Time.zone.now, '')
   end
 end

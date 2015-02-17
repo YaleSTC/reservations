@@ -11,11 +11,13 @@ Hi <%= @reservation.reserver.name %>,
   Notes: <%= markdown(@reservation.notes) %>
 <% end %>
 
-<p> <% if (@reservation.due_date - @reservation.checked_in ) < 86400 %>
-      Since the equipment was returned late, you will be charged a late fee of
-      <%= number_to_currency(@reservation.equipment_model.late_fee) %> per day,
-      for a total of <%= number_to_currency(((@reservation.checked_in - @reservation.due_date )/86400).to_i*(@reservation.equipment_model.late_fee))%>. </p>
-    <% end %></p>
+<% if @reservation.due_date + 1.day <= @reservation.checked_in.to_date %>
+  <p>
+    Since the equipment was returned late, you will be charged a late fee of
+    <%= number_to_currency(@reservation.equipment_model.late_fee) %> per day,
+    for a total of <%= number_to_currency(((@reservation.checked_in.to_date - @reservation.due_date)).to_i*(@reservation.equipment_model.late_fee))%>.
+  </p>
+<% end %>
 
 
 

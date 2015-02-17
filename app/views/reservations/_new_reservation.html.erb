@@ -24,8 +24,8 @@
     <%= link_to User.find(cart.reserver_id).name, User.find(cart.reserver_id),
     target: '_blank' %>
     from
-    <%= cart.start_date.to_date.to_s(:long) %> to
-    <%= cart.due_date.to_date.to_s(:long) %>:
+    <%= cart.start_date.to_s(:long) %> to
+    <%= cart.due_date.to_s(:long) %>:
 
   </p>
 

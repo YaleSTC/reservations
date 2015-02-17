@@ -79,7 +79,7 @@ module CartValidations
     count_hash.each do |item, q|
       max = item.maximum_per_user
 
-      start_date.to_date.upto(due_date.to_date) do |d|
+      start_date.upto(due_date) do |d|
         unless Reservation.send(count_method, d, item.id, relevant) + q > max
           next
         end

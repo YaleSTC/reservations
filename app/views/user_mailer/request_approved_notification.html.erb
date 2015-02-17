@@ -2,8 +2,8 @@ Hi <%= @reservation.reserver.name %>,
 <br />
 <p>Your <%= link_to 'reservation request', reservation_url(@reservation, only_path: false) %> has been approved!<p>
 
-<p>You can pick up your <%= @reservation.equipment_model.name %> at <%= @reservation.start_date.to_date.to_s(:long) %>. Remember to bring it back on
-<%= @reservation.due_date.to_date.to_s(:long) %>!
+<p>You can pick up your <%= @reservation.equipment_model.name %> at <%= @reservation.start_date.to_s(:long) %>. Remember to bring it back on
+<%= @reservation.due_date.to_s(:long) %>!
 <br />
 Sincerely,
 <%= @app_configs.department_name %>

@@ -6,7 +6,7 @@ task delete_missed_reservations: :environment do
   unless AppConfig.first.blank? || AppConfig.first.res_exp_time.blank?
     time = AppConfig.first.res_exp_time
     missed_reservations = Reservation.where(
-      'due_date < ?', Date.current - time.days).untouched
+      'due_date < ?', Time.zone.today - time.days).untouched
     Rails.logger.info "Found #{missed_reservations.size} reservations"
 
     missed_reservations.each do |missed_reservation|

@@ -37,14 +37,14 @@ shared_examples_for 'GET index success' do
     let!(:mod_other_cat_active) { FactoryGirl.create(:equipment_model) }
     let!(:mod_other_cat_inactive) do
       FactoryGirl.create(:equipment_model,
-                         deleted_at: Date.current)
+                         deleted_at: Time.zone.today)
     end
     context 'with @category set' do
       it 'should populate an array of of active category-type equipment '\
         'models' do
         mod_same_cat_inactive =
           FactoryGirl.create(:equipment_model, category: model.category,
-                                               deleted_at: Date.current)
+                                               deleted_at: Time.zone.today)
         get :index, category_id: model.category
         expect(assigns(:equipment_models).include?(model)).to be_truthy
         expect(assigns(:equipment_models).include?(mod_other_cat_active))
@@ -71,13 +71,13 @@ shared_examples_for 'GET index success' do
     let!(:mod_other_cat_active) { FactoryGirl.create(:equipment_model) }
     let!(:mod_other_cat_inactive) do
       FactoryGirl.create(:equipment_model,
-                         deleted_at: Date.current)
+                         deleted_at: Time.zone.today)
     end
     context 'with @category set' do
       it 'should populate an array of category-type equipment models' do
         mod_same_cat_inactive =
           FactoryGirl.create(:equipment_model, category: model.category,
-                                               deleted_at: Date.current)
+                                               deleted_at: Time.zone.today)
         get :index, category_id: model.category, show_deleted: true
         expect(assigns(:equipment_models).include?(model)).to be_truthy
         expect(assigns(:equipment_models).include?(mod_other_cat_active))

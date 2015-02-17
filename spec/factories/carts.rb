@@ -1,8 +1,8 @@
 FactoryGirl.define do
   factory :cart do
     reserver_id { FactoryGirl.create(:user).id }
-    start_date { Date.current }
-    due_date { Date.tomorrow }
+    start_date { Time.zone.today }
+    due_date { Time.zone.today + 1.day }
     items {}
 
     factory :cart_with_items do
@@ -20,11 +20,11 @@ FactoryGirl.define do
         { e.id => 1 }
       end
 
-      start_date Date.current
+      start_date Time.zone.today
       due_date do
-        Date.tomorrow\
+        Time.zone.today\
         + EquipmentModel.find(items.keys.first).category.max_checkout_length\
-        + 1.day
+        + 2.days
       end
     end
   end
