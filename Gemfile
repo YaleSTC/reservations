@@ -14,7 +14,7 @@ group :development, :test do
 end
 
 # authentication / authorization
-gem 'devise', '~> 3.3.0'
+gem 'devise', '~> 3.4.1'
 gem 'devise_cas_authenticatable', '~> 1.3.7' # if ENV['CAS_AUTH']
 gem 'cancancan'
 
