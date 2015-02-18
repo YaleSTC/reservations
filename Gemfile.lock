@@ -176,7 +176,7 @@ GEM
     jquery-rails (3.1.2)
       railties (>= 3.0, < 5.0)
       thor (>= 0.14, < 2.0)
-    jquery-ui-rails (5.0.1)
+    jquery-ui-rails (5.0.3)
       railties (>= 3.2.16)
     json (1.8.2)
     kaminari (0.16.1)
@@ -453,7 +453,7 @@ DEPENDENCIES
   guard-rspec
   jquery-datatables-rails
   jquery-rails (~> 3.1.2)
-  jquery-ui-rails (~> 5.0.1)
+  jquery-ui-rails (~> 5.0.3)
   kaminari
   letter_opener
   letter_opener_web

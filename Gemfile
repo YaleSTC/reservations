@@ -39,7 +39,7 @@ gem 'nilify_blanks', '~> 1.2.0'
 
 # ui
 gem 'jquery-rails', '~> 3.1.2'
-gem 'jquery-ui-rails', '~> 5.0.1'
+gem 'jquery-ui-rails', '~> 5.0.3'
 gem 'jquery-datatables-rails'
 gem 'rails4-autocomplete'
 gem 'select2-rails'
