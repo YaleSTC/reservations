@@ -211,7 +211,7 @@ GEM
     minitest (5.5.1)
     multi_json (1.10.1)
     multipart-post (2.0.0)
-    mysql2 (0.3.16)
+    mysql2 (0.3.18)
     nested_form (0.3.2)
     net-http-persistent (2.9.4)
     net-http-pipeline (1.0.1)
@@ -460,7 +460,7 @@ DEPENDENCIES
   kaminari
   letter_opener
   letter_opener_web
-  mysql2
+  mysql2 (~> 0.3.18)
   net-ldap
   nilify_blanks
   paperclip
