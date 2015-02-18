@@ -22,7 +22,7 @@ gem 'cancancan', '~> 1.10.1'
 gem 'whenever', '~> 0.9.4'
 
 # administrative panel
-gem 'rails_admin'
+gem 'rails_admin', '~> 0.6.6'
 
 # seed script gems
 gem 'ffaker', '~> 1.32.1'
