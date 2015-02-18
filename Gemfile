@@ -29,7 +29,7 @@ gem 'ffaker', '~> 1.32.1'
 gem 'ruby-progressbar', '~> 1.7.1'
 
 # ldap integration
-gem 'net-ldap'
+gem 'net-ldap', '~> 0.11'
 
 # attachments
 gem 'paperclip'

@@ -208,7 +208,7 @@ GEM
     nested_form (0.3.2)
     net-http-persistent (2.9.4)
     net-http-pipeline (1.0.1)
-    net-ldap (0.8.0)
+    net-ldap (0.11)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (2.9.1)
@@ -458,7 +458,7 @@ DEPENDENCIES
   letter_opener
   letter_opener_web
   mysql2 (~> 0.3.18)
-  net-ldap
+  net-ldap (~> 0.11)
   nilify_blanks
   paperclip
   party_foul
