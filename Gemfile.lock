@@ -417,7 +417,7 @@ GEM
     warden (1.2.3)
       rack (>= 1.0)
     websocket (1.2.1)
-    whenever (0.9.3)
+    whenever (0.9.4)
       chronic (>= 0.6.3)
     xpath (2.0.0)
       nokogiri (~> 1.3)
@@ -492,5 +492,5 @@ DEPENDENCIES
   travis
   uglifier
   unicorn
-  whenever
+  whenever (~> 0.9.4)
   yajl-ruby

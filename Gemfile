@@ -19,7 +19,7 @@ gem 'devise_cas_authenticatable', '~> 1.3.7' # if ENV['CAS_AUTH']
 gem 'cancancan', '~> 1.10.1'
 
 # scheduling
-gem 'whenever'
+gem 'whenever', '~> 0.9.4'
 
 # administrative panel
 gem 'rails_admin'
