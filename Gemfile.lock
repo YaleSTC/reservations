@@ -179,7 +179,7 @@ GEM
     jquery-ui-rails (5.0.3)
       railties (>= 3.2.16)
     json (1.8.2)
-    kaminari (0.16.1)
+    kaminari (0.16.3)
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
     kgio (2.9.3)
@@ -454,7 +454,7 @@ DEPENDENCIES
   jquery-datatables-rails (~> 3.1.1)
   jquery-rails (~> 3.1.2)
   jquery-ui-rails (~> 5.0.3)
-  kaminari
+  kaminari (~> 0.16.3)
   letter_opener
   letter_opener_web
   mysql2 (~> 0.3.18)
