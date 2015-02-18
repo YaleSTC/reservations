@@ -34,9 +34,7 @@ gem 'net-ldap'
 # attachments
 gem 'paperclip'
 
-# see issue #1040 for details, look for an update past 3.1.6
-gem 'permanent_records',
-    git: 'https://github.com/JackDanger/permanent_records.git', ref: 'ea027de9'
+gem 'permanent_records', '~> 3.2.0'
 gem 'nilify_blanks'
 
 # ui
