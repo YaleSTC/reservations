@@ -484,7 +484,7 @@ DEPENDENCIES
   sass-rails
   select2-rails (~> 3.5.9.3)
   shoulda-matchers
-  simple_form
+  simple_form (~> 3.1.0)
   spring
   spring-commands-rspec
   therubyracer
