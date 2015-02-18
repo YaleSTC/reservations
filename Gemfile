@@ -48,7 +48,7 @@ gem 'draper', '~> 1.4.0'
 
 # forms / formatting
 gem 'simple_form', '~> 3.1.0'
-gem 'cocoon'
+gem 'cocoon', '~> 1.2.6'
 gem 'redcarpet'
 
 group :development, :test do

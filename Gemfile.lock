@@ -436,7 +436,7 @@ DEPENDENCIES
   capistrano-rails (~> 1.1)
   capistrano-rvm
   capybara
-  cocoon
+  cocoon (~> 1.2.6)
   codeclimate-test-reporter
   coffee-rails
   database_cleaner
