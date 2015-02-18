@@ -472,7 +472,7 @@ DEPENDENCIES
   rack-mini-profiler
   rack-timeout
   rails (~> 4.1.9)
-  rails4-autocomplete
+  rails4-autocomplete (~> 1.1.1)
   rails_12factor
   rails_admin (~> 0.6.6)
   rake (~> 10.4.2)
