@@ -49,7 +49,7 @@ gem 'draper', '~> 1.4.0'
 # forms / formatting
 gem 'simple_form', '~> 3.1.0'
 gem 'cocoon', '~> 1.2.6'
-gem 'redcarpet'
+gem 'redcarpet', '~> 3.2.2'
 
 group :development, :test do
   gem 'factory_girl_rails'

@@ -305,7 +305,7 @@ GEM
       ffi (>= 0.5.0)
     rdoc (4.2.0)
       json (~> 1.4)
-    redcarpet (3.1.2)
+    redcarpet (3.2.2)
     ref (1.0.5)
     remotipart (1.2.1)
     request_store (1.1.0)
@@ -477,7 +477,7 @@ DEPENDENCIES
   rails_admin (~> 0.6.6)
   rake (~> 10.4.2)
   rdoc (~> 4.2.0)
-  redcarpet
+  redcarpet (~> 3.2.2)
   rspec-rails
   rubocop
   ruby-progressbar (~> 1.7.1)
