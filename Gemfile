@@ -16,7 +16,7 @@ end
 # authentication / authorization
 gem 'devise', '~> 3.4.1'
 gem 'devise_cas_authenticatable', '~> 1.3.7' # if ENV['CAS_AUTH']
-gem 'cancancan'
+gem 'cancancan', '~> 1.10.1'
 
 # scheduling
 gem 'whenever'

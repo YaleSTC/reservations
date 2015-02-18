@@ -51,7 +51,7 @@ GEM
       columnize (~> 0.8)
       debugger-linecache (~> 1.2)
       slop (~> 3.6)
-    cancancan (1.9.2)
+    cancancan (1.10.1)
     capistrano (3.2.1)
       i18n
       rake (>= 10.0.0)
@@ -430,7 +430,7 @@ DEPENDENCIES
   awesome_print
   bootstrap-sass (~> 3.3.1)
   bullet
-  cancancan
+  cancancan (~> 1.10.1)
   capistrano (~> 3.1)
   capistrano-bundler (~> 1.1.2)
   capistrano-rails (~> 1.1)
