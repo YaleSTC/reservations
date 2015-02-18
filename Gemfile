@@ -5,7 +5,7 @@ ruby '2.1.2' # Version in .ruby-version must match
 # standard gems
 gem 'rails', '~> 4.1.9'
 gem 'mysql2', '~> 0.3.18'
-gem 'rake', '~> 10.3.2'
+gem 'rake', '~> 10.4.2'
 gem 'rdoc', '~> 4.1.2'
 
 # simulate environment variables
