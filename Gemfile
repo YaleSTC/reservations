@@ -25,8 +25,8 @@ gem 'whenever', '~> 0.9.4'
 gem 'rails_admin'
 
 # seed script gems
-gem 'ffaker'
-gem 'ruby-progressbar'
+gem 'ffaker', '~> 1.32.1'
+gem 'ruby-progressbar', '~> 1.7.1'
 
 # ldap integration
 gem 'net-ldap'

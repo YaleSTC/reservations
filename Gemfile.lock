@@ -133,7 +133,7 @@ GEM
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.9.1)
       faraday (>= 0.7.4, < 0.10)
-    ffaker (1.25.0)
+    ffaker (1.32.1)
     ffi (1.9.6)
     font-awesome-rails (4.2.0.0)
       railties (>= 3.2, < 5.0)
@@ -337,7 +337,7 @@ GEM
       powerpack (~> 0.0.6)
       rainbow (>= 1.99.1, < 3.0)
       ruby-progressbar (~> 1.4)
-    ruby-progressbar (1.6.0)
+    ruby-progressbar (1.7.1)
     rubycas-client (2.3.9)
       activesupport
     safe_yaml (1.0.4)
@@ -446,7 +446,7 @@ DEPENDENCIES
   dotenv-rails (~> 1.0.2)
   draper (~> 1.3)
   factory_girl_rails
-  ffaker
+  ffaker (~> 1.32.1)
   font-awesome-rails
   fuubar (~> 2.0.0rc1)
   guard-livereload
@@ -480,7 +480,7 @@ DEPENDENCIES
   redcarpet
   rspec-rails
   rubocop
-  ruby-progressbar
+  ruby-progressbar (~> 1.7.1)
   sass-rails
   select2-rails
   shoulda-matchers
