@@ -35,7 +35,7 @@ gem 'net-ldap', '~> 0.11'
 gem 'paperclip', '~> 4.2.1'
 
 gem 'permanent_records', '~> 3.2.0'
-gem 'nilify_blanks'
+gem 'nilify_blanks', '~> 1.2.0'
 
 # ui
 gem 'jquery-rails', '~> 3.1.2'

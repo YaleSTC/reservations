@@ -212,7 +212,7 @@ GEM
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (2.9.1)
-    nilify_blanks (1.1.0)
+    nilify_blanks (1.2.0)
       activerecord (>= 3.0.0)
       activesupport (>= 3.0.0)
     nokogiri (1.6.3.1)
@@ -459,7 +459,7 @@ DEPENDENCIES
   letter_opener_web
   mysql2 (~> 0.3.18)
   net-ldap (~> 0.11)
-  nilify_blanks
+  nilify_blanks (~> 1.2.0)
   paperclip (~> 4.2.1)
   party_foul
   permanent_records (~> 3.2.0)
