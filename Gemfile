@@ -42,7 +42,7 @@ gem 'jquery-rails', '~> 3.1.2'
 gem 'jquery-ui-rails', '~> 5.0.3'
 gem 'jquery-datatables-rails', '~> 3.1.1'
 gem 'rails4-autocomplete', '~> 1.1.1'
-gem 'select2-rails'
+gem 'select2-rails', '~> 3.5.9.3'
 gem 'kaminari'
 gem 'draper', '~> 1.3'
 
