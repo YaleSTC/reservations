@@ -451,7 +451,7 @@ DEPENDENCIES
   fuubar (~> 2.0.0rc1)
   guard-livereload
   guard-rspec
-  jquery-datatables-rails
+  jquery-datatables-rails (~> 3.1.1)
   jquery-rails (~> 3.1.2)
   jquery-ui-rails (~> 5.0.3)
   kaminari
