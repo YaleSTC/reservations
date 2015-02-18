@@ -32,7 +32,7 @@ gem 'ruby-progressbar', '~> 1.7.1'
 gem 'net-ldap', '~> 0.11'
 
 # attachments
-gem 'paperclip'
+gem 'paperclip', '~> 4.2.1'
 
 gem 'permanent_records', '~> 3.2.0'
 gem 'nilify_blanks'
