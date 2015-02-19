@@ -200,12 +200,12 @@ describe EquipmentModelsController, type: :controller do
       context 'with valid attributes' do
         before do
           post :create, equipment_model: FactoryGirl.attributes_for(
-          :equipment_model, category_id: model.category)
+            :equipment_model, category_id: model.category)
         end
         it 'should save model' do
           expect do
             post :create, equipment_model: FactoryGirl.attributes_for(
-            :equipment_model, category_id: model.category)
+              :equipment_model, category_id: model.category)
           end.to change(EquipmentModel, :count).by(1)
         end
         it { is_expected.to set_flash }
@@ -215,14 +215,14 @@ describe EquipmentModelsController, type: :controller do
       context 'without valid attributes' do
         before do
           post :create, equipment_model: FactoryGirl.attributes_for(
-          :equipment_model, name: nil)
+            :equipment_model, name: nil)
         end
         it { is_expected.to set_flash }
         it { is_expected.to render_template(:new) }
         it 'should not save' do
           expect do
             post :create, equipment_model: FactoryGirl.attributes_for(
-            :equipment_model, name: nil)
+              :equipment_model, name: nil)
           end.not_to change(EquipmentModel, :count)
         end
         it { is_expected.to render_template(:new) }

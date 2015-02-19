@@ -176,7 +176,7 @@ describe EquipmentObjectsController, type: :controller do
         it 'should save object with notes' do
           expect do
             post :create, equipment_object: FactoryGirl.attributes_for(
-            :equipment_object, equipment_model_id: object.equipment_model.id)
+              :equipment_object, equipment_model_id: object.equipment_model.id)
           end.to change(EquipmentObject, :count).by(1)
           expect(EquipmentObject.last.notes).not_to be_nil
           expect(EquipmentObject.last.notes).not_to be('')
@@ -187,14 +187,14 @@ describe EquipmentObjectsController, type: :controller do
       context 'without valid attributes' do
         before do
           post :create, equipment_object: FactoryGirl.attributes_for(
-          :equipment_object, name: nil)
+            :equipment_object, name: nil)
         end
         it { is_expected.not_to set_flash }
         it { is_expected.to render_template(:new) }
         it 'should not save' do
           expect do
             post :create, equipment_object: FactoryGirl.attributes_for(
-            :equipment_object, name: nil)
+              :equipment_object, name: nil)
           end.not_to change(EquipmentObject, :count)
         end
         it { is_expected.to render_template(:new) }

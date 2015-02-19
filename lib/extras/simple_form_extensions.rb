@@ -6,8 +6,8 @@ module ButtonComponents
     # rubocop:disable AssignmentInCondition
     if cancel = options.delete(:cancel)
       submit(*args, &block) + ' ' + template.link_to(
-      template.button_tag(I18n.t('simple_form.buttons.cancel'),
-                          type: 'button', class: 'btn btn-default'), cancel)
+        template.button_tag(I18n.t('simple_form.buttons.cancel'),
+                            type: 'button', class: 'btn btn-default'), cancel)
     else
       submit(*args, &block)
     end

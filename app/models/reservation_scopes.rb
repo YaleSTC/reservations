@@ -50,15 +50,15 @@ module ReservationScopes
       scope :checkoutable, lambda {
         where('start_date <= ?', Time.zone.today).reserved
       }
-      scope :starts_on_days, lambda {
-        |start_date, end_date|  where(start_date: start_date..end_date)
+      scope :starts_on_days, lambda { |start_date, end_date|
+        where(start_date: start_date..end_date)
       }
-      scope :ends_on_days, lambda {
-        |start_date, end_date|  where(due_date: start_date..end_date)
+      scope :ends_on_days, lambda { |start_date, end_date|
+        where(due_date: start_date..end_date)
       }
       scope :reserved_on_date, ->(date) { overlaps_with_date(date).finalized }
-      scope :for_eq_model, lambda {
-        |eq_model| where(equipment_model_id: eq_model.id).finalized
+      scope :for_eq_model, lambda { |eq_model|
+        where(equipment_model_id: eq_model.id).finalized
       }
       scope :active_or_requested, lambda {
         where('checked_in IS NULL and approval_status != ?', 'denied').recent
@@ -79,12 +79,12 @@ module ReservationScopes
               Time.zone.today).recent
       }
       scope :for_reserver, ->(reserver) { where(reserver_id: reserver) }
-      scope :reserved_in_date_range, lambda {
-        |start_date, end_date| where('start_date <= ? and due_date >= ?',
-                                     end_date, start_date).finalized
+      scope :reserved_in_date_range, lambda { |start_date, end_date|
+        where('start_date <= ? and due_date >= ?', end_date, start_date)
+          .finalized
       }
-      scope :overlaps_with_date, lambda {
-        |date| where('start_date <= ? and due_date >= ?', date, date)
+      scope :overlaps_with_date, lambda { |date|
+        where('start_date <= ? and due_date >= ?', date, date)
       }
       scope :has_notes, ->() { where.not(notes: nil) }
       scope :with_categories, lambda {

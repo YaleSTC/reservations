@@ -69,7 +69,7 @@ group :development, :test do
   gem 'awesome_print', '~> 1.6.1'
   gem 'codeclimate-test-reporter', '~> 0.4.6'
   gem 'database_cleaner', '~> 1.4.0'
-  gem 'rubocop', require: false
+  gem 'rubocop', '~> 0.29.1', require: false
 end
 
 # Gems used only for assets and not required
