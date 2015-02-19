@@ -89,7 +89,7 @@ group :development do
   gem 'letter_opener', '~> 1.3.0'
   gem 'letter_opener_web', '~> 1.3.0'
   gem 'rack-mini-profiler', '~> 0.9.2'
-  gem 'bullet'
+  gem 'bullet', '~> 4.14.4'
   gem 'travis'
 end
 
