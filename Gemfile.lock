@@ -473,6 +473,6 @@ DEPENDENCIES
   therubyracer (~> 0.12.1)
   thin (~> 1.6.3)
   uglifier (~> 2.7.0)
-  unicorn
+  unicorn (~> 4.8.3)
   whenever (~> 0.9.4)
   yajl-ruby (~> 1.2.1)

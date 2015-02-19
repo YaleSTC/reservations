@@ -98,7 +98,7 @@ group :production do
   gem 'dotenv-deployment', '~> 0.2.0'
   # for Heroku
   gem 'pg', '~> 0.18.1'
-  gem 'unicorn'
+  gem 'unicorn', '~> 4.8.3'
   gem 'rack-timeout'
   gem 'rails_12factor'
 end
