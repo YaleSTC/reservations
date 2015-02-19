@@ -75,7 +75,7 @@ end
 # Gems used only for assets and not required
 # in production environments by default.
 gem 'sass-rails', '~> 5.0.1'
-gem 'coffee-rails'
+gem 'coffee-rails', '~> 4.1.0'
 gem 'uglifier'
 
 gem 'bootstrap-sass', '~> 3.3.1'
