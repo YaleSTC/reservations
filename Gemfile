@@ -88,7 +88,7 @@ group :development do
   gem 'pry-remote', '~> 0.1.8'
   gem 'letter_opener', '~> 1.3.0'
   gem 'letter_opener_web', '~> 1.3.0'
-  gem 'rack-mini-profiler'
+  gem 'rack-mini-profiler', '~> 0.9.2'
   gem 'bullet'
   gem 'travis'
 end

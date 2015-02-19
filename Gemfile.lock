@@ -483,7 +483,7 @@ DEPENDENCIES
   pry-rails (~> 0.3.3)
   pry-remote (~> 0.1.8)
   pry-stack_explorer (~> 0.4.9.2)
-  rack-mini-profiler
+  rack-mini-profiler (~> 0.9.2)
   rack-timeout
   rails (~> 4.1.9)
   rails4-autocomplete (~> 1.1.1)
