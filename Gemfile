@@ -55,7 +55,7 @@ group :development, :test do
   gem 'factory_girl_rails', '~> 4.5.0'
   gem 'rspec-rails', '~> 3.2.0'
   gem 'shoulda-matchers', '~> 2.8.0'
-  gem 'capybara'
+  gem 'capybara', '~> 2.4.4'
   gem 'guard-rspec', '~> 4.5.0'
   gem 'spring'
   gem 'spring-commands-rspec'
