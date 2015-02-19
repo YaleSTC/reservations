@@ -82,7 +82,7 @@ gem 'font-awesome-rails', '~> 4.3.0'
 group :development do
   gem 'thin', '~> 1.6.3'
   gem 'pry', '~> 0.10.1'
-  gem 'pry-rails'
+  gem 'pry-rails', '~> 0.3.3'
   gem 'pry-byebug'
   gem 'pry-stack_explorer'
   gem 'pry-remote'

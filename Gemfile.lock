@@ -251,7 +251,7 @@ GEM
     pry-byebug (2.0.0)
       byebug (~> 3.4)
       pry (~> 0.10)
-    pry-rails (0.3.2)
+    pry-rails (0.3.3)
       pry (>= 0.9.10)
     pry-remote (0.1.8)
       pry (~> 0.9)
@@ -479,7 +479,7 @@ DEPENDENCIES
   pg
   pry (~> 0.10.1)
   pry-byebug
-  pry-rails
+  pry-rails (~> 0.3.3)
   pry-remote
   pry-stack_explorer
   rack-mini-profiler
