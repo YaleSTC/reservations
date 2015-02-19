@@ -256,7 +256,7 @@ GEM
     pry-remote (0.1.8)
       pry (~> 0.9)
       slop (~> 3.0)
-    pry-stack_explorer (0.4.9.1)
+    pry-stack_explorer (0.4.9.2)
       binding_of_caller (>= 0.7)
       pry (>= 0.9.11)
     pusher-client (0.6.0)
@@ -481,7 +481,7 @@ DEPENDENCIES
   pry-byebug (~> 3.0.1)
   pry-rails (~> 0.3.3)
   pry-remote
-  pry-stack_explorer
+  pry-stack_explorer (~> 0.4.9.2)
   rack-mini-profiler
   rack-timeout
   rails (~> 4.1.9)

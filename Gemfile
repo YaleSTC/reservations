@@ -84,7 +84,7 @@ group :development do
   gem 'pry', '~> 0.10.1'
   gem 'pry-rails', '~> 0.3.3'
   gem 'pry-byebug', '~> 3.0.1'
-  gem 'pry-stack_explorer'
+  gem 'pry-stack_explorer', '~> 0.4.9.2'
   gem 'pry-remote'
   gem 'letter_opener'
   gem 'letter_opener_web'
