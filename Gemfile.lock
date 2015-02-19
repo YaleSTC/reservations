@@ -137,7 +137,7 @@ GEM
       faraday (>= 0.7.4, < 0.10)
     ffaker (1.32.1)
     ffi (1.9.6)
-    font-awesome-rails (4.2.0.0)
+    font-awesome-rails (4.3.0.0)
       railties (>= 3.2, < 5.0)
     formatador (0.2.5)
     fuubar (2.0.0)
@@ -460,7 +460,7 @@ DEPENDENCIES
   draper (~> 1.4.0)
   factory_girl_rails (~> 4.5.0)
   ffaker (~> 1.32.1)
-  font-awesome-rails
+  font-awesome-rails (~> 4.3.0)
   fuubar (~> 2.0.0)
   guard-livereload (~> 2.4.0)
   guard-rspec (~> 4.5.0)

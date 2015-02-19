@@ -72,13 +72,12 @@ group :development, :test do
   gem 'rubocop', '~> 0.29.1', require: false
 end
 
-# Gems used only for assets and not required
-# in production environments by default.
+# assets
 gem 'sass-rails', '~> 5.0.1'
 gem 'coffee-rails', '~> 4.1.0'
 gem 'uglifier', '~> 2.7.0'
 gem 'bootstrap-sass', '~> 3.3.3'
-gem 'font-awesome-rails'
+gem 'font-awesome-rails', '~> 4.3.0'
 
 group :development do
   gem 'thin'
