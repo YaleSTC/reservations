@@ -94,7 +94,7 @@ GEM
     colorize (0.7.5)
     columnize (0.8.9)
     daemons (1.1.9)
-    database_cleaner (1.3.0)
+    database_cleaner (1.4.0)
     debug_inspector (0.0.2)
     debugger-linecache (1.2.0)
     devise (3.4.1)
@@ -452,7 +452,7 @@ DEPENDENCIES
   cocoon (~> 1.2.6)
   codeclimate-test-reporter (~> 0.4.6)
   coffee-rails
-  database_cleaner
+  database_cleaner (~> 1.4.0)
   devise (~> 3.4.1)
   devise_cas_authenticatable (~> 1.3.7)
   dotenv-deployment

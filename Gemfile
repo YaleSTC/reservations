@@ -68,7 +68,7 @@ group :development, :test do
   gem 'capistrano-rvm', '~> 0.1.2'
   gem 'awesome_print', '~> 1.6.1'
   gem 'codeclimate-test-reporter', '~> 0.4.6'
-  gem 'database_cleaner'
+  gem 'database_cleaner', '~> 1.4.0'
   gem 'rubocop', require: false
 end
 
