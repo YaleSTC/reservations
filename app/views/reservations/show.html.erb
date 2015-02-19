@@ -39,8 +39,11 @@
         </div>
         <div class="panel-footer">
           <h3>
-            <%= link_to @reservation.equipment_object.nil? ? "(unassigned)" :
-            @reservation.equipment_object.name, equipment_model_path(@reservation.equipment_model, anchor: 'items') %>
+            <% if @reservation.equipment_object %>
+              <%= link_to @reservation.equipment_object.name, @reservation.equipment_object %>
+            <% else %>
+              <%= link_to '(unassigned)', equipment_model_path(@reservation.equipment_model, anchor: 'items') %>
+            <% end %>
           </h3>
         </div>
       </div>
