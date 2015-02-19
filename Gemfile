@@ -61,7 +61,7 @@ group :development, :test do
   gem 'spring-commands-rspec', '~> 1.0.4'
   gem 'fuubar', '~> 2.0.0'
   gem 'guard-livereload', '~> 2.4.0'
-  gem 'yajl-ruby'
+  gem 'yajl-ruby', '~> 1.2.1'
   gem 'capistrano',  '~> 3.1'
   gem 'capistrano-bundler', '~> 1.1.2'
   gem 'capistrano-rails', '~> 1.1'

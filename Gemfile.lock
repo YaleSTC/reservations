@@ -504,4 +504,4 @@ DEPENDENCIES
   uglifier
   unicorn
   whenever (~> 0.9.4)
-  yajl-ruby
+  yajl-ruby (~> 1.2.1)
