@@ -477,7 +477,7 @@ DEPENDENCIES
   party_foul
   permanent_records (~> 3.2.0)
   pg
-  pry
+  pry (~> 0.10.1)
   pry-byebug
   pry-rails
   pry-remote
