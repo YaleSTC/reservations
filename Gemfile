@@ -58,7 +58,7 @@ group :development, :test do
   gem 'capybara', '~> 2.4.4'
   gem 'guard-rspec', '~> 4.5.0'
   gem 'spring', '~> 1.3.2'
-  gem 'spring-commands-rspec'
+  gem 'spring-commands-rspec', '~> 1.0.4'
   gem 'fuubar', '~> 2.0.0'
   gem 'guard-livereload'
   gem 'yajl-ruby'
