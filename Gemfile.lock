@@ -154,13 +154,15 @@ GEM
       lumberjack (~> 1.0)
       pry (>= 0.9.12)
       thor (>= 0.18.1)
+    guard-compat (1.2.1)
     guard-livereload (2.3.1)
       em-websocket (~> 0.5)
       guard (~> 2.0)
       multi_json (~> 1.8)
-    guard-rspec (4.3.1)
+    guard-rspec (4.5.0)
       guard (~> 2.1)
-      rspec (>= 2.14, < 4.0)
+      guard-compat (~> 1.1)
+      rspec (>= 2.99.0, < 4.0)
     haml (4.0.6)
       tilt
     highline (1.6.21)
@@ -450,7 +452,7 @@ DEPENDENCIES
   font-awesome-rails
   fuubar (~> 2.0.0)
   guard-livereload
-  guard-rspec
+  guard-rspec (~> 4.5.0)
   jquery-datatables-rails (~> 3.1.1)
   jquery-rails (~> 3.1.2)
   jquery-ui-rails (~> 5.0.3)

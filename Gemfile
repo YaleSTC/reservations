@@ -56,7 +56,7 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'shoulda-matchers'
   gem 'capybara'
-  gem 'guard-rspec'
+  gem 'guard-rspec', '~> 4.5.0'
   gem 'spring'
   gem 'spring-commands-rspec'
   gem 'fuubar', '~> 2.0.0'
