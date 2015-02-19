@@ -82,7 +82,7 @@ class ReportsController < ApplicationController
     tables[:equipment_models] = Report.build_new(:equipment_model_id,
                                                  reservations, MODEL_COLUMNS)
     tables[:equipment_items] = Report.build_new(:equipment_item_id,
-                                                reservations, MODEL_COLUMNS)
+                                                  reservations, MODEL_COLUMNS)
     tables[:users] = Report.build_new(:reserver_id, reservations, MODEL_COLUMNS)
     tables[:reservations] = Report.build_new(:id, reservations, RES_COLUMNS)
     tables
@@ -94,7 +94,7 @@ class ReportsController < ApplicationController
     if session[:report_start_date].present?
       session[:report_start_date]
     else
-      Date.current - 1.year
+      Time.zone.today - 1.year
     end
   end
 
@@ -102,7 +102,7 @@ class ReportsController < ApplicationController
     if session[:report_end_date].present?
       session[:report_end_date]
     else
-      Date.current
+      Time.zone.today
     end
   end
 end

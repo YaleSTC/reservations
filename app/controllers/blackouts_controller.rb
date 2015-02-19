@@ -21,11 +21,13 @@ class BlackoutsController < ApplicationController
   end
 
   def new
-    @blackout = Blackout.new(start_date: Date.current, end_date: Date.tomorrow)
+    @blackout = Blackout.new(start_date: Time.zone.today,
+                             end_date: Time.zone.today + 1.day)
   end
 
   def new_recurring
-    @blackout = Blackout.new(start_date: Date.current, end_date: Date.tomorrow)
+    @blackout = Blackout.new(start_date: Time.zone.today,
+                             end_date: Time.zone.today + 1.day)
   end
 
   def edit

@@ -21,7 +21,7 @@
 
 <%# NOTES %>
 <div class="row">
-  <div class="span9">
+  <div class="col-md-12">
     <% unless @equipment_item.notes.blank? %>
       <hr>
       <h3>Notes</h3>
@@ -30,8 +30,7 @@
   </div>
 </div>
 
-<div class="form-actions">
-  <%= link_to "Edit", edit_equipment_item_path(@equipment_item), class: 'btn' %>
-  <%= equipment_item.make_deactivate_btn %>
-  <%= link_to "View All", equipment_items_path, class: 'btn' %>
-</div>
+<hr>
+<%= link_to "Edit", edit_equipment_item_path(@equipment_item), class: 'btn btn-default' %>
+<%= equipment_item.make_deactivate_btn %>
+<%= link_to "View All", equipment_items_path, class: 'btn btn-default' %>

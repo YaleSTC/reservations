@@ -39,7 +39,7 @@ class EquipmentItemsController < ApplicationController
 
   def create
     @equipment_item = EquipmentItem.new(equipment_item_params)
-    @equipment_item.notes = "#### Created at #{Time.current.to_s(:long)} "\
+    @equipment_item.notes = "#### Created at #{Time.zone.now.to_s(:long)} "\
       "by #{current_user.md_link}."
     if @equipment_item.save
       flash[:notice] = 'Successfully created equipment item. '\
@@ -72,7 +72,7 @@ class EquipmentItemsController < ApplicationController
   def deactivate # rubocop:disable MethodLength, AbcSize
     if params[:deactivation_reason] && !params[:deactivation_cancelled]
       # update notes and deactivate
-      new_notes = "#### Deactivated at #{Time.current.to_s(:long)} by "\
+      new_notes = "#### Deactivated at #{Time.zone.now.to_s(:long)} by "\
         "#{current_user.md_link}\n#{params[:deactivation_reason]}\n\n"\
         + @equipment_item.notes
       @equipment_item.update_attributes(
@@ -97,10 +97,10 @@ class EquipmentItemsController < ApplicationController
 
   def activate
     super
-    new_notes = "#### Reactivated at #{Time.current.to_s(:long)} by "\
+    new_notes = "#### Reactivated at #{Time.zone.now.to_s(:long)} by "\
       "#{current_user.md_link}\n\n" + @equipment_item.notes
     @equipment_item.update_attributes(deactivation_reason: nil,
-                                      notes: new_notes)
+                                        notes: new_notes)
   end
 
   private

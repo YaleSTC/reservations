@@ -1,11 +1,11 @@
-<% title "New User" %>
+<% title 'New User' %>
 
 <% unless @message %>
   <%= render partial: 'form' %>
-  <%= content_tag(:p, link_to("Back to List", users_path)) if current_user %>
+  <%= content_tag(:p, link_to('Back to List', users_path)) if current_user %>
 <% else %>
-  <div class="span5">
+  <div class="col-md-6">
     <%= content_tag(:p, @message) %>
   </div>
-  <div class="span5"></div>
+  <div class="col-md-6"></div>
 <% end %>

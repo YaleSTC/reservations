@@ -180,15 +180,15 @@ describe TestController, type: :controller do
       allow(controller).to receive(:cart).and_return(session[:cart])
     end
     it 'changes cart.start_date to today if date is in the past' do
-      session[:cart].start_date = Date.yesterday
+      session[:cart].start_date = Time.zone.today - 1.day
       get :index
-      expect(session[:cart].start_date).to eq(Date.current)
+      expect(session[:cart].start_date).to eq(Time.zone.today)
     end
     it 'does not change the start_date if date is in the future' do
-      session[:cart].start_date = Date.tomorrow
+      session[:cart].start_date = Time.zone.today + 1.day
       get :index
-      expect(session[:cart].start_date).to eq(Date.tomorrow)
-      expect(session[:cart].start_date).not_to eq(Date.current)
+      expect(session[:cart].start_date).to eq(Time.zone.today + 1.day)
+      expect(session[:cart].start_date).not_to eq(Time.zone.today)
     end
   end
 end
@@ -213,8 +213,8 @@ describe ApplicationController, type: :controller do
     before(:each) do
       session[:cart] = Cart.new
       session[:cart].reserver_id = @first_user.id
-      session[:cart].start_date = (Date.current + 1.day)
-      session[:cart].due_date = (Date.current + 2.days)
+      session[:cart].start_date = (Time.zone.today + 1.day)
+      session[:cart].due_date = (Time.zone.today + 2.days)
 
       equipment_model =
         FactoryGirl.create(:equipment_model,
@@ -225,8 +225,8 @@ describe ApplicationController, type: :controller do
 
     context 'valid parameters' do
       it 'should update cart dates' do
-        new_start = Date.current + 3.days
-        new_end = Date.current + 4.days
+        new_start = Time.zone.today + 3.days
+        new_end = Time.zone.today + 4.days
 
         put :update_cart, cart: { start_date_cart: new_start,
                                   due_date_cart: new_end },
@@ -244,8 +244,8 @@ describe ApplicationController, type: :controller do
 
     context 'invalid parameters' do
       it 'should set the flash' do
-        new_start = Date.current - 300.days
-        new_end = Date.current + 4000.days
+        new_start = Time.zone.today - 300.days
+        new_end = Time.zone.today + 4000.days
 
         put :update_cart,
             cart: { start_date_cart: new_start.strftime('%m/%d/%Y'),

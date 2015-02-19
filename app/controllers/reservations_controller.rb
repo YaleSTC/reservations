@@ -19,8 +19,8 @@ class ReservationsController < ApplicationController
   end
 
   def set_index_dates
-    session[:index_start_date] ||= Date.today - 7.days
-    session[:index_end_date] ||= Date.today + 7.days
+    session[:index_start_date] ||= Time.zone.today - 7.days
+    session[:index_end_date] ||= Time.zone.today + 7.days
     @start_date = session[:index_start_date]
     @end_date = session[:index_end_date]
   end
@@ -168,7 +168,7 @@ class ReservationsController < ApplicationController
         if (cannot? :manage, Reservation) || (requested == true)
           redirect_to(catalog_path) && return
         end
-        if start_date.to_date == Date.current
+        if start_date == Time.zone.today
           flash[:notice] += ' Are you simultaneously checking out equipment '\
             'for someone? Note that only the reservation has been made. '\
             'Don\'t forget to continue to checkout.'
@@ -399,7 +399,7 @@ class ReservationsController < ApplicationController
       redirect_to(@reservation) && return
     else
       flash[:notice] = 'Your reservation has been renewed until '\
-        "#{@reservation.due_date.to_date.to_s(:long)}."
+        "#{@reservation.due_date.to_s(:long)}."
       redirect_to @reservation
     end
   end
@@ -415,7 +415,7 @@ class ReservationsController < ApplicationController
   def approve_request
     @reservation.approval_status = 'approved'
     @reservation.notes = @reservation.notes.to_s # in case of nil
-    @reservation.notes += "\n\n### Approved on #{Time.current.to_s(:long)} "\
+    @reservation.notes += "\n\n### Approved on #{Time.zone.now.to_s(:long)} "\
       "by #{current_user.md_link}"
     if @reservation.save
       flash[:notice] = 'Request successfully approved'
@@ -431,7 +431,7 @@ class ReservationsController < ApplicationController
   def deny_request
     @reservation.approval_status = 'denied'
     @reservation.notes = @reservation.notes.to_s # in case of nil
-    @reservation.notes += "\n\n### Denied on #{Time.current.to_s(:long)} by "\
+    @reservation.notes += "\n\n### Denied on #{Time.zone.now.to_s(:long)} by "\
       "#{current_user.md_link}"
     if @reservation.save
       flash[:notice] = 'Request successfully denied'

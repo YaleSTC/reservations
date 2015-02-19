@@ -11,7 +11,7 @@ module ReservationsHelper
 
   def reservation_length
     @reservation_length =
-      (@reservation.due_date.to_date - @reservation.start_date.to_date).to_i
+      (@reservation.due_date - @reservation.start_date).to_i
   end
 
   def bar_progress_res
@@ -43,18 +43,17 @@ module ReservationsHelper
     return if (cannot? :manage, Reservation) || @reservation.reserver.id.nil?
     if (can? :override, :reservation_errors) &&
        @reservation.approval_status == 'requested'
-      link_to 'Review Request', review_request_path, class: 'btn btn-inverse'
+      link_to 'Review Request', review_request_path, class: 'btn btn-default'
     elsif @reservation.status == 'reserved'
       link_to 'Check-Out',
               manage_reservations_for_user_path(@reservation.reserver.id,
                                                 anchor: 'check_out_row'),
-              class: 'btn btn-inverse'
+              class: 'btn btn-default'
     elsif @reservation.status == 'checked out' ||
           @reservation.status == 'overdue'
-      link_to 'Check-In',
-              manage_reservations_for_user_path(@reservation.reserver.id,
-                                                anchor: 'check_in_row'),
-              class: 'btn btn-inverse'
+      link_to 'Check-In', manage_reservations_for_user_path(
+      @reservation.reserver.id,
+      anchor: 'check_in_row'), class: 'btn btn-default'
     end
   end
 
@@ -63,9 +62,8 @@ module ReservationsHelper
   # the "+ 1" terms are to account for the fact that the first
   # day is counted as part of the length of the reservation.
   def define_width_res
-    passed_length = Time.current.to_date - @reservation.start_date.to_date + 1
-    total_length = @reservation.due_date.to_date\
-                 - @reservation.start_date.to_date + 1
+    passed_length = Time.zone.today - @reservation.start_date + 1
+    total_length = @reservation.due_date - @reservation.start_date + 1
     # necessary to prevent division by 0
     total_length = total_length == 0 ? 1 : total_length
     @width = passed_length / total_length

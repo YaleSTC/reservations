@@ -18,7 +18,7 @@ describe EquipmentItemsController, type: :controller do
         let!(:obj_other_cat_active) { FactoryGirl.create(:equipment_item) }
         let!(:obj_other_cat_inactive) do
           FactoryGirl.create(:equipment_item,
-                             deleted_at: Date.current)
+                             deleted_at: Time.zone.today)
         end
         context 'with @equipment_model set' do
           it 'should populate an array of all active model-type equipment '\
@@ -26,7 +26,7 @@ describe EquipmentItemsController, type: :controller do
             obj_same_cat_inactive =
               FactoryGirl.create(:equipment_item,
                                  equipment_model: object.equipment_model,
-                                 deleted_at: Date.current)
+                                 deleted_at: Time.zone.today)
             get :index, equipment_model_id: object.equipment_model
             expect(assigns(:equipment_items).include?(object)).to be_truthy
             expect(assigns(:equipment_items)
@@ -53,14 +53,14 @@ describe EquipmentItemsController, type: :controller do
         let!(:obj_other_cat_active) { FactoryGirl.create(:equipment_item) }
         let!(:obj_other_cat_inactive) do
           FactoryGirl.create(:equipment_item,
-                             deleted_at: Date.current)
+                             deleted_at: Time.zone.today)
         end
         context 'with @equipment_model set' do
           it 'should populate an array of all model-type equipment items' do
             obj_same_cat_inactive =
               FactoryGirl.create(:equipment_item,
                                  equipment_model: object.equipment_model,
-                                 deleted_at: Date.current)
+                                 deleted_at: Time.zone.today)
             get :index, equipment_model_id: object.equipment_model,
                         show_deleted: true
             expect(assigns(:equipment_items).include?(object)).to be_truthy
@@ -240,7 +240,7 @@ describe EquipmentItemsController, type: :controller do
           put :update,
               id: object,
               equipment_item: FactoryGirl.attributes_for(:equipment_item,
-                                                         name: 'Obj')
+                                                           name: 'Obj')
         end
         it { is_expected.to set_the_flash }
         it 'sets @equipment_item to selected object' do
@@ -260,7 +260,7 @@ describe EquipmentItemsController, type: :controller do
           put :update,
               id: object,
               equipment_item: FactoryGirl.attributes_for(:equipment_item,
-                                                         name: nil)
+                                                           name: nil)
         end
         it { is_expected.not_to set_the_flash }
         it 'should not update attributes' do

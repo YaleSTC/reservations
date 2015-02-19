@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150214013719) do
+ActiveRecord::Schema.define(version: 20150213001312) do
 
   create_table "announcements", force: true do |t|
     t.text     "message"
-    t.datetime "starts_at"
-    t.datetime "ends_at"
+    t.date     "starts_at"
+    t.date     "ends_at"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -95,19 +95,6 @@ ActiveRecord::Schema.define(version: 20150214013719) do
     t.datetime "deleted_at"
   end
 
-  create_table "equipment_items", force: true do |t|
-    t.string   "name"
-    t.string   "serial"
-    t.boolean  "active",                               default: true
-    t.integer  "equipment_model_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.datetime "deleted_at"
-    t.boolean  "csv_import",                           default: false, null: false
-    t.string   "deactivation_reason"
-    t.text     "notes",               limit: 16777215,                 null: false
-  end
-
   create_table "equipment_models", force: true do |t|
     t.string   "name"
     t.text     "description"
@@ -144,6 +131,19 @@ ActiveRecord::Schema.define(version: 20150214013719) do
     t.integer "equipment_model_id", null: false
   end
 
+  create_table "equipment_objects", force: true do |t|
+    t.string   "name"
+    t.string   "serial"
+    t.boolean  "active",                               default: true
+    t.integer  "equipment_model_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "deleted_at"
+    t.boolean  "csv_import",                           default: false, null: false
+    t.string   "deactivation_reason"
+    t.text     "notes",               limit: 16777215,                 null: false
+  end
+
   create_table "requirements", force: true do |t|
     t.integer  "equipment_model_id"
     t.string   "contact_name"
@@ -159,14 +159,14 @@ ActiveRecord::Schema.define(version: 20150214013719) do
     t.integer  "reserver_id"
     t.integer  "checkout_handler_id"
     t.integer  "checkin_handler_id"
-    t.datetime "start_date"
-    t.datetime "due_date"
+    t.date     "start_date"
+    t.date     "due_date"
     t.datetime "checked_out"
     t.datetime "checked_in"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "equipment_model_id"
-    t.integer  "equipment_item_id"
+    t.integer  "equipment_object_id"
     t.text     "notes"
     t.boolean  "notes_unsent",        default: false
     t.integer  "times_renewed"

@@ -38,13 +38,13 @@ class EquipmentItem < ActiveRecord::Base
     status == 'available'
   end
 
-  def self.for_eq_model(model_id, source_items)
+  def self.for_eq_model(model_id, source_objects)
     # count the number of equipment items for a given
     # model out of an array of source objects
     # 0 queries
 
     count = 0
-    source_items.each do |o|
+    source_objects.each do |o|
       count += 1 if o.equipment_model_id == model_id
     end
     count
@@ -70,7 +70,7 @@ class EquipmentItem < ActiveRecord::Base
     new_res_msg = new_res ? new_res.md_link : 'available'
     update_attributes(notes: "#### Switched by #{handler.md_link} from "\
       "#{old_res_msg} to #{new_res_msg} on "\
-      "#{Time.current.to_s(:long)}\n\n" + notes)
+      "#{Time.zone.now.to_s(:long)}\n\n" + notes)
   end
 
   def update(current_user, new_params) # rubocop:disable all
@@ -79,7 +79,7 @@ class EquipmentItem < ActiveRecord::Base
     if changes.empty?
       return self
     else
-      new_notes = "#### Edited at #{Time.current.to_s(:long)} by "\
+      new_notes = "#### Edited at #{Time.zone.now.to_s(:long)} by "\
         "#{current_user.md_link}\n\n"
       new_notes += "\n\n#### Changes:"
       changes.each do |param, diff|

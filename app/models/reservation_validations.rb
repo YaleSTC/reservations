@@ -38,7 +38,7 @@ module ReservationValidations
   # Checks that the equipment model is available from start date to due date
   def available
     # do not run on reservations that don't matter anymore
-    return if checked_in || due_date < Date.current
+    return if checked_in || due_date < Time.zone.today
     return unless equipment_model
     return unless equipment_model.num_available(start_date, due_date) <= 0
     errors.add(:base, equipment_model.name + ' is not available for the '\
@@ -48,7 +48,7 @@ module ReservationValidations
   # Checks that reservation is not in the past
   # Does not run on checked out, checked in, overdue, or missed Reservations
   def not_in_past
-    return unless due_date < Date.current || start_date < Date.current
+    return unless due_date < Time.zone.today || start_date < Time.zone.today
     errors.add(:base, "Cannot create reservation in the past\n")
   end
 end

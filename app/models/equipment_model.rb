@@ -165,7 +165,7 @@ class EquipmentModel < ActiveRecord::Base
     # uses 0 queries, you need to specify the max number of
     # items yourself
     max_reserved = 0
-    start_date.to_date.upto(due_date.to_date) do |d|
+    start_date.upto(due_date) do |d|
       reserved = Reservation.number_for_model_on_date(d, id,
                                                       source_reservations)
       max_reserved = reserved if reserved > max_reserved
@@ -188,8 +188,7 @@ class EquipmentModel < ActiveRecord::Base
     # for if you just want the number available, 1 query to get
     # relevant reservations
     relevant_reservations = Reservation.for_eq_model(self)
-                            .reserved_in_date_range(start_date.to_datetime,
-                                                    due_date.to_datetime)
+                            .reserved_in_date_range(start_date, due_date)
                             .not_returned.all
     num_available_from_source(start_date, due_date, relevant_reservations)
   end

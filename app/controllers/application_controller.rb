@@ -111,7 +111,7 @@ class ApplicationController < ActionController::Base
   end
 
   def fix_cart_date
-    cart.start_date = (Date.current) if cart.start_date < Date.current
+    cart.start_date = (Time.zone.today) if cart.start_date < Time.zone.today
     cart.fix_due_date
   end
 
@@ -153,7 +153,7 @@ class ApplicationController < ActionController::Base
         params[:reserver_id]
       end
     rescue ArgumentError
-      cart.start_date = Date.current
+      cart.start_date = Time.zone.today
       flash[:error] = 'Please enter a valid start or due date.'
     end
 
@@ -167,7 +167,7 @@ class ApplicationController < ActionController::Base
     # validate
     errors = cart.validate_all
     # don't over-write flash if invalid date was set above
-    flash[:error] ||= notices + errors.to_sentence
+    flash[:error] ||= notices + "\n" + errors.join("\n")
     flash[:notice] = 'Cart updated.'
 
     # reload appropriate divs / exit
@@ -222,7 +222,7 @@ class ApplicationController < ActionController::Base
     end
 
     # 1 query to grab all the active related equipment items
-    eq_items = EquipmentItem.active.where(equipment_model_id: id_array).all
+    eq_objects = EquipmentItem.active.where(equipment_model_id: id_array).all
 
     # 1 query to grab all the related reservations
     source_reservations =
@@ -231,7 +231,7 @@ class ApplicationController < ActionController::Base
     # build the hash using class methods that use 0 queries
     eq_models.each do |em|
       @availability_hash[em.id] =
-        [EquipmentItem.for_eq_model(em.id, eq_items)\
+        [EquipmentItem.for_eq_model(em.id, eq_objects)\
         - Reservation.number_overdue_for_eq_model(em.id, source_reservations)\
         - em.num_reserved(cart.start_date, cart.due_date, source_reservations)\
         - cart.items[em.id].to_i, 0].max
@@ -261,7 +261,7 @@ class ApplicationController < ActionController::Base
   # users are activated and deactivated differently
   def deactivate
     authorize! :deactivate, :objects
-    # Finds the current model (EM, EO, Category)
+    # Finds the current model (EM, EI, Category)
     @objects_class2 =
       params[:controller].singularize.titleize.delete(' ')
       .constantize.find(params[:id])
@@ -275,7 +275,7 @@ class ApplicationController < ActionController::Base
 
   def activate
     authorize! :activate, :objects
-    # Finds the current model (EM, EO, Category)
+    # Finds the current model (EM, EI, Category)
     @model_to_activate =
       params[:controller].singularize.titleize.delete(' ')
       .constantize.find(params[:id])

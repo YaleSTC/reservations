@@ -4,35 +4,28 @@
 // Colors
 // =============================================================================
 $base-color: #331E0A; // dark brown
-$right-1-color: desaturate(lighten(#094B76, 14%), 10%); // light blue
+$right-1-color: desaturate(lighten(#094B76, 14%), 20%); // light blue
 $right-2-color: #0C1E2A; // dark blue
 $left-1-color: #7F440D; // orangey brown
 $left-2-color: #7F5126; // lighter, less saturated orangey brown
 
-$sansFontFamily: OpenSans, "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font-family-sans-serif: OpenSans, "Helvetica Neue", Helvetica, Arial, sans-serif;
 
 // Global
 // =============================================================================
-$bodyBackground: desaturate(lighten($left-2-color, 65%), 20%); // @white  Page background color
-$textColor: desaturate(darken($base-color, 1%), 5%);  // @grayDark Default text color for entire body, headings, and more
-$linkColor: lighten($right-2-color, 35%);  // #08c  Default link text color
-
-// Tables
-// =============================================================================
-// $tableBackground
-// $tableBackgroundAccent
-// $tableBackgroundHover
+$body-bg: desaturate(lighten($left-2-color, 65%), 30%); // @white  Page background color
+$text-color: desaturate(darken($base-color, 1%), 5%);  // @grayDark Default text color for entire body, headings, and more
+$link-color: lighten($right-2-color, 35%);  // #08c  Default link text color
+$headings-font-weight: 600;
+$font-size-base: 13px;
 
 // Navbar
 // =============================================================================
-$navbarBackground: desaturate($base-color, 10%); // @grayDarker
-$navbarBackgroundHighlight: lighten($navbarBackground, 8%);  // @grayDark
-$navbarText: lighten(desaturate($left-2-color, 40%), 40%);
-$navbarLinkColor: lighten(desaturate($left-2-color, 40%), 40%);  // @grayLight
-$navbarLinkColorHover: lighten(desaturate($left-2-color, 40%), 60%);
-// $navbarLinkColorActive  // @navbarLinkColorHover
-// $navbarLinkBackgroundHover: @include gradient-vertical;  // transparent
-// $navbarLinkBackgroundActive // @navbarBackground
-$navbarSearchBackground: lighten(desaturate($left-2-color, 40%), 30%);
-$navbarSearchPlaceholderColor: darken(desaturate($navbarBackground, 30%), 30%);
-// $navbarBrandColor
+$navbar-default-bg: desaturate($base-color, 10%); // @grayDarker
+$navbar-default-color: lighten(desaturate($left-2-color, 40%), 40%);
+$navbar-default-link-color: lighten(desaturate($left-2-color, 40%), 40%);  // @grayLight
+$navbar-default-link-hover-color: lighten(desaturate($left-2-color, 40%), 60%);
+$navbar-search-bg: lighten(desaturate($left-2-color, 40%), 30%);
+$navbar-search-placeholder-color: darken(desaturate($navbar-default-bg, 30%), 30%);
+$navbar-default-brand-hover-color: lighten($right-1-color, 60%);
+$navbar-default-link-active-color: $navbar-default-link-hover-color;

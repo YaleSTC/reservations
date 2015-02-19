@@ -123,11 +123,6 @@ $('#reservation-calendar').ready(function() {
 
   shiftCalendar(0);
 
-  $('.calendar_cell').click(function() {
-    //set cart dates to day clicked
-    $('#cart_start_date_cart').attr('value', parseDate($(this).attr('id'))).trigger('change');
-  });
-
   $('.control').click(function() {
     shiftCalendar(parseInt($(this).attr('change')));
   });
