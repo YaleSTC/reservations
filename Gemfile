@@ -59,7 +59,7 @@ group :development, :test do
   gem 'guard-rspec'
   gem 'spring'
   gem 'spring-commands-rspec'
-  gem 'fuubar', '~> 2.0.0rc1'
+  gem 'fuubar', '~> 2.0.0'
   gem 'guard-livereload'
   gem 'yajl-ruby'
   gem 'capistrano',  '~> 3.1'

@@ -448,7 +448,7 @@ DEPENDENCIES
   factory_girl_rails (~> 4.5.0)
   ffaker (~> 1.32.1)
   font-awesome-rails
-  fuubar (~> 2.0.0rc1)
+  fuubar (~> 2.0.0)
   guard-livereload
   guard-rspec
   jquery-datatables-rails (~> 3.1.1)
