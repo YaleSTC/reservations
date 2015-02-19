@@ -366,7 +366,7 @@ GEM
       simplecov-html (~> 0.8.0)
     simplecov-html (0.8.0)
     slop (3.6.0)
-    spring (1.1.3)
+    spring (1.3.2)
     spring-commands-rspec (1.0.2)
       spring (>= 0.9.1)
     sprockets (2.12.3)
@@ -488,7 +488,7 @@ DEPENDENCIES
   select2-rails (~> 3.5.9.3)
   shoulda-matchers (~> 2.8.0)
   simple_form (~> 3.1.0)
-  spring
+  spring (~> 1.3.2)
   spring-commands-rspec
   therubyracer
   thin
