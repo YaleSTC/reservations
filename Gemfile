@@ -95,7 +95,7 @@ end
 group :production do
   gem 'therubyracer', '~> 0.12.1', require: 'v8'
   gem 'party_foul', '~> 1.5.5'
-  gem 'dotenv-deployment'
+  gem 'dotenv-deployment', '~> 0.2.0'
   # for Heroku
   gem 'pg'
   gem 'unicorn'
