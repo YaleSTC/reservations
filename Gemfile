@@ -80,7 +80,7 @@ gem 'bootstrap-sass', '~> 3.3.3'
 gem 'font-awesome-rails', '~> 4.3.0'
 
 group :development do
-  gem 'thin'
+  gem 'thin', '~> 1.6.3'
   gem 'pry'
   gem 'pry-rails'
   gem 'pry-byebug'
