@@ -54,7 +54,7 @@ gem 'redcarpet', '~> 3.2.2'
 group :development, :test do
   gem 'factory_girl_rails', '~> 4.5.0'
   gem 'rspec-rails', '~> 3.2.0'
-  gem 'shoulda-matchers'
+  gem 'shoulda-matchers', '~> 2.8.0'
   gem 'capybara'
   gem 'guard-rspec', '~> 4.5.0'
   gem 'spring'

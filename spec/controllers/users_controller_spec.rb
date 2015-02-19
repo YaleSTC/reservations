@@ -2,12 +2,12 @@ require 'spec_helper'
 
 shared_examples_for 'page success' do
   it { is_expected.to respond_with(:success) }
-  it { is_expected.not_to set_the_flash }
+  it { is_expected.not_to set_flash }
 end
 
 shared_examples_for 'access denied' do
   it { is_expected.to redirect_to(root_url) }
-  it { is_expected.to set_the_flash }
+  it { is_expected.to set_flash }
 end
 
 describe UsersController, type: :controller do
@@ -128,7 +128,7 @@ describe UsersController, type: :controller do
         it 'should update the user' do
           expect(User.find(user)[:first_name]).to eq('Lolita')
         end
-        it { is_expected.to set_the_flash }
+        it { is_expected.to set_flash }
       end
       context 'without nice params' do
         before do
@@ -148,7 +148,7 @@ describe UsersController, type: :controller do
           request.env['HTTP_REFERER'] = 'where_i_came_from'
           put :find, fake_searched_id: ''
         end
-        it { is_expected.to set_the_flash }
+        it { is_expected.to set_flash }
         it { is_expected.to redirect_to('where_i_came_from') }
       end
       context 'searched id is blank' do
@@ -170,7 +170,7 @@ describe UsersController, type: :controller do
             request.env['HTTP_REFERER'] = 'where_i_came_from'
             put :find, fake_searched_id: 'not_a_real_id3', searched_id: ''
           end
-          it { is_expected.to set_the_flash }
+          it { is_expected.to set_flash }
           it { is_expected.to redirect_to('where_i_came_from') }
         end
       end
@@ -198,7 +198,7 @@ describe UsersController, type: :controller do
         expect(@user.role).to eq('banned')
         expect(@user.view_mode).to eq('banned')
       end
-      it { is_expected.to set_the_flash }
+      it { is_expected.to set_flash }
       it { is_expected.to redirect_to('where_i_came_from') }
     end
     describe 'PUT unban' do
@@ -214,7 +214,7 @@ describe UsersController, type: :controller do
         expect(@user.view_mode).to eq('normal')
       end
 
-      it { is_expected.to set_the_flash }
+      it { is_expected.to set_flash }
       it { is_expected.to redirect_to('where_i_came_from') }
     end
   end
@@ -243,7 +243,7 @@ describe UsersController, type: :controller do
         get :new
       end
 
-      it { is_expected.to set_the_flash }
+      it { is_expected.to set_flash }
       it 'redirects to homepage' do
         expect(response).to redirect_to(root_url)
       end

@@ -13,7 +13,7 @@ describe EquipmentObjectsController, type: :controller do
       end
       it { is_expected.to respond_with(:success) }
       it { is_expected.to render_template(:index) }
-      it { is_expected.not_to set_the_flash }
+      it { is_expected.not_to set_flash }
       context 'without show deleted' do
         let!(:obj_other_cat_active) { FactoryGirl.create(:equipment_object) }
         let!(:obj_other_cat_inactive) do
@@ -111,7 +111,7 @@ describe EquipmentObjectsController, type: :controller do
       end
       it { is_expected.to respond_with(:success) }
       it { is_expected.to render_template(:show) }
-      it { is_expected.not_to set_the_flash }
+      it { is_expected.not_to set_flash }
       it 'should set to correct equipment object' do
         expect(assigns(:equipment_object)).to eq(object)
       end
@@ -136,7 +136,7 @@ describe EquipmentObjectsController, type: :controller do
       end
       it { is_expected.to respond_with(:success) }
       it { is_expected.to render_template(:new) }
-      it { is_expected.not_to set_the_flash }
+      it { is_expected.not_to set_flash }
       it 'assigns a new equipment object to @equipment_object' do
         expect(assigns(:equipment_object)).to be_new_record
         expect(assigns(:equipment_object)).to be_kind_of(EquipmentObject)
@@ -181,7 +181,7 @@ describe EquipmentObjectsController, type: :controller do
           expect(EquipmentObject.last.notes).not_to be_nil
           expect(EquipmentObject.last.notes).not_to be('')
         end
-        it { is_expected.to set_the_flash }
+        it { is_expected.to set_flash }
         it { is_expected.to redirect_to(EquipmentObject.last.equipment_model) }
       end
       context 'without valid attributes' do
@@ -189,7 +189,7 @@ describe EquipmentObjectsController, type: :controller do
           post :create, equipment_object: FactoryGirl.attributes_for(
           :equipment_object, name: nil)
         end
-        it { is_expected.not_to set_the_flash }
+        it { is_expected.not_to set_flash }
         it { is_expected.to render_template(:new) }
         it 'should not save' do
           expect do
@@ -218,7 +218,7 @@ describe EquipmentObjectsController, type: :controller do
       end
       it { is_expected.to respond_with(:success) }
       it { is_expected.to render_template(:edit) }
-      it { is_expected.not_to set_the_flash }
+      it { is_expected.not_to set_flash }
       it 'sets @equipment_object to selected object' do
         expect(assigns(:equipment_object)).to eq(object)
       end
@@ -242,7 +242,7 @@ describe EquipmentObjectsController, type: :controller do
               equipment_object: FactoryGirl.attributes_for(:equipment_object,
                                                            name: 'Obj')
         end
-        it { is_expected.to set_the_flash }
+        it { is_expected.to set_flash }
         it 'sets @equipment_object to selected object' do
           expect(assigns(:equipment_object)).to eq(object)
         end
@@ -262,7 +262,7 @@ describe EquipmentObjectsController, type: :controller do
               equipment_object: FactoryGirl.attributes_for(:equipment_object,
                                                            name: nil)
         end
-        it { is_expected.not_to set_the_flash }
+        it { is_expected.not_to set_flash }
         it 'should not update attributes' do
           object.reload
           expect(object.name).not_to be_nil
