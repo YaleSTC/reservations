@@ -419,7 +419,7 @@ GEM
       ethon (>= 0.7.1)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
-    uglifier (2.5.3)
+    uglifier (2.7.0)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
     unicorn (4.8.3)
@@ -503,7 +503,7 @@ DEPENDENCIES
   therubyracer
   thin
   travis
-  uglifier
+  uglifier (~> 2.7.0)
   unicorn
   whenever (~> 0.9.4)
   yajl-ruby (~> 1.2.1)

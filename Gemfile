@@ -76,7 +76,7 @@ end
 # in production environments by default.
 gem 'sass-rails', '~> 5.0.1'
 gem 'coffee-rails', '~> 4.1.0'
-gem 'uglifier'
+gem 'uglifier', '~> 2.7.0'
 
 gem 'bootstrap-sass', '~> 3.3.1'
 gem 'font-awesome-rails'
