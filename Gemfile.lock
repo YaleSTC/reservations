@@ -441,7 +441,7 @@ PLATFORMS
 
 DEPENDENCIES
   awesome_print (~> 1.6.1)
-  bootstrap-sass (~> 3.3.1)
+  bootstrap-sass (~> 3.3.3)
   bullet
   cancancan (~> 1.10.1)
   capistrano (~> 3.3.5)
