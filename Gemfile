@@ -52,7 +52,7 @@ gem 'cocoon', '~> 1.2.6'
 gem 'redcarpet', '~> 3.2.2'
 
 group :development, :test do
-  gem 'factory_girl_rails'
+  gem 'factory_girl_rails', '~> 4.5.0'
   gem 'rspec-rails'
   gem 'shoulda-matchers'
   gem 'capybara'
