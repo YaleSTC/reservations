@@ -93,7 +93,7 @@ group :development do
 end
 
 group :production do
-  gem 'therubyracer', require: 'v8'
+  gem 'therubyracer', '~> 0.12.1', require: 'v8'
   gem 'party_foul'
   gem 'dotenv-deployment'
   # for Heroku
