@@ -83,7 +83,7 @@ group :development do
   gem 'thin', '~> 1.6.3'
   gem 'pry', '~> 0.10.1'
   gem 'pry-rails', '~> 0.3.3'
-  gem 'pry-byebug'
+  gem 'pry-byebug', '~> 3.0.1'
   gem 'pry-stack_explorer'
   gem 'pry-remote'
   gem 'letter_opener'
