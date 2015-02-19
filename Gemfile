@@ -97,7 +97,7 @@ group :production do
   gem 'party_foul', '~> 1.5.5'
   gem 'dotenv-deployment', '~> 0.2.0'
   # for Heroku
-  gem 'pg'
+  gem 'pg', '~> 0.18.1'
   gem 'unicorn'
   gem 'rack-timeout'
   gem 'rails_12factor'

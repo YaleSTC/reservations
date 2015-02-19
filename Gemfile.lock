@@ -229,7 +229,7 @@ GEM
       octokit (~> 3.1)
     permanent_records (3.2.0)
       activerecord (>= 3.0.0)
-    pg (0.17.1)
+    pg (0.18.1)
     powerpack (0.1.0)
     pry (0.10.1)
       coderay (~> 1.1.0)
@@ -446,7 +446,7 @@ DEPENDENCIES
   paperclip (~> 4.2.1)
   party_foul (~> 1.5.5)
   permanent_records (~> 3.2.0)
-  pg
+  pg (~> 0.18.1)
   pry (~> 0.10.1)
   pry-byebug (~> 3.0.1)
   pry-rails (~> 0.3.3)
