@@ -99,6 +99,6 @@ group :production do
   # for Heroku
   gem 'pg', '~> 0.18.1'
   gem 'unicorn', '~> 4.8.3'
-  gem 'rack-timeout'
+  gem 'rack-timeout','~> 0.2.0'
   gem 'rails_12factor'
 end
