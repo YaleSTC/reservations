@@ -63,7 +63,7 @@ group :development, :test do
   gem 'guard-livereload', '~> 2.4.0'
   gem 'yajl-ruby', '~> 1.2.1'
   gem 'capistrano',  '~> 3.3.5'
-  gem 'capistrano-bundler', '~> 1.1.2'
+  gem 'capistrano-bundler', '~> 1.1.4'
   gem 'capistrano-rails', '~> 1.1.2'
   gem 'capistrano-rvm', '~> 0.1.2'
   gem 'awesome_print', '~> 1.6.1'
