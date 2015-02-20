@@ -83,14 +83,14 @@ describe TestController, type: :controller do
         get :index
       end
       it { is_expected.to respond_with(:success) }
-      it { is_expected.not_to set_the_flash }
+      it { is_expected.not_to set_flash }
     end
     context 'no app_config' do
       before(:each) do
         AppConfig.delete_all
         get :index
       end
-      it { is_expected.to set_the_flash }
+      it { is_expected.to set_flash }
       it { is_expected.to render_template('application_setup/index') }
     end
     context 'no user in the db' do
@@ -99,7 +99,7 @@ describe TestController, type: :controller do
         User.delete_all
         get :index
       end
-      it { is_expected.to set_the_flash }
+      it { is_expected.to set_flash }
       it { is_expected.to render_template('application_setup/index') }
     end
   end
@@ -117,7 +117,7 @@ describe TestController, type: :controller do
         @app_config = FactoryGirl.create(:app_config, viewed: false)
         get :index
       end
-      it { is_expected.to set_the_flash }
+      it { is_expected.to set_flash }
       it { is_expected.to respond_with(:redirect) }
       it { is_expected.to redirect_to(edit_app_configs_path) }
     end
@@ -125,7 +125,7 @@ describe TestController, type: :controller do
       before(:each) do
         get :index
       end
-      it { is_expected.not_to set_the_flash }
+      it { is_expected.not_to set_flash }
       it { is_expected.to respond_with(:success) }
       it { is_expected.not_to redirect_to(edit_app_configs_path) }
     end
@@ -267,7 +267,7 @@ describe ApplicationController, type: :controller do
       expect(session[:cart].items).to be_empty
     end
     it { is_expected.to redirect_to(root_path) }
-    it { is_expected.to set_the_flash }
+    it { is_expected.to set_flash }
   end
 
   describe 'GET terms_of_service' do

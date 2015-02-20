@@ -2,12 +2,12 @@ require 'spec_helper'
 
 shared_examples_for 'page success' do
   it { is_expected.to respond_with(:success) }
-  it { is_expected.not_to set_the_flash }
+  it { is_expected.not_to set_flash }
 end
 
 shared_examples_for 'access denied' do
   it { is_expected.to redirect_to(root_url) }
-  it { is_expected.to set_the_flash }
+  it { is_expected.to set_flash }
 end
 
 describe BlackoutsController, type: :controller do
@@ -88,7 +88,7 @@ describe BlackoutsController, type: :controller do
           expect(Blackout.where(set_id: @new_set_id)).not_to be_empty
         end
         it { is_expected.to redirect_to(blackouts_path) }
-        it { is_expected.to set_the_flash }
+        it { is_expected.to set_flash }
       end
       context 'with incorrect params' do
         before do
@@ -96,7 +96,7 @@ describe BlackoutsController, type: :controller do
           @attributes = FactoryGirl.attributes_for(:blackout, days: [''])
           post :create_recurring, blackout: @attributes
         end
-        it { is_expected.to set_the_flash }
+        it { is_expected.to set_flash }
         it { is_expected.to render_template('new_recurring') }
       end
       context 'with conflicting reservation' do
@@ -108,7 +108,7 @@ describe BlackoutsController, type: :controller do
           post :create_recurring, blackout: @attributes
         end
 
-        it { is_expected.to set_the_flash }
+        it { is_expected.to set_flash }
         it { is_expected.to render_template('new_recurring') }
         it 'should not save the blackouts' do
           expect { post :create_recurring, blackout: @attributes }.not_to \
@@ -134,7 +134,7 @@ describe BlackoutsController, type: :controller do
             eq(@attributes[:blackout_type])
         end
         it { is_expected.to redirect_to(blackout_path(assigns(:blackout))) }
-        it { is_expected.to set_the_flash }
+        it { is_expected.to set_flash }
       end
       context 'with incorrect params' do
         before do
@@ -155,7 +155,7 @@ describe BlackoutsController, type: :controller do
           post :create, blackout: @attributes
         end
 
-        it { is_expected.to set_the_flash }
+        it { is_expected.to set_flash }
         it { is_expected.to render_template(:new) }
         it 'should not save the blackout' do
           expect { post :create, blackout: @attributes }.not_to\
@@ -208,7 +208,7 @@ describe BlackoutsController, type: :controller do
       it 'should delete the whole set' do
         expect(Blackout.where(set_id: @extra[:set_id])).to be_empty
       end
-      it { is_expected.to set_the_flash }
+      it { is_expected.to set_flash }
       it { is_expected.to redirect_to(blackouts_path) }
     end
   end

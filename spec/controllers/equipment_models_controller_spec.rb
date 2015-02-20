@@ -3,7 +3,7 @@ require 'spec_helper'
 shared_examples_for 'GET show success' do
   it { is_expected.to respond_with(:success) }
   it { is_expected.to render_template(:show) }
-  it { is_expected.not_to set_the_flash }
+  it { is_expected.not_to set_flash }
   it 'should set to correct equipment model' do
     expect(assigns(:equipment_model)).to eq(model)
   end
@@ -32,7 +32,7 @@ end
 shared_examples_for 'GET index success' do
   it { is_expected.to respond_with(:success) }
   it { is_expected.to render_template(:index) }
-  it { is_expected.not_to set_the_flash }
+  it { is_expected.not_to set_flash }
   context 'without show deleted' do
     let!(:mod_other_cat_active) { FactoryGirl.create(:equipment_model) }
     let!(:mod_other_cat_inactive) do
@@ -149,7 +149,7 @@ describe EquipmentModelsController, type: :controller do
       end
       it { is_expected.to respond_with(:success) }
       it { is_expected.to render_template(:new) }
-      it { is_expected.not_to set_the_flash }
+      it { is_expected.not_to set_flash }
       it 'assigns a new equipment model to @equipment_model' do
         expect(assigns(:equipment_model)).to be_new_record
         expect(assigns(:equipment_model)).to be_kind_of(EquipmentModel)
@@ -180,7 +180,7 @@ describe EquipmentModelsController, type: :controller do
       end
       it { is_expected.to respond_with(:success) }
       it { is_expected.to render_template(:edit) }
-      it { is_expected.not_to set_the_flash }
+      it { is_expected.not_to set_flash }
       it 'sets @equipment_model to selected model' do
         expect(assigns(:equipment_model)).to eq(model)
       end
@@ -200,29 +200,29 @@ describe EquipmentModelsController, type: :controller do
       context 'with valid attributes' do
         before do
           post :create, equipment_model: FactoryGirl.attributes_for(
-          :equipment_model, category_id: model.category)
+            :equipment_model, category_id: model.category)
         end
         it 'should save model' do
           expect do
             post :create, equipment_model: FactoryGirl.attributes_for(
-            :equipment_model, category_id: model.category)
+              :equipment_model, category_id: model.category)
           end.to change(EquipmentModel, :count).by(1)
         end
-        it { is_expected.to set_the_flash }
+        it { is_expected.to set_flash }
         it { is_expected.to redirect_to(EquipmentModel.last) }
       end
 
       context 'without valid attributes' do
         before do
           post :create, equipment_model: FactoryGirl.attributes_for(
-          :equipment_model, name: nil)
+            :equipment_model, name: nil)
         end
-        it { is_expected.to set_the_flash }
+        it { is_expected.to set_flash }
         it { is_expected.to render_template(:new) }
         it 'should not save' do
           expect do
             post :create, equipment_model: FactoryGirl.attributes_for(
-            :equipment_model, name: nil)
+              :equipment_model, name: nil)
           end.not_to change(EquipmentModel, :count)
         end
         it { is_expected.to render_template(:new) }
@@ -246,7 +246,7 @@ describe EquipmentModelsController, type: :controller do
           put :update, id: model, equipment_model:
           FactoryGirl.attributes_for(:equipment_model, name: 'Mod')
         end
-        it { is_expected.to set_the_flash }
+        it { is_expected.to set_flash }
         it 'sets @equipment_model to selected model' do
           expect(assigns(:equipment_model)).to eq(model)
         end
@@ -262,7 +262,7 @@ describe EquipmentModelsController, type: :controller do
           put :update, id: model, equipment_model:
           FactoryGirl.attributes_for(:equipment_model, name: nil)
         end
-        it { is_expected.not_to set_the_flash }
+        it { is_expected.not_to set_flash }
         it 'should not update attributes' do
           model.reload
           expect(model.name).not_to be_nil
