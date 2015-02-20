@@ -34,6 +34,7 @@ gem 'net-ldap', '~> 0.11'
 # attachments
 gem 'paperclip', '~> 4.2.1'
 
+# soft deletion
 gem 'permanent_records', '~> 3.2.0'
 gem 'nilify_blanks', '~> 1.2.0'
 
@@ -61,7 +62,6 @@ group :development, :test do
   gem 'spring-commands-rspec', '~> 1.0.4'
   gem 'fuubar', '~> 2.0.0'
   gem 'guard-livereload', '~> 2.4.0'
-  gem 'yajl-ruby', '~> 1.2.1'
   gem 'capistrano',  '~> 3.3.5'
   gem 'capistrano-bundler', '~> 1.1.4'
   gem 'capistrano-rails', '~> 1.1.2'
@@ -99,6 +99,6 @@ group :production do
   # for Heroku
   gem 'pg', '~> 0.18.1'
   gem 'unicorn', '~> 4.8.3'
-  gem 'rack-timeout','~> 0.2.0'
+  gem 'rack-timeout', '~> 0.2.0'
   gem 'rails_12factor', '~> 0.0.3'
 end
