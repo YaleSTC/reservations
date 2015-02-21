@@ -241,9 +241,9 @@ class ReservationsController < ApplicationController
   def note
     @reservation.add_notes(current_user, params[:new_notes])
     if @reservation.save
-      flash[:notice] = 'Successfully added note to equipment object.'
+      flash[:notice] = 'Successfully added note to reservation.'
     else
-      flash[:danger] = 'Failed to add note to equipment object.'
+      flash[:error] = 'Failed to add note to reservation.'
     end
     redirect_to @reservation
   end

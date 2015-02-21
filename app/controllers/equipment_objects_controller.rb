@@ -73,7 +73,7 @@ class EquipmentObjectsController < ApplicationController
     if @equipment_object.save
       flash[:notice] = 'Successfully added note to equipment object.'
     else
-      flash[:danger] = 'Failed to add note to equipment object.'
+      flash[:error] = 'Failed to add note to equipment object.'
     end
     redirect_to @equipment_object
   end

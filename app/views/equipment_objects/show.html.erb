@@ -30,14 +30,16 @@
   <% end %>
   <div class="span5">
     <hr>
-    <h3>Add new notes</h3>
-    
-    <%= simple_form_for @equipment_object, :url => add_notes_to_eq_object_path, 
-    :method => :put do |f| %>
-      <%= f.error_notification %>
+    <% if can? :note, @equipment_object %>
+      <h3>Add new notes</h3>
+      
+      <%= simple_form_for @equipment_object, :url => add_notes_to_eq_object_path, 
+      :method => :put do |f| %>
+        <%= f.error_notification %>
 
-      <div class='notes-container'><%= text_area_tag :new_notes, "", rows: 5, class: 'span4' %></div>
-      <%= f.submit 'Add note', class: 'btn' %>
+        <div class='notes-container'><%= text_area_tag :new_notes, "", rows: 5, class: 'span4' %></div>
+        <%= f.submit 'Add note', class: 'btn' %>
+      <% end %>
     <% end %>
   </div>
 </div>

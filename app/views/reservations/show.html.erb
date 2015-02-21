@@ -191,13 +191,15 @@
     </div>
     <div class="span5">
       <hr>
-      <%= simple_form_for @reservation, :url => add_notes_to_reservation_path,
-          :method => :put do |f| %>
-          <%= f.error_notification %>
+      <% if can? :note, @reservation %>
+        <%= simple_form_for @reservation, :url => add_notes_to_reservation_path,
+            :method => :put do |f| %>
+            <%= f.error_notification %>
 
-          <h2>Add new notes</h2>
-          <div class='notes-container'><%= text_area_tag :new_notes, "", rows: 5, class: 'span4' %></div>
-          <%= f.submit 'Add note', class: 'btn' %>
+            <h2>Add new notes</h2>
+            <div class='notes-container'><%= text_area_tag :new_notes, "", rows: 5, class: 'span4' %></div>
+            <%= f.submit 'Add note', class: 'btn' %>
+        <% end %>
       <% end %>
     </div>
   </div>
