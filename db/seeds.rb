@@ -426,7 +426,7 @@ unless Category.count == 0
   generate_objs(:generate_em, 'equipment_model', n)
 end
 
-# Eqobj, Procedures, and Requirement generation
+# Equipment Item, Procedures, and Requirement generation
 # ============================================================================
 
 unless EquipmentModel.count == 0

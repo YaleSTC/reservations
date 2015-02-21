@@ -3,11 +3,11 @@ require 'spec_helper'
 describe EquipmentItem, type: :model do
   context 'validations' do
     before(:each) do
-      @object = FactoryGirl.build(:equipment_item)
+      @item = FactoryGirl.build(:equipment_item)
     end
 
     it 'has a working factory' do
-      expect(@object.save).to be_truthy
+      expect(@item.save).to be_truthy
     end
 
     it { is_expected.to validate_presence_of(:name) }
@@ -16,9 +16,9 @@ describe EquipmentItem, type: :model do
     # this test passes even without the nilify_blanks call in the model, maybe
     # delete the call?
     it 'saves an empty string value as nil for deleted_at field' do
-      @object.deleted_at = '   '
-      @object.save
-      expect(@object.deleted_at).to eq(nil)
+      @item.deleted_at = '   '
+      @item.save
+      expect(@item.deleted_at).to eq(nil)
     end
   end
 
@@ -38,26 +38,26 @@ describe EquipmentItem, type: :model do
   end
 
   describe '.status' do
-    it "returns 'Deactivated' if the object has a value for deleted_at" do
-      @object = FactoryGirl.create(:equipment_item,
+    it "returns 'Deactivated' if the item has a value for deleted_at" do
+      @item = FactoryGirl.create(:equipment_item,
                                    deleted_at: Time.zone.today)
-      expect(@object.status).to eq('Deactivated')
+      expect(@item.status).to eq('Deactivated')
     end
-    it "returns 'available' if the object is active and not currently "\
+    it "returns 'available' if the item is active and not currently "\
       'checked out' do
-      @object = FactoryGirl.create(:equipment_item)
-      expect(@object.status).to eq('available')
+      @item = FactoryGirl.create(:equipment_item)
+      expect(@item.status).to eq('available')
       @reservation = FactoryGirl.create(:valid_reservation)
-      @reserved_object =
+      @reserved_item =
         EquipmentItem
         .find_by_equipment_model_id(@reservation.equipment_model.id)
-      expect(@reserved_object.status).to eq('available')
+      expect(@reserved_item.status).to eq('available')
     end
     it 'returns a description of the reservation that it is currently '\
       'associated with if it is active and checked out' do
       @reservation = FactoryGirl.create(:checked_out_reservation)
-      @checked_out_object = @reservation.equipment_item
-      expect(@checked_out_object.status).to\
+      @checked_out_item = @reservation.equipment_item
+      expect(@checked_out_item.status).to\
         eq("checked out by #{@reservation.reserver.name} through "\
           "#{@reservation.due_date.strftime('%b %d')}")
     end
@@ -66,26 +66,26 @@ describe EquipmentItem, type: :model do
   describe '.current_reservation' do
     it 'returns nil if the equipment item does not have an associated '\
       'reservation' do
-      @object = FactoryGirl.create(:equipment_item)
-      expect(@object.current_reservation).to be_nil
+      @item = FactoryGirl.create(:equipment_item)
+      expect(@item.current_reservation).to be_nil
     end
-    it 'returns the reservation object currently holding this '\
+    it 'returns the reservation item currently holding this '\
       'equipment_item if there is one that does' do
       @reservation = FactoryGirl.create(:checked_out_reservation)
-      @reserved_object = @reservation.equipment_item
-      expect(@reserved_object.current_reservation).to eq(@reservation)
+      @reserved_item = @reservation.equipment_item
+      expect(@reserved_item.current_reservation).to eq(@reservation)
     end
   end
 
   describe '.available?' do
     it 'returns true if the equipment item is not checked out' do
-      @object = FactoryGirl.create(:equipment_item)
-      expect(@object.available?).to be_truthy
+      @item = FactoryGirl.create(:equipment_item)
+      expect(@item.available?).to be_truthy
     end
     it 'returns false if the equipment item is currently checked out' do
       @reservation = FactoryGirl.create(:checked_out_reservation)
-      @checked_out_object = @reservation.equipment_item
-      expect(@checked_out_object.available?).to be_falsey
+      @checked_out_item = @reservation.equipment_item
+      expect(@checked_out_item.available?).to be_falsey
     end
   end
 end

@@ -4,7 +4,7 @@ module EquipmentItemsHelper
     link_to_function name do |page|
       page.insert_html :bottom, :equipment_model_table,
                        partial: 'equipment_item',
-                       object: EquipmentItem.new
+                       item: EquipmentItem.new
     end
   end
 end

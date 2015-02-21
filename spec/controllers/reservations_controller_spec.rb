@@ -454,7 +454,7 @@ describe ReservationsController, type: :controller do
     # - assign @reservation
     # - check due_date > start_date from params; if not, flash error and
     #     redirect back
-    # - if params[:equipment_item] is defined, swap the object from the
+    # - if params[:equipment_item] is defined, swap the item from the
     #     current reservation
     # - affect the current reservation (@reservation)
     # - set flash notice
@@ -524,12 +524,12 @@ describe ReservationsController, type: :controller do
                                            due_date: (Time.zone.today + 1.day)),
               equipment_item: @new_equipment_item.id
         end
-        it 'should update the object on current reservation' do
+        it 'should update the item on current reservation' do
           expect { @reservation.reload }.to\
             change { @reservation.equipment_item }
         end
 
-        it 'should update the object notes' do
+        it 'should update the item notes' do
           expect { @new_equipment_item.reload }.to\
             change(@new_equipment_item, :notes)
         end
@@ -542,10 +542,10 @@ describe ReservationsController, type: :controller do
 
         context 'with existing equipment item' do
           before(:each) do
-            @old_object =
+            @old_item =
               FactoryGirl.create(:equipment_item,
                                  equipment_model: @reservation.equipment_model)
-            @new_object =
+            @new_item =
               FactoryGirl.create(:equipment_item,
                                  equipment_model: @reservation.equipment_model)
             put :update,
@@ -554,35 +554,35 @@ describe ReservationsController, type: :controller do
                   .attributes_for(:reservation,
                                   start_date: Time.zone.today,
                                   due_date: (Time.zone.today + 1.day)),
-                equipment_item: @old_object.id
-            @old_object.reload
-            @new_object.reload
+                equipment_item: @old_item.id
+            @old_item.reload
+            @new_item.reload
             put :update,
                 id: @reservation.id,
                 reservation: FactoryGirl
                   .attributes_for(:reservation,
                                   start_date: Time.zone.today,
                                   due_date: (Time.zone.today + 1.day)),
-                equipment_item: @new_object.id
+                equipment_item: @new_item.id
           end
 
           it 'should update both histories' do
-            expect { @old_object.reload }.to change(@old_object, :notes)
-            expect { @new_object.reload }.to change(@new_object, :notes)
+            expect { @old_item.reload }.to change(@old_item, :notes)
+            expect { @new_item.reload }.to change(@new_item, :notes)
           end
 
-          it 'should make the other object available' do
-            @old_object.reload
-            expect(@old_object.status).to eq('available')
+          it 'should make the other item available' do
+            @old_item.reload
+            expect(@old_item.status).to eq('available')
           end
         end
 
         context 'with checked out equipment item' do
           before(:each) do
-            @old_object =
+            @old_item =
               FactoryGirl.create(:equipment_item,
                                  equipment_model: @reservation.equipment_model)
-            @new_object =
+            @new_item =
               FactoryGirl.create(:equipment_item,
                                  equipment_model: @reservation.equipment_model)
             @other_res =
@@ -595,28 +595,28 @@ describe ReservationsController, type: :controller do
                   FactoryGirl.attributes_for(:reservation,
                                              start_date: Time.zone.today,
                                              due_date: Time.zone.today + 1.day),
-                equipment_item: @old_object.id
+                equipment_item: @old_item.id
             put :update,
                 id: @other_res.id,
                 reservation:
                   FactoryGirl.attributes_for(:reservation,
                                              start_date: Time.zone.today,
                                              due_date: Time.zone.today + 1.day),
-                equipment_item: @new_object.id
-            @old_object.reload
-            @new_object.reload
+                equipment_item: @new_item.id
+            @old_item.reload
+            @new_item.reload
             put :update,
                 id: @reservation.id,
                 reservation:
                   FactoryGirl.attributes_for(:reservation,
                                              start_date: Time.zone.today,
                                              due_date: Time.zone.today + 1.day),
-                equipment_item: @new_object.id
+                equipment_item: @new_item.id
           end
 
           it 'should update both histories' do
-            expect { @old_object.reload }.to change(@old_object, :notes)
-            expect { @new_object.reload }.to change(@new_object, :notes)
+            expect { @old_item.reload }.to change(@old_item, :notes)
+            expect { @new_item.reload }.to change(@new_item, :notes)
           end
 
           it 'should be noted in the other reservation' do
@@ -913,12 +913,12 @@ describe ReservationsController, type: :controller do
 
     shared_examples 'has successful checkout' do
       before(:each) do
-        @obj =
+        @item =
           FactoryGirl.create(:equipment_item,
                              equipment_model: @reservation.equipment_model)
         reservations_params =
           { @reservation.id.to_s => { notes: '',
-                                      equipment_item_id: @obj.id } }
+                                      equipment_item_id: @item.id } }
         put :checkout, user_id: @user.id, reservations: reservations_params
       end
 
@@ -940,11 +940,11 @@ describe ReservationsController, type: :controller do
         @reservation.reload
         expect(@reservation.checkout_handler).to be_a(User)
         expect(@reservation.checked_out).to_not be_nil
-        expect(@reservation.equipment_item).to eq @obj
+        expect(@reservation.equipment_item).to eq @item
       end
 
       it 'updates the equipment item history' do
-        expect { @obj.reload }.to change(@obj, :notes)
+        expect { @item.reload }.to change(@item, :notes)
       end
 
       it 'updates the reservation notes' do
@@ -994,7 +994,7 @@ describe ReservationsController, type: :controller do
     context 'when not all procedures are filled out' do
       before do
         sign_in @admin
-        @obj =
+        @item =
           FactoryGirl.create(:equipment_item,
                              equipment_model: @reservation.equipment_model)
         @procedure =
@@ -1002,7 +1002,7 @@ describe ReservationsController, type: :controller do
                              equipment_model: @reservation.equipment_model)
         reservations_params =
           { @reservation.id.to_s => { notes: '',
-                                      equipment_item_id: @obj.id,
+                                      equipment_item_id: @item.id,
                                       checkout_procedures: {} } }
         put :checkout, user_id: @user.id, reservations: reservations_params
       end
@@ -1026,7 +1026,7 @@ describe ReservationsController, type: :controller do
         @reservation.reload
         expect(@reservation.checkout_handler).to be_a(User)
         expect(@reservation.checked_out).to_not be_nil
-        expect(@reservation.equipment_item).to eq @obj
+        expect(@reservation.equipment_item).to eq @item
         expect(@reservation.notes).to include(@procedure.step)
       end
     end
@@ -1046,12 +1046,12 @@ describe ReservationsController, type: :controller do
       context 'can override reservations?' do
         before do
           sign_in @admin
-          @obj =
+          @item =
             FactoryGirl.create(:equipment_item,
                                equipment_model: @reservation.equipment_model)
           reservations_params =
             { @reservation.id.to_s => { notes: '',
-                                        equipment_item_id: @obj.id } }
+                                        equipment_item_id: @item.id } }
           overdue =
             FactoryGirl.build(:overdue_reservation, reserver_id: @user.id)
           overdue.save(validate: false)
@@ -1064,12 +1064,12 @@ describe ReservationsController, type: :controller do
         before do
           request.env['HTTP_REFERER'] = 'where_i_came_from'
           sign_in @checkout_person
-          @obj =
+          @item =
             FactoryGirl.create(:equipment_item,
                                equipment_model: @reservation.equipment_model)
           reservations_params =
             { @reservation.id.to_s => { notes: '',
-                                        equipment_item_id: @obj.id } }
+                                        equipment_item_id: @item.id } }
           overdue =
             FactoryGirl.build(:overdue_reservation, reserver_id: @user.id)
           overdue.save(validate: false)
@@ -1098,7 +1098,7 @@ describe ReservationsController, type: :controller do
       before(:each) do
         @reservation =
           FactoryGirl.create(:checked_out_reservation, reserver: @user)
-        @obj = @reservation.equipment_item
+        @item = @reservation.equipment_item
         reservations_params =
           { @reservation.id.to_s => { notes: '', checkin?: '1' } }
         put :checkin, user_id: @user.id, reservations: reservations_params
@@ -1124,7 +1124,7 @@ describe ReservationsController, type: :controller do
       end
 
       it 'updates the equipment item history' do
-        expect { @obj.reload }.to change(@obj, :notes)
+        expect { @item.reload }.to change(@item, :notes)
       end
 
       it 'updates the reservation notes' do

@@ -286,11 +286,11 @@ describe EquipmentModel, type: :model do
     context 'methods involving reservations' do
       # @model and @category are already set.
       describe '.num_available' do
-        it 'should return the number of objects of that model available '\
+        it 'should return the number of items of that model available '\
           'over a given date range' do
           @reservation =
             FactoryGirl.create(:valid_reservation, equipment_model: @model)
-          @extra_object =
+          @extra_item =
             FactoryGirl.create(:equipment_item, equipment_model: @model)
           expect(@model.equipment_items.size).to eq(2)
           expect(
@@ -298,7 +298,7 @@ describe EquipmentModel, type: :model do
                                  @reservation.due_date)
             ).to eq(1)
         end
-        it 'should return 0 if no objects of that model are available' do
+        it 'should return 0 if no items of that model are available' do
           @reservation =
             FactoryGirl.create(:valid_reservation, equipment_model: @model)
           expect(@model.num_available(@reservation.start_date,
@@ -306,12 +306,12 @@ describe EquipmentModel, type: :model do
         end
       end
       describe '.number_overdue' do
-        it 'should return the number of objects of a given model that are '\
+        it 'should return the number of items of a given model that are '\
           'checked out and overdue' do
           @reservation =
             FactoryGirl.build(:overdue_reservation, equipment_model: @model)
           @reservation.save(validate: false)
-          @extra_object =
+          @extra_item =
             FactoryGirl.create(:equipment_item, equipment_model: @model)
           expect(@model.equipment_items.size).to eq(2)
           expect(@model.number_overdue).to eq(1)
@@ -333,15 +333,15 @@ describe EquipmentModel, type: :model do
           expect(@model.available_count(Time.zone.today)).to eq(1)
         end
       end
-      describe '.available_object_select_options' do
-        it 'should make a string listing the available objects' do
+      describe '.available_item_select_options' do
+        it 'should make a string listing the available items' do
           @reservation =
             FactoryGirl.create(:checked_out_reservation,
                                equipment_model: @model)
-          @object =
+          @item =
             FactoryGirl.create(:equipment_item, equipment_model: @model)
-          expect(@model.available_object_select_options).to\
-            eq("<option value=#{@object.id}>#{@object.name}</option>")
+          expect(@model.available_item_select_options).to\
+            eq("<option value=#{@item.id}>#{@item.name}</option>")
         end
       end
     end

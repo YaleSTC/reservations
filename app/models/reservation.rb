@@ -15,7 +15,7 @@ class Reservation < ActiveRecord::Base
     record.errors.add(attr, 'cannot be a guest') if value.role == 'guest'
   end
   validate :start_date_before_due_date
-  validate :matched_object_and_model
+  validate :matched_item_and_model
   validate :not_in_past, :available, on: :create
 
   nilify_blanks only: [:notes]
@@ -23,8 +23,8 @@ class Reservation < ActiveRecord::Base
   ## Class methods ##
 
   def self.unique_equipment_items?(reservations)
-    object_ids = reservations.map(&:equipment_item_id)
-    object_ids == object_ids.uniq
+    item_ids = reservations.map(&:equipment_item_id)
+    item_ids == item_ids.uniq
   end
 
   def self.number_for_model_on_date(date, model_id, source)
@@ -230,8 +230,8 @@ class Reservation < ActiveRecord::Base
     self
   end
 
-  def checkout(eq_object, checkout_handler, procedures, new_notes)
-    # checks out a reservation with the given eq object, checkout handler
+  def checkout(eq_item, checkout_handler, procedures, new_notes)
+    # checks out a reservation with the given equipment item, checkout handler
     # and a hash of checkout procedures and any manually entered
     # notes from the checkout.
     #
@@ -239,7 +239,7 @@ class Reservation < ActiveRecord::Base
 
     self.checkout_handler = checkout_handler
     self.checked_out = Time.zone.now
-    self.equipment_item_id = eq_object
+    self.equipment_item_id = eq_item
 
     incomplete_procedures = []
     procedures = [procedures].flatten

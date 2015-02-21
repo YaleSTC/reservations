@@ -90,7 +90,7 @@ describe Reservation, type: :model do
     it 'passes custom validations' do
       expect(reservation.start_date_before_due_date).to be_nil
       expect(reservation.not_empty).to be_nil
-      expect(reservation.matched_object_and_model).to be_nil
+      expect(reservation.matched_item_and_model).to be_nil
       expect(reservation.available).to be_nil
       expect(reservation.validate).to eq([])
     end
@@ -156,7 +156,7 @@ describe Reservation, type: :model do
     #   reservation.should be_no_overdue_reservations
     #   reservation.should be_start_date_before_due_date
     #   reservation.should be_not_in_past
-    #   reservation.should be_matched_object_and_model
+    #   reservation.should be_matched_item_and_model
     #   reservation.should be_duration_allowed # fails: tries to run
     # validations on nil
     #   reservation.should be_start_date_is_not_blackout
@@ -197,7 +197,7 @@ describe Reservation, type: :model do
     end
     it 'passes other custom validations' do
       expect(reservation.not_empty).to be_nil
-      expect(reservation.matched_object_and_model).to be_nil
+      expect(reservation.matched_item_and_model).to be_nil
       expect(reservation.available).to be_nil
       expect(reservation.validate).to eq([])
     end
@@ -232,7 +232,7 @@ describe Reservation, type: :model do
       expect(reservation.not_in_past).to be_nil
       expect(reservation.start_date_before_due_date).to be_nil
       expect(reservation.not_empty).to be_nil
-      expect(reservation.matched_object_and_model).to be_nil
+      expect(reservation.matched_item_and_model).to be_nil
       expect(reservation.available).to be_nil
     end
   end
@@ -274,7 +274,7 @@ describe Reservation, type: :model do
     it 'passes other custom validations' do
       expect(reservation.start_date_before_due_date).to be_nil
       expect(reservation.not_empty).to be_nil
-      expect(reservation.matched_object_and_model).to be_nil
+      expect(reservation.matched_item_and_model).to be_nil
       expect(reservation.available).to be_nil
       expect(reservation.not_in_past).to be_nil
     end
@@ -325,7 +325,7 @@ describe Reservation, type: :model do
       expect(reservation.save).to be_falsey
     end
     it 'fails appropriate validations' do
-      expect(reservation.matched_object_and_model).not_to be_nil
+      expect(reservation.matched_item_and_model).not_to be_nil
     end
     it 'passes other custom validations' do
       expect(reservation.start_date_before_due_date).to be_nil
@@ -359,7 +359,7 @@ describe Reservation, type: :model do
     it 'passes other custom validations' do
       expect(reservation.start_date_before_due_date).to be_nil
       expect(reservation.not_empty).to be_nil
-      expect(reservation.matched_object_and_model).to be_nil
+      expect(reservation.matched_item_and_model).to be_nil
       expect(reservation.available).to be_nil
       expect(reservation.not_in_past).to be_nil
     end
@@ -395,7 +395,7 @@ describe Reservation, type: :model do
     it 'passes other custom validations' do
       expect(reservation.start_date_before_due_date).to be_nil
       expect(reservation.not_empty).to be_nil
-      expect(reservation.matched_object_and_model).to be_nil
+      expect(reservation.matched_item_and_model).to be_nil
       expect(reservation.available).to be_nil
       expect(reservation.not_in_past).to be_nil
     end
@@ -431,7 +431,7 @@ describe Reservation, type: :model do
     it 'passes other custom validations' do
       expect(reservation.start_date_before_due_date).to be_nil
       expect(reservation.not_empty).to be_nil
-      expect(reservation.matched_object_and_model).to be_nil
+      expect(reservation.matched_item_and_model).to be_nil
       expect(reservation.available).to be_nil
       expect(reservation.not_in_past).to be_nil
     end

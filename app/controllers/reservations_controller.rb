@@ -193,15 +193,15 @@ class ReservationsController < ApplicationController
     message = 'Successfully edited reservation.'
     res = reservation_params
     # add new equipment item id to hash if it's being changed and save old
-    # and new objects for later
+    # and new items for later
     unless params[:equipment_item].blank?
       res[:equipment_item_id] = params[:equipment_item]
-      new_object = EquipmentItem.find(params[:equipment_item])
-      old_object =
+      new_item = EquipmentItem.find(params[:equipment_item])
+      old_item =
         EquipmentItem.find_by id: @reservation.equipment_item_id
-      # check to see if new object is available
-      unless new_object.available?
-        r = new_object.current_reservation
+      # check to see if new item is available
+      unless new_item.available?
+        r = new_item.current_reservation
         r.update(current_user,
                  { equipment_item_id: @reservation.equipment_item_id },
                  '')
@@ -222,10 +222,10 @@ class ReservationsController < ApplicationController
         end
 
         # update the item history / histories
-        if old_object
-          old_object.make_switch_notes(@reservation, r, current_user)
+        if old_item
+          old_item.make_switch_notes(@reservation, r, current_user)
         end
-        new_object.make_switch_notes(r, @reservation, current_user)
+        new_item.make_switch_notes(r, @reservation, current_user)
       end
 
       # flash success and exit

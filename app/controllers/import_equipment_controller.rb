@@ -10,7 +10,7 @@ class ImportEquipmentController < ApplicationController
     # initialize, we take up to three CSV files, now we have to check each
     cat_file = params[:cat_upload]
     model_file = params[:model_upload]
-    object_file = params[:object_upload]
+    item_file = params[:item_upload]
 
     # if the user uploaded a category CSV file
     if cat_file
@@ -49,14 +49,14 @@ class ImportEquipmentController < ApplicationController
     end
 
     # finally, import EquipmentItems
-    if object_file
+    if item_file
       # no overwrite paramter since there is no index for EquipmentItems
       # store the filepath
-      object_filepath = object_file.tempfile.path
-      processed_objects = csv_import(object_filepath)
+      item_filepath = item_file.tempfile.path
+      processed_items = csv_import(item_filepath)
 
-      if valid_object_import?(processed_objects, object_file)
-        @object_statuses = import_objects(processed_objects)
+      if valid_item_import?(processed_items, item_file)
+        @item_statuses = import_items(processed_items)
       else
         redirect_to(:back) && return
       end

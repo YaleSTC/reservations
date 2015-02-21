@@ -207,7 +207,7 @@ class EquipmentModel < ActiveRecord::Base
   end
 
   def available_count(date)
-    # get the total number of objects of this kind then subtract the total
+    # get the total number of items of this kind then subtract the total
     # quantity currently reserved, checked-out, and overdue
     total = equipment_items.active.count
     reserved = Reservation.reserved_on_date(date)
@@ -215,7 +215,7 @@ class EquipmentModel < ActiveRecord::Base
     total - reserved - number_overdue
   end
 
-  def available_object_select_options
+  def available_item_select_options
     equipment_items.includes(:reservations).active.select(&:available?)\
       .sort_by(&:name)\
       .collect { |item| "<option value=#{item.id}>#{item.name}</option>" }\

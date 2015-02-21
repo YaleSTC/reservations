@@ -222,7 +222,7 @@ class ApplicationController < ActionController::Base
     end
 
     # 1 query to grab all the active related equipment items
-    eq_objects = EquipmentItem.active.where(equipment_model_id: id_array).all
+    eq_items = EquipmentItem.active.where(equipment_model_id: id_array).all
 
     # 1 query to grab all the related reservations
     source_reservations =
@@ -231,7 +231,7 @@ class ApplicationController < ActionController::Base
     # build the hash using class methods that use 0 queries
     eq_models.each do |em|
       @availability_hash[em.id] =
-        [EquipmentItem.for_eq_model(em.id, eq_objects)\
+        [EquipmentItem.for_eq_model(em.id, eq_items)\
         - Reservation.number_overdue_for_eq_model(em.id, source_reservations)\
         - em.num_reserved(cart.start_date, cart.due_date, source_reservations)\
         - cart.items[em.id].to_i, 0].max
@@ -260,13 +260,13 @@ class ApplicationController < ActionController::Base
   # activate and deactivate are overridden in the users controller because
   # users are activated and deactivated differently
   def deactivate
-    authorize! :deactivate, :objects
+    authorize! :deactivate, :items
     # Finds the current model (EM, EI, Category)
-    @objects_class2 =
+    @items_class2 =
       params[:controller].singularize.titleize.delete(' ')
       .constantize.find(params[:id])
     # Deactivate the model you had originally intended to deactivate
-    @objects_class2.destroy
+    @items_class2.destroy
     flash[:notice] = 'Successfully deactivated '\
                    + params[:controller].singularize.titleize\
                    + '. Any related equipment has been deactivated as well.'
@@ -274,7 +274,7 @@ class ApplicationController < ActionController::Base
   end
 
   def activate
-    authorize! :activate, :objects
+    authorize! :activate, :items
     # Finds the current model (EM, EI, Category)
     @model_to_activate =
       params[:controller].singularize.titleize.delete(' ')

@@ -11,7 +11,7 @@ class ReportsController < ApplicationController
                   ]
   RES_COLUMNS = [['Reserver', :all, :name, :reserver],
                  ['Equipment Model', :all, :name, :equipment_model],
-                 ['Equipment Object', :all, :name, :equipment_item],
+                 ['Equipment Item', :all, :name, :equipment_item],
                  ['Status', :all, :display, :status],
                  ['Start Date', :all, :display, :start_date],
                  ['Checked Out', :all, :display, :checked_out],

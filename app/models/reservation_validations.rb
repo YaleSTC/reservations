@@ -27,7 +27,7 @@ module ReservationValidations
   end
 
   # Checks that the equipment_item is of type equipment_model
-  def matched_object_and_model
+  def matched_item_and_model
     return unless equipment_item
     return unless equipment_model
     return unless equipment_item.equipment_model != equipment_model
