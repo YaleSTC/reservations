@@ -21,3 +21,4 @@ diff.py
 Vagrantfile
 *.sublime*
 coverage/
+.env

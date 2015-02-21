@@ -22,8 +22,8 @@ class AnnouncementsController < ApplicationController
   end
 
   def new
-    @announcement = Announcement.new(starts_at: Date.current,
-                                     ends_at: Date.tomorrow)
+    @announcement = Announcement.new(starts_at: Time.zone.today,
+                                     ends_at: Time.zone.today + 1.day)
   end
 
   def create

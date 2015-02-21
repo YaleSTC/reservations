@@ -1,16 +1,17 @@
-<% title "Contact Us" %>
+<% title 'Contact Us' %>
 
-<%= simple_form_for @message, :url => url_for( :action => "new", :controller => "contact"), :html => { :class => "form-horizontal" } do |f| %>
+<%= simple_form_for @message, url: url_for(action: 'new', controller: 'contact'), html: { class: 'form-horizontal' } do |f| %>
 
-<%= f.error_notification %>
+  <%= f.error_notification %>
 
-<%= f.input :name %>
-<%= f.input :email %>
-<%= f.input :subject %>
-<%= f.input :body, :as => :text, :input_html => { :class => "span6" } %>
+  <%= f.input :name %>
+  <%= f.input :email %>
+  <%= f.input :subject %>
+  <%= f.input :body, as: :text, input_html: { class: 'form-control' } %>
 
-<div class="form-actions">
-  <%= f.button :submit, "Send Message" %>
-</div>
-
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <%= f.button :submit, 'Send Message' %>
+    </div>
+  </div>
 <% end %>

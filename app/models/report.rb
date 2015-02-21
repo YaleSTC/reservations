@@ -138,9 +138,7 @@ class Report # rubocop:disable ClassLength, it's only 105/100
       # some SQL magic to get the category id into the
       # reservation record relation without having to load all
       # the equipment models into memory
-      reservations = reservations.joins(:equipment_model)
-                     .select('reservations.*,
-                 equipment_models.category_id as category_id')
+      reservations = reservations.with_categories
     end
 
     report.initialize_columns(columns, reservations, row_item_type)

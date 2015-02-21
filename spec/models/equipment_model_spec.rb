@@ -162,11 +162,11 @@ describe EquipmentModel, type: :model do
               'occupy mustache four loko.')
         @another_model =
           FactoryGirl.create(
-              :equipment_model,
-              name: 'Tumblr hipster starbucks alternative music',
-              description: 'Craft beer sartorial four loko blog jean shorts '\
-                'chillwave aesthetic. Roof party art party banh mi '\
-                'aesthetic, ennui Marfa kitsch readymade vegan food truck bag.')
+            :equipment_model,
+            name: 'Tumblr hipster starbucks alternative music',
+            description: 'Craft beer sartorial four loko blog jean shorts '\
+              'chillwave aesthetic. Roof party art party banh mi '\
+              'aesthetic, ennui Marfa kitsch readymade vegan food truck bag.')
       end
       it 'Should return equipment_models with all of the query words in '\
         'either name or description' do
@@ -330,7 +330,7 @@ describe EquipmentModel, type: :model do
             FactoryGirl.build(:overdue_reservation, equipment_model: @model)
           @overdue.save(validate: false)
           expect(@model.equipment_objects.size).to eq(4)
-          expect(@model.available_count(Date.current)).to eq(1)
+          expect(@model.available_count(Time.zone.today)).to eq(1)
         end
       end
       describe '.available_object_select_options' do

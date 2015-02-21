@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141219172429) do
+ActiveRecord::Schema.define(version: 20150213001312) do
 
   create_table "announcements", force: true do |t|
     t.text     "message"
-    t.datetime "starts_at"
-    t.datetime "ends_at"
+    t.date     "starts_at"
+    t.date     "ends_at"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -159,8 +159,8 @@ ActiveRecord::Schema.define(version: 20141219172429) do
     t.integer  "reserver_id"
     t.integer  "checkout_handler_id"
     t.integer  "checkin_handler_id"
-    t.datetime "start_date"
-    t.datetime "due_date"
+    t.date     "start_date"
+    t.date     "due_date"
     t.datetime "checked_out"
     t.datetime "checked_in"
     t.datetime "created_at"

@@ -16,13 +16,13 @@
 // =============================================================================
 
 body {
-  font-family: $sansFontFamily;
-  line-height: $baseLineHeight;
+  font-family: $font-family-sans-serif;
+  line-height: $line-height-base;
   background: white;
 }
 
 p {
-  line-height: 1.4 * $baseLineHeight;
+  line-height: 1.4 * $line-height-base;
 }
 
 #header, #sidebar-right, #top_buttons, .form-actions, #pagination_line,
@@ -42,7 +42,7 @@ a {
 
 .well {
   border: solid 1px black;
-  @include border-radius(5px);
+  border-radius: 5px;
   padding: 10px;
   margin-bottom: 10px;
   float: left;
@@ -59,8 +59,8 @@ img {
   .brand {
     display: block;
     // Vertically center the text given $navbarHeight
-    $elementHeight: 20px;
-    padding: (($navbarHeight - $elementHeight) / 2 - 2) 20px (($navbarHeight - $elementHeight) / 2 + 2);
+    $element-height: 20px;
+    padding: (($navbar-height - $element-height) / 2 - 2) 20px (($navbar-height - $element-height) / 2 + 2);
     margin-left: -20px; // negative indent to left-align the text down the page
     font-size: 30px;
     font-weight: 200;
@@ -85,9 +85,9 @@ img {
 .user_label {
   // TODO: extract into a mixin?
   border: solid 1px black;
-  @include border-radius(5px);
+  border-radius: 5px;
   padding: $user_label-size*1px $user_label-size*4px $user_label-size*2px;
-  font-size: $baseFontSize * 1.5;
+  font-size: $font-size-base * 1.5;
   font-weight: bold;
   line-height: 14px;
   margin-right: 10px;

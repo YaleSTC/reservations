@@ -30,7 +30,7 @@ describe 'guest users' do
     it 'redirects to the signin page with errors' do
       visit url_path
       expect(current_path).to eq(new_user_session_path)
-      expect(page).to have_selector('.alert-error')
+      expect(page).to have_selector('.alert-danger')
     end
   end
 
@@ -110,7 +110,7 @@ describe 'guest users' do
       end
 
       it 'can change the dates' do
-        @new_date = Date.current + 5.days
+        @new_date = Time.zone.today + 5.days
         # fill in both visible / datepicker and hidden field
         fill_in 'cart_due_date_cart', with: @new_date.to_s
         find(:xpath, "//input[@id='date_end_alt']").set @new_date.to_s

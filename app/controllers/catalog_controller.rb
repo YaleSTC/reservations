@@ -76,7 +76,7 @@ class CatalogController < ApplicationController
   def change_cart(action, item)
     cart.send(action, item)
     errors = cart.validate_all
-    flash[:error] = errors.to_sentence
+    flash[:error] = errors.join("\n")
     flash[:notice] = 'Cart updated.'
 
     respond_to do |format|

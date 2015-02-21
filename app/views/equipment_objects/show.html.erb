@@ -22,13 +22,13 @@
 <%# NOTES %>
 <div class="row">
   <% unless @equipment_object.notes.blank? %>
-      <div class="span7">
+      <div class="col-md-7">
         <hr>
         <h3>Notes</h3>
         <div class='notes-container'><%= markdown(@equipment_object.notes) %></div>
       </div>
   <% end %>
-  <div class="span5">
+  <div class="col-md-5">
     <hr>
     <% if can? :note, @equipment_object %>
       <h3>Add new notes</h3>
@@ -37,15 +37,14 @@
       :method => :put do |f| %>
         <%= f.error_notification %>
 
-        <div class='notes-container'><%= text_area_tag :new_notes, "", rows: 5, class: 'span4' %></div>
-        <%= f.submit 'Add note', class: 'btn' %>
+        <%= text_area :new_notes, "", rows: 7, class: 'form-control' %>
+        <%= f.submit 'Add note', class: 'btn btn-default' %>
       <% end %>
     <% end %>
   </div>
 </div>
 
-<div class="form-actions">
-  <%= link_to "Edit", edit_equipment_object_path(@equipment_object), class: 'btn' %>
-  <%= equipment_object.make_deactivate_btn %>
-  <%= link_to "View All", equipment_objects_path, class: 'btn' %>
-</div>
+<hr>
+<%= link_to "Edit", edit_equipment_object_path(@equipment_object), class: 'btn btn-default' %>
+<%= equipment_object.make_deactivate_btn %>
+<%= link_to "View All", equipment_objects_path, class: 'btn btn-default' %>

@@ -1,5 +1,5 @@
-<div class="">
-  <ul class="nav nav-tabs nav-stacked">
+<div class="res_index_nav">
+  <ul class="nav nav-pills nav-stacked">
     <% if can? :manage, Reservation %>
       <%= render partial: 'index_nav_tab', locals: {filter: :upcoming, text: 'Today'} %>
     <% end %>

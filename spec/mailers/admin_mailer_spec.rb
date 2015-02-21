@@ -34,7 +34,7 @@ describe AdminMailer, type: :mailer do
     it 'renders the subject' do
       expect(@mail.subject).to\
         eq('[Reservations] Notes for '\
-          + (Date.yesterday.midnight).strftime('%m/%d/%y'))
+          + (Time.zone.today - 1.day).strftime('%m/%d/%y'))
     end
     it_behaves_like 'a valid admin email'
   end
