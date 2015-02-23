@@ -200,8 +200,6 @@ class ApplicationController < ActionController::Base
 
   # rubocop:disable MethodLength, AbcSize
   def prepare_catalog_index_vars(eq_models = nil)
-    cart = session[:cart]
-
     # prepare the catalog
     eq_models ||= EquipmentModel.active
                   .order('categories.sort_order ASC, equipment_models.name ASC')
@@ -233,7 +231,7 @@ class ApplicationController < ActionController::Base
       Reservation.not_returned.where(equipment_model_id: id_array).all
 
     # for getting qualifications associated between the model and the reserver
-    reserver = User.find(cart.reserver_id)
+    reserver = cart.reserver_id ? User.find(cart.reserver_id) : nil
 
     eq_models.each do |em|
       # build the hash using class methods that use 0 queries
