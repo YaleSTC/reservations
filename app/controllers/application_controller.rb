@@ -200,6 +200,8 @@ class ApplicationController < ActionController::Base
 
   # rubocop:disable MethodLength, AbcSize
   def prepare_catalog_index_vars(eq_models = nil)
+    cart = session[:cart]
+    
     # prepare the catalog
     eq_models ||= EquipmentModel.active
                   .order('categories.sort_order ASC, equipment_models.name ASC')
