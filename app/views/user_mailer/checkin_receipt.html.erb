@@ -7,7 +7,7 @@ Hi <%= @reservation.reserver.name %>,
 <p>Checkout date: <%= @reservation.checked_out.strftime(" %B %e, %Y at %l:%M%P") %></p>
 <p>Return date: <%= @reservation.checked_in.strftime(" %B %e, %Y at %l:%M%P") %></p>
 
-<% unless @reservation.notes.nil? %>
+<% unless @reservation.notes.blank? %>
   Notes: <%= markdown(@reservation.notes) %>
 <% end %>
 
@@ -19,6 +19,7 @@ Hi <%= @reservation.reserver.name %>,
   </p>
 <% end %>
 
+<p>You can view your <%= link_to 'updated reservation here', reservation_url(@reservation, only_path: false) %>.</p>
 
 
 
