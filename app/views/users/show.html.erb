@@ -18,6 +18,9 @@
       <%= "<span class=\"user_label label label-success\">Super User</span>".html_safe if @user.role == 'superuser' %>
       <%= "<span class=\"user_label label label-default\">Checkout Person</span>".html_safe if @user.role == 'checkout' %>
     <% end %>
+    <% if @has_pending %>
+      <span class="user_label label label-info">Request Pending</span>
+    <% end %>
   </div>
 </div>
 
