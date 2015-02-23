@@ -230,6 +230,9 @@ class ApplicationController < ActionController::Base
     source_reservations =
       Reservation.not_returned.where(equipment_model_id: id_array).all
 
+    # for getting qualifications associated between the model and the reserver
+    reserver = User.find(cart.reserver_id)
+
     eq_models.each do |em|
       # build the hash using class methods that use 0 queries
       @availability_hash[em.id] =
@@ -242,7 +245,7 @@ class ApplicationController < ActionController::Base
       restricted = em.model_restricted?(cart.reserver_id)
       if restricted
         @qualifications_hash[em.id] = Requirement.list_requirement_admins(
-          User.find(cart.reserver_id), em).html_safe
+          reserver, em).html_safe
       end
     end
 
