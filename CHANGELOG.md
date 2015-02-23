@@ -2,6 +2,33 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+## v5.1.0 - 2015-02-23
+### Fixed
+* Calendar views no longer overflow on some browsers ([#846](https://github.com/YaleSTC/reservations/issues/846)).
+* Date and time zone handling is now standardized; additionally, reservation start and due dates are now stored as `Date`s rather than as `DateTime`s ([#939](https://github.com/YaleSTC/reservations/issues/939)).
+* The handling of missed reservations was improved, and e-mails of missed open requests are no longer sent ([#1031](https://github.com/YaleSTC/reservations/issues/1031)).
+* The late checkin e-mail is no longer sent if the late fee due is zero ([#1064](https://github.com/YaleSTC/reservations/issues/1064)).
+* The extra 1px at the bottom of the navbar has been removed ([#1111](https://github.com/YaleSTC/reservations/issues/1111)).
+* Minor bugs with equipment import were fixed ([#1140](https://github.com/YaleSTC/reservations/issues/1140)).
+* Calendar cells can no longer be clicked on, preventing apparently incorrect cart updates ([#1152](https://github.com/YaleSTC/reservations/issues/1152)).
+
+### Added
+* Reservations is now set up for Heroku deployment (please see the [Deployment Guide](https://github.com/YaleSTC/reservations/wiki/Heroku-Deployment-Guide) for more information, [#275](https://github.com/YaleSTC/reservations/issues/275)).
+* There is now a badge on user profile pages indicating that they have open requests ([#1028](https://github.com/YaleSTC/reservations/issues/1028)).
+
+### Changed
+* Bootstrap was updated to v3.3 and the entire UI of the app was overhauled ([#245](https://github.com/YaleSTC/reservations/issues/245)).
+* The cart validations code was substantially refactored ([#1097](https://github.com/YaleSTC/reservations/issues/1097)).
+* The equipment item link on the reservation page now goes to the equipment item page instead of the equipment model page ([#1159](https://github.com/YaleSTC/reservations/issues/1159)).
+* The version of Rails was updated to 4.1.9 ([#600](https://github.com/YaleSTC/reservations/issues/600)).
+* All of the dependencies were updated to the latest versions and the Gemfile was cleaned up ([#245](https://github.com/YaleSTC/reservations/issues/245), [#600](https://github.com/YaleSTC/reservations/issues/600)).
+* Added a link to the reservation in emails ([#1102](https://github.com/YaleSTC/reservations/issues/1102)).
+
+### Removed
+* The `.env` file was removed from the repository; the `.env.example` file may be copied for local use ([#1104](https://github.com/YaleSTC/reservations/issues/1104)).
+* The `dynamic_form` gem was removed ([#1110](https://github.com/YaleSTC/reservations/issues/1110)).
+* The `yajl-ruby` gem was removed ([#600](https://github.com/YaleSTC/reservations/issues/600)).
+
 ## v5.0.0 - 2015-01-12
 ### Important
 *This release fundamentally changes how Reservations is configured (see the ([wiki](https://github.com/YaleSTC/reservations/wiki/Configuration)) for more details). You will likely have to rework how Reservations is deployed and hosted for it to work properly when updating to this version.*
