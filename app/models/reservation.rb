@@ -22,6 +22,15 @@ class Reservation < ActiveRecord::Base
 
   ## Class methods ##
 
+  def self.completed_procedures(procedures)
+    # convert the [{id=>value, id=>value}] input
+    # to [id, id] format
+    return [] if procedures.nil?
+    procedures.collect do |key, val|
+      key if val == '1'
+    end
+  end
+
   def self.unique_equipment_objects?(reservations)
     object_ids = reservations.map(&:equipment_object_id)
     object_ids == object_ids.uniq
@@ -186,7 +195,7 @@ class Reservation < ActiveRecord::Base
     # gather all the procedure texts that were not
     # checked, ie not included in the procedures hash
     incomplete_procedures = []
-    procedures = [procedures].flatten # in case of nil procedures
+    procedures = Reservation.completed_procedures(procedures)
     equipment_model.checkin_procedures.each do |checkin_procedure|
       if procedures.exclude?(checkin_procedure.id.to_s)
         incomplete_procedures << checkin_procedure.step
@@ -242,7 +251,7 @@ class Reservation < ActiveRecord::Base
     self.equipment_object_id = eq_object
 
     incomplete_procedures = []
-    procedures = [procedures].flatten
+    procedures = Reservation.completed_procedures(procedures)
     equipment_model.checkout_procedures.each do |checkout_procedure|
       if procedures.exclude?(checkout_procedure.id.to_s)
         incomplete_procedures << checkout_procedure.step
