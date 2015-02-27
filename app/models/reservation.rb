@@ -195,8 +195,8 @@ class Reservation < ActiveRecord::Base
     make_notes('Checked in', new_notes, incomplete_procedures, checkin_handler)
     # update equipment item notes
     equipment_item.make_reservation_notes('checked in', self,
-                                            checkin_handler, new_notes,
-                                            checked_in)
+                                          checkin_handler, new_notes,
+                                          checked_in)
 
     if checked_in.to_date > due_date
       # equipment was overdue, send an email confirmati
@@ -219,7 +219,7 @@ class Reservation < ActiveRecord::Base
       # archive equipment item if checked out
       if equipment_item
         equipment_item.make_reservation_notes('archived', self, archiver,
-                                                "#{note}", checked_in)
+                                              "#{note}", checked_in)
       end
       self.notes = notes.to_s + "\n\n### Archived on "\
         "#{checked_in.to_s(:long)} by #{archiver.md_link}\n\n\n#### " \
@@ -252,8 +252,8 @@ class Reservation < ActiveRecord::Base
                checkout_handler)
     # update equipment item notes
     equipment_item.make_reservation_notes('checked out', self,
-                                            checkout_handler, new_notes,
-                                            checked_out)
+                                          checkout_handler, new_notes,
+                                          checked_out)
     self
   end
 

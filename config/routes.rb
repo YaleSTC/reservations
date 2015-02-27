@@ -37,8 +37,8 @@ Reservations::Application.routes.draw do
   end
 
   get 'equipment_objects' => redirect('equipment_items')
-  get 'equipment_objects/:command' => 
-      redirect('equipment_items/%{command}')
+  get 'equipment_objects/:id' =>
+      redirect('equipment_items/%{id}')
 
   get '/import_users/import' => 'import_users#import_page',
       :as => :csv_import_page

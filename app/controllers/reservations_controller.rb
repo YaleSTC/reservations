@@ -222,9 +222,8 @@ class ReservationsController < ApplicationController
         end
 
         # update the item history / histories
-        if old_item
-          old_item.make_switch_notes(@reservation, r, current_user)
-        end
+        old_item.make_switch_notes(@reservation, r, current_user) if old_item
+
         new_item.make_switch_notes(r, @reservation, current_user)
       end
 

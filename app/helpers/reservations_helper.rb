@@ -52,8 +52,8 @@ module ReservationsHelper
     elsif @reservation.status == 'checked out' ||
           @reservation.status == 'overdue'
       link_to 'Check-In', manage_reservations_for_user_path(
-      @reservation.reserver.id,
-      anchor: 'check_in_row'), class: 'btn btn-default'
+        @reservation.reserver.id,
+        anchor: 'check_in_row'), class: 'btn btn-default'
     end
   end
 

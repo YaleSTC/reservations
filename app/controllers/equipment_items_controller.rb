@@ -100,7 +100,7 @@ class EquipmentItemsController < ApplicationController
     new_notes = "#### Reactivated at #{Time.zone.now.to_s(:long)} by "\
       "#{current_user.md_link}\n\n" + @equipment_item.notes
     @equipment_item.update_attributes(deactivation_reason: nil,
-                                        notes: new_notes)
+                                      notes: new_notes)
   end
 
   private

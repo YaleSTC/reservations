@@ -40,7 +40,7 @@ describe EquipmentItem, type: :model do
   describe '.status' do
     it "returns 'Deactivated' if the item has a value for deleted_at" do
       @item = FactoryGirl.create(:equipment_item,
-                                   deleted_at: Time.zone.today)
+                                 deleted_at: Time.zone.today)
       expect(@item.status).to eq('Deactivated')
     end
     it "returns 'available' if the item is active and not currently "\
