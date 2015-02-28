@@ -239,11 +239,15 @@ class ReservationsController < ApplicationController
   end
 
   def note
-    @reservation.add_notes(current_user, params[:new_notes])
-    if @reservation.save
-      flash[:notice] = 'Successfully added note to reservation.'
+    if @reservation.add_notes(current_user, params[:new_notes]) != false
+      if @reservation.save
+        flash[:notice] = 'Successfully added note to reservation.'
+      else
+        flash[:error] = 'Failed to add note to reservation.'
+      end
     else
-      flash[:error] = 'Failed to add note to reservation.'
+      #flash[:error] = 'Failed to add note to reservation - character limit exceeded'
+      flash[:error] = "Failed to add note to reservation - #{@reservation.errors.full_messages.to_sentence}"
     end
     redirect_to @reservation
   end

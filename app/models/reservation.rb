@@ -307,7 +307,15 @@ class Reservation < ActiveRecord::Base
   end
 
   def add_notes(current_user, contents)
-    return self if contents.empty?
+    return false if contents.empty?
+    if current_user.view_mode == 'normal'
+      @contents = Contents.new(:contents => contents[0])
+      if @contents.invalid?
+        errors.add(:notes, "cannot be longer than #{Contents.max_length} characters")
+        return false
+      end
+    end
+    self.notes_unsent = true
     new_notes = "### #{current_user.md_link} made a note on "\
       "#{Time.current.to_s(:long)}:\n\n#{contents[0]}"
     self.notes += "\n\n" + new_notes.strip
