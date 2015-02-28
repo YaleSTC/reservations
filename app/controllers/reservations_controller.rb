@@ -246,7 +246,7 @@ class ReservationsController < ApplicationController
         flash[:error] = 'Failed to add note to reservation.'
       end
     else
-      flash[:error] = "Failed to add note to reservation - "\
+      flash[:error] = 'Failed to add note to reservation - '\
       "#{@reservation.errors.full_messages.to_sentence}"
     end
     redirect_to @reservation

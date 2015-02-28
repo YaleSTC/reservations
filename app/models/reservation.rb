@@ -311,7 +311,7 @@ class Reservation < ActiveRecord::Base
     if current_user.view_mode == 'normal'
       @contents = Contents.new(contents: contents[0])
       if @contents.invalid?
-        errors.add(:notes, "cannot be longer than "\
+        errors.add(:notes, 'cannot be longer than '\
           "#{Contents.max_length} characters")
         return false
       end
