@@ -309,9 +309,10 @@ class Reservation < ActiveRecord::Base
   def add_notes(current_user, contents)
     return false if contents.empty?
     if current_user.view_mode == 'normal'
-      @contents = Contents.new(:contents => contents[0])
+      @contents = Contents.new(contents: contents[0])
       if @contents.invalid?
-        errors.add(:notes, "cannot be longer than #{Contents.max_length} characters")
+        errors.add(:notes, "cannot be longer than "\
+          "#{Contents.max_length} characters")
         return false
       end
     end

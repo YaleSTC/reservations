@@ -246,8 +246,8 @@ class ReservationsController < ApplicationController
         flash[:error] = 'Failed to add note to reservation.'
       end
     else
-      #flash[:error] = 'Failed to add note to reservation - character limit exceeded'
-      flash[:error] = "Failed to add note to reservation - #{@reservation.errors.full_messages.to_sentence}"
+      flash[:error] = "Failed to add note to reservation - "\
+      "#{@reservation.errors.full_messages.to_sentence}"
     end
     redirect_to @reservation
   end
