@@ -8,68 +8,38 @@ class UserMailer < ActionMailer::Base
     default from: AppConfig.first.admin_email, cc: AppConfig.first.admin_email
   end
 
-  def checkin_receipt(reservation)
+  # checks the status of the current reservation and sends the appropriate email
+  # receipt forces a check out receipt to be sent
+  def reservation_status_update(reservation, receipt = false) # rubocop:disable all
     set_app_config
+
     @reservation = reservation
-    mail(to: reservation.reserver.email,
-         subject: '[Reservations] Your equipment return receipt')
-  end
+    @status = @reservation.status
 
-  def checkout_receipt(reservation)
-    set_app_config
-    @reservation = reservation
-    mail(to: reservation.reserver.email,
-         subject: '[Reservations] Your equipment checkout receipt')
-  end
+    return if !receipt && @status == 'returned overdue' &&
+              @reservation.equipment_model.late_fee == 0
 
-  def missed_reservation_notification(reservation)
-    set_app_config
-    @reservation = reservation
-    mail(to: reservation.reserver.email,
-         subject: '[Reservations] Reservation Missed')
-  end
+    return if receipt && @reservation.checked_out.nil?
 
-  def overdue_checkin_notification(reservation)
-    set_app_config
-    @reservation = reservation
-    mail(to: reservation.reserver.email,
-         subject: '[Reservations] OVERDUE: equipment checkin')
-  end
+    if @reservation.start_date == Time.zone.today &&
+       @status == 'reserved'
+      @status = 'starts today'
+    elsif @reservation.due_date == Time.zone.today &&
+          @status == 'checked out'
+      @status = 'due today'
+    end
 
-  def overdue_checked_in_fine(overdue_checked_in)
-    return if overdue_checked_in.equipment_model.late_fee == 0
-    set_app_config
-    @overdue_checked_in = overdue_checked_in
-    mail(to: overdue_checked_in.reserver.email,
-         subject: '[Reservations] Overdue equipment fine')
-  end
+    if receipt && (@status == 'due today' || @status == 'overdue')
+      # force sending a check out receipt
+      @status = 'checked out'
+    end
 
-  def reservation_confirmation(complete_reservation)
-    set_app_config
-    @complete_reservation = complete_reservation
-    mail(to: complete_reservation.first.reserver.email,
-         subject: '[Reservations] Confirmation of your reservation')
-  end
+    status_formatted = @status.split.map(&:capitalize) * ' '
 
-  def upcoming_checkin_notification(reservation)
-    set_app_config
-    @reservation = reservation
-    mail(to: reservation.reserver.email,
-         subject: '[Reservations] Reminder: equipment check in')
-  end
-
-  def request_approved_notification(reservation)
-    set_app_config
-    @reservation = reservation
-    mail(to: reservation.reserver.email,
-         subject: '[Reservations] Reservation request approved!')
-  end
-
-  def request_denied_notification(reservation)
-    set_app_config
-    @reservation = reservation
-    mail(to: reservation.reserver.email,
-         subject: '[Reservations] Reservation request denied')
+    mail(to: @reservation.reserver.email,
+         subject: '[Reservations] ' \
+                  "#{@reservation.equipment_model.name.capitalize} "\
+                  " #{status_formatted}")
   end
 
   private

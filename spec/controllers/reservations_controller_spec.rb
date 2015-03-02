@@ -1407,12 +1407,30 @@ describe ReservationsController, type: :controller do
     end
   end
 
-  describe '#checkout_email (GET reservations/checkout_email)' do
-    pending 'E-mails get sent'
-  end
+  describe '#send_receipt (GET /reservations/:id/send_receipt)' do
+    before(:each) do
+      sign_in @checkout_person
+    end
 
-  describe '#checkin_email (GET reservations/checkin_email)' do
-    pending 'E-mails get sent'
+    context 'successfully emails' do
+      before do
+        @reservation.update_attributes(
+          FactoryGirl.attributes_for(:checked_out_reservation))
+        get :send_receipt, id: @reservation.id
+      end
+      it { is_expected.to redirect_to(@reservation) }
+      it { should set_flash[:notice] }
+    end
+
+    context 'fails to send email' do
+      before do
+        allow(UserMailer).to receive_message_chain(
+          'reservation_status_update.deliver').and_return(false)
+        get :send_receipt, id: @reservation.id
+      end
+      it { is_expected.to redirect_to(@reservation) }
+      it { should set_flash[:error] }
+    end
   end
 
   describe '#review GET' do
@@ -1452,7 +1470,7 @@ describe ReservationsController, type: :controller do
       expect(@requested.reload.approval_status).to eq('approved')
     end
     it 'should send an email' do
-      expect_email(UserMailer.request_approved_notification(@requested))
+      expect_email(UserMailer.reservation_status_update(@requested))
     end
     it 'should redirect to reservations path' do
       expect(response).to redirect_to(reservations_path(requested: true))
@@ -1473,7 +1491,7 @@ describe ReservationsController, type: :controller do
       expect(@requested.reload.approval_status).to eq('denied')
     end
     it 'should send an email' do
-      expect_email(UserMailer.request_denied_notification(@requested))
+      expect_email(UserMailer.reservation_status_update(@requested))
     end
     it 'should redurect to reservations path' do
       expect(response).to redirect_to(reservations_path(requested: true))

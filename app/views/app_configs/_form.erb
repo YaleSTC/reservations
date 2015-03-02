@@ -85,6 +85,12 @@
     <%= f.input :upcoming_checkin_email_body, input_html: {rows: 10} %>
     <hr />
 
+    <%= f.input :upcoming_checkout_email_active, label: 'Send equipment check-out reminders?',
+                hint: 'When enabled, patrons will get an email reminding them that reservation(s) are '\
+                'available to check-out' %>
+    <%= f.input :upcoming_checkout_email_body, input_html: {rows: 10} %>
+    <hr />
+
     <%= f.input :overdue_checkin_email_active, label: 'Send overdue check-in reminders?',
                 hint: 'When enabled, patrons who have overdue equipment will get an email informing them about late fees and other consequences.' %>
     <%= f.input :overdue_checkin_email_body, input_html: {rows: 10} %>

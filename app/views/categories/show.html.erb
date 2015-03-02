@@ -2,7 +2,6 @@
 
 <div class="btn-group">
   <%= link_to "Add new #{@category.name.singularize} model".titleize, new_category_equipment_model_path(@category), class: 'btn btn-default' %>
-  <%= link_to "View all #{@category.name.singularize} models".titleize, category_equipment_models_path(@category), class: 'btn btn-default' %>
 </div>
 <hr />
 
@@ -50,6 +49,11 @@
 <% end %>
 
 <% if can? :manage, Category %>
+  <% @equipment_models = @category.equipment_models.active %>
+  <h2>Models</h2><hr />
+  <p id="equipment_models">
+    <%= render 'equipment_models/table' %>
+  </p>
   <hr>
   <%= link_to "Edit Category", edit_category_path(@category), class: 'btn btn-default' %>
   <%= category.make_deactivate_btn %>

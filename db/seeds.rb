@@ -44,6 +44,8 @@ DEFAULT_MSGS = File.join(Rails.root, 'db', 'default_messages')
 TOS_TEXT = File.read(File.join(DEFAULT_MSGS, 'tos_text'))
 UPCOMING_CHECKIN_RES_EMAIL = File.read(File.join(DEFAULT_MSGS,
                                                  'upcoming_checkin_email'))
+UPCOMING_CHECKOUT_RES_EMAIL = File.read(File.join(DEFAULT_MSGS,
+                                                  'upcoming_checkout_email'))
 OVERDUE_RES_EMAIL_BODY = File.read(File.join(DEFAULT_MSGS, 'overdue_email'))
 DELETED_MISSED_RES_EMAIL = File.read(File.join(DEFAULT_MSGS,
                                                'deleted_missed_email'))
@@ -196,7 +198,7 @@ end
 # rubocop:enable AbcSize
 
 def generate_eo
-  EquipmentItem.create! do |eo|
+  EquipmentObject.create! do |eo|
     eo.name = "Number #{(0...3).map { 65.+(rand(25)).chr }.join}" +
       rand(1..9001).to_s
     eo.serial = (0...8).map { 65.+(rand(25)).chr }.join
@@ -259,7 +261,7 @@ def mark_checked_out(res)
     res.checked_out = nil
   else
     res.checked_out = res.start_date
-    res.equipment_item = res.equipment_model.equipment_items.all.sample
+    res.equipment_object = res.equipment_model.equipment_objects.all.sample
     res.checkout_handler_id = User.where('role = ? OR role = ? OR role = ?',
                                          'checkout', 'admin', 'superuser'
                                         ).all.sample.id
@@ -390,6 +392,7 @@ if AppConfig.count == 0
   ac.default_per_cat_page = 10
   ac.request_text = ''
   ac.upcoming_checkin_email_body = UPCOMING_CHECKIN_RES_EMAIL
+  ac.upcoming_checkout_email_body = UPCOMING_CHECKOUT_RES_EMAIL
   ac.overdue_checkin_email_body = OVERDUE_RES_EMAIL_BODY
   ac.save
 
@@ -426,13 +429,13 @@ unless Category.count == 0
   generate_objs(:generate_em, 'equipment_model', n)
 end
 
-# Equipment Item, Procedures, and Requirement generation
+# Eqobj, Procedures, and Requirement generation
 # ============================================================================
 
 unless EquipmentModel.count == 0
 
-  n = MINIMAL ? 50 : ask_for_records('EquipmentItem')
-  generate_objs(:generate_eo, 'equipment_item', n)
+  n = MINIMAL ? 50 : ask_for_records('EquipmentObject')
+  generate_objs(:generate_eo, 'equipment_object', n)
 
   n = MINIMAL ? 0 : ask_for_records('Requirement')
   generate_objs(:generate_req, 'requirement', n)
@@ -454,7 +457,7 @@ generate_objs(:generate_blackout, 'blackout', n)
 # Reservation generation
 # ============================================================================
 
-unless EquipmentItem.count == 0
+unless EquipmentObject.count == 0
   n = MINIMAL ? 10 : ask_for_records('Reservation')
   generate_objs(:generate_reservation, 'reservation', n)
 end
