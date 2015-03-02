@@ -8,14 +8,17 @@ Hi <%= @overdue_checked_in.reserver.name %>,
 <p>Due date: <%= @overdue_checked_in.due_date.strftime("%B %e, %Y") %></p>
 <p>Checked in on <%= @overdue_checked_in.checked_in.strftime(" %B %e, %Y at %l:%M%P") %> by <%= @overdue_checked_in.checkin_handler.name %>.</p>
 
-<% unless @overdue_checked_in.notes.nil? %>
-  Notes: <%= @overdue_checked_in.notes %>
+<% unless @overdue_checked_in.notes.blank? %>
+  Notes: <%= markdown(@overdue_checked_in.notes) %>
 <% end %>
 
 <p>Your late fee is <%= number_to_currency(@overdue_checked_in.equipment_model.late_fee) %> per day, for a total of <%= number_to_currency(((@overdue_checked_in.checked_in.to_date - @overdue_checked_in.due_date)).to_i*(@overdue_checked_in.equipment_model.late_fee))%>
 </p>
 
-<br />
+
+<p>You can view your <%= link_to 'updated reservation here', reservation_url(@overdue_checked_in, only_path: false) %>.</p>
+
+<br/>
 
 Sincerely, <br />
 <%= @app_configs.department_name %>

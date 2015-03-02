@@ -8,5 +8,7 @@ This is a confirmation of your reservation for the following equipment:
 
 You will be notified when the equipment you reserved is available for checkout.
 
+<p>You can view your <%= link_to 'reservation here', reservation_url(@complete_reservation, only_path: false) %>.</p>
+
 Thank you,
 <%= @app_configs.department_name %>

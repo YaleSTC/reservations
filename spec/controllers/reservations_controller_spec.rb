@@ -34,7 +34,7 @@ describe ReservationsController, type: :controller do
   ## Shared examples
   shared_examples 'cannot access page' do
     it { expect(response).to be_redirect }
-    it { is_expected.to set_the_flash }
+    it { is_expected.to set_flash }
   end
 
   shared_examples 'inaccessible by banned user' do
@@ -241,7 +241,7 @@ describe ReservationsController, type: :controller do
           get :new
         end
         it { expect(response).to be_redirect }
-        it { is_expected.to set_the_flash }
+        it { is_expected.to set_flash }
       end
 
       context 'with a non-empty cart' do
@@ -1038,7 +1038,7 @@ describe ReservationsController, type: :controller do
         sign_in @checkout_person
         put :checkout, user_id: @user.id, reservations: reservations_params
       end
-      it { is_expected.to set_the_flash }
+      it { is_expected.to set_flash }
       it { expect(response).to redirect_to 'where_i_came_from' }
     end
 
@@ -1075,7 +1075,7 @@ describe ReservationsController, type: :controller do
           overdue.save(validate: false)
           put :checkout, user_id: @user.id, reservations: reservations_params
         end
-        it { is_expected.to set_the_flash }
+        it { is_expected.to set_flash }
         it { expect(response).to redirect_to 'where_i_came_from' }
       end
     end
@@ -1173,7 +1173,7 @@ describe ReservationsController, type: :controller do
         put :checkin, user_id: @user.id, reservations: reservations_params
       end
 
-      it { is_expected.to set_the_flash }
+      it { is_expected.to set_flash }
       it { expect(response).to redirect_to 'where_i_came_from' }
     end
 
@@ -1183,7 +1183,7 @@ describe ReservationsController, type: :controller do
         sign_in @admin
         put :checkin,  user_id: @user.id, reservations: {}
       end
-      it { is_expected.to set_the_flash }
+      it { is_expected.to set_flash }
       it { expect(response).to redirect_to 'where_i_came_from' }
     end
 

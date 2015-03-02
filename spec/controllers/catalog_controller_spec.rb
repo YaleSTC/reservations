@@ -19,7 +19,7 @@ describe CatalogController, type: :controller do
     end
     it { is_expected.to respond_with(:success) }
     it { is_expected.to render_template(:index) }
-    it { is_expected.not_to set_the_flash }
+    it { is_expected.not_to set_flash }
   end
   describe 'PUT add_to_cart' do
     context 'valid equipment_model selected' do
@@ -45,7 +45,7 @@ describe CatalogController, type: :controller do
         put :add_to_cart, id: 1
       end
       it { is_expected.to redirect_to(root_path) }
-      it { is_expected.to set_the_flash }
+      it { is_expected.to set_flash }
       it 'should add logger error' do
         expect(Rails.logger).to\
           receive(:error).with('Attempt to add invalid equipment model 1')
@@ -82,7 +82,7 @@ describe CatalogController, type: :controller do
         put :remove_from_cart, id: 1
       end
       it { is_expected.to redirect_to(root_path) }
-      it { is_expected.to set_the_flash }
+      it { is_expected.to set_flash }
       it 'should add logger error' do
         expect(Rails.logger).to\
           receive(:error).with('Attempt to add invalid equipment model 1')

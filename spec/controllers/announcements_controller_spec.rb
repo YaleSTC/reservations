@@ -2,12 +2,12 @@ require 'spec_helper'
 
 shared_examples_for 'page success' do
   it { is_expected.to respond_with(:success) }
-  it { is_expected.not_to set_the_flash }
+  it { is_expected.not_to set_flash }
 end
 
 shared_examples_for 'access denied' do
   it { is_expected.to redirect_to(root_url) }
-  it { is_expected.to set_the_flash }
+  it { is_expected.to set_flash }
 end
 
 describe AnnouncementsController, type: :controller do
@@ -65,7 +65,7 @@ describe AnnouncementsController, type: :controller do
             eq(@attributes[:ends_at].to_date)
         end
         it { is_expected.to redirect_to(announcements_path) }
-        it { is_expected.to set_the_flash }
+        it { is_expected.to set_flash }
       end
       context 'with incorrect params' do
         before do

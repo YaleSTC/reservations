@@ -27,7 +27,7 @@ describe CategoriesController, type: :controller do
       end
       it { is_expected.to respond_with(:success) }
       it { is_expected.to render_template(:index) }
-      it { is_expected.not_to set_the_flash }
+      it { is_expected.not_to set_flash }
     end
     context 'user is not admin' do
       before(:each) do
@@ -35,7 +35,7 @@ describe CategoriesController, type: :controller do
         get :index
       end
       it { is_expected.to redirect_to(root_url) }
-      it { is_expected.to set_the_flash }
+      it { is_expected.to set_flash }
     end
   end
   describe 'GET show' do
@@ -46,7 +46,7 @@ describe CategoriesController, type: :controller do
       end
       it { is_expected.to respond_with(:success) }
       it { is_expected.to render_template(:show) }
-      it { is_expected.not_to set_the_flash }
+      it { is_expected.not_to set_flash }
       it 'should set @category to the selected category' do
         expect(assigns(:category)).to eq(@category)
       end
@@ -57,7 +57,7 @@ describe CategoriesController, type: :controller do
         get :show, id: @category
       end
       it { is_expected.to redirect_to(root_url) }
-      it { is_expected.to set_the_flash }
+      it { is_expected.to set_flash }
     end
   end
   # all methods below should redirect to root_url if user is not an admin
@@ -69,7 +69,7 @@ describe CategoriesController, type: :controller do
       end
       it { is_expected.to respond_with(:success) }
       it { is_expected.to render_template(:new) }
-      it { is_expected.not_to set_the_flash }
+      it { is_expected.not_to set_flash }
       it 'assigns a new category to @category' do
         expect(assigns(:category)).to be_new_record
         expect(assigns(:category).is_a?(Category)).to be_truthy
@@ -98,7 +98,7 @@ describe CategoriesController, type: :controller do
           end.to change(Category, :count).by(1)
         end
         it { is_expected.to redirect_to(Category.last) }
-        it { is_expected.to set_the_flash }
+        it { is_expected.to set_flash }
       end
       context 'with invalid attributes' do
         before(:each) do
@@ -111,7 +111,7 @@ describe CategoriesController, type: :controller do
                  category: FactoryGirl.attributes_for(:category, name: nil)
           end.not_to change(Category, :count)
         end
-        it { is_expected.to set_the_flash }
+        it { is_expected.to set_flash }
         it { is_expected.to render_template(:new) }
       end
     end
@@ -134,7 +134,7 @@ describe CategoriesController, type: :controller do
       end
       it { is_expected.to respond_with(:success) }
       it { is_expected.to render_template(:edit) }
-      it { is_expected.not_to set_the_flash }
+      it { is_expected.not_to set_flash }
     end
     context 'not admin' do
       it 'should redirect to root_url' do
@@ -163,7 +163,7 @@ describe CategoriesController, type: :controller do
           expect(@category.name).to eq('Updated')
         end
         it { is_expected.to redirect_to(@category) }
-        it { is_expected.to set_the_flash }
+        it { is_expected.to set_flash }
       end
       context 'with invalid attributes' do
         before(:each) do
@@ -179,7 +179,7 @@ describe CategoriesController, type: :controller do
           expect(@category.max_per_user).not_to eq(10)
         end
         it { is_expected.to render_template(:edit) }
-        it { is_expected.not_to set_the_flash }
+        it { is_expected.not_to set_flash }
       end
     end
   end
