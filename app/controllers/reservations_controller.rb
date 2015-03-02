@@ -249,7 +249,7 @@ class ReservationsController < ApplicationController
       r = Reservation.find(r_id)
       checked_out_reservations <<
         r.checkout(r_attrs[:equipment_object_id], current_user,
-                   Hash.new(r_attrs[:checkout_procedures]), r_attrs[:notes])
+                   r_attrs[:checkout_procedures], r_attrs[:notes])
     end
 
     ## Basic-logic checks, only need to be done once
