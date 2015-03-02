@@ -292,7 +292,8 @@ describe EquipmentModel, type: :model do
             FactoryGirl.create(:valid_reservation, equipment_model: @model)
           @extra_object =
             FactoryGirl.create(:equipment_object, equipment_model: @model)
-          expect(@model.equipment_objects.size).to eq(2)
+          @model.reload
+          expect(@model.equipment_objects_count).to eq(2)
           expect(
             @model.num_available(@reservation.start_date,
                                  @reservation.due_date)
@@ -313,7 +314,8 @@ describe EquipmentModel, type: :model do
           @reservation.save(validate: false)
           @extra_object =
             FactoryGirl.create(:equipment_object, equipment_model: @model)
-          expect(@model.equipment_objects.size).to eq(2)
+          @model.reload
+          expect(@model.equipment_objects_count).to eq(2)
           expect(@model.number_overdue).to eq(1)
         end
       end
@@ -329,7 +331,8 @@ describe EquipmentModel, type: :model do
           @overdue =
             FactoryGirl.build(:overdue_reservation, equipment_model: @model)
           @overdue.save(validate: false)
-          expect(@model.equipment_objects.size).to eq(4)
+          @model.reload
+          expect(@model.equipment_objects_count).to eq(4)
           expect(@model.available_count(Time.zone.today)).to eq(1)
         end
       end

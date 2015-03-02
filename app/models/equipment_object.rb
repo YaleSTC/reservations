@@ -2,7 +2,7 @@ class EquipmentObject < ActiveRecord::Base
   include Searchable
   include Routing
 
-  belongs_to :equipment_model
+  belongs_to :equipment_model, counter_cache: true
   has_one :category, through: :equipment_model
   has_many :reservations
 

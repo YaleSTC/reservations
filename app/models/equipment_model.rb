@@ -215,6 +215,16 @@ class EquipmentModel < ActiveRecord::Base
     total - reserved - number_overdue
   end
 
+  # figure out the qualitative status of this model's objects
+  def availability(date)
+    num = available_count(date)
+    total = equipment_objects.active.count
+    if num == 0 then 'none'
+    elsif num == total then 'all'
+    else 'some'
+    end
+  end
+
   def available_object_select_options
     equipment_objects.includes(:reservations).active.select(&:available?)\
       .sort_by(&:name)\

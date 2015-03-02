@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150213001312) do
+ActiveRecord::Schema.define(version: 20150227032011) do
 
   create_table "announcements", force: true do |t|
     t.text     "message"
@@ -52,6 +52,8 @@ ActiveRecord::Schema.define(version: 20150213001312) do
     t.boolean  "enable_new_users",                                   default: true
     t.integer  "res_exp_time"
     t.boolean  "enable_guests",                                      default: true
+    t.boolean  "upcoming_checkout_email_active"
+    t.text     "upcoming_checkout_email_body"
   end
 
   create_table "blackouts", force: true do |t|
@@ -119,6 +121,7 @@ ActiveRecord::Schema.define(version: 20150213001312) do
     t.integer  "renewal_days_before_due"
     t.boolean  "csv_import",                                          default: false, null: false
     t.integer  "max_checkout_length"
+    t.integer  "equipment_objects_count",                             default: 0,     null: false
   end
 
   create_table "equipment_models_associated_equipment_models", id: false, force: true do |t|
