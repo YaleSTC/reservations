@@ -12,7 +12,7 @@ task email_missed_reservations: :environment do
     missed_reservations.each do |missed_reservation|
       Rails.logger.info "Sending email for reservation:\n \
         #{missed_reservation.inspect}"
-      UserMailer.missed_reservation_notification(missed_reservation).deliver
+      UserMailer.reservation_status_update(missed_reservation).deliver
       missed_reservation.update_attributes(
         approval_status: 'missed_and_emailed')
     end

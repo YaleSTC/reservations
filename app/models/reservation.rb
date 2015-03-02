@@ -199,9 +199,9 @@ class Reservation < ActiveRecord::Base
                                             checked_in)
 
     if checked_in.to_date > due_date
-      # equipment was overdue, send an email confirmati
+      # equipment was overdue, send an email confirmation
       AdminMailer.overdue_checked_in_fine_admin(self).deliver
-      UserMailer.overdue_checked_in_fine(self).deliver
+      UserMailer.reservation_status_update(self).deliver
     end
 
     self
