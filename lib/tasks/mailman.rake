@@ -3,18 +3,19 @@ task send_upcoming_checkin_reminder: :environment do
   if AppConfig.first.upcoming_checkin_email_active?
     # get all reservations that end today and aren't already checked in
     upcoming_reservations =
-      Reservation.where('checked_out IS NOT NULL and checked_in IS NULL and'\
+      Reservation.where('checked_out IS NOT NULL and checked_in IS NULL and '\
                           'due_date >= ? and due_date < ?',
                         Time.zone.today, Time.zone.today + 1.day)
-    puts "Found #{upcoming_reservations.size} reservations due for checkin."\
-      'Sending reminder emails...'
+    Rails.logger.info "Found #{upcoming_reservations.size} reservations due "\
+                      'for checkin. Sending reminder emails...'
     upcoming_reservations.each do |upcoming_reservation|
-      UserMailer.upcoming_checkin_notification(upcoming_reservation).deliver
+      UserMailer.reservation_status_update(upcoming_reservation).deliver
     end
-    puts 'Done!'
+    Rails.logger.info 'Done!'
   else
-    puts 'Upcoming check in emails are not sent by admin. Please change the '\
-      'application settings if you wish to send them.'
+    Rails.logger.info 'Upcoming check in emails are not sent by admin. '\
+                      'Please change the application settings if you wish to '\
+                      'send them.'
   end
 end
 
@@ -24,15 +25,16 @@ task send_overdue_checkin_reminder: :environment do
     # get all reservations that ended before today and aren't already checked
     # in
     overdue_reservations = Reservation.overdue
-    puts "Found #{overdue_reservations.size} reservations overdue for "\
-      'checkin. Sending reminder emails...'
+    Rails.logger.info "Found #{overdue_reservations.size} reservations "\
+                      'overdue for checkin. Sending reminder emails...'
     overdue_reservations.each do |overdue_reservation|
-      UserMailer.overdue_checkin_notification(overdue_reservation).deliver
+      UserMailer.reservation_status_update(overdue_reservation).deliver
     end
-    puts 'Done!'
+    Rails.logger.info 'Done!'
   else
-    puts 'Overdue check in emails are not sent by admin. Please change the '\
-      'application settings if you wish to send them.'
+    Rails.logger.info 'Overdue check in emails are not sent by admin. '\
+                      'Please change the application settings if you wish to '\
+                      'send them.'
   end
 end
 
@@ -42,9 +44,10 @@ task send_reservation_notes: :environment do
   # application, to alert them.
   notes_reservations_out = Reservation.has_notes.checked_out.notes_unsent
   notes_reservations_in = Reservation.has_notes.checked_in.notes_unsent
-  puts "Found #{notes_reservations_out.size} reservations checked out with "\
-    "notes and #{notes_reservations_in.size} reservations checked in with "\
-    'notes. Sending a reminder email...'
+  Rails.logger.info "Found #{notes_reservations_out.size} reservations "\
+                    "checked out with notes and #{notes_reservations_in.size} "\
+                    'reservations checked in with notes. Sending a reminder '\
+                    'email...'
   unless notes_reservations_out.empty? && notes_reservations_in.empty?
     AdminMailer.notes_reservation_notification(notes_reservations_out,
                                                notes_reservations_in).deliver
@@ -53,5 +56,5 @@ task send_reservation_notes: :environment do
   notes_reservations_out.update_all(notes_unsent: false)
   notes_reservations_in.update_all(notes_unsent: false)
 
-  puts 'Done!'
+  Rails.logger.info 'Done!'
 end

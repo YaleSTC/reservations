@@ -52,7 +52,7 @@ ActiveRecord::Schema.define(version: 20150227032011) do
     t.boolean  "enable_new_users",                                   default: true
     t.integer  "res_exp_time"
     t.boolean  "enable_guests",                                      default: true
-    t.boolean  "upcoming_checkout_email_active"
+    t.boolean  "upcoming_checkout_email_active",                     default: true
     t.text     "upcoming_checkout_email_body"
   end
 
