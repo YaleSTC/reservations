@@ -1,5 +1,5 @@
 /*
- *	jQuery dotdotdot 1.6.16
+ *	jQuery dotdotdot 1.7.2
  *
  *	Copyright (c) Fred Heusschen
  *	www.frebsite.nl
@@ -7,9 +7,8 @@
  *	Plugin website:
  *	dotdotdot.frebsite.nl
  *
- *	Dual licensed under the MIT and GPL licenses.
+ *	Licensed under the MIT license.
  *	http://en.wikipedia.org/wiki/MIT_License
- *	http://en.wikipedia.org/wiki/GNU_General_Public_License
  */
 
 (function( $, undef )
@@ -341,7 +340,7 @@
 		var isTruncated	= false;
 
 		//	Don't put the ellipsis directly inside these elements
-		var notx = 'table, thead, tbody, tfoot, tr, col, colgroup, object, embed, param, ol, ul, dl, blockquote, select, optgroup, option, textarea, script, style';
+		var notx = 'a table, thead, tbody, tfoot, tr, col, colgroup, object, embed, param, ol, ul, dl, blockquote, select, optgroup, option, textarea, script, style';
 
 		//	Don't remove these elements even if they are after the ellipsis
 		var noty = 'script, .dotdotdot-keep';
@@ -371,7 +370,7 @@
 					else
 					{
 						$elem.append( $e );
-						if ( after )
+						if ( after && !$e.is( o.after ) && !$e.find( o.after ).length  )
 						{
 							$elem[ $elem.is( notx ) ? 'after' : 'append' ]( after );
 						}

@@ -20,6 +20,7 @@
 //= require variables.js
 //= require select2
 //= require jquery.sticky.js
+//= require jquery.dotdotdot.js
 //= require_tree
 //= require_self
 
