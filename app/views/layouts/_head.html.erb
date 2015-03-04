@@ -19,7 +19,8 @@
     <% if @app_configs.favicon.present? %>
       <%= favicon_link_tag @app_configs.favicon %>
     <% else %>
-      <%= favicon_link_tag %>
+      <%# add versioning to refresh browsers with old default %>
+      <%= favicon_link_tag 'favicon.ico?v=2' %>
     <% end %>
   <% end %>
 </head>

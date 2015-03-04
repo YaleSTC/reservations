@@ -9,7 +9,14 @@
         <span class="icon-bar"></span>
       </button>
       <% unless @app_configs.nil? || @app_configs.site_title.nil? %>
-        <%= link_to sanitize("<i class=\"fa fa-th-list\"></i> #{site_title}"), root_path, class: 'navbar-brand' %>
+        <%= link_to root_path, class: 'navbar-brand' do %>
+          <div class="logo-container">
+            <%= inline_svg 'res_logo.svg', class: 'logo' %>
+          </div>
+          <div class="title">
+            <%= site_title %>
+          </div>
+        <% end %>
       <% end %>
     </div>
 
