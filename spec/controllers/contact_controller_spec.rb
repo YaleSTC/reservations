@@ -18,7 +18,7 @@ describe ContactController, type: :controller do
     end
     it { is_expected.to respond_with(:success) }
     it { is_expected.to render_template(:new) }
-    it { is_expected.not_to set_the_flash }
+    it { is_expected.not_to set_flash }
   end
   describe 'POST create' do
     before(:each) do
@@ -33,14 +33,14 @@ describe ContactController, type: :controller do
           eq('[Reservations Specs] ' + FactoryGirl.build(:message).subject)
       end
       it { is_expected.to redirect_to(root_path) }
-      it { is_expected.to set_the_flash }
+      it { is_expected.to set_flash }
     end
     context 'with invalid attributes' do
       before(:each) do
         post :create, message: FactoryGirl.attributes_for(:message, name: nil)
       end
       it { is_expected.to render_template(:new) }
-      it { is_expected.to set_the_flash }
+      it { is_expected.to set_flash }
       it 'should not send a message' do
         expect(ActionMailer::Base.deliveries).to eq([])
       end

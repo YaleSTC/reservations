@@ -23,7 +23,7 @@ describe AppConfigsController, type: :controller do
         end
         it { is_expected.to render_template(:edit) }
         it { is_expected.to respond_with(:success) }
-        it { is_expected.not_to set_the_flash }
+        it { is_expected.not_to set_flash }
         it 'should assign @app_config variable to the first appconfig in '\
           'the db' do
           expect(assigns(:app_config)).to eq(AppConfig.first)
@@ -47,7 +47,7 @@ describe AppConfigsController, type: :controller do
       # Since they are pretty unimportant we're commenting them out to ensure
       # a useful test suite
       # it { is_expected.to respond_with(:success) }
-      it { is_expected.to set_the_flash }
+      it { is_expected.to set_flash }
       # it { is_expected.to render_template('application_setup/index') }
     end
   end
@@ -143,7 +143,7 @@ describe AppConfigsController, type: :controller do
         post :update
       end
       it { is_expected.to respond_with(:success) }
-      it { is_expected.to set_the_flash }
+      it { is_expected.to set_flash }
       it { is_expected.to render_template('application_setup/index') }
     end
   end

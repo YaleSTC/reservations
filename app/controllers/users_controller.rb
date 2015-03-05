@@ -44,6 +44,7 @@ class UsersController < ApplicationController
                         past_overdue: @user_reservations.returned_overdue }
     @show_equipment[:missed] =
       @user_reservations.missed unless AppConfig.first.res_exp_time
+    @has_pending = @user_reservations.requested.count > 0
   end
 
   def new # rubocop:disable all

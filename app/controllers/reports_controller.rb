@@ -94,7 +94,7 @@ class ReportsController < ApplicationController
     if session[:report_start_date].present?
       session[:report_start_date]
     else
-      Date.current - 1.year
+      Time.zone.today - 1.year
     end
   end
 
@@ -102,7 +102,7 @@ class ReportsController < ApplicationController
     if session[:report_end_date].present?
       session[:report_end_date]
     else
-      Date.current
+      Time.zone.today
     end
   end
 end

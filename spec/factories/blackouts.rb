@@ -4,7 +4,7 @@ FactoryGirl.define do
   factory :blackout do
     notice 'MyText'
     blackout_type 'hard'
-    start_date Date.current
-    end_date { Date.current + 7.day }
+    start_date Time.zone.today
+    end_date { Time.zone.today + 7.day }
   end
 end

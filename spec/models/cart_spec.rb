@@ -21,10 +21,10 @@ describe Cart, type: :model do
       @cart.items.nil?
     end
     it 'starts today ' do
-      @cart.start_date == Date.current
+      @cart.start_date == Time.zone.today
     end
     it 'is due tomorrow' do
-      @cart.due_date == Date.tomorrow
+      @cart.due_date == Time.zone.today + 1.day
     end
     it 'has no reserver' do
       @cart.reserver_id.nil?
@@ -89,8 +89,8 @@ describe Cart, type: :model do
         @cart.add_item(@equipment_model)
         @equipment_model2 = FactoryGirl.create(:equipment_model)
         @cart.add_item(@equipment_model2)
-        @cart.start_date = Date.current
-        @cart.due_date = Date.tomorrow
+        @cart.start_date = Time.zone.today
+        @cart.due_date = Time.zone.today + 1.day
         @cart.reserver_id = FactoryGirl.create(:user).id
       end
       it 'should create an array of reservations' do
@@ -101,8 +101,8 @@ describe Cart, type: :model do
         it 'should have the correct dates' do
           array = @cart.prepare_all
           array.each do |r|
-            expect(r.start_date).to eq(Time.current.midnight)
-            expect(r.due_date).to eq(Time.current.midnight + 24.hours)
+            expect(r.start_date).to eq(Time.zone.today)
+            expect(r.due_date).to eq(Time.zone.today + 1.day)
           end
         end
         it 'should have the correct equipment models' do

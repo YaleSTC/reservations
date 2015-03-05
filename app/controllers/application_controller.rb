@@ -111,7 +111,7 @@ class ApplicationController < ActionController::Base
   end
 
   def fix_cart_date
-    cart.start_date = (Date.current) if cart.start_date < Date.current
+    cart.start_date = (Time.zone.today) if cart.start_date < Time.zone.today
     cart.fix_due_date
   end
 
@@ -147,13 +147,13 @@ class ApplicationController < ActionController::Base
       cart.due_date = params[:cart][:due_date_cart].to_date
       cart.fix_due_date
       cart.reserver_id =
-      if params[:reserver_id].blank?
-        cart.reserver_id = current_or_guest_user.id
-      else
-        params[:reserver_id]
-      end
+        if params[:reserver_id].blank?
+          cart.reserver_id = current_or_guest_user.id
+        else
+          params[:reserver_id]
+        end
     rescue ArgumentError
-      cart.start_date = Date.current
+      cart.start_date = Time.zone.today
       flash[:error] = 'Please enter a valid start or due date.'
     end
 
@@ -167,7 +167,7 @@ class ApplicationController < ActionController::Base
     # validate
     errors = cart.validate_all
     # don't over-write flash if invalid date was set above
-    flash[:error] ||= notices + errors.to_sentence
+    flash[:error] ||= notices + "\n" + errors.join("\n")
     flash[:notice] = 'Cart updated.'
 
     # reload appropriate divs / exit

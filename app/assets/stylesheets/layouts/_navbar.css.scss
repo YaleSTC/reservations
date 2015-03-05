@@ -1,3 +1,18 @@
+// Hacks to have separate base font size for the navbar – remove if / when we
+// move to 14px base font size
+
+.navbar {
+	font-size: $navbar-font-size-base;
+
+	.navbar-brand { font-size: ceil(($navbar-font-size-base * 1.25)); }
+	.dropdown-menu { font-size: inherit; }
+	.form-control { font-size: inherit; }
+}
+
+// Fixes #1111 – navbar will be correct height
+.navbar-fixed-top { border-width: 0; }
+
+// Dropdown stuff
 .dropdown-menu {
 //	max-height: 440px;
 //	overflow-y: auto;
@@ -8,11 +23,11 @@
 	}
 }
 
-.navbar-search .search-query {
-  @include box-shadow(#{inset 0 0 10px rgba(0,0,0,.5), 0 1px 0 rgba(255,255,255,.15)});
-	@include placeholder-extended($navbarSearchPlaceholderColor);
-  @include transition(#{background .2s ease-in-out, text-shadow .2s ease-in-out, box-shadow .2s ease-in-out});
-}
+// .navbar-form .search-query {
+//   @include box-shadow(#{inset 0 0 10px rgba(0,0,0,.5), 0 1px 0 rgba(255,255,255,.15)});
+// 	@include placeholder-extended($navbar-search-placeholder-color);
+//   @include transition(#{background .2s ease-in-out, text-shadow .2s ease-in-out, box-shadow .2s ease-in-out});
+// }
 
 .none-text {
   // in the dropdown menus, when none to list -- this is for the "(none)" text
@@ -25,8 +40,8 @@
   white-space: nowrap;
 }
 
-.navbar .brand {
-  font-weight: 300;
+.navbar-brand {
+  font-weight: 600;
   @include transition(all .2s ease-out);
 
   &:hover{
@@ -38,27 +53,20 @@
                  0 0 80px lighten($right-1-color, 20%),
                  0 0 100px lighten($right-1-color, 20%),
                  0 0 150px lighten($right-1-color, 20%);
-    color: lighten($right-1-color, 60%);
+    // color: lighten($right-1-color, 60%);
   }
 }
 
-.navbar-inner {
-  @include box-shadow(#{0 2px 20px rgba(0, 0, 0, 0.4), inset 0 0 14px rgba(0,0,0,.5)});
+#navigation_bar {
+  @include box-shadow(#{0 2px 5px rgba(0, 0, 0, 0.3)});
 }
 
-.navbar .nav > li
-> a {
-  @include gradient-radial-extended(lighten(rgba($right-1-color, 1), 20%), rgba(0,0,0,0), center, 100%);
-  @include transition(all .17s ease-out);
-  background-position: 0 44px;
-
-  &:hover {
-    background-position: 0 0;
-  }
+.navbar .nav > li > a:hover {
+  background-position: 0 0;
 }
 
-.navbar .nav .active > a, .navbar .nav .active > a:hover {
-  @include box-shadow(inset 0 2px 10px rgba(black, .7));
+.navbar .nav > li > a {
+	@extend .hvr-underline-reveal;
 }
 
 @media (max-width: 979px) {
@@ -72,7 +80,7 @@
   }
 }
 
-.navbar-search .search-query {
+.navbar-form .search-query {
   &::-moz-placeholder {
     font-family: FontAwesome;
     font-style: normal;
@@ -88,15 +96,19 @@
 
   // this is currently broken in FF, apparently :after doesn't work
   &::-moz-placeholder:after {
-    font-family: $sansFontFamily;
+    font-family: $font-family-sans-serif;
     content: "Search the catalog";
   }
   &:-ms-input-placeholder:after {
-    font-family: $sansFontFamily;
+    font-family: $font-family-sans-serif;
     content: "Search the catalog";
   }
   &::-webkit-input-placeholder:after {
-    font-family: $sansFontFamily;
+    font-family: $font-family-sans-serif;
     content: "Search the catalog";
   }
+}
+
+.navbar .btn-sign-in {
+	margin-right: 0px;
 }

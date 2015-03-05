@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141219172429) do
+ActiveRecord::Schema.define(version: 20150227032011) do
 
   create_table "announcements", force: true do |t|
     t.text     "message"
-    t.datetime "starts_at"
-    t.datetime "ends_at"
+    t.date     "starts_at"
+    t.date     "ends_at"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -52,6 +52,8 @@ ActiveRecord::Schema.define(version: 20141219172429) do
     t.boolean  "enable_new_users",                                   default: true
     t.integer  "res_exp_time"
     t.boolean  "enable_guests",                                      default: true
+    t.boolean  "upcoming_checkout_email_active",                     default: true
+    t.text     "upcoming_checkout_email_body"
   end
 
   create_table "blackouts", force: true do |t|
@@ -119,6 +121,7 @@ ActiveRecord::Schema.define(version: 20141219172429) do
     t.integer  "renewal_days_before_due"
     t.boolean  "csv_import",                                          default: false, null: false
     t.integer  "max_checkout_length"
+    t.integer  "equipment_objects_count",                             default: 0,     null: false
   end
 
   create_table "equipment_models_associated_equipment_models", id: false, force: true do |t|
@@ -159,8 +162,8 @@ ActiveRecord::Schema.define(version: 20141219172429) do
     t.integer  "reserver_id"
     t.integer  "checkout_handler_id"
     t.integer  "checkin_handler_id"
-    t.datetime "start_date"
-    t.datetime "due_date"
+    t.date     "start_date"
+    t.date     "due_date"
     t.datetime "checked_out"
     t.datetime "checked_in"
     t.datetime "created_at"

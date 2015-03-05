@@ -6,7 +6,9 @@
 [![Dependency Status](https://gemnasium.com/YaleSTC/reservations.svg)](https://gemnasium.com/YaleSTC/reservations)
 [![Inline docs](http://inch-ci.org/github/yalestc/reservations.svg?branch=master&style=flat)](http://inch-ci.org/github/yalestc/reservations)
 
-![](http://yalestc.github.io/reservations/screenshot.png)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
+![](http://yalestc.github.io/reservations/images/screenshot.png)
 
 Reservations makes it easy to manage the checking in and out of equipment, much like a library! Here are some of the things Reservations can do:
 
