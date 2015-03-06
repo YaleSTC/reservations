@@ -76,6 +76,7 @@
     <% end %>
     <% if can? :manage, EquipmentModel %>
       <li><a href="#items">Items</a></li>
+      <li><a href="#pending_reservations">Pending Reservations</a></li>
       <li><a href="#procedures">Procedures</a></li>
     <% end %>
   </ul>
@@ -157,6 +158,32 @@
     </p>
     <p id="equipment_objects">
       <%= render 'equipment_objects_table' %>
+    </p>
+  </section>
+
+  <section id="pending_reservations">
+    <h2>Pending Reservations</h2><hr />
+
+    <div class="row">
+      <div class="col-md-6">
+        <h4>Today</h4>
+      </div>
+      <div class="col-md-6">
+        <h4>Next 7 Day</h4>
+      </div>
+    </div>
+    <div class="row giant-numbers">
+      <div class="col-md-6">
+        <%= @today.count %> 
+      </div>
+      <div class="col-md-6">
+        <%= @upcoming.count %>
+      </div>
+    </div>
+
+
+    <p id="pending_reservations">
+      <%= render 'pending_reservations_table' %>
     </p>
   </section>
 

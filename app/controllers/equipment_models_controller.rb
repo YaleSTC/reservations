@@ -31,7 +31,8 @@ class EquipmentModelsController < ApplicationController
     end
   end
 
-  def show
+  # rubocop:disable BlockNesting
+  def show # rubocop:disable MethodLength, PerceivedComplexity, AbcSize
     @associated_equipment_models =
       @equipment_model.associated_equipment_models.sample(6)
 
@@ -48,16 +49,20 @@ class EquipmentModelsController < ApplicationController
         # the above code mimics the current available? setup to show overdue
         # equipment as permanently 'out'.
       end
-
     @blackouts = Blackout.active.collect do |b|
       { start: b.start_date, end: b.end_date }
     end
-
-    @date = Time.zone.today
-    @date_max = @date + calendar_length - 1.week
-    @max = @equipment_model.equipment_objects.active.count
-
+    @date       = Time.current.to_date
+    @date_max   = @date + calendar_length - 1.week
+    @max        = @equipment_model.equipment_objects.active.count
     @restricted = @equipment_model.model_restricted?(cart.reserver_id)
+    @today      = Reservation.includes(:reserver)
+                  .for_eq_model(@equipment_model).checkoutable
+    @upcoming   = Reservation.includes(:reserver)
+                  .for_eq_model(@equipment_model)
+                  .reserved_in_date_range(Time.zone.today + 1.day,
+                                          Time.zone.today + 8.day)
+                  .untouched.future
   end
 
   def new
