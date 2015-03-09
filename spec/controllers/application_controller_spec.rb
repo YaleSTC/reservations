@@ -219,6 +219,8 @@ describe ApplicationController, type: :controller do
       equipment_model =
         FactoryGirl.create(:equipment_model,
                            category: FactoryGirl.create(:category))
+      FactoryGirl.create(:equipment_item,
+                         equipment_model_id: equipment_model.id)
       session[:cart].add_item(equipment_model)
       @new_reserver = FactoryGirl.create(:user)
     end
@@ -253,6 +255,16 @@ describe ApplicationController, type: :controller do
             reserver_id: @new_reserver.id
 
         expect(flash).not_to be_empty
+      end
+    end
+
+    context 'banned reserver' do
+      it 'should set the flash' do
+        put :update_cart,
+            cart: { start_date_cart: Time.zone.today,
+                    due_date_cart: Time.zone.today + 1.day },
+            reserver_id: FactoryGirl.create(:banned).id
+        expect(flash[:error].strip).not_to eq('')
       end
     end
   end

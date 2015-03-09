@@ -43,6 +43,12 @@ describe UsersController, type: :controller do
       before { get :show, id: user }
       it_behaves_like 'page success'
       it { is_expected.to render_template(:show) }
+
+      context 'with banned user' do
+        before { get :show, id: FactoryGirl.create(:banned) }
+        it { is_expected.to respond_with(:success) }
+        it { is_expected.to set_flash }
+      end
     end
 
     describe 'POST quick_new' do

@@ -16,7 +16,7 @@ class Reservation < ActiveRecord::Base
   end
   validate :start_date_before_due_date
   validate :matched_item_and_model
-  validate :not_in_past, :available, on: :create
+  validate :not_in_past, :available, :check_banned, on: :create
 
   nilify_blanks only: [:notes]
 
@@ -143,6 +143,8 @@ class Reservation < ActiveRecord::Base
     # days before the due date it is and the max number of times one is
     # allowed to renew
     #
+    return false if reserver.role == 'banned'
+
     self.times_renewed ||= 0
 
     # you can't renew a checked in reservation, or one without an equipment
