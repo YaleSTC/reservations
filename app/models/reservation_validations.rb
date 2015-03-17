@@ -39,8 +39,12 @@ module ReservationValidations
   # Does not run on checked out, checked in, overdue, or missed Reservations
   def not_in_past
     if due_date < Date.today || start_date < Date.today
-      errors.add(:base, "Cannot create reservation in the past\n")
+      errors.add(:base, "Cannot create reservation in the past.\n")
     end
   end
 
+  def check_banned
+    return unless reserver.role == 'banned'
+    errors.add(:base, "Reserver cannot be banned.\n")
+  end
 end

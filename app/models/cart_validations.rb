@@ -11,6 +11,7 @@ module CartValidations
     # if passed with true argument doesn't run validations that should be
     # skipped when validating renewals
     errors = []
+    errors += check_banned
     errors += check_start_date_blackout
     errors += check_due_date_blackout
     errors += check_overdue_reservations unless renew
@@ -28,6 +29,16 @@ module CartValidations
       errors += check_should_be_renewed(user_reservations,model,self.start_date)
     end
     return errors.uniq.reject{ |a| a.blank? }
+  end
+
+  def check_banned
+    errors = []
+    reserver = User.find_by_id(reserver_id)
+    if reserver && reserver.role == 'banned'
+      errors << 'The reserver is banned and cannot reserve additional '\
+        'equipment.'
+    end
+    errors
   end
 
   def check_start_date_blackout
@@ -187,5 +198,4 @@ module CartValidations
     end
     return ["#{user.name} is missing the following certifications: #{unfulfilled_req_text.to_sentence}"]
   end
-
 end

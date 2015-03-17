@@ -13,6 +13,8 @@ class ReservationsController < ApplicationController
 
   def set_user
     @user = User.find(params[:user_id])
+    return unless @user.role == 'banned'
+    flash[:error] = 'This user is banned and cannot check out equipment.'
   end
 
   def set_reservation
@@ -53,7 +55,10 @@ class ReservationsController < ApplicationController
       # error handling
       @errors = cart.validate_all
       unless @errors.empty?
-        if can? :override, :reservation_errors
+        if @errors[0].include?('banned')
+          flash[:error] = 'Reservations cannot be created for banned users.'
+          redirect_to root_path
+        elsif can? :override, :reservation_errors
           flash[:error] = 'Are you sure you want to continue? Please review the errors below.'
         else
           flash[:error] = 'Please review the errors below. If uncorrected, any reservations with errors will be filed as a request, and subject to administrator approval.'
@@ -75,7 +80,7 @@ class ReservationsController < ApplicationController
     notes = params[:reservation][:notes]
     requested = !@errors.empty? && (cannot? :override, :reservation_errors)
 
-    if !@errors.blank? && notes.blank?
+    if !@errors.blank? && notes.blank? && !@errors[0].include?('banned')
       # there were errors but they didn't fill out the notes
       flash[:error] = "Please give a short justification for this reservation #{requested ? 'request' : 'override'}"
       @notes_required = true
@@ -159,7 +164,11 @@ class ReservationsController < ApplicationController
     params[:reservations].each do |reservation_id, reservation_hash|
       if reservation_hash[:equipment_object_id].present?
         # update attributes for all equipment that is checked off
-        r = Reservation.find(reservation_id)
+        r = Reservation.includes(:reserver).find(reservation_id)
+        if r.reserver.role == 'banned'
+          flash[:error] = 'Banned users cannot check out equipment.'
+          redirect_to(root_path) && return
+        end
         r.checkout_handler = current_user
         r.checked_out = Time.now
         r.equipment_object_id = reservation_hash[:equipment_object_id]
@@ -308,6 +317,7 @@ class ReservationsController < ApplicationController
   end
 
   def manage # initializer
+    redirect_to(root_path) && return unless flash[:error].nil?
     @check_out_set = @user.due_for_checkout
     @check_in_set = @user.due_for_checkin
 
@@ -315,6 +325,7 @@ class ReservationsController < ApplicationController
   end
 
   def current
+    redirect_to(root_path) && return unless flash[:error].nil?
     @user_overdue_reservations_set = [Reservation.overdue.for_reserver(@user)].delete_if{|a| a.empty?}
     @user_checked_out_today_reservations_set = [Reservation.checked_out_today.for_reserver(@user)].delete_if{|a| a.empty?}
     @user_checked_out_previous_reservations_set = [Reservation.checked_out_previous.for_reserver(@user)].delete_if{|a| a.empty?}

@@ -5,6 +5,11 @@ Changelog
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+### v3.4.9
+*Released on 16 March 2015*
+#### Bug Fixes
+* Banned users can no longer have reservations created for them or equipment checked out to them ([#1185](https://github.com/YaleSTC/reservations/issues/1185)).
+
 ### v3.4.8
 *Released on 26 October 2014*
 #### Bug Fixes
