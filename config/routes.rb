@@ -29,6 +29,10 @@ Reservations::Application.routes.draw do
   end
 
   resources :equipment_models, concerns: :deactivatable do
+    collection do
+      put 'update_cart'
+      delete 'empty_cart'
+    end
     resources :equipment_objects
   end
 
@@ -61,8 +65,7 @@ Reservations::Application.routes.draw do
 
   resources :reservations do
     member do
-      get :checkout_email
-      get :checkin_email
+      get :send_receipt
       put :renew
       put :archive
     end
@@ -91,6 +94,11 @@ Reservations::Application.routes.draw do
   get '/blackouts/new_recurring' => 'blackouts#new_recurring',
       :as => :new_recurring_blackout
 
+  put '/reservation/update_index_dates' => 'reservations#update_index_dates',
+      :as => :update_index_dates
+  put '/reservation/view_all_dates' => 'reservations#view_all_dates',
+      :as => :view_all_dates
+
   resources :blackouts do
     collection do
       post :create_recurring
@@ -107,17 +115,14 @@ Reservations::Application.routes.draw do
   put '/add_to_cart/:id' => 'catalog#add_to_cart', :as => :add_to_cart
   put '/remove_from_cart/:id' => 'catalog#remove_from_cart',
       :as => :remove_from_cart
-  delete '/cart/empty' => 'application#empty_cart', :as => :empty_cart
-  put '/cart/update' => 'application#update_cart', :as => :update_cart
+  # delete '/cart/empty' => 'application#empty_cart', :as => :empty_cart
+  # put '/cart/update' => 'application#update_cart', :as => :update_cart
 
   get '/reports/index' => 'reports#index', :as => :reports
-  get '/reports/:id/for_model' => 'reports#for_model', :as => :for_model_report
-
-  get '/reports/for_model_set' => 'reports#for_model_set',
-      :as => :for_model_set_reports # what http request? old match
-  post '/reports/update' => 'reports#update_dates',
-       :as => :update_dates # what http request? old match
-  post '/reports/generate' => 'reports#generate', :as => :generate_report
+  get '/reports/subreport/:class/:id' => 'reports#subreport',
+      as: :subreport
+  put '/reports/update' => 'reports#update_dates',
+      :as => :update_dates
 
   get '/terms_of_service' => 'application#terms_of_service',
       :as => :tos
@@ -147,7 +152,9 @@ Reservations::Application.routes.draw do
 
   get 'status' => 'status#index'
 
-  get ':controller(/:action(/:id(.:format)))' # generalized matcher
+  # generalized matcher
+  match ':controller(/:action(/:id(.:format)))', via: [:get, :post, :put,
+                                                       :delete]
 
   # this is a fix for running letter opener inside vagrant
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?

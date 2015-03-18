@@ -1,0 +1,62 @@
+{
+  "name": "Reservations Example",
+  "description": "An example of the Reservations app. Before continuing please visit: https://github.com/YaleSTC/reservations/wiki/Heroku-Deployment-Guide",
+  "keywords": ["Rails"],
+  "repository": "https://github.com/YaleSTC/reservations",
+  "website": "http://yalestc.github.io/reservations",
+  "success_url": "/",
+  "scripts": {
+    "postdeploy": "bundle exec rake db:reset minimal=true"
+  },
+  "env": {
+    "BUILDPACK_URL": "https://github.com/orenyk/heroku-buildpack-ruby",
+    "DEVISE_SECRET_KEY": {
+      "description": "secret key used by Devise for authentication",
+      "generator": "secret"
+    },
+    "DEVISE_PEPPER": {
+      "description": "pepper used by Devise to generate encrypted passwords",
+      "generator": "secret"
+    },
+    "SECRET_KEY_BASE": {
+      "description": "secret key used to sign cookies (in secrets.yml)",
+      "generator": "secret"
+    },
+    "RAILS_HOST_NAME": {
+      "description": "the host name for your application (e.g. APP_NAME.herokuapp.com)"
+    },
+    "RES_SMTP_DOMAIN": {
+      "description": "SMTP server domain",
+      "value": "heroku.com"
+    },
+    "RES_SMTP_PORT": {
+      "description": "SMTP server port",
+      "value": "587"
+    },
+    "RES_SMTP_ADDRESS": {
+      "description": "SMTP server address",
+      "value": "smtp.mandrillapp.com"
+    },
+    "RES_SMTP_AUTH": {
+      "description": "whether or not to use authentication for SMTP",
+      "value": "1"
+    },
+    "RES_SMTP_USERNAME": {
+      "description": "SMTP authentication username",
+      "value": "(fill in MANDRIL_USERNAME post-deployment)"
+    },
+    "RES_SMTP_PASSWORD": {
+      "description": "SMTP authentication password",
+      "value": "(fill in MANDRIL_APIKEY post-deployment)"
+    },
+    "SERVE_STATIC": {
+      "description": "whether or not to serve static assets",
+      "value": "1"
+    }
+  },
+  "addons": [
+    "heroku-postgresql",
+    "mandrill",
+    "scheduler:standard"
+  ]
+}

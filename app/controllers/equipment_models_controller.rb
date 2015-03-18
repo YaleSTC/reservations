@@ -3,7 +3,8 @@ class EquipmentModelsController < ApplicationController
   layout 'application_with_sidebar', only: :show
   load_and_authorize_resource
   decorates_assigned :equipment_model
-  skip_before_action :authenticate_user!, only: [:show, :index]
+  skip_before_action :authenticate_user!, only: [:show, :index],
+                                          unless: :guests_disabled?
   before_action :set_equipment_model,
                 only: [:show, :edit, :update, :destroy, :deactivate]
   before_action :set_category_if_possible, only: [:index, :new]
@@ -30,30 +31,29 @@ class EquipmentModelsController < ApplicationController
     end
   end
 
-  # I don't like disabling the AbcSize cop for this method since it's pretty
-  # close to passing, but since we require so many instance variables for the
-  # calendar JS I think we just have to leave it.
-  def show # rubocop:disable AbcSize
+  def show
     @associated_equipment_models =
       @equipment_model.associated_equipment_models.sample(6)
 
     calendar_length = 1.month
 
-    @reservation_data = []
-    Reservation.active.for_eq_model(@equipment_model).each do |r|
-      end_date =
-        r.status == 'overdue' ? Date.current + calendar_length : r.due_date
-      @reservation_data << { start: r.start_date, end: end_date }
-      # the above code mimics the current available? setup to show overdue
-      # equipment as permanently 'out'.
+    @reservation_data =
+      Reservation.active.for_eq_model(@equipment_model).collect do |r|
+        if r.status == 'overdue'
+          end_date = Time.zone.today + calendar_length
+        else
+          end_date = r.due_date
+        end
+        { start: r.start_date, end: end_date }
+        # the above code mimics the current available? setup to show overdue
+        # equipment as permanently 'out'.
+      end
+
+    @blackouts = Blackout.active.collect do |b|
+      { start: b.start_date, end: b.end_date }
     end
 
-    @blackouts = []
-    Blackout.active.each do |b|
-      @blackouts << {
-        start: b.start_date, end: b.end_date }
-    end
-    @date = Time.current.to_date
+    @date = Time.zone.today
     @date_max = @date + calendar_length - 1.week
     @max = @equipment_model.equipment_objects.active.count
 

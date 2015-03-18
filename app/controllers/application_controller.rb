@@ -7,9 +7,7 @@ class ApplicationController < ActionController::Base
   # See ActionController::RequestForgeryProtection for details
   protect_from_forgery
   before_action :app_setup_check
-  before_action :authenticate_user!, unless: :devise_controller?
-  skip_before_action :authenticate_user!,
-                     only: [:update_cart, :empty_cart, :terms_of_service]
+  before_action :authenticate_user!, unless: :skip_authentication?
   before_action :cart, unless: :devise_controller?
 
   with_options unless: ->(_u) { User.count == 0 } do |c|
@@ -113,7 +111,7 @@ class ApplicationController < ActionController::Base
   end
 
   def fix_cart_date
-    cart.start_date = (Date.current) if cart.start_date < Date.current
+    cart.start_date = (Time.zone.today) if cart.start_date < Time.zone.today
     cart.fix_due_date
   end
 
@@ -123,6 +121,20 @@ class ApplicationController < ActionController::Base
   def make_cart_compatible
     return if session[:cart].items.is_a? Hash
     session[:cart] = Cart.new
+  end
+
+  # check to see if the guest user functionality is disabled
+  def guests_disabled?
+    AppConfig.first && !AppConfig.first.enable_guests
+  end
+
+  # check to see if we should skip authentication; either looks to see if the
+  # Devise controller is running or if we're utilizing one of the guest-
+  # accessible routes with guests disabled
+  def skip_authentication?
+    devise_controller? ||
+      (%w(update_cart empty_cart terms_of_service)
+      .include?(params[:action]) && !guests_disabled?)
   end
 
   #-------- end before_filter methods --------#
@@ -135,13 +147,13 @@ class ApplicationController < ActionController::Base
       cart.due_date = params[:cart][:due_date_cart].to_date
       cart.fix_due_date
       cart.reserver_id =
-      if params[:reserver_id].blank?
-        cart.reserver_id = current_or_guest_user.id
-      else
-        params[:reserver_id]
-      end
+        if params[:reserver_id].blank?
+          cart.reserver_id = current_or_guest_user.id
+        else
+          params[:reserver_id]
+        end
     rescue ArgumentError
-      cart.start_date = Date.current
+      cart.start_date = Time.zone.today
       flash[:error] = 'Please enter a valid start or due date.'
     end
 
@@ -155,7 +167,7 @@ class ApplicationController < ActionController::Base
     # validate
     errors = cart.validate_all
     # don't over-write flash if invalid date was set above
-    flash[:error] ||= notices + errors.to_sentence
+    flash[:error] ||= notices + "\n" + errors.join("\n")
     flash[:notice] = 'Cart updated.'
 
     # reload appropriate divs / exit
@@ -219,12 +231,10 @@ class ApplicationController < ActionController::Base
     # build the hash using class methods that use 0 queries
     eq_models.each do |em|
       @availability_hash[em.id] =
-        [EquipmentObject.for_eq_model(em.id,
-                                      eq_objects)\
-        - Reservation.number_overdue_for_eq_model(em.id,
-                                                  source_reservations)\
-        - em.num_reserved(cart.start_date,
-                          cart.due_date, source_reservations), 0].max
+        [EquipmentObject.for_eq_model(em.id, eq_objects)\
+        - Reservation.number_overdue_for_eq_model(em.id, source_reservations)\
+        - em.num_reserved(cart.start_date, cart.due_date, source_reservations)\
+        - cart.items[em.id].to_i, 0].max
     end
     @page_eq_models_by_category = eq_models
   end
@@ -234,7 +244,10 @@ class ApplicationController < ActionController::Base
     session[:cart].purge_all if session[:cart]
     flash[:notice] = 'Cart emptied.'
     respond_to do |format|
-      format.js { render template: 'cart_js/reload_all' }
+      format.js do
+        prepare_catalog_index_vars
+        render template: 'cart_js/reload_all'
+      end
       format.html { redirect_to root_path }
     end
   end

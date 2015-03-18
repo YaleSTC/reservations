@@ -44,6 +44,8 @@ DEFAULT_MSGS = File.join(Rails.root, 'db', 'default_messages')
 TOS_TEXT = File.read(File.join(DEFAULT_MSGS, 'tos_text'))
 UPCOMING_CHECKIN_RES_EMAIL = File.read(File.join(DEFAULT_MSGS,
                                                  'upcoming_checkin_email'))
+UPCOMING_CHECKOUT_RES_EMAIL = File.read(File.join(DEFAULT_MSGS,
+                                                  'upcoming_checkout_email'))
 OVERDUE_RES_EMAIL_BODY = File.read(File.join(DEFAULT_MSGS, 'overdue_email'))
 DELETED_MISSED_RES_EMAIL = File.read(File.join(DEFAULT_MSGS,
                                                'deleted_missed_email'))
@@ -115,7 +117,7 @@ def prompt_password(user)
   end
 end
 
-def time_rand(from = 0.0, to = Time.now, length = 0, options = {})
+def time_rand(from = 0.0, to = Time.zone.now, length = 0, options = {})
   options[:passes_blackout_validations] = true
 
   range = to.to_f - from.to_f
@@ -282,11 +284,13 @@ def generate_reservation
     res = Reservation.new
     res.reserver_id = User.all.sample.id
     res.equipment_model = EquipmentModel.all.sample
-    res.start_date = time_rand(Time.now, Time.now + FUTURE_RANGE).to_datetime
+    res.start_date = time_rand(Time.zone.now,
+                               Time.zone.now + FUTURE_RANGE).to_date
 
     checkout_length = res.equipment_model.category.max_checkout_length
-    res.due_date = time_rand(res.start_date, res.start_date.next_week,
-                             checkout_length.days).to_datetime
+    res.due_date = time_rand(res.start_date.to_datetime,
+                             res.start_date.to_datetime.next_week,
+                             checkout_length.days).to_date
     res.notes = Faker::HipsterIpsum.paragraph(8)
     res.notes_unsent = [true, false].sample
     if rand < PAST_CHANCE
@@ -388,6 +392,7 @@ if AppConfig.count == 0
   ac.default_per_cat_page = 10
   ac.request_text = ''
   ac.upcoming_checkin_email_body = UPCOMING_CHECKIN_RES_EMAIL
+  ac.upcoming_checkout_email_body = UPCOMING_CHECKOUT_RES_EMAIL
   ac.overdue_checkin_email_body = OVERDUE_RES_EMAIL_BODY
   ac.save
 

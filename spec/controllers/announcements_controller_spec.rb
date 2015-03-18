@@ -2,12 +2,12 @@ require 'spec_helper'
 
 shared_examples_for 'page success' do
   it { is_expected.to respond_with(:success) }
-  it { is_expected.not_to set_the_flash }
+  it { is_expected.not_to set_flash }
 end
 
 shared_examples_for 'access denied' do
   it { is_expected.to redirect_to(root_url) }
-  it { is_expected.to set_the_flash }
+  it { is_expected.to set_flash }
 end
 
 describe AnnouncementsController, type: :controller do
@@ -35,9 +35,9 @@ describe AnnouncementsController, type: :controller do
       end
       it 'sets the default announcement' do
         expect(assigns(:announcement)[:starts_at]).to\
-          eq(Time.current.midnight)
+          eq(Time.zone.today)
         expect(assigns(:announcement)[:ends_at]).to\
-          eq(Time.current.midnight + 24.hours)
+          eq(Time.zone.today + 1.day)
       end
       it_behaves_like 'page success'
       it { is_expected.to render_template(:new) }
@@ -65,12 +65,12 @@ describe AnnouncementsController, type: :controller do
             eq(@attributes[:ends_at].to_date)
         end
         it { is_expected.to redirect_to(announcements_path) }
-        it { is_expected.to set_the_flash }
+        it { is_expected.to set_flash }
       end
       context 'with incorrect params' do
         before do
           @attributes = FactoryGirl.attributes_for(:announcement)
-          @attributes[:ends_at] = Date.yesterday
+          @attributes[:ends_at] = Time.zone.today - 1.day
           post :create, announcement: @attributes
         end
         it { is_expected.to render_template(:new) }

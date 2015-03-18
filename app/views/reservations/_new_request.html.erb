@@ -15,13 +15,12 @@
   <h3>Equipment requested:</h3>
 </p>
 <%= simple_form_for @reservation do |f| %>
-  <%= f.error_messages %>
   <p>
     The following equipment will be requested for
     <%= User.find(cart.reserver_id).name %>
     from
-    <%= cart.start_date.to_date.to_s(:long) %> to
-    <%= cart.due_date.to_date.to_s(:long) %>:
+    <%= cart.start_date.to_s(:long) %> to
+    <%= cart.due_date.to_s(:long) %>:
   </p>
   <p>
     <ul class="rounded-list">
@@ -34,13 +33,12 @@
   <div class="well">
     <%= markdown(@request_text) %>
   </div>
-  <div class = "control-group text <%= 'error' if @notes_required %>">
+  <div class="form-group text <%= 'error' if @notes_required %>">
     <%= f.label "Enter your comments here:" %>
-    <%= f.input_field :notes, class: 'span6', rows: 5 %>
+    <%= f.input_field :notes, class: 'form-control', rows: 5 %>
   </div>
-
-  <div class="form-actions">
+  <div class="form-group">
     <%= f.button :submit, "Submit Request", data: { confirm: "Are you sure? This request is not finalized and will be subject to approval by an administrator. It will not be available for checkout until and unless approved, and the request may be denied for any reason at the sole discretion of the administrator." } %>
-    <%= link_to "Return to Catalog", catalog_path, class: 'btn' %>
+    <%= link_to "Return to Catalog", catalog_path, class: 'btn btn-default' %>
   </div>
 <% end %>

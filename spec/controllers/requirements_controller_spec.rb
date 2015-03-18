@@ -18,7 +18,7 @@ describe RequirementsController, type: :controller do
       end
       it { is_expected.to respond_with(:success) }
       it { is_expected.to render_template(:index) }
-      it { is_expected.not_to set_the_flash }
+      it { is_expected.not_to set_flash }
       it 'should populate an array of all requirements' do
         expect(assigns(:requirements)).to eq([@requirement])
       end
@@ -39,7 +39,7 @@ describe RequirementsController, type: :controller do
       end
       it { is_expected.to respond_with(:success) }
       it { is_expected.to render_template(:show) }
-      it { is_expected.not_to set_the_flash }
+      it { is_expected.not_to set_flash }
       it 'should set @requirement to the selected requirement' do
         expect(assigns(:requirement)).to eq(@requirement)
       end
@@ -60,7 +60,7 @@ describe RequirementsController, type: :controller do
       end
       it { is_expected.to respond_with(:success) }
       it { is_expected.to render_template(:new) }
-      it { is_expected.not_to set_the_flash }
+      it { is_expected.not_to set_flash }
       it 'assigns a new requirement to @requirement' do
         expect(assigns(:requirement)).to be_new_record
         expect(assigns(:requirement).is_a?(Requirement)).to be_truthy
@@ -85,7 +85,7 @@ describe RequirementsController, type: :controller do
       end
       it { is_expected.to respond_with(:success) }
       it { is_expected.to render_template(:edit) }
-      it { is_expected.not_to set_the_flash }
+      it { is_expected.not_to set_flash }
     end
     context 'not admin' do
       it 'should redirect to root url if not an admin' do
@@ -115,7 +115,7 @@ describe RequirementsController, type: :controller do
           expect(@requirement.contact_name).to eq('John Doe')
         end
         it { is_expected.to redirect_to(@requirement) }
-        it { is_expected.to set_the_flash }
+        it { is_expected.to set_flash }
       end
       context 'with invalid attributes' do
         before(:each) do
@@ -130,7 +130,7 @@ describe RequirementsController, type: :controller do
           expect(@requirement.contact_name).to eq('Adam Bray')
         end
         it { is_expected.to render_template(:edit) }
-        it { is_expected.not_to set_the_flash }
+        it { is_expected.not_to set_flash }
       end
     end
     context 'not admin' do
@@ -158,7 +158,7 @@ describe RequirementsController, type: :controller do
           end.to change(Requirement, :count).by(1)
         end
         it { is_expected.to redirect_to(Requirement.last) }
-        it { is_expected.to set_the_flash }
+        it { is_expected.to set_flash }
       end
       context 'with invalid attributes' do
         before(:each) do
@@ -173,7 +173,7 @@ describe RequirementsController, type: :controller do
                                                          contact_name: nil)
           end.not_to change(Requirement, :count)
         end
-        it { is_expected.not_to set_the_flash }
+        it { is_expected.not_to set_flash }
         it { is_expected.to render_template(:new) }
       end
     end

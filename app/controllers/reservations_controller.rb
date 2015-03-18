@@ -18,27 +18,82 @@ class ReservationsController < ApplicationController
     @reservation = Reservation.find(params[:id])
   end
 
+  def set_index_dates
+    session[:index_start_date] ||= Time.zone.today - 7.days
+    session[:index_end_date] ||= Time.zone.today + 7.days
+    @start_date = session[:index_start_date]
+    @end_date = session[:index_end_date]
+  end
+
+  def set_filter
+    # set the filter for #index action, pulling from session, then
+    # params, then falling back to default
+
+    f = (can? :manage, Reservation) ? :upcoming : :reserved
+
+    @filters = [:reserved, :checked_out, :overdue, :returned, :upcoming,
+                :requested, :approved_requests, :denied_requests]
+    @filters << :missed unless AppConfig.first.res_exp_time
+
+    # if filter in session set it
+    if session[:filter]
+      f = session[:filter]
+      session[:filter] = nil
+    else
+      # if the filter is defined in the params, store those reservations
+      @filters.each do |filter|
+        next unless params[filter]
+        f = filter
+        break
+      end
+    end
+    f
+  end
+
+  def set_counts(source, with_time)
+    @all_counts = {}
+    @time_counts = {}
+    @filters.each do |f|
+      @all_counts[f] = source.send(f).count
+      @time_counts[f] = with_time.send(f).count
+    end
+  end
+
   public
 
-  def index # rubocop:disable CyclomaticComplexity
-    # define our source of reservations depending on user status
-    @reservations_source =
-      (can? :manage, Reservation) ? Reservation : current_user.reservations
-    default_filter = (can? :manage, Reservation) ? :upcoming : :reserved
+  def index
+    set_index_dates
+    @filter = set_filter
+    @view_all = session[:all_dates]
 
-    filters = [:reserved, :checked_out, :overdue, :returned, :upcoming,
-               :requested, :approved_requests, :denied_requests]
-    filters << :missed unless AppConfig.first.res_exp_time
-    # if the filter is defined in the params, store those reservations
-    filters.each do |filter|
-      @reservations_set = @reservations_source.send(filter) if params[filter]
+    if can? :manage, Reservation
+      source = Reservation
+    else
+      source = current_user.reservations
     end
 
-    @default = false
-    # if no filter is defined
-    return unless @reservations_set.nil?
-    @default = true if AppConfig.first.request_text.empty?
-    @reservations_set = @reservations_source.send(default_filter)
+    if session[:all_dates]
+      time = source
+    else
+      time = source.starts_on_days(@start_date, @end_date)
+    end
+
+    set_counts(source, time)
+
+    @reservations_set = time.send(@filter)
+  end
+
+  def update_index_dates
+    session[:all_dates] = false
+    session[:index_start_date] = params[:list][:start_date].to_date
+    session[:index_end_date] = params[:list][:end_date].to_date
+    session[:filter] = params[:list][:filter].to_sym
+    redirect_to action: 'index'
+  end
+
+  def view_all_dates
+    session[:all_dates] = true
+    redirect_to action: 'index'
   end
 
   def show
@@ -113,7 +168,7 @@ class ReservationsController < ApplicationController
         if (cannot? :manage, Reservation) || (requested == true)
           redirect_to(catalog_path) && return
         end
-        if start_date.to_date == Date.current
+        if start_date == Time.zone.today
           flash[:notice] += ' Are you simultaneously checking out equipment '\
             'for someone? Note that only the reservation has been made. '\
             'Don\'t forget to continue to checkout.'
@@ -194,7 +249,7 @@ class ReservationsController < ApplicationController
       r = Reservation.find(r_id)
       checked_out_reservations <<
         r.checkout(r_attrs[:equipment_object_id], current_user,
-                   Hash.new(r_attrs[:checkout_procedures]), r_attrs[:notes])
+                   r_attrs[:checkout_procedures], r_attrs[:notes])
     end
 
     ## Basic-logic checks, only need to be done once
@@ -314,27 +369,14 @@ class ReservationsController < ApplicationController
     render 'current_reservations'
   end
 
-  # two paths to create receipt emails for checking in and checking out items.
-  def checkout_email
-    if UserMailer.checkout_receipt(@reservation).deliver
-      redirect_to :back
+  def send_receipt
+    if UserMailer.reservation_status_update(@reservation, true).deliver
       flash[:notice] = 'Successfully delivered receipt email.'
     else
-      redirect_to @reservation
       flash[:error] = 'Unable to deliver receipt email. Please contact '\
         'administrator for more support.'
     end
-  end
-
-  def checkin_email
-    if UserMailer.checkin_receipt(@reservation).deliver
-      redirect_to :back
-      flash[:notice] = 'Successfully delivered receipt email.'
-    else
-      redirect_to @reservation
-      flash[:error] = 'Unable to deliver receipt email. Please contact '\
-        'administrator for more support.'
-    end
+    redirect_to @reservation
   end
 
   def renew
@@ -344,7 +386,7 @@ class ReservationsController < ApplicationController
       redirect_to(@reservation) && return
     else
       flash[:notice] = 'Your reservation has been renewed until '\
-        "#{@reservation.due_date.to_date.to_s(:long)}."
+        "#{@reservation.due_date.to_s(:long)}."
       redirect_to @reservation
     end
   end
@@ -360,11 +402,11 @@ class ReservationsController < ApplicationController
   def approve_request
     @reservation.approval_status = 'approved'
     @reservation.notes = @reservation.notes.to_s # in case of nil
-    @reservation.notes += "\n\n### Approved on #{Time.current.to_s(:long)} "\
+    @reservation.notes += "\n\n### Approved on #{Time.zone.now.to_s(:long)} "\
       "by #{current_user.md_link}"
     if @reservation.save
       flash[:notice] = 'Request successfully approved'
-      UserMailer.request_approved_notification(@reservation).deliver
+      UserMailer.reservation_status_update(@reservation).deliver
       redirect_to reservations_path(requested: true)
     else
       flash[:error] = 'Oops! Something went wrong. Unable to approve '\
@@ -376,11 +418,11 @@ class ReservationsController < ApplicationController
   def deny_request
     @reservation.approval_status = 'denied'
     @reservation.notes = @reservation.notes.to_s # in case of nil
-    @reservation.notes += "\n\n### Denied on #{Time.current.to_s(:long)} by "\
+    @reservation.notes += "\n\n### Denied on #{Time.zone.now.to_s(:long)} by "\
       "#{current_user.md_link}"
     if @reservation.save
       flash[:notice] = 'Request successfully denied'
-      UserMailer.request_denied_notification(@reservation).deliver
+      UserMailer.reservation_status_update(@reservation).deliver
       redirect_to reservations_path(requested: true)
     else
       flash[:error] = 'Oops! Something went wrong. Unable to deny '\

@@ -1,6 +1,8 @@
 // This is the SCSS manifest for all of Reservations' CSS/SASS. This file
 // imports all of our stylesheets to compile into one CSS file.
 //
+// DO NOT USE require here! Use Sass @import directives.
+//
 // Order matters! The font must be loaded before everything else, or else it
 // won't be available to Bootstrap. Bootstrap must come second, since all of our
 // styling is based on the variables and mixins that Bootstrap defines. After
@@ -22,11 +24,9 @@
 // Custom rolled jQuery UI CSS for integrating with Bootstrap
 // ============================
 @import "jquery-ui-1.8.16.custom";
-/*
- *= require jquery-ui/datepicker
- *= require jquery-ui/autocomplete
- *= require jquery-ui/spinner
- */
+
+@import "jquery-ui/autocomplete";
+@import "jquery-ui/spinner";
 
 // Autocomplete CSS
 // ============================
@@ -56,3 +56,4 @@
 @import "catalog/*";
 @import "users/*";
 @import "equipment_models/*";
+@import "blackouts/*";

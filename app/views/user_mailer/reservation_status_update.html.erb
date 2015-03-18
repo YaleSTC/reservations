@@ -1,0 +1,30 @@
+Hi <%= @reservation.reserver.name %>,
+<br />
+
+<%= render :partial => "#{@status.gsub(/\s/, '_')}" %>
+
+<br />
+
+<p><%= link_to "Reservation ##{@reservation.id}", reservation_url(@reservation, only_path: false) %></p>
+
+<p>Equipment: <%= @reservation.equipment_model.name%> 
+<% if @reservation.equipment_object %> (<%= @reservation.equipment_object.name %>) <% end %></p>
+<p>Start Date: <%= @reservation.start_date.strftime(" %B %e, %Y")%> </p>
+<p>Due Date: <%= @reservation.due_date.strftime(" %B %e, %Y")%> </p>
+<% if @reservation.checked_out %>
+  <p>Checked Out: <%= @reservation.checked_out.strftime(" %B %e, %Y at %l:%M%P") %></p>
+<% end %>
+<% if @reservation.checked_in %>
+  <p>Returned: <%= @reservation.checked_in.strftime(" %B %e, %Y at %l:%M%P") %></p>
+<% end %>
+
+<% if @reservation.notes %>
+  Notes: <%= markdown(@reservation.notes) %>
+<% end %>
+
+<br />
+Sincerely, <br />
+<%= @app_configs.department_name %>
+<br /><br />
+<%= link_to 'Terms of Service', tos_url(only_path: false) %>
+

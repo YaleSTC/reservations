@@ -2,7 +2,7 @@ class CatalogController < ApplicationController
   layout 'application_with_sidebar'
 
   before_action :set_equipment_model, only: [:add_to_cart, :remove_from_cart]
-  skip_before_action :authenticate_user!
+  skip_before_action :authenticate_user!, unless: :guests_disabled?
 
   # --------- before filter methods --------- #
 
@@ -76,12 +76,18 @@ class CatalogController < ApplicationController
   def change_cart(action, item)
     cart.send(action, item)
     errors = cart.validate_all
-    flash[:error] = errors.to_sentence
+    flash[:error] = errors.join("\n")
     flash[:notice] = 'Cart updated.'
 
     respond_to do |format|
       format.html { redirect_to root_path }
-      format.js { render template: 'cart_js/update_cart' }
+      format.js do
+        # this isn't necessary for EM show page updates but not sure how to
+        # check for catalog views since it's always in the catalog controller
+        prepare_catalog_index_vars([item])
+        @item = item
+        render template: 'cart_js/update_cart'
+      end
     end
   end
 

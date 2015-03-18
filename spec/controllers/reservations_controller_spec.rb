@@ -34,7 +34,7 @@ describe ReservationsController, type: :controller do
   ## Shared examples
   shared_examples 'cannot access page' do
     it { expect(response).to be_redirect }
-    it { is_expected.to set_the_flash }
+    it { is_expected.to set_flash }
   end
 
   shared_examples 'inaccessible by banned user' do
@@ -45,6 +45,44 @@ describe ReservationsController, type: :controller do
     end
     include_examples 'cannot access page'
     it { is_expected.to redirect_to(root_path) }
+  end
+
+  describe '#update_index_dates (PUT)' do
+    subject do
+      put :update_index_dates, list: { start_date: Time.zone.today.to_s,
+                                       end_date: (Time.zone.today + 1.day).to_s,
+                                       filter: :reserved.to_s }
+    end
+    it { is_expected.to be_redirect }
+    before(:each) do
+      @start = Time.zone.today
+      @end = (Time.zone.today + 1.day)
+      @filter = :reserved
+      put :update_index_dates, list: { start_date: @start.to_s,
+                                       end_date: @end.to_s,
+                                       filter: @filter.to_s }
+    end
+    it 'disables all_date viewing' do
+      expect(session[:all_dates]).to be_falsey
+    end
+    it 'sets the session dates' do
+      expect(session[:index_start_date]).to eq(@start)
+      expect(session[:index_end_date]).to eq(@end)
+    end
+    it 'sets the session filter' do
+      expect(session[:filter]).to eq(@filter)
+    end
+  end
+
+  describe '#view_all_dates (PUT)' do
+    subject { put :view_all_dates }
+    it { is_expected.to be_redirect }
+    before(:each) do
+      put :view_all_dates
+    end
+    it 'enables all_date viewing' do
+      expect(session[:all_dates]).to be_truthy
+    end
   end
 
   ## Controller method tests
@@ -73,24 +111,25 @@ describe ReservationsController, type: :controller do
         # Assertion and expectation
         @filters.each do |f|
           get :index, f => true
-          expect(assigns(:reservations_set).uniq.sort).to \
-           eq(Reservation.send(f).uniq.sort)
+          expect(assigns(:reservations_set).uniq.sort).to eq(Reservation.send(f)
+               .starts_on_days(assigns(:start_date), assigns(:end_date))
+               .uniq.sort)
         end
       end
+      it 'populates with respect to session[:filter] first' do
+        @filters.each do |trait|
+          res = FactoryGirl.build(:valid_reservation, trait, reserver: @user)
+          res.save(validate: false)
+        end
 
-      it 'passes @default as false if valid params[filter] is provided' do
-        get :index, reserved: true
-        expect(assigns(:default)).to eq(false)
-      end
-
-      it 'passes @default as true if valid params[filter] is not provided' do
-        get :index
-        expect(assigns(:default)).to eq(true)
-      end
-
-      it 'passes @default as true if invalid params[filter] is provided' do
-        get :index, absurd_and_nonexistent: true
-        expect(assigns(:default)).to eq(true)
+        # Assertion and expectation
+        @filters.each do |f|
+          session[:filter] = f.to_s
+          get :index, @filters.sample => true
+          expect(assigns(:reservations_set).uniq.sort).to eq(Reservation.send(f)
+               .starts_on_days(assigns(:start_date), assigns(:end_date))
+               .uniq.sort)
+        end
       end
 
       context 'who is an admin' do
@@ -202,7 +241,7 @@ describe ReservationsController, type: :controller do
           get :new
         end
         it { expect(response).to be_redirect }
-        it { is_expected.to set_the_flash }
+        it { is_expected.to set_flash }
       end
 
       context 'with a non-empty cart' do
@@ -317,8 +356,8 @@ describe ReservationsController, type: :controller do
           @valid_cart = FactoryGirl.build(:cart_with_items)
           @req = proc do
             post :create,
-                 { reservation: { start_date: Date.current,
-                                  due_date: Date.tomorrow,
+                 { reservation: { start_date: Time.zone.today,
+                                  due_date: (Time.zone.today + 1.day),
                                   reserver_id: @user.id } },
                  cart: @valid_cart
           end
@@ -457,16 +496,14 @@ describe ReservationsController, type: :controller do
               id: @reservation.id,
               reservation:
                 FactoryGirl.attributes_for(:reservation,
-                                           start_date: Date.current,
-                                           due_date: (Date.tomorrow + 3.days)),
+                                           start_date: Time.zone.today,
+                                           due_date: Time.zone.today + 4.days),
               equipment_object: ''
         end
         it 'should update the reservation details' do
           @reservation.reload
-          expect(@reservation.start_date.to_time.utc).to\
-            eq(Time.current.midnight.utc)
-          expect(@reservation.due_date.to_time.utc).to\
-            eq((Time.current.midnight + 4 * 24.hours).utc)
+          expect(@reservation.start_date).to eq(Time.zone.today)
+          expect(@reservation.due_date).to eq(Time.zone.today + 4.days)
         end
         it 'updates the reservations notes' do
           expect { @reservation.reload }.to change(@reservation, :notes)
@@ -483,8 +520,8 @@ describe ReservationsController, type: :controller do
               id: @reservation.id,
               reservation:
                 FactoryGirl.attributes_for(:reservation,
-                                           start_date: Date.current,
-                                           due_date: Date.tomorrow),
+                                           start_date: Time.zone.today,
+                                           due_date: (Time.zone.today + 1.day)),
               equipment_object: @new_equipment_object.id
         end
         it 'should update the object on current reservation' do
@@ -513,19 +550,19 @@ describe ReservationsController, type: :controller do
                                  equipment_model: @reservation.equipment_model)
             put :update,
                 id: @reservation.id,
-                reservation:
-                  FactoryGirl.attributes_for(:reservation,
-                                             start_date: Date.current,
-                                             due_date: Date.tomorrow),
+                reservation: FactoryGirl
+                  .attributes_for(:reservation,
+                                  start_date: Time.zone.today,
+                                  due_date: (Time.zone.today + 1.day)),
                 equipment_object: @old_object.id
             @old_object.reload
             @new_object.reload
             put :update,
                 id: @reservation.id,
-                reservation:
-                  FactoryGirl.attributes_for(:reservation,
-                                             start_date: Date.current,
-                                             due_date: Date.tomorrow),
+                reservation: FactoryGirl
+                  .attributes_for(:reservation,
+                                  start_date: Time.zone.today,
+                                  due_date: (Time.zone.today + 1.day)),
                 equipment_object: @new_object.id
           end
 
@@ -556,15 +593,15 @@ describe ReservationsController, type: :controller do
                 id: @reservation.id,
                 reservation:
                   FactoryGirl.attributes_for(:reservation,
-                                             start_date: Date.current,
-                                             due_date: Date.tomorrow),
+                                             start_date: Time.zone.today,
+                                             due_date: Time.zone.today + 1.day),
                 equipment_object: @old_object.id
             put :update,
                 id: @other_res.id,
                 reservation:
                   FactoryGirl.attributes_for(:reservation,
-                                             start_date: Date.current,
-                                             due_date: Date.tomorrow),
+                                             start_date: Time.zone.today,
+                                             due_date: Time.zone.today + 1.day),
                 equipment_object: @new_object.id
             @old_object.reload
             @new_object.reload
@@ -572,8 +609,8 @@ describe ReservationsController, type: :controller do
                 id: @reservation.id,
                 reservation:
                   FactoryGirl.attributes_for(:reservation,
-                                             start_date: Date.current,
-                                             due_date: Date.tomorrow),
+                                             start_date: Time.zone.today,
+                                             due_date: Time.zone.today + 1.day),
                 equipment_object: @new_object.id
           end
 
@@ -596,8 +633,8 @@ describe ReservationsController, type: :controller do
               id: @reservation.id,
               reservation:
                 FactoryGirl.attributes_for(:reservation,
-                                           start_date: Date.current,
-                                           due_date: Date.yesterday),
+                                           start_date: Time.zone.today,
+                                           due_date: Time.zone.today - 1.day),
               equipment_object: ''
         end
         include_examples 'cannot access page'
@@ -1001,7 +1038,7 @@ describe ReservationsController, type: :controller do
         sign_in @checkout_person
         put :checkout, user_id: @user.id, reservations: reservations_params
       end
-      it { is_expected.to set_the_flash }
+      it { is_expected.to set_flash }
       it { expect(response).to redirect_to 'where_i_came_from' }
     end
 
@@ -1038,7 +1075,7 @@ describe ReservationsController, type: :controller do
           overdue.save(validate: false)
           put :checkout, user_id: @user.id, reservations: reservations_params
         end
-        it { is_expected.to set_the_flash }
+        it { is_expected.to set_flash }
         it { expect(response).to redirect_to 'where_i_came_from' }
       end
     end
@@ -1136,7 +1173,7 @@ describe ReservationsController, type: :controller do
         put :checkin, user_id: @user.id, reservations: reservations_params
       end
 
-      it { is_expected.to set_the_flash }
+      it { is_expected.to set_flash }
       it { expect(response).to redirect_to 'where_i_came_from' }
     end
 
@@ -1146,7 +1183,7 @@ describe ReservationsController, type: :controller do
         sign_in @admin
         put :checkin,  user_id: @user.id, reservations: {}
       end
-      it { is_expected.to set_the_flash }
+      it { is_expected.to set_flash }
       it { expect(response).to redirect_to 'where_i_came_from' }
     end
 
@@ -1370,12 +1407,30 @@ describe ReservationsController, type: :controller do
     end
   end
 
-  describe '#checkout_email (GET reservations/checkout_email)' do
-    pending 'E-mails get sent'
-  end
+  describe '#send_receipt (GET /reservations/:id/send_receipt)' do
+    before(:each) do
+      sign_in @checkout_person
+    end
 
-  describe '#checkin_email (GET reservations/checkin_email)' do
-    pending 'E-mails get sent'
+    context 'successfully emails' do
+      before do
+        @reservation.update_attributes(
+          FactoryGirl.attributes_for(:checked_out_reservation))
+        get :send_receipt, id: @reservation.id
+      end
+      it { is_expected.to redirect_to(@reservation) }
+      it { should set_flash[:notice] }
+    end
+
+    context 'fails to send email' do
+      before do
+        allow(UserMailer).to receive_message_chain(
+          'reservation_status_update.deliver').and_return(false)
+        get :send_receipt, id: @reservation.id
+      end
+      it { is_expected.to redirect_to(@reservation) }
+      it { should set_flash[:error] }
+    end
   end
 
   describe '#review GET' do
@@ -1415,7 +1470,7 @@ describe ReservationsController, type: :controller do
       expect(@requested.reload.approval_status).to eq('approved')
     end
     it 'should send an email' do
-      expect_email(UserMailer.request_approved_notification(@requested))
+      expect_email(UserMailer.reservation_status_update(@requested))
     end
     it 'should redirect to reservations path' do
       expect(response).to redirect_to(reservations_path(requested: true))
@@ -1436,7 +1491,7 @@ describe ReservationsController, type: :controller do
       expect(@requested.reload.approval_status).to eq('denied')
     end
     it 'should send an email' do
-      expect_email(UserMailer.request_denied_notification(@requested))
+      expect_email(UserMailer.reservation_status_update(@requested))
     end
     it 'should redurect to reservations path' do
       expect(response).to redirect_to(reservations_path(requested: true))

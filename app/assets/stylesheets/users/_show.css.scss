@@ -5,9 +5,9 @@
 
 .user_label {
 	@extend .label;
-	@include border-radius(5px);
+	border-radius: 5px;
 	padding: $user_label-size*1px $user_label-size*4px $user_label-size*2px;
-	font-size: $baseFontSize * 1.5;
+	font-size: $font-size-base * 1.5;
 	line-height: 14px;
 	margin-right: 10px;
 }
@@ -33,7 +33,7 @@ dl#user_info {
 		}
 	}
 	dd, dt {
-		line-height: $baseLineHeight * 1.5;
+		line-height: $line-height-base * 1.5;
 		text-align: left;
 	}
 }
@@ -41,7 +41,7 @@ dl#user_info {
 @media (min-width: 1200px) {
 	dl#user_info {
 		margin-top: 0px;
-	
+
 		dt {
 			width: 90px;
 		}
@@ -54,7 +54,7 @@ dl#user_info {
 			}
 		}
 		dd, dt {
-			line-height: $baseLineHeight * 1.5;
+			line-height: $line-height-base * 1.5;
 			text-align: left;
 		}
 	}
@@ -63,7 +63,7 @@ dl#user_info {
 @media (min-width: 768px) and (max-width: 979px) {
 	dl#user_info {
 		margin-top: 0px;
-	
+
 		dt {
 			width: 90px;
 		}
@@ -76,7 +76,7 @@ dl#user_info {
 			}
 		}
 		dd, dt {
-			line-height: $baseLineHeight * 1.5;
+			line-height: $line-height-base * 1.5;
 			text-align: left;
 		}
 	}
@@ -99,7 +99,7 @@ dl#user_info {
 			}
 		}
 		dd, dt {
-			line-height: $baseLineHeight * 1.5;
+			line-height: $line-height-base * 1.5;
 			text-align: left;
 		}
 	}
@@ -118,20 +118,20 @@ dl#user_info {
 			@include text-overflow;
 		}
 		dd, dt {
-			line-height: $baseLineHeight * 1.5;
+			line-height: $line-height-base * 1.5;
 			text-align: left;
 		}
 	}
 }
 
 //Tab Badges
-a.tab-text {width: 180px;}
-a .tab-badge {
-	float: right;
-}
+// a.tab-text {width: 180px;}
+// a .tab-badge {
+// 	float: right;
+// }
 
 div#qualif_box {
-	padding-bottom: $baseLineHeight;
+	padding-bottom: $line-height-base;
 }
 
 ul#qualifications {
