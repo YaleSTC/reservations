@@ -20,7 +20,7 @@ Reservations::Application.routes.draw do
   resources :documents,
             :requirements
 
-  resources :equipment_objects, concerns: :deactivatable
+  resources :equipment_objects, except: [:index], concerns: :deactivatable
 
   resources :announcements, except: [:show]
 
