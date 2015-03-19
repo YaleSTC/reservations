@@ -48,7 +48,7 @@
             <h4 class="modal-title">Qualification Required</h4>
           </div>
           <div class="modal-body">
-            <p><%= Requirement.list_requirement_admins(User.find(cart.reserver_id), equipment_model).html_safe %></p>
+            <p><%= qualifications_hash[equipment_model.id] %></p>
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
