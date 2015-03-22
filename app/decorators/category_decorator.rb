@@ -18,7 +18,7 @@ class CategoryDecorator < ApplicationDecorator
         res += Reservation.for_eq_model(em)
                .reserved_in_date_range(Time.zone.today - 1.day,
                                        Time.zone.today + 7.days)
-               .not_returned.count
+               .count
       end
       onclick_str = "handleBigDeactivation(this, #{res}, 'category');"
     end

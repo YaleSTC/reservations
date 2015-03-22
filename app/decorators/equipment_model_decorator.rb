@@ -16,7 +16,7 @@ class EquipmentModelDecorator < ApplicationDecorator
       res = Reservation.for_eq_model(object)
             .reserved_in_date_range(Time.zone.today - 1.day,
                                     Time.zone.today + 7.days)
-            .not_returned.count
+            .count
       onclick_str = "handleBigDeactivation(this, #{res}, 'equipment model');"
     end
     super(onclick_str)

@@ -102,7 +102,7 @@ describe Reservation, type: :model do
   end
 
   context 'when not checked out' do
-    it { expect(reservation.status).to eq('reserved') }
+    it { expect(reservation.reserved?).to be_truthy }
     # currently returns true; doesn't check for checked out
     it { expect(reservation).to_not be_eligible_for_renew }
   end
@@ -110,28 +110,28 @@ describe Reservation, type: :model do
   context 'when checked out' do
     subject(:reservation) { FactoryGirl.build(:checked_out_reservation) }
 
-    it { expect(reservation.status).to eq('checked out') }
+    it { expect(reservation.checked_out?).to be_truthy }
     it { is_expected.to be_eligible_for_renew }
   end
 
   context 'when checked in' do
     subject(:reservation) { FactoryGirl.build(:checked_in_reservation) }
 
-    it { expect(reservation.status).to eq('returned on time') }
+    it { expect(reservation.returned?).to be_truthy }
     it { is_expected.not_to be_eligible_for_renew }
   end
 
   context 'when overdue' do
     subject(:reservation) { FactoryGirl.build(:overdue_reservation) }
 
-    it { expect(reservation.status).to eq('overdue') }
+    it { expect(reservation.overdue).to be_truthy }
     it { is_expected.to be_eligible_for_renew } # should this be true?
   end
 
   context 'when missed' do
     subject(:reservation) { FactoryGirl.build(:missed_reservation) }
 
-    it { expect(reservation.status).to eq('missed') }
+    it { expect(reservation.missed?).to be_truthy }
     # it { should_not be_is_eligible_for_renew} #returns true; should it?
   end
 
@@ -465,6 +465,29 @@ describe Reservation, type: :model do
       expect(reservation.available).to be_nil
       expect(reservation.not_in_past).to be_nil
       expect(reservation.check_banned).to be_nil
+    end
+  end
+
+  context 'when in a final status' do
+    subject(:reservation) do
+      FactoryGirl.create(:valid_reservation)
+    end
+    it 'the status should not be able to be changed if denied' do
+      reservation.update_attributes(status: 'denied')
+      reservation.status = 'reserved'
+      expect { reservation.save! }.to raise_error
+    end
+    it 'the status should not be able to be changed if missed' do
+      reservation.update_attributes(
+        FactoryGirl.attributes_for(:missed_reservation))
+      reservation.status = 'reserved'
+      expect { reservation.save! }.to raise_error
+    end
+    it 'the status should not be able to be changed if returned' do
+      reservation.update_attributes(
+        FactoryGirl.attributes_for(:checked_in_reservation))
+      reservation.status = 'reserved'
+      expect { reservation.save! }.to raise_error
     end
   end
 end
