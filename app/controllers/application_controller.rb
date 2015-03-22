@@ -49,7 +49,7 @@ class ApplicationController < ActionController::Base
   end
 
   def seen_app_configs
-    return if AppConfig.first.viewed || current_user.nil?
+    return if AppConfig.check(:viewed) || current_user.nil?
     if can? :edit, :app_config
       flash[:notice] = 'Since this is your first time viewing the '\
         'application configurations, we recommend that you take some time '\
@@ -125,7 +125,7 @@ class ApplicationController < ActionController::Base
 
   # check to see if the guest user functionality is disabled
   def guests_disabled?
-    AppConfig.first && !AppConfig.first.enable_guests
+    !AppConfig.check(:enable_guests)
   end
 
   # check to see if we should skip authentication; either looks to see if the

@@ -7,7 +7,7 @@
     <%= render partial: 'index_nav_tab', locals: {filter: :requested, text: 'Requested'} %>
     <%= render partial: 'index_nav_tab', locals: {filter: :checked_out, text: 'Checked Out'} %>
     <%= render partial: 'index_nav_tab', locals: {filter: :overdue, text: 'Overdue'} %>
-    <% unless AppConfig.first.res_exp_time %>
+    <% unless AppConfig.check(:res_exp_time) %>
       <%= render partial: 'index_nav_tab', locals: {filter: :missed, text: 'Missed'} %>
     <% end %>
     <%= render partial: 'index_nav_tab', locals: {filter: :returned, text: 'Returned'} %>

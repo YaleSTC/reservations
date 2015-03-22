@@ -5,7 +5,7 @@ class UserMailer < ActionMailer::Base
   if AppConfig.first.nil?
     default from: 'no-reply@reservations.app'
   else
-    default from: AppConfig.first.admin_email, cc: AppConfig.first.admin_email
+    default from: AppConfig.get(:admin_email), cc: AppConfig.get(:admin_email)
   end
 
   # checks the status of the current reservation and sends the appropriate email
