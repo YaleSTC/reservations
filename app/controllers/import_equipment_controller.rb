@@ -50,7 +50,7 @@ class ImportEquipmentController < ApplicationController
 
     # finally, import EquipmentItems
     if item_file
-      # no overwrite paramter since there is no index for EquipmentItems
+      # no overwrite parameter since there is no primary key for EquipmentItems
       # store the filepath
       item_filepath = item_file.tempfile.path
       processed_items = csv_import(item_filepath)
