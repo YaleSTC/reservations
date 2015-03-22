@@ -22,12 +22,11 @@ class EquipmentModelsController < ApplicationController
   # --------- end before filter methods --------- #
 
   def index
+    base = @category ? @category.equipment_models : EquipmentModel.all
     if params[:show_deleted]
-      @equipment_models =
-        @category ? @category.equipment_models : EquipmentModel.all
+      @equipment_models = base.includes(:reservations)
     else
-      @equipment_models =
-        @category ? @category.equipment_models.active : EquipmentModel.active
+      @equipment_models = base.includes(:reservations).active
     end
   end
 

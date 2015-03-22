@@ -34,7 +34,7 @@
 
 		<% unless @model_statuses[:success].empty? %>
 			<h2>Equipment Models successfully imported</h2>
-			<%= render :partial => 'equipment_models/table', :locals => { :equipment_models => @model_statuses[:success] } %>
+			<%= render :partial => 'equipment_models/table' %>
 		<% end %>
 	<% end %>
 	<% if @object_statuses %>
