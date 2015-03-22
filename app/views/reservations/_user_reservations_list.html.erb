@@ -15,8 +15,8 @@
       <td><%= link_to reservation.id, reservation %></td>
       <td><%= reservation.equipment_model.name %></td>
       <td>
-        <% if !reservation.equipment_object.nil? %>
-          <%= reservation.equipment_object.name %>
+        <% if !reservation.equipment_item.nil? %>
+          <%= reservation.equipment_item.name %>
         <% end %>
       </td>
       <td><%= reservation.start_date.to_s(:long) %></td>

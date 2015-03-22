@@ -20,7 +20,7 @@ Reservations::Application.routes.draw do
   resources :documents,
             :requirements
 
-  resources :equipment_objects, concerns: :deactivatable
+  resources :equipment_items, concerns: :deactivatable
 
   resources :announcements, except: [:show]
 
@@ -33,8 +33,12 @@ Reservations::Application.routes.draw do
       put 'update_cart'
       delete 'empty_cart'
     end
-    resources :equipment_objects
+    resources :equipment_items
   end
+
+  get 'equipment_objects' => redirect('equipment_items')
+  get 'equipment_objects/:id' =>
+      redirect('equipment_items/%{id}')
 
   get '/import_users/import' => 'import_users#import_page',
       :as => :csv_import_page

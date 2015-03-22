@@ -13,7 +13,7 @@
   </thead>
   <tbody>
 
-  <% reservations_set.includes(:equipment_model, :equipment_object).each do |reservation| %>
+  <% reservations_set.includes(:equipment_model, :equipment_item).each do |reservation| %>
     <tr>
       <td><%= link_to reservation.id, reservation %></td>
       <% if can? :manage, Reservation %>
@@ -32,8 +32,8 @@
       <% end %>
       <td><%= link_to reservation.equipment_model.name, reservation.equipment_model %></td>
       <td>
-        <% if reservation.equipment_object_id %>
-          <%= link_to reservation.equipment_object.name, reservation.equipment_object %>
+        <% if reservation.equipment_item_id %>
+          <%= link_to reservation.equipment_item.name, reservation.equipment_item %>
         <% end %>
       </td>
       <td><%= reservation.start_date.to_s(:long) %></td>

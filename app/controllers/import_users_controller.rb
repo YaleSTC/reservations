@@ -7,7 +7,7 @@ class ImportUsersController < ApplicationController
   # create/update a bunch of users, and it renders the 'imported' page.
   def import
     # initialize
-    file = params[:csv_upload] # the file object
+    file = params[:csv_upload] # the file item
     if file
       user_type = params[:user_type]
       overwrite = (params[:overwrite] == '1') # update existing users?

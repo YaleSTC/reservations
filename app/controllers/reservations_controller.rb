@@ -184,7 +184,7 @@ class ReservationsController < ApplicationController
 
   def edit
     @option_array =
-      @reservation.equipment_model.equipment_objects
+      @reservation.equipment_model.equipment_items
       .collect { |e| [e.name, e.id] }
   end
 
@@ -192,18 +192,18 @@ class ReservationsController < ApplicationController
   def update # rubocop:disable all
     message = 'Successfully edited reservation.'
     res = reservation_params
-    # add new equipment object id to hash if it's being changed and save old
-    # and new objects for later
-    unless params[:equipment_object].blank?
-      res[:equipment_object_id] = params[:equipment_object]
-      new_object = EquipmentObject.find(params[:equipment_object])
-      old_object =
-        EquipmentObject.find_by id: @reservation.equipment_object_id
-      # check to see if new object is available
-      unless new_object.available?
-        r = new_object.current_reservation
+    # add new equipment item id to hash if it's being changed and save old
+    # and new items for later
+    unless params[:equipment_item].blank?
+      res[:equipment_item_id] = params[:equipment_item]
+      new_item = EquipmentItem.find(params[:equipment_item])
+      old_item =
+        EquipmentItem.find_by id: @reservation.equipment_item_id
+      # check to see if new item is available
+      unless new_item.available?
+        r = new_item.current_reservation
         r.update(current_user,
-                 { equipment_object_id: @reservation.equipment_object_id },
+                 { equipment_item_id: @reservation.equipment_item_id },
                  '')
       end
     end
@@ -211,21 +211,20 @@ class ReservationsController < ApplicationController
     # save changes to database
     @reservation.update(current_user, res, params[:new_notes])
     if @reservation.save
-      # code for switching equipment objects
-      unless params[:equipment_object].blank?
+      # code for switching equipment items
+      unless params[:equipment_item].blank?
         # if the item was previously assigned to a different reservation
         if r
           r.save
           # clean up this code with a model method?
-          message << " Note equipment item #{r.equipment_object.md_link} is "\
+          message << " Note equipment item #{r.equipment_item.md_link} is "\
             " now assigned to #{r.md_link} (#{r.reserver.md_link})"
         end
 
         # update the item history / histories
-        if old_object
-          old_object.make_switch_notes(@reservation, r, current_user)
-        end
-        new_object.make_switch_notes(r, @reservation, current_user)
+        old_item.make_switch_notes(@reservation, r, current_user) if old_item
+
+        new_item.make_switch_notes(r, @reservation, current_user)
       end
 
       # flash success and exit
@@ -241,14 +240,14 @@ class ReservationsController < ApplicationController
   def checkout # rubocop:disable all
     # convert all the reservations that are being checked out into an array
     # of Reservation objects. only select the ones who are selected, eg
-    # they have an equipment object id set.
+    # they have an equipment item id set.
 
     checked_out_reservations = []
     params[:reservations].each do |r_id, r_attrs|
-      next if r_attrs[:equipment_object_id].blank?
+      next if r_attrs[:equipment_item_id].blank?
       r = Reservation.find(r_id)
       checked_out_reservations <<
-        r.checkout(r_attrs[:equipment_object_id], current_user,
+        r.checkout(r_attrs[:equipment_item_id], current_user,
                    r_attrs[:checkout_procedures], r_attrs[:notes])
     end
 
@@ -260,7 +259,7 @@ class ReservationsController < ApplicationController
       flash[:error] = 'No reservation selected.'
       redirect_to(:back) && return
     end
-    unless Reservation.unique_equipment_objects?(checked_out_reservations)
+    unless Reservation.unique_equipment_items?(checked_out_reservations)
       flash[:error] = 'The same equipment item cannot be simultaneously '\
         'checked out in multiple reservations.'
       redirect_to(:back) && return
@@ -455,8 +454,8 @@ class ReservationsController < ApplicationController
   def reservation_params
     params.require(:reservation)
       .permit(:checkout_handler_id, :checkin_handler_id, :approval_status,
-              :checked_out, :checked_in, :equipment_object, :due_date,
-              :equipment_object_id, :notes, :notes_unsent, :times_renewed,
+              :checked_out, :checked_in, :equipment_item, :due_date,
+              :equipment_item_id, :notes, :notes_unsent, :times_renewed,
               :reserver_id, :reserver, :start_date, :equipment_model_id)
   end
 

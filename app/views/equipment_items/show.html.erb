@@ -1,0 +1,36 @@
+<% title "Equipment Item for #{@equipment_item.equipment_model.name}" %>
+
+<p>
+  <strong>Name:</strong>
+  <%= @equipment_item.name %>
+</p>
+<% unless @equipment_item.serial.nil? or @equipment_item.serial == "" %>
+  <p>
+    <strong>Serial:</strong>
+    <%= @equipment_item.serial %>
+  </p>
+<% end %>
+<p>
+  <strong>Equipment Model:</strong>
+  <%= link_to @equipment_item.equipment_model.name, @equipment_item.equipment_model %>
+</p>
+<p>
+  <strong>Status:</strong>
+  <%= @equipment_item.status %>
+</p>
+
+<%# NOTES %>
+<div class="row">
+  <div class="col-md-12">
+    <% unless @equipment_item.notes.blank? %>
+      <hr>
+      <h3>Notes</h3>
+      <div class='notes-container'><%= markdown(@equipment_item.notes) %></div>
+    <% end %>
+  </div>
+</div>
+
+<hr>
+<%= link_to "Edit", edit_equipment_item_path(@equipment_item), class: 'btn btn-default' %>
+<%= equipment_item.make_deactivate_btn %>
+<%= link_to "View All", equipment_items_path, class: 'btn btn-default' %>

@@ -55,7 +55,7 @@ class EquipmentModelsController < ApplicationController
 
     @date = Time.zone.today
     @date_max = @date + calendar_length - 1.week
-    @max = @equipment_model.equipment_objects.active.count
+    @max = @equipment_model.equipment_items.active.count
 
     @restricted = @equipment_model.model_restricted?(cart.reserver_id)
   end

@@ -20,7 +20,7 @@ FactoryGirl.define do
 
     factory :equipment_model_with_object do
       after(:create) do |model|
-        FactoryGirl.create(:equipment_object, equipment_model: model)
+        FactoryGirl.create(:equipment_item, equipment_model: model)
       end
     end
   end

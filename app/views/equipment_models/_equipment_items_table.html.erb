@@ -1,0 +1,32 @@
+<table id="table_woo" class="datatable table table-striped table-bordered">
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Serial</th>
+    <th>Status</th>
+<%# these blank TH's necessary for the sort function %>
+  <% if can? :manage, EquipmentItem %>
+    <th class="no_sort"> </th>
+    <th class="no_sort"> </th>
+  <% end %>
+  </tr>
+  </thead>
+  <tbody>
+  <% for equipment_item in @equipment_model.equipment_items %>
+    <tr>
+      <td><%= link_to equipment_item.name, equipment_item %></td>
+      <td><%= equipment_item.serial %></td>
+      <% if equipment_item.status == 'available' %>
+        <td><span class="label label-success eo-table">Available</span></td>
+      <% else %>
+        <% current_res = equipment_item.current_reservation %>
+        <td><%= link_to_if current_res, equipment_item.status, current_res %></td>
+      <% end %>
+      <% if can? :manage, EquipmentItem %>
+        <td><%= link_to 'Edit', edit_equipment_item_path(equipment_item), class: 'btn btn-default' %></td>
+        <td><%= equipment_item.decorate.make_deactivate_btn %></td>
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

@@ -17,10 +17,10 @@
           <% end %>
         <% end %>
         </p>
-      <%= label_tag "reservations[#{reservation.id}][equipment_object_id]",
+      <%= label_tag "reservations[#{reservation.id}][equipment_item_id]",
       'Equipment Item' %>
-      <%= select_tag "reservations[#{reservation.id}][equipment_object_id]",
-      reservation.equipment_model.available_object_select_options, class:
+      <%= select_tag "reservations[#{reservation.id}][equipment_item_id]",
+      reservation.equipment_model.available_item_select_options, class:
       'dropdown dropselect', placeholder: 'Please select an equipment item...', prompt: '', width: 80 %>
     </div>
 

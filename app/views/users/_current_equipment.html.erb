@@ -7,7 +7,7 @@
 			<% if (r.status == "checked out") || (r.status == "overdue") %>
       <li>
         <%= link_to r.equipment_model.name, r.equipment_model %>
-        (<%= link_to r.equipment_object.name, r.equipment_object %>)
+        (<%= link_to r.equipment_item.name, r.equipment_item %>)
       </li>
 			<% end %>
     <% end %>

@@ -30,7 +30,7 @@
         <td class="text-center"><%= equipment_model.num_reserved(Time.zone.today, Time.zone.today, equipment_model.reservations)%></td>
         <td class="text-center"><%= equipment_model.reservations.checked_out.count %></td>
         <td class="text-center"><%= equipment_model.number_overdue %></td>
-        <td class="text-center"><%= equipment_model.equipment_objects.size %></td>
+        <td class="text-center"><%= equipment_model.equipment_items.size %></td>
         <td class="text-center"><%= link_to "Edit", edit_equipment_model_path(equipment_model), class: "btn btn-default" %></td>
         <td class="text-center"><%= equipment_model.decorate.make_deactivate_btn %></td>
       <% end %>

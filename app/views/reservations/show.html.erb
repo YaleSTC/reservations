@@ -39,8 +39,8 @@
         </div>
         <div class="panel-footer">
           <h3>
-            <% if @reservation.equipment_object %>
-              <%= link_to @reservation.equipment_object.name, @reservation.equipment_object %>
+            <% if @reservation.equipment_item %>
+              <%= link_to @reservation.equipment_item.name, @reservation.equipment_item %>
             <% else %>
               <%= link_to '(unassigned)', equipment_model_path(@reservation.equipment_model, anchor: 'items') %>
             <% end %>

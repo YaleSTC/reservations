@@ -26,12 +26,12 @@ module ReservationValidations
     errors.add(:base, "Reservation start date must be before due date.\n")
   end
 
-  # Checks that the equipment_object is of type equipment_model
-  def matched_object_and_model
-    return unless equipment_object
+  # Checks that the equipment_item is of type equipment_model
+  def matched_item_and_model
+    return unless equipment_item
     return unless equipment_model
-    return unless equipment_object.equipment_model != equipment_model
-    errors.add(:base, equipment_object.name + ' must be of type '\
+    return unless equipment_item.equipment_model != equipment_model
+    errors.add(:base, equipment_item.name + ' must be of type '\
       + equipment_model.name + ".\n")
   end
 

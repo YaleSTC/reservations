@@ -40,7 +40,7 @@
   </div>
 <% end %>
 
-<% unless @equipment_object_results.empty? %>
+<% unless @equipment_item_results.empty? %>
   <div class="row">
     <div class="col-md-9">
       <h2>Equipment Item Results</h2>
@@ -48,21 +48,21 @@
   </div>
 
   <div class="row">
-    <% @equipment_object_results.each do |equipment_object| %>
+    <% @equipment_item_results.each do |equipment_item| %>
 
     <div class="col-md-4">
       <div class="well">
         <p>
           <strong>Model:</strong>
-          <%= link_to equipment_object.equipment_model.name, equipment_model_path(equipment_object.equipment_model) %>
+          <%= link_to equipment_item.equipment_model.name, equipment_model_path(equipment_item.equipment_model) %>
         </p>
         <p>
           <strong>Item:</strong>
-          <%= equipment_object.name %> (<%= equipment_object.serial %>)
+          <%= equipment_item.name %> (<%= equipment_item.serial %>)
         </p>
         <p>
           <strong>Status:</strong>
-          <% if equipment_object.available? %>
+          <% if equipment_item.available? %>
             <span class="label label-success eo-table">Available</span>
           <% else %>
             <span class="label label-danger eo-table">Not Available</span>

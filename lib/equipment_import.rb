@@ -5,7 +5,7 @@ module EquipmentImport
   # import categories
   def import_cats(processed_cats, cat_overwrite = false)
     # let's make sure that we're consistent w/ scope on these variables
-    array_of_success = [] # will contain category objects
+    array_of_success = [] # will contain category items
     array_of_fail = [] # will contain category_data hashes and error messages
 
     processed_cats.each do |cat_data|
@@ -40,7 +40,7 @@ module EquipmentImport
   # rubocop:disable MethodLength, PerceivedComplexity
   def import_models(processed_models, model_overwrite = false)
     # let's make sure that we're consistent w/ scope on these variables
-    array_of_success = [] # will contain model objects
+    array_of_success = [] # will contain model items
     array_of_fail = [] # will contain model_data hashes and error messages
 
     processed_models.each do |model_data|
@@ -81,37 +81,37 @@ module EquipmentImport
   end
   # rubocop:enable MethodLength, PerceivedComplexity
 
-  # import objectss
-  def import_objects(processed_objects) # rubocop:disable MethodLength
+  # import items
+  def import_items(processed_items) # rubocop:disable MethodLength
     # let's make sure that we're consistent w/ scope on these variables
-    array_of_success = [] # will contain object objects
-    array_of_fail = [] # will contain object_data hashes and error messages
+    array_of_success = [] # will contain items
+    array_of_fail = [] # will contain item_data hashes and error messages
 
-    processed_objects.each do |object_data|
-      object_data[:csv_import] = true
+    processed_items.each do |item_data|
+      item_data[:csv_import] = true
 
       # check for valid equipment_model and store id in relevant parameter (
       # nil if no category found)
-      object_data[:equipment_model] =
-        EquipmentModel.where('name = ?', object_data[:equipment_model]).first
+      item_data[:equipment_model] =
+        EquipmentModel.where('name = ?', item_data[:equipment_model]).first
 
       # create new category
-      object = EquipmentObject.new(object_data)
-      object.assign_attributes(object_data)
+      item = EquipmentItem.new(item_data)
+      item.assign_attributes(item_data)
 
-      # if new object is valid, save to database and add to array of success
-      if object.valid?
-        object.notes = "#### Created at #{Time.zone.now.to_s(:long)} via import"
-        object.save
-        array_of_success << object
+      # if new item is valid, save to database and add to array of success
+      if item.valid?
+        item.notes = "#### Created at #{Time.zone.now.to_s(:long)} via import"
+        item.save
+        array_of_success << item
       # else, store to array of fail with error messages
       else
-        if object_data[:equipment_model].nil?
+        if item_data[:equipment_model].nil?
           error = 'Equipment Model not found.'
         else
-          error = object.errors.full_messages.to_sentence.capitalize + '.'
+          error = item.errors.full_messages.to_sentence.capitalize + '.'
         end
-        array_of_fail << [object_data, error]
+        array_of_fail << [item_data, error]
       end
     end
 
@@ -190,8 +190,8 @@ module EquipmentImport
     end
   end
 
-  # object validators
-  def valid_object_import?(processed_objects, object_file)
+  # item validators
+  def valid_item_import?(processed_items, item_file)
     # define accepted keys and key error
     accepted_keys = [:equipment_model, :name, :serial]
     key_error = 'Unable to import equipment item CSV file. Please ensure '\
@@ -199,7 +199,7 @@ module EquipmentImport
       'equipment_model,name,serial) Note that headers are case sensitive '\
       'and must be in the correct order.'
     # general validations
-    if valid_equipment_import?(processed_objects, object_file,
+    if valid_equipment_import?(processed_items, item_file,
                                'equipment item', accepted_keys, key_error)
       # custom validators for equipment items go here
       return true

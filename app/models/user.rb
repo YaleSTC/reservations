@@ -81,8 +81,8 @@ class User < ActiveRecord::Base
     "#{(nickname.blank? ? first_name : nickname)} #{last_name}"
   end
 
-  def equipment_objects
-    reservations.collect(&:equipment_object).flatten
+  def equipment_items
+    reservations.collect(&:equipment_item).flatten
   end
 
   # rubocop:disable AbcSize, MethodLength, PerceivedComplexity
