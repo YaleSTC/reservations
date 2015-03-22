@@ -197,14 +197,14 @@ def generate_em
 end
 # rubocop:enable AbcSize
 
-def generate_eo
-  EquipmentObject.create! do |eo|
-    eo.name = "Number #{(0...3).map { 65.+(rand(25)).chr }.join}" +
+def generate_ei
+  EquipmentItem.create! do |ei|
+    ei.name = "Number #{(0...3).map { 65.+(rand(25)).chr }.join}" +
       rand(1..9001).to_s
-    eo.serial = (0...8).map { 65.+(rand(25)).chr }.join
-    eo.active = true
-    eo.equipment_model_id = EquipmentModel.all.sample.id
-    eo.notes = ''
+    ei.serial = (0...8).map { 65.+(rand(25)).chr }.join
+    ei.active = true
+    ei.equipment_model_id = EquipmentModel.all.sample.id
+    ei.notes = ''
   end
 end
 
@@ -261,7 +261,7 @@ def mark_checked_out(res)
     res.checked_out = nil
   else
     res.checked_out = res.start_date
-    res.equipment_object = res.equipment_model.equipment_objects.all.sample
+    res.equipment_item = res.equipment_model.equipment_items.all.sample
     res.checkout_handler_id = User.where('role = ? OR role = ? OR role = ?',
                                          'checkout', 'admin', 'superuser'
                                         ).all.sample.id
@@ -434,8 +434,8 @@ end
 
 unless EquipmentModel.count == 0
 
-  n = MINIMAL ? 50 : ask_for_records('EquipmentObject')
-  generate_objs(:generate_eo, 'equipment_object', n)
+  n = MINIMAL ? 50 : ask_for_records('EquipmentItem')
+  generate_objs(:generate_ei, 'equipment_item', n)
 
   n = MINIMAL ? 0 : ask_for_records('Requirement')
   generate_objs(:generate_req, 'requirement', n)
@@ -457,7 +457,7 @@ generate_objs(:generate_blackout, 'blackout', n)
 # Reservation generation
 # ============================================================================
 
-unless EquipmentObject.count == 0
+unless EquipmentItem.count == 0
   n = MINIMAL ? 10 : ask_for_records('Reservation')
   generate_objs(:generate_reservation, 'reservation', n)
 end
