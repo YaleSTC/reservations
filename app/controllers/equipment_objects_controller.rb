@@ -21,15 +21,6 @@ class EquipmentObjectsController < ApplicationController
 
   # ---------- end before filter methods ---------- #
 
-  def index
-    method = params[:show_deleted] ? :all : :active
-    if @equipment_model
-      @equipment_objects = @equipment_model.equipment_objects.send(method)
-    else
-      @equipment_objects = EquipmentObject.send(method)
-    end
-  end
-
   def show
   end
 
