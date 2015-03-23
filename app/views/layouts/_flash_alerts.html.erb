@@ -4,7 +4,7 @@
     <% unless msg.blank? %>
       <%= content_tag :div, id: "flash_#{name}", role: 'alert', class: "alert alert-#{(name == :notice || name == 'notice') ? "success" : "danger"} alert-dismissable" do %>
         <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <%= markdown(msg).strip.gsub(/\n/, "<br />").html_safe %>
+        <%= markdown(msg, false).strip.gsub(/\n/, "<br />").html_safe %>
       <% end %>
     <% end %>
   <% end %>

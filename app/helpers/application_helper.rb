@@ -1,10 +1,10 @@
 # Methods added to this helper will be available to all templates in the
 # application.
 module ApplicationHelper
-  def markdown(text)
+  def markdown(text, filter = true)
     return '' if text.blank?
     rndr =
-      Redcarpet::Render::HTML.new(filter_html: true, safe_links_only: true,
+      Redcarpet::Render::HTML.new(filter_html: filter, safe_links_only: true,
                                   with_toc_data: true, hard_wrap: true,
                                   no_images: true)
     markdown =
