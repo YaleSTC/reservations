@@ -22,7 +22,7 @@
   <%= f.input :first_name %>
   <%= f.input :last_name %>
   <%= f.input :nickname %>
-  <% if AppConfig.first.require_phone %>
+  <% if AppConfig.check(:require_phone) %>
     <%= f.input :phone, required: true, hint: 'Format like (555) 555-5555' %>
   <% else %>
     <%= f.input :phone, hint: 'Format like (555) 555-5555' %>

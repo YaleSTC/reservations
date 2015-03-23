@@ -9,7 +9,7 @@
   <div class="row">
     <div class="col-md-offset-2 col-md-10">
       <%= f.button :submit, 'Sign in' %>
-      <% if AppConfig.first.enable_new_users %>
+      <% if AppConfig.check(:enable_new_users) %>
         <%= link_to 'Register', new_user_path, class: 'btn btn-default' %>
       <% end %>
       <%= link_to 'Forgot your password?', new_password_path(resource_name), class: 'btn btn-default' %>

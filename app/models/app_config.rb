@@ -12,4 +12,17 @@ class AppConfig < ActiveRecord::Base
   validates :admin_email,
             format: { with: /\A([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})\z/i }
   validates :default_per_cat_page, numericality: { only_integer: true }
+
+  def self.check(prop, val = false)
+    # Check the property given in prop
+    # return val (default false) if AppConfig.first is nil
+    ap = AppConfig.first
+    return val unless ap
+    ap.send(prop)
+  end
+
+  def self.get(prop, val = false)
+    # alias for semantics
+    AppConfig.check(prop, val)
+  end
 end

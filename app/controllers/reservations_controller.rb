@@ -35,7 +35,7 @@ class ReservationsController < ApplicationController
 
     @filters = [:reserved, :checked_out, :overdue, :returned, :upcoming,
                 :requested, :approved_requests, :denied_requests]
-    @filters << :missed unless AppConfig.first.res_exp_time
+    @filters << :missed unless AppConfig.check(:res_exp_time)
 
     # if filter in session set it
     if session[:filter]
@@ -118,11 +118,11 @@ class ReservationsController < ApplicationController
           flash[:error] = 'Please review the errors below. If uncorrected, '\
             'any reservations with errors will be filed as a request, and '\
             'subject to administrator approval.'
-          if AppConfig.first.request_text.empty?
+          if AppConfig.get(:request_text).empty?
             @request_text = 'Please give a short justification for this '\
               'equipment request.'
           else
-            @request_text = AppConfig.first.request_text
+            @request_text = AppConfig.get(:request_text)
           end
         end
       end
@@ -146,11 +146,11 @@ class ReservationsController < ApplicationController
       flash[:error] = 'Please give a short justification for this '\
         "reservation #{requested ? 'request' : 'override'}"
       @notes_required = true
-      if AppConfig.first.request_text.empty?
+      if AppConfig.get(:request_text).empty?
         @request_text = 'Please give a short justification for this '\
           'equipment request.'
       else
-        @request_text = AppConfig.first.request_text
+        @request_text = AppConfig.get(:request_text)
       end
       render(:new) && return
     end

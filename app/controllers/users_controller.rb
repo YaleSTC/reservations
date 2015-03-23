@@ -46,7 +46,7 @@ class UsersController < ApplicationController
                         past:         @user_reservations.returned,
                         past_overdue: @user_reservations.returned_overdue }
     @show_equipment[:missed] =
-      @user_reservations.missed unless AppConfig.first.res_exp_time
+      @user_reservations.missed unless AppConfig.check(:res_exp_time)
     @has_pending = @user_reservations.requested.count > 0
   end
 
