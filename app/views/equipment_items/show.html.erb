@@ -33,4 +33,4 @@
 <hr>
 <%= link_to "Edit", edit_equipment_item_path(@equipment_item), class: 'btn btn-default' %>
 <%= equipment_item.make_deactivate_btn %>
-<%= link_to "View All", equipment_items_path, class: 'btn btn-default' %>
+<%= link_to("View All", equipment_model_equipment_items_path(@equipment_item.equipment_model), class: 'btn btn-default' ) %>
