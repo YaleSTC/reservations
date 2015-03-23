@@ -35,6 +35,9 @@ class UsersController < ApplicationController
   end
 
   def show
+    if @user.role == 'banned' && @user.id != current_user.id
+      flash[:error] = 'Please note that this user is banned.'
+    end
     @user_reservations = @user.reservations
     @all_equipment = Reservation.active.for_reserver(@user)
     @show_equipment = { checked_out:  @user_reservations.checked_out,

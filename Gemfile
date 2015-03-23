@@ -53,6 +53,13 @@ gem 'cocoon', '~> 1.2.6'
 gem 'redcarpet', '~> 3.2.2'
 
 group :development, :test do
+  gem 'pry', '~> 0.10.1'
+  gem 'pry-rails', '~> 0.3.3'
+  gem 'pry-byebug', '~> 3.0.1'
+  gem 'pry-stack_explorer', '~> 0.4.9.2'
+  gem 'pry-remote', '~> 0.1.8'
+  gem 'letter_opener', '~> 1.3.0'
+  gem 'letter_opener_web', '~> 1.3.0'
   gem 'factory_girl_rails', '~> 4.5.0'
   gem 'rspec-rails', '~> 3.2.0'
   gem 'shoulda-matchers', '~> 2.8.0'
@@ -81,13 +88,6 @@ gem 'font-awesome-rails', '~> 4.3.0'
 
 group :development do
   gem 'thin', '~> 1.6.3'
-  gem 'pry', '~> 0.10.1'
-  gem 'pry-rails', '~> 0.3.3'
-  gem 'pry-byebug', '~> 3.0.1'
-  gem 'pry-stack_explorer', '~> 0.4.9.2'
-  gem 'pry-remote', '~> 0.1.8'
-  gem 'letter_opener', '~> 1.3.0'
-  gem 'letter_opener_web', '~> 1.3.0'
   gem 'rack-mini-profiler', '~> 0.9.2'
   gem 'bullet', '~> 4.14.4'
 end

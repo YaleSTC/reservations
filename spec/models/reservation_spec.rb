@@ -74,6 +74,7 @@ describe Reservation, type: :model do
     it 'should have a valid reserver' do
       expect(reservation.reserver).not_to be_nil
       expect(reservation.reserver.first_name).not_to eq('Deleted')
+      expect(reservation.reserver.role).not_to eq('Banned')
     end
     it { expect(reservation.equipment_model).to_not be_nil }
     it { expect(reservation.start_date).to_not be_nil }
@@ -92,6 +93,7 @@ describe Reservation, type: :model do
       expect(reservation.not_empty).to be_nil
       expect(reservation.matched_item_and_model).to be_nil
       expect(reservation.available).to be_nil
+      expect(reservation.check_banned).to be_nil
       expect(reservation.validate).to eq([])
     end
     it { is_expected.to respond_to(:fake_reserver_id) }
@@ -199,6 +201,7 @@ describe Reservation, type: :model do
       expect(reservation.not_empty).to be_nil
       expect(reservation.matched_item_and_model).to be_nil
       expect(reservation.available).to be_nil
+      expect(reservation.check_banned).to be_nil
       expect(reservation.validate).to eq([])
     end
     it 'updates with fixed date' do
@@ -234,6 +237,7 @@ describe Reservation, type: :model do
       expect(reservation.not_empty).to be_nil
       expect(reservation.matched_item_and_model).to be_nil
       expect(reservation.available).to be_nil
+      expect(reservation.check_banned).to be_nil
     end
   end
 
@@ -267,6 +271,29 @@ describe Reservation, type: :model do
     it 'can be updated' do
       reservation.start_date = Time.zone.today + 1.day
       expect(reservation.save).to be_truthy
+    end
+    it 'fails appropriate validations' do
+      expect(reservation.validate).not_to eq([])
+    end
+    it 'passes other custom validations' do
+      expect(reservation.start_date_before_due_date).to be_nil
+      expect(reservation.not_empty).to be_nil
+      expect(reservation.matched_item_and_model).to be_nil
+      expect(reservation.available).to be_nil
+      expect(reservation.not_in_past).to be_nil
+      expect(reservation.check_banned).to be_nil
+    end
+  end
+
+  context 'with banned user' do
+    let(:banned) { FactoryGirl.create(:banned) }
+    subject(:reservation) do
+      FactoryGirl.build(:valid_reservation, reserver_id: banned.id)
+    end
+
+    it { is_expected.not_to be_valid }
+    it 'should not save' do
+      expect(reservation.save).to be_falsey
     end
     it 'fails appropriate validations' do
       expect(reservation.validate).not_to eq([])
@@ -331,6 +358,7 @@ describe Reservation, type: :model do
       expect(reservation.start_date_before_due_date).to be_nil
       expect(reservation.not_empty).to be_nil
       expect(reservation.not_in_past).to be_nil
+      expect(reservation.check_banned).to be_nil
       expect(reservation.validate).to eq([])
     end
   end
@@ -362,6 +390,7 @@ describe Reservation, type: :model do
       expect(reservation.matched_item_and_model).to be_nil
       expect(reservation.available).to be_nil
       expect(reservation.not_in_past).to be_nil
+      expect(reservation.check_banned).to be_nil
     end
   end
 
@@ -398,6 +427,7 @@ describe Reservation, type: :model do
       expect(reservation.matched_item_and_model).to be_nil
       expect(reservation.available).to be_nil
       expect(reservation.not_in_past).to be_nil
+      expect(reservation.check_banned).to be_nil
     end
   end
 
@@ -434,6 +464,7 @@ describe Reservation, type: :model do
       expect(reservation.matched_item_and_model).to be_nil
       expect(reservation.available).to be_nil
       expect(reservation.not_in_past).to be_nil
+      expect(reservation.check_banned).to be_nil
     end
   end
 end

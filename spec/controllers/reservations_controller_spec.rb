@@ -344,6 +344,7 @@ describe ReservationsController, type: :controller do
             @req.call
             expect(response).to redirect_to(catalog_path)
           end
+
           it 'should not set the flash' do
             @req.call
             expect(flash[:error]).to be_nil
@@ -378,13 +379,46 @@ describe ReservationsController, type: :controller do
             .to eq(0)
           # Cart.should_receive(:new)
         end
+
         it 'sets flash[:notice]' do
           @req.call
           expect(flash[:notice]).not_to be_nil
         end
+
         it 'is a redirect' do
           @req.call
           expect(response).to be_redirect
+        end
+      end
+
+      context 'with banned reserver' do
+        before(:each) do
+          sign_in @checkout_person
+          @valid_cart = FactoryGirl.build(:cart_with_items)
+          @banned = FactoryGirl.create(:banned)
+          @valid_cart.reserver_id = @banned.id
+          @req = proc do
+            post :create,
+                 { reservation: { start_date: Time.zone.today,
+                                  due_date: (Time.zone.today + 1.day),
+                                  reserver_id: @banned.id,
+                                  notes: 'because I can' } },
+                 cart: @valid_cart
+          end
+        end
+
+        it 'does not save' do
+          expect { @req.call }.not_to change { Reservation.count }
+        end
+
+        it 'is a redirect' do
+          @req.call
+          expect(response).to be_redirect
+        end
+
+        it 'sets flash[:error]' do
+          @req.call
+          expect(flash[:error]).not_to be_nil
         end
       end
     end
@@ -816,6 +850,21 @@ describe ReservationsController, type: :controller do
     it_behaves_like 'inaccessible by banned user' do
       before { get :manage, user_id: @banned.id }
     end
+
+    context 'with banned reserver' do
+      before(:each) do
+        sign_in @admin
+        get :manage, user_id: @banned.id
+      end
+
+      it 'is a redirect' do
+        expect(response).to be_redirect
+      end
+
+      it 'sets the flash' do
+        expect(flash[:error]).not_to be_nil
+      end
+    end
   end
 
   describe '#current (GET /reservations/current/:user_id)' do
@@ -887,6 +936,21 @@ describe ReservationsController, type: :controller do
     it_behaves_like 'inaccessible by banned user' do
       before { get :current, user_id: @banned.id }
     end
+
+    context 'with banned reserver' do
+      before(:each) do
+        sign_in @admin
+        get :current, user_id: @banned.id
+      end
+
+      it 'is a redirect' do
+        expect(response).to be_redirect
+      end
+
+      it 'sets the flash' do
+        expect(flash[:error]).not_to be_nil
+      end
+    end
   end
 
   describe '#checkout (PUT /reservations/checkout/:user_id)' do
@@ -900,6 +964,7 @@ describe ReservationsController, type: :controller do
     # - stops checkout if no reservations are selected
     # - overrides errors if you can and if there are some, otherwise
     #     redirects away
+    # - also prevents checkout if reserver is banned
 
     # Effects if successful:
     # - sets empty @check_in_set, populates @check_out_set with the
@@ -1060,6 +1125,7 @@ describe ReservationsController, type: :controller do
         it { expect(response).to be_success }
         it { is_expected.to render_template(:receipt) }
       end
+
       context 'cannot override' do
         before do
           request.env['HTTP_REFERER'] = 'where_i_came_from'
@@ -1078,6 +1144,24 @@ describe ReservationsController, type: :controller do
         it { is_expected.to set_flash }
         it { expect(response).to redirect_to 'where_i_came_from' }
       end
+    end
+
+    context 'with banned reserver' do
+      before(:each) do
+        @reservation.update_attribute(:reserver_id, @banned.id)
+        request.env['HTTP_REFERER'] = 'where_i_came_from'
+        sign_in @checkout_person
+        @obj =
+          FactoryGirl.create(:equipment_item,
+                             equipment_model: @reservation.equipment_model)
+        reservations_params =
+          { @reservation.id.to_s => { notes: '',
+                                      equipment_item_id: @obj.id } }
+        put :checkout, user_id: @banned.id, reservations: reservations_params
+      end
+
+      it { is_expected.to set_flash }
+      it { expect(response).to redirect_to root_path }
     end
   end
 
@@ -1287,6 +1371,17 @@ describe ReservationsController, type: :controller do
 
     it_behaves_like 'inaccessible by banned user' do
       before { put :renew, id: @reservation.id }
+    end
+
+    context 'when reserver is banned' do
+      before(:each) do
+        @reservation.update_attribute(:reserver_id, @banned.id)
+        sign_in @admin
+        put :renew, id: @reservation.id
+      end
+
+      it { expect { @reservation.reload }.not_to change { @reservation } }
+      it { is_expected.to set_flash }
     end
   end
 
