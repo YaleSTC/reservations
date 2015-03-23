@@ -19,7 +19,6 @@ class EquipmentModel < ActiveRecord::Base
   belongs_to :category
   has_and_belongs_to_many :requirements
   has_many :equipment_items, dependent: :destroy
-  has_many :documents
   has_many :reservations
   has_many :checkin_procedures, dependent: :destroy
   accepts_nested_attributes_for :checkin_procedures, \

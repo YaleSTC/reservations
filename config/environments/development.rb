@@ -53,5 +53,9 @@ Reservations::Application.configure do
     # Bullet.bugsnag = true
     # Bullet.add_footer = true
     # Bullet.stacktrace_includes = [ 'your_gem', 'your_middleware' ]
+
+    # Disable Rack Mini Profiler in certain parts of the application
+    Rack::MiniProfiler.config.skip_paths ||= []
+    Rack::MiniProfiler.config.skip_paths << '/admin'
   end
 end
