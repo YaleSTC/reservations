@@ -6,18 +6,21 @@ FactoryGirl.define do
   end
 
   factory :user, aliases: [:reserver, :checkout_handler, :checkin_handler] do
-    sequence(:username) { |n| "netid#{n}" }
+    sequence(:cas_login) { |n| "netid#{n}" }
     first_name 'First'
     last_name 'Last'
     affiliation 'Yale'
-    email { "#{username}@example.edu".downcase }
+    email { "#{cas_login}@example.edu".downcase }
     phone '555-555-5555'
     terms_of_service_accepted true
     created_by_admin false
     role 'normal'
     view_mode 'normal'
 
-    unless ENV['CAS_AUTH']
+    if ENV['CAS_AUTH']
+      username { cas_login }
+    else
+      username { email }
       password 'passw0rd'
       password_confirmation 'passw0rd'
     end

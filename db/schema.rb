@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150304042433) do
+ActiveRecord::Schema.define(version: 20150323013431) do
 
   create_table "announcements", force: true do |t|
     t.text     "message"
@@ -203,6 +203,7 @@ ActiveRecord::Schema.define(version: 20150304042433) do
     t.string   "encrypted_password",        limit: 128, default: "",       null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
+    t.string   "cas_login"
   end
 
   add_index "users", ["username"], name: "index_users_on_username", unique: true, using: :btree

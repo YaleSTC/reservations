@@ -94,7 +94,8 @@ class UsersController < ApplicationController
       # pull from our CAS hackery unless you're an admin/superuser creating a
       # new user
       unless current_user && can?(:manage, Reservation)
-        @user.username = session[:new_username]
+        @user.cas_login = session[:new_username]
+        @user.username = @user.cas_login
       end
     else
       # if not using CAS, just put the e-mail as the username
