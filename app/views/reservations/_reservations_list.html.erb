@@ -9,6 +9,9 @@
     <th>Item</th>
     <th>Start Date</th>
     <th>Due Date</th>
+    <% if @filter == :overdue || @filter == :returned_overdue %>
+      <th>Late Fee</th>
+    <% end %>
   </tr>
   </thead>
   <tbody>
@@ -38,6 +41,9 @@
       </td>
       <td><%= reservation.start_date.to_s(:long) %></td>
       <td><%= reservation.due_date.to_s(:long) %></td>
+      <% if @filter == :overdue || @filter == :returned_overdue %>
+        <td><%= number_to_currency reservation.late_fee %></td>
+      <% end %>
     </tr>
   <% end %>
   </tbody>
