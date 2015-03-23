@@ -1,4 +1,4 @@
-class EquipmentObjectDecorator < ApplicationDecorator
+class EquipmentItemDecorator < ApplicationDecorator
   delegate_all
 
   # Define presentation-specific methods here. Helpers are accessed through

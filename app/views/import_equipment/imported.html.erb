@@ -1,6 +1,6 @@
 <% title "Equipment Import Summary" %>
 
-<% if @cat_statuses or @model_statuses or @object_statuses %>
+<% if @cat_statuses or @model_statuses or @item_statuses %>
 	<% if @cat_statuses %>
 		<% unless @cat_statuses[:fail].empty? %>
 			<h2>Categories not successfully imported</h2>
@@ -37,24 +37,24 @@
 			<%= render :partial => 'equipment_models/table', :locals => { :equipment_models => @model_statuses[:success] } %>
 		<% end %>
 	<% end %>
-	<% if @object_statuses %>
-		<% if @cat_statuses or @object_statuses %>
+	<% if @item_statuses %>
+		<% if @cat_statuses or @item_statuses %>
 			<hr />
 			<hr />
 		<% end %>
-		<% unless @object_statuses[:fail].empty? %>
+		<% unless @item_statuses[:fail].empty? %>
 			<h2>Equipment Items not successfully imported</h2>
-			<table class="datatable-wide table table-striped table-bordered" id="object_import_errors_table">
-				<%= render :partial => 'import_object_table', :locals => { :objects => @object_statuses[:fail] } %>
+			<table class="datatable-wide table table-striped table-bordered" id="item_import_errors_table">
+				<%= render :partial => 'import_item_table', :locals => { :items => @item_statuses[:fail] } %>
 			</table>
-			<% unless @object_statuses[:success].empty? %>
+			<% unless @item_statuses[:success].empty? %>
 				<hr />
 			<% end %>
 		<% end %>
 
-		<% unless @object_statuses[:success].empty? %>
+		<% unless @item_statuses[:success].empty? %>
 			<h2>Equipment Items successfully imported</h2>
-			<%= render :partial => 'equipment_objects/table', :locals => { :equipment_objects => @object_statuses[:success] } %>
+			<%= render :partial => 'equipment_items/table', :locals => { :equipment_items => @item_statuses[:success] } %>
 		<% end %>
 	<% end %>
 <% end %>

@@ -177,13 +177,13 @@ $(document).ready(function() {
   $('select#equipment_model_category_id').select2();
   $('select#equipment_model_associated_equipment_model_ids').select2();
   $('select#equipment_model_requirements').select2();
-  $('select#equipment_object_equipment_model_id').select2();
+  $('select#equipment_item_equipment_model_id').select2();
   $('select#requirement_equipment_model').select2();
   $('select.dropdown.dropselect').select2();
 
-  // Popup confirmation when editing reservation equipment objects
-  $('.reservation_eq_objects').on('change', function() {
-    newMsg = ($('.select2-choice > .select2-chosen').text() == $('#equipment_object').attr('placeholder'))
+  // Popup confirmation when editing reservation equipment items
+  $('.reservation_eq_items').on('change', function() {
+    newMsg = ($('.select2-choice > .select2-chosen').text() == $('#equipment_item').attr('placeholder'))
       ? ""
       : "Be aware that changing the reservation equipment item may have an effect on another reservation. If you set this reservation's equipment item to an item that has already been checked out, the reservations will be swapped.";
     $('input[type="submit"]').data('confirm', newMsg);

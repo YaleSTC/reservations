@@ -1,7 +1,7 @@
 <p>
   <strong>Equipment:</strong>
 	<%= link_to @reservation.equipment_model.name, @reservation.equipment_model %>
-	<%= @reservation.equipment_object.nil? ? "(unassigned)" : "(#{@reservation.equipment_object.name})" %>
+	<%= @reservation.equipment_item.nil? ? "(unassigned)" : "(#{@reservation.equipment_item.name})" %>
 </p>
 
 <% unless @reservation.checked_in %>

@@ -18,7 +18,7 @@ class EquipmentModel < ActiveRecord::Base
 
   belongs_to :category
   has_and_belongs_to_many :requirements
-  has_many :equipment_objects, dependent: :destroy
+  has_many :equipment_items, dependent: :destroy
   has_many :documents
   has_many :reservations
   has_many :checkin_procedures, dependent: :destroy
@@ -178,7 +178,7 @@ class EquipmentModel < ActiveRecord::Base
     # take an array of reservations instead of using a database call
     # for database query optimization purposes
     # 2 queries to calculate max_num
-    max_num = equipment_objects.active.count - number_overdue
+    max_num = equipment_items.active.count - number_overdue
     available = max_num - num_reserved(start_date, due_date,
                                        source_reservations)
     available < 0 ? 0 : available
@@ -207,26 +207,26 @@ class EquipmentModel < ActiveRecord::Base
   end
 
   def available_count(date)
-    # get the total number of objects of this kind then subtract the total
+    # get the total number of items of this kind then subtract the total
     # quantity currently reserved, checked-out, and overdue
-    total = equipment_objects.active.count
+    total = equipment_items.active.count
     reserved = Reservation.reserved_on_date(date)
                .not_returned.for_eq_model(self).count
     total - reserved - number_overdue
   end
 
-  # figure out the qualitative status of this model's objects
+  # figure out the qualitative status of this model's items
   def availability(date)
     num = available_count(date)
-    total = equipment_objects.active.count
+    total = equipment_items.active.count
     if num == 0 then 'none'
     elsif num == total then 'all'
     else 'some'
     end
   end
 
-  def available_object_select_options
-    equipment_objects.includes(:reservations).active.select(&:available?)\
+  def available_item_select_options
+    equipment_items.includes(:reservations).active.select(&:available?)\
       .sort_by(&:name)\
       .collect { |item| "<option value=#{item.id}>#{item.name}</option>" }\
       .join.html_safe

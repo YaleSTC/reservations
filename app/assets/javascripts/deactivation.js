@@ -16,7 +16,7 @@ function handleDeactivation(e, reservation_id, overbooked) {
   }
   if (confirmCheckedOut == true && confirmOverbooked == true) {
     var reason = prompt("Write down the reason for deactivation of this " +
-      "equipment object.")
+      "equipment item.")
     if (reason == null) {
       e.href += "?deactivation_cancelled=1"
     } else if (reason != "") {
@@ -28,10 +28,10 @@ function handleDeactivation(e, reservation_id, overbooked) {
   }
 };
 
-function handleBigDeactivation(e, res_count, object_str) {
+function handleBigDeactivation(e, res_count, item_str) {
   if (arguments.length > 1 && res_count > 0) {
     var confirmDeactivation = confirm("There is/are currently " +
-      res_count + " reservation(s) for this " + object_str + " over the " +
+      res_count + " reservation(s) for this " + item_str + " over the " +
       "coming week. Are you sure you want to continue?")
   } else {
     confirmDeactivation = true

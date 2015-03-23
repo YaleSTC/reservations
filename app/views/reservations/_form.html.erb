@@ -24,14 +24,14 @@
     </div>
   </div>
 
-  <% if @reservation.equipment_object %>
+  <% if @reservation.equipment_item %>
     <div class="form-group">
       <label class="col-sm-2 control-label">Item</label>
       <div class="col-sm-7">
-        <%= select_tag :equipment_object,
+        <%= select_tag :equipment_item,
             options_for_select(@option_array),
-            placeholder: @reservation.equipment_object.name,
-            class: 'dropdown dropselect reservation_eq_objects',
+            placeholder: @reservation.equipment_item.name,
+            class: 'dropdown dropselect reservation_eq_items',
             prompt: '', width: 80 %>
       </div>
     </div>

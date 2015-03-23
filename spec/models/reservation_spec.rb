@@ -8,7 +8,7 @@ describe Reservation, type: :model do
 
   it { is_expected.to belong_to(:equipment_model) }
   it { is_expected.to belong_to(:reserver) }
-  it { is_expected.to belong_to(:equipment_object) }
+  it { is_expected.to belong_to(:equipment_item) }
   it { is_expected.to belong_to(:checkout_handler) }
   it { is_expected.to belong_to(:checkin_handler) }
   # it { should validate_presence_of(:reserver) } #fails because of the
@@ -23,7 +23,7 @@ describe Reservation, type: :model do
   describe '.find renewal length' do
     subject(:reservation) do
       r = FactoryGirl.create(:valid_reservation)
-      FactoryGirl.create(:equipment_object,
+      FactoryGirl.create(:equipment_item,
                          equipment_model_id: r.equipment_model_id)
       r
     end
@@ -62,7 +62,7 @@ describe Reservation, type: :model do
                                due_date: reservation.due_date + reservation
                                .equipment_model.max_renewal_length.days\
                                + 5.days)
-        r.equipment_model.equipment_objects.last.destroy
+        r.equipment_model.equipment_items.last.destroy
         expect(reservation.find_renewal_date).to\
           eq(reservation.due_date + 2.days)
       end
@@ -90,7 +90,7 @@ describe Reservation, type: :model do
     it 'passes custom validations' do
       expect(reservation.start_date_before_due_date).to be_nil
       expect(reservation.not_empty).to be_nil
-      expect(reservation.matched_object_and_model).to be_nil
+      expect(reservation.matched_item_and_model).to be_nil
       expect(reservation.available).to be_nil
       expect(reservation.validate).to eq([])
     end
@@ -156,7 +156,7 @@ describe Reservation, type: :model do
     #   reservation.should be_no_overdue_reservations
     #   reservation.should be_start_date_before_due_date
     #   reservation.should be_not_in_past
-    #   reservation.should be_matched_object_and_model
+    #   reservation.should be_matched_item_and_model
     #   reservation.should be_duration_allowed # fails: tries to run
     # validations on nil
     #   reservation.should be_start_date_is_not_blackout
@@ -169,7 +169,7 @@ describe Reservation, type: :model do
     # end
     it 'updates with equipment model' do
       reservation.equipment_model = FactoryGirl.create(:equipment_model)
-      FactoryGirl.create(:equipment_object,
+      FactoryGirl.create(:equipment_item,
                          equipment_model: reservation.equipment_model)
       expect(reservation.save).to be_truthy
       expect(reservation).to be_valid
@@ -197,7 +197,7 @@ describe Reservation, type: :model do
     end
     it 'passes other custom validations' do
       expect(reservation.not_empty).to be_nil
-      expect(reservation.matched_object_and_model).to be_nil
+      expect(reservation.matched_item_and_model).to be_nil
       expect(reservation.available).to be_nil
       expect(reservation.validate).to eq([])
     end
@@ -232,7 +232,7 @@ describe Reservation, type: :model do
       expect(reservation.not_in_past).to be_nil
       expect(reservation.start_date_before_due_date).to be_nil
       expect(reservation.not_empty).to be_nil
-      expect(reservation.matched_object_and_model).to be_nil
+      expect(reservation.matched_item_and_model).to be_nil
       expect(reservation.available).to be_nil
     end
   end
@@ -274,14 +274,14 @@ describe Reservation, type: :model do
     it 'passes other custom validations' do
       expect(reservation.start_date_before_due_date).to be_nil
       expect(reservation.not_empty).to be_nil
-      expect(reservation.matched_object_and_model).to be_nil
+      expect(reservation.matched_item_and_model).to be_nil
       expect(reservation.available).to be_nil
       expect(reservation.not_in_past).to be_nil
     end
   end
 
   # this all fails - problem w/ available
-  context 'with equipment object available problems' do
+  context 'with equipment item available problems' do
     let!(:available_reservation) do
       FactoryGirl.create(:checked_out_reservation,
                          equipment_model: reservation.equipment_model)
@@ -308,10 +308,10 @@ describe Reservation, type: :model do
     end
   end
 
-  context 'with equipment object/model matching problems' do
+  context 'with equipment item/model matching problems' do
     subject(:reservation) do
       r = FactoryGirl.build(:valid_reservation)
-      r.equipment_object = FactoryGirl.create(:equipment_object)
+      r.equipment_item = FactoryGirl.create(:equipment_item)
       r
     end
 
@@ -325,7 +325,7 @@ describe Reservation, type: :model do
       expect(reservation.save).to be_falsey
     end
     it 'fails appropriate validations' do
-      expect(reservation.matched_object_and_model).not_to be_nil
+      expect(reservation.matched_item_and_model).not_to be_nil
     end
     it 'passes other custom validations' do
       expect(reservation.start_date_before_due_date).to be_nil
@@ -359,7 +359,7 @@ describe Reservation, type: :model do
     it 'passes other custom validations' do
       expect(reservation.start_date_before_due_date).to be_nil
       expect(reservation.not_empty).to be_nil
-      expect(reservation.matched_object_and_model).to be_nil
+      expect(reservation.matched_item_and_model).to be_nil
       expect(reservation.available).to be_nil
       expect(reservation.not_in_past).to be_nil
     end
@@ -372,8 +372,8 @@ describe Reservation, type: :model do
       r.equipment_model.max_per_user = 2
       r.equipment_model.save
       r.equipment_model.category.save
-      FactoryGirl.create(:equipment_object, equipment_model: r.equipment_model)
-      FactoryGirl.create(:equipment_object, equipment_model: r.equipment_model)
+      FactoryGirl.create(:equipment_item, equipment_model: r.equipment_model)
+      FactoryGirl.create(:equipment_item, equipment_model: r.equipment_model)
       FactoryGirl.create(:reservation,
                          equipment_model: r.equipment_model,
                          reserver: r.reserver)
@@ -395,7 +395,7 @@ describe Reservation, type: :model do
     it 'passes other custom validations' do
       expect(reservation.start_date_before_due_date).to be_nil
       expect(reservation.not_empty).to be_nil
-      expect(reservation.matched_object_and_model).to be_nil
+      expect(reservation.matched_item_and_model).to be_nil
       expect(reservation.available).to be_nil
       expect(reservation.not_in_past).to be_nil
     end
@@ -408,8 +408,8 @@ describe Reservation, type: :model do
       r.equipment_model.max_per_user = 1
       r.equipment_model.save
       r.equipment_model.category.save
-      FactoryGirl.create(:equipment_object, equipment_model: r.equipment_model)
-      FactoryGirl.create(:equipment_object, equipment_model: r.equipment_model)
+      FactoryGirl.create(:equipment_item, equipment_model: r.equipment_model)
+      FactoryGirl.create(:equipment_item, equipment_model: r.equipment_model)
       FactoryGirl.create(:valid_reservation,
                          equipment_model: r.equipment_model,
                          reserver: r.reserver)
@@ -431,7 +431,7 @@ describe Reservation, type: :model do
     it 'passes other custom validations' do
       expect(reservation.start_date_before_due_date).to be_nil
       expect(reservation.not_empty).to be_nil
-      expect(reservation.matched_object_and_model).to be_nil
+      expect(reservation.matched_item_and_model).to be_nil
       expect(reservation.available).to be_nil
       expect(reservation.not_in_past).to be_nil
     end

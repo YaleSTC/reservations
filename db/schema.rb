@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150227032011) do
+ActiveRecord::Schema.define(version: 20150304042433) do
 
   create_table "announcements", force: true do |t|
     t.text     "message"
@@ -97,6 +97,19 @@ ActiveRecord::Schema.define(version: 20150227032011) do
     t.datetime "deleted_at"
   end
 
+  create_table "equipment_items", force: true do |t|
+    t.string   "name"
+    t.string   "serial"
+    t.boolean  "active",                               default: true
+    t.integer  "equipment_model_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "deleted_at"
+    t.boolean  "csv_import",                           default: false, null: false
+    t.string   "deactivation_reason"
+    t.text     "notes",               limit: 16777215,                 null: false
+  end
+
   create_table "equipment_models", force: true do |t|
     t.string   "name"
     t.text     "description"
@@ -121,7 +134,7 @@ ActiveRecord::Schema.define(version: 20150227032011) do
     t.integer  "renewal_days_before_due"
     t.boolean  "csv_import",                                          default: false, null: false
     t.integer  "max_checkout_length"
-    t.integer  "equipment_objects_count",                             default: 0,     null: false
+    t.integer  "equipment_items_count",                               default: 0,     null: false
   end
 
   create_table "equipment_models_associated_equipment_models", id: false, force: true do |t|
@@ -132,19 +145,6 @@ ActiveRecord::Schema.define(version: 20150227032011) do
   create_table "equipment_models_requirements", id: false, force: true do |t|
     t.integer "requirement_id",     null: false
     t.integer "equipment_model_id", null: false
-  end
-
-  create_table "equipment_objects", force: true do |t|
-    t.string   "name"
-    t.string   "serial"
-    t.boolean  "active",                               default: true
-    t.integer  "equipment_model_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.datetime "deleted_at"
-    t.boolean  "csv_import",                           default: false, null: false
-    t.string   "deactivation_reason"
-    t.text     "notes",               limit: 16777215,                 null: false
   end
 
   create_table "requirements", force: true do |t|
@@ -169,7 +169,7 @@ ActiveRecord::Schema.define(version: 20150227032011) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "equipment_model_id"
-    t.integer  "equipment_object_id"
+    t.integer  "equipment_item_id"
     t.text     "notes"
     t.boolean  "notes_unsent",        default: false
     t.integer  "times_renewed"
