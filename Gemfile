@@ -24,10 +24,6 @@ gem 'whenever', '~> 0.9.4'
 # administrative panel
 gem 'rails_admin', '~> 0.6.6'
 
-# seed script gems
-gem 'ffaker', '~> 1.32.1'
-gem 'ruby-progressbar', '~> 1.7.1'
-
 # ldap integration
 gem 'net-ldap', '~> 0.11'
 
@@ -77,6 +73,10 @@ group :development, :test do
   gem 'codeclimate-test-reporter', '~> 0.4.6'
   gem 'database_cleaner', '~> 1.4.0'
   gem 'rubocop', '~> 0.29.1', require: false
+
+  # seed script gems
+  gem 'ffaker', '~> 1.32.1', require: false
+  gem 'ruby-progressbar', '~> 1.7.1', require: false
 end
 
 # assets
