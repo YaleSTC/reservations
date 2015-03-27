@@ -148,6 +148,31 @@
   </section>
 <% end %>
 
+<section id="pending_reservations">
+    <h2>Pending Reservations</h2><hr />
+
+    <div class="row">
+      <div class="span3">
+        <h4>Today</h4>
+      </div>
+      <div class="span3">
+        <h4>Next 7 Day</h4>
+      </div>
+    </div>
+    <div class="row giant-numbers">
+      <div class="span3">
+        <%= @today.count %> 
+      </div>
+      <div class="span3">
+        <%= @upcoming.count %>
+      </div>
+    </div>
+
+    <p id="pending_reservations">
+      <%= render 'pending_reservations_table' %>
+    </p>
+  </section>
+
 <% if can? :manage, EquipmentModel %>
   <section id="items">
     <h2>Items</h2><hr />
