@@ -147,26 +147,27 @@
        <p><%= Requirement.list_requirement_admins(current_user, @equipment_model) %></p>
   </section>
 <% end %>
+<%if can? :manage, EquipmentModel %>
+  <section id="pending_reservations">
+      <h2>Pending Reservations</h2><hr />
 
-<section id="pending_reservations">
-    <h2>Pending Reservations</h2><hr />
-
-    <div class="row">
-      <div class="col-md-3">
-        <h4>Today</h4>
+      <div class="row">
+        <div class="col-md-3">
+          <h4>Today</h4>
+        </div>
+        <div class="col-md-3">
+          <h4>Next 7 Day</h4>
+        </div>
       </div>
-      <div class="col-md-3">
-        <h4>Next 7 Day</h4>
+      <div class="row giant-numbers">
+        <div class="col-md-3">
+          <%= @today.count %> 
+        </div>
+        <div class="col-md-3">
+          <%= @upcoming.count %>
+        </div>
       </div>
-    </div>
-    <div class="row giant-numbers">
-      <div class="col-md-3">
-        <%= @today.count %> 
-      </div>
-      <div class="col-md-3">
-        <%= @upcoming.count %>
-      </div>
-    </div>
+    <%if can? :manage, EquipmentModel %>
 
     <p id="pending_reservations">
       <%= render 'pending_reservations_table' %>
