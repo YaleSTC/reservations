@@ -14,6 +14,35 @@ shared_examples_for 'GET show success' do
     expect(assigns(:associated_equipment_models).size).to eq(1)
     expect(assigns(:associated_equipment_models)).to eq([] << mod1)
   end
+  it 'should include @today and @upcoming reservations' do
+    # Make one overdue reservations, one active reservation that started
+    # in the past, one active reservation starting today,
+    # one reservation starting within the next week,
+    # and one starting more than a week in the future
+    #
+    #
+    # First, make sure we have enough equipment objects available
+    FactoryGirl.create(:equipment_object, equipment_model: model)
+    FactoryGirl.create(:equipment_object, equipment_model: model)
+    FactoryGirl.create(:missed_reservation, equipment_model: model)
+    res_starting_past =
+    FactoryGirl.create(:missed_reservation, equipment_model: model,
+                                            due_date: Time.zone.today + 1.days)
+    res_starting_today =
+    FactoryGirl.create(:reservation, equipment_model: model,
+                                     start_date: Time.zone.today,
+                                     due_date: Time.zone.today + 2.days)
+    res_starting_this_week =
+    FactoryGirl.create(:reservation, equipment_model: model,
+                                     start_date: Time.zone.today  +  2.days,
+                                     due_date: Time.zone.today + 4.days)
+    FactoryGirl.create(:reservation, equipment_model: model,
+                                     start_date: Time.zone.today + 10.days,
+                                     due_date: Time.zone.today + 12.days)
+    get :show, id: model
+    expect(assigns(:today)).to eq([] << res_starting_past << res_starting_today)
+    expect(assigns(:upcoming)).to eq([] << res_starting_this_week)
+  end
   it 'should limit @associated_equipment_models to maximum 6' do
     mod1 = FactoryGirl.create(:equipment_model)
     mod2 = FactoryGirl.create(:equipment_model)
