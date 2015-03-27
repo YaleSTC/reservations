@@ -31,6 +31,7 @@ class EquipmentModelsController < ApplicationController
     end
   end
 
+  #rubocop:disable Metrics
   def show
     @associated_equipment_models =
       @equipment_model.associated_equipment_models.sample(6)
