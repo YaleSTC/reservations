@@ -147,7 +147,7 @@
        <p><%= Requirement.list_requirement_admins(current_user, @equipment_model) %></p>
   </section>
 <% end %>
-<%if can? :manage, EquipmentModel %>
+<% if can? :manage, EquipmentModel %>
   <section id="pending_reservations">
       <h2>Pending Reservations</h2><hr />
 
@@ -167,12 +167,12 @@
           <%= @upcoming.count %>
         </div>
       </div>
-    <%if can? :manage, EquipmentModel %>
 
-    <p id="pending_reservations">
-      <%= render 'pending_reservations_table' %>
-    </p>
-  </section>
+      <p id="pending_reservations">
+        <%= render 'pending_reservations_table' %>
+      </p>
+    </section>
+  <% end %>
 
 <% if can? :manage, EquipmentModel %>
   <section id="items">
