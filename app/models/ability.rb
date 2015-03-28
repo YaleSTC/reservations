@@ -7,7 +7,7 @@ class Ability
       when 'superuser'
         can :manage, :all
         can :note, Reservation
-        can :note, EquipmentObject
+        can :note, EquipmentItem
       when 'admin'
         can :manage, :all
         can :note, Reservation
@@ -19,7 +19,7 @@ class Ability
       when 'checkout'
         can :manage, Reservation
         can :note, Reservation
-        can :note, EquipmentObject
+        can :note, EquipmentItem
         cannot :archive, Reservation
         cannot :renew, Reservation unless AppConfig.check(:enable_renewals)
         cannot :destroy, Reservation do |r|
