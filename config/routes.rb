@@ -20,7 +20,7 @@ Reservations::Application.routes.draw do
   resources :documents,
             :requirements
 
-  resources :equipment_objects, concerns: :deactivatable
+  resources :equipment_items, concerns: :deactivatable
 
   resources :announcements, except: [:show]
 
@@ -33,8 +33,12 @@ Reservations::Application.routes.draw do
       put 'update_cart'
       delete 'empty_cart'
     end
-    resources :equipment_objects
+    resources :equipment_items
   end
+
+  get 'equipment_objects' => redirect('equipment_items')
+  get 'equipment_objects/:id' =>
+      redirect('equipment_items/%{id}')
 
   get '/import_users/import' => 'import_users#import_page',
       :as => :csv_import_page
@@ -65,16 +69,15 @@ Reservations::Application.routes.draw do
 
   resources :reservations do
     member do
-      get :checkout_email
-      get :checkin_email
+      get :send_receipt
       put :renew
       put :archive
     end
   end
 
   # routes to add notes
-  put '/equipment_objects/:id/note' => 'equipment_objects#note',
-      :as => :add_notes_to_eq_object
+  put '/equipment_items/:id/note' => 'equipment_items#note',
+      :as => :add_notes_to_eq_item
   put '/reservations/:id/note' => 'reservations#note',
       :as => :add_notes_to_reservation
 

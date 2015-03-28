@@ -11,7 +11,7 @@ class ReportsController < ApplicationController
                   ]
   RES_COLUMNS = [['Reserver', :all, :name, :reserver],
                  ['Equipment Model', :all, :name, :equipment_model],
-                 ['Equipment Object', :all, :name, :equipment_object],
+                 ['Equipment Item', :all, :name, :equipment_item],
                  ['Status', :all, :display, :status],
                  ['Start Date', :all, :display, :start_date],
                  ['Checked Out', :all, :display, :checked_out],
@@ -81,8 +81,8 @@ class ReportsController < ApplicationController
     tables = {}
     tables[:equipment_models] = Report.build_new(:equipment_model_id,
                                                  reservations, MODEL_COLUMNS)
-    tables[:equipment_objects] = Report.build_new(:equipment_object_id,
-                                                  reservations, MODEL_COLUMNS)
+    tables[:equipment_items] = Report.build_new(:equipment_item_id,
+                                                reservations, MODEL_COLUMNS)
     tables[:users] = Report.build_new(:reserver_id, reservations, MODEL_COLUMNS)
     tables[:reservations] = Report.build_new(:id, reservations, RES_COLUMNS)
     tables

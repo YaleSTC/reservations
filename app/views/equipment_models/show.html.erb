@@ -153,10 +153,10 @@
     <h2>Items</h2><hr />
     <p>
     <%= link_to "Create New #{@equipment_model.name.singularize.truncate(30)} Item",
-      new_equipment_model_equipment_object_path(@equipment_model), class: 'btn btn-default' %>
+      new_equipment_model_equipment_item_path(@equipment_model), class: 'btn btn-default' %>
     </p>
-    <p id="equipment_objects">
-      <%= render 'equipment_objects_table' %>
+    <p id="equipment_items">
+      <%= render 'equipment_items_table' %>
     </p>
   </section>
 

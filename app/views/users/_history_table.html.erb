@@ -17,8 +17,8 @@
       <td><%= link_to reservation.equipment_model.name, reservation.equipment_model %></td>
       <% unless key == (:current_reservations || :missed_reservations) %>
         <td>
-          <% if !reservation.equipment_object.nil? %>
-            <%= link_to_if (can? :manage, Reservation), reservation.equipment_object.name %>
+          <% unless reservation.equipment_item.nil? %>
+            <%= link_to_if (can? :manage, Reservation), reservation.equipment_item.name %>
           <% end %>
         </td>
       <% end %>

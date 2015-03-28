@@ -1,11 +1,12 @@
 # Welcome to Reservations
 
-[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 [![Build Status](https://travis-ci.org/YaleSTC/reservations.svg)](https://travis-ci.org/YaleSTC/reservations)
 [![Code Climate](https://codeclimate.com/github/YaleSTC/reservations/badges/gpa.svg)](https://codeclimate.com/github/YaleSTC/reservations)
 [![Test Coverage](https://codeclimate.com/github/YaleSTC/reservations/badges/coverage.svg)](https://codeclimate.com/github/YaleSTC/reservations)
 [![Dependency Status](https://gemnasium.com/YaleSTC/reservations.svg)](https://gemnasium.com/YaleSTC/reservations)
 [![Inline docs](http://inch-ci.org/github/yalestc/reservations.svg?branch=master&style=flat)](http://inch-ci.org/github/yalestc/reservations)
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 ![](http://yalestc.github.io/reservations/images/screenshot.png)
 

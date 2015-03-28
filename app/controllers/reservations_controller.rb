@@ -12,6 +12,8 @@ class ReservationsController < ApplicationController
 
   def set_user
     @user = User.find(params[:user_id])
+    return unless @user.role == 'banned'
+    flash[:error] = 'This user is banned and cannot check out equipment.'
   end
 
   def set_reservation
@@ -33,7 +35,7 @@ class ReservationsController < ApplicationController
 
     @filters = [:reserved, :checked_out, :overdue, :returned, :upcoming,
                 :requested, :approved_requests, :denied_requests]
-    @filters << :missed unless AppConfig.first.res_exp_time
+    @filters << :missed unless AppConfig.check(:res_exp_time)
 
     # if filter in session set it
     if session[:filter]
@@ -116,11 +118,11 @@ class ReservationsController < ApplicationController
           flash[:error] = 'Please review the errors below. If uncorrected, '\
             'any reservations with errors will be filed as a request, and '\
             'subject to administrator approval.'
-          if AppConfig.first.request_text.empty?
+          if AppConfig.get(:request_text).empty?
             @request_text = 'Please give a short justification for this '\
               'equipment request.'
           else
-            @request_text = AppConfig.first.request_text
+            @request_text = AppConfig.get(:request_text)
           end
         end
       end
@@ -138,16 +140,17 @@ class ReservationsController < ApplicationController
     notes = params[:reservation][:notes]
     requested = !@errors.empty? && (cannot? :override, :reservation_errors)
 
+    # check for missing notes and validation errors
     if !@errors.blank? && notes.blank?
       # there were errors but they didn't fill out the notes
       flash[:error] = 'Please give a short justification for this '\
         "reservation #{requested ? 'request' : 'override'}"
       @notes_required = true
-      if AppConfig.first.request_text.empty?
+      if AppConfig.get(:request_text).empty?
         @request_text = 'Please give a short justification for this '\
           'equipment request.'
       else
-        @request_text = AppConfig.first.request_text
+        @request_text = AppConfig.get(:request_text)
       end
       render(:new) && return
     end
@@ -184,7 +187,7 @@ class ReservationsController < ApplicationController
 
   def edit
     @option_array =
-      @reservation.equipment_model.equipment_objects
+      @reservation.equipment_model.equipment_items
       .collect { |e| [e.name, e.id] }
   end
 
@@ -192,18 +195,18 @@ class ReservationsController < ApplicationController
   def update # rubocop:disable all
     message = 'Successfully edited reservation.'
     res = reservation_params
-    # add new equipment object id to hash if it's being changed and save old
-    # and new objects for later
-    unless params[:equipment_object].blank?
-      res[:equipment_object_id] = params[:equipment_object]
-      new_object = EquipmentObject.find(params[:equipment_object])
-      old_object =
-        EquipmentObject.find_by id: @reservation.equipment_object_id
-      # check to see if new object is available
-      unless new_object.available?
-        r = new_object.current_reservation
+    # add new equipment item id to hash if it's being changed and save old
+    # and new items for later
+    unless params[:equipment_item].blank?
+      res[:equipment_item_id] = params[:equipment_item]
+      new_item = EquipmentItem.find(params[:equipment_item])
+      old_item =
+        EquipmentItem.find_by id: @reservation.equipment_item_id
+      # check to see if new item is available
+      unless new_item.available?
+        r = new_item.current_reservation
         r.update(current_user,
-                 { equipment_object_id: @reservation.equipment_object_id },
+                 { equipment_item_id: @reservation.equipment_item_id },
                  '')
       end
     end
@@ -211,21 +214,20 @@ class ReservationsController < ApplicationController
     # save changes to database
     @reservation.update(current_user, res)
     if @reservation.save
-      # code for switching equipment objects
-      unless params[:equipment_object].blank?
+      # code for switching equipment items
+      unless params[:equipment_item].blank?
         # if the item was previously assigned to a different reservation
         if r
           r.save
           # clean up this code with a model method?
-          message << " Note equipment item #{r.equipment_object.md_link} is "\
+          message << " Note equipment item #{r.equipment_item.md_link} is "\
             " now assigned to #{r.md_link} (#{r.reserver.md_link})"
         end
 
         # update the item history / histories
-        if old_object
-          old_object.make_switch_notes(@reservation, r, current_user)
-        end
-        new_object.make_switch_notes(r, @reservation, current_user)
+        old_item.make_switch_notes(@reservation, r, current_user) if old_item
+
+        new_item.make_switch_notes(r, @reservation, current_user)
       end
 
       # flash success and exit
@@ -255,15 +257,19 @@ class ReservationsController < ApplicationController
   def checkout # rubocop:disable all
     # convert all the reservations that are being checked out into an array
     # of Reservation objects. only select the ones who are selected, eg
-    # they have an equipment object id set.
+    # they have an equipment item id set.
 
     checked_out_reservations = []
     params[:reservations].each do |r_id, r_attrs|
-      next if r_attrs[:equipment_object_id].blank?
-      r = Reservation.find(r_id)
+      next if r_attrs[:equipment_item_id].blank?
+      r = Reservation.includes(:reserver).find(r_id)
+      if r.reserver.role == 'banned'
+        flash[:error] = 'Banned users cannot check out equipment.'
+        redirect_to(root_path) && return
+      end
       checked_out_reservations <<
-        r.checkout(r_attrs[:equipment_object_id], current_user,
-                   Hash.new(r_attrs[:checkout_procedures]), r_attrs[:notes])
+        r.checkout(r_attrs[:equipment_item_id], current_user,
+                   r_attrs[:checkout_procedures], r_attrs[:notes])
     end
 
     ## Basic-logic checks, only need to be done once
@@ -274,7 +280,7 @@ class ReservationsController < ApplicationController
       flash[:error] = 'No reservation selected.'
       redirect_to(:back) && return
     end
-    unless Reservation.unique_equipment_objects?(checked_out_reservations)
+    unless Reservation.unique_equipment_items?(checked_out_reservations)
       flash[:error] = 'The same equipment item cannot be simultaneously '\
         'checked out in multiple reservations.'
       redirect_to(:back) && return
@@ -363,6 +369,7 @@ class ReservationsController < ApplicationController
   end
 
   def manage # initializer
+    redirect_to(root_path) && return unless flash[:error].nil?
     @check_out_set = @user.due_for_checkout
     @check_in_set = @user.due_for_checkin
 
@@ -370,6 +377,7 @@ class ReservationsController < ApplicationController
   end
 
   def current
+    redirect_to(root_path) && return unless flash[:error].nil?
     @user_overdue_reservations_set =
       [Reservation.overdue.for_reserver(@user)].delete_if(&:empty?)
     @user_checked_out_today_reservations_set =
@@ -383,27 +391,14 @@ class ReservationsController < ApplicationController
     render 'current_reservations'
   end
 
-  # two paths to create receipt emails for checking in and checking out items.
-  def checkout_email
-    if UserMailer.checkout_receipt(@reservation).deliver
-      redirect_to :back
+  def send_receipt
+    if UserMailer.reservation_status_update(@reservation, true).deliver
       flash[:notice] = 'Successfully delivered receipt email.'
     else
-      redirect_to @reservation
       flash[:error] = 'Unable to deliver receipt email. Please contact '\
         'administrator for more support.'
     end
-  end
-
-  def checkin_email
-    if UserMailer.checkin_receipt(@reservation).deliver
-      redirect_to :back
-      flash[:notice] = 'Successfully delivered receipt email.'
-    else
-      redirect_to @reservation
-      flash[:error] = 'Unable to deliver receipt email. Please contact '\
-        'administrator for more support.'
-    end
+    redirect_to @reservation
   end
 
   def renew
@@ -433,7 +428,7 @@ class ReservationsController < ApplicationController
       "by #{current_user.md_link}"
     if @reservation.save
       flash[:notice] = 'Request successfully approved'
-      UserMailer.request_approved_notification(@reservation).deliver
+      UserMailer.reservation_status_update(@reservation).deliver
       redirect_to reservations_path(requested: true)
     else
       flash[:error] = 'Oops! Something went wrong. Unable to approve '\
@@ -449,7 +444,7 @@ class ReservationsController < ApplicationController
       "#{current_user.md_link}"
     if @reservation.save
       flash[:notice] = 'Request successfully denied'
-      UserMailer.request_denied_notification(@reservation).deliver
+      UserMailer.reservation_status_update(@reservation).deliver
       redirect_to reservations_path(requested: true)
     else
       flash[:error] = 'Oops! Something went wrong. Unable to deny '\
@@ -482,8 +477,8 @@ class ReservationsController < ApplicationController
   def reservation_params
     params.require(:reservation)
       .permit(:checkout_handler_id, :checkin_handler_id, :approval_status,
-              :checked_out, :checked_in, :equipment_object, :due_date,
-              :equipment_object_id, :notes, :notes_unsent, :times_renewed,
+              :checked_out, :checked_in, :equipment_item, :due_date,
+              :equipment_item_id, :notes, :notes_unsent, :times_renewed,
               :reserver_id, :reserver, :start_date, :equipment_model_id)
   end
 

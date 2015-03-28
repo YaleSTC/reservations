@@ -1,0 +1,20 @@
+<thead>
+<tr>
+  <th>Item</th>
+  <th>Name</th>
+  <th>Serial #</th>
+  <th>Reason</th>
+</tr>
+</thead>
+<tbody>
+  <% items.each do |item_data| %>
+    <% item = item_data.first %>
+    <% message = item_data.last %>
+    <tr>
+      <td><%= EquipmentModel.find(item[:equipment_model]).name if item[:equipment_model] and EquipmentModel.find(item[:equipment_model]) %></td>
+      <td><%= item[:name] %></td>
+      <td><%= item[:serial] %></td>
+      <td><%= message %></td>
+    </tr>
+  <% end %>
+</tbody>

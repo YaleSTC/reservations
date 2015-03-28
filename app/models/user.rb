@@ -64,8 +64,7 @@ class User < ActiveRecord::Base
 
   # ------- validations -------- #
   def skip_phone_validation?
-    return true unless AppConfig.first
-    return true unless AppConfig.first.require_phone
+    return true unless AppConfig.check(:require_phone)
     return true if missing_phone
     !@csv_import.nil?
   end
@@ -81,8 +80,8 @@ class User < ActiveRecord::Base
     "#{(nickname.blank? ? first_name : nickname)} #{last_name}"
   end
 
-  def equipment_objects
-    reservations.collect(&:equipment_object).flatten
+  def equipment_items
+    reservations.collect(&:equipment_item).flatten
   end
 
   # rubocop:disable AbcSize, MethodLength, PerceivedComplexity

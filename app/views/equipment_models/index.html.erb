@@ -1,30 +1,6 @@
 <% title (@category.blank? ? "Equipment Models" : @category.name.pluralize) %>
 
-<table id="table_woo" class="datatable-wide table table-striped table-bordered">
-  <thead>
-  <tr>
-    <th>Name</th>
-    <%= "<th>Type</th>".html_safe unless @category %>
-  <%# these blank TH's necessary for the sort function %>
-  <% if can? :manage, EquipmentModel %>
-    <th class="no_sort"> </th>
-    <th class="no_sort"> </th>
-  <% end %>
-  </tr>
-  </thead>
-  <tbody>
-  <% for equipment_model in @equipment_models.includes(:category) %>
-    <tr>
-      <td><%= link_to equipment_model.name, equipment_model %></td>
-      <%= ("<td>" + (link_to equipment_model.category.name.singularize, equipment_model.category) + "</td>").html_safe unless @category %>
-      <% if can? :manage, EquipmentModel %>
-        <td><%= link_to "Edit", edit_equipment_model_path(equipment_model), :class => "btn btn-default" %></td>
-        <td><%= equipment_model.decorate.make_deactivate_btn %></td>
-      <% end %>
-    </tr>
-  <% end %>
-  </tbody>
-</table>
+<%= render 'table' %>
 
 <hr>
 <% if can? :manage, EquipmentModel %>

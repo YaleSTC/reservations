@@ -106,14 +106,14 @@ describe User, type: :model do
     end
   end
 
-  describe '.equipment_objects' do
+  describe '.equipment_items' do
     it 'has a working reservation factory' do
       @reservation = FactoryGirl.create(:valid_reservation)
     end
-    it 'should return all equipment_objects reserved by the user' do
+    it 'should return all equipment_items reserved by the user' do
       @user = FactoryGirl.create(:user)
       @reservation = FactoryGirl.create(:valid_reservation, reserver: @user)
-      expect(@user.equipment_objects).to eq([@reservation.equipment_object])
+      expect(@user.equipment_items).to eq([@reservation.equipment_item])
     end
   end
 

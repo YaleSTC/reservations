@@ -5,7 +5,7 @@ class Reservation < ActiveRecord::Base
   include Routing
 
   belongs_to :equipment_model
-  belongs_to :equipment_object
+  belongs_to :equipment_item
   belongs_to :reserver, class_name: 'User'
   belongs_to :checkout_handler, class_name: 'User'
   belongs_to :checkin_handler, class_name: 'User'
@@ -15,16 +15,25 @@ class Reservation < ActiveRecord::Base
     record.errors.add(attr, 'cannot be a guest') if value.role == 'guest'
   end
   validate :start_date_before_due_date
-  validate :matched_object_and_model
-  validate :not_in_past, :available, on: :create
+  validate :matched_item_and_model
+  validate :not_in_past, :available, :check_banned, on: :create
 
   nilify_blanks only: [:notes]
 
   ## Class methods ##
 
-  def self.unique_equipment_objects?(reservations)
-    object_ids = reservations.map(&:equipment_object_id)
-    object_ids == object_ids.uniq
+  def self.completed_procedures(procedures)
+    # convert the [{id=>value, id=>value}] input
+    # to [id, id] format
+    return [] if procedures.nil?
+    procedures.collect do |key, val|
+      key if val == '1'
+    end
+  end
+
+  def self.unique_equipment_items?(reservations)
+    item_ids = reservations.map(&:equipment_item_id)
+    item_ids == item_ids.uniq
   end
 
   def self.number_for_model_on_date(date, model_id, source)
@@ -134,11 +143,13 @@ class Reservation < ActiveRecord::Base
     # days before the due date it is and the max number of times one is
     # allowed to renew
     #
+    return false if reserver.role == 'banned'
+
     self.times_renewed ||= 0
 
     # you can't renew a checked in reservation, or one without an equipment
     # model
-    return false if checked_in || equipment_object.nil?
+    return false if checked_in || equipment_item.nil?
 
     max_renewal_times = equipment_model.maximum_renewal_times
 
@@ -186,22 +197,22 @@ class Reservation < ActiveRecord::Base
     # gather all the procedure texts that were not
     # checked, ie not included in the procedures hash
     incomplete_procedures = []
-    procedures = [procedures].flatten # in case of nil procedures
+    procedures = Reservation.completed_procedures(procedures)
     equipment_model.checkin_procedures.each do |checkin_procedure|
       if procedures.exclude?(checkin_procedure.id.to_s)
         incomplete_procedures << checkin_procedure.step
       end
     end
     make_notes('Checked in', new_notes, incomplete_procedures, checkin_handler)
-    # update equipment object notes
-    equipment_object.make_reservation_notes('checked in', self,
-                                            checkin_handler, new_notes,
-                                            checked_in)
+    # update equipment item notes
+    equipment_item.make_reservation_notes('checked in', self,
+                                          checkin_handler, new_notes,
+                                          checked_in)
 
     if checked_in.to_date > due_date
-      # equipment was overdue, send an email confirmati
+      # equipment was overdue, send an email confirmation
       AdminMailer.overdue_checked_in_fine_admin(self).deliver
-      UserMailer.overdue_checked_in_fine(self).deliver
+      UserMailer.reservation_status_update(self).deliver
     end
 
     self
@@ -210,16 +221,16 @@ class Reservation < ActiveRecord::Base
   def archive(archiver, note)
     # set the reservation as checked in if it has been checked out
     # used for emergency situations or when equipment is deactivated
-    # to preserve database sanity (eg, equipment object is deactivated while
+    # to preserve database sanity (eg, equipment item is deactivated while
     # that reseration is checked out)
     # returns self
     if checked_in.nil?
       self.checked_in = Time.zone.now
       self.checked_out = Time.zone.now if checked_out.nil?
-      # archive equipment object if checked out
-      if equipment_object
-        equipment_object.make_reservation_notes('archived', self, archiver,
-                                                "#{note}", checked_in)
+      # archive equipment item if checked out
+      if equipment_item
+        equipment_item.make_reservation_notes('archived', self, archiver,
+                                              "#{note}", checked_in)
       end
       self.notes = notes.to_s + "\n\n### Archived on "\
         "#{checked_in.to_s(:long)} by #{archiver.md_link}\n\n\n#### " \
@@ -230,8 +241,8 @@ class Reservation < ActiveRecord::Base
     self
   end
 
-  def checkout(eq_object, checkout_handler, procedures, new_notes)
-    # checks out a reservation with the given eq object, checkout handler
+  def checkout(eq_item, checkout_handler, procedures, new_notes)
+    # checks out a reservation with the given equipment item, checkout handler
     # and a hash of checkout procedures and any manually entered
     # notes from the checkout.
     #
@@ -239,10 +250,10 @@ class Reservation < ActiveRecord::Base
 
     self.checkout_handler = checkout_handler
     self.checked_out = Time.zone.now
-    self.equipment_object_id = eq_object
+    self.equipment_item_id = eq_item
 
     incomplete_procedures = []
-    procedures = [procedures].flatten
+    procedures = Reservation.completed_procedures(procedures)
     equipment_model.checkout_procedures.each do |checkout_procedure|
       if procedures.exclude?(checkout_procedure.id.to_s)
         incomplete_procedures << checkout_procedure.step
@@ -250,10 +261,10 @@ class Reservation < ActiveRecord::Base
     end
     make_notes('Checked out', new_notes, incomplete_procedures,
                checkout_handler)
-    # update equipment object notes
-    equipment_object.make_reservation_notes('checked out', self,
-                                            checkout_handler, new_notes,
-                                            checked_out)
+    # update equipment item notes
+    equipment_item.make_reservation_notes('checked out', self,
+                                          checkout_handler, new_notes,
+                                          checked_out)
     self
   end
 
@@ -261,7 +272,7 @@ class Reservation < ActiveRecord::Base
     # updates a reservation and records changes in the notes
     #
     # takes the current user, the new params from the controller that have
-    # been updated w/ a new equipment object, and the new notes (if any)
+    # been updated w/ a new equipment item, and the new notes (if any)
     assign_attributes(new_params)
     changes = self.changes
     if changes.empty?
@@ -290,10 +301,10 @@ class Reservation < ActiveRecord::Base
             name = 'Due Date'
             old_val = diff[0].to_s(:long)
             new_val = diff[1].to_s(:long)
-          when 'equipment_object_id'
+          when 'equipment_item_id'
             name = 'Item'
-            old_val = diff[0] ? EquipmentObject.find(diff[0]).md_link : 'nil'
-            new_val = diff[1] ? EquipmentObject.find(diff[1]).md_link : 'nil'
+            old_val = diff[0] ? EquipmentItem.find(diff[0]).md_link : 'nil'
+            new_val = diff[1] ? EquipmentItem.find(diff[1]).md_link : 'nil'
           end
           self.notes += "\n#{name} changed from " + old_val + ' to '\
             + new_val + '.'

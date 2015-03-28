@@ -3,13 +3,14 @@ module CartValidations
   # queries as possible. Often it seems that a scope could be used but
   # it is important to remember that Rails lazy-loads the database calls
   #
-  def validate_all(renew = false) # rubocop:disable AbcSize
+  def validate_all(renew = false) # rubocop:disable AbcSize, MethodLength
     # 2 queries for every equipment model in the cart because of num_available
     # plus about 8 extra
     #
     # if passed with true argument doesn't run validations that should be
     # skipped when validating renewals
     errors = []
+    errors += check_banned
     errors += check_date_blackout(start_date, 'start')
     errors += check_date_blackout(due_date, 'end')
     errors += check_overdue_reservations unless renew
@@ -33,6 +34,16 @@ module CartValidations
       errors += check_should_be_renewed(user_reservations, model, start_date)
     end
     errors.uniq.reject(&:blank?)
+  end
+
+  def check_banned
+    errors = []
+    reserver = User.find_by(id: reserver_id)
+    if reserver && reserver.role == 'banned'
+      errors << 'The reserver is banned and cannot reserve additional '\
+        'equipment.'
+    end
+    errors
   end
 
   def check_date_blackout(date, verb)

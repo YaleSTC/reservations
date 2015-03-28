@@ -15,6 +15,14 @@ shared_examples_for 'valid user email' do
   # end
 end
 
+shared_examples_for 'contains reservation' do
+  it 'has reservation link' do
+    # body contains link to the reservation
+    expect(@mail.body).to \
+      include("<a href=\"http://0.0.0.0:3000/reservations/#{@res.id}\"")
+  end
+end
+
 describe UserMailer, type: :mailer do
   before(:all) do
     @app_config = FactoryGirl.create(:app_config)
@@ -23,80 +31,109 @@ describe UserMailer, type: :mailer do
     ActionMailer::Base.delivery_method = :test
     ActionMailer::Base.perform_deliveries = true
     ActionMailer::Base.deliveries = []
+    @res = FactoryGirl.create(:valid_reservation,
+                              reserver: reserver,
+                              start_date: Time.zone.today + 1)
   end
   let!(:reserver) { FactoryGirl.create(:user) }
-  describe 'checkin_receipt' do
-    before do
-      @res = FactoryGirl.build(:checked_in_reservation, reserver: reserver)
-      @res.save(validate: false)
-      @mail = UserMailer.checkin_receipt(@res).deliver
-    end
-    it_behaves_like 'valid user email'
-    it 'includes overdue information when overdue' do
-      @res.due_date = @res.checked_in.to_date - 1.day
-      @res.save(validate: false)
-      @mail = UserMailer.checkin_receipt(@res).deliver
 
-      expect(@mail.body).to include('late fee')
+  describe 'reservation_status_update' do
+    it 'sends to the reserver' do
+      @mail = UserMailer.reservation_status_update(@res).deliver
+      expect(@mail.to.size).to eq(1)
+      expect(@mail.to.first).to eq(reserver.email)
     end
-  end
-  describe 'checkout_receipt' do
-    before do
-      @res = FactoryGirl.build(:checked_out_reservation, reserver: reserver)
-      @res.save(validate: false)
-      @mail = UserMailer.checkout_receipt(@res).deliver
+
+    it 'sends an email' do
+      @mail = UserMailer.reservation_status_update(@res).deliver
+      expect(ActionMailer::Base.deliveries.count).to eq(1)
     end
-    it_behaves_like 'valid user email'
-  end
-  describe 'missed_reservation_notification' do
-    before do
-      @res = FactoryGirl.build(:missed_reservation, reserver: reserver)
-      @res.save(validate: false)
-      @mail = UserMailer.missed_reservation_notification(@res).deliver
+
+    it 'sends denied notifications' do
+      @res.update_attributes(approval_status: 'denied')
+      expect(@res.status).to eq('denied')
+      @mail = UserMailer.reservation_status_update(@res).deliver
+      expect(@mail.subject).to eq(
+        "[Reservations] #{@res.equipment_model.name} Denied")
     end
-    it_behaves_like 'valid user email'
-  end
-  describe 'overdue_checkin_notification' do
-    before do
-      @res = FactoryGirl.build(:checked_in_reservation, reserver: reserver)
-      @res.save(validate: false)
-      @mail = UserMailer.overdue_checkin_notification(@res).deliver
+
+    it 'sends reminders to check-out' do
+      @res.update_attributes(
+        FactoryGirl.attributes_for(:upcoming_reservation))
+      @mail = UserMailer.reservation_status_update(@res).deliver
+      expect(@mail.subject).to eq(
+        "[Reservations] #{@res.equipment_model.name} Starts Today")
     end
-    it_behaves_like 'valid user email'
-  end
-  describe 'overdue_checked_in_fine' do
-    before do
-      @res = FactoryGirl.build(:checked_in_reservation, reserver: reserver)
-      @res.save(validate: false)
-      @mail = UserMailer.overdue_checked_in_fine(@res).deliver
+
+    it 'sends missed notifications' do
+      @res.update_attributes(FactoryGirl.attributes_for(:missed_reservation))
+      @mail = UserMailer.reservation_status_update(@res).deliver
+      expect(@mail.subject).to eq(
+        "[Reservations] #{@res.equipment_model.name} Missed")
     end
-    it_behaves_like 'valid user email'
-  end
-  describe 'overdue_checked_in_fine with no fine' do
-    before do
-      @em = FactoryGirl.create(:equipment_model, late_fee: 0)
-      @res = FactoryGirl.build(:checked_in_reservation,
-                               reserver: reserver,
-                               equipment_model_id: @em.id)
-      @res.save(validate: false)
-      @mail = UserMailer.overdue_checked_in_fine(@res).deliver
+
+    it 'sends check-out receipts' do
+      @res.update_attributes(
+        FactoryGirl.attributes_for(:checked_out_reservation))
+      @mail = UserMailer.reservation_status_update(@res, true).deliver
+      expect(@mail.subject).to eq(
+        "[Reservations] #{@res.equipment_model.name} Checked Out")
     end
-    it 'doesn\'t send an email' do
-      expect(ActionMailer::Base.deliveries.count).to eq(0)
+
+    it "doesn't sends check-out receipts if not checked out" do
+      @res.update_attributes(
+        FactoryGirl.attributes_for(:valid_reservation))
+      expect(@res.checked_out).to be_nil
+      @mail = UserMailer.reservation_status_update(@res, true).deliver
+      expect(@mail).to be_nil
     end
-  end
-  describe 'reservation_confirmation' do
-    before do
-      @res = [] << FactoryGirl.create(:valid_reservation, reserver: reserver)
-      @mail = UserMailer.reservation_confirmation(@res).deliver
+
+    it 'sends check-out receipts for reservations due today' do
+      @res.update_attributes(
+        FactoryGirl.attributes_for(:checked_out_reservation,
+                                   due_date: Time.zone.today))
+      @mail = UserMailer.reservation_status_update(@res, true).deliver
+      expect(@mail.subject).to eq(
+        "[Reservations] #{@res.equipment_model.name} Checked Out")
     end
-    it_behaves_like 'valid user email'
-  end
-  describe 'upcoming_checkin_notification' do
-    before do
-      @res = FactoryGirl.create(:valid_reservation, reserver: reserver)
-      @mail = UserMailer.upcoming_checkin_notification(@res).deliver
+
+    it 'sends check-out receipts for overdue reservations' do
+      @res.update_attributes(FactoryGirl.attributes_for(:overdue_reservation))
+      @mail = UserMailer.reservation_status_update(@res, true).deliver
+      expect(@mail.subject).to eq(
+        "[Reservations] #{@res.equipment_model.name} Checked Out")
     end
-    it_behaves_like 'valid user email'
+
+    it 'sends reminders to check-in' do
+      @res.update_attributes(
+        FactoryGirl.attributes_for(:checked_out_reservation,
+                                   due_date: Time.zone.today))
+      @mail = UserMailer.reservation_status_update(@res).deliver
+      expect(@mail.subject).to eq(
+        "[Reservations] #{@res.equipment_model.name} Due Today")
+    end
+
+    it 'sends check-in receipts' do
+      @res.update_attributes(
+        FactoryGirl.attributes_for(:checked_in_reservation))
+      @mail = UserMailer.reservation_status_update(@res).deliver
+      expect(@mail.subject).to eq(
+        "[Reservations] #{@res.equipment_model.name} Returned On Time")
+    end
+
+    it 'sends overdue equipment reminders' do
+      @res.update_attributes(FactoryGirl.attributes_for(:overdue_reservation))
+      @mail = UserMailer.reservation_status_update(@res).deliver
+      expect(@mail.subject).to eq(
+        "[Reservations] #{@res.equipment_model.name} Overdue")
+    end
+
+    it 'sends fine emails for overdue equipment' do
+      @res.update_attributes(FactoryGirl.attributes_for(:checked_in_reservation,
+                                                        :overdue))
+      @mail = UserMailer.reservation_status_update(@res).deliver
+      expect(@mail.subject).to eq(
+        "[Reservations] #{@res.equipment_model.name} Returned Overdue")
+    end
   end
 end

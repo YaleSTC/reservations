@@ -39,8 +39,8 @@
         </div>
         <div class="panel-footer">
           <h3>
-            <% if @reservation.equipment_object %>
-              <%= link_to @reservation.equipment_object.name, @reservation.equipment_object %>
+            <% if @reservation.equipment_item %>
+              <%= link_to @reservation.equipment_item.name, @reservation.equipment_item %>
             <% else %>
               <%= link_to '(unassigned)', equipment_model_path(@reservation.equipment_model, anchor: 'items') %>
             <% end %>
@@ -223,11 +223,11 @@
 
   <hr>
   <%= link_to 'Print this page', '#', onclick: 'print();', class: 'btn btn-default' %>
-  <%# if (@reservation.status == "checked out") or (@reservation.status == "overdue") %>
-    <%#= link_to "Email checkout receipt", {:controller => :reservations, :action => "checkout_email", :id => @reservation}, :method => "get", :class => 'btn btn-default' %>
-  <%# elsif @reservation.status.include?("returned") %>
-    <%#= link_to "Email return receipt", {:controller => :reservations, :action => "checkin_email", :id => @reservation}, :method => "get", :class => 'btn btn-default' %>
-  <%# end %>
+  <% if (@reservation.status == "checked out") or (@reservation.status == "overdue") %>
+    <%= link_to "Email checkout receipt", {controller: :reservations, action: "send_receipt", id: @reservation}, method: "get", class: 'btn btn-default' %>
+  <% elsif @reservation.status.include?("returned") %>
+    <%= link_to "Email return receipt", {controller: :reservations, action: "send_receipt", id: @reservation}, method: "get", class: 'btn btn-default' %>
+  <% end %>
   <% if can? :edit, @reservation %>
     <%= link_to "Edit", edit_reservation_path(@reservation), class: 'btn btn-default' %>
   <% end %>
