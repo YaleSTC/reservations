@@ -101,12 +101,24 @@ describe 'guest users' do
       end
 
       it 'can remove items from cart' do
-        click_link 'Remove',
-                   href: "/remove_from_cart/#{EquipmentModel.first.id}"
+        quantity = 0
+
+        fill_in "quantity_field_#{EquipmentModel.first.id}", with: quantity.to_s
+        find('#quantity_form').submit_form!
         visit '/'
         expect(page.find(:css, '#list_items_in_cart')).not_to have_link(
           EquipmentModel.first.name,
           href: equipment_model_path(EquipmentModel.first))
+      end
+
+      it 'can change item quantities' do
+        quantity = 3
+
+        fill_in "quantity_field_#{EquipmentModel.first.id}", with: quantity.to_s
+        find('#quantity_form').submit_form!
+        visit '/'
+        expect(page.find("#quantity_field_#{EquipmentModel.first.id}").value) \
+          .to eq(quantity.to_s)
       end
 
       it 'can change the dates' do

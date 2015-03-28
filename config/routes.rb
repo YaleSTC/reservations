@@ -119,6 +119,8 @@ Reservations::Application.routes.draw do
   put '/add_to_cart/:id' => 'catalog#add_to_cart', :as => :add_to_cart
   put '/remove_from_cart/:id' => 'catalog#remove_from_cart',
       :as => :remove_from_cart
+  put '/catalog/edit_cart_item/:id' => 'catalog#edit_cart_item',
+      :as => :edit_cart_item
   # delete '/cart/empty' => 'application#empty_cart', :as => :empty_cart
   # put '/cart/update' => 'application#update_cart', :as => :update_cart
 
