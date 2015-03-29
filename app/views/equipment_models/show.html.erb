@@ -127,13 +127,13 @@
         <div class="col-md-3">
           <h4>
             <%= (link_to @equipment_model.documentation_file_name,
-                 asset_paths.compute_public_path(@equipment_model.documentation.url, ""), target: "_blank") if @equipment_model.documentation.exists? %>
+                 @equipment_model.documentation.url, target: "_blank") if @equipment_model.documentation.exists? %>
           </h4>
         </div>
       </div>
       <div class="row">
         <div class="col-md-3">
-          <%= link_to asset_paths.compute_public_path(@equipment_model.documentation.url, ""), target: "_blank" do %>
+          <%= link_to @equipment_model.documentation.url, target: "_blank" do %>
             <i class="fa fa-file"></i>
           <% end %>
         </div>

@@ -106,8 +106,13 @@ class EquipmentModel < ActiveRecord::Base
   validates_attachment_size :photo,
                             less_than: 1.megabytes,
                             message: 'must be less than 1 MB in size'
-  validates_attachment :documentation,
-                       content_type: { content_type: 'application/pdf' }
+  validates_attachment_content_type :documentation,
+                                    content_type: ['application/pdf'],
+                                    message: 'must be pdf'
+
+  validates_attachment_size :documentation,
+                            less_than: 5.megabytes,
+                            message: 'must be less than 5 MB in size'
 
   Paperclip.interpolates :normalized_photo_name do |attachment, _style|
     attachment.instance.normalized_photo_name
