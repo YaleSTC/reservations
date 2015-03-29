@@ -219,6 +219,8 @@ class ApplicationController < ActionController::Base
 
     # create an hash of em id's as keys and their availability as the value
     @availability_hash = {}
+    # create a hash of em id's as keys and their qualifications as the value
+    @qualifications_hash = {}
 
     # first get an array of all the paginated ids
     id_array = []
@@ -233,14 +235,25 @@ class ApplicationController < ActionController::Base
     source_reservations =
       Reservation.not_returned.where(equipment_model_id: id_array).all
 
-    # build the hash using class methods that use 0 queries
+    # for getting qualifications associated between the model and the reserver
+    reserver = cart.reserver_id ? User.find(cart.reserver_id) : nil
+
     eq_models.each do |em|
+      # build the hash using class methods that use 0 queries
       @availability_hash[em.id] =
         [EquipmentItem.for_eq_model(em.id, eq_items)\
         - Reservation.number_overdue_for_eq_model(em.id, source_reservations)\
         - em.num_reserved(cart.start_date, cart.due_date, source_reservations)\
         - cart.items[em.id].to_i, 0].max
+
+      # have requirements as part of equipment model itself
+      restricted = em.model_restricted?(cart.reserver_id)
+      if restricted
+        @qualifications_hash[em.id] = Requirement.list_requirement_admins(
+          reserver, em).html_safe
+      end
     end
+
     @page_eq_models_by_category = eq_models
   end
   # rubocop:enable MethodLength, AbcSize
