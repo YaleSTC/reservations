@@ -3,6 +3,6 @@
 <%= render :partial => 'form' %>
 
 <p>
-  <%= link_to "Show", @equipment_item %> |
-  <%= link_to "View All", equipment_items_path %>
+  <%= link_to "Show", @equipment_item, class: 'btn btn-default' %>
+<%= link_to("View All", equipment_model_equipment_items_path(@equipment_item.equipment_model), class: 'btn btn-default') %>
 </p>
