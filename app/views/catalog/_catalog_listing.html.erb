@@ -1,17 +1,19 @@
 <% eq_models_by_category.each do |category, equipment_models| %>
-      <% unless equipment_models.nil? %>
-        <h2 class="catalog">
-          <%= link_to category.name, category_equipment_models_path(category) %>
-        </h2>
-        <div class="thumbnails row">
-        <% equipment_models.each do |equipment_model| %>
-          <div class="col-md-4">
-          <%= render partial: 'catalog/equipment_model_div', locals: { equipment_model: equipment_model,
-                                                               availability_hash: availability_hash,
-                                                               available_string: available_string,
-                                                              } %>
-          </div>
-        <% end %>
-      </div>
+  <% unless equipment_models.nil? %>
+    <h2 class="catalog">
+      <%= link_to category.name, category_equipment_models_path(category) %>
+    </h2>
+    <div class="thumbnails row">
+      <% equipment_models.each do |equipment_model| %>
+        <div class="col-md-4">
+          <%= render partial: 'catalog/equipment_model_div', locals: {
+            equipment_model: equipment_model,
+            availability_hash: availability_hash,
+            available_string: available_string,
+            qualifications_hash: qualifications_hash
+          } %>
+        </div>
       <% end %>
-    <% end %>
+    </div>
+  <% end %>
+<% end %>
