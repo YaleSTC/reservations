@@ -142,18 +142,18 @@ def includes?(array_of_ranges, elem)
   end
 end
 
-def generate_user
+def generate_user # rubocop:disable AbcSize
   User.create do |u|
     u.first_name = Faker::Name.first_name
     u.last_name = Faker::Name.last_name
     u.nickname = Faker::Name.first_name
     u.phone = Faker::PhoneNumber.short_phone_number
     u.email = Faker::Internet.email
-    u.username = Faker::Internet.user_name
+    u.cas_login = Faker::Internet.user_name if ENV['CAS_AUTH']
     u.affiliation = 'YC ' + %w(BK BR CC DC ES JE MC PC SM SY TC TD).sample +
       ' ' + rand(2012..2015).to_s
     u.role = %w(normal checkout).sample
-    u.username = u.email unless ENV['CAS_AUTH']
+    u.username = ENV['CAS_AUTH'] ? u.cas_login : u.email
   end
 end
 
@@ -344,8 +344,8 @@ if User.where('role = ?', 'superuser').empty?
 
   if MINIMAL || SEMI
     if ENV['CAS_AUTH']
-      printf 'CAS '
-      prompt_field(u, :username)
+      prompt_field(u, :cas_login)
+      u.username = u.cas_login
     else
       u.username = u.email
       u.password = 'passw0rd'
@@ -361,8 +361,8 @@ if User.where('role = ?', 'superuser').empty?
     prompt_field(u, :email)
     prompt_field(u, :affiliation)
     if ENV['CAS_AUTH']
-      printf 'CAS '
-      prompt_field(u, :username)
+      prompt_field(u, :cas_login)
+      u.username = u.cas_login
     else
       u.username = u.email
       u.save

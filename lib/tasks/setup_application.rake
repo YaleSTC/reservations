@@ -36,7 +36,8 @@ namespace :app do
         email = STDIN.gets.chomp
         if ENV['CAS_AUTH']
           puts 'Username (i.e. NetID, ensure this is correct):'
-          username = STDIN.gets.chomp
+          cas_login = STDIN.gets.chomp
+          username = cas_login
         else
           username = email
           puts 'Password:'
@@ -54,6 +55,7 @@ namespace :app do
               u.last_name = last_name
               u.phone = phone
               u.email = email
+              u.cas_login = cas_login if ENV['CAS_AUTH']
               u.username = username
               u.affiliation = affiliation
               u.role = 'superuser'
