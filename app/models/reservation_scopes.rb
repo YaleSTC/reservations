@@ -54,7 +54,7 @@ module ReservationScopes
         where('start_date > ?', Time.zone.today.to_time).reserved
       }
       scope :pending, lambda {
-        where('due_date >= ? and start_date <= ?', Time.zone.today, 
+        where('due_date >= ? and start_date <= ?', Time.zone.today,
               Time.zone.today + 8.day).untouched
       }
       scope :starts_on_days, lambda { |start_date, end_date|

@@ -61,7 +61,7 @@ class EquipmentModelsController < ApplicationController
 
     # For pending reservations table
     @pending = Reservation.for_eq_model(@equipment_model)
-                          .pending
+               .pending
   end
 
   def new
