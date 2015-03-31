@@ -132,7 +132,7 @@ describe EquipmentModelsController, type: :controller do
         get :show, id: model
       end
       it_behaves_like 'GET show success'
-      it 'should include @today and @upcoming reservations' do
+      it 'should include @pending reservations' do
         # Make one overdue reservations, one active reservation that started
         # in the past, one active reservation starting today,
         # one reservation starting within the next week,
@@ -159,9 +159,9 @@ describe EquipmentModelsController, type: :controller do
                                          start_date: Time.zone.today + 10.days,
                                          due_date: Time.zone.today + 12.days)
         get :show, id: model
-        expect(assigns(:today)).to eq([] << res_starting_past <<
-                                            res_starting_today)
-        expect(assigns(:upcoming)).to eq([] << res_starting_this_week)
+        expect(assigns(:pending)).to eq([] << res_starting_past <<
+                                            res_starting_today <<
+                                            res_starting_this_week)
       end
     end
     context 'with non-admin user' do
