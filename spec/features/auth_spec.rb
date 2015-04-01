@@ -2,9 +2,6 @@ require 'spec_helper'
 
 describe 'Authentication' do
   subject { page }
-  before(:each) do
-    app_setup
-  end
 
   shared_examples_for 'valid registration' do
     it { is_expected.to have_content 'Successfully created user.' }
@@ -56,6 +53,22 @@ describe 'Authentication' do
     # set the environment variable
     around(:example) do |example|
       env_wrapper('CAS_AUTH' => nil) { example.run }
+    end
+
+    context 'testing login and logout helpers' do
+      before { sign_in_as_user(@checkout_person) }
+      it 'signs in the right user' do
+        visit root_path
+        expect(page).to have_content(@checkout_person.name)
+        expect(page).not_to have_link 'Sign In', href: new_user_session_path
+      end
+
+      it 'can also sign out' do
+        sign_out
+        visit root_path
+        expect(page).to have_link 'Sign In', href: new_user_session_path
+        expect(page).not_to have_content(@checkout_person.name)
+      end
     end
 
     context 'with new user' do

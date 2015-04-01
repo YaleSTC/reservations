@@ -1,11 +1,6 @@
 require 'spec_helper'
 
 describe 'Equipment Model views', type: :feature do
-  before(:each) do
-    app_setup
-    @eq_model = EquipmentModel.first
-  end
-
   context 'show view' do
     context 'pending reservations' do
       before(:each) do
@@ -61,70 +56,46 @@ describe 'Equipment Model views', type: :feature do
 
       context 'as superuser' do
         before do
-          # sign_in_as_user @superuser
-          @superuser = FactoryGirl.create :user, role: 'superuser',
-                                                 view_mode: 'superuser'
-          visit root_path
-          click_link 'Sign In', match: :first
-          fill_in 'Email', with: @superuser.email
-          fill_in 'Password', with: 'passw0rd'
-          click_button 'Sign in'
+          sign_in_as_user @superuser
           visit equipment_model_path(@eq_model)
         end
-        after { click_link 'Log Out' } # sign_out }
+        after { sign_out }
 
         it_behaves_like 'can see pending reservations'
       end
 
       context 'as admin' do
         before do
-          # sign_in_as_user @admin
-          visit root_path
-          click_link 'Sign In', match: :first
-          fill_in 'Email', with: @admin.email
-          fill_in 'Password', with: 'passw0rd'
-          click_button 'Sign in'
+          sign_in_as_user @admin
           visit equipment_model_path(@eq_model)
         end
-        after { click_link 'Log Out' } # sign_out }
+        after { sign_out }
 
         it_behaves_like 'can see pending reservations'
       end
 
       context 'as checkout person' do
         before do
-          # sign_in_as_user @superuser
-          @checkout_person = FactoryGirl.create :checkout_person
-          visit root_path
-          click_link 'Sign In', match: :first
-          fill_in 'Email', with: @checkout_person.email
-          fill_in 'Password', with: 'passw0rd'
-          click_button 'Sign in'
+          sign_in_as_user @checkout_person
           visit equipment_model_path(@eq_model)
         end
-        after { click_link 'Log Out' } # sign_out }
+        after { sign_out }
 
         it_behaves_like 'cannot see pending reservations'
       end
 
       context 'as patron' do
         before do
-          # sign_in_as_user @user
-          visit root_path
-          click_link 'Sign In', match: :first
-          fill_in 'Email', with: @user.email
-          fill_in 'Password', with: 'passw0rd'
-          click_button 'Sign in'
+          sign_in_as_user @user
           visit equipment_model_path(@eq_model)
         end
-        after { click_link 'Log Out' } # sign_out }
+        after { sign_out }
 
         it_behaves_like 'cannot see pending reservations'
       end
 
       context 'as guest' do
         before { visit equipment_model_path(@eq_model) }
-
         it_behaves_like 'cannot see pending reservations'
       end
     end

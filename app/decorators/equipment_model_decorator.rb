@@ -13,7 +13,7 @@ class EquipmentModelDecorator < ApplicationDecorator
   def make_deactivate_btn
     unless object.deleted_at
       # find reservations in the next week
-      res = Reservation.for_eq_model(object)
+      res = Reservation.for_eq_model(object).finalized
             .reserved_in_date_range(Time.zone.today - 1.day,
                                     Time.zone.today + 7.days)
             .count

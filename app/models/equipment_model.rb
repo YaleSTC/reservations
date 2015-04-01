@@ -191,7 +191,7 @@ class EquipmentModel < ActiveRecord::Base
   def num_available(start_date, due_date)
     # for if you just want the number available, 1 query to get
     # relevant reservations
-    relevant_reservations = Reservation.for_eq_model(self)
+    relevant_reservations = Reservation.for_eq_model(self).finalized
                             .reserved_in_date_range(start_date, due_date)
                             .all
     num_available_from_source(start_date, due_date, relevant_reservations)

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'guest users' do
+describe 'guest users', type: :feature do
   # Shared Examples
   shared_examples 'unauthorized' do
     context 'visiting protected route' do
@@ -44,18 +44,12 @@ describe 'guest users' do
     it 'goes to the correct page with sign in link' do
       visit url_path
       expect(current_path).to eq(url_path)
-      expect(page).to have_link('Sign In')
+      expect(page).to have_link('Sign In', href: new_user_session_path)
     end
   end
 
   context 'when enabled' do
     before(:each) do
-      # this currently isn't working for some reason, it's changing the
-      # setting in the test context but that's not translating to the "server"
-      # for some reason. For example, puts AppConfig.first.enable_guests
-      # returns the correct thing but Rails follows whichever setting gets
-      # applied first (depending on the describe block that goes first)
-      app_setup
       AppConfig.first.update_attribute(:enable_guests, true)
     end
 
@@ -87,17 +81,14 @@ describe 'guest users' do
 
     describe 'can use the catalog' do
       before :each do
-        visit '/'
-        within(:css, "#add_to_cart_#{EquipmentModel.first.id}") do
-          click_link 'Add to Cart'
-        end
+        add_item_to_cart(@eq_model)
         visit '/'
       end
 
       it 'can add items to cart' do
         expect(page.find(:css, '#list_items_in_cart')).to have_link(
-          EquipmentModel.first.name,
-          href: equipment_model_path(EquipmentModel.first))
+          @eq_model.name,
+          href: equipment_model_path(@eq_model))
       end
 
       it 'can remove items from cart' do
@@ -107,8 +98,8 @@ describe 'guest users' do
         find('#quantity_form').submit_form!
         visit '/'
         expect(page.find(:css, '#list_items_in_cart')).not_to have_link(
-          EquipmentModel.first.name,
-          href: equipment_model_path(EquipmentModel.first))
+          @eq_model.name,
+          href: equipment_model_path(@eq_model))
       end
 
       it 'can change item quantities' do
@@ -123,10 +114,7 @@ describe 'guest users' do
 
       it 'can change the dates' do
         @new_date = Time.zone.today + 5.days
-        # fill in both visible / datepicker and hidden field
-        fill_in 'cart_due_date_cart', with: @new_date.to_s
-        find(:xpath, "//input[@id='date_end_alt']").set @new_date.to_s
-        find('#cart_form').submit_form!
+        update_cart_due_date(@new_date.to_s)
         visit '/'
         expect(page.find('#cart_due_date_cart').value).to \
           eq(@new_date.strftime('%m/%d/%Y'))
@@ -136,7 +124,6 @@ describe 'guest users' do
 
   context 'when disabled' do
     before(:each) do
-      app_setup
       AppConfig.first.update_attribute(:enable_guests, false)
     end
 

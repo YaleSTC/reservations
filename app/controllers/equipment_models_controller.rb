@@ -37,17 +37,16 @@ class EquipmentModelsController < ApplicationController
 
     calendar_length = 1.month
 
-    @reservation_data =
-      Reservation.active.for_eq_model(@equipment_model).collect do |r|
-        if r.overdue
-          end_date = Time.zone.today + calendar_length
-        else
-          end_date = r.due_date
-        end
-        { start: r.start_date, end: end_date }
-        # the above code mimics the current available? setup to show overdue
-        # equipment as permanently 'out'.
+    @reservation_data = relevant_reservations.collect do |r|
+      if r.overdue
+        end_date = Time.zone.today + calendar_length
+      else
+        end_date = r.due_date
       end
+      { start: r.start_date, end: end_date }
+      # the above code mimics the current available? setup to show overdue
+      # equipment as permanently 'out'.
+    end
 
     @blackouts = Blackout.active.collect do |b|
       { start: b.start_date, end: b.end_date }
@@ -125,7 +124,7 @@ class EquipmentModelsController < ApplicationController
       flash[:notice] = 'Deactivation cancelled.'
       redirect_to @equipment_model
     elsif params[:deactivation_confirmed]
-      Reservation.for_eq_model(@equipment_model).each do |r|
+      Reservation.for_eq_model(@equipment_model).finalized.each do |r|
         r.archive(current_user, 'The equipment model was deactivated.')
           .save(validate: false)
       end

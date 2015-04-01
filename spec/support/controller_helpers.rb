@@ -1,4 +1,4 @@
-# some basic helpers to simulate controller methods in specs
+# some basic helpers to simulate devise controller methods in specs
 module ControllerHelpers
   def current_user
     user_session_info =

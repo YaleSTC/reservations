@@ -55,7 +55,7 @@ module ReservationScopes
         overlaps_with_date(date).active
       }
       scope :for_eq_model, lambda { |eq_model|
-        where(equipment_model_id: eq_model.id).finalized
+        where(equipment_model_id: eq_model.id)
       }
       scope :active_or_requested, lambda {
         where(status: Reservation.statuses.values_at(
