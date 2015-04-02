@@ -162,13 +162,13 @@
       </div>
       <div class="row giant-numbers">
         <div class="col-md-3">
-          <%= @today.count %> 
+          <%= @pending.future.count %>
         </div>
         <div class="col-md-3">
           <%= @pending.checkoutable.count %>
         </div>
       </div>
-      <% if @pending.future.length + @today.length > 0 %>
+      <% if @pending.future.length + @pending.checkoutable.length > 0 %>
         <p id="pending_reservations">
           <%= render 'pending_reservations_table' %>
         </p>
