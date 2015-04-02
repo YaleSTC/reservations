@@ -52,6 +52,22 @@ Devise.setup do |config|
     # Don't put a too small interval or your users won't have the time to
     # change their passwords.
     config.reset_password_within = 6.hours
+
+    # ==> Configuration for :rememberable
+
+    # The time the user will be remembered without asking for credentials
+    # again.
+    # config.remember_for = 2.weeks
+
+    # Invalidates all the remember me tokens when the user signs out.
+    config.expire_all_remember_me_on_sign_out = true
+
+    # If true, extends the user's remember period when remembered via cookie.
+    # config.extend_remember_period = false
+
+    # Options to be passed to the created cookie. For instance, you can set
+    # secure: true in order to force SSL only cookies.
+    # config.rememberable_options = {}
   end
 
   # ==> devise_cas_authenticatable configuration

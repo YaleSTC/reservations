@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150323013431) do
+ActiveRecord::Schema.define(version: 20150327012721) do
 
   create_table "announcements", force: true do |t|
     t.text     "message"
@@ -204,6 +204,7 @@ ActiveRecord::Schema.define(version: 20150323013431) do
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.string   "cas_login"
+    t.datetime "remember_created_at"
   end
 
   add_index "users", ["username"], name: "index_users_on_username", unique: true, using: :btree
