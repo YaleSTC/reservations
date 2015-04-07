@@ -43,6 +43,7 @@ class ImportEquipmentController < ApplicationController
       if valid_model_import?(processed_models, model_file)
         # create EquipmentModels
         @model_statuses = import_models(processed_models, model_overwrite)
+        @equipment_models = @model_statuses[:success]
       else
         redirect_to(:back) && return
       end

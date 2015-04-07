@@ -17,7 +17,7 @@
   </tr>
   </thead>
   <tbody>
-    <% for equipment_model in @equipment_models.includes(:reservations) %>
+    <% for equipment_model in @equipment_models %>
     <tr>
       <td class="text-center"><%= link_to equipment_model.name, equipment_model %></td>
       <% if can? :manage, Reservation %>
