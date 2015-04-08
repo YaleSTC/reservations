@@ -30,10 +30,6 @@ module LayoutHelper
     @site_title = @app_configs.site_title.strip
   end
 
-  def favicon_path
-    @favicon_path = 'favicon.ico'
-  end
-
   # rubocop:disable UselessAssignment
   def reservations_count
     if can? :manage, Reservation

@@ -43,18 +43,33 @@
 .navbar-brand {
   font-weight: 600;
   @include transition(all .2s ease-out);
+  @extend .hvr-underline-reveal;
+  fill: #C2B8AF;
+  stroke: #C2B8AF;
 
-  &:hover{
-    text-shadow: 0 0 10px lighten($right-1-color, 20%),
-                 0 0 20px lighten($right-1-color, 20%),
-                 0 0 30px lighten($right-1-color, 20%),
-                 0 0 40px lighten($right-1-color, 20%),
-                 0 0 70px lighten($right-1-color, 20%),
-                 0 0 80px lighten($right-1-color, 20%),
-                 0 0 100px lighten($right-1-color, 20%),
-                 0 0 150px lighten($right-1-color, 20%);
-    // color: lighten($right-1-color, 60%);
+  &:hover {
+  fill: #FAFDFE;
+  stroke: #FAFDFE;
   }
+}
+
+.logo-container {
+  display: inline-block;
+  float: left;
+  margin-top: -8px;
+  padding-right: 5px;
+}
+
+.logo {
+  fill: inherit;
+  stroke: inherit;
+  width: 32px;
+  height: 32px;
+  @include transition(all .2s ease-out);
+}
+
+.title {
+  display: inline-block;
 }
 
 #navigation_bar {
@@ -110,5 +125,6 @@
 }
 
 .navbar .btn-sign-in {
-	margin-right: 0px;
+  margin-right: 0px;
 }
+
