@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 describe 'Equipment Model views', type: :feature do
-  before(:all) do
+  before(:each) do
     app_setup
     @eq_model = EquipmentModel.first
   end
 
   context 'show view' do
     context 'pending reservations' do
-      before(:all) do
+      before(:each) do
         4.times do
           FactoryGirl.create :equipment_item, equipment_model: @eq_model
         end
