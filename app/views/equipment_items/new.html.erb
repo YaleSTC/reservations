@@ -2,4 +2,4 @@
 
 <%= render :partial => 'form' %>
 
-<p><%= link_to "Back to List", (@equipment_model.nil? ? equipment_items_path : equipment_model_equipment_items_path(@equipment_model)) %></p>
+<p><%= link_to("Back to List", equipment_model_equipment_items_path(@equipment_model)) unless @equipment_model.nil? %></p>

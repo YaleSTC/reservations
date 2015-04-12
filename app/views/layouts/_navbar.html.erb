@@ -9,7 +9,14 @@
         <span class="icon-bar"></span>
       </button>
       <% unless @app_configs.nil? || @app_configs.site_title.nil? %>
-        <%= link_to sanitize("<i class=\"fa fa-th-list\"></i> #{site_title}"), root_path, class: 'navbar-brand' %>
+        <%= link_to root_path, class: 'navbar-brand' do %>
+          <div class="logo-container">
+            <%= inline_svg 'res_logo.svg', class: 'logo' %>
+          </div>
+          <div class="title">
+            <%= site_title %>
+          </div>
+        <% end %>
       <% end %>
     </div>
 
@@ -25,12 +32,11 @@
                 <ul class="dropdown-menu">
                   <li><%= link_to "Categories", categories_path %></li>
                   <li><%= link_to "Equipment Models", equipment_models_path %></li>
-                  <li><%= link_to "Equipment Items", equipment_items_path %></li>
                   <li><%= link_to "Requirements", requirements_path %></li>
                 </ul>
               </li>
             <% else %>
-              <li><%= link_to "Equipment", equipment_items_path %></li>
+              <li><%= link_to "Equipment", equipment_models_path %></li>
             <% end %>
           <% end %>
           <%# test if current_user first because if there is no current user (i.e., no login), do not show %>

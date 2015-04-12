@@ -33,6 +33,9 @@ You'll need the following to run Reservations:
 * a [CAS](http://www.jasig.org/cas) authentication system (optional)
 
 ### Installation
+
+For troubleshooting, see [our wiki](https://github.com/YaleSTC/wiki/wiki).
+
 First, checkout a copy of Reservations using git:
 
 ```
@@ -82,7 +85,7 @@ In the `development` and `test` Rails environments, most of the configuration is
 In `production`, the `config/database.yml.example.production` should be used as it will refer to the relevant environment variables. Additionally, you must define most of the configuration environment variables listed [here](https://github.com/YaleSTC/reservations/wiki/Configuration) in order for Reservations to work.
 
 #### Authentication
-By default, Reservations uses e-mail addresses and passwords to authenticate users. It also supports the CAS authentication system, using the gem [devise_cas_authenticatable](https://github.com/nbudin/devise_cas_authenticatable). If you want to use CAS authentication you must set the `CAS_AUTH` environment variable to some value (see above). Attempting to switch between authentication methods after initial setup is highly discouraged and will likely fail. If this is necessary, you may need to install a fresh copy of the application and manually migrate over user data (see our [wiki](https://github.com/YaleSTC/reservations/wiki/Authentication) for more details).
+By default, Reservations uses e-mail addresses and passwords to authenticate users with the [`devise`](https://rubygems.org/gems/devise) gem. It also supports the CAS authentication system, using the gem [`devise_cas_authenticatable`](https://rubygems.org/gems/devise_cas_authenticatable). If you want to use CAS authentication you must set the `CAS_AUTH` and `CAS_BASE_URL` environment variables to the appropriate values (see [here](https://github.com/YaleSTC/reservations/wiki/Configuration#authentication) for more details). Switching between authentication methods after initial setup is possible with some caveats (see our [wiki](https://github.com/YaleSTC/reservations/wiki/Authentication#switching-authentication-methods) for more details).
 
 To point the gem to the correct CAS server in the development and test Rails environments, modify the following setting in your app's `config/secrets.yml` file (see [above](#configuration)):
 ```yaml

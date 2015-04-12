@@ -12,7 +12,7 @@ class User < ActiveRecord::Base
   if ENV['CAS_AUTH']
     devise :cas_authenticatable
   else
-    devise :database_authenticatable, :recoverable
+    devise :database_authenticatable, :recoverable, :rememberable
   end
 
   has_many :reservations, foreign_key: 'reserver_id', dependent: :destroy
@@ -36,8 +36,11 @@ class User < ActiveRecord::Base
   validates :email,
             presence: true, uniqueness: true,
             format: { with: /\A([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})\z/i }
+  # validations for CAS authentication
+  if ENV['CAS_AUTH']
+    validates :cas_login, presence: true, uniqueness: true
   # validations for password authentication
-  unless ENV['CAS_AUTH']
+  else
     # only run password validatons if the parameter is present
     validates :password,  presence: true,
                           length: { minimum: 8 },

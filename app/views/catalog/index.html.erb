@@ -21,7 +21,12 @@
     </div>
 
     <div id="catalog_listing">
-      <%= render partial: 'catalog_listing', locals: { eq_models_by_category: @eq_models_by_category, available_string: @available_string, availability_hash: @availability_hash } %>
+      <%= render partial: 'catalog_listing', locals: {
+        eq_models_by_category: @eq_models_by_category,
+        available_string:      @available_string,
+        availability_hash:     @availability_hash,
+        qualifications_hash:   @qualifications_hash
+      } %>
     </div>
     <%= paginate @page_eq_models_by_category %>
   <% end %>

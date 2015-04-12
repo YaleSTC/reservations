@@ -163,6 +163,10 @@ GEM
     hitimes (1.2.2)
     http_parser.rb (0.6.0)
     i18n (0.7.0)
+    inline_svg (0.5.2)
+      activesupport (>= 4.1.9)
+      loofah (>= 2.0)
+      nokogiri (~> 1.6)
     jquery-datatables-rails (3.1.1)
       actionpack (>= 3.1)
       jquery-rails
@@ -191,6 +195,8 @@ GEM
       celluloid (>= 0.15.2)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
+    loofah (2.0.1)
+      nokogiri (>= 1.5.9)
     lumberjack (1.0.9)
     mail (2.6.3)
       mime-types (>= 1.16, < 3)
@@ -433,6 +439,7 @@ DEPENDENCIES
   fuubar (~> 2.0.0)
   guard-livereload (~> 2.4.0)
   guard-rspec (~> 4.5.0)
+  inline_svg
   jquery-datatables-rails (~> 3.1.1)
   jquery-rails (~> 3.1.2)
   jquery-ui-rails (~> 5.0.3)

@@ -22,12 +22,11 @@ class EquipmentModelsController < ApplicationController
   # --------- end before filter methods --------- #
 
   def index
+    base = @category ? @category.equipment_models : EquipmentModel.all
     if params[:show_deleted]
-      @equipment_models =
-        @category ? @category.equipment_models : EquipmentModel.all
+      @equipment_models = base.includes(:reservations)
     else
-      @equipment_models =
-        @category ? @category.equipment_models.active : EquipmentModel.active
+      @equipment_models = base.includes(:reservations).active
     end
   end
 
@@ -106,7 +105,11 @@ class EquipmentModelsController < ApplicationController
   def update
     delete_files
 
-    if @equipment_model.update_attributes(equipment_model_params)
+    eq_params = equipment_model_params
+    # correct for file type
+    eq_params[:documentation] = fix_content_type(eq_params[:documentation])
+
+    if @equipment_model.update_attributes(eq_params)
       # hard-delete any deleted checkin/checkout procedures
       delete_procedures(params, 'checkout')
       delete_procedures(params, 'checkin')
@@ -167,5 +170,19 @@ class EquipmentModelsController < ApplicationController
         params[:equipment_model][:checkout_procedures_attributes] if
         params[:equipment_model][:checkout_procedures_attributes]
     end
+  end
+
+  # from https://gist.github.com/cnk/4453c6e81837e8d38b7e
+  def fix_content_type(filedata)
+    return nil if filedata.blank?
+    # see what the unix file command thinks this is
+    if filedata.content_type == 'application/octect-stream'
+      filedata.content_type = type_from_file_command(filedata.path)
+    end
+    filedata
+  end
+
+  def type_from_file_command(file)
+    Paperclip::FileCommandContentTypeDetector.new(file).detect
   end
 end
