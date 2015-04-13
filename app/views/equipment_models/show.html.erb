@@ -168,12 +168,12 @@
         <%= @pending.future.count %>
       </div>
     </div>
-    <% if @pending.future.length + @pending.checkoutable.length > 0 %>
+    <% if @pending.length > 0 %>
       <p>
         <%= render 'pending_reservations_table' %>
       </p>
     <% end %>
-    </section>
+  </section>
 
   <section id="items">
     <h2>Items</h2><hr />
