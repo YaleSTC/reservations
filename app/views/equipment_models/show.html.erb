@@ -69,7 +69,7 @@
     <li><a href="#description">Description</a></li>
     <li><a href="#details">Details</a></li>
     <% if @equipment_model.documentation.exists? %>
-      <li><a href="#documentation">Documentation</a></li>
+      <li><a href="#documenatloction">Documentation</a></li>
     <% end %>
     <% if @equipment_model.model_restricted?(cart.reserver_id) %>
       <li><a href="#requirements">Requirements</a></li>
@@ -77,6 +77,7 @@
     <% if can? :manage, EquipmentModel %>
       <li><a href="#items">Items</a></li>
       <li><a href="#procedures">Procedures</a></li>
+      <li><a href="pending_reservations">Pending Reservations</a><li>
     <% end %>
   </ul>
 </div>
@@ -147,8 +148,33 @@
        <p><%= Requirement.list_requirement_admins(current_user, @equipment_model) %></p>
   </section>
 <% end %>
-
 <% if can? :manage, EquipmentModel %>
+  <section id="pending_reservations">
+    <h2>Pending Reservations</h2><hr />
+
+    <div class="row">
+      <div class="col-md-3">
+        <h4>Today</h4>
+      </div>
+      <div class="col-md-3">
+        <h4>Next 7 Days</h4>
+      </div>
+    </div>
+    <div class="row giant-numbers">
+      <div class="col-md-3">
+        <%= @pending.checkoutable.count %>
+      </div>
+      <div class="col-md-3">
+        <%= @pending.future.count %>
+      </div>
+    </div>
+    <% if @pending.length > 0 %>
+      <p>
+        <%= render 'pending_reservations_table' %>
+      </p>
+    <% end %>
+  </section>
+
   <section id="items">
     <h2>Items</h2><hr />
     <p>
