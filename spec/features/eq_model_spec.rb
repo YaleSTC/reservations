@@ -118,6 +118,8 @@ describe 'Equipment Model views', type: :feature do
           visit equipment_model_path(@eq_model)
         end
         after { click_link 'Log Out' } # sign_out }
+
+        it_behaves_like 'cannot see pending reservations'
       end
 
       context 'as guest' do
