@@ -50,6 +50,9 @@ module ReservationScopes
       scope :checkoutable, lambda {
         where('start_date <= ?', Time.zone.today).reserved
       }
+      scope :future, lambda {
+        where('start_date > ?', Time.zone.today.to_time).reserved
+      }
       scope :starts_on_days, lambda { |start_date, end_date|
         where(start_date: start_date..end_date)
       }

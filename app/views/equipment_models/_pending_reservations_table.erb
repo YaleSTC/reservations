@@ -1,0 +1,20 @@
+<table id="pending_reservations_table" class="datatable table table-striped table-bordered">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Reserver</th>
+    <th>Start Date</th>
+    <th>Due Date</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% for reservation in (@pending) %>
+    <tr>
+      <td><%= link_to reservation.id, reservation %></td>
+      <td><%= link_to reservation.reserver.name, reservation.reserver %></td>
+      <td><%= reservation.start_date.to_date %></td>
+      <td><%= reservation.due_date.to_date %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
