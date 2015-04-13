@@ -30,14 +30,15 @@ class EquipmentModelsController < ApplicationController
     end
   end
 
-  def show
+  def show # rubocop:disable AbcSize, MethodLength
+    relevant_reservations = Reservation.active.for_eq_model(@equipment_model)
     @associated_equipment_models =
       @equipment_model.associated_equipment_models.sample(6)
 
     calendar_length = 1.month
 
     @reservation_data =
-      Reservation.active.for_eq_model(@equipment_model).collect do |r|
+      relevant_reservations.collect do |r|
         if r.status == 'overdue'
           end_date = Time.zone.today + calendar_length
         else
@@ -57,6 +58,11 @@ class EquipmentModelsController < ApplicationController
     @max = @equipment_model.equipment_items.active.count
 
     @restricted = @equipment_model.model_restricted?(cart.reserver_id)
+
+    # For pending reservations table
+    @pending = relevant_reservations.reserved_in_date_range(Time.zone.today,
+                                                            Time.zone.today +
+                                                            8.days).reserved
   end
 
   def new
