@@ -74,7 +74,9 @@ group :development, :test do
   gem 'codeclimate-test-reporter', '~> 0.4.6'
   gem 'database_cleaner', '~> 1.4.0'
   gem 'rubocop', '~> 0.29.1', require: false
+end
 
+group :development, :test, :heroku do
   # seed script gems
   gem 'ffaker', '~> 1.32.1', require: false
   gem 'ruby-progressbar', '~> 1.7.1', require: false
