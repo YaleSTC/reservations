@@ -3,6 +3,10 @@
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
 
+## v5.2.1 - 2015-04-14
+### Fixed
+* Skipped authentication initializer when users table does not yet exist; resolves issue where new Heroku installation failed due to asset precompilation running before database migrations.
+
 ## v5.2.0 - 2015-04-13
 ### Fixed
 * Refactored qualifications logic from catalog views ([#980](https://github.com/YaleSTC/reservations/issues/980)).
