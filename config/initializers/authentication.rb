@@ -1,6 +1,6 @@
 # Check for authentication method and copy data over if necessary (ENV variable
 # to skip if necessary)
-unless ENV['SKIP_AUTH_INIT']
+unless ENV['SKIP_AUTH_INIT'] || !User.table_exists? # skip if no users table
   user = User.first
 
   # if we want to use CAS authentication and the username parameter doesn't
