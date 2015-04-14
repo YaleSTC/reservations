@@ -6,6 +6,7 @@
 ## v5.2.1 - 2015-04-14
 ### Fixed
 * Skipped authentication initializer when users table does not yet exist; resolves issue where new Heroku installation failed due to asset precompilation running before database migrations.
+* Added seed script gems to heroku group in the Gemfile; resolves regression due to [#1165](https://github.com/YaleSTC/reservations/issues/1165) ([#1226](https://github.com/YaleSTC/reservations/issues/1226)).
 
 ## v5.2.0 - 2015-04-13
 ### Fixed
