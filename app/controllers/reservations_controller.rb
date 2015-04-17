@@ -14,6 +14,7 @@ class ReservationsController < ApplicationController
     @user = User.find(params[:user_id])
     return unless @user.role == 'banned'
     flash[:error] = 'This user is banned and cannot check out equipment.'
+    params[:banned] = true
   end
 
   def set_reservation
@@ -260,7 +261,13 @@ class ReservationsController < ApplicationController
 
     ## Basic-logic checks, only need to be done once
 
-    redirect_to(:back) && return unless check_tos(@user)
+    # check terms of service
+    unless @user.terms_of_service_accepted ||
+           params[:terms_of_service_accepted].present?
+      flash[:error] = 'You must confirm that the user accepts the Terms of '\
+        'Service.'
+      redirect_to(:back) && return
+    end
 
     if checked_out_reservations.empty?
       flash[:error] = 'No reservation selected.'
@@ -295,6 +302,11 @@ class ReservationsController < ApplicationController
         redirect_to manage_reservations_for_user_path(@user)
         raise ActiveRecord::Rollback
       end
+    end
+
+    # update user with terms of service acceptance now that checkout worked
+    unless @user.terms_of_service_accepted
+      @user.update_attributes(terms_of_service_accepted: true)
     end
 
     # Send checkout receipts
@@ -360,7 +372,9 @@ class ReservationsController < ApplicationController
   end
 
   def manage # initializer
-    redirect_to(root_path) && return unless flash[:error].nil?
+    if params[:banned] && current_user.view_mode != 'superuser'
+      redirect_to(root_path) && return
+    end
     @check_out_set = @user.due_for_checkout
     @check_in_set = @user.due_for_checkin
 
@@ -368,7 +382,9 @@ class ReservationsController < ApplicationController
   end
 
   def current
-    redirect_to(root_path) && return unless flash[:error].nil?
+    if params[:banned] && current_user.view_mode != 'superuser'
+      redirect_to(root_path) && return
+    end
     @user_overdue_reservations_set =
       [Reservation.overdue.for_reserver(@user)].delete_if(&:empty?)
     @user_checked_out_today_reservations_set =
