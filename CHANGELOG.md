@@ -5,6 +5,10 @@ Changelog
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+### v3.4.10
+*Released on 20 March 2015*
+* Forgetting to check off the ToS checkbox during checkout no longer causes checkout to fail silently ([#1227](https://github.com/YaleSTC/reservations/issues/1227)).
+
 ### v3.4.9
 *Released on 16 March 2015*
 #### Bug Fixes

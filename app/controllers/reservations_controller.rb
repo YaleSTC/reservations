@@ -15,6 +15,7 @@ class ReservationsController < ApplicationController
     @user = User.find(params[:user_id])
     return unless @user.role == 'banned'
     flash[:error] = 'This user is banned and cannot check out equipment.'
+    params[:banned] = true
   end
 
   def set_reservation
@@ -317,7 +318,9 @@ class ReservationsController < ApplicationController
   end
 
   def manage # initializer
-    redirect_to(root_path) && return unless flash[:error].nil?
+    if params[:banned] && current_user.view_mode != 'superuser'
+      redirect_to(root_path) && return
+    end
     @check_out_set = @user.due_for_checkout
     @check_in_set = @user.due_for_checkin
 
@@ -325,7 +328,9 @@ class ReservationsController < ApplicationController
   end
 
   def current
-    redirect_to(root_path) && return unless flash[:error].nil?
+    if params[:banned] && current_user.view_mode != 'superuser'
+      redirect_to(root_path) && return
+    end
     @user_overdue_reservations_set = [Reservation.overdue.for_reserver(@user)].delete_if{|a| a.empty?}
     @user_checked_out_today_reservations_set = [Reservation.checked_out_today.for_reserver(@user)].delete_if{|a| a.empty?}
     @user_checked_out_previous_reservations_set = [Reservation.checked_out_previous.for_reserver(@user)].delete_if{|a| a.empty?}
