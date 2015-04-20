@@ -2,6 +2,48 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+## v5.3.0 - 2015-09-21
+### Fixed
+* Fixed issues with reservation renewals and added tests ([#416](https://github.com/YaleSTC/reservations/issues/416), [#1218](https://github.com/YaleSTC/reservations/issues/1218)).
+* Reservation scopes refactored ([#462](https://github.com/YaleSTC/reservations/issues/462)).
+* Equipment Items and other deactivate-able resources can now be destroyed using Rails Admin ([#1062](https://github.com/YaleSTC/reservations/issues/1062)).
+* Fixed broken calendar logic ([#1218](https://github.com/YaleSTC/reservations/issues/1218)).
+* Forgetting to check off the ToS checkbox during checkout no longer causes checkout to fail silently ([#1227](https://github.com/YaleSTC/reservations/issues/1227)).
+* ToS acceptance is no longer saved if checkout doesn't succeed ([#1227](https://github.com/YaleSTC/reservations/issues/1227)).
+* Trying to make a reservation with an empty cart now redirects properly to the last page you were on ([#1235](https://github.com/YaleSTC/reservations/issues/1235)).
+* Autocomplete now works on Heroku / when using a PostgreSQL database ([#1237](https://github.com/YaleSTC/reservations/issues/1237)).
+* Several issues with e-mails were addressed ([#1240](https://github.com/YaleSTC/reservations/issues/1240)).
+* Admin users and superusers can no longer ban themselves ([#1241](https://github.com/YaleSTC/reservations/issues/1241)).
+* Attempting to check out equipment without checking off the ToS checkbox no longer updated the equipment item notes ([#1243](https://github.com/YaleSTC/reservations/issues/1243)).
+* Fixed visibility issue with autocomplete selection ([#1251](https://github.com/YaleSTC/reservations/issues/1251)).
+* Archiving a reservation with a missing reserver no longer fails ([#1253](https://github.com/YaleSTC/reservations/issues/1253)).
+* The Reservation#approved? method now correctly returns false for open requests ([#1267](https://github.com/YaleSTC/reservations/issues/1267)).
+* CSV upload now sanitizes for invalid UTF-8 characters ([#1271](https://github.com/YaleSTC/reservations/issues/1271), [#1299](https://github.com/YaleSTC/reservations/issues/1299)).
+* All Rake tasks were refactored to avoid the `LocalJumpError` when calling the bulk tasks defined for Heroku ([#1276](https://github.com/YaleSTC/reservations/issues/1276)).
+* The authorization initializer is now skipped if running commands with a pre-v4.1.0 database ([#1282](https://github.com/YaleSTC/reservations/issues/1282)).
+
+### Added
+* Added integration tests for basic reservation actions and Rails Admin routes ([#416](https://github.com/YaleSTC/reservations/issues/416)).
+* Added Reservation flags for various attributes ([see wiki](https://github.com/YaleSTC/reservations/wiki/Reservation-Flags), [#462](https://github.com/YaleSTC/reservations/issues/462)).
+* Set up Capistrano deployment script ([#1074](https://github.com/YaleSTC/reservations/issues/1074)).
+* Added quantity fields to cart items ([#1114](https://github.com/YaleSTC/reservations/issues/1114)).
+* Added the ability to view returned overdue reservations from the reservations index page along with their late fees ([#1121](https://github.com/YaleSTC/reservations/issues/1121)).
+* Checkout receipts are now sent automatically on checkout ([#1215](https://github.com/YaleSTC/reservations/issues/1215)).
+* Added an optional admin notification upon Reservation creation ([#1284](https://github.com/YaleSTC/reservations/issues/1284)).
+* Added an optional cap for equipment item late fees ([#1285](https://github.com/YaleSTC/reservations/issues/1285)).
+* Added kill switch for user e-mails ([#1286](https://github.com/YaleSTC/reservations/issues/1286)).
+
+### Changed
+* Reservation approval status and status method are now consolidated into a status enum ([#462](https://github.com/YaleSTC/reservations/issues/462)).
+* Equipment item notes can now only be viewed by admin roles and higher ([#1245](https://github.com/YaleSTC/reservations/issues/1245)).
+* Equipment can now be checked-in for banned users ([#1246](https://github.com/YaleSTC/reservations/issues/1246)).
+* TOS checkbox on checkout/checkin page moved to the left of the notice text for increased salience and UX consistency ([#1259](https://github.consistencom/YaleSTC/reservations/issues/1259)).
+* The Reservation status / flagging tasks have been removed from the `flag_reservations` namespace and put in separate files ([#1273](https://github.com/YaleSTC/reservations/issues/1273)).
+* The cron task that flags overdue reservations has been updated to check all past reservations ([#1274](https://github.com/YaleSTC/reservations/issues/1274)).
+
+## v5.2.2 - 2015-04-20
+### Fixed
+* Forgetting to check off the ToS checkbox during checkout no longer causes checkout to fail silently ([#1227](https://github.com/YaleSTC/reservations/issues/1227)).
 
 ## v5.2.1 - 2015-04-14
 ### Fixed
@@ -169,6 +211,10 @@
 * Added persistent flash for superusers in other view modes ([#974](https://github.com/YaleSTC/reservations/issues/974)).
 * Replaced Airbrake with Party Foul ([#501](https://github.com/YaleSTC/reservations/issues/501)).
 * The first user is now created as a superuser ([#753](https://github.com/YaleSTC/reservations/issues/753)).
+
+## v3.4.10 - 2015-04-20
+### Fixed
+* Forgetting to check off the ToS checkbox during checkout no longer causes checkout to fail silently ([#1227](https://github.com/YaleSTC/reservations/issues/1227)).
 
 ## v3.4.9 - 2015-03-16
 ### Fixed
