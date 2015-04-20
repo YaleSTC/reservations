@@ -34,7 +34,7 @@ class ReservationsController < ApplicationController
     f = (can? :manage, Reservation) ? :upcoming : :reserved
 
     @filters = [:reserved, :checked_out, :overdue, :returned, :upcoming,
-                :requested, :approved_requests, :denied_requests]
+                :requested, :approved_requests, :denied]
     @filters << :missed unless AppConfig.check(:res_exp_time)
 
     # if filter in session set it
@@ -408,7 +408,7 @@ class ReservationsController < ApplicationController
   end
 
   def approve_request
-    @reservation.approval_status = 'approved'
+    @reservation.status = 'reserved'
     @reservation.notes = @reservation.notes.to_s # in case of nil
     @reservation.notes += "\n\n### Approved on #{Time.zone.now.to_s(:long)} "\
       "by #{current_user.md_link}"
@@ -424,7 +424,7 @@ class ReservationsController < ApplicationController
   end
 
   def deny_request
-    @reservation.approval_status = 'denied'
+    @reservation.status = 'denied'
     @reservation.notes = @reservation.notes.to_s # in case of nil
     @reservation.notes += "\n\n### Denied on #{Time.zone.now.to_s(:long)} by "\
       "#{current_user.md_link}"
@@ -462,7 +462,7 @@ class ReservationsController < ApplicationController
 
   def reservation_params
     params.require(:reservation)
-      .permit(:checkout_handler_id, :checkin_handler_id, :approval_status,
+      .permit(:checkout_handler_id, :checkin_handler_id,
               :checked_out, :checked_in, :equipment_item, :due_date,
               :equipment_item_id, :notes, :notes_unsent, :times_renewed,
               :reserver_id, :reserver, :start_date, :equipment_model_id)

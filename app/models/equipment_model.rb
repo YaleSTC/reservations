@@ -193,7 +193,7 @@ class EquipmentModel < ActiveRecord::Base
     # relevant reservations
     relevant_reservations = Reservation.for_eq_model(self)
                             .reserved_in_date_range(start_date, due_date)
-                            .not_returned.all
+                            .all
     num_available_from_source(start_date, due_date, relevant_reservations)
   end
 
@@ -214,8 +214,7 @@ class EquipmentModel < ActiveRecord::Base
     # get the total number of items of this kind then subtract the total
     # quantity currently reserved, checked-out, and overdue
     total = equipment_items.active.count
-    reserved = Reservation.reserved_on_date(date)
-               .not_returned.for_eq_model(self).count
+    reserved = Reservation.reserved_on_date(date).for_eq_model(self).count
     total - reserved - number_overdue
   end
 

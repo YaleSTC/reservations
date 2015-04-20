@@ -14,27 +14,24 @@ class UserMailer < ActionMailer::Base
     set_app_config
 
     @reservation = reservation
-    @status = @reservation.status
+    @status = @reservation.human_status
 
-    return if !receipt && @status == 'returned overdue' &&
+    return if !receipt && @status == 'returned' && @reservation.overdue &&
               @reservation.equipment_model.late_fee == 0
 
     return if receipt && @reservation.checked_out.nil?
 
-    if @reservation.start_date == Time.zone.today &&
-       @status == 'reserved'
-      @status = 'starts today'
-    elsif @reservation.due_date == Time.zone.today &&
-          @status == 'checked out'
-      @status = 'due today'
-    end
-
-    if receipt && (@status == 'due today' || @status == 'overdue')
+    if receipt && (@status == 'due today' || @reservation.overdue)
       # force sending a check out receipt
       @status = 'checked out'
     end
 
-    status_formatted = @status.split.map(&:capitalize) * ' '
+    if @status == 'reserved'
+      # we only send emails for reserved reservations if it was a request
+      @status = 'request approved'
+    end
+
+    status_formatted = @status.sub('_', ' ').split.map(&:capitalize) * ' '
 
     mail(to: @reservation.reserver.email,
          subject: '[Reservations] ' \

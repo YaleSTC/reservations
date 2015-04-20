@@ -2,10 +2,7 @@ desc 'Send email reminder about upcoming checkins'
 task send_upcoming_checkin_reminder: :environment do
   if AppConfig.first.upcoming_checkin_email_active?
     # get all reservations that end today and aren't already checked in
-    upcoming_reservations =
-      Reservation.where('checked_out IS NOT NULL and checked_in IS NULL and '\
-                          'due_date >= ? and due_date < ?',
-                        Time.zone.today, Time.zone.today + 1.day)
+    upcoming_reservations = Reservation.due_soon
     Rails.logger.info "Found #{upcoming_reservations.size} reservations due "\
                       'for checkin. Sending reminder emails...'
     upcoming_reservations.each do |upcoming_reservation|

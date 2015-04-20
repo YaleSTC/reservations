@@ -373,6 +373,11 @@ describe ReservationsController, type: :controller do
           expect(Reservation.last.notes.empty?).not_to be_truthy
         end
 
+        it 'sets the status to reserved' do
+          @req.call
+          expect(Reservation.last.reserved?)
+        end
+
         it 'empties the Cart' do
           @req.call
           expect(response.request.env['rack.session'][:cart].items.count)
@@ -973,6 +978,7 @@ describe ReservationsController, type: :controller do
     #     checkout_handler, checked_out (time), equipment_item; updates
     #     notes
     # - renders :receipt template
+    # - sets reservation status to 'checked_out'
 
     # Note: Many of these can be cross-applied to #checkin as well
 
@@ -1002,10 +1008,12 @@ describe ReservationsController, type: :controller do
         expect(@reservation.checkout_handler).to be_nil
         expect(@reservation.checked_out).to be_nil
         expect(@reservation.equipment_item).to be_nil
+        expect(@reservation.reserved?).to be_truthy
         @reservation.reload
         expect(@reservation.checkout_handler).to be_a(User)
         expect(@reservation.checked_out).to_not be_nil
         expect(@reservation.equipment_item).to eq @item
+        expect(@reservation.checked_out).to be_truthy
       end
 
       it 'updates the equipment item history' do
@@ -1554,15 +1562,14 @@ describe ReservationsController, type: :controller do
   describe '#approve_request PUT' do
     before do
       sign_in @admin
-      @requested =
-        FactoryGirl.create(:valid_reservation, approval_status: 'requested')
+      @requested = FactoryGirl.create(:request)
       put :approve_request, id: @requested.id
     end
-    it 'should set the reservation approval status' do
-      expect(assigns(:reservation).approval_status).to eq('approved')
+    it 'should set the reservation status' do
+      expect(assigns(:reservation).status).to eq('reserved')
     end
     it 'should save the reservation' do
-      expect(@requested.reload.approval_status).to eq('approved')
+      expect(@requested.reload.status).to eq('reserved')
     end
     it 'should send an email' do
       expect_email(UserMailer.reservation_status_update(@requested))
@@ -1575,15 +1582,14 @@ describe ReservationsController, type: :controller do
   describe '#deny_request PUT' do
     before do
       sign_in @admin
-      @requested =
-        FactoryGirl.create(:valid_reservation, approval_status: 'requested')
+      @requested = FactoryGirl.create(:request)
       put :deny_request, id: @requested.id
     end
-    it 'should set the reservation approval status to deny' do
-      expect(assigns(:reservation).approval_status).to eq('denied')
+    it 'should set the reservation status to denied' do
+      expect(assigns(:reservation).status).to eq('denied')
     end
     it 'should save the reservation' do
-      expect(@requested.reload.approval_status).to eq('denied')
+      expect(@requested.reload.status).to eq('denied')
     end
     it 'should send an email' do
       expect_email(UserMailer.reservation_status_update(@requested))

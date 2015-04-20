@@ -38,8 +38,8 @@ class EquipmentModelsController < ApplicationController
     calendar_length = 1.month
 
     @reservation_data =
-      relevant_reservations.collect do |r|
-        if r.status == 'overdue'
+      Reservation.active.for_eq_model(@equipment_model).collect do |r|
+        if r.overdue
           end_date = Time.zone.today + calendar_length
         else
           end_date = r.due_date

@@ -143,10 +143,6 @@ describe EquipmentModelsController, type: :controller do
         FactoryGirl.create(:equipment_item, equipment_model: model)
         FactoryGirl.create(:equipment_item, equipment_model: model)
         FactoryGirl.create(:missed_reservation, equipment_model: model)
-        res_starting_past =
-        FactoryGirl.create(:missed_reservation, equipment_model: model,
-                                                due_date:
-                                                Time.zone.today + 1.days)
         res_starting_today =
         FactoryGirl.create(:reservation, equipment_model: model,
                                          start_date: Time.zone.today,
@@ -155,12 +151,12 @@ describe EquipmentModelsController, type: :controller do
         FactoryGirl.create(:reservation, equipment_model: model,
                                          start_date: Time.zone.today  +  2.days,
                                          due_date: Time.zone.today + 4.days)
+
         FactoryGirl.create(:reservation, equipment_model: model,
                                          start_date: Time.zone.today + 10.days,
                                          due_date: Time.zone.today + 12.days)
         get :show, id: model
-        expect(assigns(:pending)).to eq([] << res_starting_past <<
-                                            res_starting_today <<
+        expect(assigns(:pending)).to eq([] << res_starting_today <<
                                             res_starting_this_week)
       end
     end

@@ -81,7 +81,8 @@ class Cart
       if request
         notes = "### Requested on #{Time.zone.now.to_s(:long)} by "\
           "#{user.md_link}\n\n#### Notes:\n#{res_notes}"
-        r.approval_status = 'requested'
+        r.flag(:request)
+        r.status = 'requested'
         message << "Request for #{r.equipment_model.md_link} filed "\
           "successfully. #{errors.to_sentence}\n"
       else
@@ -89,7 +90,7 @@ class Cart
           "#{user.md_link}"
         notes += "\n\n#### Notes:\n#{res_notes}" unless res_notes.nil? ||
                                                         res_notes.empty?
-        r.approval_status = 'auto'
+        r.status = 'reserved'
         message << "Reservation for #{r.equipment_model.md_link} created "\
           "successfully#{', even though ' + errors.to_sentence[0, 1].downcase\
           + errors.to_sentence[1..-1] unless errors.empty?}.\n"

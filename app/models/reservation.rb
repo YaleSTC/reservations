@@ -16,9 +16,25 @@ class Reservation < ActiveRecord::Base
   end
   validate :start_date_before_due_date
   validate :matched_item_and_model
+  validate :check_status
+  validate :status_final_state
   validate :not_in_past, :available, :check_banned, on: :create
 
   nilify_blanks only: [:notes]
+
+  # see https://robots.thoughtbot.com/whats-new-in-edge-rails-active-record-enum
+  enum status: %w(requested reserved denied checked_out missed returned
+                  archived)
+
+  # valid bitmask flags
+  # set by reservation |= FLAGS[:flag]
+  # check by reservation & FLAGS[:flag]
+  #   = 0 when false
+  #   > 0 when true
+  # query by where('flags & ? > 0', FLAGS[:flag])
+  # or where('flags & ? = 0', FLAGS[:flag]) for not flagged
+  FLAGS = { request: (1 << 1), broken: (1 << 2), lost: (1 << 3),
+            fined: (1 << 4), missed_email_sent: (1 << 5) }
 
   ## Class methods ##
 
@@ -67,28 +83,42 @@ class Reservation < ActiveRecord::Base
     # 0 queries
     count = 0
     reservations.each do |r|
-      count += 1 if r.status == 'overdue' && r.equipment_model_id == model_id
+      count += 1 if r.overdue && r.equipment_model_id == model_id
     end
     count
   end
 
   ## Getter style instance methods ##
 
-  def status # rubocop:disable CyclomaticComplexity, PerceivedComplexity
-    return if due_date.nil?
-    if checked_out.nil?
-      if approval_status == 'auto' || approval_status == 'approved'
-        due_date >= Time.zone.today ? 'reserved' : 'missed'
-      elsif approval_status
-        approval_status
+  def approved?
+    flagged?(:request) && (status != 'denied')
+  end
+
+  def flagged?(flag)
+    flags & FLAGS[flag] > 0
+  end
+
+  def flag(flag)
+    self.flags |= FLAGS[flag]
+  end
+
+  def unflag(flag)
+    self.flags - FLAGS[flag]
+  end
+
+  def human_status # rubocop:disable all
+    if overdue
+      if status == 'returned'
+        'returned overdue'
       else
-        # just in case an admin does something absurd in the database?
-        '?'
+        'overdue'
       end
-    elsif checked_in.nil?
-      due_date < Time.zone.today ? 'overdue' : 'checked out'
+    elsif start_date == Time.zone.today && status == 'reserved'
+      'starts today'
+    elsif due_date == Time.zone.today && status == 'checked_out'
+      'due today'
     else
-      due_date < checked_in.to_date ? 'returned overdue' : 'returned on time'
+      status
     end
   end
 
@@ -193,6 +223,7 @@ class Reservation < ActiveRecord::Base
 
     self.checkin_handler = checkin_handler
     self.checked_in = Time.zone.now
+    self.status = 'returned'
 
     # gather all the procedure texts that were not
     # checked, ie not included in the procedures hash
@@ -237,6 +268,7 @@ class Reservation < ActiveRecord::Base
         "Reason:\n#{note}\n\n#### The checkin and checkout dates may "\
         'reflect the archive date because the reservation was for a '\
         'nonexistent piece of equipment or otherwise problematic.'
+      self.status = 'archived'
     end
     self
   end
@@ -251,6 +283,7 @@ class Reservation < ActiveRecord::Base
     self.checkout_handler = checkout_handler
     self.checked_out = Time.zone.now
     self.equipment_item_id = eq_item
+    self.status = 'checked_out'
 
     incomplete_procedures = []
     procedures = Reservation.completed_procedures(procedures)

@@ -50,11 +50,19 @@ describe UserMailer, type: :mailer do
     end
 
     it 'sends denied notifications' do
-      @res.update_attributes(approval_status: 'denied')
-      expect(@res.status).to eq('denied')
+      @res.update_attributes(status: 'denied')
+      expect(@res.denied?).to be_truthy
       @mail = UserMailer.reservation_status_update(@res).deliver
       expect(@mail.subject).to eq(
         "[Reservations] #{@res.equipment_model.name} Denied")
+    end
+
+    it 'sends approved request notifications' do
+      @res.update_attributes(status: 'reserved',
+                             flags: Reservation::FLAGS[:request])
+      @mail = UserMailer.reservation_status_update(@res).deliver
+      expect(@mail.subject).to eq(
+        "[Reservations] #{@res.equipment_model.name} Request Approved")
     end
 
     it 'sends reminders to check-out' do
@@ -118,7 +126,7 @@ describe UserMailer, type: :mailer do
         FactoryGirl.attributes_for(:checked_in_reservation))
       @mail = UserMailer.reservation_status_update(@res).deliver
       expect(@mail.subject).to eq(
-        "[Reservations] #{@res.equipment_model.name} Returned On Time")
+        "[Reservations] #{@res.equipment_model.name} Returned")
     end
 
     it 'sends overdue equipment reminders' do

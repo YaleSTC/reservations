@@ -42,15 +42,14 @@ module ReservationsHelper
   def manage_reservations_btn # rubocop:disable all
     return if (cannot? :manage, Reservation) || @reservation.reserver.id.nil?
     if (can? :override, :reservation_errors) &&
-       @reservation.approval_status == 'requested'
+       @reservation.flagged?(:request)
       link_to 'Review Request', review_request_path, class: 'btn btn-default'
-    elsif @reservation.status == 'reserved'
+    elsif @reservation.reserved?
       link_to 'Check-Out',
               manage_reservations_for_user_path(@reservation.reserver.id,
                                                 anchor: 'check_out_row'),
               class: 'btn btn-default'
-    elsif @reservation.status == 'checked out' ||
-          @reservation.status == 'overdue'
+    elsif @reservation.checked_out?
       link_to 'Check-In',
               manage_reservations_for_user_path(@reservation.reserver.id,
                                                 anchor: 'check_in_row'),

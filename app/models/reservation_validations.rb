@@ -56,4 +56,53 @@ module ReservationValidations
     return unless reserver.role == 'banned'
     errors.add(:base, "Reserver cannot be banned.\n")
   end
+
+  # Checks that the status column agrees with the actual reservation data
+  # rubocop:disable all
+  def check_status
+    return unless self.status_changed?
+    case status
+    when Reservation.statuses['requested']
+      if !self.flagged?(:request)
+        errors.add(:base, "Request flag must be set for requested status.\n")
+      end
+    when Reservation.statuses['denied']
+      if !self.flagged?(:request)
+        errors.add(:base, "Request flag must be set for denied status.\n")
+      end
+    when Reservation.statuses['reserved']
+      if checked_out
+        errors.add(:base, "Reserved reservation must not be checked out\n")
+      elsif start_date < Time.zone.today
+        errors.add(:base, 'Reserved reservation must not start earlier than'\
+        "today.\n")
+      end
+    when Reservation.statuses['checked_out']
+      if !checked out
+        errors.add(:base, "Checked out reservation must be checked out.\n")
+      elsif checked_in
+        errors.add(:base, "Checked out reservation must not be checked in.\n")
+      end
+    when Reservation.statuses['missed']
+      if checked_out
+        errors.add(:base, "Missed reservation must not be checked out.\n")
+      elsif start_date >= Time.zone.today
+        errors.add(:base, "Missed reservation must start before today.\n")
+      end
+    when Reservation.statuses['returned']
+      if !checked_out
+        errors.add(:base, "Returned reservation must be checked out.\n")
+      elsif !checked_in
+        errors.add(:base, "Returned reservation must be checked in.\n")
+      end
+    end
+  end
+
+  # Checks that the status is not changed when it is in a final state
+  def status_final_state
+    return unless status_changed?
+    return unless %w(denied missed returned archived).include?(status_was)
+    errors.add(:base, "Cannot change status of #{status_was}"\
+    " reservation.\n")
+  end
 end

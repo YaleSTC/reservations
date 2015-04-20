@@ -233,7 +233,7 @@ class ApplicationController < ActionController::Base
 
     # 1 query to grab all the related reservations
     source_reservations =
-      Reservation.not_returned.where(equipment_model_id: id_array).all
+      Reservation.active.where(equipment_model_id: id_array).all
 
     # for getting qualifications associated between the model and the reserver
     reserver = cart.reserver_id ? User.find(cart.reserver_id) : nil
