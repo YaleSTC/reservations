@@ -1,4 +1,4 @@
-class Cart
+class Cart # rubocop:disable ClassLength
   include ActiveModel::Validations
   include CartValidations
   validates :reserver_id, :start_date, :due_date, presence: true
@@ -32,18 +32,18 @@ class Cart
   end
 
   # Adds equipment model id to items hash
-  def add_item(equipment_model)
+  def add_item(equipment_model, _quantity = nil)
     return if equipment_model.nil?
     key = equipment_model.id
     items[key] = items[key] ? items[key] + 1 : 1
   end
 
-  # Remove equipment model id from items hash, or decrement its count
-  def remove_item(equipment_model)
+  def edit_cart_item(equipment_model, quantity)
     return if equipment_model.nil?
+    return if quantity < 0
     key = equipment_model.id
-    items[key] = items[key] ? items[key] - 1 : 0
-    self.items = items.except(key) if items[key] <= 0
+    items[key] = items[key] ? quantity : 0
+    self.items = items.except(key) if items[key] == 0
   end
 
   def empty?

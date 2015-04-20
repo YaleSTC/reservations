@@ -54,42 +54,6 @@ describe CatalogController, type: :controller do
       end
     end
   end
-  describe 'PUT remove_from_cart' do
-    context 'valid equipment_model selected' do
-      before(:each) do
-        @equipment_model = FactoryGirl.create(:equipment_model)
-        put :add_to_cart, id: @equipment_model.id
-        put :remove_from_cart, id: @equipment_model.id
-      end
-      it 'should call cart.remove_item to remove item from cart' do
-        put :add_to_cart, id: @equipment_model.id
-        expect do
-          put :remove_from_cart, id: @equipment_model.id
-        end.to change { session[:cart].items.size }.by(-1)
-      end
-      it 'should set flash[:error] to the result of '\
-        'Reservation.validate_set if exists' do
-        allow(Reservation).to\
-          receive(:validate_set).with(session[:cart].reserver,
-                                      session[:cart].prepare_all)
-          .and_return('test')
-        expect(flash[:error]).not_to be_nil
-      end
-      it { is_expected.to redirect_to(root_path) }
-    end
-    context 'invalid equipment_model selected' do
-      before(:each) do
-        put :remove_from_cart, id: 1
-      end
-      it { is_expected.to redirect_to(root_path) }
-      it { is_expected.to set_flash }
-      it 'should add logger error' do
-        expect(Rails.logger).to\
-          receive(:error).with('Attempt to add invalid equipment model 1')
-        put :remove_from_cart, id: 1
-      end
-    end
-  end
   describe 'PUT update_user_per_cat_page' do
     before(:each) do
       put :update_user_per_cat_page
