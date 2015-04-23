@@ -990,6 +990,7 @@ describe ReservationsController, type: :controller do
         reservations_params =
           { @reservation.id.to_s => { notes: '',
                                       equipment_item_id: @item.id } }
+        ActionMailer::Base.deliveries = []
         put :checkout, user_id: @user.id, reservations: reservations_params
       end
 
@@ -1022,6 +1023,10 @@ describe ReservationsController, type: :controller do
 
       it 'updates the reservation notes' do
         expect { @reservation.reload }.to change(@reservation, :notes)
+      end
+
+      it 'sends checkout receipts' do
+        expect(ActionMailer::Base.deliveries.count).to eq(1)
       end
     end
 
