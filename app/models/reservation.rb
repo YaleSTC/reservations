@@ -168,25 +168,23 @@ class Reservation < ActiveRecord::Base
     due_date
   end
 
-  def eligible_for_renew?
+  def eligible_for_renew? # rubocop:disable all
     # determines if a reservation is eligible for renewal, based on how many
-    # days before the due date it is and the max number of times one is
-    # allowed to renew
+    # days before the due date it is, the max number of times one is allowed
+    # to renew, and other factors
     #
-    return false if reserver.role == 'banned'
+
+    # check some basic conditions
+    return false if !checked_out? || overdue? || reserver.role == 'banned'
+    return false unless equipment_model.maximum_renewal_length > 0
+    return false unless equipment_model.available_count(due_date + 1.day) > 0
 
     self.times_renewed ||= 0
 
-    # you can't renew a checked in reservation, or one without an equipment
-    # model
-    return false if checked_in || equipment_item.nil?
-
-    max_renewal_times = equipment_model.maximum_renewal_times
-
-    max_renewal_days = equipment_model.maximum_renewal_days_before_due
-    ((due_date - Time.zone.today).to_i < max_renewal_days) &&
-      (self.times_renewed < max_renewal_times) &&
-      equipment_model.maximum_renewal_length > 0
+    return false if self.times_renewed >= equipment_model.maximum_renewal_times
+    return false if (due_date - Time.zone.today).to_i >
+                    equipment_model.maximum_renewal_days_before_due
+    true
   end
 
   def to_cart

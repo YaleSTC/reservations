@@ -125,14 +125,40 @@ describe Reservation, type: :model do
     subject(:reservation) { FactoryGirl.build(:overdue_reservation) }
 
     it { expect(reservation.overdue).to be_truthy }
-    it { is_expected.to be_eligible_for_renew } # should this be true?
+    it { is_expected.not_to be_eligible_for_renew }
   end
 
   context 'when missed' do
     subject(:reservation) { FactoryGirl.build(:missed_reservation) }
 
     it { expect(reservation.missed?).to be_truthy }
-    # it { should_not be_is_eligible_for_renew} #returns true; should it?
+    it { is_expected.not_to be_eligible_for_renew }
+  end
+
+  context 'when there is no availability on the next day' do
+    before do
+      mod = FactoryGirl.create :equipment_model_with_item
+      @res = FactoryGirl.create :checked_out_reservation, equipment_model: mod
+      FactoryGirl.create :reservation, equipment_model: mod,
+                                       start_date: @res.due_date + 1.day,
+                                       due_date: @res.due_date + 2.days
+    end
+
+    subject(:reservation) { @res }
+
+    it { is_expected.not_to be_eligible_for_renew }
+  end
+
+  context 'when the reserver is banned' do
+    before do
+      user = FactoryGirl.create :user
+      @res = FactoryGirl.create :checked_out_reservation, reserver: user
+      user.update_attributes(role: 'banned', view_mode: 'banned')
+    end
+
+    subject(:reservation) { @res }
+
+    it { is_expected.not_to be_eligible_for_renew }
   end
 
   context 'when empty' do

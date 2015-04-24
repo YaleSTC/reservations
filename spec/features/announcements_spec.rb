@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe 'Announcements' do
   before :each do
-    app_setup
     Announcement.create! message: 'Hello World',
                          starts_at: Time.zone.today - 1.day,
                          ends_at: Time.zone.today + 1.day

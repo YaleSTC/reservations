@@ -65,6 +65,9 @@ RSpec.configure do |config|
     end
   end
 
+  # set up app before all integration specs, wish we didn't have to use :each
+  config.before(:each, type: :feature) { app_setup }
+
   # Devise helpers
   config.include Devise::TestHelpers, type: :controller
   config.include ControllerHelpers, type: :controller
