@@ -297,6 +297,11 @@ class ReservationsController < ApplicationController
       end
     end
 
+    # Send checkout receipts
+    checked_out_reservations.each do |res|
+      UserMailer.reservation_status_update(res, true).deliver
+    end
+
     # prep for receipt page and exit
     @check_in_set = []
     @check_out_set = checked_out_reservations
