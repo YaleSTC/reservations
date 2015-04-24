@@ -46,8 +46,8 @@ function renderCalendar(reservations, week_start, max, blackouts) {
   week_end.setDate(week_start.getDate() + 6);
 
   for(var d = 0; d < reservations.length; d++) {
-      var end = new Date (reservations[d].end);
-      var start = new Date (reservations[d].start);
+      var end = dateInTimeZone(reservations[d].end);
+      var start = dateInTimeZone(reservations[d].start);
       if ((start < week_end) && (end >= week_start)) {
         //for each reservation, decrement availability per day
         var begin_date = ((week_start > start) ? week_start : start);
