@@ -2,6 +2,9 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+## v5.2.2 - 2015-04-20
+### Fixed
+* Forgetting to check off the ToS checkbox during checkout no longer causes checkout to fail silently ([#1227](https://github.com/YaleSTC/reservations/issues/1227)).
 
 ## v5.2.1 - 2015-04-14
 ### Fixed
@@ -169,6 +172,10 @@
 * Added persistent flash for superusers in other view modes ([#974](https://github.com/YaleSTC/reservations/issues/974)).
 * Replaced Airbrake with Party Foul ([#501](https://github.com/YaleSTC/reservations/issues/501)).
 * The first user is now created as a superuser ([#753](https://github.com/YaleSTC/reservations/issues/753)).
+
+## v3.4.10 - 2015-04-20
+### Fixed
+* Forgetting to check off the ToS checkbox during checkout no longer causes checkout to fail silently ([#1227](https://github.com/YaleSTC/reservations/issues/1227)).
 
 ## v3.4.9 - 2015-03-16
 ### Fixed
