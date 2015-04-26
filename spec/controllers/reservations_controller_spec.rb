@@ -234,13 +234,16 @@ describe ReservationsController, type: :controller do
     end
 
     context 'when accessed by a non-banned user' do
-      before(:each) { sign_in @user }
+      before(:each) do
+        sign_in @user
+        request.env['HTTP_REFERER'] = 'where_i_came_from'
+      end
 
       context 'with an empty cart' do
         before(:each) do
           get :new
         end
-        it { expect(response).to be_redirect }
+        it { expect(response).to redirect_to('where_i_came_from') }
         it { is_expected.to set_flash }
       end
 

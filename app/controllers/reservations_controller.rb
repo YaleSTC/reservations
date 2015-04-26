@@ -107,7 +107,7 @@ class ReservationsController < ApplicationController
     if cart.items.empty?
       flash[:error] = 'You need to add items to your cart before making a '\
         'reservation.'
-      redirect_to catalog_path
+      redirect_to :back
     else
       # error handling
       @errors = cart.validate_all
