@@ -1059,14 +1059,31 @@ describe ReservationsController, type: :controller do
       before { put :checkout, user_id: @banned.id }
     end
 
-    context 'when tos returns false' do
+    context 'when tos not accepted and not checked off' do
       before do
         request.env['HTTP_REFERER'] = 'where_i_came_from'
         sign_in @admin
-        allow(@controller).to receive(:check_tos).and_return(false)
+        @user.update_attributes(terms_of_service_accepted: false)
         put :checkout, user_id: @user.id, reservations: {}
       end
       it { expect(response).to redirect_to 'where_i_came_from' }
+    end
+
+    context 'when tos accepted' do
+      before do
+        sign_in @admin
+        @user.update_attributes(terms_of_service_accepted: false)
+        @item =
+          FactoryGirl.create(:equipment_item,
+                             equipment_model: @reservation.equipment_model)
+        reservations_params =
+          { @reservation.id.to_s => { notes: '',
+                                      equipment_item_id: @item.id } }
+        put :checkout, user_id: @user.id, reservations: reservations_params,
+                       terms_of_service_accepted: true
+      end
+
+      it { expect(response).to be_success }
     end
 
     context 'when not all procedures are filled out' do

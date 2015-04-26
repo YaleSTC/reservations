@@ -180,6 +180,7 @@ describe 'Reservations', type: :feature do
     before(:each) do
       @res = FactoryGirl.create :valid_reservation, reserver: @user,
                                                     equipment_model: @eq_model
+      visit manage_reservations_for_user_path(@user)
     end
 
     shared_examples 'can handle reservation transactions' do
@@ -206,6 +207,14 @@ describe 'Reservations', type: :feature do
         @res.reload
         expect(@res.checkin_handler).to eq(current_user)
         expect(@res.checked_in).not_to be_nil
+      end
+    end
+
+    context 'as guest' do
+      it 'should redirect to the catalog page' do
+        visit manage_reservations_for_user_path(@user)
+        expect(page).to have_content 'Sign In'
+        expect(page.current_url).to eq(new_user_session_url)
       end
     end
 
@@ -239,6 +248,64 @@ describe 'Reservations', type: :feature do
       after { sign_out }
 
       it_behaves_like 'can handle reservation transactions'
+    end
+
+    context 'ToS checkbox' do
+      before(:each) do
+        @user.update_attributes(terms_of_service_accepted: false)
+      end
+
+      shared_examples 'can utilize the ToS checkbox' do
+        before(:each) { visit manage_reservations_for_user_path(@user) }
+
+        it 'fails when the box isn\'t checked off' do
+          # skip the checkbox
+          select "#{@eq_model.equipment_items.first.name}",
+                 from: 'Equipment Item'
+          click_button 'Check-Out Equipment'
+
+          expect(page).to have_content 'You must confirm that the user '\
+            'accepts the Terms of Service.'
+          expect(page.current_url).to \
+            eq(manage_reservations_for_user_url(@user))
+        end
+
+        it 'succeeds when the box is checked off' do
+          check 'terms_of_service_accepted'
+          select "#{@eq_model.equipment_items.first.name}",
+                 from: 'Equipment Item'
+          click_button 'Check-Out Equipment'
+
+          expect(page).to have_content 'Check-Out Receipt'
+          expect(page).to have_content current_user.name
+          @res.reload
+          expect(@res.equipment_item_id).to \
+            eq(@eq_model.equipment_items.first.id)
+          expect(@res.checkout_handler).to eq(current_user)
+          expect(@res.checked_out).not_to be_nil
+        end
+      end
+
+      context 'as checkout person' do
+        before { sign_in_as_user(@checkout_person) }
+        after { sign_out }
+
+        it_behaves_like 'can utilize the ToS checkbox'
+      end
+
+      context 'as admin' do
+        before { sign_in_as_user(@admin) }
+        after { sign_out }
+
+        it_behaves_like 'can utilize the ToS checkbox'
+      end
+
+      context 'as superuser' do
+        before { sign_in_as_user(@superuser) }
+        after { sign_out }
+
+        it_behaves_like 'can utilize the ToS checkbox'
+      end
     end
   end
 
