@@ -30,6 +30,14 @@ describe 'Active Admin', type: :feature do
     VALID_MODELS.each do |mod|
       it_behaves_like 'can access route', mod
     end
+
+    it 'can delete equipment items' do
+      visit admin_routes.show_url(model_name: :equipment_item, id: @eq_item.id,
+                                  host: Capybara.default_host)
+      click_link 'Delete'
+      click_button "Yes, I'm sure"
+      expect(EquipmentItem.find_by(id: @eq_item.id)).to be_nil
+    end
   end
 
   context 'as other roles' do
