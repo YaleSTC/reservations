@@ -467,4 +467,33 @@ describe Reservation, type: :model do
       expect(reservation.check_banned).to be_nil
     end
   end
+
+  context 'when manually over-extending reservation' do
+    before(:each) do
+      em = FactoryGirl.create(:equipment_model)
+      ei = FactoryGirl.create(:equipment_item, equipment_model: em)
+      reservation = FactoryGirl.create(:valid_reservation,
+                                        equipment_item: ei,
+                                        start_date: Time.zone.today,
+                                        due_date: Time.zone.today + 1.day)
+      r2 = FactoryGirl.build(:valid_reservation,
+                              equipment_item: ei,
+                              start_date: Time.zone.today + 2.days,
+                              due_date: Time.zone.today + 3.days)
+    end
+
+    it 'should have 1 equipment item' do
+      expect(em.equipment_items.count).to eq(1)
+    end
+
+    it 'should save before over-extending' do
+      expect(r2.save).to be_truthy
+    end
+
+    it 'should not save after over-extending' do
+      r2.save
+      reservation.due_date = Time.zone.today + 3.days
+      expect(reservation.save).to be_falsey
+    end
+  end
 end
