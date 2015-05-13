@@ -198,11 +198,25 @@
 
   <%# NOTES %>
   <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-7">
       <% unless @reservation.notes.blank? %>
         <hr>
         <h2>Notes</h2>
         <div class="notes-container"><%= markdown(@reservation.notes) %></div>
+      <% end %>
+    </div>
+    <div class="col-md-5">
+      <hr>
+      <% if can? :note, @reservation %>
+        <%= simple_form_for @reservation, :url => add_notes_to_reservation_path,
+            :method => :put do |f| %>
+            <%= f.error_notification %>
+
+            <h2>Add new notes</h2>
+
+            <%= text_area :new_notes, "", rows: 7, class: 'form-control' %>
+            <%= f.submit 'Add note', class: 'btn btn-default' %>
+        <% end %>
       <% end %>
     </div>
   </div>

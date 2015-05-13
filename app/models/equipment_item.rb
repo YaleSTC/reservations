@@ -106,6 +106,15 @@ class EquipmentItem < ActiveRecord::Base
     self
   end
 
+  def add_notes(current_user, contents)
+    return self if contents.empty?
+    new_notes = "#### #{current_user.md_link} made a note on "\
+      "#{Time.current.to_s(:long)}:\n\n#{contents[0]}"
+    new_notes += "\n\n" + notes
+    self.notes = new_notes.strip
+    self
+  end
+
   def md_link
     "[#{name}](#{equipment_item_url(self, only_path: false)})"
   end

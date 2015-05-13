@@ -6,14 +6,20 @@ class Ability
       case user.view_mode
       when 'superuser'
         can :manage, :all
+        can :note, Reservation
+        can :note, EquipmentItem
       when 'admin'
         can :manage, :all
+        can :note, Reservation
+        can :note, EquipmentItem
         cannot :renew, Reservation unless AppConfig.check(:enable_renewals)
         cannot :appoint, :superuser
         cannot :access, :rails_admin
         cannot [:destroy, :update], User, role: 'superuser'
       when 'checkout'
         can :manage, Reservation
+        can :note, Reservation
+        can :note, EquipmentItem
         cannot :archive, Reservation
         cannot :renew, Reservation unless AppConfig.check(:enable_renewals)
         cannot :destroy, Reservation do |r|
@@ -33,7 +39,7 @@ class Ability
       when 'normal' || 'checkout'
         can [:update, :show], User, id: user.id
         can :read, EquipmentModel
-        can [:read, :create], Reservation, reserver_id: user.id
+        can [:read, :create, :note], Reservation, reserver_id: user.id
         can :destroy, Reservation, reserver_id: user.id, checked_out: nil
         if AppConfig.check(:enable_renewals)
           can :renew, Reservation, reserver_id: user.id

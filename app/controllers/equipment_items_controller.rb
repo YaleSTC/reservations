@@ -68,6 +68,16 @@ class EquipmentItemsController < ApplicationController
     end
   end
 
+  def note
+    @equipment_item.add_notes(current_user, params[:new_notes])
+    if @equipment_item.save
+      flash[:notice] = 'Successfully added note to equipment item.'
+    else
+      flash[:error] = 'Failed to add note to equipment item.'
+    end
+    redirect_to @equipment_item
+  end
+
   # Deactivate and activate extend controller methods in ApplicationController
   def deactivate # rubocop:disable MethodLength, AbcSize
     if params[:deactivation_reason] && !params[:deactivation_cancelled]

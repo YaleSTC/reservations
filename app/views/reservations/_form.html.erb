@@ -36,24 +36,7 @@
       </div>
     </div>
   <% end %>
-  <div class="form-group">
-    <%= label_tag :current_notes, 'Current notes', class: 'col-sm-2 control-label' %>
-    <div class="col-sm-7">
-      <div class="notes-container" id="current_notes">
-        <%= markdown @reservation.notes %>
 
-      </div>
-    </div>
-  </div>
-  <div class="form-group">
-    <%= label_tag :new_notes, 'Add new notes', class: 'col-sm-2 control-label' %>
-    <div class="col-sm-7">
-      <%= text_area_tag :new_notes, nil, rows: 7, class: 'form-control' %>
-      <br />
-      <%= render partial: 'shared/markdown_button' %>
-    </div>
-  </div>
-  <hr>
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
       <%= f.button :submit, cancel: reservations_path %>

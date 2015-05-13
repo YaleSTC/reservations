@@ -299,24 +299,20 @@ class Reservation < ActiveRecord::Base
     self
   end
 
-  def update(current_user, new_params, new_notes) # rubocop:disable all
+  def update(current_user, new_params) # rubocop:disable all
     # updates a reservation and records changes in the notes
     #
     # takes the current user, the new params from the controller that have
     # been updated w/ a new equipment item, and the new notes (if any)
     assign_attributes(new_params)
     changes = self.changes
-    new_notes = '' unless new_notes
-    if new_notes.empty? && changes.empty?
+    if changes.empty?
       return self
     else
       # write notes header
       header = "### Edited on #{Time.zone.now.to_s(:long)} by "\
         "#{current_user.md_link}\n"
       self.notes = notes ? notes + "\n\n" + header : header
-
-      # add notes if they exist
-      self.notes += "\n\n#### Notes:\n#{new_notes}" unless new_notes.empty?
 
       # record changes
       # rubocop:disable BlockNesting
@@ -350,6 +346,23 @@ class Reservation < ActiveRecord::Base
       self.notes = self.notes.strip
       self
     end
+  end
+
+  def add_notes(current_user, contents)
+    return false if contents.empty?
+    if current_user.view_mode == 'normal'
+      @contents = Contents.new(contents: contents[0])
+      if @contents.invalid?
+        errors.add(:notes, 'cannot be longer than '\
+          "#{Contents.max_length} characters")
+        return false
+      end
+    end
+    self.notes_unsent = true
+    new_notes = "### #{current_user.md_link} made a note on "\
+      "#{Time.current.to_s(:long)}:\n\n#{contents[0]}"
+    self.notes += "\n\n" + new_notes.strip
+    self
   end
 
   # rubocop:disable PerceivedComplexity

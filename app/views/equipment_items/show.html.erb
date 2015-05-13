@@ -21,11 +21,25 @@
 
 <%# NOTES %>
 <div class="row">
-  <div class="col-md-12">
-    <% unless @equipment_item.notes.blank? %>
-      <hr>
-      <h3>Notes</h3>
-      <div class='notes-container'><%= markdown(@equipment_item.notes) %></div>
+  <% unless @equipment_item.notes.blank? %>
+      <div class="col-md-7">
+        <hr>
+        <h3>Notes</h3>
+        <div class='notes-container'><%= markdown(@equipment_item.notes) %></div>
+      </div>
+  <% end %>
+  <div class="col-md-5">
+    <hr>
+    <% if can? :note, @equipment_item %>
+      <h3>Add new notes</h3>
+      
+      <%= simple_form_for @equipment_item, :url => add_notes_to_eq_item_path, 
+      :method => :put do |f| %>
+        <%= f.error_notification %>
+
+        <%= text_area :new_notes, "", rows: 7, class: 'form-control' %>
+        <%= f.submit 'Add note', class: 'btn btn-default' %>
+      <% end %>
     <% end %>
   </div>
 </div>
