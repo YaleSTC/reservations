@@ -494,6 +494,7 @@ describe Reservation, type: :model do
     end
   end
 
+<<<<<<< HEAD
   context 'when manually over-extending reservation' do
     before(:each) do
       @em = FactoryGirl.create(:equipment_model)
@@ -524,6 +525,28 @@ describe Reservation, type: :model do
       expect(@r2.save).to be_truthy
       reservation.due_date = Time.zone.today + 3.days
       expect(reservation.save).to be_falsey
+=======
+  context 'when in a final status' do
+    subject(:reservation) do
+      FactoryGirl.create(:valid_reservation)
+    end
+    it 'the status should not be able to be changed if denied' do
+      reservation.update_attributes(status: 'denied')
+      reservation.status = 'reserved'
+      expect { reservation.save! }.to raise_error
+    end
+    it 'the status should not be able to be changed if missed' do
+      reservation.update_attributes(
+        FactoryGirl.attributes_for(:missed_reservation))
+      reservation.status = 'reserved'
+      expect { reservation.save! }.to raise_error
+    end
+    it 'the status should not be able to be changed if returned' do
+      reservation.update_attributes(
+        FactoryGirl.attributes_for(:checked_in_reservation))
+      reservation.status = 'reserved'
+      expect { reservation.save! }.to raise_error
+>>>>>>> master
     end
   end
 end

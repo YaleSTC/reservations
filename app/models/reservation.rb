@@ -19,6 +19,7 @@ class Reservation < ActiveRecord::Base
   validate :not_in_past, :check_banned, on: :create
   validate :available
 
+
   nilify_blanks only: [:notes]
 
   # see https://robots.thoughtbot.com/whats-new-in-edge-rails-active-record-enum
