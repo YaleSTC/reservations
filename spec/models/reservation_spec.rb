@@ -486,7 +486,6 @@ describe Reservation, type: :model do
       @r2.due_date        = Time.zone.today + 4.days
     end
 
-
     it 'should have equipment model with 1 item' do
       expect(@em.equipment_items.count).to eq(1)
     end
