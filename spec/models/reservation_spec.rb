@@ -494,7 +494,6 @@ describe Reservation, type: :model do
     end
   end
 
-<<<<<<< HEAD
   context 'when manually over-extending reservation' do
     before(:each) do
       @em = FactoryGirl.create(:equipment_model)
@@ -525,7 +524,9 @@ describe Reservation, type: :model do
       expect(@r2.save).to be_truthy
       reservation.due_date = Time.zone.today + 3.days
       expect(reservation.save).to be_falsey
-=======
+    end
+  end
+
   context 'when in a final status' do
     subject(:reservation) do
       FactoryGirl.create(:valid_reservation)
@@ -546,7 +547,6 @@ describe Reservation, type: :model do
         FactoryGirl.attributes_for(:checked_in_reservation))
       reservation.status = 'reserved'
       expect { reservation.save! }.to raise_error
->>>>>>> master
     end
   end
 end
