@@ -246,8 +246,11 @@ end
 def mark_checked_in(res, checkout_length)
   return unless res.checked_out
   if rand < OVERDUE_CHANCE
+    res.overdue = true
+    res.status = 'checked_out'
     res.checked_in = nil
   else
+    res.status = 'returned'
     res.checked_in = time_rand(res.checked_out, res.checked_out.next_week,
                                checkout_length).to_datetime
     res.checkin_handler_id = User.where('role = ? OR role = ? OR role = ?',
@@ -259,7 +262,9 @@ end
 def mark_checked_out(res)
   if rand < MISSED_CHANCE
     res.checked_out = nil
+    res.status = 'missed'
   else
+    res.status = 'checked_out'
     res.checked_out = res.start_date
     res.equipment_item = res.equipment_model.equipment_items.all.sample
     res.checkout_handler_id = User.where('role = ? OR role = ? OR role = ?',
@@ -282,6 +287,7 @@ def generate_reservation
   count = 0
   while count < MAX_TRIES
     res = Reservation.new
+    res.status = 'reserved'
     res.reserver_id = User.all.sample.id
     res.equipment_model = EquipmentModel.all.sample
     res.start_date = time_rand(Time.zone.now,

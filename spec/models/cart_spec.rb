@@ -54,24 +54,6 @@ describe Cart, type: :model do
         expect(@cart.items[@equipment_model.id]).to eq(2)
       end
     end
-
-    describe '.remove_item' do
-      before(:each) do
-        @cart.purge_all
-        @cart.add_item(@equipment_model)
-      end
-
-      it 'removes an item from cart' do
-        @cart.remove_item(@equipment_model)
-        expect(@cart.items[@equipment_model.id]).to be_nil
-      end
-
-      it 'decrements if multiple items are in the cart' do
-        @cart.add_item(@equipment_model)
-        @cart.remove_item(@equipment_model)
-        expect(@cart.items[@equipment_model.id]).to eq(1)
-      end
-    end
   end
 
   describe 'Cart actions' do
