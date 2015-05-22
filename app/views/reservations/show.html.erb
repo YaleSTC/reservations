@@ -5,15 +5,15 @@
 
   <div class="row">
     <div id="bool_labels" class="col-md-12">
-      <%= "<span class=\"user_label label-success\">Returned</span>".html_safe if @reservation.status == 'returned on time' %>
-      <%= "<span class=\"user_label label-danger\">Overdue</span>".html_safe if @reservation.status == 'overdue' %>
-      <%= "<span class=\"user_label label-warning\">Returned Overdue</span>".html_safe if @reservation.status == 'returned overdue' %>
-      <%= "<span class=\"user_label label-info\">Checked Out</span>".html_safe if @reservation.status == 'checked out' %>
-      <%= "<span class=\"user_label label-default\">Missed</span>".html_safe if @reservation.status == 'missed' %>
-      <%= "<span class=\"user_label label-danger\">Requested</span>".html_safe if @reservation.approval_status == 'requested' %>
-      <%= "<span class=\"user_label label-success\">Approved</span>".html_safe if @reservation.approval_status == 'approved' %>
-      <%= "<span class=\"user_label label-warning\">Denied</span>".html_safe if @reservation.approval_status == 'denied' %>
-      <% unless @reservation.status == 'reserved' %>
+      <%= "<span class=\"user_label label-success\">Returned</span>".html_safe if @reservation.returned? && !@reservation.overdue %>
+      <%= "<span class=\"user_label label-danger\">Overdue</span>".html_safe if @reservation.checked_out? && @reservation.overdue %>
+      <%= "<span class=\"user_label label-warning\">Returned Overdue</span>".html_safe if @reservation.returned? && @reservation.overdue %>
+      <%= "<span class=\"user_label label-info\">Checked Out</span>".html_safe if @reservation.checked_out? %>
+      <%= "<span class=\"user_label label-default\">Missed</span>".html_safe if @reservation.missed? %>
+      <%= "<span class=\"user_label label-danger\">Requested</span>".html_safe if @reservation.requested? %>
+      <%= "<span class=\"user_label label-success\">Approved</span>".html_safe if @reservation.approved? %>
+      <%= "<span class=\"user_label label-warning\">Denied</span>".html_safe if @reservation.denied? %>
+      <% unless @reservation.reserved? %>
         <hr>
       <% end %>
     </div>
@@ -209,9 +209,9 @@
 
   <hr>
   <%= link_to 'Print this page', '#', onclick: 'print();', class: 'btn btn-default' %>
-  <% if (@reservation.status == "checked out") or (@reservation.status == "overdue") %>
+  <% if @reservation.checked_out? %>
     <%= link_to "Email checkout receipt", {controller: :reservations, action: "send_receipt", id: @reservation}, method: "get", class: 'btn btn-default' %>
-  <% elsif @reservation.status.include?("returned") %>
+  <% elsif @reservation.returned? %>
     <%= link_to "Email return receipt", {controller: :reservations, action: "send_receipt", id: @reservation}, method: "get", class: 'btn btn-default' %>
   <% end %>
   <% if can? :edit, @reservation %>

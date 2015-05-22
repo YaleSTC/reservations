@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe 'User profile' do
   subject { page }
-  before(:each) { app_setup }
 
   context 'with password authentication' do
     around(:example) do |example|

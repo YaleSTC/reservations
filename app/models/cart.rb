@@ -1,4 +1,4 @@
-class Cart
+class Cart # rubocop:disable ClassLength
   include ActiveModel::Validations
   include CartValidations
   validates :reserver_id, :start_date, :due_date, presence: true
@@ -32,18 +32,18 @@ class Cart
   end
 
   # Adds equipment model id to items hash
-  def add_item(equipment_model)
+  def add_item(equipment_model, _quantity = nil)
     return if equipment_model.nil?
     key = equipment_model.id
     items[key] = items[key] ? items[key] + 1 : 1
   end
 
-  # Remove equipment model id from items hash, or decrement its count
-  def remove_item(equipment_model)
+  def edit_cart_item(equipment_model, quantity)
     return if equipment_model.nil?
+    return if quantity < 0
     key = equipment_model.id
-    items[key] = items[key] ? items[key] - 1 : 0
-    self.items = items.except(key) if items[key] <= 0
+    items[key] = items[key] ? quantity : 0
+    self.items = items.except(key) if items[key] == 0
   end
 
   def empty?
@@ -81,7 +81,8 @@ class Cart
       if request
         notes = "### Requested on #{Time.zone.now.to_s(:long)} by "\
           "#{user.md_link}\n\n#### Notes:\n#{res_notes}"
-        r.approval_status = 'requested'
+        r.flag(:request)
+        r.status = 'requested'
         message << "Request for #{r.equipment_model.md_link} filed "\
           "successfully. #{errors.to_sentence}\n"
       else
@@ -89,7 +90,7 @@ class Cart
           "#{user.md_link}"
         notes += "\n\n#### Notes:\n#{res_notes}" unless res_notes.nil? ||
                                                         res_notes.empty?
-        r.approval_status = 'auto'
+        r.status = 'reserved'
         message << "Reservation for #{r.equipment_model.md_link} created "\
           "successfully#{', even though ' + errors.to_sentence[0, 1].downcase\
           + errors.to_sentence[1..-1] unless errors.empty?}.\n"

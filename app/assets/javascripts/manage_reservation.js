@@ -37,7 +37,10 @@ function validate_checkin(){
 
   function confirm_checkinout(flag){
     if (flag){
-      if( confirm("Oops! We've noticed one of the following issues:\n\nYou checked off procedures for an item you're not checking in/out.\n\n       or\n\nYou didn't check off all procedures for an item that you are checking in/out.\n\nAre you sure you want to continue?")){
+      if( confirm("Oops! We've noticed one of the following issues:\n\n"+
+        "You didn't check off all procedures for an item your're checking "+
+        "in/out,\n\n\tor\n\nYou didn't select an item for a reservation you "+
+        "checked off procedures for.\n\nAre you sure you want to continue?")){
         (this).submit();
         return false;
       } else {

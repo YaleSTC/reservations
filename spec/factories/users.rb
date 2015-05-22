@@ -25,6 +25,11 @@ FactoryGirl.define do
       password_confirmation 'passw0rd'
     end
 
+    factory :superuser do
+      role 'superuser'
+      view_mode 'superuser'
+    end
+
     factory :admin do
       role 'admin'
       view_mode 'admin'
