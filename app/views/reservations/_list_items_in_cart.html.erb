@@ -5,16 +5,13 @@
     <table id="table_list_items" class="table table-bordered table-striped table-condensed table-hover">
       <% cart.items.each do |model_id, quantity| %>
         <tr>
-          <td class="cart-items-quantity">
-            <%= quantity %>
+          <td id="quantity_col">
+            <%= form_tag url_for(controller: 'catalog', action: 'edit_cart_item', id: model_id), remote: true, class: 'form-vertical', id: 'quantity_form', method: :put do %>
+
+              <%= number_field_tag('quantity', quantity, class: 'autosubmitme form-control quantity', min: 0, step: 1, id: "quantity_field_#{model_id}") %>
+            <% end %>
           </td>
           <td>
-            <div id="remove_button">
-              <%= link_to remove_from_cart_path(EquipmentModel.find(model_id)),
-              method: :put, remote: true, :'data-toggle' => 'tooltip', title: 'Remove', class: 'btn btn-default btn-xs' do %>
-                <i class="fa fa-times"></i>
-              <% end %>
-            </div>
             <%= link_to EquipmentModel.find(model_id).name, EquipmentModel.find(model_id) %>
           </td>
         </tr>

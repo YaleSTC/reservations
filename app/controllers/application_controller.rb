@@ -233,7 +233,7 @@ class ApplicationController < ActionController::Base
 
     # 1 query to grab all the related reservations
     source_reservations =
-      Reservation.not_returned.where(equipment_model_id: id_array).all
+      Reservation.active.where(equipment_model_id: id_array).all
 
     # for getting qualifications associated between the model and the reserver
     reserver = cart.reserver_id ? User.find(cart.reserver_id) : nil
@@ -309,21 +309,6 @@ class ApplicationController < ActionController::Base
     respond_to do |format|
       format.html { render partial: 'shared/markdown_help' }
       format.js { render template: 'shared/markdown_help_js' }
-    end
-  end
-
-  # Checks if params[:terms_of_service_accepted] is necessary; if filled-out,
-  # saves the state of the user; if not filled out and necessary, returns false.
-  # Otherwise, returns true.
-  def check_tos(user)
-    return true if user.terms_of_service_accepted
-
-    user.terms_of_service_accepted = params[:terms_of_service_accepted].present?
-    if user.terms_of_service_accepted
-      user.save
-    else
-      (flash[:error] = 'You must confirm that the user accepts the Terms of '\
-      'Service.') && false
     end
   end
 

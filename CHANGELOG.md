@@ -187,7 +187,6 @@
 * Modified `schedule.rb` so that the cron jobs of multiple Reservations instances on the same server don't overload the server.
 
 ## v3.4.6 - 2014-10-06
-*Released on 6 October 2014*
 ### Fixed
 * Improved performance of sending reservations notes emails
 * Actually finally resolved the issue where links in e-mails were broken ([#868](https://github.com/YaleSTC/reservations/issues/868)).

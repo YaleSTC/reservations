@@ -6,6 +6,10 @@
 	padding-bottom: 0px;
 	margin-bottom: 19px;
 
+  #quantity_col {
+    width: 70px
+  }
+
   #cart_is_empty {
     margin: 9px;
     line-height: $line-height-base * 2;

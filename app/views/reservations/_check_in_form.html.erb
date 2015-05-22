@@ -7,7 +7,7 @@
       </span>
       <span class="icons">
         <h4>
-          <% if reservation.status == "overdue" %>
+          <% if reservation.overdue %>
             <i class="fa fa-exclamation-circle fa-lg overdue-icon"></i>
           <% end %>
           <i class="fa fa-check hidden check fa-lg"></i>

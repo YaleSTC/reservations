@@ -234,13 +234,16 @@ describe ReservationsController, type: :controller do
     end
 
     context 'when accessed by a non-banned user' do
-      before(:each) { sign_in @user }
+      before(:each) do
+        sign_in @user
+        request.env['HTTP_REFERER'] = 'where_i_came_from'
+      end
 
       context 'with an empty cart' do
         before(:each) do
           get :new
         end
-        it { expect(response).to be_redirect }
+        it { expect(response).to redirect_to('where_i_came_from') }
         it { is_expected.to set_flash }
       end
 
@@ -371,6 +374,11 @@ describe ReservationsController, type: :controller do
         it 'sets the reservation notes' do
           @req.call
           expect(Reservation.last.notes.empty?).not_to be_truthy
+        end
+
+        it 'sets the status to reserved' do
+          @req.call
+          expect(Reservation.last.reserved?)
         end
 
         it 'empties the Cart' do
@@ -973,6 +981,7 @@ describe ReservationsController, type: :controller do
     #     checkout_handler, checked_out (time), equipment_item; updates
     #     notes
     # - renders :receipt template
+    # - sets reservation status to 'checked_out'
 
     # Note: Many of these can be cross-applied to #checkin as well
 
@@ -984,6 +993,7 @@ describe ReservationsController, type: :controller do
         reservations_params =
           { @reservation.id.to_s => { notes: '',
                                       equipment_item_id: @item.id } }
+        ActionMailer::Base.deliveries = []
         put :checkout, user_id: @user.id, reservations: reservations_params
       end
 
@@ -1002,10 +1012,12 @@ describe ReservationsController, type: :controller do
         expect(@reservation.checkout_handler).to be_nil
         expect(@reservation.checked_out).to be_nil
         expect(@reservation.equipment_item).to be_nil
+        expect(@reservation.reserved?).to be_truthy
         @reservation.reload
         expect(@reservation.checkout_handler).to be_a(User)
         expect(@reservation.checked_out).to_not be_nil
         expect(@reservation.equipment_item).to eq @item
+        expect(@reservation.checked_out).to be_truthy
       end
 
       it 'updates the equipment item history' do
@@ -1014,6 +1026,10 @@ describe ReservationsController, type: :controller do
 
       it 'updates the reservation notes' do
         expect { @reservation.reload }.to change(@reservation, :notes)
+      end
+
+      it 'sends checkout receipts' do
+        expect(ActionMailer::Base.deliveries.count).to eq(1)
       end
     end
 
@@ -1046,14 +1062,31 @@ describe ReservationsController, type: :controller do
       before { put :checkout, user_id: @banned.id }
     end
 
-    context 'when tos returns false' do
+    context 'when tos not accepted and not checked off' do
       before do
         request.env['HTTP_REFERER'] = 'where_i_came_from'
         sign_in @admin
-        allow(@controller).to receive(:check_tos).and_return(false)
+        @user.update_attributes(terms_of_service_accepted: false)
         put :checkout, user_id: @user.id, reservations: {}
       end
       it { expect(response).to redirect_to 'where_i_came_from' }
+    end
+
+    context 'when tos accepted' do
+      before do
+        sign_in @admin
+        @user.update_attributes(terms_of_service_accepted: false)
+        @item =
+          FactoryGirl.create(:equipment_item,
+                             equipment_model: @reservation.equipment_model)
+        reservations_params =
+          { @reservation.id.to_s => { notes: '',
+                                      equipment_item_id: @item.id } }
+        put :checkout, user_id: @user.id, reservations: reservations_params,
+                       terms_of_service_accepted: true
+      end
+
+      it { expect(response).to be_success }
     end
 
     context 'when not all procedures are filled out' do
@@ -1554,15 +1587,14 @@ describe ReservationsController, type: :controller do
   describe '#approve_request PUT' do
     before do
       sign_in @admin
-      @requested =
-        FactoryGirl.create(:valid_reservation, approval_status: 'requested')
+      @requested = FactoryGirl.create(:request)
       put :approve_request, id: @requested.id
     end
-    it 'should set the reservation approval status' do
-      expect(assigns(:reservation).approval_status).to eq('approved')
+    it 'should set the reservation status' do
+      expect(assigns(:reservation).status).to eq('reserved')
     end
     it 'should save the reservation' do
-      expect(@requested.reload.approval_status).to eq('approved')
+      expect(@requested.reload.status).to eq('reserved')
     end
     it 'should send an email' do
       expect_email(UserMailer.reservation_status_update(@requested))
@@ -1575,15 +1607,14 @@ describe ReservationsController, type: :controller do
   describe '#deny_request PUT' do
     before do
       sign_in @admin
-      @requested =
-        FactoryGirl.create(:valid_reservation, approval_status: 'requested')
+      @requested = FactoryGirl.create(:request)
       put :deny_request, id: @requested.id
     end
-    it 'should set the reservation approval status to deny' do
-      expect(assigns(:reservation).approval_status).to eq('denied')
+    it 'should set the reservation status to denied' do
+      expect(assigns(:reservation).status).to eq('denied')
     end
     it 'should save the reservation' do
-      expect(@requested.reload.approval_status).to eq('denied')
+      expect(@requested.reload.status).to eq('denied')
     end
     it 'should send an email' do
       expect_email(UserMailer.reservation_status_update(@requested))
