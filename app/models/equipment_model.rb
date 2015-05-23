@@ -202,7 +202,7 @@ class EquipmentModel < ActiveRecord::Base
     # relevant reservations
     relevant_reservations = Reservation.for_eq_model(self).finalized
                             .reserved_in_date_range(start_date, due_date)
-                            .all.reject{ |r| r.id == exclude_reservation.id }
+                            .all.reject { |r| r.id == exclude_reservation.id }
     num_available_from_source(start_date, due_date, relevant_reservations)
   end
 

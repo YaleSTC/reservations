@@ -501,7 +501,7 @@ describe Reservation, type: :model do
 
       reservation.update_attributes(equipment_item: @ei,
                                     equipment_model: @em,
-                                    start_date: 
+                                    start_date:
                                     Time.zone.today + 1.day,
                                     due_date:
                                     Time.zone.today + 2.days)
@@ -509,9 +509,9 @@ describe Reservation, type: :model do
       @r2 = FactoryGirl.build(:valid_reservation,
                               equipment_item: @ei,
                               equipment_model: @em,
-                              start_date: Time.zone.today + 
+                              start_date: Time.zone.today +
                                           3.days,
-                              due_date: Time.zone.today + 
+                              due_date: Time.zone.today +
                                         4.days)
     end
 
