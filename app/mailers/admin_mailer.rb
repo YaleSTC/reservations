@@ -1,6 +1,6 @@
 class AdminMailer < ActionMailer::Base
   add_template_helper(ApplicationHelper)
-  default from: 'no-reply@reservations.app'
+  default from: "no-reply@#{ ActionMailer::Base.default_url_options[:host] }"
 
   def notes_reservation_notification(notes_reservations_out,
                                      notes_reservations_in)
