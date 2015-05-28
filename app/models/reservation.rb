@@ -91,7 +91,7 @@ class Reservation < ActiveRecord::Base
   ## Getter style instance methods ##
 
   def approved?
-    flagged?(:request) && (status != 'denied')
+    flagged?(:request) && !%w(denied requested).include?(status)
   end
 
   def flagged?(flag)
