@@ -1,5 +1,5 @@
 # config valid only for Capistrano 3.1
-lock '3.2.1'
+lock '3.3.5'
 
 set :application, 'Reservations'
 set :repo_url, 'https://github.com/YaleSTC/reservations.git'
@@ -9,17 +9,19 @@ set :branch, "#{ENV['GIT_TAG']}"
 
 # Default deploy_to directory is /var/www/my_app
 set :deploy_to, "#{ENV['DEPLOY_DIR']}"
+set :param_file, "#{ENV['PARAM_FILE']}"
 
 # Set Rails environment
 # set, :rails_env, 'production'
 
-# Set RVM version
-set :rvm_ruby_version, '2.1.2'
+# Set rvm stuff
+set :rvm_ruby_version, File.read('.ruby-version').strip
 
-# include whenever recipes
+# Include whenever recipes
+set :whenever_environment, ->{ fetch(:environment) }
 set :whenever_command, 'bundle exec whenever'
-set :whenever_environment, defer { stage }
-set :whenever_variables, { "rails_root=#{fetch :release_path}&environment=#{fetch :whenever_environment}" }
+set :whenever_identifier, ->{ "#{fetch(:application)}_#{fetch(:environment)}" }
+set :whenever_variables, ->{ "rails_root=#{fetch :release_path}&environment=#{fetch :whenever_environment}" }
 
 # Default value for :scm is :git
 # set :scm, :git
@@ -45,55 +47,27 @@ set :linked_dirs, %w{log public/system public/attachments vendor/bundle}
 # Default value for keep_releases is 5
 # set :keep_releases, 5
 
-# configuration tasks
-namespace :init do
-  namespace :config do
-
-    desc 'Create .env'
-    task :env
-      execute "cp #{release_path}/.env.example #{release_path}/.env"
-    end
-
-    desc 'Create database.yml'
-    task :db
-      execute "cp #{release_path}/config/database.yml.example.production #{release_path}/config/database.yml"
-    end
-
-    desc 'Create party_foul initializer'
-    task :party_foul
-      execute "cp #{release_path}/config/initializers/party_foul.rb.example #{release_path}/config/initializers/party_foul.rb"
-    end
-  end
-end
-
 namespace :deploy do
-
   desc 'Restart application'
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do
-      # Your restart mechanism here, for example:
       execute :touch, release_path.join('tmp/restart.txt')
     end
   end
 
-  after :updated, 'config:env'
-  after :updated, 'config:db'
-  # figure out how to make this optional
-  after :updated, 'config:party_foul'
-  # clear crontab if in staging environment
-  if :stage == 'staging'
-    before :restart, 'whenever:clear_crontab'
-  end
-
-  after :publishing, :restart
-
-  after :restart, :clear_cache do
-    on roles(:web), in: :groups, limit: 3, wait: 10 do
-      # Here we can do anything such as:
-      # within release_path do
-      #   execute :rake, 'cache:clear'
-      # end
+  # see http://tutor.lugolabs.com/articles/14-schedule-rails-tasks-with-whenever-and-capistrano
+  desc "Update crontab with whenever"
+  task :update_cron do
+    on roles(:app) do
+      within current_path do
+        execute :bundle, :exec, "whenever --update-crontab #{fetch(:application)}"
+      end
     end
   end
 
+  before :updated, 'config:env'
+  before :updated, 'config:db'
+  before :updated, 'config:secrets'
+  before :updated, 'config:party_foul'
+  after :publishing, :restart
 end

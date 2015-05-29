@@ -2,6 +2,7 @@
 # to skip if necessary, skip if migrating from a pre-v4.1.0 DB or no table)
 unless ENV['SKIP_AUTH_INIT'] || !User.table_exists? ||
        !User.respond_to?(:username)
+
   user = User.first
 
   # if we want to use CAS authentication and the username parameter doesn't
