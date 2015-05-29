@@ -516,4 +516,26 @@ describe Reservation, type: :model do
       expect { reservation.save! }.to raise_error
     end
   end
+
+  context '#approved?' do
+    subject(:reservation) { FactoryGirl.create(:request) }
+
+    it 'returns false if requested' do
+      expect(reservation.approved?).to be_falsey
+    end
+
+    it 'returns false if denied' do
+      reservation.update_attributes(status: 'denied')
+      expect(reservation.approved?).to be_falsey
+    end
+
+    it 'returns true if approved' do
+      reservation.update_attributes(status: 'reserved')
+      expect(reservation.approved?).to be_truthy
+    end
+
+    it 'returns false if not a request' do
+      expect(FactoryGirl.create(:valid_reservation).approved?).to be_falsey
+    end
+  end
 end
