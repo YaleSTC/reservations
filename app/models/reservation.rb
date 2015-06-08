@@ -131,7 +131,14 @@ class Reservation < ActiveRecord::Base
   end
 
   def late_fee
-    equipment_model.late_fee.to_f
+    if checked_in
+      end_date = checked_in.to_date
+    else
+      end_date = Time.zone.today
+    end
+    fee = equipment_model.late_fee * (end_date - due_date)
+    fee = 0 if fee < 0
+    fee
   end
 
   def reserver

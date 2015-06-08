@@ -70,7 +70,7 @@
         <footer>
           <p>
             This equipment is <strong class="error">overdue.</strong><br />
-            At a fee of <%= number_to_currency(reservation.late_fee) %> / day, the renter owes <strong><%= number_to_currency(reservation.late_fee * (Time.zone.today - reservation.due_date).to_i)  %></strong> total.
+            At a fee of <%= number_to_currency(reservation.equipment_model.late_fee) %> / day, the renter owes <strong><%= number_to_currency(reservation.late_fee) %></strong> total.
           </p>
         </footer>
 

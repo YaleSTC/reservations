@@ -34,9 +34,9 @@ class ReservationsController < ApplicationController
 
     f = (can? :manage, Reservation) ? :upcoming : :reserved
 
-    @filters = [:reserved, :checked_out, :overdue, :returned, :upcoming,
-                :requested, :approved_requests, :denied]
-    @filters << :missed unless AppConfig.check(:res_exp_time)
+    @filters = [:reserved, :checked_out, :overdue, :returned, :returned_overdue,
+                :upcoming, :requested, :approved_requests, :denied]
+    @filters << :missed unless AppConfig.first.res_exp_time
 
     # if filter in session set it
     if session[:filter]

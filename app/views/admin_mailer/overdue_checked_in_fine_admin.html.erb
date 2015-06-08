@@ -11,7 +11,7 @@
   Notes: <%= markdown(@overdue_checked_in.notes) %>
 <% end %>
 
-<p>The late fee is <%= number_to_currency(@overdue_checked_in.equipment_model.late_fee) %> per day, for a total of <%= number_to_currency(((@overdue_checked_in.checked_in.to_date - @overdue_checked_in.due_date )).to_i*(@overdue_checked_in.equipment_model.late_fee))%>
+<p>The late fee is <%= number_to_currency(@overdue_checked_in.equipment_model.late_fee) %> per day, for a total of <%= number_to_currency(@overdue_checked_in.late_fee) %>
 </p>
 
 <br />

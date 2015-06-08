@@ -1,6 +1,6 @@
 <p>This is a receipt for your late equipment return. </p>
 
 <% if @reservation.equipment_model.late_fee > 0 %>
-  <p>Your late fee is <%= number_to_currency(@reservation.equipment_model.late_fee) %> per day, for a total of <%= number_to_currency(((@reservation.checked_in.to_date - @reservation.due_date)).to_i*(@reservation.equipment_model.late_fee))%>
+  <p>Your late fee is <%= number_to_currency(@reservation.equipment_model.late_fee) %> per day, for a total of <%= number_to_currency(@reservation.late_fee) %>
   </p>
 <% end %>

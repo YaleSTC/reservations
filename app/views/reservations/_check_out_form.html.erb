@@ -53,7 +53,7 @@
     <footer>
       <p>
           This equipment is <strong>due back on <%= reservation.due_date.to_s(:long) %>.</strong><br />
-          An overdue return will incur a combined late fee of <strong><%= number_to_currency(reservation.late_fee) %> / day.</strong>
+          An overdue return will incur a combined late fee of <strong><%= number_to_currency(reservation.equipment_model.late_fee) %> / day.</strong>
       </p>
     </footer>
   </div>
