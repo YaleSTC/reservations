@@ -47,11 +47,13 @@
       <div class="row">
         <div class="col-md-12">
           <div class="well">
-            <p>This user hasn't accepted the
-              <%= link_to('Terms of Service', tos_path, target: '_blank') %>.</p>
+            <p>
+              This user hasn't accepted the
+                <%= link_to('Terms of Service', tos_path, target: '_blank') %>.
+            </p>
+            <%= check_box_tag :terms_of_service_accepted %>
             <%= label_tag :terms_of_service_accepted,
             'I certify that I have given a copy of the terms of service, and the user has accepted.' %>
-            <%= check_box_tag :terms_of_service_accepted %>
           </div>
         </div>
       </div>
