@@ -22,7 +22,7 @@
 <%# NOTES %>
 <div class="row">
   <div class="col-md-12">
-    <% unless @equipment_item.notes.blank? %>
+    <% if @equipment_item.notes.present? && (can? :view, :eq_log) %>
       <hr>
       <h3>Notes</h3>
       <div class='notes-container'><%= markdown(@equipment_item.notes) %></div>
