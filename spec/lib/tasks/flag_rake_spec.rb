@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 # see http://robots.thoughtbot.com/test-rake-tasks-like-a-boss
-describe 'flag_reservations:flag_overdue' do
+describe 'flag_overdue' do
   include_context 'rake'
 
   before(:all) { FactoryGirl.create(:app_config) }
@@ -22,7 +22,7 @@ describe 'flag_reservations:flag_overdue' do
   end
 end
 
-describe 'flag_reservations:flag_missed' do
+describe 'flag_missed' do
   include_context 'rake'
 
   before(:all) { FactoryGirl.create(:app_config) }
@@ -47,7 +47,7 @@ describe 'flag_reservations:flag_missed' do
   end
 end
 
-describe 'flag_reservations:deny_missed_requests' do
+describe 'deny_missed_requests' do
   include_context 'rake'
 
   before(:all) { FactoryGirl.create(:app_config) }
