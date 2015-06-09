@@ -20,6 +20,17 @@ describe 'flag_overdue' do
     expect { subject.invoke }.not_to(
       change { Reservation.find(@res.id).overdue })
   end
+
+  it 'flags past overdue reservations' do
+    old_res = FactoryGirl.build(:overdue_reservation)
+    old_res.assign_attributes(start_date: Time.zone.today - 7.days,
+                              due_date: Time.zone.today - 6.days,
+                              overdue: false)
+    old_res.save!(validate: false)
+
+    expect { subject.invoke }.to \
+      change { Reservation.find(old_res.id).overdue }
+  end
 end
 
 describe 'flag_missed' do
