@@ -13,6 +13,7 @@ module UsersHelper
   end
 
   def make_ban_btn(user)
+    return if user == current_user
     if user.role != 'banned'
       link_to 'Ban', ban_user_path(user), class: 'btn btn-danger',
                                           method: :put

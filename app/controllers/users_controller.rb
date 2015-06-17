@@ -179,6 +179,10 @@ class UsersController < ApplicationController
       flash[:error] = 'Cannot ban guest.'
       redirect_to(request.referer) && return
     end
+    if @user == current_user
+      flash[:error] = 'You cannot ban yourself.'
+      redirect_to(request.referer) && return
+    end
     @user.update_attributes(role: 'banned', view_mode: 'banned')
     flash[:notice] = "#{@user.name} was banned succesfully."
     redirect_to request.referer
