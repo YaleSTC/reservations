@@ -151,7 +151,7 @@ class User < ActiveRecord::Base
   end
 
   def md_link
-    "[#{name}](#{user_url(self, only_path: false)})"
+    id ? "[#{name}](#{user_url(self, only_path: false)})" : "#{name}"
   end
 
   # ---- Reservation methods ---- #
