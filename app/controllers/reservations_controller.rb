@@ -246,36 +246,19 @@ class ReservationsController < ApplicationController
     # of Reservation objects. only select the ones who are selected, eg
     # they have an equipment item id set.
 
-    checked_out_reservations = []
-    params[:reservations].each do |r_id, r_attrs|
-      next if r_attrs[:equipment_item_id].blank?
-      r = Reservation.includes(:reserver).find(r_id)
-      if r.reserver.role == 'banned'
-        flash[:error] = 'Banned users cannot check out equipment.'
-        redirect_to(root_path) && return
-      end
-      checked_out_reservations <<
-        r.checkout(r_attrs[:equipment_item_id], current_user,
-                   r_attrs[:checkout_procedures], r_attrs[:notes])
-    end
-
     ## Basic-logic checks, only need to be done once
+
+    # check for banned user
+    if @user.role == 'banned'
+      flash[:error] = 'Banned users cannot check out equipment.'
+      redirect_to(root_path) && return
+    end
 
     # check terms of service
     unless @user.terms_of_service_accepted ||
            params[:terms_of_service_accepted].present?
       flash[:error] = 'You must confirm that the user accepts the Terms of '\
         'Service.'
-      redirect_to(:back) && return
-    end
-
-    if checked_out_reservations.empty?
-      flash[:error] = 'No reservation selected.'
-      redirect_to(:back) && return
-    end
-    unless Reservation.unique_equipment_items?(checked_out_reservations)
-      flash[:error] = 'The same equipment item cannot be simultaneously '\
-        'checked out in multiple reservations.'
       redirect_to(:back) && return
     end
 
@@ -293,10 +276,40 @@ class ReservationsController < ApplicationController
       end
     end
 
+    checked_out_reservations = []
+    params[:reservations].each do |r_id, r_attrs|
+      next if r_attrs[:equipment_item_id].blank?
+      r = Reservation.includes(:reserver).find(r_id)
+      # check that we don't somehow checkout a reservation that doesn't belong
+      # to the @user we're checking out for (params hacking?)
+      next if r.reserver != @user
+      checked_out_reservations <<
+        r.checkout(r_attrs[:equipment_item_id], current_user,
+                   r_attrs[:checkout_procedures], r_attrs[:notes])
+    end
+
+    if checked_out_reservations.empty?
+      flash[:error] = 'No reservation selected.'
+      redirect_to(:back) && return
+    end
+
+    unless Reservation.unique_equipment_items?(checked_out_reservations)
+      flash[:error] = 'The same equipment item cannot be simultaneously '\
+        'checked out in multiple reservations.'
+      redirect_to(:back) && return
+    end
+
     ## Save reservations
     Reservation.transaction do
       begin
-        checked_out_reservations.each(&:save!)
+        checked_out_reservations.each do |r|
+          r.save!
+          # update equipment item notes
+          new_notes = params[:reservations]["#{r.id}"][:notes]
+          r.equipment_item.make_reservation_notes('checked out', r,
+                                                  r.checkout_handler,
+                                                  new_notes, r.checked_out)
+        end
       rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid => e
         flash[:error] = "Checking out your reservation failed: #{e.message}"
         redirect_to manage_reservations_for_user_path(@user)
@@ -346,7 +359,14 @@ class ReservationsController < ApplicationController
     ## Save reservations
     Reservation.transaction do
       begin
-        checked_in_reservations.each(&:save!)
+        checked_in_reservations.each do |r|
+          r.save!
+          # update equipment item notes
+          new_notes = params[:reservations]["#{r.id}"][:notes]
+          r.equipment_item.make_reservation_notes('checked in', r,
+                                                  r.checkin_handler, new_notes,
+                                                  r.checked_in)
+        end
       rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid => e
         flash[:error] = "Checking in your reservation failed: #{e.message}"
         redirect_to :back
@@ -375,8 +395,8 @@ class ReservationsController < ApplicationController
     if params[:banned] && current_user.view_mode != 'superuser'
       redirect_to(root_path) && return
     end
-    @check_out_set = @user.due_for_checkout
-    @check_in_set = @user.due_for_checkin
+    @check_out_set = @user.due_for_checkout.includes(:equipment_model)
+    @check_in_set = @user.due_for_checkin.includes(:equipment_model)
 
     render :manage, layout: 'application'
   end
@@ -460,7 +480,7 @@ class ReservationsController < ApplicationController
     end
   end
 
-  def archive # rubocop:disable CyclomaticComplexity, PerceivedComplexity
+  def archive # rubocop:disable all
     if params[:archive_cancelled]
       flash[:notice] = 'Reservation archiving cancelled.'
       redirect_to(:back) && return
@@ -473,9 +493,21 @@ class ReservationsController < ApplicationController
       flash[:error] = 'Cannot archive checked-in reservation.'
       redirect_to(:back) && return
     end
-    @reservation.archive(current_user, params[:archive_note])
-      .save(validate: false)
-    flash[:notice] = 'Reservation successfully archived.'
+
+    begin
+      @reservation.archive(current_user, params[:archive_note])
+        .save(validate: false)
+      # archive equipment item if checked out
+      if @reservation.equipment_item
+        @reservation.equipment_item
+          .make_reservation_notes('archived', @reservation, current_user,
+                                  params[:archive_note],
+                                  @reservation.checked_in)
+      end
+      flash[:notice] = 'Reservation successfully archived.'
+    rescue ActiveRecord::RecordNotSaved => e
+      flash[:error] = "Archiving your reservation failed: #{e.message}"
+    end
     redirect_to :back
   end
 
