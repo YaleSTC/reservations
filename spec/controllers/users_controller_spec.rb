@@ -206,6 +206,16 @@ describe UsersController, type: :controller do
       end
       it { is_expected.to set_flash }
       it { is_expected.to redirect_to('where_i_came_from') }
+
+      it 'cannot ban self' do
+        sign_out :user
+        new_admin = FactoryGirl.create :admin
+        sign_in new_admin
+        put :ban, id: new_admin.id
+        new_admin.reload
+        expect(new_admin.role).to eq('admin')
+        expect(new_admin.view_mode).to eq('admin')
+      end
     end
     describe 'PUT unban' do
       before do
