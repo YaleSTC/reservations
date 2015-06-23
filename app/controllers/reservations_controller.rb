@@ -311,7 +311,7 @@ class ReservationsController < ApplicationController
 
     # Send checkout receipts
     checked_out_reservations.each do |res|
-      UserMailer.reservation_status_update(res, true).deliver
+      UserMailer.reservation_status_update(res, 'checked out').deliver
     end
 
     # prep for receipt page and exit
@@ -399,7 +399,7 @@ class ReservationsController < ApplicationController
   end
 
   def send_receipt
-    if UserMailer.reservation_status_update(@reservation, true).deliver
+    if UserMailer.reservation_status_update(@reservation, 'checked out').deliver
       flash[:notice] = 'Successfully delivered receipt email.'
     else
       flash[:error] = 'Unable to deliver receipt email. Please contact '\
@@ -435,7 +435,8 @@ class ReservationsController < ApplicationController
       "by #{current_user.md_link}"
     if @reservation.save
       flash[:notice] = 'Request successfully approved'
-      UserMailer.reservation_status_update(@reservation).deliver
+      UserMailer.reservation_status_update(@reservation,
+                                           'request approved').deliver
       redirect_to reservations_path(requested: true)
     else
       flash[:error] = 'Oops! Something went wrong. Unable to approve '\

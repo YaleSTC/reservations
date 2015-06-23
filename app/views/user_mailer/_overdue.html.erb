@@ -1,1 +1,1 @@
-<p><%= simple_format(replace_variables(@app_configs.overdue_checkin_email_body)) %></p>
+<%= render html: simple_format(replace_variables(@app_configs.overdue_checkin_email_body)).html_safe %>

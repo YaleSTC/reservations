@@ -5,9 +5,9 @@ shared_examples_for 'a valid admin email' do
     expect(@mail.to.size).to eq(1)
     expect(@mail.to.first).to eq(@app_config.admin_email)
   end
-  it 'is from no-reply@reservations.app' do
-    expect(@mail.from.size).to eq(1)
-    expect(@mail.from.first).to eq('no-reply@reservations.app')
+  it "is from no-reply@#{ ActionMailer::Base.default_url_options[:host] }" do
+    expect(@mail.from).to eq("no-reply@#{
+      ActionMailer::Base.default_url_options[:host] }")
   end
   it 'should actually send the email' do
     expect(ActionMailer::Base.deliveries.count).to eq(1)
