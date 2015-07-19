@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150719040438) do
+ActiveRecord::Schema.define(version: 20150719050013) do
 
   create_table "announcements", force: true do |t|
     t.text     "message"
@@ -55,6 +55,7 @@ ActiveRecord::Schema.define(version: 20150719040438) do
     t.boolean  "upcoming_checkout_email_active",                     default: true
     t.text     "upcoming_checkout_email_body"
     t.boolean  "notify_admin_on_create",                             default: false
+    t.boolean  "disable_user_emails",                                default: false
   end
 
   create_table "blackouts", force: true do |t|

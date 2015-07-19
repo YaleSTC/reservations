@@ -83,6 +83,8 @@
       <dt>@tos@</dt><dd>The terms of service</dd>
     </dl>
     <hr />
+    <%= f.input :disable_user_emails, label: 'Disable all user e-mails', hint: 'Prevent Reservations from sending any e-mails to users.' %>
+    <hr />
     <%= f.input :upcoming_checkin_email_active, label: 'Send equipment check-in reminders?',
                 hint: 'When enabled, patrons will get an email reminding them that reservation(s) are due.' %>
     <%= f.input :upcoming_checkin_email_body, input_html: {rows: 10} %>
