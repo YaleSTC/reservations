@@ -131,13 +131,18 @@ class Reservation < ActiveRecord::Base
   end
 
   def late_fee
+    return 0 unless overdue
     if checked_in
       end_date = checked_in.to_date
     else
       end_date = Time.zone.today
     end
     fee = equipment_model.late_fee * (end_date - due_date)
-    fee = 0 if fee < 0
+    if fee < 0
+      fee = 0
+    elsif equipment_model.late_fee_max > 0
+      fee = [fee, equipment_model.late_fee_max].min
+    end
     fee
   end
 
