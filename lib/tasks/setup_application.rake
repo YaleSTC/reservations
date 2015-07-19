@@ -160,6 +160,7 @@ namespace :app do
               ac.reservation_confirmation_email_active = false
               ac.overdue_checkin_email_active = false
               ac.send_notifications_for_deleted_missed_reservations = false
+              ac.notify_admin_on_create = false
               ac.upcoming_checkin_email_body = upcoming_checkin_email_body
               ac.upcoming_checkout_email_body = upcoming_checkout_email_body
               ac.deleted_missed_reservation_email_body =

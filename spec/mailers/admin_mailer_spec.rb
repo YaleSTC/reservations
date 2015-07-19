@@ -65,4 +65,14 @@ describe AdminMailer, type: :mailer do
       expect(ActionMailer::Base.deliveries.count).to eq(0)
     end
   end
+  describe 'reservation_created_admin' do
+    before do
+      @res = FactoryGirl.create(:valid_reservation)
+      @mail = AdminMailer.reservation_created_admin(@res).deliver
+    end
+    it_behaves_like 'a valid admin email'
+    it 'renders the subject' do
+      expect(@mail.subject).to eq('[Reservations] Reservation created')
+    end
+  end
 end

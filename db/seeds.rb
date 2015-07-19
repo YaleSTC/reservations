@@ -389,6 +389,7 @@ if AppConfig.count == 0
   ac.overdue_checkin_email_active = false
   ac.site_title = 'Reservations'
   ac.upcoming_checkin_email_active = false
+  ac.notify_admin_on_create = false
   ac.admin_email = 'admin@admin.com'
   ac.department_name = 'Department'
   ac.contact_link_location = 'link'

@@ -23,4 +23,10 @@ class AdminMailer < ActionMailer::Base
     mail(to: AppConfig.get(:admin_email),
          subject: '[Reservations] Request submitted')
   end
+
+  def reservation_created_admin(reservation)
+    @reservation = reservation
+    mail(to: AppConfig.get(:admin_email),
+         subject: '[Reservations] Reservation created')
+  end
 end

@@ -23,6 +23,7 @@ FactoryGirl.define do
     favicon_updated_at '2013-06-24 14:02:01'
     deleted_missed_reservation_email_body 'MyText'
     send_notifications_for_deleted_missed_reservations true
+    notify_admin_on_create false
     checkout_persons_can_edit false
     request_text ''
   end

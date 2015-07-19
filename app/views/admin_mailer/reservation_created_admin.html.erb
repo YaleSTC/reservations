@@ -1,0 +1,10 @@
+<p>A new reservation has been created by
+<%= link_to @reservation.reserver.name, user_url(@reservation.reserver, only_path: false) %></p>
+<ul>
+  <li>Equipment reserved: <%= link_to @reservation.equipment_model.name, equipment_model_url(@reservation.equipment_model, only_path: false) %> </li>
+  <li>Reservation start date: <%= @reservation.start_date.to_s(:long) %></li>
+  <li>Reservation end date: <%= @reservation.due_date.to_s(:long) %></li>
+  <li>Notes: <%= markdown(@reservation.notes) %></li>
+</ul>
+<p>Click <%= link_to "here", reservation_url(@reservation, only_path: false) %> to view this reservation.</p>
+

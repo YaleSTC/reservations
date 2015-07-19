@@ -50,6 +50,7 @@ class AppConfigsController < ApplicationController
               :deleted_missed_reservation_email_body, :enable_guests,
               :default_per_cat_page, :terms_of_service, :favicon,
               :checkout_persons_can_edit, :enable_renewals,
-              :override_on_create, :override_at_checkout, :require_phone)
+              :override_on_create, :override_at_checkout, :require_phone,
+              :notify_admin_on_create)
   end
 end
