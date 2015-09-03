@@ -397,6 +397,34 @@ describe ReservationsController, type: :controller do
           @req.call
           expect(response).to be_redirect
         end
+
+        context 'with notify_admin_on_create set' do
+          before(:each) do
+            ActionMailer::Base.deliveries.clear
+            AppConfig.first.update_attributes(notify_admin_on_create: true)
+          end
+
+          it 'cc-s the admin on the confirmation email' do
+            @req.call
+            delivered = ActionMailer::Base.deliveries.last
+            expect(delivered).not_to be_nil
+            expect(delivered.subject).to \
+              eq('[Reservations] Reservation created')
+          end
+        end
+
+        context 'without notify_admin_on_create set' do
+          before(:each) do
+            ActionMailer::Base.deliveries.clear
+            AppConfig.first.update_attributes(notify_admin_on_create: false)
+          end
+
+          it 'cc-s the admin on the confirmation email' do
+            @req.call
+            delivered = ActionMailer::Base.deliveries.last
+            expect(delivered).to be_nil
+          end
+        end
       end
 
       context 'with banned reserver' do

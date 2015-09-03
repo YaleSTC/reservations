@@ -69,40 +69,23 @@ class Cart # rubocop:disable ClassLength
     reservations
   end
 
-  def reserve_all(user, res_notes = '', request = false) # rubocop:disable all
+  def reserve_all(user, res_notes = '', request = false)
     # reserve all the items in the cart!
     # takes 3 arguments which is the current user, whether or not
     # the equipment should be requested or reserved,
     # and what notes the reservations should be initialized with
     reservations = prepare_all
-    message = []
-    reservations.each do |r|
-      errors = r.validate
-      if request
-        notes = "### Requested on #{Time.zone.now.to_s(:long)} by "\
-          "#{user.md_link}\n\n#### Notes:\n#{res_notes}"
-        r.flag(:request)
-        r.status = 'requested'
-        message << "Request for #{r.equipment_model.md_link} filed "\
-          "successfully. #{errors.to_sentence}\n"
-      else
-        notes = "### Reserved on #{Time.zone.now.to_s(:long)} by "\
-          "#{user.md_link}"
-        notes += "\n\n#### Notes:\n#{res_notes}" unless res_notes.nil? ||
-                                                        res_notes.empty?
-        r.status = 'reserved'
-        message << "Reservation for #{r.equipment_model.md_link} created "\
-          "successfully#{', even though ' + errors.to_sentence[0, 1].downcase\
-          + errors.to_sentence[1..-1] unless errors.empty?}.\n"
-      end
-      r.notes = notes
-      r.save!
-      AdminMailer.request_filed(r).deliver if request
+    msgs = []
+
+    if request
+      reservations.each { |r| msgs << create_request(r, user, res_notes) }
+    else
+      reservations.each { |r| msgs << create_reservation(r, user, res_notes) }
     end
 
     purge_all
 
-    message.join(' ')
+    msgs.join(' ') # return flash message
   end
 
   def request_all(user, notes = '')
@@ -129,5 +112,43 @@ class Cart # rubocop:disable ClassLength
   def fix_items
     valid_items = EquipmentModel.where(id: items.keys).collect(&:id)
     self.items = items.select { |em, _count| valid_items.include? em }
+  end
+
+  private
+
+  # create a reservation with the appropriate notes and update the message
+  # array appropriately; returns the updated message array
+  def create_reservation(res, user, res_notes)
+    errors = res.validate
+    notes = "### Reserved on #{Time.zone.now.to_s(:long)} by "\
+          "#{user.md_link}"
+    notes += "\n\n#### Notes:\n#{res_notes}" unless res_notes.nil? ||
+                                                    res_notes.empty?
+    res.status = 'reserved'
+    res.notes = notes
+    res.save!
+
+    if AppConfig.get(:notify_admin_on_create) # send e-mail if configured to
+      AdminMailer.reservation_created_admin(res).deliver
+    end
+    "Reservation for #{res.equipment_model.md_link} created "\
+      "successfully#{', even though ' + errors.to_sentence[0, 1].downcase\
+      + errors.to_sentence[1..-1] unless errors.empty?}.\n"
+  end
+
+  # create a request with the appropriate notes and update the message array
+  # appropriately; returns the updated message array
+  def create_request(res, user, res_notes)
+    errors = res.validate
+    notes = "### Requested on #{Time.zone.now.to_s(:long)} by "\
+      "#{user.md_link}\n\n#### Notes:\n#{res_notes}"
+    res.flag(:request)
+    res.status = 'requested'
+    res.notes = notes
+    res.save!
+
+    AdminMailer.request_filed(res).deliver # send request notification
+    "Request for #{res.equipment_model.md_link} filed successfully. "\
+      "#{errors.to_sentence}\n"
   end
 end
