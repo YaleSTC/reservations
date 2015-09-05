@@ -121,7 +121,7 @@ class Cart # rubocop:disable ClassLength
   def create_reservation(res, user, res_notes)
     errors = res.validate
     notes = "### Reserved on #{Time.zone.now.to_s(:long)} by "\
-          "#{user.md_link}"
+          "#{user.md_link} for #{res.reserver.md_link}"
     notes += "\n\n#### Notes:\n#{res_notes}" unless res_notes.nil? ||
                                                     res_notes.empty?
     res.status = 'reserved'
