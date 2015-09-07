@@ -1117,6 +1117,32 @@ describe ReservationsController, type: :controller do
       it { expect(response).to be_success }
     end
 
+    context 'with duplicate equipment item selection' do
+      before do
+        request.env['HTTP_REFERER'] = 'where_i_came_from'
+        sign_in @admin
+        @item =
+          FactoryGirl.create :equipment_item,
+                             equipment_model: @reservation.equipment_model
+        FactoryGirl.create :equipment_item,
+                           equipment_model: @reservation.equipment_model
+        @res2 =
+          FactoryGirl.create :valid_reservation,
+                             reserver: @user,
+                             equipment_model: @reservation.equipment_model
+        res_params = { notes: '', equipment_item_id: @item.id }
+        reservations_params = { @reservation.id.to_s => res_params,
+                                @res2.id.to_s => res_params }
+        put :checkout, user_id: @user.id, reservations: reservations_params
+      end
+
+      it { expect(response).to redirect_to 'where_i_came_from' }
+
+      it 'does not update the equipment item history' do
+        expect { @item.reload }.not_to change(@item, :notes)
+      end
+    end
+
     context 'when not all procedures are filled out' do
       before do
         sign_in @admin
