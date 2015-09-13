@@ -15,5 +15,9 @@ task email_missed_reservations: :environment do
       missed_reservation.flag(:missed_email_sent)
       missed_reservation.save!
     end
+  else
+    Rails.logger.info 'Reservations is not configured to send missed '\
+                      'reservation emails. Please change the application '\
+                      'settings if you wish to send them.'
   end
 end
