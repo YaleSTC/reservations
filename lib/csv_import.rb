@@ -7,6 +7,10 @@ module CsvImport
     string = File.read(filepath)
     require 'csv'
 
+    # sanitize input
+    string = string.encode('UTF-8', 'binary', invalid: :replace,
+                           undef: :replace, replace: '')
+
     # import data by row
     CSV.parse(string, headers: true) do |row|
       object_hash = row.to_hash.symbolize_keys
