@@ -56,6 +56,13 @@ class ImportUsersController < ApplicationController
       redirect_to(:back) && return
     end
 
+    # make sure that there's spaces in the header line
+    if imported_users.first.keys.join('').match(/\s/)
+      flash[:error] = 'Unable to import the CSV file. Please ensure that '\
+        'there are no spaces in the first line of the file.'
+      redirect_to(:back) && return
+    end
+
     # make sure we have username data (otherwise all will always fail)
     unless imported_users.first.keys.include?(:username) ||
            ENV['CAS_AUTH'].nil?
@@ -69,9 +76,9 @@ class ImportUsersController < ApplicationController
                      :email, :affiliation]
     unless imported_users.first.keys == accepted_keys
       flash[:error] = 'Unable to import CSV file. Please ensure that the '\
-        'first line of the file exactly matches the sample input (username,'\
+        'first line of the file exactly matches the sample input (username, '\
         'first_name, etc.) Note that headers are case sensitive, and must be '\
-        'in the correct order with no spaces.'
+        'in the correct order.'
       redirect_to(:back) && return
     end
     true
