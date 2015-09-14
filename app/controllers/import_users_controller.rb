@@ -69,9 +69,9 @@ class ImportUsersController < ApplicationController
                      :email, :affiliation]
     unless imported_users.first.keys == accepted_keys
       flash[:error] = 'Unable to import CSV file. Please ensure that the '\
-        'first line of the file exactly matches the sample input (username, '\
-        'first_name, etc.) Note that headers are case sensitive and must be '\
-        'in the correct order.'
+        'first line of the file exactly matches the sample input (username,'\
+        'first_name, etc.) Note that headers are case sensitive, and must be '\
+        'in the correct order with no spaces.'
       redirect_to(:back) && return
     end
     true
