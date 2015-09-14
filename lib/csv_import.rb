@@ -8,8 +8,8 @@ module CsvImport
     require 'csv'
 
     # sanitize input
-    string = string.encode('UTF-8', 'binary', invalid: :replace,
-                           undef: :replace, replace: '')
+    string = string.encode('UTF-8', 'binary',
+                           invalid: :replace, undef: :replace, replace: '')
 
     # import data by row
     CSV.parse(string, headers: true) do |row|
