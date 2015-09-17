@@ -883,23 +883,12 @@ describe ReservationsController, type: :controller do
       include_examples 'cannot access page'
     end
 
-    it_behaves_like 'inaccessible by banned user' do
-      before { get :manage, user_id: @banned.id }
-    end
-
     context 'with banned reserver' do
       before(:each) do
         sign_in @admin
         get :manage, user_id: @banned.id
       end
-
-      it 'is a redirect' do
-        expect(response).to be_redirect
-      end
-
-      it 'sets the flash' do
-        expect(flash[:error]).not_to be_nil
-      end
+      include_examples 'can access #manage'
     end
   end
 
