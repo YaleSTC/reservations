@@ -9,9 +9,7 @@ gem 'rake', '~> 10.4.2'
 gem 'rdoc', '~> 4.2.0'
 
 # simulate environment variables
-group :development, :test do
-  gem 'dotenv-rails', '~> 1.0.2'
-end
+gem 'dotenv-rails', '~> 2.0.2'
 
 # authentication / authorization
 gem 'devise', '~> 3.4.1'
@@ -66,10 +64,11 @@ group :development, :test do
   gem 'spring-commands-rspec', '~> 1.0.4'
   gem 'fuubar', '~> 2.0.0'
   gem 'guard-livereload', '~> 2.4.0'
-  gem 'capistrano',  '~> 3.3.5'
-  gem 'capistrano-bundler', '~> 1.1.4'
-  gem 'capistrano-rails', '~> 1.1.2'
-  gem 'capistrano-rvm', '~> 0.1.2'
+  gem 'capistrano', '~> 3.3.5', require: false
+  gem 'capistrano-bundler', '~> 1.1.4', require: false
+  gem 'capistrano-rails', '~> 1.1.2', require: false
+  gem 'capistrano-rvm', '~> 0.1.2', require: false
+  gem 'highline', '~> 1.7.2', require: false
   gem 'awesome_print', '~> 1.6.1'
   gem 'codeclimate-test-reporter', '~> 0.4.6'
   gem 'database_cleaner', '~> 1.4.0'
@@ -98,7 +97,6 @@ end
 group :production do
   gem 'therubyracer', '~> 0.12.1', require: 'v8'
   gem 'party_foul', '~> 1.5.5'
-  gem 'dotenv-deployment', '~> 0.2.0'
   # for Heroku
   gem 'pg', '~> 0.18.1'
   gem 'unicorn', '~> 4.8.3'

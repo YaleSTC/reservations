@@ -36,6 +36,9 @@ Reservations::Application.configure do
   # Enable serving of images, stylesheets, and javascripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
 
+  # Disable e-mails if environment variable is set
+  config.action_mailer.perform_deliveries = ENV['DISABLE_EMAILS'].nil?
+
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false
 

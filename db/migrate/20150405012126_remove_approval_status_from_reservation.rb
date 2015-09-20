@@ -8,7 +8,7 @@ class RemoveApprovalStatusFromReservation < ActiveRecord::Migration
           res.flag(:missed_email_sent)
         end
 
-        if res.checked_in 
+        if res.checked_in
           res.status = 'returned'
           if res.checked_in > (res.due_date + 1.day)
             res.overdue = true
@@ -36,7 +36,7 @@ class RemoveApprovalStatusFromReservation < ActiveRecord::Migration
           res.flag(:request)
           res.status = 'requested'
         end
-        res.save!
+        res.save!(validate: false)
       end
     end
 
