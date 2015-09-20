@@ -11,6 +11,11 @@ module CsvImport
     string = string.encode('UTF-8', 'binary',
                            invalid: :replace, undef: :replace, replace: '')
 
+    # remove spaces from header line
+    string = string.split "\n"
+    string.first.gsub!(/\s+/, '')
+    string = string.join "\n"
+
     # import data by row
     CSV.parse(string, headers: true) do |row|
       object_hash = row.to_hash.symbolize_keys

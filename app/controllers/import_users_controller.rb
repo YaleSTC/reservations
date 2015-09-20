@@ -56,13 +56,6 @@ class ImportUsersController < ApplicationController
       redirect_to(:back) && return
     end
 
-    # make sure that there's spaces in the header line
-    if imported_users.first.keys.join('').match(/\s/)
-      flash[:error] = 'Unable to import the CSV file. Please ensure that '\
-        'there are no spaces in the first line of the file.'
-      redirect_to(:back) && return
-    end
-
     # make sure we have username data (otherwise all will always fail)
     unless imported_users.first.keys.include?(:username) ||
            ENV['CAS_AUTH'].nil?
