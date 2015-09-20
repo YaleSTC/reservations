@@ -75,7 +75,7 @@ Reservations is built using [Ruby on Rails](http://rubyonrails.org/), and can be
 * web server ([apache](http://apache.org/) or [nginx](http://wiki.nginx.org/Main) both work well)
 * Rails application server (usually [Passenger Phusion](http://www.modrails.com/) aka mod_rails)
 
-For a general guide to setting up your web and application servers, including hosting providers, see the [Rails Deployment Guide](http://rubyonrails.org/deploy/).
+For a general guide to setting up your web and application servers, including hosting providers, see the [Rails Deployment Guide](http://rubyonrails.org/deploy/). For a guide to using our [Capistrano](http://capistranorb.com/) deployment script, see the [wiki](https://github.com/YaleSTC/reservations/wiki/Capistrano-Deployment-Guide). For a guide to deploying Reservations to [Heroku](https://www.heroku.com/), see the [wiki](https://github.com/YaleSTC/reservations/wiki/Heroku-Deployment-Guide) as well.
 
 ### Configuration
 Reservations uses environment variables for configuration (following the principles of the [Twelve-Factor App](http://12factor.net/config)). The gems [`dotenv`](https://github.com/bkeepers/dotenv) and [`dotenv-deployment`](https://github.com/bkeepers/dotenv-deployment) can be used to simulate system environment variables at runtime.
