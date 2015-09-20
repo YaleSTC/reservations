@@ -36,6 +36,13 @@
       precision: 2), type: 'number', step: 'any' %>
   <% end %>
 
+  <%= f.input :late_fee_max, wrapper: :horizontal_input_group, hint: 'Maximum possible late fee (set to zero for unlimited).' do %>
+    <%= content_tag :span, "$", class: "input-group-addon" %>
+    <%= f.input_field :late_fee_max,
+      class: 'form-control', value: number_with_precision(f.object.late_fee_max,
+      precision: 2), type: 'number', step: 'any' %>
+  <% end %>
+
   <%= f.input :max_per_user, label: "Maximum per user", hint:
   "Leave blank to default to category value." %>
 

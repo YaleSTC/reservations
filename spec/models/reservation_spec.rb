@@ -538,4 +538,41 @@ describe Reservation, type: :model do
       expect(FactoryGirl.create(:valid_reservation).approved?).to be_falsey
     end
   end
+
+  context '#late_fee' do
+    let(:reservation) do
+      r = FactoryGirl.build(:overdue_reservation)
+      r.save(validate: false)
+      r
+    end
+
+    it 'returns the correct late fee' do
+      expected = (Time.zone.today - reservation.due_date) *
+                 reservation.equipment_model.late_fee
+      expect(reservation.late_fee).to eq(expected)
+    end
+
+    it 'returns 0 if not overdue' do
+      reservation.update_attributes(due_date: Time.zone.today + 1.day,
+                                    overdue: false)
+      expect(reservation.late_fee).to eq(0)
+    end
+
+    it 'returns the cap if a cap is set' do
+      reservation.equipment_model.update_attributes(late_fee: 100,
+                                                    late_fee_max: 100)
+      reservation.update_attributes(due_date: Time.zone.today - 3.days)
+      expect(reservation.late_fee).to \
+        eq(reservation.equipment_model.late_fee_max)
+    end
+
+    it 'returns the full amount if no cap set' do
+      reservation.equipment_model.update_attributes(late_fee: 100,
+                                                    late_fee_max: 0)
+      reservation.update_attributes(due_date: Time.zone.today - 3.days)
+      expected = (Time.zone.today - reservation.due_date) *
+                 reservation.equipment_model.late_fee
+      expect(reservation.late_fee).to eq(expected)
+    end
+  end
 end

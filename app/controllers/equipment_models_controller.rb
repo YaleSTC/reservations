@@ -154,11 +154,11 @@ class EquipmentModelsController < ApplicationController
     # manually add on the procedure elements from params since they
     # don't have fixed hash keys (check to see if they exist first
     # to resolve test failures)
-    params. require(:equipment_model)
+    params.require(:equipment_model)
       .permit(:name, :category_id, :category, :description, :late_fee,
               :replacement_fee, :max_per_user, :document_attributes,
               :deleted_at, :photo, :documentation, :max_renewal_times,
-              :max_renewal_length, :renewal_days_before_due,
+              :max_renewal_length, :renewal_days_before_due, :late_fee_max,
               { associated_equipment_model_ids: [] }, :requirement_ids,
               :requirements, :max_checkout_length)
       .tap do |whitelisted|

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150719050013) do
+ActiveRecord::Schema.define(version: 20150719052612) do
 
   create_table "announcements", force: true do |t|
     t.text     "message"
@@ -137,6 +137,7 @@ ActiveRecord::Schema.define(version: 20150719050013) do
     t.boolean  "csv_import",                                          default: false, null: false
     t.integer  "max_checkout_length"
     t.integer  "equipment_items_count",                               default: 0,     null: false
+    t.decimal  "late_fee_max",               precision: 10, scale: 2, default: 0.0
   end
 
   create_table "equipment_models_associated_equipment_models", id: false, force: true do |t|
