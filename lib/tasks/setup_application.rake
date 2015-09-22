@@ -41,9 +41,9 @@ namespace :app do
         else
           username = email
           puts 'Password:'
-          password = STDIN.gets.chomp
+          password = STDIN.noecho(&:gets).chomp
           puts 'Confirm Password:'
-          password_confirmation = STDIN.gets.chomp
+          password_confirmation = STDIN.noecho(&:gets).chomp
         end
         puts 'Affiliation (i.e. Yale College):'
         affiliation = STDIN.gets.chomp
