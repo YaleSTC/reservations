@@ -2,6 +2,17 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+## v5.4.0 - 2015-10-26
+### Fixed
+* Setup script for initial user now doesn't echo the typed password ([#1304](https://github.com/YaleSTC/reservations/pull/1304)).
+* Addressed a versioning issue with Capistrano ([#1306](https://github.com/YaleSTC/reservations/issues/1306)).
+* The seed-script-created superuser can now login in CAS mode ([#1320](https://github.com/YaleSTC/reservations/issues/1320)).
+* Actually fixed the user authentication initializer allowing both CAS and password authentication to be used ([#1324](https://github.com/YaleSTC/reservations/issues/1324)).
+
+### Added
+* ENV variable 'LOG_EMAILS' to log more detailed information upon sending any email ([#1127](https://github.com/YaleSTC/reservations/issues/1127)).
+* Email notifcations for requests that expire ([#1203](https://github.com/YaleSTC/reservations/issues/1203)).
+
 ## v5.3.0 - 2015-09-21
 ### Fixed
 * Fixed issues with reservation renewals and added tests ([#416](https://github.com/YaleSTC/reservations/issues/416), [#1218](https://github.com/YaleSTC/reservations/issues/1218)).
