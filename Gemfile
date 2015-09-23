@@ -64,7 +64,7 @@ group :development, :test do
   gem 'spring-commands-rspec', '~> 1.0.4'
   gem 'fuubar', '~> 2.0.0'
   gem 'guard-livereload', '~> 2.4.0'
-  gem 'capistrano', '~> 3.3.5', require: false
+  gem 'capistrano', '3.4.0', require: false
   gem 'capistrano-bundler', '~> 1.1.4', require: false
   gem 'capistrano-rails', '~> 1.1.2', require: false
   gem 'capistrano-rvm', '~> 0.1.2', require: false
