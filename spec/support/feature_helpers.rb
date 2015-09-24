@@ -74,10 +74,14 @@ module FeatureHelpers
   end
 
   def current_user
-    visit root_path
-    click_link 'My Profile'
-    email = find('.page-header h1 small').text
-    User.find_by_email(email)
+    if @current_user
+      @current_user
+    else
+      visit root_path
+      click_link 'My Profile'
+      email = find('.page-header h1 small').text
+      @current_user = User.find_by_email(email)
+    end
   end
 
   def admin_routes

@@ -162,5 +162,11 @@ describe UserMailer, type: :mailer do
       @mail = UserMailer.reservation_status_update(@res).deliver
       expect(@mail).to be_nil
     end
+
+    it "doesn't send at all if disable_user_emails is set" do
+      AppConfig.first.update_attributes(disable_user_emails: true)
+      @mail = UserMailer.reservation_status_update(@res).deliver
+      expect(@mail).to be_nil
+    end
   end
 end

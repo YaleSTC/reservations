@@ -51,6 +51,6 @@ class AppConfigsController < ApplicationController
               :default_per_cat_page, :terms_of_service, :favicon,
               :checkout_persons_can_edit, :enable_renewals,
               :override_on_create, :override_at_checkout, :require_phone,
-              :notify_admin_on_create)
+              :notify_admin_on_create, :disable_user_emails)
   end
 end

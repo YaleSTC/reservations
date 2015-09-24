@@ -16,6 +16,10 @@ class UserMailer < ActionMailer::Base
                     'returned overdue', 'starts today']
 
   def reservation_status_update(reservation, force = '') # rubocop:disable all
+    if AppConfig.get(:disable_user_emails)
+      Rails.logger.warn 'User e-mails disabled in application settings.'
+      return
+    end
     set_app_config
     @reservation = reservation
 

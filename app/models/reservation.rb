@@ -131,13 +131,18 @@ class Reservation < ActiveRecord::Base
   end
 
   def late_fee
+    return 0 unless overdue
     if checked_in
       end_date = checked_in.to_date
     else
       end_date = Time.zone.today
     end
     fee = equipment_model.late_fee * (end_date - due_date)
-    fee = 0 if fee < 0
+    if fee < 0
+      fee = 0
+    elsif equipment_model.late_fee_max > 0
+      fee = [fee, equipment_model.late_fee_max].min
+    end
     fee
   end
 
@@ -240,10 +245,6 @@ class Reservation < ActiveRecord::Base
       end
     end
     make_notes('Checked in', new_notes, incomplete_procedures, checkin_handler)
-    # update equipment item notes
-    equipment_item.make_reservation_notes('checked in', self,
-                                          checkin_handler, new_notes,
-                                          checked_in)
 
     if checked_in.to_date > due_date
       # equipment was overdue, send an email confirmation
@@ -263,11 +264,6 @@ class Reservation < ActiveRecord::Base
     if checked_in.nil?
       self.checked_in = Time.zone.now
       self.checked_out = Time.zone.now if checked_out.nil?
-      # archive equipment item if checked out
-      if equipment_item
-        equipment_item.make_reservation_notes('archived', self, archiver,
-                                              "#{note}", checked_in)
-      end
       self.notes = notes.to_s + "\n\n### Archived on "\
         "#{checked_in.to_s(:long)} by #{archiver.md_link}\n\n\n#### " \
         "Reason:\n#{note}\n\n#### The checkin and checkout dates may "\
@@ -299,10 +295,6 @@ class Reservation < ActiveRecord::Base
     end
     make_notes('Checked out', new_notes, incomplete_procedures,
                checkout_handler)
-    # update equipment item notes
-    equipment_item.make_reservation_notes('checked out', self,
-                                          checkout_handler, new_notes,
-                                          checked_out)
     self
   end
 

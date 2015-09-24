@@ -41,3 +41,8 @@ server 'localhost', user: 'hudson', roles: %w(web app db)
 #     auth_methods: %w(publickey password)
 #     # password: 'please use keys'
 #   }
+
+# set crontab with whenever
+namespace :deploy do
+  after :finishing, :update_cron
+end

@@ -1,9 +1,12 @@
 <% title "Import Users" %>
 
 <h3>CSV Import Format</h3>
+  <p>
+    To import user data, upload a CSV file that follows this format. All fields except "nickname" are required.
+  </p>
 <h5>Columns (must be in the first row of the CSV file)</h5>
 <%= markdown("
-    Username, First Name, Last Name, Nickname, Phone, Email, Affiliation") %>
+    username,first_name,last_name,nickname,phone,email,affiliation") %>
 <h5>Example</h5>
 <%= markdown("
     username,first_name,last_name,nickname,phone,email,affiliation

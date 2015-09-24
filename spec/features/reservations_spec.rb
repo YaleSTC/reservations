@@ -176,6 +176,61 @@ describe 'Reservations', type: :feature do
     end
   end
 
+  context 'banned equipment processing' do
+    after(:each) do
+      @user.update_attributes(role: 'normal')
+    end
+    shared_examples 'can handle banned user reservation transactions' do
+      it 'checks in successfully' do
+        # check in
+        @checked_out_res = FactoryGirl.create :checked_out_reservation,
+                                              reserver: @user,
+                                              equipment_model: @eq_model
+        @user.update_attributes(role: 'banned')
+        visit manage_reservations_for_user_path(@user)
+        check "#{@checked_out_res.equipment_item.name}"
+        click_button 'Check-In Equipment'
+
+        expect(page).to have_content 'Check-In Receipt'
+        expect(page).to have_content current_user.name
+        @checked_out_res.reload
+        expect(@checked_out_res.checkin_handler).to eq(current_user)
+        expect(@checked_out_res.checked_in).not_to be_nil
+      end
+      it 'cannot checkout successfully' do
+        @res = FactoryGirl.create :valid_reservation, reserver: @user,
+                                                      equipment_model: @eq_model
+        @user.update_attributes(role: 'banned')
+        # check out
+        visit manage_reservations_for_user_path(@user)
+        select "#{@eq_model.equipment_items.first.name}", from: 'Equipment Item'
+        click_button 'Check-Out Equipment'
+        expect(page).to have_content 'Banned users cannot check out equipment'
+      end
+    end
+
+    context 'as checkout person' do
+      before { sign_in_as_user(@checkout_person) }
+      after { sign_out }
+
+      it_behaves_like 'can handle banned user reservation transactions'
+    end
+
+    context 'as admin' do
+      before { sign_in_as_user(@admin) }
+      after { sign_out }
+
+      it_behaves_like 'can handle banned user reservation transactions'
+    end
+
+    context 'as superuser' do
+      before { sign_in_as_user(@superuser) }
+      after { sign_out }
+
+      it_behaves_like 'can handle banned user reservation transactions'
+    end
+  end
+
   context 'equipment processing' do
     before(:each) do
       @res = FactoryGirl.create :valid_reservation, reserver: @user,
@@ -196,6 +251,13 @@ describe 'Reservations', type: :feature do
         expect(@res.equipment_item_id).to eq(@eq_model.equipment_items.first.id)
         expect(@res.checkout_handler).to eq(current_user)
         expect(@res.checked_out).not_to be_nil
+        # check equipment item notes if admin or superuser (checkout persons
+        # can't see them)
+        if current_user.view_mode == 'admin' ||
+           current_user.view_mode == 'superuser'
+          visit equipment_item_path(@res.equipment_item)
+          expect(page).to have_link('Checked out', href: reservation_path(@res))
+        end
 
         # check in
         visit manage_reservations_for_user_path(@user)
@@ -207,6 +269,46 @@ describe 'Reservations', type: :feature do
         @res.reload
         expect(@res.checkin_handler).to eq(current_user)
         expect(@res.checked_in).not_to be_nil
+        if current_user.view_mode == 'admin' ||
+           current_user.view_mode == 'superuser'
+          visit equipment_item_path(@res.equipment_item)
+          expect(page).to have_link('Checked in', href: reservation_path(@res))
+        end
+      end
+
+      it 'does not update equipment items for missing ToS checkbox' do
+        @user.update_attributes(terms_of_service_accepted: false)
+        visit manage_reservations_for_user_path(@user)
+        select "#{@eq_model.equipment_items.first.name}", from: 'Equipment Item'
+        click_button 'Check-Out Equipment'
+
+        expect(page).to have_content 'You must confirm that the user accepts '\
+          'the Terms of Service.'
+        visit equipment_item_path(@res.equipment_model.equipment_items.first)
+        expect(page).not_to have_link('Checked out',
+                                      href: reservation_path(@res))
+      end
+
+      it 'does not update equipment items for duplicate items' do
+        FactoryGirl.create :equipment_item, equipment_model: @eq_model,
+                                            name: 'name2'
+        @res2 = FactoryGirl.create :valid_reservation,
+                                   reserver: @user,
+                                   equipment_model: @eq_model
+        visit manage_reservations_for_user_path(@user)
+        select "#{@eq_model.equipment_items.first.name}",
+               from: "reservations_#{@res.id}_equipment_item_id"
+        select "#{@eq_model.equipment_items.first.name}",
+               from: "reservations_#{@res2.id}_equipment_item_id"
+        click_button 'Check-Out Equipment'
+
+        expect(page).to have_content 'The same equipment item cannot be '\
+          'simultaneously checked out in multiple reservations.'
+        visit equipment_item_path(@res.equipment_model.equipment_items.first)
+        expect(page).not_to have_link('Checked out',
+                                      href: reservation_path(@res))
+        expect(page).not_to have_link('Checked out',
+                                      href: reservation_path(@res2))
       end
     end
 
