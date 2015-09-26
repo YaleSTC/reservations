@@ -76,6 +76,15 @@ describe UserMailer, type: :mailer do
         "[Reservations] #{@res.equipment_model.name} Request Approved")
     end
 
+    it 'sends expired request notifications' do
+      @res.update_attributes(status: 'denied',
+                             flags: (Reservation::FLAGS[:request] |
+                                     Reservation::FLAGS[:expired]))
+      @mail = UserMailer.reservation_status_update(@res).deliver
+      expect(@mail.subject).to eq(
+        "[Reservations] #{@res.equipment_model.name} Request Expired")
+    end
+
     it 'sends reminders to check-out' do
       @res.update_attributes(
         FactoryGirl.attributes_for(:upcoming_reservation))

@@ -40,6 +40,9 @@ class UserMailer < ActionMailer::Base
     if @status == 'reserved'
       # we only send emails for reserved reservations if it was a request
       @status = 'request approved'
+    elsif @status == 'denied' &&
+          @reservation.flagged?(:expired)
+      @status = 'request expired'
     end
 
     status_formatted = @status.sub('_', ' ').split.map(&:capitalize) * ' '
