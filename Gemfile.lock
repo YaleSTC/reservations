@@ -36,6 +36,12 @@ GEM
       execjs
       json
     awesome_print (1.6.1)
+    aws-sdk (2.1.24)
+      aws-sdk-resources (= 2.1.24)
+    aws-sdk-core (2.1.24)
+      jmespath (~> 1.0)
+    aws-sdk-resources (2.1.24)
+      aws-sdk-core (= 2.1.24)
     bcrypt (3.1.10)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
@@ -167,6 +173,7 @@ GEM
       activesupport (>= 4.1.9)
       loofah (>= 2.0)
       nokogiri (~> 1.6)
+    jmespath (1.1.3)
     jquery-datatables-rails (3.1.1)
       actionpack (>= 3.1)
       jquery-rails
@@ -416,6 +423,7 @@ PLATFORMS
 
 DEPENDENCIES
   awesome_print (~> 1.6.1)
+  aws-sdk
   bootstrap-sass (~> 3.3.3)
   bullet (~> 4.14.4)
   cancancan (~> 1.10.1)
@@ -481,3 +489,6 @@ DEPENDENCIES
   uglifier (~> 2.7.0)
   unicorn (~> 4.8.3)
   whenever (~> 0.9.4)
+
+BUNDLED WITH
+   1.10.6

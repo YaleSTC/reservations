@@ -44,6 +44,18 @@ Reservations::Application.configure do
   # Set Paperclip path
   Paperclip.options[:command_path] = '/usr/local/bin'
 
+  # configure for AWS
+  if ENV['ENABLE_PAPERCLIP_S3']
+    config.paperclip_defaults = {
+      storage: :s3,
+      s3_credentials: {
+        bucket: ENV['S3_BUCKET_NAME'],
+        access_key_id: ENV['AWS_ACCESS_KEY_ID'],
+        secret_access_key: ENV['AWS_SECRET_ACCESS_KEY']
+      }
+    }
+  end
+
   config.after_initialize do
     Bullet.enable = true
     # Bullet.alert = true
