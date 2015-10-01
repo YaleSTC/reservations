@@ -8,6 +8,9 @@ gem 'mysql2', '~> 0.3.18'
 gem 'rake', '~> 10.4.2'
 gem 'rdoc', '~> 4.2.0'
 
+# only for heroku, we should make a heroku group
+gem 'aws-sdk'
+
 # simulate environment variables
 gem 'dotenv-rails', '~> 2.0.2'
 
