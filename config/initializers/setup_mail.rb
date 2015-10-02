@@ -15,3 +15,13 @@ if ENV['RES_SMTP_AUTH']
   ActionMailer::Base.smtp_settings[:password] =
     Rails.application.secrets.smtp_password
 end
+
+# logging of automatically sent emails
+if ENV['LOG_EMAILS']
+  class MailObserver
+    def self.delivered_email(message)
+      Rails.logger.info "Sent #{message.subject} to #{message.to}"
+    end
+  end
+  ActionMailer::Base.register_observer(MailObserver)
+end
