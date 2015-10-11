@@ -34,7 +34,8 @@ class Reservation < ActiveRecord::Base
   # query by where('flags & ? > 0', FLAGS[:flag])
   # or where('flags & ? = 0', FLAGS[:flag]) for not flagged
   FLAGS = { request: (1 << 1), broken: (1 << 2), lost: (1 << 3),
-            fined: (1 << 4), missed_email_sent: (1 << 5) }
+            fined: (1 << 4), missed_email_sent: (1 << 5),
+            expired: (1 << 6) }
 
   ## Class methods ##
 
@@ -95,6 +96,8 @@ class Reservation < ActiveRecord::Base
   end
 
   def flagged?(flag)
+    # checks to see if the given flag is set
+    # you must pass the symbol for the flag
     flags & FLAGS[flag] > 0
   end
 

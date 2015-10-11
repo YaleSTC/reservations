@@ -65,13 +65,14 @@ describe 'deny_missed_requests' do
 
   before(:each) { @res = FactoryGirl.create(:valid_reservation) }
 
-  it 'flags missed requests as missed' do
+  it 'flags missed requests as denied and expired' do
     @res.update_attributes(FactoryGirl.attributes_for(:request))
     @res.update_attributes(start_date: Time.zone.yesterday,
                            due_date: Time.zone.today)
     expect { subject.invoke }.to(
       change { Reservation.find(@res.id).status }.from(
         'requested').to('denied'))
+    expect(Reservation.find(@res.id).flagged?(:expired)).to be_truthy
   end
 
   it "doesn't flag missed non-requests" do
@@ -83,5 +84,14 @@ describe 'deny_missed_requests' do
   it "doesn't flag not missed requests" do
     @res.update_attributes(FactoryGirl.attributes_for(:request))
     expect { subject.invoke }.not_to change { Reservation.find(@res.id).status }
+  end
+
+  it 'sends appropriate emails' do
+    @res.update_attributes(FactoryGirl.attributes_for(:request))
+    @res.update_attributes(start_date: Time.zone.yesterday,
+                           due_date: Time.zone.today)
+    @no_email = FactoryGirl.create(:missed_reservation)
+    expect { subject.invoke }.to(
+      change { ActionMailer::Base.deliveries.count }.by(1))
   end
 end
