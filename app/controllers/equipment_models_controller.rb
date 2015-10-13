@@ -31,7 +31,8 @@ class EquipmentModelsController < ApplicationController
   end
 
   def show # rubocop:disable AbcSize, MethodLength
-    relevant_reservations = Reservation.active.for_eq_model(@equipment_model)
+    relevant_reservations =
+      Reservation.for_eq_model(@equipment_model.id).active
     @associated_equipment_models =
       @equipment_model.associated_equipment_models.sample(6)
 
@@ -59,9 +60,11 @@ class EquipmentModelsController < ApplicationController
     @restricted = @equipment_model.model_restricted?(cart.reserver_id)
 
     # For pending reservations table
-    @pending = relevant_reservations.reserved_in_date_range(Time.zone.today,
-                                                            Time.zone.today +
-                                                            8.days).reserved
+    @pending =
+      relevant_reservations.reserved_in_date_range(Time.zone.today,
+                                                   Time.zone.today + 8.days)
+    # Future reservations using Query object
+    @future = @pending.future
   end
 
   def new
@@ -124,7 +127,7 @@ class EquipmentModelsController < ApplicationController
       flash[:notice] = 'Deactivation cancelled.'
       redirect_to @equipment_model
     elsif params[:deactivation_confirmed]
-      Reservation.for_eq_model(@equipment_model).finalized.each do |r|
+      Reservation.for_eq_model(@equipment_model.id).finalized.each do |r|
         r.archive(current_user, 'The equipment model was deactivated.')
           .save(validate: false)
       end

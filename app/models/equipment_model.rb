@@ -191,7 +191,7 @@ class EquipmentModel < ActiveRecord::Base
   def num_available(start_date, due_date)
     # for if you just want the number available, 1 query to get
     # relevant reservations
-    relevant_reservations = Reservation.for_eq_model(self).finalized
+    relevant_reservations = Reservation.for_eq_model(id).finalized
                             .reserved_in_date_range(start_date, due_date)
                             .all
     num_available_from_source(start_date, due_date, relevant_reservations)
@@ -207,14 +207,14 @@ class EquipmentModel < ActiveRecord::Base
   # Returns the number of overdue objects for a given model,
   # as long as they have been checked out.
   def number_overdue
-    Reservation.overdue.for_eq_model(self).size
+    Reservation.overdue.for_eq_model(id).size
   end
 
   def available_count(date)
     # get the total number of items of this kind then subtract the total
     # quantity currently reserved, checked-out, and overdue
     total = equipment_items.active.count
-    reserved = Reservation.reserved_on_date(date).for_eq_model(self).count
+    reserved = Reservation.reserved_on_date(date).for_eq_model(id).count
     total - reserved - number_overdue
   end
 

@@ -15,7 +15,7 @@ class CategoryDecorator < ApplicationDecorator
       # find reservations for models in the category in the next week
       res = 0
       object.equipment_models.each do |em|
-        res += Reservation.for_eq_model(em).finalized
+        res += Reservation.for_eq_model(em.id).finalized
                .reserved_in_date_range(Time.zone.today - 1.day,
                                        Time.zone.today + 7.days)
                .count

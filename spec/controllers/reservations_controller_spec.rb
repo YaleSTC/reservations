@@ -111,9 +111,10 @@ describe ReservationsController, type: :controller do
         # Assertion and expectation
         @filters.each do |f|
           get :index, f => true
-          expect(assigns(:reservations_set).uniq.sort).to eq(Reservation.send(f)
-               .starts_on_days(assigns(:start_date), assigns(:end_date))
-               .uniq.sort)
+          expect(assigns(:reservations_set).uniq.sort).to \
+            eq(Reservation.send(f)
+              .starts_on_days(assigns(:start_date), assigns(:end_date))
+              .uniq.sort)
         end
       end
       it 'populates with respect to session[:filter] first' do
@@ -126,9 +127,10 @@ describe ReservationsController, type: :controller do
         @filters.each do |f|
           session[:filter] = f.to_s
           get :index, @filters.sample => true
-          expect(assigns(:reservations_set).uniq.sort).to eq(Reservation.send(f)
-               .starts_on_days(assigns(:start_date), assigns(:end_date))
-               .uniq.sort)
+          expect(assigns(:reservations_set).uniq.sort).to \
+            eq(Reservation.send(f)
+              .starts_on_days(assigns(:start_date), assigns(:end_date))
+              .uniq.sort)
         end
       end
 

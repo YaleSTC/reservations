@@ -82,7 +82,6 @@ class ReservationsController < ApplicationController
     end
 
     set_counts(source, time)
-
     @reservations_set = time.send(@filter)
   end
 
