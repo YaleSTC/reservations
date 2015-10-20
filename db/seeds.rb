@@ -352,6 +352,7 @@ if User.where('role = ?', 'superuser').empty?
     if ENV['CAS_AUTH']
       prompt_field(u, :cas_login)
       u.username = u.cas_login
+      u.save
     else
       u.username = u.email
       u.password = 'passw0rd'
@@ -369,6 +370,7 @@ if User.where('role = ?', 'superuser').empty?
     if ENV['CAS_AUTH']
       prompt_field(u, :cas_login)
       u.username = u.cas_login
+      u.save
     else
       u.username = u.email
       u.save
