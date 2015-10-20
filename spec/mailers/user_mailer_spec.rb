@@ -1,4 +1,5 @@
 require 'spec_helper'
+include EnvHelpers
 
 shared_examples_for 'valid user email' do
   it 'sends to the reserver' do
@@ -47,6 +48,19 @@ describe UserMailer, type: :mailer do
     it 'sends an email' do
       @mail = UserMailer.reservation_status_update(@res).deliver
       expect(ActionMailer::Base.deliveries.count).to eq(1)
+    end
+
+    it 'logs if the env is set' do
+      env_wrapper('LOG_EMAILS' =>  '1') do
+        expect(Rails.logger).to receive(:info).with(/Sent/).once
+        @mail = UserMailer.reservation_status_update(@res).deliver
+      end
+    end
+
+    it "doesn't log if the env is not set" do
+      expect(ENV['LOG_EMAILS']).to be_nil
+      expect(Rails.logger).to receive(:info).exactly(0).times
+      @mail = UserMailer.reservation_status_update(@res).deliver
     end
 
     it 'sends denied notifications' do
