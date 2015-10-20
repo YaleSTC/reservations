@@ -107,7 +107,7 @@ end
 
 def prompt_password(user)
   puts 'Temp Password:'
-  user.password = STDIN.gets.chomp
+  user.password = STDIN.noecho(&:gets).chomp
   user.password_confirmation = user.password
   begin
     user.save!
