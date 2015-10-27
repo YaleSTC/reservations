@@ -2,25 +2,25 @@
   <thead>
   <tr>
     <th class="text-center col-md-2">Name</th>
-  <% if can? :manage, Reservation %>
-    <th class="no_sort text-center">Current Status</th>
-    <th class="text-center">Available</th>
-    <th class="text-center">Reserved</th>
-    <th class="text-center">Checked-Out</th>
-    <th class="text-center">Overdue</th>
-    <th class="text-center">Total Stock</th>
-    <% if can? :manage, EquipmentModel %>
-      <th class="no_sort text-center"> </th>
-      <th class="no_sort text-center"> </th>
-    <% end%>
-  <% end %>
+    <% if can? :view_detailed, EquipmentModel %>
+      <th class="no_sort text-center">Current Status</th>
+      <th class="text-center">Available</th>
+      <th class="text-center">Reserved</th>
+      <th class="text-center">Checked-Out</th>
+      <th class="text-center">Overdue</th>
+      <th class="text-center">Total Stock</th>
+      <% if can? :manage, EquipmentModel %>
+        <th class="no_sort text-center"> </th>
+        <th class="no_sort text-center"> </th>
+      <% end%>
+    <% end %>
   </tr>
   </thead>
   <tbody>
     <% for equipment_model in @equipment_models %>
     <tr>
       <td class="text-center"><%= link_to equipment_model.name, equipment_model %></td>
-      <% if can? :manage, Reservation %>
+      <% if can? :view_detailed, EquipmentModel %>
         <% if equipment_model.availability(Time.zone.today) == 'all' %>
           <td class="text-center"><span class="label label-success">All  Available</span></td>
         <% elsif equipment_model.availability(Time.zone.today) == 'some' %>

@@ -10,6 +10,7 @@ module FeatureHelpers
     @superuser = FactoryGirl.create(:superuser)
     @checkout_person = FactoryGirl.create(:checkout_person)
     @user = FactoryGirl.create(:user)
+    @banned = FactoryGirl.create(:banned)
   end
 
   def empty_cart
