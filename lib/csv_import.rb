@@ -84,8 +84,13 @@ module CsvImport
   # tries to save using only the csv data. This method will return
   # false if the data specified in the csv is invalid on the user model.
   def attempt_save_with_csv_data?(user_data)
-    # use username if using cas, email otherwise
-    user_data[:username] = user_data[ENV['CAS_AUTH'] ? :username : :email]
+    if ENV['CAS_AUTH']
+      # set the cas login
+      user_data[:cas_login] = user_data[:username]
+    else
+      # set the username
+      user_data[:username] = user_data[:email]
+    end
 
     user = set_or_create_user_for_import(user_data)
 
