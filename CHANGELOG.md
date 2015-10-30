@@ -2,6 +2,22 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+## v5.5.0 - 2015-11-23
+### Fixed
+* The dropdown menu that appears when clicking on the reserver in a list of reservations is no longer blocked in a short table ([#724](https://github.com/YaleSTC/reservations/issues/724)).
+* Importing users when using CAS now correctly sets their cas_login ([#1272](https://github.com/YaleSTC/reservations/issues/1272)).
+* Resolved issues with an earlier migration that would fail when trying to update an old database ([#1330](https://github.com/YaleSTC/reservations/issues/1330)).
+* Fixed issue with FontAwesome asset files in production ([#1342](https://github.com/YaleSTC/reservations/issues/1342)).
+* Fixed broken search results partial ([#1344](https://github.com/YaleSTC/reservations/issues/1344)).
+* Resolved issue with missing logs in non-Heroku deployments ([#1345](https://github.com/YaleSTC/reservations/issues/1345)).
+* Fixed an issue where requirements could not be applied to users ([#1354](https://github.com/YaleSTC/reservations/issues/1354)).
+* The secret token is now appropriately set by the relevant environment variable ([#1356](https://github.com/YaleSTC/reservations/issues/1356)).
+
+### Changed
+* Multiple equipment items of a given equipment model can no longer have the same non-blank serial number ([#296](https://github.com/YaleSTC/reservations/issues/296)).
+* Made equipment model table more informative for patrons ([#1199](https://github.com/YaleSTC/reservations/issues/1199)).
+* The reservation note for creation now includes the name of the reserver ([#1250](https://github.com/YaleSTC/reservations/issues/1250)).
+
 ## v5.4.0 - 2015-10-26
 ### Fixed
 * Setup script for initial user now doesn't echo the typed password ([#1304](https://github.com/YaleSTC/reservations/pull/1304)).
