@@ -13,6 +13,7 @@ class UsersController < ApplicationController
   before_action :check_cas_auth, only: [:show, :new, :create, :edit, :update]
 
   include Autocomplete
+  include CsvExport
 
   # ------------ before filter methods ------------ #
 
@@ -31,6 +32,14 @@ class UsersController < ApplicationController
       @users = User.order('username ASC')
     else
       @users = User.active.order('username ASC')
+    end
+
+    respond_to do |format|
+      format.html
+      format.csv do
+        col = %w(username first_name last_name nickname phone email affiliation)
+        download_csv(User.all, col, "users_#{Time.zone.today}")
+      end
     end
   end
 

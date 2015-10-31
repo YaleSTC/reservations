@@ -28,6 +28,9 @@ gem 'net-ldap', '~> 0.13.0'
 # attachments
 gem 'paperclip', '~> 4.3.2'
 
+# for exporting multiple files
+gem 'rubyzip', '~> 1.1.7'
+
 # soft deletion
 gem 'permanent_records', '~> 4.1.0'
 gem 'nilify_blanks', '~> 1.2.1'

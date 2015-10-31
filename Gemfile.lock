@@ -350,6 +350,7 @@ GEM
     ruby-progressbar (1.7.5)
     rubycas-client (2.3.9)
       activesupport
+    rubyzip (1.1.7)
     safe_yaml (1.0.4)
     sass (3.4.21)
     sass-rails (5.0.4)
@@ -474,6 +475,7 @@ DEPENDENCIES
   rspec-rails (~> 3.4.0)
   rubocop (~> 0.35.1)
   ruby-progressbar (~> 1.7.5)
+  rubyzip (~> 1.1.7)
   sass-rails (~> 5.0.4)
   select2-rails (~> 4.0.1)
   shoulda-matchers (~> 3.0.1)
@@ -487,4 +489,4 @@ DEPENDENCIES
   whenever (~> 0.9.4)
 
 BUNDLED WITH
-   1.10.6
+   1.11.2
