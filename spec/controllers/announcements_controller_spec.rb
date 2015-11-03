@@ -130,4 +130,55 @@ describe AnnouncementsController, type: :controller do
       it_behaves_like 'access denied'
     end
   end
+  context 'GET hide as' do
+    shared_examples 'can hide announcement' do
+      before do
+        @announcement = FactoryGirl.create(:announcement)
+        request.env['HTTP_REFERER'] = 'where_i_came_from'
+        get :hide, id: @announcement
+      end
+      it 'should set some cookie values' do
+        name = 'hidden_announcement_ids'
+        jar = request.cookie_jar
+        jar.signed[name] = [@announcement[:id].to_s]
+        expect(response.cookies[name]).to eq(jar[name])
+      end
+    end
+    context 'superuser' do
+      before do
+        sign_in FactoryGirl.create(:superuser)
+      end
+      it_behaves_like 'can hide announcement'
+    end
+    context 'admin' do
+      before do
+        sign_in FactoryGirl.create(:admin)
+      end
+      it_behaves_like 'can hide announcement'
+    end
+    context 'patron' do
+      before do
+        sign_in FactoryGirl.create(:user)
+      end
+      it_behaves_like 'can hide announcement'
+    end
+    context 'checkout person' do
+      before do
+        sign_in FactoryGirl.create(:checkout_person)
+      end
+      it_behaves_like 'can hide announcement'
+    end
+    context 'guest' do
+      before do
+        sign_in FactoryGirl.create(:guest)
+      end
+      it_behaves_like 'can hide announcement'
+    end
+    context 'banned user' do
+      before do
+        sign_in FactoryGirl.create(:banned)
+      end
+      it_behaves_like 'can hide announcement'
+    end
+  end
 end
