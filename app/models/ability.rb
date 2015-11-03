@@ -30,6 +30,7 @@ class Ability
         can :read, EquipmentModel
         can :override, :reservation_errors if AppConfig.get(:override_on_create)
         can :override, :checkout_errors if AppConfig.get(:override_at_checkout)
+        can :view_detailed, EquipmentModel
       when 'normal' || 'checkout'
         can [:update, :show], User, id: user.id
         can :read, EquipmentModel
@@ -41,6 +42,7 @@ class Ability
         can :update_cart, :all
         can :update_index_dates, Reservation
         can :view_all_dates, Reservation
+        can :view_detailed, EquipmentModel
       when 'guest'
         # rubocop:disable BlockNesting
         if AppConfig.check(:enable_guests)
