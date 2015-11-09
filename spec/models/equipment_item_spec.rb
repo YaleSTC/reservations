@@ -13,6 +13,35 @@ describe EquipmentItem, type: :model do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:equipment_model) }
 
+    # 2015-11-09: we can't use the shoulda matchers test for scoped uniqueness
+    # due to the lack of a default value for notes - we could potentially
+    # rework our database schema to add a default value but it seems
+    # unnecessary at the moment
+    it 'ensures unique serials scoped to equipment model if it exists' do
+      em1 = FactoryGirl.create(:equipment_model)
+      em2 = FactoryGirl.create(:equipment_model)
+      FactoryGirl.create(:equipment_item, equipment_model: em1, serial: 'a')
+      em1_a2 = FactoryGirl.build(:equipment_item, equipment_model: em1,
+                                                  serial: 'a')
+      em1_nil1 = FactoryGirl.build(:equipment_item, equipment_model: em1,
+                                                    serial: nil)
+      em1_nil2 = FactoryGirl.build(:equipment_item, equipment_model: em1,
+                                                    serial: nil)
+      em1_blank1 = FactoryGirl.build(:equipment_item, equipment_model: em1,
+                                                      serial: '')
+      em1_blank2 = FactoryGirl.build(:equipment_item, equipment_model: em1,
+                                                      serial: '')
+      em2_a = FactoryGirl.build(:equipment_item, equipment_model: em2,
+                                                 serial: 'a')
+
+      expect(em1_a2.valid?).to be_falsey
+      expect(em1_nil1.save!).to be_truthy
+      expect(em1_nil2.valid?).to be_truthy
+      expect(em1_blank1.save!).to be_truthy
+      expect(em1_blank2.valid?).to be_truthy
+      expect(em2_a.valid?).to be_truthy
+    end
+
     # this test passes even without the nilify_blanks call in the model, maybe
     # delete the call?
     it 'saves an empty string value as nil for deleted_at field' do
