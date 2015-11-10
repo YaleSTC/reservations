@@ -52,6 +52,10 @@
     "SERVE_STATIC": {
       "description": "whether or not to serve static assets",
       "value": "1"
+    },
+    "RAILS_GROUPS": {
+      "description": "extra groups to install for Heroku",
+      "value": "heroku"
     }
   },
   "addons": [
