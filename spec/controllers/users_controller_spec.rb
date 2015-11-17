@@ -136,6 +136,16 @@ describe UsersController, type: :controller do
         end
         it { is_expected.to set_flash }
       end
+      context 'with requirements' do
+        before do
+          req = FactoryGirl.create :requirement
+          @new_attributes = { requirement_ids: ['', req.id.to_s] }
+          put :update, user: @new_attributes, id: user
+        end
+        it 'should update the user' do
+          expect(User.find(user).requirements.count).to eq(1)
+        end
+      end
       context 'without nice params' do
         before do
           @bad_attributes = FactoryGirl.attributes_for(:user,

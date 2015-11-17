@@ -231,7 +231,7 @@ class UsersController < ApplicationController
                              :current_password] unless @cas_auth
     permitted_attributes << :username if can? :manage, Reservation
     if can? :assign, :requirements
-      permitted_attributes += [:requirement_ids, :user_ids, :role]
+      permitted_attributes += [:user_ids, :role, requirement_ids: []]
     end
     p = params.require(:user).permit(*permitted_attributes)
     p[:view_mode] = p[:role] if p[:role]
