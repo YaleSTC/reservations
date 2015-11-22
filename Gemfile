@@ -97,7 +97,9 @@ end
 group :production do
   gem 'therubyracer', '~> 0.12.1', require: 'v8'
   gem 'party_foul', '~> 1.5.5'
-  # for Heroku
+end
+
+group :heroku do
   gem 'pg', '~> 0.18.1'
   gem 'unicorn', '~> 4.8.3'
   gem 'rack-timeout', '~> 0.2.0'
