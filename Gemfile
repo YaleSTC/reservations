@@ -9,7 +9,7 @@ gem 'rake', '~> 10.4.2'
 gem 'rdoc', '~> 4.2.0'
 
 # simulate environment variables
-gem 'dotenv-rails', '~> 2.0.2'
+gem 'dotenv-rails', '~> 2.0.2', :require => 'dotenv/rails-now'
 
 # authentication / authorization
 gem 'devise', '~> 3.4.1'
@@ -86,7 +86,7 @@ gem 'sass-rails', '~> 5.0.1'
 gem 'coffee-rails', '~> 4.1.0'
 gem 'uglifier', '~> 2.7.0'
 gem 'bootstrap-sass', '~> 3.3.3'
-gem 'font-awesome-rails', '~> 4.3.0'
+gem 'font-awesome-rails', '~> 4.4.0'
 
 group :development do
   gem 'thin', '~> 1.6.3'
