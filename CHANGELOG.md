@@ -2,6 +2,134 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+## v6.0.0 - 2016-04-11
+### Important
+*This release includes an upgrade to Ruby 2.2.3 and Rails 4.2.5 along with updates to many other dependencies. Also, the configuration parameter SERVE_STATIC was renamed to RAILS_SERVE_STATIC_FILES.*
+
+### Fixed
+* Fixed issue with duplicate search results ([#933](https://github.com/YaleSTC/reservations/issues/933)).
+* Fixed the alignment of the reset TOS checkbox on the Settings page ([#1266](https://github.com/YaleSTC/reservations/issues/1266)).
+* Fixed issue where most users couldn't hide announcements ([#1339](https://github.com/YaleSTC/reservations/issues/1339)).
+* The equipment model availability numbers no longer overflow when they are two digits long ([#1363](https://github.com/YaleSTC/reservations/issues/1363)).
+* Admins can again manually create new users when CAS authentication is enabled ([#1370](https://github.com/YaleSTC/reservations/issues/1370)).
+* Fixed integration of Capistrano with the whenever cron scheduler ([#1373](https://github.com/YaleSTC/reservations/issues/1373)).
+* Fixed missing affiliation LDAP lookup ([#1375](https://github.com/YaleSTC/reservations/issues/1375)).
+* Fixed broken cancel button on the quick new user model ([#1376](https://github.com/YaleSTC/reservations/issues/1376)).
+* Fixed issue with missing datepicker assets / update jQuery UI + Bootstrap theme ([#1377](https://github.com/YaleSTC/reservations/issues/1377)).
+* The reservation history tables on user profiles are again sortable ([#1378](https://github.com/YaleSTC/reservations/issues/1378)).
+* Fixed broken link to pending reservations on equipment model page ([#1379](https://github.com/YaleSTC/reservations/issues/1379)).
+* Fixed broken "Total Stock" count on the equipment model table ([#1380](https://github.com/YaleSTC/reservations/issues/1380)).
+* Fixed migration that was leading to reservations being incorrectly marked as overdue ([#1381](https://github.com/YaleSTC/reservations/issues/1381)).
+* Removed extra padding from navbar due to #1377 ([#1403](https://github.com/YaleSTC/reservations/issues/1403)).
+* The quick new user modal form works again ([#1421](https://github.com/YaleSTC/reservations/issues/1421), [#1469](https://github.com/YaleSTC/reservations/issues/1469), [#1471](https://github.com/YaleSTC/reservations/issues/1471)).
+* All URL helpers now use the correct relative root with subdirectory deployment ([#1424](https://github.com/YaleSTC/reservations/issues/1424), [#1465](https://github.com/YaleSTC/reservations/issues/1465)).
+* Fixed the links to Paperclip uploads ([#1425](https://github.com/YaleSTC/reservations/issues/1425)).
+* Resolved an issue where all AdminMailer e-mails were not being delivered ([#1426](https://github.com/YaleSTC/reservations/issues/1426)).
+* Fixed typo in .env.example ([#1427](https://github.com/YaleSTC/reservations/issues/1427)).
+* Resolved an issue where late fees in e-mails were cumulative, not daily ([#1433](https://github.com/YaleSTC/reservations/issues/1433)).
+* CSV Import can handle CR line endings ([#1438](https://github.com/YaleSTC/reservations/issues/1438)).
+* Uploaded CSVs support extra columns ([#1439](https://github.com/YaleSTC/reservations/issues/1439)).
+* Daily rake tasks run sequentially; check-in emails now only send for checked-out reservations ([#1446](https://github.com/YaleSTC/reservations/issues/1446)).
+* Resolved an issue where checked-out reservations were not being taken into account when validating availability ([#1449](https://github.com/YaleSTC/reservations/issues/1449)).
+* Translation added for button label ([#1463](https://github.com/YaleSTC/reservations/issues/1463)).
+* The start and end dates of reports can now actually be changed ([#1476](https://github.com/YaleSTC/reservations/issues/1476)).
+* The reservation overdue parameter correctly updates when editing the due date of checked out reservations ([#1479](https://github.com/YaleSTC/reservations/issues/1479)).
+* Fixed an issue where enabling CAS wouldn't actually require the relevant gem ([#1487](https://github.com/YaleSTC/reservations/issues/1487)).
+* Reservations now correctly identifies blackout conflicts ([#1489](https://github.com/YaleSTC/reservations/issues/1489)).
+* Various UI bugs fixed: equipment_model show table and checkout restrictions ([#1492](https://github.com/YaleSTC/reservations/issues/1492)).
+* Terms of Service checkbox correctly determines if editable ([#1497](https://github.com/YaleSTC/reservations/issues/1497)).
+* Fixed some strange behavior with the availability calendar ([#1498](https://github.com/YaleSTC/reservations/issues/1498)).
+* The contact form now correctly falls back to the admin e-mail if no separate e-mail is set ([#1524](https://github.com/YaleSTC/reservations/issues/1524)).
+* Fixed regression with the crontab generator ([#1542](https://github.com/YaleSTC/reservations/issues/1542)).
+* Fixed issue with request prompt on new reservation confirmation page ([#1544](https://github.com/YaleSTC/reservations/issues/1544)).
+
+### Added
+* Uploads can now be hosted on Amazon S3; particularly useful for Heroku deployments ([#1210](https://github.com/YaleSTC/reservations/issues/1210)).
+* Users can no longer create consecutive reservations to bypass length limits ([#1311](https://github.com/YaleSTC/reservations/issues/1311)).
+* CSV files of user and equipment data can be downloaded ([#1337](https://github.com/YaleSTC/reservations/issues/1337)).
+* You can now view a monthly calendar view of reservations for categories, equipment models, and equipment items. ([#1360](https://github.com/YaleSTC/reservations/issues/1360)).
+* Made archived reservations accessible through the reservations index page ([#1383](https://github.com/YaleSTC/reservations/issues/1383)).
+* Equipment items checked out to a given reservation are now optionally deactivated when that reservation is archived ([#1384](https://github.com/YaleSTC/reservations/issues/1384)).
+
+### Changed
+* Refactored and redesigned the confirm reservation page to allow editing ([#237](https://github.com/YaleSTC/reservations/issues/237)).
+* Clarified error message when adding too many items to cart ([#1242](https://github.com/YaleSTC/reservations/issues/1242)).
+* Refactored and improved Reservation queries using Query Objects ([#1288](https://github.com/YaleSTC/reservations/issues/1288)).
+* Updated all dependencies, including Ruby and Rails ([#1329](https://github.com/YaleSTC/reservations/issues/1329)).
+* Refactored and improved the md_link method for resources and standardized its usage in notes / logs ([#1382](https://github.com/YaleSTC/reservations/issues/1382)).
+* Improved ability.rb for clarity and to avoid redundancy ([#1391](https://github.com/YaleSTC/reservations/issues/1391)).
+* Reordered sections on current reservations page ([#1414](https://github.com/YaleSTC/reservations/issues/1414)).
+* Updated SERVE_STATIC to RAILS_SERVE_STATIC_FILES in .env.example and app.json ([#1419](https://github.com/YaleSTC/reservations/issues/1419)).
+* Changed receipts page to include user search ([#1420](https://github.com/YaleSTC/reservations/issues/1420)).
+* Reservations now defaults to deleting missed reservations after one week ([#1491](https://github.com/YaleSTC/reservations/issues/1491)).
+* Fixed redirect error on direct url visit to /reservations/new ([#1502](https://github.com/YaleSTC/reservations/issues/1502)).
+* Updated the database schema to reflect the default field limits in MariaDB based on change in Rails 4.2 ([#1517](https://github.com/YaleSTC/reservations/issues/1517)).
+
+## v5.5.6 - 2016-03-07
+### Fixed
+* CSV Import can handle CR line endings ([#1438](https://github.com/YaleSTC/reservations/issues/1438)).
+* Reservations now correctly identifies blackout conflicts ([#1489](https://github.com/YaleSTC/reservations/issues/1489)).
+* Various UI bugs fixed: equipment model show table and checkout restrictions ([#1492](https://github.com/YaleSTC/reservations/issues/1492)).
+* Terms of Service checkbox correctly determines if editable ([#1497](https://github.com/YaleSTC/reservations/issues/1497)).
+* Fixed some strange behavior with the availability calendar ([#1498](https://github.com/YaleSTC/reservations/issues/1498)).
+* Directly accessing /reservations/new now redirects to root_path ([#1502](https://github.com/YaleSTC/reservations/issues/1502)).
+* The contact form now correctly falls back to the admin e-mail if no separate e-mail is set ([#1524](https://github.com/YaleSTC/reservations/issues/1524)).
+
+### Changed
+* Reservations now defaults to deleting missed reservations after one week ([#1491](https://github.com/YaleSTC/reservations/issues/1491)).
+* The availability calendar now uses FullCalendar ([#1498](https://github.com/YaleSTC/reservations/issues/1498)).
+
+## v5.5.5 - 2016-02-05
+### Fixed
+* Updated Rails Admin to allow editing of reservations ([#1449](https://github.com/YaleSTC/reservations/issues/1449#issuecomment-180207219)).
+* The start and end dates of reports can now actually be changed ([#1476](https://github.com/YaleSTC/reservations/issues/1476)).
+* The reservation overdue parameter correctly updates when editing the due date of checked out reservations ([#1479](https://github.com/YaleSTC/reservations/issues/1479)).
+
+## v5.5.4 - 2016-02-02
+### Fixed
+* The quick new user modal form works again ([#1421](https://github.com/YaleSTC/reservations/issues/1421), [#1469](https://github.com/YaleSTC/reservations/issues/1469), [#1471](https://github.com/YaleSTC/reservations/issues/1471)).
+* All URL helpers now use the correct relative root with subdirectory deployment ([#1424](https://github.com/YaleSTC/reservations/issues/1424), [#1465](https://github.com/YaleSTC/reservations/issues/1465)).
+* Fixed the links to Paperclip uploads ([#1425](https://github.com/YaleSTC/reservations/issues/1425)).
+* Uploaded CSVs support extra columns ([#1439](https://github.com/YaleSTC/reservations/issues/1439)).
+* Daily rake tasks run sequentially; check-in emails now only send for checked-out reservations ([#1446](https://github.com/YaleSTC/reservations/issues/1446)).
+
+### Changed
+* Changed receipts page to include user search ([#1420](https://github.com/YaleSTC/reservations/issues/1420)).
+
+## v5.5.3 - 2016-01-24
+### Fixed
+* Resolved an issue where checked-out reservations were not being taken into account when validating availability ([#1449](https://github.com/YaleSTC/reservations/issues/1449)).
+
+## v5.5.2 - 2016-01-18
+### Fixed
+* Resolved an issue where all AdminMailer e-mails were not being delivered ([#1426](https://github.com/YaleSTC/reservations/issues/1426)).
+* Resolved an issue where late fees in e-mails were cumulative, not daily ([#1433](https://github.com/YaleSTC/reservations/issues/1433)).
+
+## v5.5.1 - 2016-01-12
+### Fixed
+* Fixed issue where most users couldn't hide announcements ([#1339](https://github.com/YaleSTC/reservations/issues/1339)).
+* The equipment model availability numbers no longer overflow when they are two digits long ([#1363](https://github.com/YaleSTC/reservations/issues/1363)).
+* Admins can again manually create new users when CAS authentication is enabled ([#1370](https://github.com/YaleSTC/reservations/issues/1370)).
+* Fixed integration of Capistrano with the whenever cron scheduler ([#1373](https://github.com/YaleSTC/reservations/issues/1373)).
+* Fixed missing affiliation LDAP lookup ([#1375](https://github.com/YaleSTC/reservations/issues/1375)).
+* Fixed broken cancel button on the quick new user model ([#1376](https://github.com/YaleSTC/reservations/issues/1376)).
+* Fixed issue with missing datepicker assets ([#1377](https://github.com/YaleSTC/reservations/issues/1377)).
+* The reservation history tables on user profiles are again sortable ([#1378](https://github.com/YaleSTC/reservations/issues/1378)).
+* Fixed broken link to pending reservations on equipment model page ([#1379](https://github.com/YaleSTC/reservations/issues/1379)).
+* Fixed broken "Total Stock" count on the equipment model table ([#1380](https://github.com/YaleSTC/reservations/issues/1380)).
+* Fixed migration that was leading to reservations being incorrectly marked as overdue ([#1381](https://github.com/YaleSTC/reservations/issues/1381)).
+* Removed extra padding from navbar due to #1377 ([#1403](https://github.com/YaleSTC/reservations/issues/1403)).
+
+### Added
+* Made archived reservations accessible through the reservations index page ([#1383](https://github.com/YaleSTC/reservations/issues/1383)).
+
+### Changed
+* Updated jQuery UI and its associated Bootstrap theme ([#1377](https://github.com/YaleSTC/reservations/issues/1377)).
+* Updated the default sort order for the reservation history tables on user profiles ([#1378](https://github.com/YaleSTC/reservations/issues/1378)).
+* Updated jQuery Datatables ([#1378](https://github.com/YaleSTC/reservations/issues/1378)).
+* Reordered sections on the current reservations page ([#1414](https://github.com/YaleSTC/reservations/issues/1414)).
+
+
 ## v5.5.0 - 2015-11-23
 ### Fixed
 * The dropdown menu that appears when clicking on the reserver in a list of reservations is no longer blocked in a short table ([#724](https://github.com/YaleSTC/reservations/issues/724)).
