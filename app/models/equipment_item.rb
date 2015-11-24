@@ -8,6 +8,8 @@ class EquipmentItem < ActiveRecord::Base
 
   validates :name,
             :equipment_model, presence: true
+  validates :serial, uniqueness: { scope: :equipment_model_id },
+                     allow_nil: true, allow_blank: true
 
   nilify_blanks only: [:deleted_at]
 
