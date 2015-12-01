@@ -16,10 +16,6 @@ module Reservations
     # Custom directories with classes and modules you want to be autoloadable.
     config.autoload_paths += %W(#{config.root}/lib/extras #{config.root}/lib/)
     config.watchable_dirs['lib'] = [:rb]
-    # Only load the plugins named here, in the order given (default is
-    # alphabetical).
-    # :all can be used as a placeholder for all plugins not explicitly named.
-    # config.plugins = [ :exception_notification, :ssl_requirement, :all ]
 
     # Activate observers that should always be running.
     # config.active_record.observers = :cacher, :garbage_collector,
@@ -30,6 +26,9 @@ module Reservations
     # Run "rake -D time" for a list of tasks for finding time zone names.
     # Default is UTC.
     config.time_zone = 'Eastern Time (US & Canada)'
+
+    # Do not swallow errors in after_commit/after_rollback callbacks.
+    config.active_record.raise_in_transactional_callbacks = true
 
     # The default locale is :en and all translations from
     # config/locales/*.rb,yml are auto loaded.

@@ -1,9 +1,10 @@
+# rubocop:disable ModuleLength
 module CartValidations
   # These validation methods were carefully written to use as few database
   # queries as possible. Often it seems that a scope could be used but
   # it is important to remember that Rails lazy-loads the database calls
   #
-  def validate_all(renew = false) # rubocop:disable AbcSize, MethodLength
+  def validate_all(renew = false) # rubocop:disable AbcSize
     # 2 queries for every equipment model in the cart because of num_available
     # plus about 8 extra
     #

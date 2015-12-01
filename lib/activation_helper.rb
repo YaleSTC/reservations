@@ -2,7 +2,7 @@ module ActivationHelper
   def activate_parents(current_item)
     # Equipment Items have EMs and Categories that may need to be
     # reactivated
-    if (current_item.class == EquipmentItem)
+    if current_item.class == EquipmentItem
       # Reactivate the current item's category and/or Equipment Model if
       # deactivated
       category = Category.find(
@@ -17,7 +17,7 @@ module ActivationHelper
       end
     # EMs have Categories and checkin/checkout procedures that may need to be
     # reactivated
-    elsif (current_item.class == EquipmentModel)
+    elsif current_item.class == EquipmentModel
       # Reactivate the current item's category
       category = Category.find(current_item.category_id)
       category.revive if category.deleted_at

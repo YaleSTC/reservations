@@ -52,14 +52,14 @@ class Blackout < ActiveRecord::Base
       @blackout.start_date = date
       @blackout.end_date = date
       # save dates for conflict checking and blackout objects
-      res_dates << DateTime.parse(date.to_s)
+      res_dates << DateTime.parse(date.to_s) # rubocop:disable TimeZone
       blackouts_tmp << @blackout
     end
     # conflict checking
     query = Reservation.all
     # create BETWEEN query for each blackout date created
     res_dates.each do |date|
-      query = query.send(:where,  due_date: date..date + 1.day)
+      query = query.send(:where, due_date: date..date + 1.day)
     end
     # stick em all together and find conflicting reservations
     res = Reservation.where(query.where_values.inject(:or))

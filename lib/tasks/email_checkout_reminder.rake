@@ -8,7 +8,7 @@ task email_checkout_reminder: :environment do
     upcoming_reservations.each do |upcoming_reservation|
       Rails.logger.info "Sending reminder for upcoming reservation:\n \
         #{upcoming_reservation.inspect}"
-      UserMailer.reservation_status_update(upcoming_reservation).deliver
+      UserMailer.reservation_status_update(upcoming_reservation).deliver_now
     end
   else
     Rails.logger.info 'Upcoming check out emails are not sent by admin. \

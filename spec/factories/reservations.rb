@@ -12,7 +12,7 @@ FactoryGirl.define do
       after(:build) do |res|
         # for some reason this code is required instead of just calling it on
         # res.equipment_model
-        mod = EquipmentModel.find(res.equipment_model)
+        mod = EquipmentModel.find(res.equipment_model_id)
         if mod.equipment_items.empty?
           FactoryGirl.create(:equipment_item, equipment_model: mod)
         end
@@ -39,7 +39,7 @@ FactoryGirl.define do
       status { 'checked_out' }
       checkout_handler
       after(:build) do |res|
-        mod = EquipmentModel.find(res.equipment_model)
+        mod = EquipmentModel.find(res.equipment_model_id)
         res.equipment_item = mod.equipment_items.first
       end
     end
@@ -54,9 +54,9 @@ FactoryGirl.define do
     end
 
     trait :returned do
-      start_date { Time.zone.today - 1.days }
+      start_date { Time.zone.today - 1.day }
       due_date { Time.zone.today }
-      checked_out { Time.zone.today - 1.days }
+      checked_out { Time.zone.today - 1.day }
       checked_in { Time.zone.today }
       status { 'returned' }
       checkin_handler
@@ -68,11 +68,11 @@ FactoryGirl.define do
 
     trait :overdue do
       start_date { Time.zone.today - 2.days }
-      due_date { Time.zone.today - 1.days }
+      due_date { Time.zone.today - 1.day }
       checked_out { Time.zone.today - 2.days }
       overdue { true }
       after(:build) do |res|
-        mod = EquipmentModel.find(res.equipment_model)
+        mod = EquipmentModel.find(res.equipment_model_id)
         res.equipment_item = mod.equipment_items.first
       end
     end

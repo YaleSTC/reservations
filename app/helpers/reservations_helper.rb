@@ -24,7 +24,7 @@ module ReservationsHelper
       'same day'
     else
       distance_of_time_in_words(@reservation.start_date,
-                                @reservation.due_date + 1.days)
+                                @reservation.due_date + 1.day)
     end
   end
 

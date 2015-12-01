@@ -7,7 +7,7 @@ task email_overdue_reminder: :environment do
     Rails.logger.info "Found #{overdue_reservations.size} reservations "\
                       'overdue for checkin. Sending reminder emails...'
     overdue_reservations.each do |overdue_reservation|
-      UserMailer.reservation_status_update(overdue_reservation).deliver
+      UserMailer.reservation_status_update(overdue_reservation).deliver_now
     end
     Rails.logger.info 'Done!'
   else

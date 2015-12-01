@@ -92,7 +92,7 @@ class ApplicationController < ActionController::Base
                       'superuser' => 'Superuser',
                       'normal' => 'Patron',
                       'guest' => 'Guest' }
-    authorize! :view_as, :superuser if (params[:view_mode] == 'superuser')
+    authorize! :view_as, :superuser if params[:view_mode] == 'superuser'
     current_user.view_mode = params[:view_mode]
     current_user.save!(validate: false)
     flash[:notice] = "Viewing as #{messages_hash[current_user.view_mode]}."
@@ -288,7 +288,7 @@ class ApplicationController < ActionController::Base
     flash[:notice] = 'Successfully deactivated '\
                    + params[:controller].singularize.titleize\
                    + '. Any related equipment has been deactivated as well.'
-    redirect_to request.referer  # Or use redirect_to(back).
+    redirect_to request.referer # Or use redirect_to(back).
   end
 
   def activate

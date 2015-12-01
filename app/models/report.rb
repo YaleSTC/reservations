@@ -1,4 +1,4 @@
-class Report # rubocop:disable ClassLength, it's only 105/100
+class Report
   attr_accessor :columns, :row_item_type, :rows
   DEFAULT_COLUMNS = [['Total', :all, :count],
                      ['Reserved', :reserved, :count],
@@ -10,11 +10,10 @@ class Report # rubocop:disable ClassLength, it's only 105/100
 
   # Reports are extremely powerful 2D reservation statistics tables
   # See #build_new for the main constructor method used in the controller.
-  #
 
-  # The Column class contains all the information needed to build the
-  # columns (obviously I should hope!). Simple arrays can be made into
-  # Column objects if their elements are in the right order.
+  # The Column class contains all the information needed to build the columns
+  # (obviously I should hope!). Simple arrays can be made into Column objects
+  # if their elements are in the right order.
   #
   #   name:       human readable name
   #   filter:     filtering scope to apply to Reservations
@@ -34,8 +33,8 @@ class Report # rubocop:disable ClassLength, it's only 105/100
     end
   end
 
-  # Rows correspond to singular objects like equipment models or users.
-  # You can even construct a row skeleton with one of these objects
+  # Rows correspond to singular objects like equipment models or users. You
+  # can even construct a row skeleton with one of these objects
   #
   #   name:      human readable name
   #   link_path: clickable link path
@@ -80,17 +79,15 @@ class Report # rubocop:disable ClassLength, it's only 105/100
     average2(res_set.collect(&:time_checked_out))
   end
 
-  # count the # of occurences of unique <type>s in the reservation set,
-  # eg how many unique reservers there are in the set
+  # count the # of occurences of unique <type>s in the reservation set, e.g.
+  # how many unique reservers there are in the set
   def self.count_unique(res_set, type)
-    items = res_set.collect do |res|
-      res.send(type)
-    end
+    items = res_set.collect { |res| res.send(type) }
     items.uniq.count
   end
 
-  # given the narrowed set of reservations, calculate the value
-  # according to type and optional field
+  # given the narrowed set of reservations, calculate the value according to
+  # type and optional field
   # rubocop:disable CyclomaticComplexity
   def self.calculate(res_set, type, field = nil)
     case type
@@ -118,16 +115,14 @@ class Report # rubocop:disable ClassLength, it's only 105/100
   end
 
   # Create a new report using an item_type (this is a symbol like
-  #   :equipment_model_id
-  # a set of reservations (do all your date filtering and stuff here)
-  # and an array of columns. Each column object in the array is not
-  # actually an instance of the Column class (this method does the
-  # conversion) but a 3 or 4 element array literal. See DEFAULT_COLUMNS
-  # for an example and Column.arr_to_col for the conversion specifics
+  # :equipment_model_id), a set of reservations (do all your date filtering
+  # and stuff here), and an array of columns. Each column object in the array
+  # is not actually an instance of the Column class (this method does the
+  # conversion) but a 3 or 4 element array literal. See DEFAULT_COLUMNS for an
+  # example and Column.arr_to_col for the conversion specifics
   #
-  # I wrote the code this way so that we don't need to expose the
-  # Column class and because the const array literal declarations
-  # are pretty easy to read
+  # I wrote the code this way so that we don't need to expose the Column class
+  # and because the const array literal declarations are pretty easy to read
 
   def self.build_new(row_item_type, reservations = Reservation.all,
                      columns = DEFAULT_COLUMNS)
@@ -135,9 +130,8 @@ class Report # rubocop:disable ClassLength, it's only 105/100
     report.row_item_type = row_item_type
 
     if row_item_type == :category_id
-      # some SQL magic to get the category id into the
-      # reservation record relation without having to load all
-      # the equipment models into memory
+      # some SQL magic to get the category id into the reservation record
+      # relation without having to load all the equipment models into memory
       reservations = reservations.with_categories
     end
 
@@ -147,9 +141,7 @@ class Report # rubocop:disable ClassLength, it's only 105/100
     item_ids = reservations.collect(&row_item_type).reject(&:nil?)
     items = get_class(row_item_type).find(item_ids)
 
-    report.rows = items.collect do |item|
-      Row.item_to_row item
-    end
+    report.rows = items.collect { |item| Row.item_to_row item }
 
     report.populate_data
     report
@@ -165,7 +157,7 @@ class Report # rubocop:disable ClassLength, it's only 105/100
     # get the reservations for each column
     columns.each do |col|
       # only instantiate the fields that we need
-      relation  = reservations.send(col.filter)
+      relation = reservations.send(col.filter)
       if col.data_type == :count && col.data_field.nil?
         col.res_set = relation.collect(&row_item_type)
       else
@@ -175,30 +167,23 @@ class Report # rubocop:disable ClassLength, it's only 105/100
   end
 
   def populate_data
-    # populate the reports' rows.data
-    # iterate by row
+    # populate the reports' rows.data, iterate by row
     @rows.each do |row|
       row.data = []
       @columns.each do |col|
-        # get all the reservations in the set that are relevant
-        # to the row object we're looking at
+        # get all the reservations in the set that are relevant to the row
+        # object we're looking at
         id = row.item_id
         if col.data_type == :count && col.data_field.nil?
           # do a fast select if we don't care about the other fields
-          res_set = col.res_set.select do |res|
-            id == res
-          end
+          res_set = col.res_set.select { |res| id == res }
         else
-          res_set = col.res_set.select do |res|
-            id == res.send(@row_item_type)
-          end
+          res_set = col.res_set.select { |res| id == res.send(@row_item_type) }
         end
         # add the datum to the array
         row.data << Report.calculate(res_set, col.data_type, col.data_field)
       end
     end
-    @columns.each do |col|
-      col.res_set = []
-    end
+    @columns.each { |col| col.res_set = [] }
   end
 end

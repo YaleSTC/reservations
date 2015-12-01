@@ -149,7 +149,7 @@ describe EquipmentModelsController, type: :controller do
                                          due_date: Time.zone.today + 2.days)
         res_starting_this_week =
         FactoryGirl.create(:reservation, equipment_model: model,
-                                         start_date: Time.zone.today  +  2.days,
+                                         start_date: Time.zone.today + 2.days,
                                          due_date: Time.zone.today + 4.days)
 
         FactoryGirl.create(:reservation, equipment_model: model,

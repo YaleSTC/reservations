@@ -9,7 +9,7 @@ describe 'email_missed_reservations' do
   before(:each) do
     @missed = FactoryGirl.create(:missed_reservation,
                                  start_date: Time.zone.today - 2.days,
-                                 due_date: Time.zone.today - 1.days)
+                                 due_date: Time.zone.today - 1.day)
     @not_missed = FactoryGirl.create(:valid_reservation)
   end
 

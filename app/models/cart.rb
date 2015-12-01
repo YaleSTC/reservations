@@ -129,7 +129,7 @@ class Cart # rubocop:disable ClassLength
     res.save!
 
     if AppConfig.get(:notify_admin_on_create) # send e-mail if configured to
-      AdminMailer.reservation_created_admin(res).deliver
+      AdminMailer.reservation_created_admin(res).deliver_now
     end
     "Reservation for #{res.equipment_model.md_link} created "\
       "successfully#{', even though ' + errors.to_sentence[0, 1].downcase\
@@ -147,7 +147,7 @@ class Cart # rubocop:disable ClassLength
     res.notes = notes
     res.save!
 
-    AdminMailer.request_filed(res).deliver # send request notification
+    AdminMailer.request_filed(res).deliver_now # send request notification
     "Request for #{res.equipment_model.md_link} filed successfully. "\
       "#{errors.to_sentence}\n"
   end

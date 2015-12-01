@@ -40,7 +40,7 @@ class AnnouncementsController < ApplicationController
   end
 
   def update
-    if  @announcement.update_attributes(announcement_params)
+    if @announcement.update_attributes(announcement_params)
       redirect_to(announcements_url,
                   notice: 'Announcement was successfully updated.')
     else

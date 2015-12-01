@@ -78,7 +78,7 @@ describe CatalogController, type: :controller do
   describe 'PUT search' do
     context 'query is blank' do
       before(:each) do
-        put :search,  query: ''
+        put :search, query: ''
       end
       it { is_expected.to redirect_to(root_path) }
     end
@@ -90,7 +90,7 @@ describe CatalogController, type: :controller do
                                               description: 'query')
         # EquipmentModel.stub(:catelog_search).with('query')
         #   .and_return(@equipment_model)
-        put :search,  query: 'query'
+        put :search, query: 'query'
         expect(assigns(:equipment_model_results)).to eq([@equipment_model])
       end
       it 'should call catalog_search on EquipmentItem' do
@@ -98,13 +98,13 @@ describe CatalogController, type: :controller do
           FactoryGirl.create(:equipment_item, serial: 'query')
         # EquipmentItem.stub(:catelog_search).with('query')
         #   .and_return(@equipment_item)
-        put :search,  query: 'query'
+        put :search, query: 'query'
         expect(assigns(:equipment_item_results)).to eq([@equipment_item])
       end
       it 'should call catalog_search on Category' do
         @category = FactoryGirl.create(:category, name: 'query')
         # Category.stub(:catelog_search).with('query').and_return(@category)
-        put :search,  query: 'query'
+        put :search, query: 'query'
         expect(assigns(:category_results)).to eq([@category])
       end
     end

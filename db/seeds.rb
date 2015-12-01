@@ -124,12 +124,12 @@ def time_rand(from = 0.0, to = Time.zone.now, length = 0, options = {})
 
   range = length.to_f if length > 0
 
-  random_time = Time.at(from.to_f + rand * range)
+  random_time = Time.zone.at(from.to_f + rand * range)
   blackouts = Blackout.all.map { |blk| blk.start_date..blk.end_date }
 
   if options[:passes_blackout_validations] && !blackouts.blank?
     while includes?(blackouts, random_time)
-      random_time = Time.at(from.to_f + rand * range)
+      random_time = Time.zone.at(from.to_f + rand * range)
     end
   end
 
@@ -142,16 +142,16 @@ def includes?(array_of_ranges, elem)
   end
 end
 
-def generate_user # rubocop:disable AbcSize
+def generate_user
   User.create do |u|
-    u.first_name = Faker::Name.first_name
-    u.last_name = Faker::Name.last_name
-    u.nickname = Faker::Name.first_name
-    u.phone = Faker::PhoneNumber.short_phone_number
-    u.email = Faker::Internet.email
-    u.cas_login = Faker::Internet.user_name if ENV['CAS_AUTH']
+    u.first_name = FFaker::Name.first_name
+    u.last_name = FFaker::Name.last_name
+    u.nickname = FFaker::Name.first_name
+    u.phone = FFaker::PhoneNumber.short_phone_number
+    u.email = FFaker::Internet.email
+    u.cas_login = FFaker::Internet.user_name if ENV['CAS_AUTH']
     u.affiliation = 'YC ' + %w(BK BR CC DC ES JE MC PC SM SY TC TD).sample +
-      ' ' + rand(2012..2015).to_s
+                    ' ' + rand(2012..2015).to_s
     u.role = %w(normal checkout).sample
     u.username = ENV['CAS_AUTH'] ? u.cas_login : u.email
   end
@@ -159,12 +159,12 @@ end
 
 def generate_category
   Category.create! do |c|
-    category_name = Faker::Product.brand
+    category_name = FFaker::Product.brand
     category_names = Category.all.to_a.map!(&:name)
 
     # Verify uniqueness of category name
     while category_names.include?(category_name)
-      category_name = Faker::Product.brand
+      category_name = FFaker::Product.brand
     end
 
     c.name = category_name
@@ -178,11 +178,10 @@ def generate_category
   end
 end
 
-# rubocop:disable AbcSize
 def generate_em
   EquipmentModel.create! do |em|
-    em.name = Faker::Product.product + ' ' + rand(1..9001).to_s
-    em.description = Faker::HipsterIpsum.paragraph(16)
+    em.name = FFaker::Product.product + ' ' + rand(1..9001).to_s
+    em.description = FFaker::HipsterIpsum.paragraph(16)
     em.late_fee = rand(50.00..1000.00).round(2).to_d
     em.replacement_fee = rand(50.00..1000.00).round(2).to_d
     em.category = Category.all.sample
@@ -195,12 +194,11 @@ def generate_em
     em.associated_equipment_models = EquipmentModel.all.sample(6)
   end
 end
-# rubocop:enable AbcSize
 
 def generate_ei
   EquipmentItem.create! do |ei|
     ei.name = "Number #{(0...3).map { 65.+(rand(25)).chr }.join}" +
-      rand(1..9001).to_s
+              rand(1..9001).to_s
     ei.serial = (0...8).map { 65.+(rand(25)).chr }.join
     ei.active = true
     ei.equipment_model_id = EquipmentModel.all.sample.id
@@ -211,33 +209,35 @@ end
 def generate_req
   Requirement.create! do |req|
     req.equipment_models = EquipmentModel.all.sample(rand(1..3))
-    req.contact_name = Faker::Name.name
-    req.contact_info = Faker::PhoneNumber.short_phone_number
-    req.notes = Faker::HipsterIpsum.paragraph(4)
-    req.description = Faker::HipsterIpsum.sentence
+    req.contact_name = FFaker::Name.name
+    req.contact_info = FFaker::PhoneNumber.short_phone_number
+    req.notes = FFaker::HipsterIpsum.paragraph(4)
+    req.description = FFaker::HipsterIpsum.sentence
   end
 end
 
 def generate_checkin
   CheckinProcedure.create! do |chi|
-    chi.step = Faker::HipsterIpsum.sentence
+    chi.step = FFaker::HipsterIpsum.sentence
     chi.equipment_model_id = EquipmentModel.all.sample.id
   end
 end
 
 def generate_checkout
   CheckoutProcedure.create! do |chi|
-    chi.step = Faker::HipsterIpsum.sentence
+    chi.step = FFaker::HipsterIpsum.sentence
     chi.equipment_model_id = EquipmentModel.all.sample.id
   end
 end
 
 def generate_blackout
   Blackout.create! do |blk|
-    blk.start_date = time_rand(Time.now + 1.year)
+    blk.start_date = time_rand(Time.zone.now + 1.year)
+    # rubocop:disable Date
     blk.end_date = time_rand(blk.start_date.to_time,
                              blk.start_date.next_week.to_time)
-    blk.notice = Faker::HipsterIpsum.paragraph(2)
+    # rubocop:enable Date
+    blk.notice = FFaker::HipsterIpsum.paragraph(2)
     blk.created_by = User.first.id
     blk.blackout_type = %w(soft hard).sample
   end
@@ -255,7 +255,7 @@ def mark_checked_in(res, checkout_length)
                                checkout_length).to_datetime
     res.checkin_handler_id = User.where('role = ? OR role = ? OR role = ?',
                                         'checkout', 'admin', 'superuser'
-                                     ).all.sample.id
+                                       ).all.sample.id
   end
 end
 
@@ -297,7 +297,7 @@ def generate_reservation
     res.due_date = time_rand(res.start_date.to_datetime,
                              res.start_date.to_datetime.next_week,
                              checkout_length.days).to_date
-    res.notes = Faker::HipsterIpsum.paragraph(8)
+    res.notes = FFaker::HipsterIpsum.paragraph(8)
     res.notes_unsent = [true, false].sample
     if rand < PAST_CHANCE
       throw_into_past res
@@ -331,7 +331,7 @@ end
 
 puts 'Minimal mode activated. Please wait...' if MINIMAL
 
-t1 = Time.now
+t1 = Time.zone.now
 display_login_msg = false
 # check to see if a superuser exists
 if User.where('role = ?', 'superuser').empty?
@@ -384,7 +384,6 @@ end
 # ============================================================================
 
 if AppConfig.count == 0
-
   ac = AppConfig.new
   ac.terms_of_service = TOS_TEXT
   ac.reservation_confirmation_email_active = false
@@ -471,7 +470,7 @@ unless EquipmentItem.count == 0
   generate_objs(:generate_reservation, 'reservation', n)
 end
 
-puts "\n***Successfully seeded all records! (#{Time.now - t1}s)***\n\n"
+puts "\n***Successfully seeded all records! (#{Time.zone.now - t1}s)***\n\n"
 if !ENV['CAS_AUTH'] && MINIMAL && display_login_msg
   puts "You can log in using e-mail 'email@email.com' and password 'passw0rd'\n"
 end
