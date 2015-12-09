@@ -38,6 +38,11 @@
   margin-bottom: 19px;
 }
 
+.availability-num {
+  @include giant-number;
+  text-align: center;
+}
+
 .caption_cat { padding: 0px 9px 0px 9px; }
 
 a.not-qualified-icon {
