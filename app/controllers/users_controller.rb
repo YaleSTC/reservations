@@ -14,6 +14,7 @@ class UsersController < ApplicationController
                                         :edit, :update]
 
   include Autocomplete
+  include Calendarable
   include CsvExport
 
   # ------------ before filter methods ------------ #
@@ -255,5 +256,21 @@ class UsersController < ApplicationController
     p = params.require(:user).permit(*permitted_attributes)
     p[:view_mode] = p[:role] if p[:role]
     p
+  end
+
+  def generate_calendar_reservations
+    # we need uniq because it otherwise includes overdue reservations in the
+    # date range twice
+    (@user.reservations.includes(:equipment_item)
+      .overlaps_with_date_range(@start_date, @end_date).finalized + \
+      @user.reservations.includes(:equipment_item).overdue).uniq
+  end
+
+  def generate_calendar_resource
+    @user
+  end
+
+  def calendar_name_method
+    :equipment_model
   end
 end

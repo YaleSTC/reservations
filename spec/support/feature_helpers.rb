@@ -73,7 +73,7 @@ module FeatureHelpers
 
   def sign_out
     visit root_path
-    click_link 'Log Out'
+    click_link 'Log Out' if has_link?('Log Out')
     @current_user = nil
   end
 

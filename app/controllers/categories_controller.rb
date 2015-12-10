@@ -6,6 +6,7 @@ class CategoriesController < ApplicationController
 
   include ActivationHelper
   include CsvExport
+  include Calendarable
 
   # --------- before filter methods -------- #
   def set_current_category
@@ -80,5 +81,23 @@ class CategoriesController < ApplicationController
       .permit(:name, :max_per_user, :max_checkout_length, :deleted_at,
               :max_renewal_times, :max_renewal_length, :sort_order,
               :renewal_days_before_due)
+  end
+
+  def generate_calendar_reservations
+    # we need uniq because it otherwise includes overdue reservations in the
+    # date range twice
+    (Reservation.for_cat(@category.id).finalized
+      .includes(:equipment_item, :equipment_model)
+      .overlaps_with_date_range(@start_date, @end_date) + \
+      Reservation.for_cat(@category.id)
+        .includes(:equipment_item, :equipment_model).overdue).uniq
+  end
+
+  def generate_calendar_resource
+    @category
+  end
+
+  def calendar_name_method
+    :equipment_model
   end
 end

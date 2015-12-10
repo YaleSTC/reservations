@@ -21,16 +21,20 @@
 
 <%# NOTES %>
 <div class="row">
-  <div class="col-md-12">
+  <div class="col-md-7">
     <% if @equipment_item.notes.present? && (can? :view, :eq_log) %>
       <hr>
       <h3>Notes</h3>
       <div class='notes-container'><%= markdown(@equipment_item.notes) %></div>
     <% end %>
   </div>
+  <div class="col-md-5">
+    <%= render 'res_calendar' %>
+  </div>
 </div>
 
 <hr>
+<%= link_to "#{@equipment_item.name} Reservations Calendar", calendar_equipment_item_path(@equipment_item), class: 'btn btn-default' %>
 <%= link_to "Edit", edit_equipment_item_path(@equipment_item), class: 'btn btn-default' %>
 <%= equipment_item.make_deactivate_btn %>
 <%= link_to("View All", equipment_model_equipment_items_path(@equipment_item.equipment_model), class: 'btn btn-default' ) %>

@@ -6,6 +6,7 @@
 <% if can? :manage, EquipmentModel %>
   <% if @category %>
     <%= link_to "New #{@category.name.singularize}", new_category_equipment_model_path(@category), :class => 'btn btn-primary' %>
+    <%= link_to "#{@category.name} Reservations Calendar", calendar_category_path(@category), class: 'btn btn-default' %>
     <%= link_to "View All Equipment Models", equipment_models_path, :class => 'btn btn-default' %>
   <% else %>
     <%= link_to "New Equipment Model", new_equipment_model_path, :class => "btn btn-primary" %>

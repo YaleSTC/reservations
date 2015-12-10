@@ -79,6 +79,7 @@ class Reservation < ActiveRecord::Base
 
   # more complex / task-specific scopes
   scope :checkoutable, Reservations::CheckoutableQuery
+  scope :for_cat, Reservations::ForCatQuery
   scope :future, Reservations::FutureQuery
   scope :notes_unsent, Reservations::NotesUnsentQuery
   scope :overlaps_with_date_range, Reservations::OverlapsWithDateRangeQuery
@@ -179,6 +180,14 @@ class Reservation < ActiveRecord::Base
     else
       status
     end
+  end
+
+  # returns end of reservation, either checkin date (if returned), today (if
+  # overdue), or due date otherwise
+  def end_date
+    return checked_in if checked_in
+    return Time.zone.today if overdue
+    due_date
   end
 
   def duration

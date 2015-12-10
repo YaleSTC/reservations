@@ -5,6 +5,8 @@ describe EquipmentItemsController, type: :controller do
   let!(:item) { FactoryGirl.create(:equipment_item) }
   let!(:deactivated_item) { FactoryGirl.create(:deactivated) }
 
+  it_behaves_like 'calendarable', EquipmentItem
+
   describe 'GET index' do
     context 'with admin user' do
       before do

@@ -1,0 +1,12 @@
+<% title @user.first_name + " " + (!@user.nickname.blank? ? "(#{@user.nickname}) " : "") + @user.last_name + "'s Reservations Calendar" %>
+
+<% if can? :read, User %>
+  <div class="row">
+    <div class="col-md-12">
+      <%= render :partial => 'reservations/top_buttons', :locals => {:reserver => @user} %>
+    </div>
+  </div>
+  <hr>
+<% end %>
+
+<%= render 'res_calendar' %>
