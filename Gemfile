@@ -2,6 +2,8 @@ source 'https://rubygems.org'
 
 ruby '2.1.2' # Version in .ruby-version must match
 
+gem 'pg' 
+
 # standard gems
 gem 'rails', '~> 4.1.9'
 gem 'mysql2', '~> 0.3.18'
