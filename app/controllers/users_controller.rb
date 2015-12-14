@@ -91,9 +91,11 @@ class UsersController < ApplicationController
     @user.view_mode = @user.role
     # if we're using CAS
     if @cas_auth
-      # pull from our CAS hackery unless you're an admin/superuser creating a
+      # pull from our CAS hackery if you're not an admin/superuser creating a
       # new user
-      unless current_user && can?(:manage, Reservation)
+      if current_user && can?(:manage, Reservation)
+        @user.cas_login = user_params[:username]
+      else
         @user.cas_login = session[:new_username]
         @user.username = @user.cas_login
       end
