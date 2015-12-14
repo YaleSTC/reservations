@@ -2,9 +2,29 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
-## v5.5.1 - 2016-01-11
+## v5.5.1 - 2016-01-12
 ### Fixed
+* Fixed issue where most users couldn't hide announcements ([#1339](https://github.com/YaleSTC/reservations/issues/1339)).
 * The equipment model availability numbers no longer overflow when they are two digits long ([#1363](https://github.com/YaleSTC/reservations/issues/1363)).
+* Admins can again manually create new users when CAS authentication is enabled ([#1370](https://github.com/YaleSTC/reservations/issues/1370)).
+* Fixed integration of Capistrano with the whenever cron scheduler ([#1373](https://github.com/YaleSTC/reservations/issues/1373)).
+* Fixed missing affiliation LDAP lookup ([#1375](https://github.com/YaleSTC/reservations/issues/1375)).
+* Fixed broken cancel button on the quick new user model ([#1376](https://github.com/YaleSTC/reservations/issues/1376)).
+* Fixed issue with missing datepicker assets ([#1377](https://github.com/YaleSTC/reservations/issues/1377)).
+* The reservation history tables on user profiles are again sortable ([#1378](https://github.com/YaleSTC/reservations/issues/1378)).
+* Fixed broken link to pending reservations on equipment model page ([#1379](https://github.com/YaleSTC/reservations/issues/1379)).
+* Fixed broken "Total Stock" count on the equipment model table ([#1380](https://github.com/YaleSTC/reservations/issues/1380)).
+* Fixed migration that was leading to reservations being incorrectly marked as overdue ([#1381](https://github.com/YaleSTC/reservations/issues/1381)).
+* Removed extra padding from navbar due to #1377 ([#1403](https://github.com/YaleSTC/reservations/issues/1403)).
+
+### Changed
+* Updated jQuery UI and its associated Bootstrap theme ([#1377](https://github.com/YaleSTC/reservations/issues/1377)).
+* Updated the default sort order for the reservation history tables on user profiles ([#1378](https://github.com/YaleSTC/reservations/issues/1378)).
+* Updated jQuery Datatables ([#1378](https://github.com/YaleSTC/reservations/issues/1378)).
+* Reordered sections on the current reservations page ([#1414](https://github.com/YaleSTC/reservations/issues/1414)).
+
+### Added
+* Made archived reservations accessible through the reservations index page ([#1383](https://github.com/YaleSTC/reservations/issues/1383)).
 
 ## v5.5.0 - 2015-11-23
 ### Fixed
