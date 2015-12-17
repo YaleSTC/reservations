@@ -85,20 +85,27 @@ describe UsersController, type: :controller do
       end
     end
     describe 'POST create' do
+      shared_examples_for 'saves user' do
+        it 'successfully' do
+          expect(User.find(assigns(:user).id)).not_to be_nil
+        end
+      end
+
       context 'with correct params' do
         before do
           @user_attributes = FactoryGirl.attributes_for(:user)
           post :create, user: @user_attributes
         end
-        it 'should save the user' do
-          expect(User.find(assigns(:user))).not_to be_nil
-        end
+
+        it_behaves_like 'saves user'
       end
+
       context 'with incorrect params' do
         before do
           @bad_attributes = FactoryGirl.attributes_for(:user, first_name: '')
           post :create, user: @bad_attributes
         end
+
         it 'should not save the user' do
           expect(assigns(:user).save).to be_falsey
         end
@@ -111,11 +118,23 @@ describe UsersController, type: :controller do
           post :create, user: @user_attributes
         end
 
-        it 'should save the user' do
-          expect(User.find(assigns(:user))).not_to be_nil
+        it_behaves_like 'saves user'
+      end
+
+      context 'with CAS enabled' do
+        around(:example) do |example|
+          env_wrapper('CAS_AUTH' => '1') { example.run }
         end
+
+        before do
+          @user_attributes = FactoryGirl.attributes_for(:user)
+          post :create, user: @user_attributes
+        end
+
+        it_behaves_like 'saves user'
       end
     end
+
     describe 'GET edit' do
       before { get :edit, id: FactoryGirl.create(:user) }
       it 'should set @can_edit_username to true' do
