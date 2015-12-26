@@ -88,6 +88,15 @@ $(document).ready(function() {
     ]
   });
 
+  $('th:contains("Due Date")').append(' alex'); // debug
+  $('th:contains("Due Date")').trigger('click');
+//  $('th:contains("Due Date")').trigger('click');
+
+  setTimeout( function () {
+    $('.datatable-wide').css('width', '100%');
+    newTable.fnAdjustColumnSizing();
+  }, 10 );
+
   // ### REPORTS JS ### //
 
   $('.report_table').dataTable({
