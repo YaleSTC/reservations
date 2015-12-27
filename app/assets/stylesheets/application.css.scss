@@ -23,10 +23,9 @@
 
 // Custom rolled jQuery UI CSS for integrating with Bootstrap
 // ============================
-@import "jquery-ui-1.8.16.custom";
-
-@import "jquery-ui/autocomplete";
-@import "jquery-ui/spinner";
+@import "jquery-ui-1.10.3.custom";
+@import "jquery-ui-1.10.3.theme";
+@import "jquery_overrides";
 
 // Autocomplete CSS
 // ============================
