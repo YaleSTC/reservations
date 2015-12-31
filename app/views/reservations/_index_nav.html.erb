@@ -12,6 +12,7 @@
     <% end %>
     <%= render partial: 'index_nav_tab', locals: {filter: :returned, text: 'Returned'} %>
     <%= render partial: 'index_nav_tab', locals: {filter: :returned_overdue, text: 'Returned Overdue'} %>
+    <%= render partial: 'index_nav_tab', locals: {filter: :archived, text: 'Archived'} %>
     <%= render partial: 'index_nav_tab', locals: {filter: :approved_requests, text: 'Approved'} %>
     <%= render partial: 'index_nav_tab', locals: {filter: :denied, text: 'Denied'} %>
   </ul>
