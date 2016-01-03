@@ -28,7 +28,7 @@ describe Report, type: :model do
       u = FactoryGirl.build(:reservation)
       u.save(validate: false)
       row = Report::Row.item_to_row u
-      expect(row.name).to eq(u.id)
+      expect(row.name).to eq(u.name)
       expect(row.item_id).to eq(u.id)
       expect(row.link_path).to eq(Rails.application.routes.url_helpers
                                   .reservation_path(id: u.id))

@@ -88,4 +88,9 @@ module FeatureHelpers
   def admin_routes
     RailsAdmin::Engine.routes.url_helpers
   end
+
+  def resource_url(obj, host = 'http://0.0.0.0:3000')
+    return unless obj
+    "#{host}#{send("#{obj.class.to_s.underscore}_path".to_sym, obj)}".strip
+  end
 end

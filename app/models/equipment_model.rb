@@ -1,9 +1,9 @@
 # rubocop:disable ClassLength
 class EquipmentModel < ActiveRecord::Base
   include ApplicationHelper
-  include Routing
-
+  include Linkable
   include Searchable
+
   searchable_on(:name, :description)
 
   nilify_blanks only: [:deleted_at]
@@ -233,9 +233,5 @@ class EquipmentModel < ActiveRecord::Base
       .sort_by(&:name)\
       .collect { |item| "<option value=#{item.id}>#{item.name}</option>" }\
       .join.html_safe
-  end
-
-  def md_link
-    "[#{name}](#{equipment_model_url(self, only_path: false)})"
   end
 end

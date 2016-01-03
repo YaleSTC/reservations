@@ -1,8 +1,8 @@
 # rubocop:disable ClassLength
 class Reservation < ActiveRecord::Base
+  include Linkable
   include ReservationValidations
   include ReservationScopes
-  include Routing
 
   belongs_to :equipment_model
   belongs_to :equipment_item
@@ -396,7 +396,7 @@ class Reservation < ActiveRecord::Base
     '* ' + items.join("\n* ")
   end
 
-  def md_link
-    "[res. \##{id}](#{reservation_url(self, only_path: false)})"
+  def name
+    "\##{id}"
   end
 end

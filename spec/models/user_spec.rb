@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'concerns/linkable_spec.rb'
 include EnvHelpers
 
 describe User, type: :model do
@@ -58,7 +59,7 @@ describe User, type: :model do
     end
   end
 
-  describe 'nickname' do
+  describe '#nickname' do
     before(:each) do
       @user = FactoryGirl.create(:user)
     end
@@ -92,7 +93,7 @@ describe User, type: :model do
     end
   end
 
-  describe '.name' do
+  describe '#name' do
     it 'should return the nickname and last name joined into one string if '\
       'nickname is specified' do
       @user = FactoryGirl.create(:user, nickname: 'Sasha Fierce')
@@ -106,7 +107,7 @@ describe User, type: :model do
     end
   end
 
-  describe '.equipment_items' do
+  describe '#equipment_items' do
     it 'has a working reservation factory' do
       @reservation = FactoryGirl.create(:valid_reservation)
     end
@@ -119,13 +120,13 @@ describe User, type: :model do
 
   # TODO: find a way to simulate an ldap database using a test fixture/factory
   # of some kind
-  describe '#search_ldap' do
+  describe '.search_ldap' do
     it 'should return a hash of user attributes if the ldap database has the '\
       'login associated with user'
     it 'should return nil if the user is not in the ldap database'
   end
 
-  describe '#select_options' do
+  describe '.select_options' do
     it 'should return an array of all users ordered by last name, each '\
       "represented by an array like this: ['first_name last_name', id]" do
       @user1 = FactoryGirl.create(:user,
@@ -142,7 +143,7 @@ describe User, type: :model do
     end
   end
 
-  describe '.render_name' do
+  describe '#render_name' do
     it 'should return the nickname, last name, and username id as a string '\
       'if nickname exists and if using CAS' do
       env_wrapper('CAS_AUTH' => '1') do
@@ -176,4 +177,6 @@ describe User, type: :model do
       end
     end
   end
+
+  it_behaves_like 'linkable'
 end

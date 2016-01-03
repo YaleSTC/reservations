@@ -2,6 +2,7 @@
 # works but more work is needed to ensure that we have test coverage.
 
 require 'spec_helper'
+require 'concerns/linkable_spec.rb'
 
 describe Reservation, type: :model do
   subject(:reservation) { FactoryGirl.build(:valid_reservation) }
@@ -575,4 +576,6 @@ describe Reservation, type: :model do
       expect(reservation.late_fee).to eq(expected)
     end
   end
+
+  it_behaves_like 'linkable'
 end

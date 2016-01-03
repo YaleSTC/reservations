@@ -256,7 +256,7 @@ describe 'Reservations', type: :feature do
         if current_user.view_mode == 'admin' ||
            current_user.view_mode == 'superuser'
           visit equipment_item_path(@res.equipment_item)
-          expect(page).to have_link('Checked out', href: reservation_path(@res))
+          expect(page).to have_link('Checked out', href: resource_url(@res))
         end
 
         # check in
@@ -272,7 +272,7 @@ describe 'Reservations', type: :feature do
         if current_user.view_mode == 'admin' ||
            current_user.view_mode == 'superuser'
           visit equipment_item_path(@res.equipment_item)
-          expect(page).to have_link('Checked in', href: reservation_path(@res))
+          expect(page).to have_link('Checked in', href: resource_url(@res))
         end
       end
 
@@ -285,8 +285,7 @@ describe 'Reservations', type: :feature do
         expect(page).to have_content 'You must confirm that the user accepts '\
           'the Terms of Service.'
         visit equipment_item_path(@res.equipment_model.equipment_items.first)
-        expect(page).not_to have_link('Checked out',
-                                      href: reservation_path(@res))
+        expect(page).not_to have_link('Checked out', href: resource_url(@res))
       end
 
       it 'does not update equipment items for duplicate items' do
@@ -305,10 +304,8 @@ describe 'Reservations', type: :feature do
         expect(page).to have_content 'The same equipment item cannot be '\
           'simultaneously checked out in multiple reservations.'
         visit equipment_item_path(@res.equipment_model.equipment_items.first)
-        expect(page).not_to have_link('Checked out',
-                                      href: reservation_path(@res))
-        expect(page).not_to have_link('Checked out',
-                                      href: reservation_path(@res2))
+        expect(page).not_to have_link('Checked out', href: resource_url(@res))
+        expect(page).not_to have_link('Checked out', href: resource_url(@res2))
       end
     end
 
