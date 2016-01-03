@@ -77,6 +77,10 @@ FactoryGirl.define do
       end
     end
 
+    trait :archived do
+      status { 'archived' }
+    end
+
     factory :valid_reservation, traits: [:valid]
     factory :checked_out_reservation, traits: [:valid, :checked_out]
     factory :checked_in_reservation, traits: [:valid, :checked_out, :returned]
