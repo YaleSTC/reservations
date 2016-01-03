@@ -7,13 +7,13 @@
   </h4>
 
   <hr class="special-hr"/>
-    <div class="col-md-2">
-      <span class="giant-numbers" id="availability_<%= equipment_model.id %>">
+    <div class="col-md-3 availability-num">
+      <span id="availability_<%= equipment_model.id %>">
         <%= availability_hash[equipment_model.id] %>
       </span>
     </div>
 
-    <p class="model_availability col-md-10">
+    <p class="model_availability col-md-9">
       <%= available_string %>
     </p>
 
