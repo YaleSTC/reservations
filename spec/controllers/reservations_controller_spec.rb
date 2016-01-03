@@ -93,7 +93,7 @@ describe ReservationsController, type: :controller do
 
     before(:all) do
       @filters = [:reserved, :checked_out, :overdue, :missed,
-                  :returned, :upcoming]
+                  :returned, :upcoming, :archived]
     end
 
     context 'when accessed by non-banned user' do
