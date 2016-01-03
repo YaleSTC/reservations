@@ -88,6 +88,7 @@ class User < ActiveRecord::Base
   end
 
   # rubocop:disable AbcSize, MethodLength, PerceivedComplexity
+  # rubocop:disable CyclomaticComplexity
   def self.search_ldap(login)
     return nil if login.blank?
     return nil unless ENV['USE_LDAP']
@@ -97,6 +98,10 @@ class User < ActiveRecord::Base
     else
       filter_param = Rails.application.secrets.ldap_email
     end
+
+    # store affiliation parameters
+    aff_params = Rails.application.secrets.ldap_affiliation
+    aff_params = aff_params ? aff_params.split(',') : []
 
     # set up LDAP object and filter parameters
     ldap = Net::LDAP.new(host: Rails.application.secrets.ldap_host,
@@ -108,7 +113,7 @@ class User < ActiveRecord::Base
              Rails.application.secrets.ldap_email,
              Rails.application.secrets.ldap_first_name,
              Rails.application.secrets.ldap_last_name,
-             Rails.application.secrets.ldap_nickname]
+             Rails.application.secrets.ldap_nickname] + aff_params
 
     # actually look up query
     result = ldap.search(base: Rails.application.secrets.ldap_base,
@@ -118,19 +123,24 @@ class User < ActiveRecord::Base
     unless result.empty?
       # store output hash
       out = {}
+      result = result[0] # since we're doing this anyway
       out[:first_name] =
-        result[0][Rails.application.secrets.ldap_first_name.to_sym][0]
+        result[Rails.application.secrets.ldap_first_name.to_sym][0]
       out[:last_name] =
-        result[0][Rails.application.secrets.ldap_last_name.to_sym][0]
+        result[Rails.application.secrets.ldap_last_name.to_sym][0]
       out[:nickname] =
-        result[0][Rails.application.secrets.ldap_nickname.to_sym][0]
+        result[Rails.application.secrets.ldap_nickname.to_sym][0]
       out[:email] =
-        result[0][Rails.application.secrets.ldap_email.to_sym][0]
+        result[Rails.application.secrets.ldap_email.to_sym][0]
+
+      # deal with affiliation
+      out[:affiliation] = aff_params.map { |param| result[param.to_sym][0] }
+                          .select { |s| s && s.length > 0 }.join(' ')
 
       # define username based on authentication method
       if ENV['CAS_AUTH']
         out[:username] =
-          result[0][Rails.application.secrets.ldap_login.to_sym][0]
+          result[Rails.application.secrets.ldap_login.to_sym][0]
       else
         out[:username] = out[:email]
       end
@@ -139,6 +149,7 @@ class User < ActiveRecord::Base
       return out
     end
   end
+  # rubocop:enable CyclomaticComplexity
   # rubocop:enable AbcSize, MethodLength, PerceivedComplexity
 
   def self.select_options

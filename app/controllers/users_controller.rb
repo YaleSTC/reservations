@@ -118,19 +118,19 @@ class UsersController < ApplicationController
   end
 
   def quick_new
-    ldap_result = User.search_ldap(params[:possible_netid])
+    ldap_result = User.search_ldap(params[:possible_login])
     @user = User.new(ldap_result)
 
     # Does netID exist?
     if ldap_result.nil?
-      @message = 'Sorry, the netID that you entered does not exist.
-      You cannot create a user profile without a valid netID.'
+      @message = 'Sorry, the login that you entered does not exist.
+      You cannot create a user profile without a valid login.'
       render(:quick_new) && return
     end
 
     # Is there a user record already?
-    return unless User.find_by_username(params[:possible_netid])
-    @message = 'You cannot create a new user, as the netID you entered is '\
+    return unless User.find_by_username(params[:possible_login])
+    @message = 'You cannot create a new user, as the login you entered is '\
       'already associated with a user. If you would like to reserve for '\
       'them, please select their name from the drop-down options in the cart.'
     render(:quick_new) && return
