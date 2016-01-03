@@ -1,0 +1,33 @@
+/*
+   Copied from jquery-ui-rails theme.css.erb, v5.0.3 so that everything plays
+   nicely with the asset pipeline in production [2015-12-30]
+*/
+
+/* Icons
+----------------------------------*/
+
+/* states and images */
+.ui-icon,
+.ui-widget-content .ui-icon {
+  background-image: url(<%= image_path("jquery-ui/ui-icons_222222_256x240.png") %>)/*{iconsContent}*/;
+}
+.ui-widget-header .ui-icon {
+  background-image: url(<%= image_path("jquery-ui/ui-icons_222222_256x240.png") %>)/*{iconsHeader}*/;
+}
+.ui-state-default .ui-icon {
+  background-image: url(<%= image_path("jquery-ui/ui-icons_888888_256x240.png") %>)/*{iconsDefault}*/;
+}
+.ui-state-hover .ui-icon,
+.ui-state-focus .ui-icon {
+  background-image: url(<%= image_path("jquery-ui/ui-icons_454545_256x240.png") %>)/*{iconsHover}*/;
+}
+.ui-state-active .ui-icon {
+  background-image: url(<%= image_path("jquery-ui/ui-icons_454545_256x240.png") %>)/*{iconsActive}*/;
+}
+.ui-state-highlight .ui-icon {
+  background-image: url(<%= image_path("jquery-ui/ui-icons_2e83ff_256x240.png") %>)/*{iconsHighlight}*/;
+}
+.ui-state-error .ui-icon,
+.ui-state-error-text .ui-icon {
+  background-image: url(<%= image_path("jquery-ui/ui-icons_cd0a0a_256x240.png") %>)/*{iconsError}*/;
+}
