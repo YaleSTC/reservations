@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'concerns/linkable_spec.rb'
 
 describe EquipmentItem, type: :model do
   context 'validations' do
@@ -117,4 +118,6 @@ describe EquipmentItem, type: :model do
       expect(@checked_out_item.available?).to be_falsey
     end
   end
+
+  it_behaves_like 'linkable'
 end

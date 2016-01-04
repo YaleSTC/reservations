@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'concerns/linkable_spec.rb'
 
 describe EquipmentModel, type: :model do
   context 'basic validations' do
@@ -352,4 +353,6 @@ describe EquipmentModel, type: :model do
   context 'paperclip' do
     # not sure what this is/how it works, research and complete later.
   end
+
+  it_behaves_like 'linkable'
 end

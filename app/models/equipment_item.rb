@@ -1,6 +1,6 @@
 class EquipmentItem < ActiveRecord::Base
+  include Linkable
   include Searchable
-  include Routing
 
   belongs_to :equipment_model, counter_cache: true
   has_one :category, through: :equipment_model
@@ -54,9 +54,9 @@ class EquipmentItem < ActiveRecord::Base
 
   def make_reservation_notes(procedure_verb, reservation, handler, new_notes,
                              time)
-    new_str = "#### [#{procedure_verb.capitalize}]("\
-      "#{reservation_path(reservation.id)}) by #{handler.md_link} for "\
-      "#{reservation.reserver.md_link} on #{time.to_s(:long)}\n"
+    new_str = "#### #{reservation.md_link(procedure_verb.capitalize)} by "\
+      "#{handler.md_link} for #{reservation.reserver.md_link} on "\
+      "#{time.to_s(:long)}\n"
     if new_notes.empty?
       new_str += "\n"
     else
@@ -106,9 +106,5 @@ class EquipmentItem < ActiveRecord::Base
     new_notes += "\n\n" + notes
     self.notes = new_notes.strip
     self
-  end
-
-  def md_link
-    "[#{name}](#{equipment_item_url(self, only_path: false)})"
   end
 end

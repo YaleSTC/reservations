@@ -50,10 +50,10 @@ class Report # rubocop:disable ClassLength, it's only 105/100
         id: item.id, class: item.class.to_s.underscore.downcase)
       begin
         r.name = item.name
-            rescue NoMethodError # only item without name are reservations
-              r.name = item.id
-              r.link_path = Rails.application.routes.url_helpers
-                .reservation_path(id: item.id)
+        if item.class == Reservation
+          r.link_path =
+            Rails.application.routes.url_helpers.reservation_path(id: item.id)
+        end
       end
       r.item_id = item.id
       r

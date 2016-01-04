@@ -2,7 +2,7 @@ require 'net/ldap'
 
 # rubocop:disable ClassLength
 class User < ActiveRecord::Base
-  include Routing
+  include Linkable
 
   # Include authentication modules
   # If the CAS_AUTH environment variable is set, we simply include the
@@ -159,10 +159,6 @@ class User < ActiveRecord::Base
 
   def render_name
     ENV['CAS_AUTH'] ? "#{name} #{username}" : "#{name}"
-  end
-
-  def md_link
-    id ? "[#{name}](#{user_url(self, only_path: false)})" : "#{name}"
   end
 
   # ---- Reservation methods ---- #
