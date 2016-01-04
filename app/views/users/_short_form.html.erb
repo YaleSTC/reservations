@@ -11,5 +11,10 @@
   <%= f.input :email %>
   <%= f.input :affiliation %>
 
-  <%= f.button :submit, cancel: root_path %>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <%= f.button :submit %>
+      <button class="btn btn-default" data-dismiss="modal" type="button">Cancel</button>
+    </div>
+  </div>
 <% end %>
