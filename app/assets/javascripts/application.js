@@ -1,7 +1,6 @@
 //= require jquery
 //= require jquery_ujs
-//= require dataTables/jquery.dataTables
-//= require dataTables/bootstrap/3/jquery.dataTables.bootstrap
+//= require datatables.min.js
 //= require jquery-ui/datepicker
 //= require jquery-ui/autocomplete
 //= require cocoon
@@ -87,6 +86,18 @@ $(document).ready(function() {
       { "orderable": false, "targets": [ "no_sort" ] }
     ]
   });
+
+  // For DataTables in Bootstrap tabs
+  // see https://datatables.net/examples/api/tabs_and_scrolling.html
+  $('a[data-toggle="tab"]').on( 'shown.bs.tab', function (e) {
+    $.fn.dataTable.tables( {visible: true, api: true} ).columns.adjust();
+  } );
+
+  // User profile history datatable default sorting
+  $("#res-history-checked_out").DataTable().order([3, "asc"]).draw();
+  $("#res-history-future").DataTable().order([2, "asc"]).draw();
+  $("#res-history-overdue,#res-history-past,#res-history-past_overdue").DataTable().order([4, "desc"]).draw();
+
 
   // ### REPORTS JS ### //
 
