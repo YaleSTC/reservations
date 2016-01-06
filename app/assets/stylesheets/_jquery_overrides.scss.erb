@@ -31,3 +31,14 @@
 .ui-state-error-text .ui-icon {
   background-image: url(<%= image_path("jquery-ui/ui-icons_cd0a0a_256x240.png") %>)/*{iconsError}*/;
 }
+
+/* -- Override padding behavior of search boxes -- */
+
+input[type="search"] {
+  -webkit-appearance: textfield;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+
