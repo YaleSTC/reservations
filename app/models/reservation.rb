@@ -1,8 +1,7 @@
-# rubocop:disable ClassLength
+# rubocop:disable Metrics/ClassLength, Rails/ScopeArgs
 class Reservation < ActiveRecord::Base
   include Linkable
   include ReservationValidations
-  include ReservationScopes
 
   belongs_to :equipment_model
   belongs_to :equipment_item
@@ -36,6 +35,60 @@ class Reservation < ActiveRecord::Base
   FLAGS = { request: (1 << 1), broken: (1 << 2), lost: (1 << 3),
             fined: (1 << 4), missed_email_sent: (1 << 5),
             expired: (1 << 6) }
+
+  ## Scopes ##
+  # general scopes
+  default_scope { order('start_date, due_date, reserver_id') }
+  scope :for_eq_model, ->(em_id) { where(equipment_model_id: em_id) }
+  scope :for_reserver, ->(reserver_id) { where(reserver_id: reserver_id) }
+
+  # flag scopes
+  scope :flagged, ->(flag) { where('flags & ? > 0', FLAGS[flag]) }
+  scope :not_flagged, ->(flag) { where('flags & ? = 0', FLAGS[flag]) }
+
+  # basic status scopes
+  scope :active, lambda {
+    where(status: Reservation.statuses.values_at(*%w(reserved checked_out)))
+  }
+  scope :finalized, lambda {
+    where.not(status: Reservation.statuses.values_at(*%w(denied requested)))
+  }
+  scope :active_or_requested, lambda {
+    where(status: Reservation.statuses.values_at(
+      *%w(requested reserved checked_out)))
+  }
+
+  # overdue / request scopes
+  scope :overdue, ->() { where(overdue: true).checked_out }
+  scope :returned_on_time, ->() { where(overdue: false).returned }
+  scope :returned_overdue, ->() { where(overdue: true).returned }
+  scope :approved_requests, ->() { flagged(:request).finalized }
+  scope :missed_requests, ->() { past_date(:start_date).requested }
+
+  # generalized date scopes (pass parameter as either a string or a symbol)
+  scope :past_date, ->(param) { where("#{param} < ?", Time.zone.today) }
+  scope :today_date, ->(param) { where(param.to_sym => Time.zone.today) }
+
+  # basic date scopes
+  scope :checked_out_today, ->() { today_date(:checked_out) }
+  scope :checked_out_previous, ->() { past_date(:checked_out) }
+  scope :due_today, ->() { today_date(:due_date) }
+
+  # more complex / task-specific scopes
+  scope :checkoutable, Reservations::CheckoutableQuery
+  scope :ends_on_days, Reservations::EndsOnDaysQuery
+  scope :future, Reservations::FutureQuery
+  scope :notes_unsent, Reservations::NotesUnsentQuery
+  scope :reserved_in_date_range, Reservations::ReservedInDateRangeQuery
+  scope :reserved_on_date, Reservations::ReservedOnDateQuery
+  scope :starts_on_days, Reservations::StartsOnDaysQuery
+  scope :upcoming, Reservations::UpcomingQuery
+
+  # join Scopes
+  scope :with_categories, lambda {
+    joins(:equipment_model)
+      .select('reservations.*, equipment_models.category_id as category_id')
+  }
 
   ## Class methods ##
 

@@ -2,8 +2,8 @@ desc 'Send email to admins on reservations with notes'
 task email_notes_to_admins: :environment do
   # gets all reservations with notes and sends an email to the admin of the
   # application, to alert them.
-  notes_reservations_out = Reservation.has_notes.checked_out.notes_unsent
-  notes_reservations_in = Reservation.has_notes.checked_in.notes_unsent
+  notes_reservations_out = Reservation.checked_out.notes_unsent
+  notes_reservations_in = Reservation.returned.notes_unsent
   Rails.logger.info "Found #{notes_reservations_out.size} reservations "\
                     "checked out with notes and #{notes_reservations_in.size} "\
                     'reservations checked in with notes.'

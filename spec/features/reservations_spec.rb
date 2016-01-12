@@ -30,7 +30,8 @@ describe 'Reservations', type: :feature do
         click_button 'Finalize Reservation'
 
         # check that reservation was created with correct dates
-        query = Reservation.for_eq_model(@eq_model).for_reserver(reserver.id)
+        query =
+          Reservation.for_eq_model(@eq_model.id).for_reserver(reserver.id)
         expect(query.count).to eq(1)
         expect(query.first.start_date).to eq(Time.zone.today)
         expect(query.first.due_date).to eq(due_date)
@@ -67,7 +68,8 @@ describe 'Reservations', type: :feature do
         click_button 'Submit Request'
 
         # check that reservation request was created with correct dates
-        query = Reservation.for_eq_model(@eq_model).for_reserver(reserver.id)
+        query =
+          Reservation.for_eq_model(@eq_model.id).for_reserver(reserver.id)
         expect(query.count).to eq(1)
         expect(query.first.start_date).to eq(Time.zone.today)
         expect(query.first.due_date).to eq(bad_due_date)
@@ -105,7 +107,8 @@ describe 'Reservations', type: :feature do
         click_button 'Finalize Reservation'
 
         # check that reservation was created with correct dates
-        query = Reservation.for_eq_model(@eq_model).for_reserver(reserver.id)
+        query =
+          Reservation.for_eq_model(@eq_model.id).for_reserver(reserver.id)
         expect(query.count).to eq(1)
         expect(query.first.start_date).to eq(Time.zone.today)
         expect(query.first.due_date).to eq(bad_due_date)
