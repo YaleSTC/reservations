@@ -8,6 +8,11 @@
   <%= render :partial => "user_reservations_list", :collection => @user_overdue_reservations_set %>
 <% end %>
 
+<% unless @user_reserved_reservations_set.empty? %>
+  <h3>Future reservations</h3>
+  <%= render :partial => "user_reservations_list", :collection => @user_reserved_reservations_set %>
+<% end %>
+
 <% unless @user_checked_out_today_reservations_set.empty? %>
   <h3>Checked out today</h3>
   <%= render :partial => "user_reservations_list", :collection => @user_checked_out_today_reservations_set %>
@@ -16,11 +21,6 @@
 <% unless @user_checked_out_previous_reservations_set.empty? %>
   <h3>Checked out prior to today</h3>
   <%= render :partial => "user_reservations_list", :collection => @user_checked_out_previous_reservations_set %>
-<% end %>
-
-<% unless @user_reserved_reservations_set.empty? %>
-  <h3>Future reservations</h3>
-  <%= render :partial => "user_reservations_list", :collection => @user_reserved_reservations_set %>
 <% end %>
 
 <% if @user_overdue_reservations_set.empty? and @user_checked_out_today_reservations_set.empty? and @user_checked_out_previous_reservations_set.empty? and @user_reserved_reservations_set.empty? %>
