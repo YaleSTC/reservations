@@ -38,7 +38,7 @@ describe Reservation, type: :model do
     context 'with a blackout date overlapping with the max renewal length' do
       it 'should set the correct renewal length' do
         FactoryGirl.create(:blackout,
-                           start_date: reservation.due_date + 2.day,
+                           start_date: reservation.due_date + 2.days,
                            end_date: reservation.due_date + reservation
                            .equipment_model.max_renewal_length.days + 1.day)
         expect(reservation.find_renewal_date).to\
@@ -502,19 +502,19 @@ describe Reservation, type: :model do
     it 'the status should not be able to be changed if denied' do
       reservation.update_attributes(status: 'denied')
       reservation.status = 'reserved'
-      expect { reservation.save! }.to raise_error
+      expect { reservation.save! }.to raise_error ActiveRecord::RecordInvalid
     end
     it 'the status should not be able to be changed if missed' do
       reservation.update_attributes(
         FactoryGirl.attributes_for(:missed_reservation))
       reservation.status = 'reserved'
-      expect { reservation.save! }.to raise_error
+      expect { reservation.save! }.to raise_error ActiveRecord::RecordInvalid
     end
     it 'the status should not be able to be changed if returned' do
       reservation.update_attributes(
         FactoryGirl.attributes_for(:checked_in_reservation))
       reservation.status = 'reserved'
-      expect { reservation.save! }.to raise_error
+      expect { reservation.save! }.to raise_error ActiveRecord::RecordInvalid
     end
   end
 

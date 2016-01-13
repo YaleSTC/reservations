@@ -1,3 +1,4 @@
+# rubocop:disable ModuleLength
 module EquipmentImport
   # IMPORT FUNCTIONS - these are all kinda similar, but we'll write them
   # separately for now and we can always refactor later.

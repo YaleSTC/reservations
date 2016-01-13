@@ -24,7 +24,7 @@ namespace :app do
       puts 'We need to start by creating a superuser account. Please enter the'
       puts 'following info:'
 
-      until User.first # rubocop:disable Next
+      until User.first
         puts ''
         puts 'First Name:'
         first_name = STDIN.gets.chomp
@@ -75,11 +75,10 @@ namespace :app do
           end
         end # transaction
 
-        if User.first
-          puts 'Your user was saved successfully! Now we\'ll set the '\
-            'application'
-          puts 'configurations.'
-        end
+        next unless User.first
+        puts 'Your user was saved successfully! Now we\'ll set the '\
+          'application'
+        puts 'configurations.'
       end
     else
       puts ''
@@ -127,7 +126,7 @@ namespace :app do
         'reservations'
       puts 'application:'
 
-      until AppConfig.first # rubocop:disable Next
+      until AppConfig.first
         puts ''
         puts 'Site title (this will show across the top of the browser '\
           'window when visiting'
@@ -186,18 +185,17 @@ namespace :app do
           end
         end # transaction
 
-        if AppConfig.first
-          puts 'Congratulations! Your application has been setup '\
-            'successfully. We highly'
-          puts 'recommend that you now visit the site using the '\
-            'administrator account that you'
-          puts 'just created, and finish setting up the configurations that '\
-            "we couldn't set"
-          puts "from here. Thanks for using reservations, and don't "\
-            'hesitate to submit any'
-          puts 'issues or questions on our github page:'
-          puts 'https://github.com/YaleSTC/reservations'
-        end
+        next unless AppConfig.first
+        puts 'Congratulations! Your application has been setup '\
+          'successfully. We highly'
+        puts 'recommend that you now visit the site using the '\
+          'administrator account that you'
+        puts 'just created, and finish setting up the configurations that '\
+          "we couldn't set"
+        puts "from here. Thanks for using reservations, and don't "\
+          'hesitate to submit any'
+        puts 'issues or questions on our github page:'
+        puts 'https://github.com/YaleSTC/reservations'
       end
     else
       puts 'Application configurations appear to already be set. You can '\

@@ -27,7 +27,7 @@ describe 'Equipment Model views', type: :feature do
         @far_future_res =
           FactoryGirl.create :valid_reservation,
                              equipment_model: @eq_model,
-                             start_date: Time.zone.today + 9.day,
+                             start_date: Time.zone.today + 9.days,
                              due_date: Time.zone.today + 10.days
       end
 

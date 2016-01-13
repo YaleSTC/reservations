@@ -6,7 +6,7 @@ task email_checkin_reminder: :environment do
     Rails.logger.info "Found #{upcoming_reservations.size} reservations due "\
                       'for check-in. Sending reminder emails...'
     upcoming_reservations.each do |upcoming_reservation|
-      UserMailer.reservation_status_update(upcoming_reservation).deliver
+      UserMailer.reservation_status_update(upcoming_reservation).deliver_now
     end
     Rails.logger.info 'Done!'
   else

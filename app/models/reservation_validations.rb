@@ -20,6 +20,7 @@ module ReservationValidations
     return unless equipment_model.nil?
     errors.add(:base, 'Reservation must be for an object')
   end
+
   # Checks that reservation start date is before end dates
   def start_date_before_due_date
     return unless start_date && due_date && (due_date < start_date)

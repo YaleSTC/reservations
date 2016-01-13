@@ -6,8 +6,8 @@ class UsersController < ApplicationController
   autocomplete :user, :last_name, extra_data: [:first_name, :username],
                                   display_value: :render_name
 
-  skip_filter :cart, only: [:new, :create]
-  skip_filter :authenticate_user!, only: [:new, :create]
+  skip_action_callback :cart, only: [:new, :create]
+  skip_action_callback :authenticate_user!, only: [:new, :create]
   before_action :set_user,
                 only: [:show, :edit, :update, :destroy, :ban, :unban]
   before_action :check_cas_auth, only: [:show, :new, :create, :edit, :update]
@@ -168,7 +168,7 @@ class UsersController < ApplicationController
     if @user.send(method, par)
       # sign in the user if you've edited yourself since you have a new
       # password, otherwise don't
-      sign_in @user, bypass: true if (@user.id == current_user.id)
+      sign_in @user, bypass: true if @user.id == current_user.id
       flash[:notice] = 'Successfully updated user.'
       redirect_to user_path(@user)
     else

@@ -29,7 +29,7 @@ class User < ActiveRecord::Base
             :last_name,
             :affiliation, presence: true
   validates :phone, presence: true,
-                    format: { with: /\A\S[0-9\+\/\(\)\s\-]*\z/i },
+                    format: { with: %r{/\A\S[0-9\+\/\(\)\s\-]*\z/i} },
                     length: { minimum: 10 },
                     unless: ->(u) { u.skip_phone_validation? }
 

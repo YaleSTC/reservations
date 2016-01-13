@@ -298,7 +298,7 @@ describe EquipmentModel, type: :model do
           expect(
             @model.num_available(@reservation.start_date,
                                  @reservation.due_date)
-            ).to eq(1)
+          ).to eq(1)
         end
         it 'should return 0 if no items of that model are available' do
           @reservation =

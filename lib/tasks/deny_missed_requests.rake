@@ -11,7 +11,7 @@ task deny_missed_requests: :environment do
     request.status = 'denied'
     request.flag(:expired)
     request.save!
-    UserMailer.reservation_status_update(request).deliver
+    UserMailer.reservation_status_update(request).deliver_now
   end
 
   Rails.logger.info 'Finished processing missed requests.'

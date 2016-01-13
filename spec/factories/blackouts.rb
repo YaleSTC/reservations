@@ -5,6 +5,6 @@ FactoryGirl.define do
     notice 'MyText'
     blackout_type 'hard'
     start_date Time.zone.today
-    end_date { Time.zone.today + 7.day }
+    end_date { Time.zone.today + 7.days }
   end
 end

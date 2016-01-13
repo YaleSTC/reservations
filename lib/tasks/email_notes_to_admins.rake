@@ -19,7 +19,7 @@ def email_notes_to_admins(notes_reservations_out, notes_reservations_in)
   Rails.logger.info 'Sending a reminder email...'
 
   AdminMailer.notes_reservation_notification(notes_reservations_out,
-                                             notes_reservations_in).deliver
+                                             notes_reservations_in).deliver_now
   # reset notes_unsent flag on all reservations
   notes_reservations_out.update_all(notes_unsent: false)
   notes_reservations_in.update_all(notes_unsent: false)

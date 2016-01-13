@@ -55,9 +55,9 @@ module CsvImport
       end
     end
 
-    # rubocop:disable UnusedLocalVariable, UselessAssignment
+    # rubocop:disable UselessAssignment
     hash_of_statuses = { success: @array_of_success, fail: @array_of_fail }
-    # rubocop:enable UnusedLocalVariable, UselessAssignment
+    # rubocop:enable UselessAssignment
   end
 
   # attempts to import with LDAP, returns nil if the login is not found,

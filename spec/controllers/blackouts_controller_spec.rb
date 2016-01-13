@@ -123,7 +123,7 @@ describe BlackoutsController, type: :controller do
           post :create, blackout: @attributes
         end
         it 'should create the new blackout' do
-          expect(Blackout.find(assigns(:blackout))).not_to be_nil
+          expect(Blackout.find(assigns(:blackout).id)).not_to be_nil
         end
         it 'should pass the correct params' do
           expect(assigns(:blackout)[:notice]).to eq(@attributes[:notice])

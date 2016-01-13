@@ -56,7 +56,7 @@ describe AnnouncementsController, type: :controller do
           post :create, announcement: @attributes
         end
         it 'should create the new announcement' do
-          expect(Announcement.find(assigns(:announcement))).not_to be_nil
+          expect(Announcement.find(assigns(:announcement).id)).not_to be_nil
         end
         it 'should pass the correct params' do
           expect(assigns(:announcement)[:starts_at].to_date).to\

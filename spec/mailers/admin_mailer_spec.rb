@@ -5,9 +5,9 @@ shared_examples_for 'a valid admin email' do
     expect(@mail.to.size).to eq(1)
     expect(@mail.to.first).to eq(@app_config.admin_email)
   end
-  it "is from no-reply@#{ ActionMailer::Base.default_url_options[:host] }" do
-    expect(@mail.from).to eq("no-reply@#{
-      ActionMailer::Base.default_url_options[:host] }")
+  it "is from no-reply@#{ActionMailer::Base.default_url_options[:host]}" do
+    expect(@mail.from).to \
+      eq("no-reply@#{ActionMailer::Base.default_url_options[:host]}")
   end
   it 'should actually send the email' do
     expect(ActionMailer::Base.deliveries.count).to eq(1)
@@ -29,7 +29,8 @@ describe AdminMailer, type: :mailer do
     before do
       @res1 = FactoryGirl.create(:valid_reservation)
       @res2 = FactoryGirl.create(:valid_reservation)
-      @mail = AdminMailer.notes_reservation_notification(@res1, @res2).deliver
+      @mail =
+        AdminMailer.notes_reservation_notification(@res1, @res2).deliver_now
     end
     it 'renders the subject' do
       expect(@mail.subject).to\
@@ -46,7 +47,7 @@ describe AdminMailer, type: :mailer do
                                 equipment_model: @model,
                                 equipment_item: @item)
       @res1.save(validate: false)
-      @mail = AdminMailer.overdue_checked_in_fine_admin(@res1).deliver
+      @mail = AdminMailer.overdue_checked_in_fine_admin(@res1).deliver_now
     end
     it_behaves_like 'a valid admin email'
     it 'renders the subject' do
@@ -59,7 +60,7 @@ describe AdminMailer, type: :mailer do
       @res = FactoryGirl.build(:checked_in_reservation,
                                equipment_model_id: @em.id)
       @res.save(validate: false)
-      @mail = AdminMailer.overdue_checked_in_fine_admin(@res).deliver
+      @mail = AdminMailer.overdue_checked_in_fine_admin(@res).deliver_now
     end
     it 'doesn\'t send an email' do
       expect(ActionMailer::Base.deliveries.count).to eq(0)
@@ -68,7 +69,7 @@ describe AdminMailer, type: :mailer do
   describe 'reservation_created_admin' do
     before do
       @res = FactoryGirl.create(:valid_reservation)
-      @mail = AdminMailer.reservation_created_admin(@res).deliver
+      @mail = AdminMailer.reservation_created_admin(@res).deliver_now
     end
     it_behaves_like 'a valid admin email'
     it 'renders the subject' do
