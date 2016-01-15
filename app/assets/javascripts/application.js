@@ -200,4 +200,8 @@ $(document).ready(function() {
     $('input[type="submit"]').data('confirm', newMsg);
   });
 
+  $('.modal-body > :submit').click(function(){
+    $(this).siblings('#new_user').submit();
+  });
+
 });
