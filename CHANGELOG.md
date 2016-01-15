@@ -2,6 +2,17 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+## v5.5.4 - 2016-02-02
+### Fixed
+* The quick new user modal form can now be submitted ([#1421](https://github.com/YaleSTC/reservations/issues/1421)).
+* All URL helpers now use the correct relative root with subdirectory deployment ([#1424](https://github.com/YaleSTC/reservations/issues/1424), [#1465](https://github.com/YaleSTC/reservations/issues/1465)).
+* Fixed the links to Paperclip uploads ([#1425](https://github.com/YaleSTC/reservations/issues/1425)).
+* Uploaded CSVs support extra columns ([#1439](https://github.com/YaleSTC/reservations/issues/1439)).
+* Daily rake tasks run sequentially; check-in emails now only send for checked-out reservations ([#1446](https://github.com/YaleSTC/reservations/issues/1446)).
+
+### Changed
+* Changed receipts page to include user search ([#1420](https://github.com/YaleSTC/reservations/issues/1420)).
+
 ## v5.5.3 - 2016-01-24
 ### Fixed
 * Resolved an issue where checked-out reservations were not being taken into account when validating availability ([#1449](https://github.com/YaleSTC/reservations/issues/1449)).
