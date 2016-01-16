@@ -68,8 +68,11 @@ $(document).on('railsAutocomplete.select', '#fake_searched_id', function(){
   $(this).parents('form').submit();
 });
 
-$(document).ready(function() {
+$(document).on('click', 'input.btn-primary:submit', function(){
+  $(this).siblings('#new_user').submit();
+});
 
+$(document).ready(function() {
   // For DataTables and Bootstrap
   $('.datatable').dataTable({
     "pagingType": "full_numbers",
@@ -198,10 +201,6 @@ $(document).ready(function() {
       ? ""
       : "Be aware that changing the reservation equipment item may have an effect on another reservation. If you set this reservation's equipment item to an item that has already been checked out, the reservations will be swapped.";
     $('input[type="submit"]').data('confirm', newMsg);
-  });
-
-  $('.modal-body > :submit').click(function(){
-    $(this).siblings('#new_user').submit();
   });
 
 });
