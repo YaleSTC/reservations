@@ -5,6 +5,7 @@
 ## v5.5.2 - 2016-01-18
 ### Fixed
 * Resolved an issue where all AdminMailer e-mails were not being delivered ([#1426](https://github.com/YaleSTC/reservations/issues/1426)).
+* Resolved an issue where late fees in e-mails were cumulative, not daily ([#1433](https://github.com/YaleSTC/reservations/issues/1433)).
 
 ## v5.5.1 - 2016-01-12
 ### Fixed
