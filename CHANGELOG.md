@@ -2,6 +2,10 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+## v5.5.2 - 2016-01-18
+### Fixed
+* Resolved an issue where all AdminMailer e-mails were not being delivered ([#1426](https://github.com/YaleSTC/reservations/issues/1426)).
+
 ## v5.5.1 - 2016-01-12
 ### Fixed
 * Fixed issue where most users couldn't hide announcements ([#1339](https://github.com/YaleSTC/reservations/issues/1339)).
