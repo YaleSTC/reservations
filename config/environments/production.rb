@@ -71,7 +71,8 @@ Rails.application.configure do
 
   # Mailer host, allows links in email body to function correctly
   config.action_mailer.default_url_options =
-    { host: "#{ENV['RAILS_HOST_NAME']}#{ENV['RAILS_RELATIVE_URL_ROOT']}" }
+    { host: ENV['RAILS_HOST_NAME'],
+      script_name: ENV['RAILS_RELATIVE_URL_ROOT'] }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation can not be found)
