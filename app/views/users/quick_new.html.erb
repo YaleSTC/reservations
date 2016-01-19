@@ -1,12 +1,3 @@
-<% unless @message %>
-  <p>Please double check that this information is correct.
-    The user can update their personal information later by clicking 'edit' on their profile page.</p>
-  <%= render partial: 'short_form' %>
-<% else %>
-  <p><%= @message %></p>
-<% end %>
-
-
 <div class="modal fade" id="userModal">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -15,6 +6,13 @@
         <h4 class="modal-title">Quick Create New User</h4>
       </div>
       <div class="modal-body">
+		<% unless @message %>
+		  <p>Please double check that this information is correct.
+		    The user can update their personal information later by clicking 'edit' on their profile page.</p>
+		  <%= render partial: 'short_form' %>
+		<% else %>
+		  <p><%= @message %></p>
+		<% end %>
       </div>
     </div>
   </div>
