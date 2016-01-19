@@ -49,7 +49,7 @@
       "description": "SMTP authentication password",
       "value": "(fill in MANDRIL_APIKEY post-deployment)"
     },
-    "SERVE_STATIC": {
+    "RAILS_SERVE_STATIC_FILES": {
       "description": "whether or not to serve static assets",
       "value": "1"
     },
