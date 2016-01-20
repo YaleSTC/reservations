@@ -40,27 +40,31 @@ describe UserMailer, type: :mailer do
 
   describe 'reservation_status_update' do
     it 'sends to the reserver' do
-      @mail = UserMailer.reservation_status_update(@res).deliver
+      # force a request email; there is not an email for a basic reservation
+      @mail = UserMailer.reservation_status_update(@res, 'requested').deliver
       expect(@mail.to.size).to eq(1)
       expect(@mail.to.first).to eq(reserver.email)
     end
 
     it 'sends an email' do
-      @mail = UserMailer.reservation_status_update(@res).deliver
+      # force a request email; there is not an email for a basic reservation
+      @mail = UserMailer.reservation_status_update(@res, 'requested').deliver
       expect(ActionMailer::Base.deliveries.count).to eq(1)
     end
 
     it 'logs if the env is set' do
       env_wrapper('LOG_EMAILS' =>  '1') do
         expect(Rails.logger).to receive(:info).with(/Sent/).once
-        @mail = UserMailer.reservation_status_update(@res).deliver
+        # force a request email; there is not an email for a basic reservation
+        @mail = UserMailer.reservation_status_update(@res, 'requested').deliver
       end
     end
 
     it "doesn't log if the env is not set" do
       expect(ENV['LOG_EMAILS']).to be_nil
       expect(Rails.logger).to receive(:info).exactly(0).times
-      @mail = UserMailer.reservation_status_update(@res).deliver
+      # force a request email; there is not an email for a basic reservation
+      @mail = UserMailer.reservation_status_update(@res, 'requested').deliver
     end
 
     it 'sends denied notifications' do
