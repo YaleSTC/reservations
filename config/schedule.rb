@@ -32,18 +32,10 @@ hourly_cron_str = time.min.to_s + ' * * * *'
 
 # every night around 5 AM
 every nightly_cron_str do
-  rake 'flag_overdue'
-  rake 'flag_missed'
-  rake 'deny_missed_requests'
-  rake 'email_overdue_reminder'
-  rake 'email_missed_reservations'
-  rake 'email_checkin_reminder'
-  rake 'email_checkout_reminder'
-  rake 'delete_old_blackouts'
-  rake 'delete_missed_reservations'
+  rake 'run_daily_tasks'
 end
 
 # every hour (except five AM)
 every hourly_cron_str do
-  rake 'email_notes_to_admins'
+  rake 'run_hourly_tasks'
 end
