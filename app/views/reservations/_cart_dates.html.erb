@@ -18,7 +18,7 @@
           class: 'submittable form-control' %>
         <% if can? :create, User %>
           <span class="input-group-btn">
-            <%= link_to sanitize("<i class=\"fa fa-plus\"></i>"), '#userModalWraper', class: 'btn btn-default', id: 'modal', rel: 'tooltip', title: 'New Reserver', :"data-toggle" => 'modal' %>
+            <%= link_to sanitize("<i class=\"fa fa-plus\"></i>"), '#userModal', class: 'btn btn-default', id: 'modal', rel: 'tooltip', title: 'New Reserver', :"data-toggle" => 'modal' %>
           </span>
         <% end %>
       </div>
@@ -40,5 +40,15 @@
   <% end %>
 </div>
 
-<div id='userModalWraper'>
+<div class="modal fade" id="userModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h4 class="modal-title">Quick Create New User</h4>
+      </div>
+      <div class="modal-body">
+      </div>
+    </div>
+  </div>
 </div>
