@@ -182,8 +182,11 @@ $(document).ready(function() {
   }
 
   $('#modal').click(function() {
-    $('#userModal div.modal-body').load(new_user, {possible_login: $('#fake_reserver_id').val() }); // new_user defined in variables.js.erb
-    $('div.modal-body div.test-div').append('<p>a</p>');
+    $('#userModal div.modal-body').load(new_user, {possible_login: $('#fake_reserver_id').val() }, function ()
+    {
+      userModalLoad();
+      $('modal-header h4').focus(); // Used to remove focuse from the added element
+    }); // new_user defined in variables.js.erb
   });
 
   load_datepicker();
