@@ -3,34 +3,23 @@ function userModalLoad ()
 	if ($('div.modal-body form').length) // check if there is a form? if so the DOM tree needs to be sorted
 	{
 		// create a DOM order acourding to the desired order
+		// the diffret form field divs - all of these have 3 children
+		var formFields = ['div.user_first_name',
+											'div.user_last_name',
+											'div.user_phone',
+											'div.user_email',
+											'div.user_affiliation'];
 		// first input to first div
 		$('form#new_user').next().next().appendTo($('form#new_user').next());
 		// user name
 		$('input#user_username').appendTo($('div.user_username'));
-		// first name
-		for (var i=0; i<3; i++)
+		// form fields
+		for (var j=0; j<formFields.length; j++)
 		{
-			$('div.user_first_name').next().appendTo($('div.user_first_name'));
-		}
-		// last name
-		for (var i=0; i<3; i++)
-		{
-			$('div.user_last_name').next().appendTo($('div.user_last_name'));
-		}
-		// phone number
-		for (var i=0; i<3; i++)
-		{
-			$('div.user_phone').next().appendTo($('div.user_phone'));
-		}
-		// email
-		for (var i=0; i<3; i++)
-		{
-			$('div.user_email').next().appendTo($('div.user_email'));
-		}
-		// affiliation
-		for (var i=0; i<3; i++)
-		{
-			$('div.user_affiliation').next().appendTo($('div.user_affiliation'));
+			for (var i=0; i<3; i++)
+			{
+				$(formFields[j]).next().appendTo($(formFields[j]));
+			}
 		}
 		// buttons
 		for (var i=0; i<2; i++)
