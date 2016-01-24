@@ -73,7 +73,7 @@ module ReservationScopes
       scope :for_reserver, ->(reserver) { where(reserver_id: reserver) }
       scope :reserved_in_date_range, lambda { |start_date, end_date|
         where('start_date <= ? and due_date >= ?', end_date, start_date)
-          .reserved
+          .active
       }
       scope :overlaps_with_date, lambda { |date|
         where('start_date <= ? and due_date >= ?', date, date)
