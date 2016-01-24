@@ -334,27 +334,30 @@ describe Reservation, type: :model do
     end
   end
 
-  # this all fails - problem w/ available
   context 'with equipment item available problems' do
-    let!(:available_reservation) do
+    before(:each) do
       FactoryGirl.create(:checked_out_reservation,
-                         equipment_model: reservation.equipment_model)
+                         equipment_model: reservation.equipment_model,
+                         start_date: reservation.start_date,
+                         due_date: reservation.due_date,
+                         equipment_item: reservation.equipment_model
+                           .equipment_items.first)
     end
 
-    # it { should_not be_valid } #fails
-    # it 'should not save' do #fails
-    #   reservation.save.should be_falsey
-    #   Reservation.all.size.should == 0
-    # end
-    # it 'cannot be updated' do #fails
-    #   reservation.start_date = Time.zone.today + 1.day
-    #   reservation.save.should be_falsey
-    # end
-    # it 'fails appropriate validations' do # fails
-    #   reservation.should_not be_available
-    #   Reservation.validate_set(reservation.reserver,
-    #                            [] << reservation).should_not == []
-    # end
+    it { is_expected.not_to be_valid }
+    it 'should not save' do
+      expect(reservation.save).to be_falsey
+      expect(Reservation.all.size).to eq(1)
+    end
+    it 'cannot be updated' do
+      reservation.start_date = Time.zone.today + 1.day
+      expect(reservation.save).to be_falsey
+    end
+    it 'fails appropriate validations' do
+      expect(reservation.available).not_to eq([])
+      expect(reservation).not_to be_valid
+    end
+
     it 'passes other custom validations' do
       expect(reservation.start_date_before_due_date).to be_nil
       expect(reservation.not_empty).to be_nil
