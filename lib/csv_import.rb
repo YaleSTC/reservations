@@ -16,6 +16,9 @@ module CsvImport
     string.first.gsub!(/\s+/, '')
     string = string.join "\n"
 
+    # get rid of any extra columns
+    string.gsub!(/,,*$/, '')
+
     # import data by row
     CSV.parse(string, headers: true) do |row|
       object_hash = row.to_hash.symbolize_keys

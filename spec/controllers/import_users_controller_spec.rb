@@ -34,6 +34,9 @@ describe ImportUsersController, type: :controller do
     context 'when the header line has spaces' do
       it_behaves_like 'successful upload', 'header_spaces_users.csv'
     end
+    context 'with extra blank columns' do
+      it_behaves_like 'successful upload', 'extra_columns_users.csv'
+    end
     context "when the isn't csv uploaded" do
       before { post :import }
       it_behaves_like 'failure'
