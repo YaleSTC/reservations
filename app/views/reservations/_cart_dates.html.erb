@@ -18,7 +18,7 @@
           class: 'submittable form-control' %>
         <% if can? :create, User %>
           <span class="input-group-btn">
-            <%= link_to sanitize("<i class=\"fa fa-plus\"></i>"), '#userModal', class: 'btn btn-default', id: 'modal', rel: 'tooltip', title: 'New Reserver', :"data-toggle" => 'modal' %>
+            <%= link_to sanitize("<i class=\"fa fa-plus\"></i>"), '#userModal', class: 'btn btn-default', id: 'userModalBtn', rel: 'tooltip', title: 'New Reserver', :"data-toggle" => 'modal' %>
           </span>
         <% end %>
       </div>

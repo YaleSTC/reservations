@@ -121,7 +121,7 @@ $(document).ready(function() {
   // truncate catalog descriptions
   truncate();
 
-  $(".btn#modal").tooltip();
+  $(".btn#userModalBtn").tooltip();
   $(".not-qualified-icon").tooltip();
   $(".not-qualified-icon-em").tooltip();
   $('[data-toggle="tooltip"]').tooltip();
@@ -178,8 +178,8 @@ $(document).ready(function() {
     }
   }
 
-  $('#modal').click(function() {
-    $('#userModal div.modal-body').load(new_user, {possible_login: $('#fake_reserver_id').val() }); // new_user defined in variables.js.erb
+  $('#userModalBtn').click(function() {
+    $.post(new_user, {possible_login: $('#fake_reserver_id').val() }); // new_user defined in variables.js.erb
   });
 
   load_datepicker();
