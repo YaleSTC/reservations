@@ -68,10 +68,6 @@ $(document).on('railsAutocomplete.select', '#fake_searched_id', function(){
   $(this).parents('form').submit();
 });
 
-$(document).on('click', 'input.btn-primary:submit', function(){
-  $(this).siblings('#new_user').submit();
-});
-
 $(document).ready(function() {
   // For DataTables and Bootstrap
   $('.datatable').dataTable({
