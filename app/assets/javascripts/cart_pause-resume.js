@@ -2,7 +2,7 @@
 function pause_cart () {
   // disable the cart form (using `readonly` to avoid breaking the session)
   $('#fake_reserver_id').prop('readonly', true);
-  $('#modal').addClass('disabled');
+  $('#userModalBtn').addClass('disabled');
   $('#cart_start_date_cart').prop('readonly', true);
   $('#cart_due_date_cart').prop('readonly', true);
   $('#cart_buttons').children('a').addClass("disabled"); // disable cart buttons
@@ -14,7 +14,7 @@ function pause_cart () {
 function resume_cart () {
   // enable the cart form
   $('#fake_reserver_id').prop('readonly', false);
-  $('#modal').removeClass('disabled');
+  $('#userModalBtn').removeClass('disabled');
   $('#cart_start_date_cart').prop('readonly', false);
   $('#cart_due_date_cart').prop('readonly', false);
   $('#cart_buttons').children('a').removeClass("disabled"); // disable cart buttons
