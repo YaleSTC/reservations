@@ -69,7 +69,7 @@
     <li><a href="#description">Description</a></li>
     <li><a href="#details">Details</a></li>
     <% if @equipment_model.documentation.exists? %>
-      <li><a href="#documenatloction">Documentation</a></li>
+      <li><a href="#documentation">Documentation</a></li>
     <% end %>
     <% if @equipment_model.model_restricted?(cart.reserver_id) %>
       <li><a href="#requirements">Requirements</a></li>
@@ -128,7 +128,8 @@
         <div class="col-md-3">
           <h4>
             <%= (link_to @equipment_model.documentation_file_name,
-                 @equipment_model.documentation.url, target: "_blank") if @equipment_model.documentation.exists? %>
+                         paperclip_full_url(@equipment_model.documentation),
+                         target: "_blank") if @equipment_model.documentation.exists? %>
           </h4>
         </div>
       </div>
