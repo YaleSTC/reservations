@@ -168,11 +168,6 @@ GEM
       activesupport (>= 4.0.4)
       loofah (>= 2.0)
       nokogiri (~> 1.6)
-    jquery-datatables-rails (3.3.0)
-      actionpack (>= 3.1)
-      jquery-rails
-      railties (>= 3.1)
-      sass-rails
     jquery-rails (4.0.5)
       rails-dom-testing (~> 1.0)
       railties (>= 4.2.0)
@@ -450,7 +445,6 @@ DEPENDENCIES
   guard-rspec (~> 4.6.4)
   highline (~> 1.7.8)
   inline_svg (~> 0.6.1)
-  jquery-datatables-rails (~> 3.3.0)
   jquery-rails (~> 4.0.5)
   jquery-ui-rails (~> 5.0.5)
   kaminari (~> 0.16.3)
