@@ -37,7 +37,7 @@ module ReservationScopes
         unscoped.where(start_date: Time.zone.today).reserved.user_sort
       }
       scope :due_soon, lambda {
-        where(due_date: Time.zone.today)
+        where(due_date: Time.zone.today).checked_out
       }
       scope :checkoutable, lambda {
         where('start_date <= ?', Time.zone.today).reserved
