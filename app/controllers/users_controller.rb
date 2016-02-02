@@ -126,15 +126,13 @@ class UsersController < ApplicationController
     if ldap_result.nil?
       @message = 'Sorry, the login that you entered does not exist.
       You cannot create a user profile without a valid login.'
-      render(:quick_new) && return
-    end
-
     # Is there a user record already?
-    return unless User.find_by_username(params[:possible_login])
-    @message = 'You cannot create a new user, as the login you entered is '\
+    elsif User.find_by_username(params[:possible_login])
+      @message = 'You cannot create a new user, as the login you entered is '\
       'already associated with a user. If you would like to reserve for '\
       'them, please select their name from the drop-down options in the cart.'
-    render(:quick_new) && return
+    end
+    respond_to :html, :js
   end
 
   def quick_create
