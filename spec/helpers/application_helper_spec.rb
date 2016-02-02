@@ -22,7 +22,7 @@ describe ApplicationHelper, type: :helper do
         Rails.application.config.action_controller.relative_url_root = rel_root
 
         expect(paperclip_full_url(good_obj)).to \
-          eq("/#{rel_root}#{good_obj.url}")
+          eq("#{rel_root}#{good_obj.url}")
       end
     end
   end

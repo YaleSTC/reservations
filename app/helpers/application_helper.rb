@@ -41,7 +41,7 @@ module ApplicationHelper
     unless Rails.application.config.action_controller.relative_url_root
       return upload.url
     end
-    "/#{Rails.application.config.action_controller.relative_url_root}" \
+    "#{Rails.application.config.action_controller.relative_url_root}" \
       "#{upload.url}"
   end
 end
