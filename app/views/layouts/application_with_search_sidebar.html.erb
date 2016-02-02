@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%# ================== HTML HEAD ================== %>
+  <%= render 'layouts/head' %>
+
+  <body data-spy="scroll" data-target=".subnav" data-offset="100">
+
+    <%= render 'layouts/navbar' %>
+
+    <div class="container">
+      <%= render 'layouts/announcements' %>
+      <%= render 'layouts/flash_alerts' %>
+      <div class="row">
+
+        <%# ================ MAIN PAGE CONTENT ================ %>
+      	<%= render 'layouts/content_with_sidebar' %>
+
+        <%# ================ RIGHT SIDEBAR ================ %>
+        <%= render 'layouts/sidebar_with_search' %>
+      </div>
+
+      <%# ================ FOOTER ================ %>
+      <%= render 'layouts/footer' %>
+    </div>
+  </body>
+</html>

@@ -329,7 +329,7 @@ class ReservationsController < ApplicationController
     # prep for receipt page and exit
     @check_in_set = []
     @check_out_set = checked_out_reservations
-    render('receipt') && return
+    render('receipt', layout: 'application_with_search_sidebar') && return
   end
 
   def checkin # rubocop:disable all
@@ -377,7 +377,7 @@ class ReservationsController < ApplicationController
     @user = checked_in_reservations.first.reserver
     @check_in_set = checked_in_reservations
     @check_out_set = []
-    render('receipt') && return
+    render('receipt', layout: 'application_with_search_sidebar') && return
   end
 
   def destroy
