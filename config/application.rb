@@ -64,5 +64,11 @@ module Reservations
     config.action_controller.include_all_helpers = false
 
     PermanentRecords.dependent_record_window = 10.seconds
+
+    # set up routing options for Reports (at a minimum)
+    config.after_initialize do
+      Rails.application.routes.default_url_options =
+        config.action_mailer.default_url_options
+    end
   end
 end

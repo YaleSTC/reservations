@@ -93,10 +93,4 @@ Rails.application.configure do
 
   # set up PartyFoul
   config.middleware.use('PartyFoul::Middleware') if ENV['PARTY_FOUL_TOKEN']
-
-  # set up routing options for Reports (at a minimum)
-  config.after_initialize do
-    Rails.application.routes.default_url_options =
-      config.action_mailer.default_url_options
-  end
 end
