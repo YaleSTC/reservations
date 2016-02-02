@@ -4,7 +4,7 @@
 
 ## v5.5.4 - 2016-02-02
 ### Fixed
-* The quick new user modal form can now be submitted ([#1421](https://github.com/YaleSTC/reservations/issues/1421)).
+* The quick new user modal form works again ([#1421](https://github.com/YaleSTC/reservations/issues/1421), [#1469](https://github.com/YaleSTC/reservations/issues/1469), [#1471](https://github.com/YaleSTC/reservations/issues/1471)).
 * All URL helpers now use the correct relative root with subdirectory deployment ([#1424](https://github.com/YaleSTC/reservations/issues/1424), [#1465](https://github.com/YaleSTC/reservations/issues/1465)).
 * Fixed the links to Paperclip uploads ([#1425](https://github.com/YaleSTC/reservations/issues/1425)).
 * Uploaded CSVs support extra columns ([#1439](https://github.com/YaleSTC/reservations/issues/1439)).
