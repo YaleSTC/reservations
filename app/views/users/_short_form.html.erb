@@ -11,10 +11,8 @@
   <%= f.input :email %>
   <%= f.input :affiliation %>
 
-  <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-10">
-      <%= f.button :submit %>
-      <button class="btn btn-default" data-dismiss="modal" type="button">Cancel</button>
-    </div>
+  <div class="form-group" id="userModalButtons">
+    <%= f.button :submit %>
+    <button class="btn btn-default" data-dismiss="modal" type="button">Cancel</button>
   </div>
 <% end %>

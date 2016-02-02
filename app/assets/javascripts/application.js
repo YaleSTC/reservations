@@ -69,7 +69,6 @@ $(document).on('railsAutocomplete.select', '#fake_searched_id', function(){
 });
 
 $(document).ready(function() {
-
   // For DataTables and Bootstrap
   $('.datatable').dataTable({
     "pagingType": "full_numbers",
@@ -179,7 +178,11 @@ $(document).ready(function() {
   }
 
   $('#modal').click(function() {
-    $('#userModal div.modal-body').load(new_user, {possible_login: $('#fake_reserver_id').val() }); // new_user defined in variables.js.erb
+    $('#userModal div.modal-body').load(new_user, {possible_login: $('#fake_reserver_id').val() }, function ()
+    {
+      userModalLoad();
+      $('modal-header h4').focus(); // Used to remove focuse from the added element
+    }); // new_user defined in variables.js.erb
   });
 
   load_datepicker();
