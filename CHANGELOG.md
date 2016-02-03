@@ -2,6 +2,10 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+## v5.5.5 - 2016-02-03
+### Fixed
+* The start and end dates of reports can now actually be changed ([#1476](https://github.com/YaleSTC/reservations/issues/1476)).
+
 ## v5.5.4 - 2016-02-02
 ### Fixed
 * The quick new user modal form works again ([#1421](https://github.com/YaleSTC/reservations/issues/1421), [#1469](https://github.com/YaleSTC/reservations/issues/1469), [#1471](https://github.com/YaleSTC/reservations/issues/1471)).
