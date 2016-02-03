@@ -48,7 +48,7 @@ class ReportsController < ApplicationController
     session[:report_end_date] = @end_date
 
     respond_to do |format|
-      format.js { render inline 'location.reload();' }
+      format.js { render inline: 'location.reload();' }
     end
   end
 
