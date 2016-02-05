@@ -2,9 +2,11 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
-## v5.5.5 - 2016-02-03
+## v5.5.5 - 2016-02-05
 ### Fixed
+* Updated Rails Admin to allow editing of reservations ([#1449](https://github.com/YaleSTC/reservations/issues/1449#issuecomment-180207219)).
 * The start and end dates of reports can now actually be changed ([#1476](https://github.com/YaleSTC/reservations/issues/1476)).
+* The reservation overdue parameter correctly updates when editing the due date of checked out reservations ([#1479](https://github.com/YaleSTC/reservations/issues/1479)).
 
 ## v5.5.4 - 2016-02-02
 ### Fixed

@@ -154,7 +154,7 @@ GEM
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
-    haml (4.0.6)
+    haml (4.0.7)
       tilt
     highline (1.7.2)
     hike (1.2.3)
@@ -269,7 +269,7 @@ GEM
     rails_12factor (0.0.3)
       rails_serve_static_assets
       rails_stdout_logging
-    rails_admin (0.6.6)
+    rails_admin (0.8.1)
       builder (~> 3.1)
       coffee-rails (~> 4.0)
       font-awesome-rails (>= 3.0, < 5)
@@ -455,7 +455,7 @@ DEPENDENCIES
   rails (~> 4.1.9)
   rails4-autocomplete (~> 1.1.1)
   rails_12factor (~> 0.0.3)
-  rails_admin (~> 0.6.6)
+  rails_admin (~> 0.8.1)
   rake (~> 10.4.2)
   rdoc (~> 4.2.0)
   redcarpet (~> 3.2.2)

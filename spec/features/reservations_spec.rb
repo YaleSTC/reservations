@@ -524,7 +524,7 @@ describe 'Reservations', type: :feature do
       end
 
       context 'cannot renew if the reservation is overdue' do
-        before { @res.update_attributes(overdue: true) }
+        before { @res.update_columns(overdue: true) }
 
         it_behaves_like 'cannot see renew button'
       end

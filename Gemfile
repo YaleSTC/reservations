@@ -20,7 +20,7 @@ gem 'cancancan', '~> 1.10.1'
 gem 'whenever', '~> 0.9.4'
 
 # administrative panel
-gem 'rails_admin', '~> 0.6.6'
+gem 'rails_admin', '~> 0.8.1'
 
 # ldap integration
 gem 'net-ldap', '~> 0.11'
