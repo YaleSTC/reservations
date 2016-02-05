@@ -1,7 +1,6 @@
 desc 'Flag reservations due in the past as overdue'
 task flag_overdue: :environment do
-  new_overdue = Reservation.where('due_date <= ?',
-                                  Time.zone.today - 1.day).checked_out
+  new_overdue = Reservation.where('due_date < ?', Time.zone.today).checked_out
   Rails.logger.info "Found #{new_overdue.size} newly overdue reservations"
 
   new_overdue.each do |overdue_reservation|
