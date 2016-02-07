@@ -2,6 +2,19 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+## v5.5.6 - 2016-03-07
+### Fixed
+* CSV Import can handle CR line endings ([#1438](https://github.com/YaleSTC/reservations/issues/1438)).
+* Reservations now correctly identifies blackout conflicts ([#1489](https://github.com/YaleSTC/reservations/issues/1489)).
+* Various UI bugs fixed: equipment model show table and checkout restrictions ([#1492](https://github.com/YaleSTC/reservations/issues/1492)).
+* Terms of Service checkbox correctly determines if editable ([#1497](https://github.com/YaleSTC/reservations/issues/1497)).
+* Fixed some strange behavior with the availability calendar ([#1498](https://github.com/YaleSTC/reservations/issues/1498)).
+* Directly accessing /reservations/new now redirects to root_path ([#1502](https://github.com/YaleSTC/reservations/issues/1502)).
+
+### Changed
+* Reservations now defaults to deleting missed reservations after one week ([#1491](https://github.com/YaleSTC/reservations/issues/1491)).
+* The availability calendar now uses FullCalendar ([#1498](https://github.com/YaleSTC/reservations/issues/1498)).
+
 ## v5.5.5 - 2016-02-05
 ### Fixed
 * Updated Rails Admin to allow editing of reservations ([#1449](https://github.com/YaleSTC/reservations/issues/1449#issuecomment-180207219)).
