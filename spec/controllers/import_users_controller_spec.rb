@@ -37,6 +37,9 @@ describe ImportUsersController, type: :controller do
     context 'with extra blank columns' do
       it_behaves_like 'successful upload', 'extra_columns_users.csv'
     end
+    context 'with CR line endings' do
+      it_behaves_like 'successful upload', 'cr_line_endings_users.csv'
+    end
     context "when the isn't csv uploaded" do
       before { post :import }
       it_behaves_like 'failure'
