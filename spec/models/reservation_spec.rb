@@ -682,5 +682,49 @@ describe Reservation, type: :model do
     end
   end
 
+  context 'check in check out validations' do
+    before do
+      @res = FactoryGirl.create(:valid_reservation,
+                                start_date: Time.zone.today,
+                                due_date: Time.zone.today + 1.day)
+    end
+    it 'should fail to edit with check in time before start date' do
+      @res.assign_attributes(checked_in: Time.zone.now - 2.days)
+      expect(@res.check_in_time_after_start_date).not_to be_nil
+    end
+    it 'should fail to edit with check out time before start date' do
+      @res.assign_attributes(checked_out: Time.zone.now - 2.days)
+      expect(@res.check_out_time_after_start_date).not_to be_nil
+    end
+    it 'should fail to edit with check in time before check out time' do
+      @res.assign_attributes(checked_in: Time.zone.now,
+                             checked_out: Time.zone.now + 1)
+      expect(@res.check_in_time_after_check_out_time).not_to be_nil
+    end
+    it 'should not create a reservation where check in is before start' do
+      r = FactoryGirl.build(:valid_reservation,
+                            start_date: Time.zone.today,
+                            due_date: Time.zone.today + 1.day)
+      r.assign_attributes(checked_in: Time.zone.now - 2.days)
+      expect(r.save).to be_falsey
+    end
+    it 'should not create a reservation where check out is before start' do
+      r = FactoryGirl.build(:valid_reservation,
+                            start_date: Time.zone.today,
+                            due_date: Time.zone.today + 1.day)
+      r.assign_attributes(checked_in: Time.zone.now + 2.days)
+      r.assign_attributes(checked_out: Time.zone.now - 2.days)
+      expect(r.save).to be_falsey
+    end
+    it 'should not create a reservation where check in is before check out' do
+      r = FactoryGirl.build(:valid_reservation,
+                            start_date: Time.zone.today,
+                            due_date: Time.zone.today + 1.day)
+      r.assign_attributes(checked_in: Time.zone.now + 1.day)
+      r.assign_attributes(checked_out: Time.zone.now + 2.days)
+      expect(r.save).to be_falsey
+    end
+  end
+
   it_behaves_like 'linkable'
 end

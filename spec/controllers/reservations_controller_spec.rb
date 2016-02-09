@@ -571,11 +571,16 @@ describe ReservationsController, type: :controller do
                                            start_date: Time.zone.today,
                                            due_date: Time.zone.today + 4.days),
               equipment_item: ''
+          @now = Time.zone.now.round
+          @reservation.update_attributes(checked_out: @now,
+                                         checked_in: @now + 5.days)
         end
         it 'should update the reservation details' do
           @reservation.reload
           expect(@reservation.start_date).to eq(Time.zone.today)
           expect(@reservation.due_date).to eq(Time.zone.today + 4.days)
+          expect(@reservation.checked_out).to eq(@now)
+          expect(@reservation.checked_in).to eq(@now + 5.days)
         end
         it 'updates the reservations notes' do
           expect { @reservation.reload }.to change(@reservation, :notes)

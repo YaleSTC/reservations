@@ -14,6 +14,10 @@ class Reservation < ActiveRecord::Base
     record.errors.add(attr, 'cannot be a guest') if value.role == 'guest'
   end
   validate :start_date_before_due_date
+  validate :check_out_time_after_now
+  validate :check_out_time_after_start_date
+  validate :check_in_time_after_start_date
+  validate :check_in_time_after_check_out_time
   validate :matched_item_and_model
   validate :check_status
   validate :status_final_state
@@ -414,6 +418,14 @@ class Reservation < ActiveRecord::Base
             name = 'Item'
             old_val = diff[0] ? EquipmentItem.find(diff[0]).md_link : 'nil'
             new_val = diff[1] ? EquipmentItem.find(diff[1]).md_link : 'nil'
+          when 'checked_out'
+            name = 'Checkout Time'
+            old_val = diff[0].to_s(:long)
+            new_val = diff[1].to_s(:long)
+          when 'checked_in'
+            name = 'Checkin Time'
+            old_val = diff[0].to_s(:long)
+            new_val = diff[1].to_s(:long)
           end
           self.notes += "\n#{name} changed from " + old_val + ' to '\
             + new_val + '.' + overdue_str.to_s

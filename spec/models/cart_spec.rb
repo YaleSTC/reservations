@@ -190,11 +190,12 @@ describe Cart, type: :model do
     shared_examples 'with a consecutive reservation' do |res_type|
       before do
         @em.update_attributes(max_per_user: 1, max_checkout_length: 3)
-        @res = FactoryGirl.create(res_type,
-                                  reserver: User.find_by(id: @cart.reserver.id),
-                                  equipment_model: @em,
-                                  start_date: @cart.due_date + 1,
-                                  due_date: @cart.due_date + 2)
+        @res = FactoryGirl.build(res_type,
+                                 reserver: User.find_by(id: @cart.reserver.id),
+                                 equipment_model: @em,
+                                 start_date: @cart.due_date + 1,
+                                 due_date: @cart.due_date + 2)
+        @res.save(validate: false)
       end
 
       it 'fails when the reservation is before' do

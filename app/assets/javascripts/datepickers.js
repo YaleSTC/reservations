@@ -47,6 +47,22 @@ function load_datepicker() {
       $('.date_end_no_min').datepicker( "option" , "minDate" , start_date);
     }
   });
+
+  $('.date_checkout').datetimepicker({
+    dateFormat: "mm/dd/yy",
+    timeFormat: "h:mm TT",
+    altFieldTimeOnly: false,
+    altFormat: "yy-mm-dd",
+    altTimeFormat: "HH:mm",
+    altField: '#date_checkout_alt'
+  });
+
+  $('.date_checkin').datetimepicker({
+    dateFormat: "mm/dd/yy",
+    timeFormat: "h:mm TT",
+    altFieldTimeOnly: false,
+    altFormat: "yy-mm-dd",
+    altTimeFormat: "HH:mm",
+    altField: '#date_checkin_alt'
+  });
 };
-
-
