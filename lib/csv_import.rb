@@ -12,8 +12,9 @@ module CsvImport
                            invalid: :replace, undef: :replace, replace: '')
 
     # remove spaces from header line
-    string = string.split "\n"
+    string = string.split(/(\r?\n)|\r/)
     string.first.gsub!(/\s+/, '')
+    string.reject! { |s| /(\r?\n)|\r/.match s }
     string = string.join "\n"
 
     # get rid of any extra columns
