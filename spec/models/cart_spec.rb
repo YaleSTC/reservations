@@ -136,4 +136,47 @@ describe Cart, type: :model do
       expect { @cart.fix_items }.to change { @cart.items.length }.by(-1)
     end
   end
+
+  describe 'check_availability' do
+    before(:each) do
+      @em = FactoryGirl.create(:equipment_model)
+      FactoryGirl.create(:equipment_item, equipment_model: @em)
+      @cart.add_item(@em)
+    end
+
+    shared_examples 'validates availability' do |offset|
+      before do
+        @start_date = @cart.start_date - offset
+        @due_date = @cart.due_date + offset
+      end
+
+      it 'fails if there is a reserved reservation for that model' do
+        FactoryGirl.build(:reservation, equipment_model: @em,
+                                        start_date: @start_date,
+                                        due_date: @due_date)
+          .save(validate: false)
+
+        expect(@cart.check_availability).not_to eq([])
+        expect(@cart.validate_all).not_to eq([])
+      end
+
+      it 'fails if there is a checked out reservation for that model' do
+        FactoryGirl.build(:checked_out_reservation,
+                          equipment_model: @em, start_date: @start_date,
+                          due_date: @due_date,
+                          equipment_item: @em.equipment_items.first)
+          .save(validate: false)
+
+        expect(@cart.check_availability).not_to eq([])
+        expect(@cart.validate_all).not_to eq([])
+      end
+    end
+
+    it 'passes if there are equipment items available' do
+      expect(@cart.check_availability).to eq([])
+    end
+
+    it_behaves_like 'validates availability', 0.days
+    it_behaves_like 'validates availability', 1.day
+  end
 end

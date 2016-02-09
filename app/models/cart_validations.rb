@@ -26,7 +26,7 @@ module CartValidations
 
     source_res =
       Reservation.where(equipment_model_id: items.keys)
-      .reserved_in_date_range(start_date, due_date).all
+      .overlaps_with_date_range(start_date, due_date).active.all
 
     models.each do |model, quantity|
       errors += check_availability(model, quantity, source_res)
@@ -128,8 +128,9 @@ module CartValidations
 
   def check_availability(model = EquipmentModel.find(items.keys.first),
                          quantity = 1,
-                         source_res = Reservation.for_eq_model(id)
-                           .active.all)
+                         source_res =
+                           Reservation.for_eq_model(items.keys.first)
+                             .active.all)
 
     # checks that the model is available for the given quantity given the
     # existence of the source_reservations

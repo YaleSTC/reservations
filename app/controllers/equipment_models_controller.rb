@@ -60,9 +60,9 @@ class EquipmentModelsController < ApplicationController
     @restricted = @equipment_model.model_restricted?(cart.reserver_id)
 
     # For pending reservations table
-    @pending =
-      relevant_reservations.reserved_in_date_range(Time.zone.today,
-                                                   Time.zone.today + 8.days)
+    @pending = relevant_reservations.reserved
+               .overlaps_with_date_range(Time.zone.today,
+                                         Time.zone.today + 8.days)
     # Future reservations using Query object
     @future = @pending.future
   end
