@@ -72,7 +72,7 @@ class Reservation < ActiveRecord::Base
   # basic date scopes
   scope :checked_out_today, ->() { today_date(:checked_out) }
   scope :checked_out_previous, ->() { past_date(:checked_out) }
-  scope :due_today, ->() { today_date(:due_date) }
+  scope :due_today, ->() { today_date(:due_date).checked_out }
 
   # more complex / task-specific scopes
   scope :checkoutable, Reservations::CheckoutableQuery
