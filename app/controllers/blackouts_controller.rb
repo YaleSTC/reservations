@@ -61,14 +61,14 @@ class BlackoutsController < ApplicationController
     end
   end
 
-  def create
+  def create # rubocop:disable MethodLength
     # create a non-recurring blackout
     p = blackout_params
     p[:created_by] = current_user.id
     @blackout = Blackout.new(p)
 
     # check for conflicts
-    res = Reservation.ends_on_days(p[:start_date], p[:end_date])
+    res = Reservation.reserved_in_date_range(p[:start_date], p[:end_date])
 
     # save and exit
     if res.empty? && @blackout.save
@@ -77,12 +77,13 @@ class BlackoutsController < ApplicationController
       if res.empty?
         msg = 'Oops, something went wrong. Please try again.'
       else
-        msg = 'The following reservation(s) will be unable to be returned: '
+        msg = 'The following reservation(s) will be unable to be checked out '\
+          'and/or returned: '
         res.each do |res2|
           msg += "#{res2.md_link}, "
         end
         msg = msg[0, msg.length - 2]\
-            + '. Please update their due dates and try again.'
+            + '. Please update their start and/or due dates and try again.'
       end
 
       flash[:error] = msg
