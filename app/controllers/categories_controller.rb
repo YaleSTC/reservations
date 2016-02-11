@@ -5,6 +5,7 @@ class CategoriesController < ApplicationController
                 only: [:show, :edit, :update, :destroy, :deactivate]
 
   include ActivationHelper
+  include CsvExport
 
   # --------- before filter methods -------- #
   def set_current_category
@@ -17,6 +18,10 @@ class CategoriesController < ApplicationController
       @categories = Category.all
     else
       @categories = Category.active
+    end
+    respond_to do |format|
+      format.html
+      format.zip { download_equipment_data }
     end
   end
 

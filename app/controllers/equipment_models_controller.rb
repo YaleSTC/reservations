@@ -28,6 +28,11 @@ class EquipmentModelsController < ApplicationController
     else
       @equipment_models = base.includes(:reservations).active
     end
+
+    respond_to do |format|
+      format.html
+      format.zip { download_equipment_data }
+    end
   end
 
   def show # rubocop:disable AbcSize, MethodLength
