@@ -42,13 +42,16 @@ class ReportsController < ApplicationController
 
   # get dates from datepicker
   def update_dates
-    @start_date = params[:report][:start_date].to_date
-    @end_date = params[:report][:end_date].to_date
-    session[:report_start_date] = @start_date
-    session[:report_end_date] = @end_date
+    if params[:report] && params[:report][:start_date] &&
+       params[:report][:end_date]
+      @start_date = params[:report][:start_date].to_date
+      @end_date = params[:report][:end_date].to_date
+      session[:report_start_date] = @start_date
+      session[:report_end_date] = @end_date
+    end
 
     respond_to do |format|
-      format.js { render inline 'location.reload();' }
+      format.js { render inline: 'location.reload();' }
     end
   end
 
