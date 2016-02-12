@@ -10,7 +10,8 @@ class UsersController < ApplicationController
   skip_action_callback :authenticate_user!, only: [:new, :create]
   before_action :set_user,
                 only: [:show, :edit, :update, :destroy, :ban, :unban]
-  before_action :check_cas_auth, only: [:show, :new, :create, :edit, :update]
+  before_action :check_cas_auth, only: [:show, :new, :create, :quick_create,
+                                        :edit, :update]
 
   include Autocomplete
   include CsvExport
@@ -148,7 +149,12 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     @user.role = 'normal' if user_params[:role].blank?
     @user.view_mode = @user.role
+    # if we're using CAS, set the cas_login correctly
+    @user.cas_login = user_params[:username] if @cas_auth
+
     if @user.save
+      cart.reserver_id = @user.id
+      flash[:notice] = 'Successfully created user.'
       render action: 'create_success'
     else
       render action: 'load_form_errors'

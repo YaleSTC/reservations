@@ -61,6 +61,56 @@ describe UsersController, type: :controller do
       end
     end
 
+    describe 'POST quick_create' do
+      before(:each) do
+        short_form_attrs = [:username, :first_name, :last_name, :phone,
+                            :email, :affiliation]
+
+        # only pass in the short form attributes
+        user_params = FactoryGirl.attributes_for(:user) do |attrs|
+          attrs.keep_if { |k, _| short_form_attrs.include? k }
+        end
+
+        post :quick_create, format: :js, user: user_params
+      end
+
+      # clear database
+      after(:all) do
+        User.delete_all
+      end
+
+      shared_examples_for 'sets cart reserver' do
+        it 'to new user' do
+          expect(session[:cart].reserver_id).to eq(assigns(:user).id)
+        end
+      end
+
+      context 'not using CAS' do
+        it 'creates valid user' do
+          # test using ActiveModel validation since we load Rails without CAS
+          # enabled
+          expect(assigns(:user)).to be_valid
+        end
+
+        it_behaves_like 'sets cart reserver'
+      end
+
+      context 'using CAS' do
+        # set the environment variable and reload User class
+        around(:example) do |example|
+          env_wrapper('CAS_AUTH' => '1') { example.run }
+        end
+
+        it 'creates valid user' do
+          # test by checkin the cas_login attribute directly since our
+          # ActiveModel validations won't catch it
+          expect(assigns(:user).cas_login).not_to be_nil
+        end
+
+        it_behaves_like 'sets cart reserver'
+      end
+    end
+
     describe 'GET new' do
       before { get :new }
       context 'possible netid not provided' do
