@@ -174,6 +174,7 @@ namespace :app do
               ac.default_per_cat_page = 20
               ac.viewed = false
               ac.blackout_exp_time = 30
+              ac.res_exp_time = 7
               ac.contact_link_location = contact_link_location
             end
           rescue => e
