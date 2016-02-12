@@ -79,7 +79,7 @@ module ReservationValidations
         "today.\n")
       end
     when Reservation.statuses['checked_out']
-      if !checked out
+      if !checked_out
         errors.add(:base, "Checked out reservation must be checked out.\n")
       elsif checked_in
         errors.add(:base, "Checked out reservation must not be checked in.\n")

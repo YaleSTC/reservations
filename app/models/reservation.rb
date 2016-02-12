@@ -19,6 +19,9 @@ class Reservation < ActiveRecord::Base
   validate :status_final_state
   validate :not_in_past, :available, :check_banned, on: :create
 
+  # correctly update the overdue flag if necessary
+  before_save :update_overdue, if: :checked_out?
+
   nilify_blanks only: [:notes]
 
   # see https://robots.thoughtbot.com/whats-new-in-edge-rails-active-record-enum
@@ -391,13 +394,20 @@ class Reservation < ActiveRecord::Base
             name = 'Due Date'
             old_val = diff[0].to_s(:long)
             new_val = diff[1].to_s(:long)
+            if checked_out?
+              if overdue? && diff[1] >= Time.zone.today
+                overdue_str = "\nReservation marked as not overdue."
+              elsif !overdue? && diff[1] < Time.zone.today
+                overdue_str = "\nReservation marked as overdue."
+              end
+            end
           when 'equipment_item_id'
             name = 'Item'
             old_val = diff[0] ? EquipmentItem.find(diff[0]).md_link : 'nil'
             new_val = diff[1] ? EquipmentItem.find(diff[1]).md_link : 'nil'
           end
           self.notes += "\n#{name} changed from " + old_val + ' to '\
-            + new_val + '.'
+            + new_val + '.' + overdue_str.to_s
         end
       end
       # rubocop:enable BlockNesting
@@ -451,5 +461,13 @@ class Reservation < ActiveRecord::Base
 
   def name
     "\##{id}"
+  end
+
+  private
+
+  def update_overdue
+    return true unless checked_out?
+    self.overdue = due_date < Time.zone.today
+    true # so we don't halt the transaction if it's not overdue
   end
 end

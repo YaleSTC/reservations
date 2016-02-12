@@ -206,6 +206,73 @@ describe Reservation, type: :model do
     end
   end
 
+  context 'editing the due date' do
+    context 'while not checked out' do
+      shared_examples_for 'does not affect the overdue status' do |res_type|
+        subject(:reservation) do
+          r = FactoryGirl.build(res_type)
+          r.save(validate: false)
+          r
+        end
+
+        it 'regardless of date' do
+          reservation.due_date = Time.zone.today - 1.day
+          expect { reservation.save }.not_to change { reservation.overdue }
+          reservation.due_date = Time.zone.today + 1.day
+          expect { reservation.save }.not_to change { reservation.overdue }
+        end
+      end
+
+      statuses = [:valid_reservation, :checked_in_reservation, :request,
+                  :missed_reservation]
+      statuses.each do |type|
+        it_behaves_like 'does not affect the overdue status', type
+      end
+    end
+
+    context 'while checked out and not overdue' do
+      subject(:reservation) do
+        r = FactoryGirl.build(:checked_out_reservation,
+                              start_date: Time.zone.today - 2.days)
+        r.save(validate: false)
+        r
+      end
+
+      it { expect(reservation.overdue).to be_falsey }
+
+      it 'changes overdue attribute if due date is in past' do
+        reservation.update_attributes(due_date: Time.zone.today - 1.day)
+        expect(reservation.overdue).to be_truthy
+      end
+
+      it 'does not change overdue attribute if due date is not in past' do
+        reservation.update_attributes(due_date: Time.zone.today + 2.days)
+        expect(reservation.overdue).to be_falsey
+      end
+    end
+
+    context 'while checked out and overdue' do
+      subject(:reservation) do
+        r = FactoryGirl.build(:overdue_reservation,
+                              start_date: Time.zone.today - 2.days)
+        r.save(validate: false)
+        r
+      end
+
+      it { expect(reservation.overdue).to be_truthy }
+
+      it 'does not change overdue attribute if due date is in past' do
+        reservation.update_attributes(due_date: Time.zone.today - 1.day)
+        expect(reservation.overdue).to be_truthy
+      end
+
+      it 'changes overdue attribute if due date is not in past' do
+        reservation.update_attributes(due_date: Time.zone.today + 2.days)
+        expect(reservation.overdue).to be_falsey
+      end
+    end
+  end
+
   context 'with past due date' do
     subject(:reservation) do
       FactoryGirl.build(:valid_reservation, due_date: Time.zone.today - 1.day)
