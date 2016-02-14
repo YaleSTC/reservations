@@ -179,4 +179,65 @@ describe Cart, type: :model do
     it_behaves_like 'validates availability', 0.days
     it_behaves_like 'validates availability', 1.day
   end
+
+  describe 'check_consecutive' do
+    before(:each) do
+      @em = FactoryGirl.create(:equipment_model)
+      2.times { FactoryGirl.create(:equipment_item, equipment_model: @em) }
+      @cart.add_item(@em)
+    end
+
+    shared_examples 'with a consecutive reservation' do |res_type|
+      before do
+        @em.update_attributes(max_per_user: 1, max_checkout_length: 3)
+        @res = FactoryGirl.create(res_type,
+                                  reserver: User.find_by(id: @cart.reserver.id),
+                                  equipment_model: @em,
+                                  start_date: @cart.due_date + 1,
+                                  due_date: @cart.due_date + 2)
+      end
+
+      it 'fails when the reservation is before' do
+        @res.update_columns(start_date: @cart.start_date - 2,
+                            due_date: @cart.start_date - 1)
+        expect(@cart.check_consecutive).not_to eq([])
+        expect(@cart.validate_all).not_to eq([])
+      end
+
+      it 'fails when the reservation is after' do
+        expect(@cart.check_consecutive).not_to eq([])
+        expect(@cart.validate_all).not_to eq([])
+      end
+
+      it 'fails when there are reservations before and after' do
+        @em.update_attributes(max_checkout_length: 5)
+        FactoryGirl.build(res_type,
+                          reserver: User.find_by(id: @cart.reserver.id),
+                          equipment_model: @em,
+                          start_date: @cart.start_date - 2,
+                          due_date: @cart.start_date - 1).save(validate: false)
+        expect(@cart.check_consecutive).not_to eq([])
+        expect(@cart.validate_all).not_to eq([])
+      end
+
+      it "passes when max_per_user isn't 1" do
+        @em.update_attributes(max_per_user: 5)
+        expect(@em.max_per_user).not_to eq(1)
+        expect(@cart.check_consecutive).to eq([])
+      end
+
+      it "passes when it doesn't exceed the max_checkout_length" do
+        @em.update_attributes(max_checkout_length: 5)
+        expect(@em.max_checkout_length).to eq(5)
+        expect(@cart.check_consecutive).to eq([])
+      end
+    end
+
+    it 'passes without a consecutive reservation' do
+      expect(@cart.check_consecutive).to eq([])
+    end
+
+    it_behaves_like 'with a consecutive reservation', :valid_reservation
+    it_behaves_like 'with a consecutive reservation', :checked_out_reservation
+  end
 end

@@ -86,6 +86,7 @@ class Reservation < ActiveRecord::Base
   scope :reserved_on_date, Reservations::ReservedOnDateQuery
   scope :starts_on_days, Reservations::StartsOnDaysQuery
   scope :upcoming, Reservations::UpcomingQuery
+  scope :consecutive_with, Reservations::ConsecutiveWithQuery
 
   # join Scopes
   scope :with_categories, lambda {
