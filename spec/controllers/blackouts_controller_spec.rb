@@ -116,53 +116,112 @@ describe BlackoutsController, type: :controller do
         end
       end
     end
+
     context 'POST create' do
-      context 'with correct params' do
-        before do
-          @attributes = FactoryGirl.attributes_for(:blackout)
-          post :create, blackout: @attributes
-        end
+      shared_examples_for 'creates blackout' do |attributes|
+        before { post :create, blackout: attributes }
+
         it 'should create the new blackout' do
           expect(Blackout.find(assigns(:blackout).id)).not_to be_nil
         end
         it 'should pass the correct params' do
-          expect(assigns(:blackout)[:notice]).to eq(@attributes[:notice])
+          expect(assigns(:blackout)[:notice]).to eq(attributes[:notice])
           expect(assigns(:blackout)[:start_date]).to\
-            eq(@attributes[:start_date])
-          expect(assigns(:blackout)[:end_date]).to eq(@attributes[:end_date])
+            eq(attributes[:start_date])
+          expect(assigns(:blackout)[:end_date]).to eq(attributes[:end_date])
           expect(assigns(:blackout)[:blackout_type]).to\
-            eq(@attributes[:blackout_type])
+            eq(attributes[:blackout_type])
         end
         it { is_expected.to redirect_to(blackout_path(assigns(:blackout))) }
         it { is_expected.to set_flash }
       end
-      context 'with incorrect params' do
-        before do
-          @attributes = FactoryGirl.attributes_for(:blackout)
-          @attributes[:end_date] = Time.zone.today - 1.day
-          post :create, blackout: @attributes
-        end
-        it { is_expected.to render_template(:new) }
-      end
-      context 'with conflicting reservation' do
-        before do
-          @res = FactoryGirl.create(:valid_reservation,
-                                    due_date: Time.zone.today + 1.day)
-          @attributes =
-            FactoryGirl.attributes_for(:blackout,
-                                       start_date: Time.zone.today,
-                                       end_date: Time.zone.today + 2.days)
-          post :create, blackout: @attributes
-        end
+
+      shared_examples_for 'does not create blackout' do |attributes|
+        before { post :create, blackout: attributes }
 
         it { is_expected.to set_flash }
         it { is_expected.to render_template(:new) }
         it 'should not save the blackout' do
-          expect { post :create, blackout: @attributes }.not_to\
+          expect { post :create, blackout: attributes }.not_to\
             change { Blackout.all.count }
         end
       end
+
+      context 'with correct params' do
+        attributes = FactoryGirl.attributes_for(:blackout)
+
+        it_behaves_like 'creates blackout', attributes
+      end
+
+      context 'with overlapping archived reservation' do
+        before do
+          FactoryGirl.create(:archived_reservation,
+                             start_date: Time.zone.today + 1.day,
+                             due_date: Time.zone.today + 3.days)
+        end
+
+        attributes =
+          FactoryGirl.attributes_for(:blackout,
+                                     start_date: Time.zone.today,
+                                     end_date: Time.zone.today + 2.days)
+
+        it_behaves_like 'creates blackout', attributes
+      end
+
+      context 'with overlapping missed reservation' do
+        before do
+          FactoryGirl.create(:missed_reservation,
+                             start_date: Time.zone.today + 1.day,
+                             due_date: Time.zone.today + 3.days)
+        end
+
+        attributes =
+          FactoryGirl.attributes_for(:blackout,
+                                     start_date: Time.zone.today,
+                                     end_date: Time.zone.today + 2.days)
+
+        it_behaves_like 'creates blackout', attributes
+      end
+
+      context 'with incorrect params' do
+        attributes =
+          FactoryGirl.attributes_for(:blackout,
+                                     end_date: Time.zone.today - 1.day)
+
+        it_behaves_like 'does not create blackout', attributes
+      end
+
+      context 'with conflicting reservation start date' do
+        before do
+          FactoryGirl.create(:valid_reservation,
+                             start_date: Time.zone.today + 1.day,
+                             due_date: Time.zone.today + 3.days)
+        end
+
+        attributes =
+          FactoryGirl.attributes_for(:blackout,
+                                     start_date: Time.zone.today,
+                                     end_date: Time.zone.today + 2.days)
+
+        it_behaves_like 'does not create blackout', attributes
+      end
+
+      context 'with conflicting reservation due date' do
+        before do
+          FactoryGirl.create(:valid_reservation,
+                             start_date: Time.zone.today,
+                             due_date: Time.zone.today + 2.days)
+        end
+
+        attributes =
+          FactoryGirl.attributes_for(:blackout,
+                                     start_date: Time.zone.today + 1.day,
+                                     end_date: Time.zone.today + 3.days)
+
+        it_behaves_like 'does not create blackout', attributes
+      end
     end
+
     context 'PUT update' do
       context 'single blackout' do
         before do

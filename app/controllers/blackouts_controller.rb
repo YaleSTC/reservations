@@ -61,14 +61,15 @@ class BlackoutsController < ApplicationController
     end
   end
 
-  def create
+  def create # rubocop:disable MethodLength
     # create a non-recurring blackout
     p = blackout_params
     p[:created_by] = current_user.id
     @blackout = Blackout.new(p)
 
     # check for conflicts
-    res = Reservation.ends_on_days(p[:start_date], p[:end_date])
+    res = Reservation.overlaps_with_date_range(p[:start_date], p[:end_date])
+          .active
 
     # save and exit
     if res.empty? && @blackout.save

@@ -79,7 +79,6 @@ class Reservation < ActiveRecord::Base
 
   # more complex / task-specific scopes
   scope :checkoutable, Reservations::CheckoutableQuery
-  scope :ends_on_days, Reservations::EndsOnDaysQuery
   scope :future, Reservations::FutureQuery
   scope :notes_unsent, Reservations::NotesUnsentQuery
   scope :overlaps_with_date_range, Reservations::OverlapsWithDateRangeQuery
