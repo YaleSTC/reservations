@@ -799,4 +799,22 @@ describe 'Reservations', type: :feature do
       it_behaves_like 'can remove an invalid item'
     end
   end
+  context 'accessing /reservation/new path with empty cart' do
+    before(:each) do
+      sign_in_as_user(@admin)
+      empty_cart
+      visit equipment_model_path(@eq_model)
+    end
+    after(:each) { sign_out }
+    it 'handles direct url' do
+      visit new_reservation_path
+      expect(page.current_url).to include(root_path)
+      expect(page).to have_content('Catalog')
+    end
+    it 'handles pressing reserve button' do
+      click_link('Reserve')
+      expect(page.current_url).to include(equipment_models_path)
+      expect(page).to have_content('Description')
+    end
+  end
 end

@@ -106,7 +106,8 @@ class ReservationsController < ApplicationController
     if cart.items.empty?
       flash[:error] = 'You need to add items to your cart before making a '\
         'reservation.'
-      redirect_to :back
+      redirect_loc = (request.env['HTTP_REFERER'].present? ? :back : root_path)
+      redirect_to redirect_loc
     else
       # error handling
       @errors = cart.validate_all
