@@ -7,6 +7,7 @@ gem 'rails', '~> 4.1.9'
 gem 'mysql2', '~> 0.3.18'
 gem 'rake', '~> 10.4.2'
 gem 'rdoc', '~> 4.2.0'
+gem 'jbuilder', '~> 2.4.0'
 
 # simulate environment variables
 gem 'dotenv-rails', '~> 2.0.2', :require => 'dotenv/rails-now'
@@ -35,6 +36,8 @@ gem 'nilify_blanks', '~> 1.2.0'
 # ui
 gem 'jquery-rails', '~> 3.1.2'
 gem 'jquery-ui-rails', '~> 5.0.3'
+gem 'fullcalendar-rails', '~> 2.4.0.0'
+gem 'momentjs-rails', '~> 2.10.6'
 gem 'rails4-autocomplete', '~> 1.1.1'
 gem 'select2-rails', '~> 3.5.9.3'
 gem 'kaminari', '~> 0.16.3'
