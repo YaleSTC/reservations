@@ -1,0 +1,35 @@
+<div class="edit-reservation-form">
+    <% # items in reservation %>
+      <% if cart.items.empty? %>
+        <span id="cart_is_empty">(empty)</span>
+      <% else %>
+        <table id="table_list_items" class="table table-responsive table-striped table-hover">
+          <tr>
+            <thead>
+              <th></th>
+              <th>Items</th>
+              <th id="quantity-col">Quantity</th>
+            </thead>
+          </tr>
+          <% cart.items.each do |model_id, quantity| %>
+            <% # for each item in the cart, list out the quantity and the name %>
+            <tr>
+              <td>
+                <%= link_to EquipmentModel.find(model_id) do %>
+                  <% image_tag (EquipmentModel.find(model_id).photo.exists? ? EquipmentModel.find(model_id).photo.url(:small) : 'no-image.gif') %>
+                <% end %>
+              </td>
+              <td>
+                <%= link_to EquipmentModel.find(model_id).name, EquipmentModel.find(model_id) %>
+              </td>
+              <td id="quantity-col">
+                <%= form_tag url_for(controller: 'catalog', action: 'submit_cart_updates_form', id: model_id), remote: true, class: 'form-vertical', id: 'quantity_form', method: :post do %>
+                  <%= number_field_tag("quantity", quantity, class: 'autosubmitme form-control quantity', min: 0, step: 1, id: "quantity_field_#{model_id}") %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </table>
+      <% end %>
+    <hr>
+</div>

@@ -170,14 +170,18 @@ class ApplicationController < ActionController::Base
     notices += "\n" unless notices.blank?
 
     # validate
-    errors = cart.validate_all
+    @errors = cart.validate_all
     # don't over-write flash if invalid date was set above
-    flash[:error] ||= notices + "\n" + errors.join("\n")
+    flash[:error] ||= notices + "\n" + @errors.join("\n")
     flash[:notice] = 'Cart updated.'
 
     # reload appropriate divs / exit
     prepare_catalog_index_vars if params[:controller] == 'catalog'
+  end
 
+  # runs update cart and then reloads the javascript for the dates in sidebar
+  def reload_catalog_cart
+    update_cart
     respond_to do |format|
       format.js { render template: 'cart_js/cart_dates_reload' }
       # guys i really don't like how this is rendering a template for js,

@@ -1,5 +1,5 @@
 <div id="cart_dates">
-  <%= form_tag url_for(action: 'update_cart'), remote: true, class: 'form-vertical', id: 'cart_form', method: :put do %>
+  <%= form_tag url_for(action: 'reload_catalog_cart', controller: "catalog"), remote: true, class: 'form-vertical', id: 'cart_form', method: :put do %>
 
     <%= hidden_field_tag 'page', params[:page] %>
     <%# to preserve pagination %>
