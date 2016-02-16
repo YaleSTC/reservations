@@ -16,7 +16,7 @@ class EquipmentItemDecorator < ApplicationDecorator
       res = object.current_reservation
       overbooked_dates = []
       (Time.zone.today..Time.zone.today + 7.days).each do |date|
-        overbooked_dates << date.to_s(:short) if em.available_count(date) <= 0
+        overbooked_dates << date.to_s(:short) if em.num_available_on(date) <= 0
       end
       onclick_str = "handleDeactivation(this, #{res ? res.id : 'null'}, "\
         "#{overbooked_dates});"

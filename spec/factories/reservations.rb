@@ -48,9 +48,6 @@ FactoryGirl.define do
       start_date { Time.zone.yesterday }
       due_date { Time.zone.today }
       status { 'missed' }
-      to_create do |instance|
-        instance.save(validate: false)
-      end
     end
 
     trait :returned do
@@ -81,14 +78,24 @@ FactoryGirl.define do
       status { 'archived' }
     end
 
+    trait :past do
+      before(:create) do |res|
+        travel_to(res.start_date)
+        res.save
+        travel_back
+      end
+    end
+
     factory :valid_reservation, traits: [:valid]
-    factory :checked_out_reservation, traits: [:valid, :checked_out]
-    factory :checked_in_reservation, traits: [:valid, :checked_out, :returned]
-    factory :overdue_reservation, traits: [:valid, :checked_out, :overdue]
+    factory :checked_out_reservation, traits: [:valid, :checked_out, :past]
+    factory :checked_in_reservation, traits: [:valid, :checked_out, :returned,
+                                              :past]
+    factory :overdue_reservation, traits: [:valid, :checked_out, :overdue,
+                                           :past]
     factory :overdue_returned_reservation, traits: [:valid, :checked_out,
-                                                    :returned, :overdue]
+                                                    :returned, :overdue, :past]
     factory :upcoming_reservation, traits: [:valid, :upcoming]
-    factory :missed_reservation, traits: [:valid, :missed]
+    factory :missed_reservation, traits: [:valid, :missed, :past]
     factory :archived_reservation, traits: [:valid, :archived]
     factory :request, traits: [:valid, :request]
   end

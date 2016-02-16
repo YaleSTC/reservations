@@ -19,6 +19,14 @@ class Reservation < ActiveRecord::Base
   validate :status_final_state
   validate :not_in_past, :available, :check_banned, on: :create
 
+  # conditional counter cache for overdue reservations
+  after_update :increment_cache, if: :checked_out?
+  after_update :decrement_cache, if: :overdue
+
+  # make counter cache update on create
+  # should only ever get called in the test suite
+  after_create :test_cache, if: :overdue
+
   # correctly update the overdue flag if necessary
   before_save :update_overdue, if: :checked_out?
 
@@ -63,6 +71,7 @@ class Reservation < ActiveRecord::Base
 
   # overdue / request scopes
   scope :overdue, ->() { where(overdue: true).checked_out }
+  scope :not_overdue, ->() { where(overdue: false) }
   scope :returned_on_time, ->() { where(overdue: false).returned }
   scope :returned_overdue, ->() { where(overdue: true).returned }
   scope :approved_requests, ->() { flagged(:request).finalized }
@@ -83,7 +92,6 @@ class Reservation < ActiveRecord::Base
   scope :future, Reservations::FutureQuery
   scope :notes_unsent, Reservations::NotesUnsentQuery
   scope :overlaps_with_date_range, Reservations::OverlapsWithDateRangeQuery
-  scope :reserved_on_date, Reservations::ReservedOnDateQuery
   scope :starts_on_days, Reservations::StartsOnDaysQuery
   scope :upcoming, Reservations::UpcomingQuery
   scope :consecutive_with, Reservations::ConsecutiveWithQuery
@@ -110,40 +118,17 @@ class Reservation < ActiveRecord::Base
     item_ids == item_ids.uniq
   end
 
-  def self.number_for_model_on_date(date, model_id, source)
-    # count the number of reservations that overlaps a date within
-    # a given array of source reservations and that matches
-    # a specific model id
-    number_for(date, model_id, source, :equipment_model_id)
+  # Counts the number of reservations in source that overlap with the given date
+  # If no date is given, defaults to today
+  # If attrs are given, only counts the reservation if it has the
+  # specified attributes
+  def self.number_for(source, date: Time.zone.today, **attrs)
+    source.to_a.count { |r| r.overlaps_with(date) && r.attrs?(attrs) }
   end
 
-  def self.number_for_category_on_date(date, category_id, reservations)
-    number_for(date, category_id, reservations, :category_id)
-  end
-
-  def self.number_for(date, value, source, property)
-    count = 0
-    source.each do |r|
-      if r.start_date <= date && r.due_date >= date &&
-         r.send(property) == value
-        count += 1
-      end
-    end
-    count
-  end
-
-  def self.number_overdue_for_eq_model(model_id, reservations)
-    # count the number of overdue reservations for a given
-    # eq model out of an array of source reservations
-    #
-    # used in rendering the catalog in order to save db queries
-    #
-    # 0 queries
-    count = 0
-    reservations.each do |r|
-      count += 1 if r.overdue && r.equipment_model_id == model_id
-    end
-    count
+  # Same as number_for, just over a range of dates
+  def self.number_for_date_range(source, date_range, **attrs)
+    date_range.map { |d| Reservation.number_for(source, date: d, **attrs) }
   end
 
   ## Getter style instance methods ##
@@ -156,6 +141,17 @@ class Reservation < ActiveRecord::Base
     # checks to see if the given flag is set
     # you must pass the symbol for the flag
     flags & FLAGS[flag] > 0
+  end
+
+  # Generic method for checking if a reservation fits a hash of attributes
+  # Stops checking attributes when it finds a false
+  def attrs?(attrs)
+    attrs.each { |k, v| return false unless send(k) == v }
+    true
+  end
+
+  def overlaps_with(d)
+    start_date <= d && due_date >= d
   end
 
   def flag(flag)
@@ -257,7 +253,7 @@ class Reservation < ActiveRecord::Base
     # check some basic conditions
     return false if !checked_out? || overdue? || reserver.role == 'banned'
     return false unless equipment_model.maximum_renewal_length > 0
-    return false unless equipment_model.available_count(due_date + 1.day) > 0
+    return false unless equipment_model.num_available_on(due_date + 1.day) > 0
 
     self.times_renewed ||= 0
 
@@ -476,7 +472,40 @@ class Reservation < ActiveRecord::Base
 
   def update_overdue
     return true unless checked_out?
-    self.overdue = due_date < Time.zone.today
+    if due_date < Time.zone.today
+      self.overdue = true
+    else
+      # decrement the counter cache if we're changing overdue
+      # check for id to make sure this is not a new, unsaved reservation
+      # (only relevant in testing when overdue reservations are created)
+      equipment_model.decrement(:overdue_count) if overdue && id && checked_out?
+      self.overdue = false
+    end
     true # so we don't halt the transaction if it's not overdue
+  end
+
+  # custom counter cache methods
+  # keeps a count of how many actively overdue reservations there are for
+  # every equipment model
+  def increment_cache
+    return true unless overdue && overdue_changed?
+    # just made overdue
+    equipment_model.increment(:overdue_count)
+    true
+  end
+
+  def decrement_cache
+    return true unless checked_in? && status_changed?
+    # just checked in
+    equipment_model.decrement(:overdue_count)
+    true
+  end
+
+  # Only used when overdue reservations are created in the test suite
+  def test_cache
+    # check for id to make sure this is a new, unsaved reservation
+    return true if checked_in? || id
+    equipment_model.increment(:overdue_count)
+    true
   end
 end
