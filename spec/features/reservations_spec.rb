@@ -26,7 +26,7 @@ describe 'Reservations', type: :feature do
         expect(page).to have_content Time.zone.today.to_s(:long)
         expect(page).to have_content due_date.to_s(:long)
         expect(page).to have_content @eq_model.name
-        expect(page).to have_content 'Create Reservation'
+        expect(page).to have_content 'Confirm Reservation'
         click_button 'Finalize Reservation'
 
         # check that reservation was created with correct dates
@@ -63,7 +63,7 @@ describe 'Reservations', type: :feature do
         expect(page).to have_content Time.zone.today.to_s(:long)
         expect(page).to have_content bad_due_date.to_s(:long)
         expect(page).to have_content @eq_model.name
-        expect(page).to have_content 'File Reservation Request'
+        expect(page).to have_content 'Confirm Reservation Request'
         find(:xpath, "//textarea[@id='reservation_notes']").set 'Because'
         click_button 'Submit Request'
 
@@ -101,7 +101,7 @@ describe 'Reservations', type: :feature do
         expect(page).to have_content Time.zone.today.to_s(:long)
         expect(page).to have_content bad_due_date.to_s(:long)
         expect(page).to have_content @eq_model.name
-        expect(page).to have_content 'Create Reservation'
+        expect(page).to have_content 'Confirm Reservation'
         expect(page).to have_content 'Please be aware of the following errors:'
         find(:xpath, "//textarea[@id='reservation_notes']").set 'Because'
         click_button 'Finalize Reservation'
@@ -543,6 +543,260 @@ describe 'Reservations', type: :feature do
         expect(page).to have_link 'Renew Now',
                                   href: renew_reservation_path(@res)
       end
+    end
+  end
+
+  context 'valid items on confirmation page' do
+    before(:each) do
+      empty_cart
+      select('10', from: 'items_per_page') # show more than 1 item (default)
+      find('#items_per_form').submit_form!
+      add_item_to_cart(@eq_model)
+      add_item_to_cart(@eq_model2)
+      update_cart_start_date(Time.zone.today)
+      due_date = Time.zone.today + 1.day
+      update_cart_due_date(due_date)
+    end
+
+    shared_examples 'can make valid change to reservation' do |reserver|
+      before(:each) do
+        visit new_reservation_path
+      end
+      let(:reserver) { reserver }
+      str = reserver ? 'for other user successfully' : 'successfully'
+      it str do
+        quantity_forms = page.all('#quantity_form')
+        avail_quantity = @eq_model.num_available(Time.zone.today,
+                                                 Time.zone.today + 1.day)
+        fill_in "quantity_field_#{@eq_model.id}", # edit and submit
+                with: (avail_quantity)
+
+        quantity_forms[0].submit_form!
+        # loading right page
+        expect(page).to have_content 'Confirm Reservation'
+        expect(page).not_to have_content 'Confirm Reservation Request'
+        # changes applied
+        expect(page).to have_selector("input[value='#{avail_quantity}']")
+      end
+    end
+
+    shared_examples 'will load request page if item is invalid' do |reserver|
+      before(:each) do
+        visit new_reservation_path
+      end
+      let(:reserver) { reserver }
+      str = reserver ? 'for other user successfully' : 'successfully'
+      it str do
+        # change cart to have invalid properties, and check if it loads request
+        quantity_forms = page.all('#quantity_form')
+        fill_in "quantity_field_#{@eq_model.id}",
+                with: (@eq_model.max_per_user + 1)
+        quantity_forms[0].submit_form!
+        fill_in "quantity_field_#{@eq_model2.id}",
+                with: (@eq_model2.max_per_user + 1)
+        quantity_forms[1].submit_form!
+        # loading right page
+        expect(page).to have_content 'Confirm Reservation Request'
+        # changes applied
+        expect(page).to \
+          have_selector("input[value='#{@eq_model.max_per_user + 1}']")
+        expect(page).to \
+          have_selector("input[value='#{@eq_model2.max_per_user + 1}']")
+      end
+    end
+
+    shared_examples 'can remove a valid item' do |reserver|
+      before(:each) do
+        visit new_reservation_path
+      end
+      let(:reserver) { reserver }
+      str = reserver ? 'for other user successfully' : 'successfully'
+      it str do
+        # removing a valid item
+        quantity_forms = page.all('#quantity_form')
+        fill_in "quantity_field_#{@eq_model.id}",
+                with: 0
+        quantity_forms[0].submit_form!
+        # changes applied
+        expect(page).not_to have_content @eq_model.name
+      end
+    end
+
+    shared_examples 'can remove all items' do |reserver|
+      before(:each) do
+        visit new_reservation_path
+      end
+      let(:reserver) { reserver }
+      str = reserver ? 'for other user successfully' : 'successfully'
+      it str do
+        # removing all items
+        quantity_forms = page.all('#quantity_form')
+        fill_in "quantity_field_#{@eq_model.id}",
+                with: 0
+        quantity_forms[0].submit_form!
+        quantity_forms = page.all('#quantity_form') # gets an updated page
+        fill_in "quantity_field_#{@eq_model2.id}",
+                with: 0
+        quantity_forms[0].submit_form!
+        # redirects to catalog (implies that cart is empty)
+        expect(page).to have_content 'Catalog'
+        expect(page).not_to have_content 'Confirm Reservation'
+      end
+    end
+
+    shared_examples 'can make valid date change' do |reserver|
+      before(:each) do
+        visit new_reservation_path
+      end
+      let(:reserver) { reserver }
+      str = reserver ? 'for other user successfully' : 'successfully'
+      it str do
+        # valid change
+        due_date = Time.zone.today + 2.days
+        fill_in 'cart_due_date_cart', with: due_date
+        find(:xpath, "//input[@id='date_end_alt']").set due_date
+        find('#dates_form').submit_form!
+        # loads right page
+        expect(page).to have_content 'Confirm Reservation'
+        expect(page).not_to have_content 'Confirm Reservation Request'
+        # has correct date
+        expect(page).to have_selector("input[value='#{due_date}']")
+      end
+    end
+
+    shared_examples 'will load request if invalid date change' do |reserver|
+      before(:each) do
+        visit new_reservation_path
+      end
+      let(:reserver) { reserver }
+      str = reserver ? 'for other user successfully' : 'successfully'
+
+      it str do
+        # change to invalid date
+        bad_due_date =
+          Time.zone.today + (@eq_model.maximum_checkout_length + 1).days
+        fill_in 'cart_due_date_cart', with: bad_due_date
+        find(:xpath, "//input[@id='date_end_alt']").set bad_due_date
+        find('#dates_form').submit_form!
+        # loads right page
+        expect(page).to have_content 'Confirm Reservation Request'
+        # has altered date
+        expect(page).to have_selector("input[value='#{bad_due_date}']")
+      end
+    end
+
+    shared_examples 'can change back to valid dates after invalid' do |reserver|
+      before(:each) do
+        visit new_reservation_path
+      end
+      let(:reserver) { reserver }
+      str = reserver ? 'for other user successfully' : 'successfully'
+
+      it str do
+        # change to invalid date
+        bad_due_date =
+          Time.zone.today + (@eq_model.maximum_checkout_length + 1).days
+        fill_in 'cart_due_date_cart', with: bad_due_date
+        find(:xpath, "//input[@id='date_end_alt']").set bad_due_date
+        find('#dates_form').submit_form!
+        # changes back to valid date
+        due_date = Time.zone.today + 1.day
+        fill_in 'cart_due_date_cart', with: due_date
+        find(:xpath, "//input[@id='date_end_alt']").set due_date
+        find('#dates_form').submit_form!
+        # redirect to right page
+        expect(page).to have_content 'Confirm Reservation'
+        expect(page).not_to have_content 'Confirm Reservation Request'
+        # has correct dates
+        expect(page).to have_selector("input[value='#{due_date}']")
+      end
+    end
+
+    context 'as patron' do
+      before { sign_in_as_user(@user) }
+      after { sign_out }
+
+      it_behaves_like 'can make valid change to reservation'
+      it_behaves_like 'will load request page if item is invalid'
+      it_behaves_like 'can remove a valid item'
+      it_behaves_like 'can remove all items'
+      it_behaves_like 'can make valid date change'
+      it_behaves_like 'will load request if invalid date change'
+      it_behaves_like 'can change back to valid dates after invalid'
+    end
+
+    context 'as checkout person' do
+      before { sign_in_as_user(@checkout_person) }
+      after { sign_out }
+
+      it_behaves_like 'can make valid change to reservation'
+      it_behaves_like 'will load request page if item is invalid'
+      it_behaves_like 'can remove a valid item'
+      it_behaves_like 'can remove all items'
+      it_behaves_like 'can make valid date change'
+      it_behaves_like 'will load request if invalid date change'
+      it_behaves_like 'can change back to valid dates after invalid'
+    end
+  end
+
+  context 'invalid items on confirm page' do
+    before(:each) do
+      empty_cart
+      # change items per page from 1 to 10 so second item shows up
+      select('10', from: 'items_per_page')
+      find('#items_per_form').submit_form!
+      add_item_to_cart(@eq_model)
+      add_item_to_cart(@eq_model2)
+      quantity_forms = page.all('#quantity_form')
+      fill_in "quantity_field_#{@eq_model.id}",
+              with: (@eq_model.max_per_user + 1)
+      quantity_forms[0].submit_form!
+      update_cart_start_date(Time.zone.today)
+      due_date = Time.zone.today + 1.day
+      update_cart_due_date(due_date)
+      visit new_reservation_path
+    end
+
+    shared_examples 'loads reservation page if item is now valid' do |reserver|
+      let(:reserver) { reserver }
+      str = reserver ? 'for other user successfully' : 'successfully'
+      it str do
+        # change cart to have invalid properties, and check if it loads request
+        quantity_forms = page.all('#quantity_form')
+        fill_in "quantity_field_#{@eq_model.id}",
+                with: (@eq_model.max_per_user)
+        quantity_forms[0].submit_form!
+        expect(page).to have_content 'Confirm Reservation'
+      end
+    end
+
+    shared_examples 'can remove an invalid item' do |reserver|
+      let(:reserver) { reserver }
+      str = reserver ? 'for other user successfully' : 'successfully'
+      it str do
+        # removing a valid item
+        quantity_forms = page.all('#quantity_form')
+        fill_in "quantity_field_#{@eq_model.id}",
+                with: 0
+        quantity_forms[0].submit_form!
+        expect(page).not_to have_content @eq_model.name
+      end
+    end
+
+    context 'as patron' do
+      before { sign_in_as_user(@user) }
+      after { sign_out }
+
+      it_behaves_like 'loads reservation page if item is now valid'
+      it_behaves_like 'can remove an invalid item'
+    end
+
+    context 'as checkout person' do
+      before { sign_in_as_user(@checkout_person) }
+      after { sign_out }
+
+      it_behaves_like 'loads reservation page if item is now valid'
+      it_behaves_like 'can remove an invalid item'
     end
   end
 end

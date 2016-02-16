@@ -1,3 +1,4 @@
+# rubocop:disable ClassLength
 class CatalogController < ApplicationController
   layout 'application_with_sidebar'
 
@@ -41,6 +42,54 @@ class CatalogController < ApplicationController
     end
   end
 
+  # this method updates item quantities using the edit_reservation_form
+  def submit_cart_updates_form # rubocop:disable MethodLength, AbcSize
+    flash.clear
+    quantity = params[:quantity].to_i
+    id = params[:id].to_i
+    equipment_model = EquipmentModel.find(id)
+    cart.send(:edit_cart_item, equipment_model, quantity)
+    @errors = cart.validate_all # update the errors
+    respond_to do |format|
+      format.html do
+        if cart.items.empty?
+          redirect_to root_path
+        else
+          redirect_to new_reservation_path
+        end
+      end
+      format.js do
+        if cart.items.empty?
+          # redirects to catalog page
+          render inline: "window.location = '#{root_path}'"
+        else
+          # to prepare for making reservation
+          @reservation = Reservation.new(start_date: cart.start_date,
+                                         due_date: cart.due_date,
+                                         reserver_id: cart.reserver_id)
+          render template: 'cart_js/reservation_form'
+        end
+      end
+    end
+  end
+
+  # called to update the dates in cart and trigger errors
+  def change_reservation_dates
+    flash.clear
+    update_cart
+    @errors = cart.validate_all # update the errors
+    respond_to do |format|
+      format.html { redirect_to new_reservation_path }
+      format.js do
+        # to prepare for making reservation
+        @reservation = Reservation.new(start_date: cart.start_date,
+                                       due_date: cart.due_date,
+                                       reserver_id: cart.reserver_id)
+        render template: 'cart_js/reservation_form'
+      end
+    end
+  end
+
   def search
     if params[:query].blank?
       redirect_to(root_path) && return
@@ -76,8 +125,8 @@ class CatalogController < ApplicationController
   # cart (or displays the appropriate errors)
   def change_cart(action, item, quantity = nil)
     cart.send(action, item, quantity)
-    errors = cart.validate_all
-    flash[:error] = errors.join("\n")
+    @errors = cart.validate_all
+    flash[:error] = @errors.join("\n")
     flash[:notice] = 'Cart updated.'
 
     respond_to do |format|

@@ -209,7 +209,7 @@ describe ApplicationController, type: :controller do
   end
 
   # TODO: This may involve rewriting the method somewhat
-  describe 'PUT update_cart' do
+  describe 'PUT reload_catalog_cart' do
     before(:each) do
       session[:cart] = Cart.new
       session[:cart].reserver_id = @first_user.id
@@ -230,9 +230,10 @@ describe ApplicationController, type: :controller do
         new_start = Time.zone.today + 3.days
         new_end = Time.zone.today + 4.days
 
-        put :update_cart, cart: { start_date_cart: new_start,
-                                  due_date_cart: new_end },
-                          reserver_id: @new_reserver.id
+        put :reload_catalog_cart,
+            cart: { start_date_cart: new_start,
+                    due_date_cart: new_end },
+            reserver_id: @new_reserver.id
 
         expect(session[:cart].start_date).to eq(new_start)
         expect(session[:cart].due_date).to eq(new_end)
@@ -249,7 +250,7 @@ describe ApplicationController, type: :controller do
         new_start = Time.zone.today - 300.days
         new_end = Time.zone.today + 4000.days
 
-        put :update_cart,
+        put :reload_catalog_cart,
             cart: { start_date_cart: new_start.strftime('%m/%d/%Y'),
                     due_date_cart: new_end.strftime('%m/%d/%Y') },
             reserver_id: @new_reserver.id
@@ -260,7 +261,7 @@ describe ApplicationController, type: :controller do
 
     context 'banned reserver' do
       it 'should set the flash' do
-        put :update_cart,
+        put :reload_catalog_cart,
             cart: { start_date_cart: Time.zone.today,
                     due_date_cart: Time.zone.today + 1.day },
             reserver_id: FactoryGirl.create(:banned).id

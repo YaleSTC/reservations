@@ -30,7 +30,7 @@ Reservations::Application.routes.draw do
 
   resources :equipment_models, concerns: :deactivatable do
     collection do
-      put 'update_cart'
+      put 'update_catalog_cart'
       delete 'empty_cart'
     end
     resources :equipment_items
