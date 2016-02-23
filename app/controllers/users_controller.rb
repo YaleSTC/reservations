@@ -162,10 +162,13 @@ class UsersController < ApplicationController
   end
 
   def edit
+    # refer to the page as Profile if current user, and as User elsewise
+    @edit_title_text = (current_user == @user) ? 'Profile' : 'User'
     @can_edit_username = can? :edit_username, User
   end
 
-  def update # rubocop:disable PerceivedComplexity
+  def update # rubocop:disable CyclomaticComplexity, PerceivedComplexity
+    @edit_title_text = (current_user == @user) ? 'Profile' : 'User'
     par = user_params
     # use :update_with_password when we're not using CAS and you're editing
     # your own profile
