@@ -112,6 +112,63 @@ $(document).ready(function() {
     buttonText: { today: 'Today' }
   });
 
+  // For availability calendars
+  $('#avail-cal').fullCalendar({
+    // generate event array locally for speed
+    events: function(start, end, timezone, callback) {
+      var events = [];
+      var data = JSON.parse($('#avail-cal').attr('data-src'));
+
+      for(var i=0; i<data.length; i++) {
+        var json_event = data[i];
+        date = moment(json_event.start);
+        if(date >= start) {
+          if(date > end) {
+            break;
+          } else {
+            var event = { start: date, end: date, title: json_event.title, allDay: true, backgroundColor: json_event.color, borderColor: json_event.color };
+            events.push(event);
+          }
+        }
+      }
+
+      callback(events);
+    },
+    viewRender: function(currentView) {
+      // prevent from scrolling beyond boundaries
+      var minDate = moment($('#avail-cal').attr('data-min')),
+      maxDate = moment($('#avail-cal').attr('data-max'));
+
+      // Past
+      if (minDate >= currentView.start && minDate <= currentView.end) {
+        $(".fc-prev-button").prop('disabled', true);
+        $(".fc-prev-button").addClass('fc-state-disabled');
+      }
+      else {
+        $(".fc-prev-button").removeClass('fc-state-disabled');
+        $(".fc-prev-button").prop('disabled', false);
+      }
+
+      // Future
+      if (maxDate >= currentView.start && maxDate <= currentView.end) {
+        $(".fc-next-button").prop('disabled', true);
+        $(".fc-next-button").addClass('fc-state-disabled');
+      } else {
+        $(".fc-next-button").removeClass('fc-state-disabled');
+        $(".fc-next-button").prop('disabled', false);
+      }
+    },
+    eventRender: function(event, element) {
+      element.attr('data-role', 'avail-item');
+      element.css({ 'text-align': 'center', 'font-size': '2em' });
+    },
+    defaultView: 'basicWeek',
+    header: { left: 'prev,next',
+              center: '',
+              right: '' },
+    aspectRatio: 4.4
+  });
+
   // ### REPORTS JS ### //
 
   $('.report_table').dataTable({

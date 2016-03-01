@@ -37,6 +37,7 @@ class EquipmentModelsController < ApplicationController
   end
 
   def show # rubocop:disable AbcSize, MethodLength
+    calculate_availability
     relevant_reservations =
       Reservation.for_eq_model(@equipment_model.id).active
     @associated_equipment_models =
@@ -201,5 +202,47 @@ class EquipmentModelsController < ApplicationController
 
   def calendar_name_method
     :reserver
+  end
+
+  def calculate_availability # rubocop:disable all
+    # get start and end dates
+    @start_date = Time.zone.today.beginning_of_week(:sunday)
+    @end_date = (Time.zone.today + 1.month).end_of_week(:sunday)
+
+    reservations =
+      (Reservation.for_eq_model(@equipment_model.id).active
+        .overlaps_with_date_range(@start_date, @end_date) + \
+      Reservation.for_eq_model(@equipment_model).overdue).uniq
+    max_avail = @equipment_model.equipment_items.active.count
+
+    @avail_data = []
+    (@start_date..@end_date).map do |date|
+      count = 0
+      # also hack-y, we need to fix these methods
+      reservations.each do |res|
+        if res.overdue && res.checked_out?
+          count += 1
+        elsif res.start_date <= date && res.due_date >= date
+          count += 1
+        end
+      end
+
+      availability = max_avail - count
+
+      # set up colors
+      if date < Time.zone.today
+        color = '#888'
+      elsif availability == 0
+        color = '#d9534f'
+      elsif availability == max_avail
+        color = '#5cb85c'
+      elsif availability > [0.25 * max_avail, 1].max
+        color = '#94d194'
+      elsif availability <= [0.25 * max_avail, 1].max
+        color = '#f0ad4e'
+      end
+      @avail_data << { title: availability.to_s, start: date, end: date,
+                       allDay: true, color: color }
+    end
   end
 end

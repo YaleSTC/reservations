@@ -133,6 +133,7 @@ describe EquipmentModelsController, type: :controller do
         sign_in FactoryGirl.create(:admin)
         get :show, id: model
       end
+
       it_behaves_like 'GET show success'
       it 'should include @pending reservations' do
         # Make one overdue reservations, one active reservation that started
@@ -162,12 +163,115 @@ describe EquipmentModelsController, type: :controller do
                                             res_starting_this_week)
       end
     end
+
     context 'with non-admin user' do
       before do
         sign_in FactoryGirl.create(:user)
         get :show, id: model
       end
+
       it_behaves_like 'GET show success'
+    end
+
+    context 'availability calendar' do
+      before(:each) do
+        @model = FactoryGirl.create(:equipment_model)
+        2.times do
+          FactoryGirl.create(:equipment_item, equipment_model: @model)
+        end
+        sign_in FactoryGirl.create(:user)
+      end
+
+      shared_examples_for 'calculates availability correctly' do |expected|
+        it do
+          get :show, id: @model
+          day_data = assigns(:avail_data).select do |d|
+            d[:start] == Time.zone.today + 1.day
+          end
+          expect(day_data.first[:title]).to eq(expected.to_s)
+        end
+      end
+
+      context 'with no reservations' do
+        it_behaves_like 'calculates availability correctly', 2
+      end
+
+      context 'with upcoming request' do
+        before do
+          FactoryGirl.create(:request,
+                             equipment_model: @model,
+                             start_date: Time.zone.today + 1.day,
+                             due_date: Time.zone.today + 1.day)
+        end
+
+        it_behaves_like 'calculates availability correctly', 2
+      end
+
+      context 'with returned reservation' do
+        before do
+          r = FactoryGirl.build(:checked_in_reservation,
+                                equipment_model: @model,
+                                start_date: Time.zone.today - 1.day,
+                                due_date: Time.zone.today + 1.day)
+          r.save(validate: false)
+        end
+
+        it_behaves_like 'calculates availability correctly', 2
+      end
+
+      context 'with upcoming reservation' do
+        before do
+          FactoryGirl.create(:valid_reservation,
+                             equipment_model: @model,
+                             start_date: Time.zone.today + 1.day,
+                             due_date: Time.zone.today + 1.day)
+        end
+
+        it_behaves_like 'calculates availability correctly', 1
+      end
+
+      context 'with overdue reservation' do
+        before do
+          r = FactoryGirl.build(:overdue_reservation,
+                                equipment_model: @model,
+                                start_date: Time.zone.today - 1.day,
+                                due_date: Time.zone.today - 1.day,
+                                equipment_item: @model.equipment_items.first)
+          r.save(validate: false)
+        end
+
+        it_behaves_like 'calculates availability correctly', 1
+      end
+
+      context 'with checked out reservation' do
+        before do
+          r = FactoryGirl.build(:checked_out_reservation,
+                                equipment_model: @model,
+                                start_date: Time.zone.today - 1.day,
+                                due_date: Time.zone.today + 1.day,
+                                equipment_item: @model.equipment_items.first)
+          r.save(validate: false)
+        end
+
+        it_behaves_like 'calculates availability correctly', 1
+      end
+
+      context 'with upcoming and overdue reservations' do
+        before do
+          FactoryGirl.create(:valid_reservation,
+                             equipment_model: @model,
+                             start_date: Time.zone.today + 1.day,
+                             due_date: Time.zone.today + 1.day)
+          r = FactoryGirl.build(:overdue_reservation,
+                                equipment_model: @model,
+                                start_date: Time.zone.today - 1.day,
+                                due_date: Time.zone.today - 1.day,
+                                equipment_item: model.equipment_items.first)
+          r.save(validate: false)
+        end
+
+        it_behaves_like 'calculates availability correctly', 0
+      end
     end
   end
 
