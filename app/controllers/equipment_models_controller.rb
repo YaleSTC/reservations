@@ -6,7 +6,8 @@ class EquipmentModelsController < ApplicationController
   skip_before_action :authenticate_user!, only: [:show, :index],
                                           unless: :guests_disabled?
   before_action :set_equipment_model,
-                only: [:show, :edit, :update, :destroy, :deactivate]
+                only: [:show, :edit, :update, :destroy, :deactivate,
+                       :availability]
   before_action :set_category_if_possible, only: [:index, :new]
 
   include ActivationHelper
@@ -31,6 +32,7 @@ class EquipmentModelsController < ApplicationController
   end
 
   def show # rubocop:disable AbcSize, MethodLength
+    calculate_availability
     relevant_reservations = Reservation.active.for_eq_model(@equipment_model)
     @associated_equipment_models =
       @equipment_model.associated_equipment_models.sample(6)
@@ -183,5 +185,48 @@ class EquipmentModelsController < ApplicationController
 
   def type_from_file_command(file)
     Paperclip::FileCommandContentTypeDetector.new(file).detect
+  end
+
+  def calculate_availability # rubocop:disable all
+    # get start and end dates
+    @start_date = Date.today.beginning_of_week(:sunday)
+    @end_date = (Date.today + 1.month).end_of_week(:sunday)
+
+    # hack-y, we have a proper scope in master for this
+    reservations =
+      Reservation.for_eq_model(@equipment_model).finalized
+      .where('start_date <= ? and due_date >= ?', @end_date, @start_date) + \
+      Reservation.for_eq_model(@equipment_model).overdue
+    max_avail = @equipment_model.equipment_items.active.count
+
+    @avail_data = []
+    (@start_date..@end_date).map do |date|
+      count = 0
+      # also hack-y, we need to fix these methods
+      reservations.each do |res|
+        if res.overdue && res.checked_out
+          count += 1
+        elsif res.start_date <= date && res.due_date >= date
+          count += 1
+        end
+      end
+
+      availability = max_avail - count
+
+      # set up colors
+      if date < Time.zone.today
+        color = '#888'
+      elsif availability == 0
+        color = '#d9534f'
+      elsif availability == max_avail
+        color = '#5cb85c'
+      elsif availability > [0.25 * max_avail, 1].max
+        color = '#94d194'
+      elsif availability <= [0.25 * max_avail, 1].max
+        color = '#f0ad4e'
+      end
+      @avail_data << { title: availability.to_s, start: date, end: date,
+                       allDay: true, color: color }
+    end
   end
 end
