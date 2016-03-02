@@ -1,8 +1,8 @@
 <% accepted = @user.terms_of_service_accepted == true %>
 
-<%= f.input :terms_of_service_accepted,
-          input_html: {value: accepted, disabled: (cannot? :manage, Reservation)},
-          label: "#{ (current_user == @user) ? 'I accept' : 'User accepts'} the #{
+<%= f.input :terms_of_service_accepted, # users(admins) cannot accept ToS for other users
+          input_html: {value: accepted, disabled: !(current_user == @user || !current_user)},
+          label: "#{ (current_user == @user || !current_user) ? 'I accept' : 'User accepts'} the #{
                     link_to('Terms of Service', tos_path, target: '_blank')}".html_safe %>
 
 <% if can? :manage, Reservation %>

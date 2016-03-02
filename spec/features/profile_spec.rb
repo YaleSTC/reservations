@@ -40,14 +40,14 @@ describe 'User profile' do
             fill_in 'Current password', with: 'wrongpassword'
             click_button 'Update User'
 
-            expect(page).to have_content('Edit User')
+            expect(page).to have_content('Edit Profile')
             expect(page).to have_content('is invalid')
           end
 
           it 'does not update with blank password' do
             click_button 'Update User'
 
-            expect(page).to have_content('Edit User')
+            expect(page).to have_content('Edit Profile')
             expect(page).to have_content('can\'t be blank')
           end
 
@@ -70,7 +70,7 @@ describe 'User profile' do
               fill_in 'Password confirmation', with: 'wrongpassword'
               click_button 'Update User'
 
-              expect(page).to have_content('Edit User')
+              expect(page).to have_content('Edit Profile')
               expect(page).to have_content('doesn\'t match Password')
             end
           end
@@ -122,14 +122,14 @@ describe 'User profile' do
             fill_in 'Current password', with: 'wrongpassword'
             click_button 'Update User'
 
-            expect(page).to have_content('Edit User')
+            expect(page).to have_content('Edit Profile')
             expect(page).to have_content('is invalid')
           end
 
           it 'does not update with blank password' do
             click_button 'Update User'
 
-            expect(page).to have_content('Edit User')
+            expect(page).to have_content('Edit Profile')
             expect(page).to have_content('can\'t be blank')
           end
 
@@ -152,7 +152,7 @@ describe 'User profile' do
               fill_in 'Password confirmation', with: 'wrongpassword'
               click_button 'Update User'
 
-              expect(page).to have_content('Edit User')
+              expect(page).to have_content('Edit Profile')
               expect(page).to have_content('doesn\'t match Password')
             end
           end
