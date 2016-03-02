@@ -189,14 +189,14 @@ class EquipmentModelsController < ApplicationController
 
   def calculate_availability # rubocop:disable all
     # get start and end dates
-    @start_date = Date.today.beginning_of_week(:sunday)
-    @end_date = (Date.today + 1.month).end_of_week(:sunday)
+    @start_date = Time.zone.today.beginning_of_week(:sunday)
+    @end_date = (Time.zone.today + 1.month).end_of_week(:sunday)
 
     # hack-y, we have a proper scope in master for this
     reservations =
-      Reservation.for_eq_model(@equipment_model).finalized
+      (Reservation.for_eq_model(@equipment_model).active
       .where('start_date <= ? and due_date >= ?', @end_date, @start_date) + \
-      Reservation.for_eq_model(@equipment_model).overdue
+      Reservation.for_eq_model(@equipment_model).overdue).uniq
     max_avail = @equipment_model.equipment_items.active.count
 
     @avail_data = []
