@@ -90,25 +90,6 @@ class EquipmentModelsController < ApplicationController
   def edit
   end
 
-  def delete_files
-    # for a given filetype affected by param value, the file in question is
-    # saved in path contained value
-    types = { 'clear_documentation' => 'documentations',
-              'clear_photo' => 'photos' }
-
-    # only keep pairs that occur as keys with non-nil values in params
-    types.select! { |k, v| params.keys.member?((k)) && !v.nil? }
-    types.each do |_k, path|
-      # TODO: investigate a way to do this without hard-coded paths
-      # recursively remove files from filesystem
-      file_location = Rails.root.to_s\
-                    + '/public/attachments/equipment_models/' + path + '/'\
-                    + @equipment_model.id.to_s + '/original/'
-      FileUtils.rm_r file_location
-      @equipment_model.documentation_file_name = NIL
-    end
-  end
-
   def update
     delete_files
 
@@ -156,6 +137,17 @@ class EquipmentModelsController < ApplicationController
         @equipment_model.send(:"#{phase}_procedures")[k.to_i].destroy(:force)
       end
     end
+  end
+
+  def delete_files
+    # for a given filetype affected by param value, the file in question is
+    # saved in path contained value
+    types = { 'clear_documentation' => :documentation,
+              'clear_photo' => :photo }
+
+    # only keep pairs that occur as keys with non-nil values in params
+    types.select! { |k, v| params.keys.member?((k)) && !v.nil? }
+    types.each { |_k, attr| params[:equipment_model][attr] = nil }
   end
 
   def equipment_model_params

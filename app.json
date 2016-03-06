@@ -56,6 +56,19 @@
     "RAILS_GROUPS": {
       "description": "extra groups to install for Heroku",
       "value": "heroku"
+    },
+    "ENABLE_PAPERCLIP_S3": {
+      "description": "enables storage of image and file uploads on Amazon S3",
+      "value": "1"
+    },
+    "S3_BUCKET_NAME": {
+      "description": "Amazon S3 bucket name"
+    },
+    "AWS_ACCESS_KEY_ID": {
+      "description": "AWS access key ID string"
+    },
+    "AWS_SECRET_ACCESS_KEY": {
+      "description": "AWS secret access key"
     }
   },
   "addons": [

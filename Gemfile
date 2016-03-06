@@ -42,7 +42,7 @@ gem 'rails4-autocomplete', '~> 1.1.1'
 gem 'select2-rails', '~> 4.0.1'
 gem 'kaminari', '~> 0.16.3'
 gem 'draper', '~> 2.1.0'
-gem 'inline_svg', '~> 0.6.1'
+gem 'inline_svg', '~> 0.6.2'
 
 # forms / formatting
 gem 'simple_form', '~> 3.2.1'
@@ -105,5 +105,6 @@ group :heroku do
   gem 'pg', '~> 0.18.4'
   gem 'unicorn', '~> 5.0.1'
   gem 'rack-timeout', '~> 0.3.2'
+  gem 'aws-sdk', '< 2.0'
   gem 'rails_12factor', '~> 0.0.3'
 end
