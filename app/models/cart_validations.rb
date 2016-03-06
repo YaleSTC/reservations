@@ -3,8 +3,7 @@ module CartValidations
   # These validation methods were carefully written to use as few database
   # queries as possible. Often it seems that a scope could be used but
   # it is important to remember that Rails lazy-loads the database calls
-  #
-  def validate_all(renew = false) # rubocop:disable AbcSize
+  def validate_all(renew = false) # rubocop:disable AbcSize, MethodLength
     # 2 queries for every equipment model in the cart because of num_available
     # plus about 8 extra
     #
@@ -12,6 +11,7 @@ module CartValidations
     # skipped when validating renewals
     errors = []
     errors += check_banned
+    errors += check_consecutive
     errors += check_date_blackout(start_date, 'start')
     errors += check_date_blackout(due_date, 'end')
     errors += check_overdue_reservations unless renew
@@ -42,6 +42,30 @@ module CartValidations
     if reserver && reserver.role == 'banned'
       errors << 'The reserver is banned and cannot reserve additional '\
         'equipment.'
+    end
+    errors
+  end
+
+  def check_consecutive # rubocop:disable AbcSize
+    errors = []
+    reserver = User.find_by(id: reserver_id)
+    models = get_items.keys
+    models.each do |model|
+      next unless model.maximum_per_user == 1 && model.maximum_checkout_length
+      consecutive = Reservation.for_reserver(reserver).for_eq_model(model)
+                    .consecutive_with(start_date, due_date)
+
+      consecutive.each do |c|
+        next unless c.duration + duration > model.maximum_checkout_length
+        errors << "Reserver has a consecutive reservation (#{c.md_link}) "\
+          "that exceeds the duration limit for the model #{model.name}."
+      end
+
+      next unless consecutive.size > 1 &&
+                  duration + consecutive.inject(0) { |a, e| a + e.duration } >
+                  model.maximum_checkout_length
+      errors << 'Reserver has consecutive reservations that exceeds the '\
+        "duration limit for the model #{model.name}."
     end
     errors
   end
