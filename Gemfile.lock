@@ -111,7 +111,7 @@ GEM
       responders
       thread_safe (~> 0.1)
       warden (~> 1.2.3)
-    devise_cas_authenticatable (1.7.0)
+    devise_cas_authenticatable (1.7.1)
       devise (>= 1.2.0)
       rubycas-client (>= 2.2.1)
     diff-lcs (1.2.5)
@@ -458,7 +458,7 @@ DEPENDENCIES
   coffee-rails (~> 4.1.1)
   database_cleaner (~> 1.5.1)
   devise (~> 3.5.3)
-  devise_cas_authenticatable (~> 1.7.0)
+  devise_cas_authenticatable (~> 1.7.1)
   dotenv-rails (~> 2.0.2)
   draper (~> 2.1.0)
   factory_girl_rails (~> 4.5.0)
