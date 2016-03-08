@@ -78,7 +78,7 @@ class ReservationsController < ApplicationController
     if session[:all_dates]
       time = source
     else
-      time = source.starts_on_days(@start_date, @end_date)
+      time = source.overlaps_with_date_range(@start_date, @end_date)
     end
 
     set_counts(source, time)

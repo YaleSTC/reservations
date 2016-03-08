@@ -117,6 +117,7 @@ describe ReservationsController, type: :controller do
               .uniq.sort)
         end
       end
+
       it 'populates with respect to session[:filter] first' do
         @filters.each do |trait|
           res = FactoryGirl.build(:valid_reservation, trait, reserver: @user)
@@ -165,6 +166,85 @@ describe ReservationsController, type: :controller do
           expect(assigns(:reservations_set) - @user.reservations.reserved)
             .to be_empty
         end
+      end
+    end
+
+    context 'when accessed by a patron' do
+      subject { get :index }
+      it { is_expected.to be_success }
+      it { is_expected.to render_template(:index) }
+
+      before(:each) do
+        sign_in @user
+        @filter = :reserved
+
+        # clear the database, set viewing session limits
+        Reservation.delete_all
+        session[:index_start_date] = Time.zone.today
+        session[:index_end_date] = Time.zone.today + 10.days
+      end
+
+      it 'populates @reservations_set with proper date overlap' do
+        # Setup
+
+        # Enter five test reservations
+        res1 = FactoryGirl.build(
+          :valid_reservation,
+          reserver: @user)
+        res2 = FactoryGirl.build(
+          :valid_reservation,
+          reserver: @user)
+        res3 = FactoryGirl.build(
+          :valid_reservation,
+          reserver: @user)
+        res4 = FactoryGirl.build(
+          :valid_reservation,
+          reserver: @user)
+        res5 = FactoryGirl.build(
+          :valid_reservation,
+          reserver: @user)
+
+        #   entirely before session limits
+        res1.start_date = Time.zone.today - 7.days
+        res1.due_date = Time.zone.today - 5.days
+
+        #   entirely after session limits
+        res2.start_date = Time.zone.today + 15.days
+        res2.due_date = Time.zone.today + 20.days
+
+        #   overlapping at start of limits
+        res3.start_date = Time.zone.today - 5.days
+        res3.due_date = Time.zone.today + 2.days
+
+        #   overlapping at end of limits
+        res4.start_date = Time.zone.today + 5.days
+        res4.due_date = Time.zone.today + 12.days
+
+        #   entirely within session limits
+        res5.start_date = Time.zone.today + 1.day
+        res5.due_date = Time.zone.today + 5.days
+
+        res1.save(validate: false)
+        res2.save(validate: false)
+        res3.save(validate: false)
+        res4.save(validate: false)
+        res5.save(validate: false)
+
+        # test the database directly
+        get :index
+
+        # previous code: should produce fewer results
+        expect((Reservation.starts_on_days(
+          assigns(:start_date),
+          assigns(:end_date))).length).to eq(2)
+
+        # new code: should produce correct results
+        expect((Reservation.overlaps_with_date_range(
+          assigns(:start_date),
+          assigns(:end_date))).length).to eq(3)
+
+        # test of the returned set that the view renders
+        expect(assigns(:reservations_set).length).to eq(3)
       end
     end
 
