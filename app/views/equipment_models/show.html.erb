@@ -94,10 +94,10 @@
 <section id="details">
   <h2>Details</h2><hr />
   <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-3">
       <h4>Late Fee</h4>
       <div class="giant-numbers">
-        <%= number_to_currency @equipment_model.late_fee %> / day
+        <%= number_to_currency @equipment_model.late_fee %>/day
       </div>
     </div>
     <div class="col-md-3">
@@ -106,7 +106,7 @@
         <%= number_to_currency @equipment_model.replacement_fee %>
       </div>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-3">
       <h4>Max. Per User</h4>
       <div class="giant-numbers">
         <%= intify @equipment_model.maximum_per_user %>
