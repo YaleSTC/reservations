@@ -118,7 +118,7 @@ module CartValidations
         unless Reservation.send(count_method, d, item.id, relevant) + q > max
           next
         end
-        errors << "Only #{max} #{item.name.pluralize} "\
+        errors << "Only #{max} #{item.name.pluralize(max)} "\
           'can be reserved at a time.'
       end
     end
@@ -174,12 +174,18 @@ module CartValidations
     # 2 queries
 
     errors = []
-    if model.num_available_from_source(start_date, due_date,
-                                       source_res) < quantity
-      errors << "That many #{model.name.pluralize} are not available for "\
-        'the given time range.'
+    max_available = model.num_available_from_source(start_date, due_date,
+                                                    source_res)
+    if max_available < quantity
+      if max_available == 0
+        error = "No #{model.name.pluralize} are"
+      else
+        error = "Only #{max_available} #{model.name.pluralize(max_available)}" \
+        " #{(max_available == 1 ? 'is' : 'are')}"
+      end
+      error += ' available for the given time range.'
     end
-    errors
+    errors << error
   end
 
   def check_duration(model = EquipmentModel.find(items.keys.first))
