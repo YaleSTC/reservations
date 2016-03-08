@@ -10,6 +10,7 @@ class EquipmentModelsController < ApplicationController
   before_action :set_category_if_possible, only: [:index, :new]
 
   include ActivationHelper
+  include Calendarable
 
   # --------- before filter methods --------- #
   def set_equipment_model
@@ -183,5 +184,22 @@ class EquipmentModelsController < ApplicationController
 
   def type_from_file_command(file)
     Paperclip::FileCommandContentTypeDetector.new(file).detect
+  end
+
+  def generate_calendar_reservations
+    # we need uniq because it otherwise includes overdue reservations in the
+    # date range twice
+    (Reservation.for_eq_model(@equipment_model.id).includes(:equipment_item)
+      .overlaps_with_date_range(@start_date, @end_date).finalized + \
+      Reservation.for_eq_model(@equipment_model.id).includes(:equipment_item)
+        .overdue).uniq
+  end
+
+  def generate_calendar_resource
+    @equipment_model
+  end
+
+  def calendar_name_method
+    :reserver
   end
 end

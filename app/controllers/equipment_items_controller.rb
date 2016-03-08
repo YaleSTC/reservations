@@ -1,3 +1,4 @@
+# rubocop:disable ClassLength
 class EquipmentItemsController < ApplicationController
   load_and_authorize_resource
   decorates_assigned :equipment_item
@@ -7,6 +8,7 @@ class EquipmentItemsController < ApplicationController
   before_action :set_equipment_model_if_possible, only: [:index, :new]
 
   include ActivationHelper
+  include Calendarable
 
   # ---------- before filter methods ---------- #
 
@@ -31,6 +33,7 @@ class EquipmentItemsController < ApplicationController
   end
 
   def show
+    prepare_calendar_vars
   end
 
   def new
@@ -109,5 +112,21 @@ class EquipmentItemsController < ApplicationController
     params.require(:equipment_item)
       .permit(:name, :serial, :deleted_at, :equipment_model_id,
               :deactivation_reason, :notes)
+  end
+
+  def generate_calendar_reservations
+    # we need uniq because it otherwise includes overdue reservations in the
+    # date range twice
+    (@equipment_item.reservations.includes(:equipment_item)
+      .overlaps_with_date_range(@start_date, @end_date).finalized + \
+      @equipment_item.reservations.includes(:equipment_item).overdue).uniq
+  end
+
+  def generate_calendar_resource
+    @equipment_item
+  end
+
+  def calendar_name_method
+    :reserver
   end
 end

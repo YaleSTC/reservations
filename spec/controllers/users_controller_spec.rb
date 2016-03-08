@@ -344,4 +344,6 @@ describe UsersController, type: :controller do
       end
     end
   end
+
+  it_behaves_like 'calendarable', User
 end

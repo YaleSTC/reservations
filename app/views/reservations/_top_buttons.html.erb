@@ -20,4 +20,12 @@
     <%= link_to "#{reserver.first_name}'s Reservations", current_reservations_for_user_path(reserver), :class => 'btn btn-default' %>
   <% end %>
 
+  <% if can? :manage, User %>
+    <% if url == calendar_user_path(reserver) %>
+      <%= link_to "#{reserver.first_name}'s Calendar", calendar_user_path(reserver), :class => 'btn btn-default disabled' %>
+    <% else %>
+      <%= link_to "#{reserver.first_name}'s Calendar", calendar_user_path(reserver), :class => 'btn btn-default' %>
+    <% end %>
+  <% end %>
+
 </div>

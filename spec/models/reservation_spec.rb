@@ -647,5 +647,40 @@ describe Reservation, type: :model do
     end
   end
 
+  context '#end_date' do
+    context 'if checked in' do
+      before { @res = FactoryGirl.build(:checked_in_reservation) }
+
+      it 'returns the checkin date' do
+        expect(@res.end_date).to eq(@res.checked_in)
+      end
+
+      it 'does not care if overdue' do
+        @res.overdue = true
+        expect(@res.end_date).to eq(@res.checked_in)
+      end
+    end
+
+    context 'if overdue' do
+      before { @res = FactoryGirl.build(:overdue_reservation) }
+
+      it 'returns today' do
+        expect(@res.end_date).to eq(Time.zone.today)
+      end
+    end
+
+    context 'otherwise' do
+      it 'returns due date for request' do
+        res = FactoryGirl.build(:request)
+        expect(res.end_date).to eq(res.due_date)
+      end
+
+      it 'returns due date for reserved' do
+        res = FactoryGirl.build(:valid_reservation)
+        expect(res.end_date).to eq(res.due_date)
+      end
+    end
+  end
+
   it_behaves_like 'linkable'
 end

@@ -108,6 +108,8 @@ describe EquipmentModelsController, type: :controller do
   before(:all) { @app_config = FactoryGirl.create(:app_config) }
   let!(:model) { FactoryGirl.create(:equipment_model) }
 
+  it_behaves_like 'calendarable', EquipmentModel
+
   describe 'GET index' do
     context 'with admin user' do
       before do

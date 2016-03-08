@@ -6,7 +6,7 @@ ruby '2.2.3' # Version in .ruby-version must match
 gem 'rails', '~> 4.2.5'
 gem 'mysql2', '~> 0.4.2'
 gem 'rake', '~> 10.4.2'
-gem 'rdoc', '~> 4.2.1'
+gem 'jbuilder', '~> 2.4.0'
 
 # simulate environment variables
 gem 'dotenv-rails', '~> 2.0.2', :require => 'dotenv/rails-now'
@@ -38,6 +38,9 @@ gem 'nilify_blanks', '~> 1.2.1'
 # ui
 gem 'jquery-rails', '~> 4.0.5'
 gem 'jquery-ui-rails', '~> 5.0.5'
+gem 'jquery-datatables-rails', '~> 3.3.0'
+gem 'fullcalendar-rails', '~> 2.5.0.0'
+gem 'momentjs-rails', '~> 2.10.6'
 gem 'rails4-autocomplete', '~> 1.1.1'
 gem 'select2-rails', '~> 4.0.1'
 gem 'kaminari', '~> 0.16.3'
@@ -48,6 +51,9 @@ gem 'inline_svg', '~> 0.6.2'
 gem 'simple_form', '~> 3.2.1'
 gem 'cocoon', '~> 1.2.6'
 gem 'redcarpet', '~> 3.3.4'
+
+# iCalendar export
+gem 'icalendar', '~> 2.3.0'
 
 group :development, :test do
   gem 'pry', '~> 0.10.3'
@@ -61,6 +67,7 @@ group :development, :test do
   gem 'rspec-rails', '~> 3.4.0'
   gem 'shoulda-matchers', '~> 3.0.1'
   gem 'capybara', '~> 2.5.0'
+  gem 'capybara-webkit', '~> 1.7.1'
   gem 'guard-rspec', '~> 4.6.4'
   gem 'spring', '~> 1.6.2'
   gem 'spring-commands-rspec', '~> 1.0.4'

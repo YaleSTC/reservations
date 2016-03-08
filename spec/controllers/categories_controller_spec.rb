@@ -7,6 +7,9 @@ describe CategoriesController, type: :controller do
   before(:each) do
     @category = FactoryGirl.create(:category)
   end
+
+  it_behaves_like 'calendarable', Category
+
   describe 'GET index' do
     before(:each) do
       @inactive_category =

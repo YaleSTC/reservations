@@ -20,6 +20,8 @@
 //= require select2
 //= require jquery.sticky.js
 //= require jquery.dotdotdot.js
+//= require moment
+//= require fullcalendar
 //= require_tree
 //= require_self
 
@@ -98,6 +100,17 @@ $(document).ready(function() {
   $("#res-history-future").DataTable().order([2, "asc"]).draw();
   $("#res-history-overdue,#res-history-past,#res-history-past_overdue").DataTable().order([4, "desc"]).draw();
 
+  // For reservation calendars
+  $('.res-cal').fullCalendar({
+    events: $('.res-cal').attr('data-src'),
+    eventRender: function(event, element) {
+      element.attr('data-role', 'cal-item');
+      if(event.hasItem) {
+        $(element).tooltip({title: event.location});
+      }
+    },
+    buttonText: { today: 'Today' }
+  });
 
   // ### REPORTS JS ### //
 

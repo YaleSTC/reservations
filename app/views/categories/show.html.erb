@@ -55,6 +55,7 @@
     <%= render 'equipment_models/table' %>
   </p>
   <hr>
+  <%= link_to "#{@category.name} Reservations Calendar", calendar_category_path(@category), class: 'btn btn-default' %>
   <%= link_to "Edit Category", edit_category_path(@category), class: 'btn btn-default' %>
   <%= category.make_deactivate_btn %>
   <%= link_to "View All Categories", categories_path, class: 'btn btn-default' %>

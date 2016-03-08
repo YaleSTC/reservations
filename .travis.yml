@@ -36,7 +36,7 @@ script:
   # - jshint --reporter=node_modules/jshint-stylish/stylish.js .
   # rubocop Ruby / Rails linter
   - bundle exec rubocop -D
-  - bundle exec rake
+  - xvfb-run -a bundle exec rake
 
 # From Travis CI Support: This will route jobs to our beta build environment,
 # which has much faster boot times, making it easier to debug via Travis.

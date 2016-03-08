@@ -77,7 +77,8 @@
     <% if can? :manage, EquipmentModel %>
       <li><a href="#items">Items</a></li>
       <li><a href="#procedures">Procedures</a></li>
-      <li><a href="#pending_reservations">Pending Reservations</a><li>
+      <li><a href="#pending_reservations">Pending Reservations</a></li>
+      <li><%= link_to 'Reservations Calendar', calendar_equipment_model_path(@equipment_model) %></li>
     <% end %>
   </ul>
 </div>

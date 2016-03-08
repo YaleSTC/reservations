@@ -128,7 +128,7 @@ $border-att: 1px solid darken($body-bg, 20%);
   a { vertical-align: middle; }
 }
 
-section {
+section ~ section {
   padding-top: 86px;
 }
 

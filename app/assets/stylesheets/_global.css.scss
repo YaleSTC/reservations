@@ -251,3 +251,8 @@ td > a, td > div.dropdown {
   -webkit-transform: translateY(0);
   transform: translateY(0);
 }
+
+// FullCalendar Overrides
+.fc-unthemed .fc-today {
+    background: darken(#fcf8e3, 10%) none repeat scroll 0 0;
+}

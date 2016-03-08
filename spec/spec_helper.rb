@@ -33,6 +33,7 @@ RSpec.configure do |config|
   # Needed in order to do integration tests with capybara
   config.include Capybara::DSL
   Capybara.asset_host = 'http://0.0.0.0:3000'
+  Capybara.javascript_driver = :webkit
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
@@ -40,7 +41,7 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = true
+  config.use_transactional_fixtures = false
 
   # If true, the base class of anonymous controllers will be inferred
   # automatically. This will be the default behavior in future versions of
@@ -53,16 +54,25 @@ RSpec.configure do |config|
   #     --seed 1234
   config.order = 'random'
 
-  # DatabaseCleaner setup
+  # DatabaseCleaner setup (2016-01-04 based on Rails Testing book)
   config.before(:suite) do
-    DatabaseCleaner.strategy = :transaction
-    DatabaseCleaner.clean_with(:truncation)
+    DatabaseCleaner.clean_with(:deletion)
   end
 
-  config.around(:each) do |example|
-    DatabaseCleaner.cleaning do
-      example.run
-    end
+  config.before(:each) do
+    DatabaseCleaner.strategy = :transaction
+  end
+
+  config.before(:each, js: true) do
+    DatabaseCleaner.strategy = :deletion
+  end
+
+  config.before(:each) do
+    DatabaseCleaner.start
+  end
+
+  config.after(:each) do
+    DatabaseCleaner.clean
   end
 
   # set up app before all integration specs, wish we didn't have to use :each
