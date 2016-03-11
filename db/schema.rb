@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150719052612) do
+ActiveRecord::Schema.define(version: 20160311070200) do
 
   create_table "announcements", force: :cascade do |t|
     t.text     "message",    limit: 65535
@@ -56,6 +56,7 @@ ActiveRecord::Schema.define(version: 20150719052612) do
     t.text     "upcoming_checkout_email_body",                       limit: 65535
     t.boolean  "notify_admin_on_create",                                           default: false
     t.boolean  "disable_user_emails",                                              default: false
+    t.boolean  "autodeactivate_on_archive",                                        default: false
   end
 
   create_table "blackouts", force: :cascade do |t|

@@ -1532,6 +1532,23 @@ describe ReservationsController, type: :controller do
             expect { @reservation.reload }.not_to change { @reservation.notes }
           end
         end
+
+        context 'when auto-deactivate is enabled' do
+          before(:each) do
+            AppConfig.first.update_attributes(autodeactivate_on_archive: true)
+            put :archive, id: @reservation.id, archive_note: 'Because I can'
+          end
+          after(:each) do
+            AppConfig.first.update_attributes(autodeactivate_on_archive: false)
+          end
+
+          it 'should deactivate the equipment item' do
+            ei = @reservation.equipment_item.reload
+            expect(ei.deleted_at).not_to be_nil
+            expect(ei.deactivation_reason).to \
+              include('Because I can')
+          end
+        end
       end
 
       context 'when accessed by checkout person' do

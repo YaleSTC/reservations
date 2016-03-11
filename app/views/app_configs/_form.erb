@@ -47,11 +47,12 @@
   </fieldset>
 
   <fieldset>
-    <legend>Reservation Creation</legend><br />
+    <legend>Reservation Settings</legend><br />
     <%= f.input :notify_admin_on_create, label: 'Notify admin on creation?',hint: 'When enabled, admins will get an e-mail whenever a reservation is created.' %>
     <%= f.input :request_text, label: 'Reservation request text', input_html: {rows: 10},
       hint: 'This message will be displayed to users who are about to file a reservation request for invalid reservations. You can use markdown in this field' %>
     <%= render partial: 'shared/markdown_button' %>
+    <%= f.input :autodeactivate_on_archive, label: 'Autodeactivate equipment after archiving?',hint: 'When enabled, the equipment item assigned to a reservation will be automatically deactivated when that reservation is archived.' %>
   </fieldset>
 
   <fieldset>

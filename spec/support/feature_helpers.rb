@@ -1,6 +1,7 @@
 module FeatureHelpers
   # make sure we have a working app
   def app_setup
+    AppConfig.delete_all
     @app_config = FactoryGirl.create(:app_config)
     @category = FactoryGirl.create(:category)
     @eq_model =

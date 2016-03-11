@@ -502,8 +502,13 @@ class ReservationsController < ApplicationController
           .make_reservation_notes('archived', @reservation, current_user,
                                   params[:archive_note],
                                   @reservation.checked_in)
+        if AppConfig.check(:autodeactivate_on_archive)
+          @reservation.equipment_item.deactivate(user: current_user,
+                                                 reason: params[:archive_note])
+          flash_end = ' The equipment item has been automatically deactivated.'
+        end
       end
-      flash[:notice] = 'Reservation successfully archived.'
+      flash[:notice] = "Reservation successfully archived.#{flash_end}"
     rescue ActiveRecord::RecordNotSaved => e
       flash[:error] = "Archiving your reservation failed: #{e.message}"
     end
