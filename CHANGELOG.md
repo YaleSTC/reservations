@@ -10,6 +10,7 @@
 * Terms of Service checkbox correctly determines if editable ([#1497](https://github.com/YaleSTC/reservations/issues/1497)).
 * Fixed some strange behavior with the availability calendar ([#1498](https://github.com/YaleSTC/reservations/issues/1498)).
 * Directly accessing /reservations/new now redirects to root_path ([#1502](https://github.com/YaleSTC/reservations/issues/1502)).
+* The contact form now correctly falls back to the admin e-mail if no separate e-mail is set ([#1524](https://github.com/YaleSTC/reservations/issues/1524)).
 
 ### Changed
 * Reservations now defaults to deleting missed reservations after one week ([#1491](https://github.com/YaleSTC/reservations/issues/1491)).
