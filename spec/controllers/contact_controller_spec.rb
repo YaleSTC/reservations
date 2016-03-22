@@ -46,6 +46,29 @@ describe ContactController, type: :controller do
       end
     end
   end
+  context 'with contact e-mail set' do
+    before do
+      AppConfig.first
+        .update_attributes(contact_link_location: 'contact@example.com')
+      post :create, message: FactoryGirl.attributes_for(:message)
+    end
+
+    it 'sends the message to the contact address' do
+      expect(ActionMailer::Base.deliveries.last.to).to\
+        include('contact@example.com')
+    end
+  end
+  context 'with contact e-mail not set' do
+    before do
+      AppConfig.first.update_attributes(contact_link_location: '')
+      post :create, message: FactoryGirl.attributes_for(:message)
+    end
+
+    it 'sends the message to the admin address' do
+      expect(ActionMailer::Base.deliveries.last.to).to\
+        include(AppConfig.first.admin_email)
+    end
+  end
   after(:all) do
     @app_config.destroy
   end

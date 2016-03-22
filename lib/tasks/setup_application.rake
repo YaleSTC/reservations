@@ -144,11 +144,7 @@ namespace :app do
         home_link_location = STDIN.gets.chomp
         puts 'Contact Email (this email address will receive contact form '\
           'submissions). Leave blank to default to the admin e-mail.'
-        if STDIN.gets.chomp.empty?
-          contact_link_location = admin_email
-        else
-          contact_link_location = STDIN.gets.chomp
-        end
+        contact_link_location = STDIN.gets.chomp unless STDIN.gets.chomp.empty?
 
         ActiveRecord::Base.transaction do
           begin
