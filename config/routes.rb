@@ -158,6 +158,10 @@ Reservations::Application.routes.draw do
 
   get 'status/index'
 
+  put '/equipment_models/:id/up' => 'equipment_models#up',
+      as: 'sort_up'
+  put '/equipment_models/:id/down' => 'equipment_models#down',
+      as: 'sort_down'
   # generalized matcher
   match ':controller(/:action(/:id(.:format)))', via: [:get, :post, :put,
                                                        :delete]

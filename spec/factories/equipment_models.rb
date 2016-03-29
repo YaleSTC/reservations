@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 # Read about factories at https://github.com/thoughtbot/factory_girl
-
 FactoryGirl.define do
   sequence(:unique_id) { |n| n }
 
@@ -14,7 +13,7 @@ FactoryGirl.define do
     max_renewal_times 10
     max_renewal_length 10
     renewal_days_before_due 10
-
+    ordering 1
     factory :restricted_equipment_model do
       category { FactoryGirl.create(:category, max_per_user: 1) }
     end
