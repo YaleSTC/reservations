@@ -393,7 +393,7 @@ if AppConfig.count == 0
   ac.notify_admin_on_create = false
   ac.admin_email = 'admin@admin.com'
   ac.department_name = 'Department'
-  ac.contact_link_location = 'link'
+  ac.contact_link_location = 'contact@admin.com'
   ac.home_link_text = 'home_link'
   ac.home_link_location = 'Canada'
   ac.deleted_missed_reservation_email_body = DELETED_MISSED_RES_EMAIL
