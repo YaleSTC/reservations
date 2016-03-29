@@ -35,6 +35,9 @@ gem 'rubyzip', '~> 1.1.7'
 gem 'permanent_records', '~> 4.1.0'
 gem 'nilify_blanks', '~> 1.2.1'
 
+# object versioning
+gem 'paper_trail', '~> 4.1.0'
+
 # ui
 gem 'jquery-rails', '~> 4.0.5'
 gem 'jquery-ui-rails', '~> 5.0.5'
