@@ -13,8 +13,8 @@ task :check_style do
   puts diff_output
   puts "\nRunning rubocop..."
   puts check_ruby
-  puts "\nRunning eslint..."
-  puts check_js
+  # puts "\nRunning eslint..."
+  # puts check_js
   exit evaluate
 end
 
@@ -42,8 +42,7 @@ def evaluate
 end
 
 def passed?
-  RUBY_PASS.any? { |m| check_ruby.include? m } &&
-    JS_PASS.any? { |m| check_js.include? m }
+  RUBY_PASS.any? { |m| check_ruby.include? m }
 end
 
 def rubocop(files)

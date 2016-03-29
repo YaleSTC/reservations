@@ -7,4 +7,8 @@ module EquipmentModelsHelper
       'no-image-260.gif'
     end
   end
+
+  def display_order(em)
+    em.category_ordering.index(em.ordering) + 1
+  end
 end

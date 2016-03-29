@@ -90,8 +90,12 @@ describe EquipmentModelsController, type: :controller do
     context 'with admin user' do
       before { mock_user_sign_in(UserMock.new(:admin)) }
       context 'successful save' do
-        let!(:model) { FactoryGirl.build_stubbed(:equipment_model) }
+        let!(:model) do
+          category = FactoryGirl.build_stubbed(:category)
+          FactoryGirl.build_stubbed(:equipment_model, category: category)
+        end
         before do
+          allow(model).to receive(:update_attribute)
           allow(EquipmentModel).to receive(:new).and_return(model)
           allow(model).to receive(:save).and_return(true)
           post :create, equipment_model: { name: 'Model' }
@@ -103,7 +107,6 @@ describe EquipmentModelsController, type: :controller do
       context 'unsuccessful save' do
         before do
           model = EquipmentModelMock.new(save: false)
-          allow(EquipmentModel).to receive(:new).and_return(model)
           post :create, equipment_model: { id: model.id }
         end
         it { is_expected.to set_flash[:error] }
@@ -138,7 +141,7 @@ describe EquipmentModelsController, type: :controller do
 
       context 'unsuccessful update' do
         before do
-          model = EquipmentModelMock.new(traits: [:findable],
+          model = EquipmentModelMock.new(traits: [:findable, :with_category],
                                          update_attributes: false)
           put :update, id: model.id, equipment_model: { name: 'Model' }
         end
@@ -154,7 +157,6 @@ describe EquipmentModelsController, type: :controller do
       it_behaves_like 'redirected request'
     end
   end
-
   describe 'PUT deactivate' do
     context 'as admin' do
       before { mock_user_sign_in(UserMock.new(:admin)) }
@@ -176,22 +178,30 @@ describe EquipmentModelsController, type: :controller do
       it_behaves_like 'not confirmed', :notice, deactivation_cancelled: true
 
       context 'confirmed' do
-        let!(:model) { EquipmentModelMock.new(traits: [:findable]) }
+        let!(:model) do
+          EquipmentModelMock.new(traits: [:findable, :with_category])
+        end
+        let!(:orderer) { instance_spy('OrderingHelper') }
         before do
+          allow(OrderingHelper).to receive(:new).with(model).and_return(orderer)
+          allow(orderer).to receive(:deactivate_order)
           request.env['HTTP_REFERER'] = 'where_i_came_from'
           put :deactivate, id: model.id, deactivation_confirmed: true
         end
         it { is_expected.to set_flash[:notice] }
         it { is_expected.to redirect_to('where_i_came_from') }
         it 'deactivates model' do
+          expect(orderer).to have_received(:deactivate_order)
           expect(model).to have_received(:destroy)
         end
       end
 
       context 'with reservations' do
         it "archives the model's reservations on deactivation" do
-          model = EquipmentModelMock.new(traits: [:findable])
+          orderer = instance_spy('OrderingHelper')
+          model = EquipmentModelMock.new(traits: [:findable, :with_category])
           res = ReservationMock.new
+          allow(OrderingHelper).to receive(:new).with(model).and_return(orderer)
           # stub out scope chain -- SMELL
           allow(Reservation).to receive(:for_eq_model).and_return(Reservation)
           allow(Reservation).to receive(:finalized).and_return([res])
@@ -211,7 +221,6 @@ describe EquipmentModelsController, type: :controller do
       it_behaves_like 'redirected request'
     end
   end
-
   describe 'GET show' do
     # the current controller method is too complex to be tested
     # appropriately. FIXME when refactoring the controller
