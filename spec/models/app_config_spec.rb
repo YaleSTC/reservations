@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe AppConfig, type: :model do
-  before(:each) do
-    @ac = FactoryGirl.build(:app_config)
-  end
+  before(:all) { AppConfig.delete_all }
+  before(:each) { @ac = FactoryGirl.build(:app_config) }
+
   it 'has a working factory' do
     expect(@ac.save).to be_truthy
   end
@@ -28,6 +28,13 @@ describe AppConfig, type: :model do
     @ac.admin_email = 'ana@yale.edu'
     expect(@ac).to be_valid
   end
+  it "shouldn't have an invalid contact e-mail" do
+    emails = ['ana@com', 'anda@pres,com']
+    emails.each do |invalid|
+      @ac.contact_link_location = invalid
+      expect(@ac).not_to be_valid
+    end
+  end
   # it "has an attachment that could serve as favicon" do
   #   @ac.favicon_file_name = "icon.ico"
   #   @ac.should be_valid
@@ -43,5 +50,25 @@ describe AppConfig, type: :model do
       expect(@ac).not_to be_valid
     end
     @ac.favicon_content_type = 'image/vnd.microsoft.icon'
+  end
+
+  context '.contact_email' do
+    it 'returns the contact e-mail if it is set' do
+      @ac.contact_link_location = 'contact@example.com'
+      @ac.save
+
+      expect(AppConfig.contact_email).to eq('contact@example.com')
+
+      AppConfig.delete_all
+    end
+
+    it 'returns the admin e-mail if no contact e-mail is set' do
+      @ac.contact_link_location = ''
+      @ac.save
+
+      expect(AppConfig.contact_email).to eq(AppConfig.check(:admin_email))
+
+      AppConfig.delete_all
+    end
   end
 end

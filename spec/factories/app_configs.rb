@@ -8,7 +8,7 @@ FactoryGirl.define do
     site_title 'Reservations Specs'
     admin_email 'my@email.com'
     department_name 'MyString'
-    contact_link_location 'MyString'
+    contact_link_location 'contact@email.com'
     home_link_text 'MyString'
     home_link_location 'MyString'
     default_per_cat_page 1
