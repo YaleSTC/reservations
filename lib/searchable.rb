@@ -16,12 +16,12 @@ module Searchable
             query_results << active.where("#{attribute} LIKE :query",
                                           query: "%#{q}%")
           end
+          # flatten all elements associated with one query word into a 1D array
+          query_results.flatten!
           # remove duplicate items in case they were added more than once
           # e.g. a term match in both name and description results in an item
           # being added twice
           query_results.uniq!
-          # flatten all elements associated with one query word into a 1D array
-          query_results.flatten!
           # add this array to the over-all results
           results << query_results
         end
