@@ -293,6 +293,7 @@ describe EquipmentItemsController, type: :controller do
       end
       it { expect(response).to be_redirect }
       it { expect(item.deactivation_reason).to eq('Because I can') }
+      it { expect(item.deleted_at).not_to be_nil }
       it 'should change the notes' do
         new_item = FactoryGirl.create(:equipment_item)
         put :deactivate, id: new_item, deactivation_reason: 'reason'

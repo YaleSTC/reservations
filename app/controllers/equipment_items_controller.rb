@@ -1,4 +1,3 @@
-# rubocop:disable ClassLength
 class EquipmentItemsController < ApplicationController
   load_and_authorize_resource
   decorates_assigned :equipment_item
@@ -71,16 +70,12 @@ class EquipmentItemsController < ApplicationController
     end
   end
 
-  # Deactivate and activate extend controller methods in ApplicationController
-  def deactivate # rubocop:disable MethodLength, AbcSize
+  # extend ApplicationController method; calls destroy twice due to presence of
+  # model method
+  def deactivate
     if params[:deactivation_reason] && !params[:deactivation_cancelled]
-      # update notes and deactivate
-      new_notes = "#### Deactivated at #{Time.zone.now.to_s(:long)} by "\
-        "#{current_user.md_link}\n#{params[:deactivation_reason]}\n\n"\
-        + @equipment_item.notes
-      @equipment_item.update_attributes(
-        deactivation_reason: params[:deactivation_reason],
-        notes: new_notes)
+      @equipment_item.deactivate(user: current_user,
+                                 reason: params[:deactivation_reason])
       # archive current reservation if any
       if @equipment_item.current_reservation
         @equipment_item.current_reservation.archive(
@@ -98,6 +93,7 @@ class EquipmentItemsController < ApplicationController
     end
   end
 
+  # activate extends controller method from ApplicationController
   def activate
     super
     new_notes = "#### Reactivated at #{Time.zone.now.to_s(:long)} by "\

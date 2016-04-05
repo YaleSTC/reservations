@@ -107,4 +107,27 @@ class EquipmentItem < ActiveRecord::Base
     self.notes = new_notes.strip
     self
   end
+
+  # Deactivates the equipment item using the #destroy method and
+  # `permanent_records`, while appropriately updating the equipment item notes.
+  #
+  # == Parameters:
+  # options::
+  #   A hash of inputs, required parameters `:user` (any object that responds to
+  #   `md_link`) and `:reason`.
+  #
+  # == Returns:
+  # The equipment item, unchanged if missing inputs or deactivated if passed the
+  # appropriate options.
+  def deactivate(options = {})
+    return unless options[:user] && options[:user].md_link && options[:reason]
+    # update notes
+    new_notes = "#### Deactivated at #{Time.zone.now.to_s(:long)} by "\
+      "#{options[:user].md_link}\n#{options[:reason]}\n\n" + notes
+    self.notes = new_notes
+    self.deactivation_reason = options[:reason]
+    self.save!
+    destroy
+    self
+  end
 end

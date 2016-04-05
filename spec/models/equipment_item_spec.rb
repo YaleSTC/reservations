@@ -119,5 +119,42 @@ describe EquipmentItem, type: :model do
     end
   end
 
+  describe '#deactivate' do
+    before do
+      @ei = FactoryGirl.build(:equipment_item)
+      @user = FactoryGirl.build(:admin)
+    end
+
+    context 'with user and notes' do
+      before { @ei.deactivate(user: @user, reason: 'reason') }
+
+      it 'prepends to the notes' do
+        expect(@ei.notes).to include('reason')
+        expect(@ei.notes).to include(@user.md_link)
+      end
+      it 'sets deleted_at' do
+        expect(@ei.deleted_at).not_to be_nil
+      end
+    end
+
+    context 'without user' do
+      it 'does nothing' do
+        expect { @ei.deactivate(reason: 'reason') }.not_to change { @ei }
+      end
+    end
+
+    context 'without notes' do
+      it 'does nothing' do
+        expect { @ei.deactivate(user: @user) }.not_to change { @ei }
+      end
+    end
+
+    context 'without parameters' do
+      it 'does nothing' do
+        expect { @ei.deactivate }.not_to change { @ei }
+      end
+    end
+  end
+
   it_behaves_like 'linkable'
 end
