@@ -137,6 +137,15 @@ describe CatalogController, type: :controller do
         put :search, query: 'query'
         expect(assigns(:equipment_model_results)).to eq([@equipment_model])
       end
+      it 'should give unique results even with multiple matches' do
+        @equipment_model = FactoryGirl.create(:equipment_model,
+                                              active: true,
+                                              name: 'query',
+                                              description: 'query')
+        put :search, query: 'query'
+        expect(assigns(:equipment_model_results)).to eq([@equipment_model])
+        expect(assigns(:equipment_model_results).uniq!).to eq(nil) # no dups
+      end
       it 'should call catalog_search on EquipmentItem' do
         @equipment_item =
           FactoryGirl.create(:equipment_item, serial: 'query')
