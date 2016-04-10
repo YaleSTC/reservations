@@ -1,7 +1,7 @@
 # config valid only for Capistrano 3.1
 lock '3.4.0'
 
-set :application, 'Reservations'
+set :application, "reservations-#{ENV['IDENTIFIER']}"
 set :repo_url, 'https://github.com/YaleSTC/reservations.git'
 
 # Default branch is :master
@@ -16,12 +16,6 @@ set :param_file, "#{ENV['PARAM_FILE']}"
 
 # Set rvm stuff
 set :rvm_ruby_version, File.read('.ruby-version').strip
-
-# Include whenever recipes
-set :whenever_environment, ->{ fetch(:environment) }
-set :whenever_command, 'bundle exec whenever'
-set :whenever_identifier, ->{ "#{fetch(:application)}_#{fetch(:environment)}" }
-set :whenever_variables, ->{ "rails_root=#{fetch :release_path}&environment=#{fetch :whenever_environment}" }
 
 # Default value for :scm is :git
 # set :scm, :git
@@ -52,16 +46,6 @@ namespace :deploy do
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do
       execute :touch, release_path.join('tmp/restart.txt')
-    end
-  end
-
-  # see http://tutor.lugolabs.com/articles/14-schedule-rails-tasks-with-whenever-and-capistrano
-  desc "Update crontab with whenever"
-  task :update_cron do
-    on roles(:app) do
-      within current_path do
-        execute :bundle, :exec, "whenever --update-crontab #{fetch(:application)}"
-      end
     end
   end
 

@@ -44,5 +44,5 @@ server 'localhost', user: 'hudson', roles: %w(web app db)
 
 # set crontab with whenever
 namespace :deploy do
-  after :finishing, :update_cron
+  after :finishing, 'whenever:update_crontab'
 end
