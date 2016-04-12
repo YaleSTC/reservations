@@ -24,7 +24,7 @@
 # Learn more: http://github.com/javan/whenever
 
 # stagger jobs by offsetting with current time
-time = Time.new
+time = Time.new # rubocop:disable TimeZone
 
 # define cron strings
 nightly_cron_str = time.min.to_s + ' 5 * * *'
