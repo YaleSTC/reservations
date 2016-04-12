@@ -34,6 +34,13 @@ module ReservationValidations
                "Reservation check out time must be before current time.\n")
   end
 
+    # Checks that reservation check in time isn't after now
+  def check_in_time_after_now
+    return unless checked_in && (Time.zone.now <= checked_in)
+    errors.add(:base,
+               "Reservation check in time must be before current time.\n")
+  end
+
   # Checks that reservation check in and check out times are after start dates
   def check_in_time_after_start_date
     return unless checked_in && start_date && (checked_in < start_date)

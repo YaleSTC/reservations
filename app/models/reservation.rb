@@ -16,6 +16,7 @@ class Reservation < ActiveRecord::Base
   validate :start_date_before_due_date
   validate :check_out_time_after_now
   validate :check_out_time_after_start_date
+  validate :check_in_time_after_now
   validate :check_in_time_after_start_date
   validate :check_in_time_after_check_out_time
   validate :matched_item_and_model
@@ -420,12 +421,12 @@ class Reservation < ActiveRecord::Base
             new_val = diff[1] ? EquipmentItem.find(diff[1]).md_link : 'nil'
           when 'checked_out'
             name = 'Checkout Time'
-            old_val = diff[0].to_s(:long)
-            new_val = diff[1].to_s(:long)
+            old_val = diff[0] ? diff[0].to_s(:long) : 'nil'
+            new_val = diff[1] ? diff[1].to_s(:long) : 'nil'
           when 'checked_in'
             name = 'Checkin Time'
-            old_val = diff[0].to_s(:long)
-            new_val = diff[1].to_s(:long)
+            old_val = diff[0] ? diff[0].to_s(:long) : 'nil'
+            new_val = diff[1] ? diff[1].to_s(:long) : 'nil'
           end
           self.notes += "\n#{name} changed from " + old_val + ' to '\
             + new_val + '.' + overdue_str.to_s
