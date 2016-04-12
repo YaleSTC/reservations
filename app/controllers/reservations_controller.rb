@@ -75,7 +75,7 @@ class ReservationsController < ApplicationController
       source = current_user.reservations
     end
 
-    binding.pry
+    # binding.pry
     if session[:all_dates]
       time = source
     else

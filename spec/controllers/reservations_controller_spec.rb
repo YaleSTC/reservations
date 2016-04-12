@@ -188,46 +188,38 @@ describe ReservationsController, type: :controller do
         # Setup
 
         # Enter five test reservations
-        res1 = FactoryGirl.build(
-          :valid_reservation,
-          reserver: @user)
-        res2 = FactoryGirl.build(
-          :valid_reservation,
-          reserver: @user)
-        res3 = FactoryGirl.build(
-          :valid_reservation,
-          reserver: @user)
-        res4 = FactoryGirl.build(
-          :valid_reservation,
-          reserver: @user)
+        r1 = FactoryGirl.build(:valid_reservation, reserver: @user)
+        r2 = FactoryGirl.build(:valid_reservation, reserver: @user)
+        r3 = FactoryGirl.build(:valid_reservation, reserver: @user)
+        r4 = FactoryGirl.build(:valid_reservation, reserver: @user)
         res5 = FactoryGirl.build(
           :valid_reservation,
           reserver: @user)
 
         #   entirely before session limits
-        res1.start_date = Time.zone.today - 7.days
-        res1.due_date = Time.zone.today - 5.days
+        r1.start_date = Time.zone.today - 7.days
+        r1.due_date = Time.zone.today - 5.days
 
         #   entirely after session limits
-        res2.start_date = Time.zone.today + 15.days
-        res2.due_date = Time.zone.today + 20.days
+        r2.start_date = Time.zone.today + 15.days
+        r2.due_date = Time.zone.today + 20.days
 
         #   overlapping at start of limits
-        res3.start_date = Time.zone.today - 5.days
-        res3.due_date = Time.zone.today + 2.days
+        r3.start_date = Time.zone.today - 5.days
+        r3.due_date = Time.zone.today + 2.days
 
         #   overlapping at end of limits
-        res4.start_date = Time.zone.today + 5.days
-        res4.due_date = Time.zone.today + 12.days
+        r4.start_date = Time.zone.today + 5.days
+        r4.due_date = Time.zone.today + 12.days
 
         #   entirely within session limits
         res5.start_date = Time.zone.today + 1.day
         res5.due_date = Time.zone.today + 5.days
 
-        res1.save(validate: false)
-        res2.save(validate: false)
-        res3.save(validate: false)
-        res4.save(validate: false)
+        r1.save(validate: false)
+        r2.save(validate: false)
+        r3.save(validate: false)
+        r4.save(validate: false)
         res5.save(validate: false)
 
         # test the database directly

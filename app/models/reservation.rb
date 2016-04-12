@@ -83,7 +83,9 @@ class Reservation < ActiveRecord::Base
   scope :future, Reservations::FutureQuery
   scope :notes_unsent, Reservations::NotesUnsentQuery
   scope :overlaps_with_date_range, Reservations::OverlapsWithDateRangeQuery
-  scope :overdue_overlaps_with_date_range, Reservations::OverdueOverlapsWithDateRangeQuery
+  scope :overdue_overlaps_with_date_range, lambda {
+    Reservations::OverdueOverlapsWithDateRangeQuery
+  }
   scope :reserved_on_date, Reservations::ReservedOnDateQuery
   scope :starts_on_days, Reservations::StartsOnDaysQuery
   scope :upcoming, Reservations::UpcomingQuery
