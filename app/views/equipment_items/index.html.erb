@@ -31,7 +31,7 @@
       </td>
 
       <% if can? :manage, EquipmentItem %>
-        <td><%= link_to "Edit", edit_equipment_item_path(equipment_item), :class => "btn btn-default" %></td>
+        <td><%= link_to "Edit", edit_equipment_item_path(equipment_item), class:  "btn btn-default" %></td>
         <td><%= equipment_item.decorate.make_deactivate_btn %></td>
       <% end %>
     </tr>
@@ -48,7 +48,7 @@
   <% else %>
     <%= link_to "New Equipment Item", new_equipment_item_path, class: 'btn btn-primary' %>
     <%= link_to "Import Equipment Item", equip_import_page_path, class: 'btn btn-default' %>
-    <%= link_to "Export Equipment Data", categories_path(format: 'zip'), :class => "btn btn-default" %>
+    <%= link_to "Export Equipment Data", equipment_items_path(format: 'zip'), class: "btn btn-default" %> 
   <% end %>
 
   <% if params[:show_deleted] %>
