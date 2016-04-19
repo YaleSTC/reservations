@@ -1,5 +1,6 @@
 # rubocop:disable ClassLength
 class CatalogController < ApplicationController
+  helper ReservationsHelper # for request_text
   layout 'application_with_sidebar'
 
   before_action :set_equipment_model, only:

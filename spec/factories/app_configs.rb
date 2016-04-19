@@ -25,6 +25,6 @@ FactoryGirl.define do
     send_notifications_for_deleted_missed_reservations true
     notify_admin_on_create false
     checkout_persons_can_edit false
-    request_text ''
+    request_text 'tell me whyyy?'
   end
 end
