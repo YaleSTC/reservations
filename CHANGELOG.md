@@ -2,6 +2,19 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+## v6.1.0 - 2016-06-01
+### Fixed
+* Seed script no longer saves reservations with invalid dates ([#1229](https://github.com/YaleSTC/reservations/issues/1229)).
+* Seed script no longer saves future overdue reservations ([#1263](https://github.com/YaleSTC/reservations/issues/1263)).
+* Minor clean up of CsvExport code ([#1499](https://github.com/YaleSTC/reservations/issues/1499)).
+* Availability calculation methods all work as expected ([#1501](https://github.com/YaleSTC/reservations/issues/1501)).
+* Fixed intermittent ElementNotFound error during tests ([#1514](https://github.com/YaleSTC/reservations/issues/1514)).
+* Fixed progress bar overflow on reservations show page ([#1532](https://github.com/YaleSTC/reservations/issues/1532)).
+
+### Changed
+* Changed default Heroku mailer from Mandrill to Sendgrid ([#1515](https://github.com/YaleSTC/reservations/issues/1515)).
+* Updated all dependencies ([#1553](https://github.com/YaleSTC/reservations/issues/1553)).
+
 ## v6.0.0 - 2016-04-11
 ### Important
 *This release includes an upgrade to Ruby 2.2.3 and Rails 4.2.5 along with updates to many other dependencies. Also, the configuration parameter SERVE_STATIC was renamed to RAILS_SERVE_STATIC_FILES.*
