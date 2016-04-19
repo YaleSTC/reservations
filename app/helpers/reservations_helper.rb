@@ -57,6 +57,14 @@ module ReservationsHelper
     end
   end
 
+  def request_text
+    if AppConfig.get(:request_text).empty?
+      'Please give a short justification for this equipment request.'
+    else
+      AppConfig.get(:request_text)
+    end
+  end
+
   private
 
   # the "+ 1" terms are to account for the fact that the first

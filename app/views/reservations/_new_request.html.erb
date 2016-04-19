@@ -23,7 +23,7 @@
   </p>
   <%= render partial: 'reservations/edit_reservation_form' %>
   <div class="well">
-    <%= markdown(@request_text) %>
+    <%= markdown(request_text) %>
   </div>
   <%= simple_form_for @reservation do |f| %>
     <div class="form-group text <%= 'error' if @notes_required %>">

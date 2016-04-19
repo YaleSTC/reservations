@@ -101,8 +101,7 @@ class ReservationsController < ApplicationController
   def show
   end
 
-  # rubocop:disable BlockNesting
-  def new # rubocop:disable MethodLength, PerceivedComplexity
+  def new # rubocop:disable MethodLength
     if cart.items.empty?
       flash[:error] = 'You need to add items to your cart before making a '\
         'reservation.'
@@ -119,12 +118,6 @@ class ReservationsController < ApplicationController
           flash[:error] = 'Please review the errors below. If uncorrected, '\
             'any reservations with errors will be filed as a request, and '\
             'subject to administrator approval.'
-          if AppConfig.get(:request_text).empty?
-            @request_text = 'Please give a short justification for this '\
-              'equipment request.'
-          else
-            @request_text = AppConfig.get(:request_text)
-          end
         end
       end
 
@@ -134,7 +127,6 @@ class ReservationsController < ApplicationController
                                      reserver_id: cart.reserver_id)
     end
   end
-  # rubocop:enable BlockNesting
 
   def create # rubocop:disable all
     @errors = cart.validate_all

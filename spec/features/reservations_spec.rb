@@ -597,6 +597,7 @@ describe 'Reservations', type: :feature do
         quantity_forms[1].submit_form!
         # loading right page
         expect(page).to have_content 'Confirm Reservation Request'
+        expect(page).to have_content AppConfig.get(:request_text)
         # changes applied
         expect(page).to \
           have_selector("input[value='#{@eq_model.max_per_user + 1}']")
@@ -680,6 +681,7 @@ describe 'Reservations', type: :feature do
         find('#dates_form').submit_form!
         # loads right page
         expect(page).to have_content 'Confirm Reservation Request'
+        expect(page).to have_content AppConfig.get(:request_text)
         # has altered date
         expect(page).to have_selector("input[value='#{bad_due_date}']")
       end
