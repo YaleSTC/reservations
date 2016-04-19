@@ -565,7 +565,8 @@ describe ReservationsController, type: :controller do
       describe 'and provides valid params[:reservation]' do
         before(:each) do
           @now = Time.zone.now.round
-          @reservation.checkout(@reservation.equipment_model.equipment_items.first,
+          @first_eq_item = @reservation.equipment_model.equipment_items.first
+          @reservation.checkout(@first_eq_item,
                                 @checkout_person, {}, '').save
           @reservation.checkin(@checkout_person, {}, '').save
           put :update,
