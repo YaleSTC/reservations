@@ -35,7 +35,7 @@
     },
     "RES_SMTP_ADDRESS": {
       "description": "SMTP server address",
-      "value": "smtp.mandrillapp.com"
+      "value": "smtp.sendgrid.net"
     },
     "RES_SMTP_AUTH": {
       "description": "whether or not to use authentication for SMTP",
@@ -43,11 +43,11 @@
     },
     "RES_SMTP_USERNAME": {
       "description": "SMTP authentication username",
-      "value": "(fill in MANDRIL_USERNAME post-deployment)"
+      "value": "(fill in SENDGRID_USERNAME post-deployment)"
     },
     "RES_SMTP_PASSWORD": {
       "description": "SMTP authentication password",
-      "value": "(fill in MANDRIL_APIKEY post-deployment)"
+      "value": "(fill in SENDGRID_PASSWORD post-deployment)"
     },
     "RAILS_SERVE_STATIC_FILES": {
       "description": "whether or not to serve static assets",
@@ -73,7 +73,7 @@
   },
   "addons": [
     "heroku-postgresql",
-    "mandrill",
+    "sendgrid:starter",
     "scheduler:standard"
   ]
 }
