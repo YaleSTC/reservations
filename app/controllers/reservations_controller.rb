@@ -58,7 +58,7 @@ class ReservationsController < ApplicationController
     @time_counts = {}
     @filters.each do |f|
       @all_counts[f] = source.send(f).count
-      @time_counts[f] = with_time.send(f).count
+        @time_counts[f] = with_time.send(f).count
     end
   end
 
@@ -79,9 +79,14 @@ class ReservationsController < ApplicationController
     if session[:all_dates]
       time = source
     else
-      time = source.overlaps_with_date_range(@start_date, @end_date)
+      if @filter == :overdue
+        time = source.overdue_overlaps_with_date_range(@start_date, @end_date)
+      else
+        time = source.overlaps_with_date_range(@start_date, @end_date)
+      end
     end
 
+binding.pry
     set_counts(source, time)
     @reservations_set = time.send(@filter)
   end
