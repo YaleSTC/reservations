@@ -1,0 +1,10 @@
+<% title @user.full_name + " Log" %>
+
+<% if can? :read, User %>
+  <div class="row">
+    <div class="col-md-12">
+      <%= render partial: 'top_buttons', locals: { reserver: @user } %>
+    </div>
+  </div>
+  <hr />
+<% end %>
