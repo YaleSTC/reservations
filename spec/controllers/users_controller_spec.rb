@@ -346,4 +346,18 @@ describe UsersController, type: :controller do
   end
 
   it_behaves_like 'calendarable', User
+
+  describe 'GET log' do
+    it 'gets the versions of the relevant user' do
+      sign_in FactoryGirl.create(:admin)
+      user = double('User')
+      versions = double('Versions')
+      allow(User).to receive(:find).and_return(user)
+      allow(user).to receive(:versions).and_return(versions)
+
+      get :log, id: 1
+
+      expect(assigns(:versions)).to eq(versions)
+    end
+  end
 end

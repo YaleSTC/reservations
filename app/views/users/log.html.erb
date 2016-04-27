@@ -14,7 +14,7 @@
         <th>Version</th>
         <th>Date</th>
         <th>Changes</th>
-        <th>Changed By</th>
+        <th>Whodunnit</th>
       </tr>
     </thead>
     <tbody>
@@ -22,13 +22,26 @@
       <tr data-role="user-version">
       <td><%= link_to v.id.to_s, version_user_path(v) %></td>
       <td><%= v.created_at.to_s(:long) %></td>
-      <td><%= v.changeset %></td>
+      <td class="version-changes">
+        <div class="row changes-header">
+          <div class="col-sm-2">Param</div>
+          <div class="col-sm-5">Old</div>
+          <div class="col-sm-5">New</div>
+        </div>
+        <% v.changeset.each do |param, changes| %>
+        <div class="row">
+          <div class="col-sm-2"><strong><%= param %></strong></div>
+          <div class="col-sm-5"><%= changify(changes[0]) %></div>
+          <div class="col-sm-5"><%= changify(changes[1]) %></div>
+        </div>
+          <% end %>
+        </td>
       <td>
         <% if u = User.find_by(id: v.whodunnit) %>
           <%= link_to u.name, user_path(u) %>
-        <% else %>
+      <% else %>
           N/A
-        <% end %>
+      <% end %>
       </td>
     </tr>
   <% end %>

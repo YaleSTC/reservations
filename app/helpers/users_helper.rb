@@ -22,4 +22,8 @@ module UsersHelper
                                               method: :put
     end
   end
+
+  def changify(val)
+    val.to_s.empty? ? 'N/A' : val.to_s
+  end
 end
