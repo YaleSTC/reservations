@@ -1,10 +1,37 @@
-<% title @user.full_name + " Log" %>
+<% title @user.name + " Log" %>
 
 <% if can? :read, User %>
   <div class="row">
-    <div class="col-md-12">
-      <%= render partial: 'top_buttons', locals: { reserver: @user } %>
-    </div>
+  <div class="col-md-12">
+    <%= render partial: 'reservations/top_buttons',
+      locals: { reserver: @user } %>
+  </div>
   </div>
   <hr />
+  <table id="table_user_log" class="datatable-wide table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>Version</th>
+        <th>Date</th>
+        <th>Changes</th>
+        <th>Changed By</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% for v in @versions %>
+      <tr data-role="user-version">
+      <td><%= link_to v.id.to_s, version_user_path(v) %></td>
+      <td><%= v.created_at.to_s(:long) %></td>
+      <td><%= v.changeset %></td>
+      <td>
+        <% if u = User.find_by(id: v.whodunnit) %>
+          <%= link_to u.name, user_path(u) %>
+        <% else %>
+          N/A
+        <% end %>
+      </td>
+    </tr>
+  <% end %>
+    </tbody>
+  </table>
 <% end %>

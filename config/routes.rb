@@ -63,6 +63,7 @@ Reservations::Application.routes.draw do
       put :ban
       put :unban
       get :log
+      get :version
     end
     get :autocomplete_user_last_name, on: :collection
   end

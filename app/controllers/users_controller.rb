@@ -242,6 +242,7 @@ class UsersController < ApplicationController
   end
 
   def log
+    @versions = @user.versions
   end
 
   private

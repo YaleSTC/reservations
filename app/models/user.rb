@@ -3,6 +3,9 @@ require 'net/ldap'
 # rubocop:disable ClassLength
 class User < ActiveRecord::Base
   include Linkable
+  has_paper_trail ignore: [:encrypted_password, :updated_at,
+                           :reset_password_token, :reset_password_sent_at,
+                           :remember_created_at]
 
   # Include authentication modules
   # If the CAS_AUTH environment variable is set, we simply include the
