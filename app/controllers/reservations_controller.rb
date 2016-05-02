@@ -39,6 +39,8 @@ class ReservationsController < ApplicationController
     @filters << :missed unless AppConfig.first.res_exp_time
 
     # if filter in session set it
+
+    # binding.pry
     if session[:filter]
       f = session[:filter]
       session[:filter] = nil
@@ -86,7 +88,6 @@ class ReservationsController < ApplicationController
       end
     end
 
-binding.pry
     set_counts(source, time)
     @reservations_set = time.send(@filter)
   end
