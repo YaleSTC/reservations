@@ -427,6 +427,7 @@ class Reservation < ActiveRecord::Base
             name = 'Checkin Time'
             old_val = diff[0] ? diff[0].to_s(:long) : 'nil'
             new_val = diff[1] ? diff[1].to_s(:long) : 'nil'
+            update_overdue
           end
           self.notes += "\n#{name} changed from " + old_val + ' to '\
             + new_val + '.' + overdue_str.to_s
