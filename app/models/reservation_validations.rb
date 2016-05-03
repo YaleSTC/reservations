@@ -41,7 +41,9 @@ module ReservationValidations
     # do not run on reservations that don't matter anymore
     return if checked_in || due_date < Time.zone.today
     return unless equipment_model
-    return unless equipment_model.num_available(start_date, due_date) <= 0
+    return unless equipment_model.num_available_excluding(start_date,
+                                                          due_date,
+                                                          self) <= 0
     errors.add(:base, equipment_model.name + ' is not available for the '\
       "full time period requested.\n")
   end

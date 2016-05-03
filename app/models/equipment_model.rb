@@ -197,6 +197,15 @@ class EquipmentModel < ActiveRecord::Base
     num_available_from_source(start_date, due_date, relevant_reservations)
   end
 
+  def num_available_excluding(start_date, due_date, exclude_reservation)
+    # for if you just want the number available, 1 query to get
+    # relevant reservations
+    relevant_reservations = Reservation.for_eq_model(self).finalized
+                            .reserved_in_date_range(start_date, due_date)
+                            .all.reject { |r| r.id == exclude_reservation.id }
+    num_available_from_source(start_date, due_date, relevant_reservations)
+  end
+
   # Returns true if the reserver is ineligible to checkout the model.
   def model_restricted?(reserver_id)
     return false if reserver_id.nil?

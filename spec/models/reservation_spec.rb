@@ -565,6 +565,46 @@ describe Reservation, type: :model do
     end
   end
 
+  context 'when manually over-extending reservation' do
+    before(:each) do
+      @em = FactoryGirl.create(:equipment_model)
+      @ei = FactoryGirl.create(:equipment_item, equipment_model: @em)
+
+      reservation.update_attributes(equipment_item: @ei,
+                                    equipment_model: @em,
+                                    start_date:
+                                    Time.zone.today + 1.day,
+                                    due_date:
+                                    Time.zone.today + 2.days)
+
+      @r2 = FactoryGirl.build(:valid_reservation,
+                              equipment_item: @ei,
+                              equipment_model: @em,
+                              start_date: Time.zone.today +
+                                          3.days,
+                              due_date: Time.zone.today +
+                                        4.days)
+    end
+
+    it 'should save reservation' do
+      expect(reservation.save).to be_truthy
+    end
+
+    it 'should have equipment model with 1 item' do
+      expect(@em.equipment_items.count).to eq(1)
+    end
+
+    it 'should save before over-extending' do
+      expect(@r2.save).to be_truthy
+    end
+
+    it 'should not save after over-extending' do
+      @r2.save
+      reservation.due_date = Time.zone.today + 3.days
+      expect(reservation.save).to be_falsey
+    end
+  end
+
   context 'when in a final status' do
     subject(:reservation) do
       FactoryGirl.create(:valid_reservation)
