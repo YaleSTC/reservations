@@ -33,7 +33,7 @@ module CartValidations
       errors += check_duration(model) unless renew
       errors += check_should_be_renewed(user_reservations, model, start_date)
     end
-    errors.uniq.reject(&:blank?)
+    errors.uniq.reject(&:blank?)[0..9]
   end
 
   def check_banned
