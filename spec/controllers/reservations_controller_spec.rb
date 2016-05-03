@@ -117,6 +117,7 @@ describe ReservationsController, type: :controller do
               .uniq.sort)
         end
       end
+
       it 'populates with respect to session[:filter] first' do
         @filters.each do |trait|
           res = FactoryGirl.build(:valid_reservation, trait, reserver: @user)
@@ -165,6 +166,69 @@ describe ReservationsController, type: :controller do
           expect(assigns(:reservations_set) - @user.reservations.reserved)
             .to be_empty
         end
+      end
+    end
+
+    context 'when accessed by a patron' do
+      subject { get :index }
+      it { is_expected.to be_success }
+      it { is_expected.to render_template(:index) }
+
+      before(:each) do
+        sign_in @user
+
+        # clear the database, set viewing session limits
+        Reservation.delete_all
+        session[:index_start_date] = Time.zone.today
+        session[:index_end_date] = Time.zone.today + 10.days
+
+        # Enter five test reservations
+        r1 = FactoryGirl.build(:valid_reservation, reserver: @user)
+        r2 = FactoryGirl.build(:valid_reservation, reserver: @user)
+        r3 = FactoryGirl.build(:valid_reservation, reserver: @user)
+        r4 = FactoryGirl.build(:valid_reservation, reserver: @user)
+        r5 = FactoryGirl.build(:valid_reservation, reserver: @user)
+
+        #   entirely before session limits
+        r1.start_date = Time.zone.today - 7.days
+        r1.due_date = Time.zone.today - 5.days
+        r1.save(validate: false)
+
+        #   entirely after session limits
+        r2.start_date = Time.zone.today + 15.days
+        r2.due_date = Time.zone.today + 20.days
+        r2.save(validate: false)
+
+        #   overlapping at start of limits
+        r3.start_date = Time.zone.today - 5.days
+        r3.due_date = Time.zone.today + 2.days
+        r3.save(validate: false)
+
+        #   overlapping at end of limits
+        r4.start_date = Time.zone.today + 5.days
+        r4.due_date = Time.zone.today + 12.days
+        r4.save(validate: false)
+
+        #   entirely within session limits
+        r5.start_date = Time.zone.today + 1.day
+        r5.due_date = Time.zone.today + 5.days
+        r5.save(validate: false)
+      end
+
+      it 'populates @reservations_set with proper date overlap' do
+        @filter = :reserved
+        get :index
+
+        # test of the returned set that the view renders
+        expect(assigns(:reservations_set).length).to eq(3)
+      end
+
+      it 'populates @reservations_set for overdue items in date range' do
+        @filter = :overdue
+        get :index
+
+        # test of the returned set that the view renders
+        expect(assigns(:reservations_set).length).to eq(3)
       end
     end
 

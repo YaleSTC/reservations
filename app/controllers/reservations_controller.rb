@@ -39,6 +39,8 @@ class ReservationsController < ApplicationController
     @filters << :missed unless AppConfig.first.res_exp_time
 
     # if filter in session set it
+
+    # binding.pry
     if session[:filter]
       f = session[:filter]
       session[:filter] = nil
@@ -58,7 +60,7 @@ class ReservationsController < ApplicationController
     @time_counts = {}
     @filters.each do |f|
       @all_counts[f] = source.send(f).count
-      @time_counts[f] = with_time.send(f).count
+        @time_counts[f] = with_time.send(f).count
     end
   end
 
@@ -75,10 +77,15 @@ class ReservationsController < ApplicationController
       source = current_user.reservations
     end
 
+    # binding.pry
     if session[:all_dates]
       time = source
     else
-      time = source.starts_on_days(@start_date, @end_date)
+      if @filter == :overdue
+        time = source.overdue_overlaps_with_date_range(@start_date, @end_date)
+      else
+        time = source.overlaps_with_date_range(@start_date, @end_date)
+      end
     end
 
     set_counts(source, time)
