@@ -181,11 +181,6 @@ describe ReservationsController, type: :controller do
         Reservation.delete_all
         session[:index_start_date] = Time.zone.today
         session[:index_end_date] = Time.zone.today + 10.days
-      end
-
-      it 'populates @reservations_set with proper date overlap' do
-        @filter = :reserved
-        # Setup
 
         # Enter five test reservations
         r1 = FactoryGirl.build(:valid_reservation, reserver: @user)
@@ -218,8 +213,10 @@ describe ReservationsController, type: :controller do
         r5.start_date = Time.zone.today + 1.day
         r5.due_date = Time.zone.today + 5.days
         r5.save(validate: false)
+      end
 
-        # test the database directly
+      it 'populates @reservations_set with proper date overlap' do
+        @filter = :reserved
         get :index
 
         # test of the returned set that the view renders
@@ -228,41 +225,6 @@ describe ReservationsController, type: :controller do
 
       it 'populates @reservations_set for overdue items in date range' do
         @filter = :overdue
-        # Setup
-
-        # Enter five test reservations
-        r1 = FactoryGirl.build(:valid_reservation, reserver: @user)
-        r2 = FactoryGirl.build(:valid_reservation, reserver: @user)
-        r3 = FactoryGirl.build(:valid_reservation, reserver: @user)
-        r4 = FactoryGirl.build(:valid_reservation, reserver: @user)
-        r5 = FactoryGirl.build(:valid_reservation, reserver: @user)
-
-        # reservation overdue at beginning of date range
-        # r1.start_date = Time.zone.today - 7.days
-        # r1.due_date = Time.zone.today - 5.days
-        r1.save(validate: false)
-
-        #   entirely after session limits
-        # r2.start_date = Time.zone.today + 15.days
-        # r2.due_date = Time.zone.today + 20.days
-        r2.save(validate: false)
-
-        #   overlapping at start of limits
-        # r3.start_date = Time.zone.today - 5.days
-        # r3.due_date = Time.zone.today + 2.days
-        r3.save(validate: false)
-
-        #   overlapping at end of limits
-        # r4.start_date = Time.zone.today + 5.days
-        # r4.due_date = Time.zone.today + 12.days
-        r4.save(validate: false)
-
-        #   entirely within session limits
-        # r5.start_date = Time.zone.today + 1.day
-        # r5.due_date = Time.zone.today + 5.days
-        r5.save(validate: false)
-
-        # test the database directly
         get :index
 
         # test of the returned set that the view renders
