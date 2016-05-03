@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ClassLength
 class EquipmentItemsController < ApplicationController
   load_and_authorize_resource
   decorates_assigned :equipment_item
@@ -7,6 +8,7 @@ class EquipmentItemsController < ApplicationController
   before_action :set_equipment_model_if_possible, only: [:index, :new]
 
   include ActivationHelper
+  include CsvExport
   include Calendarable
 
   # ---------- before filter methods ---------- #
@@ -28,6 +30,10 @@ class EquipmentItemsController < ApplicationController
       @equipment_items = @equipment_model.equipment_items.send(method)
     else
       @equipment_items = EquipmentItem.send(method)
+    end
+    respond_to do |format|
+      format.html
+      format.zip { download_equipment_data }
     end
   end
 

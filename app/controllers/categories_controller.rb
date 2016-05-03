@@ -27,6 +27,14 @@ class CategoriesController < ApplicationController
   end
 
   def show
+    respond_to do |format|
+      format.html
+      format.zip do
+        models = @category.equipment_models
+        items = EquipmentItem.where(equipment_model_id: models.all.map(&:id))
+        download_equipment_data(cats: [@category], models: models, items: items)
+      end
+    end
   end
 
   def new

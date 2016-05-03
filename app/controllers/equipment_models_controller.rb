@@ -10,6 +10,7 @@ class EquipmentModelsController < ApplicationController
   before_action :set_category_if_possible, only: [:index, :new]
 
   include ActivationHelper
+  include CsvExport
   include Calendarable
 
   # --------- before filter methods --------- #

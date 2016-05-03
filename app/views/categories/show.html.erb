@@ -58,5 +58,6 @@
   <%= link_to "#{@category.name} Reservations Calendar", calendar_category_path(@category), class: 'btn btn-default' %>
   <%= link_to "Edit Category", edit_category_path(@category), class: 'btn btn-default' %>
   <%= category.make_deactivate_btn %>
+  <%= link_to "Export Category Data", category_path(@category, format: 'zip'), class: 'btn btn-default' %>
   <%= link_to "View All Categories", categories_path, class: 'btn btn-default' %>
 <% end %>

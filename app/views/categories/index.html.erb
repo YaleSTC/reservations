@@ -22,7 +22,7 @@
       <td><%= intify category.max_checkout_length %></td>
       <td><%= category.sort_order %></td>
       <% if can? :manage, Category %>
-       <td><%= link_to "Edit", edit_category_path(category), :class => "btn btn-default" %></td>
+       <td><%= link_to "Edit", edit_category_path(category), class:  "btn btn-default" %></td>
        <td><%= category.decorate.make_deactivate_btn %></td>
       <% end %>
     </tr>
@@ -32,12 +32,12 @@
 <hr />
 
 <% if can? :manage, Category %>
-  <%= link_to "New Category", new_category_path, :class => "btn btn-primary" %>
-  <%= link_to "Import Categories", equip_import_page_path, :class => "btn btn-default" %>
-  <%= link_to "Export Equipment Data", categories_path(format: 'zip'), :class => "btn btn-default" %>
+  <%= link_to "New Category", new_category_path, class:  "btn btn-primary" %>
+  <%= link_to "Import Categories", equip_import_page_path, class:  "btn btn-default" %>
+  <%= link_to "Export Equipment Data", categories_path(format: 'zip'), class:  "btn btn-default" %>
 <% end %>
 <% if params[:show_deleted] %>
-  <%= link_to "Hide Old Categories from List", categories_path, :class => "btn btn-default" %>
+  <%= link_to "Hide Old Categories from List", categories_path, class:  "btn btn-default" %>
 <% else %>
-  <%= link_to "Show Old Categories in List", categories_path(:show_deleted => true), :class => "btn btn-default" %>
+  <%= link_to "Show Old Categories in List", categories_path(:show_deleted => true), class:  "btn btn-default" %>
 <% end %>

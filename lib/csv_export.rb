@@ -59,15 +59,13 @@ module CsvExport
   end
 
   # NOTE: this method depends on ActionController
-  def download_equipment_data
-    categories = [Category.all, %w(name max_per_user max_checkout_length
-                                   max_renewal_times max_renewal_length
-                                   renewal_days_before_due sort_order)]
-    models = [EquipmentModel.all, %w(category name description late_fee
-                                     replacement_fee max_per_user
-                                     max_renewal_length)]
-    items = [EquipmentItem.all, %w(equipment_model name serial)]
-    download_zip([categories, models, items],
-                 "EquipmentData_#{Time.zone.now.to_s(:number)}")
+  def download_equipment_data(cats: Category.all, models: EquipmentModel.all,
+                              items: EquipmentItem.all)
+    c = [cats, %w(name max_per_user max_checkout_length max_renewal_times
+                  max_renewal_length renewal_days_before_due sort_order)]
+    m = [models, %w(category name description late_fee replacement_fee
+                    max_per_user max_renewal_length)]
+    i = [items, %w(equipment_model name serial)]
+    download_zip([c, m, i], "EquipmentData_#{Time.zone.now.to_s(:number)}")
   end
 end
