@@ -128,8 +128,10 @@ class ReservationsController < ApplicationController
     res = params[:reservation].clone
 
     # adjust dates to match intended input of Month / Day / Year
-    res[:start_date] = Date.strptime(params[:reservation][:start_date],'%m/%d/%Y')
-    res[:due_date] = Date.strptime(params[:reservation][:due_date],'%m/%d/%Y')
+    # this isn't the right way to handle time zones but we've dealt with it in
+    # v4.0.0
+    res[:start_date] = DateTime.strptime(params[:reservation][:start_date],'%m/%d/%Y')
+    res[:due_date] = DateTime.strptime(params[:reservation][:due_date],'%m/%d/%Y')
 
     message = "Successfully edited reservation."
     # update attributes
@@ -171,7 +173,7 @@ class ReservationsController < ApplicationController
           redirect_to(root_path) && return
         end
         r.checkout_handler = current_user
-        r.checked_out = Time.now
+        r.checked_out = Time.zone.now
         r.equipment_object_id = reservation_hash[:equipment_object_id]
 
         # Check that checkout procedures have been performed
@@ -256,7 +258,7 @@ class ReservationsController < ApplicationController
       end
 
       r.checkin_handler = current_user
-      r.checked_in = Time.now
+      r.checked_in = Time.zone.now
 
       # Check that check-in procedures have been performed
       incomplete_procedures = check_procedures(r, reservation_hash, :checkin)

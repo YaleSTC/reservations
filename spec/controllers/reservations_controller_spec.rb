@@ -126,7 +126,7 @@ describe ReservationsController do
           get :index
           # Cannot compare objects in nested arrays directly
           assigns(:reservations_set).each do |r|
-            expect(@controller.current_user.reservations.upcoming.map(&:id)).to include(r.id)
+            expect(@controller.current_user.reservations.reserved.map(&:id)).to include(r.id)
          end
         end
       end
@@ -305,7 +305,7 @@ describe ReservationsController do
           @valid_cart = FactoryGirl.build(:cart_with_items)
           @req = Proc.new do
             post :create,
-              {reservation: {start_date: Date.today, due_date: Date.tomorrow,
+              {reservation: {start_date: Time.zone.today, due_date: Time.zone.today + 1.day,
                             reserver_id: @user.id}},
               {cart: @valid_cart}
           end
@@ -429,14 +429,14 @@ describe ReservationsController do
         before(:each) do
           put :update, { id: @reservation.id,
             reservation: FactoryGirl.attributes_for(:reservation,
-              start_date: Date.today.strftime('%m/%d/%Y'),
-              due_date: (Date.tomorrow + 3.days).strftime('%m/%d/%Y')),
+              start_date: Time.zone.today.strftime('%m/%d/%Y'),
+              due_date: (Time.zone.today + 4.days).strftime('%m/%d/%Y')),
             equipment_object: ''}
         end
         it 'should update the reservation details' do
           @reservation.reload
-          expect(@reservation.start_date.to_time.utc).to eq(Date.today.to_time.utc)
-          expect(@reservation.due_date.to_time.utc).to eq((Date.tomorrow + 3.days).to_time.utc)
+          expect(@reservation.start_date).to eq(Time.zone.today)
+          expect(@reservation.due_date).to eq(Time.zone.today + 4.days)
         end
         it { should redirect_to(@reservation) }
       end
@@ -446,8 +446,8 @@ describe ReservationsController do
           @new_equipment_object = FactoryGirl.create(:equipment_object, equipment_model: @reservation.equipment_model)
           put :update, { id: @reservation.id,
             reservation: FactoryGirl.attributes_for(:reservation,
-              start_date: Date.today.strftime('%m/%d/%Y'),
-              due_date: Date.tomorrow.strftime('%m/%d/%Y')),
+              start_date: Time.zone.today.strftime('%m/%d/%Y'),
+              due_date: (Time.zone.today + 1.day).strftime('%m/%d/%Y')),
             equipment_object: @new_equipment_object.id }
         end
         it 'should update the object on current reservation' do
@@ -462,8 +462,8 @@ describe ReservationsController do
           request.env["HTTP_REFERER"] = reservation_path(@reservation)
           put :update, { id: @reservation.id,
             reservation: FactoryGirl.attributes_for(:reservation,
-              start_date: Date.today.strftime('%m/%d/%Y'),
-              due_date: Date.yesterday.strftime('%m/%d/%Y')),
+              start_date: Time.zone.today.strftime('%m/%d/%Y'),
+              due_date: (Time.zone.today - 1.day).strftime('%m/%d/%Y')),
             equipment_object: ''}
         end
         include_examples 'cannot access page'

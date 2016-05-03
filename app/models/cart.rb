@@ -8,8 +8,8 @@ class Cart
   def initialize
     @errors = ActiveModel::Errors.new(self)
     @items = Hash.new()
-    @start_date = Date.today
-    @due_date = Date.tomorrow
+    @start_date = Time.zone.today
+    @due_date = Time.zone.today + 1.day
     @reserver_id = nil
   end
 
