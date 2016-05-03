@@ -15,9 +15,8 @@ class Reservation < ActiveRecord::Base
   end
   validate :start_date_before_due_date
   validate :matched_item_and_model
-  validate :check_status
-  validate :status_final_state
-  validate :not_in_past, :available, :check_banned, on: :create
+  validate :not_in_past, :check_banned, on: :create
+  validate :available
 
   # correctly update the overdue flag if necessary
   before_save :update_overdue, if: :checked_out?
