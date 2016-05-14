@@ -698,7 +698,7 @@ describe Reservation, type: :model do
     end
     it 'should fail to edit with check in time before check out time' do
       @res.assign_attributes(checked_in: Time.zone.now,
-                             checked_out: Time.zone.now + 1)
+                             checked_out: Time.zone.now + 1.day)
       expect(@res.check_in_time_after_check_out_time).not_to be_nil
     end
     it 'should not create a reservation where check in is before start' do
