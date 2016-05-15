@@ -4,7 +4,7 @@ module Capybara
   module Driver
     class Node
       def submit_form!
-        fail NotImplementedError
+        raise NotImplementedError
       end
     end
   end

@@ -37,13 +37,13 @@ describe 'Equipment Model views', type: :feature do
             page.all(:css, 'section#pending_reservations .giant-numbers div')
           expect(num_divs[0].text).to eq('1')
           expect(num_divs[1].text).to eq('2')
-          expect(page).to have_link "#{@today_res.id}",
+          expect(page).to have_link @today_res.id.to_s,
                                     href: reservation_path(@today_res)
-          expect(page).to have_link "#{@pending_res_1.id}",
+          expect(page).to have_link @pending_res_1.id.to_s,
                                     href: reservation_path(@pending_res_1)
-          expect(page).to have_link "#{@pending_res_2.id}",
+          expect(page).to have_link @pending_res_2.id.to_s,
                                     href: reservation_path(@pending_res_2)
-          expect(page).not_to have_link "#{@far_future_res.id}",
+          expect(page).not_to have_link @far_future_res.id.to_s,
                                         href: reservation_path(@far_future_res)
         end
       end

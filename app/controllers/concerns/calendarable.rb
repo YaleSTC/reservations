@@ -105,14 +105,14 @@ module Calendarable
   # This method should return the relevant list of reservations to display in
   # the calendar
   def generate_calendar_reservations
-    fail NotImplementedError
+    raise NotImplementedError
   end
 
   ##
   # This method should return the relevant instance of the current controller's
   # model (e.g. the equipment model whose calendar is being requested)
   def generate_calendar_resource
-    fail NotImplementedError
+    raise NotImplementedError
   end
 
   ##
@@ -127,6 +127,6 @@ module Calendarable
   # is a symbol that will be called on an instance of Reservation whose return
   # value should accept a #name method (e.g. `reserver` or `equipment_model`)
   def calendar_name_method
-    fail NotImplementedError
+    raise NotImplementedError
   end
 end

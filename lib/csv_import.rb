@@ -47,15 +47,11 @@ module CsvImport
     array_of_user_data.each do |user_data|
       user_data[:role] = user_type
       user_data[:csv_import] = true
-      if attempt_save_with_csv_data?(user_data)
-        next
+      next if attempt_save_with_csv_data?(user_data)
+      if ENV['USE_LDAP']
+        attempt_save_with_ldap(user_data)
       else
-        if ENV['USE_LDAP']
-          attempt_save_with_ldap(user_data)
-        else
-          @array_of_fail << [user_data, 'Invalid user parameters.']
-        end
-        next
+        @array_of_fail << [user_data, 'Invalid user parameters.']
       end
     end
 
@@ -101,13 +97,10 @@ module CsvImport
     user.update_attributes(user_data)
     # if the updated or new user is valid, save to database and add to array
     # of successful imports
-    if user.valid?
-      user.save
-      @array_of_success << user
-      return true
-    else
-      return false
-    end
+    return false unless user.valid?
+    user.save
+    @array_of_success << user
+    true
   end
 
   # attempts to save a user with ldap lookup
@@ -127,24 +120,24 @@ module CsvImport
     if user.valid?
       user.save
       @array_of_success << user
-      return
     else
       @array_of_fail << [user_data,
                          user.errors.full_messages.to_sentence.capitalize\
                          + '.']
-      return
     end
+    nil
   end
 
   # sets the user based on the overwrite parameter
   # rubocop:disable AccessorMethodName
   def set_or_create_user_for_import(user_data)
     # set the user and attempt to save with given data
-    if @overwrite && (User.where('username = ?', user_data[:username]).size > 0)
-      user = User.where('username = ?', user_data[:username]).first
-    else
-      user = User.new(user_data)
-    end
+    user = if @overwrite &&
+              !User.where('username = ?', user_data[:username]).empty?
+             User.where('username = ?', user_data[:username]).first
+           else
+             User.new(user_data)
+           end
     user
   end
   # rubocop:enable AccessorMethodName

@@ -6,7 +6,8 @@ module ActivationHelper
       # Reactivate the current item's category and/or Equipment Model if
       # deactivated
       category = Category.find(
-        EquipmentModel.find(current_item.equipment_model_id).category_id)
+        EquipmentModel.find(current_item.equipment_model_id).category_id
+      )
       category.revive if category.deleted_at
       em = EquipmentModel.find(current_item.equipment_model_id)
       if em.deleted_at

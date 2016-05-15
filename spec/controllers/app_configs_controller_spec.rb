@@ -62,11 +62,12 @@ describe AppConfigsController, type: :controller do
         before(:each) do
           sign_in FactoryGirl.create(:admin)
           # Except paperclip attributes that trigger MassAssignment errors
-          @params = FactoryGirl.attributes_for(:app_config)
-                    .reject do |k, _v|
-                      [:favicon_file_name, :favicon_content_type,
-                       :favicon_file_size, :favicon_updated_at].include? k
-                    end
+          @params =
+            FactoryGirl.attributes_for(:app_config)
+                       .reject do |k, _v|
+                         [:favicon_file_name, :favicon_content_type,
+                          :favicon_file_size, :favicon_updated_at].include? k
+                       end
         end
 
         it 'assigns current configuration to @app_config' do
@@ -116,11 +117,12 @@ describe AppConfigsController, type: :controller do
           # TODO: Simulate update_attributes failure
           before(:each) do
             # Except paperclip attributes that trigger MassAssignment errors
-            @params = FactoryGirl.attributes_for(:app_config, site_title: nil)
-                      .reject do |k, _v|
-                        [:favicon_file_name, :favicon_content_type,
-                         :favicon_file_size, :favicon_updated_at].include? k
-                      end
+            @params =
+              FactoryGirl.attributes_for(:app_config, site_title: nil)
+                         .reject do |k, _v|
+                           [:favicon_file_name, :favicon_content_type,
+                            :favicon_file_size, :favicon_updated_at].include? k
+                         end
             post :update, @params
           end
           # it { should render_template(:edit) }

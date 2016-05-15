@@ -22,11 +22,11 @@ describe User, type: :model do
     it { is_expected.to validate_presence_of(:affiliation) }
     it { is_expected.to validate_presence_of(:email) }
     it do
-      is_expected.not_to\
-        allow_value('abc', '!s@abc.com', 'a@!d.com', 'a@a.c0m').for(:email)
+      is_expected.not_to \
+        allow_value('abc', '!s@abc.com', 'a@!d.com').for(:email)
     end
     it do
-      is_expected.to\
+      is_expected.to \
         allow_value('example@example.com', '1a@a.edu', 'a@2a.net').for(:email)
     end
 

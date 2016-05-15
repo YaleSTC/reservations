@@ -8,7 +8,7 @@ class ApplicationDecorator < Draper::Decorator
     else
       link_to 'Deactivate', [:deactivate, object],
               class: 'btn btn-danger', method: :put,
-              onclick: "#{onclick_str}"
+              onclick: onclick_str.to_s
     end
   end
 end

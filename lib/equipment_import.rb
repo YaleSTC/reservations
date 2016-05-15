@@ -4,6 +4,7 @@ module EquipmentImport
   # separately for now and we can always refactor later.
 
   # import categories
+  # rubocop:disable MethodLength
   def import_cats(processed_cats, cat_overwrite = false)
     # let's make sure that we're consistent w/ scope on these variables
     array_of_success = [] # will contain category items
@@ -13,11 +14,12 @@ module EquipmentImport
       cat_data[:csv_import] = true
 
       # pick or create new category based on overwrite parameter
-      if cat_overwrite && (Category.where('name = ?', cat_data[:name]).size > 0)
-        cat = Category.where('name = ?', cat_data[:name]).first
-      else
-        cat = Category.new(cat_data)
-      end
+      cat = if cat_overwrite &&
+               !Category.where('name = ?', cat_data[:name]).empty?
+              Category.where('name = ?', cat_data[:name]).first
+            else
+              Category.new(cat_data)
+            end
 
       cat.update_attributes(cat_data)
       # if updated / new category is valid, save to database and add to array
@@ -36,6 +38,7 @@ module EquipmentImport
     # return hash of status arrays
     { success: array_of_success, fail: array_of_fail }
   end
+  # rubocop:enable MethodLength
 
   # import models
   # rubocop:disable MethodLength, PerceivedComplexity
@@ -53,12 +56,12 @@ module EquipmentImport
         Category.where('name = ?', model_data[:category]).first
 
       # pick or create new model based on overwrite parameter
-      if model_overwrite && (EquipmentModel.where('name = ?',
-                                                  model_data[:name]).size > 0)
-        model = EquipmentModel.where('name = ?', model_data[:name]).first
-      else
-        model = EquipmentModel.new(model_data)
-      end
+      model = if model_overwrite &&
+                 !EquipmentModel.where('name = ?', model_data[:name]).empty?
+                EquipmentModel.where('name = ?', model_data[:name]).first
+              else
+                EquipmentModel.new(model_data)
+              end
 
       model.update_attributes(model_data)
       # if updated / new model is valid, save to database and add to array of
@@ -68,11 +71,11 @@ module EquipmentImport
         array_of_success << model
       # else, store to array of fail with error messages
       else
-        if model_data[:category].nil?
-          error = 'Category not found.'
-        else
-          error = model.errors.full_messages.to_sentence.capitalize + '.'
-        end
+        error = if model_data[:category].nil?
+                  'Category not found.'
+                else
+                  model.errors.full_messages.to_sentence.capitalize + '.'
+                end
         array_of_fail << [model_data, error]
       end
     end
@@ -107,11 +110,11 @@ module EquipmentImport
         array_of_success << item
       # else, store to array of fail with error messages
       else
-        if item_data[:equipment_model].nil?
-          error = 'Equipment Model not found.'
-        else
-          error = item.errors.full_messages.to_sentence.capitalize + '.'
-        end
+        error = if item_data[:equipment_model].nil?
+                  'Equipment Model not found.'
+                else
+                  item.errors.full_messages.to_sentence.capitalize + '.'
+                end
         array_of_fail << [item_data, error]
       end
     end

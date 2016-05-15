@@ -17,13 +17,13 @@ describe 'email_checkout_reminder' do
 
   it 'sends emails for reservations that start today' do
     allow(@ac).to receive(:upcoming_checkout_email_active?).and_return(true)
-    expect { subject.invoke }.to(
-      change { ActionMailer::Base.deliveries.count }.by(1))
+    expect { subject.invoke }.to \
+      change { ActionMailer::Base.deliveries.count }.by(1)
   end
 
   it "doesn't send emails when upcoming_checkout_email_active is false" do
     allow(@ac).to receive(:upcoming_checkout_email_active?).and_return(false)
-    expect { subject.invoke }.not_to(
-      change { ActionMailer::Base.deliveries.count })
+    expect { subject.invoke }.not_to \
+      change { ActionMailer::Base.deliveries.count }
   end
 end

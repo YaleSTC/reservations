@@ -3,7 +3,7 @@ module CsvExport
   require 'zip'
 
   PROTECTED_COLS = %w(id encrypted_password reset_password_token
-                      reset_password_sent_at)
+                      reset_password_sent_at).freeze
 
   # generates a csv from the given model data
   # columns is optional; defaults to all columns except protected

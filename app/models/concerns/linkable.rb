@@ -9,7 +9,7 @@ module Linkable
 
     def md_link(text = name)
       url_method = "#{self.class.to_s.underscore}_url"
-      id ? "[#{text}](#{send(url_method, self, only_path: false)})" : "#{text}"
+      id ? "[#{text}](#{send(url_method, self, only_path: false)})" : text.to_s
     end
   end
 end

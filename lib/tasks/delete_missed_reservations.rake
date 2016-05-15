@@ -9,8 +9,8 @@ end
 def delete_missed_reservations
   return if AppConfig.first.blank? || AppConfig.first.res_exp_time.blank?
   time = AppConfig.first.res_exp_time
-  missed_reservations = Reservation.where(
-    'start_date < ?', Time.zone.today - time.days).missed
+  missed_reservations =
+    Reservation.where('start_date < ?', Time.zone.today - time.days).missed
   Rails.logger.info "Found #{missed_reservations.size} reservations"
 
   missed_reservations.each do |missed_reservation|

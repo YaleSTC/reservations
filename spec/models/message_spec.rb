@@ -8,7 +8,7 @@ describe Message, type: :model do
     it { is_expected.to validate_presence_of(:body) }
     it do
       is_expected.not_to\
-        allow_value('abc', '!s@abc.com', 'a@!d.com', 'a@a.c0m').for(:email)
+        allow_value('abc', '!s@abc.com', 'a@!d.com').for(:email)
     end
     it do
       is_expected.to\

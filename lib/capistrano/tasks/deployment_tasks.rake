@@ -9,7 +9,7 @@ namespace :config do
       if test "[ -e #{fetch(:param_file)} ]"
         execute "cp -rf #{fetch(:param_file)} #{release_path}/.env"
       else
-        fail Capistrano::Error, 'You must specify a valid parameter file.'
+        raise Capistrano::Error, 'You must specify a valid parameter file.'
       end
     end
   end
@@ -35,7 +35,7 @@ namespace :config do
     on roles(:app) do
       # check for Party Foul parameter in .env file
       env_lines = File.foreach("#{release_path}/.env")
-      if env_lines.grep(/PARTY_FOUL_TOKEN/).length > 0
+      unless env_lines.grep(/PARTY_FOUL_TOKEN/).empty?
         # copy initializer
         execute "cp -rf #{release_path}/config/initializers/party_foul.rb"\
           ".example #{release_path}/config/initializers/party_foul.rb"

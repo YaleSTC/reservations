@@ -6,7 +6,7 @@ class Report
                      ['Overdue', :overdue, :count],
                      ['Returned On Time', :returned_on_time, :count],
                      ['Returned Overdue', :returned_overdue, :count],
-                     ['User Count', :all, :count, :reserver_id]]
+                     ['User Count', :all, :count, :reserver_id]].freeze
 
   # Reports are extremely powerful 2D reservation statistics tables
   # See #build_new for the main constructor method used in the controller.
@@ -46,7 +46,8 @@ class Report
     def self.item_to_row(item)
       r = Row.new
       r.link_path = Rails.application.routes.url_helpers.subreport_path(
-        id: item.id, class: item.class.to_s.underscore.downcase)
+        id: item.id, class: item.class.to_s.underscore.downcase
+      )
       begin
         r.name = item.name
         if item.class == Reservation
@@ -63,12 +64,9 @@ class Report
 
   # get the average of an array of values, discounting nil values
   def self.average2(arr)
-    arr = arr.reject(&:nil?)
-    if arr.size == 0
-      'N/A'
-    else
-      (arr.inject { |a, e| a + e }.to_f / arr.size).round(2)
-    end
+    arr.compact!
+    return 'N/A' if arr.empty?
+    (arr.inject { |a, e| a + e }.to_f / arr.size).round(2)
   end
 
   def self.avg_duration(res_set)
@@ -158,11 +156,11 @@ class Report
     columns.each do |col|
       # only instantiate the fields that we need
       relation = reservations.send(col.filter)
-      if col.data_type == :count && col.data_field.nil?
-        col.res_set = relation.collect(&row_item_type)
-      else
-        col.res_set = relation.to_a
-      end
+      col.res_set = if col.data_type == :count && col.data_field.nil?
+                      relation.collect(&row_item_type)
+                    else
+                      relation.to_a
+                    end
     end
   end
 

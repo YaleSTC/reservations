@@ -97,19 +97,17 @@ namespace :app do
 
     terms_of_service_text = File.read(File.join(DEFAULT_MSGS, 'tos_text'))
 
-    upcoming_checkin_email_body = File.read(File.join(DEFAULT_MSGS,
-                                                      'upcoming_checkin_email'))
+    upcoming_checkin_email_body =
+      File.read(File.join(DEFAULT_MSGS, 'upcoming_checkin_email'))
 
-    upcoming_checkout_email_body = File.read(File.join(DEFAULT_MSGS,
-                                                       'upcoming_checkout_email'
-                                                      ))
+    upcoming_checkout_email_body =
+      File.read(File.join(DEFAULT_MSGS, 'upcoming_checkout_email'))
 
-    overdue_checkin_email_body = File.read(File.join(DEFAULT_MSGS,
-                                                     'overdue_email'))
+    overdue_checkin_email_body =
+      File.read(File.join(DEFAULT_MSGS, 'overdue_email'))
 
-    deleted_missed_reservation_email_body = File.read(File.join(
-                                                        DEFAULT_MSGS,
-                                                        'deleted_missed_email'))
+    deleted_missed_reservation_email_body =
+      File.read(File.join(DEFAULT_MSGS, 'deleted_missed_email'))
 
     request_text =
       'The following equipment cannot be reserved because of admin '\

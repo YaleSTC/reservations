@@ -6,16 +6,10 @@ class Category < ActiveRecord::Base
 
   validates :name, presence: true, uniqueness: true
 
-  validates :max_per_user,
-            :max_checkout_length,
-            :max_renewal_length,
-            :max_renewal_times,
-            :renewal_days_before_due,
-            :sort_order,
-            numericality: {
-              allow_nil: true,
-              integer_only: true,
-              greater_than_or_equal_to: 0 }
+  validates :max_per_user, :max_checkout_length, :max_renewal_length,
+            :max_renewal_times, :renewal_days_before_due, :sort_order,
+            numericality: { allow_nil: true, integer_only: true,
+                            greater_than_or_equal_to: 0 }
 
   nilify_blanks only: [:deleted_at]
 

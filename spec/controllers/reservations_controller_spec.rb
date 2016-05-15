@@ -84,7 +84,7 @@ describe ReservationsController, type: :controller do
     # depending on admin status, source of reservations (all v. own) changes
 
     FILTERS = [:reserved, :checked_out, :overdue, :missed,
-               :returned, :upcoming, :archived]
+               :returned, :upcoming, :archived].freeze
 
     context 'when accessed by non-banned user' do
       subject { get :index }
@@ -486,7 +486,7 @@ describe ReservationsController, type: :controller do
       it 'assigns @option_array with the correct contents' do
         expect(assigns(:option_array)).to\
           eq @reservation.equipment_model.equipment_items
-            .collect { |e| [e.name, e.id] }
+                         .collect { |e| [e.name, e.id] }
       end
       it { is_expected.to render_template(:edit) }
     end
@@ -1592,7 +1592,8 @@ describe ReservationsController, type: :controller do
     context 'successfully emails' do
       before do
         @reservation.update_attributes(
-          FactoryGirl.attributes_for(:checked_out_reservation))
+          FactoryGirl.attributes_for(:checked_out_reservation)
+        )
         get :send_receipt, id: @reservation.id
       end
       it { is_expected.to redirect_to(@reservation) }
@@ -1601,8 +1602,9 @@ describe ReservationsController, type: :controller do
 
     context 'fails to send email' do
       before do
-        allow(UserMailer).to receive_message_chain(
-          'reservation_status_update.deliver_now').and_return(false)
+        allow(UserMailer).to \
+          receive_message_chain('reservation_status_update.deliver_now')
+          .and_return(false)
         get :send_receipt, id: @reservation.id
       end
       it { is_expected.to redirect_to(@reservation) }
@@ -1619,7 +1621,7 @@ describe ReservationsController, type: :controller do
       it 'should assign all current requests except itself' do
         expect(assigns(:all_current_requests_by_user)).to\
           eq @reservation.reserver.reservations.requested
-            .reject { |r| r.id == @reservation.id }
+                         .reject { |r| r.id == @reservation.id }
       end
       it 'should assign errors' do
         expect(assigns(:errors)).to eq assigns(:reservation).validate

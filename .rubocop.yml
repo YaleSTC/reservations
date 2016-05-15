@@ -1,5 +1,4 @@
 AllCops:
-  RunRailsCops: true
   Include:
     - '**/Rakefile'
     - '**/config.ru'
@@ -34,3 +33,5 @@ TrivialAccessors:
 # allow has_and_belongs_to_many
 HasAndBelongsToMany:
   Enabled: false
+Rails:
+  Enabled: true

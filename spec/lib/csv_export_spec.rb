@@ -2,9 +2,9 @@ require 'spec_helper'
 include CsvExport
 
 describe CsvExport do
-  MODELS = [:user, :category, :equipment_model, :equipment_item]
+  MODELS = [:user, :category, :equipment_model, :equipment_item].freeze
   PROTECTED_COLS = %w(id encrypted_password reset_password_token
-                      reset_password_sent_at)
+                      reset_password_sent_at).freeze
 
   shared_examples 'builds a csv' do |model|
     let(:csv) do
@@ -16,8 +16,8 @@ describe CsvExport do
     end
 
     it 'has the appropriate columns' do
-      expect(csv.first.split(',')).to eq(
-        FactoryGirl.build(model).attributes.keys - PROTECTED_COLS)
+      expect(csv.first.split(',')).to \
+        eq(FactoryGirl.build(model).attributes.keys - PROTECTED_COLS)
     end
 
     it "doesn't include protected columns" do

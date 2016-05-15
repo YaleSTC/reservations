@@ -45,7 +45,7 @@ class Reservation < ActiveRecord::Base
   # or where('flags & ? = 0', FLAGS[:flag]) for not flagged
   FLAGS = { request: (1 << 1), broken: (1 << 2), lost: (1 << 3),
             fined: (1 << 4), missed_email_sent: (1 << 5),
-            expired: (1 << 6) }
+            expired: (1 << 6) }.freeze
 
   ## Scopes ##
   # general scopes
@@ -66,7 +66,8 @@ class Reservation < ActiveRecord::Base
   }
   scope :active_or_requested, lambda {
     where(status: Reservation.statuses.values_at(
-      *%w(requested reserved checked_out)))
+      *%w(requested reserved checked_out)
+    ))
   }
 
   # overdue / request scopes
@@ -196,12 +197,7 @@ class Reservation < ActiveRecord::Base
 
   def late_fee
     return 0 unless overdue
-    if checked_in
-      end_date = checked_in.to_date
-    else
-      end_date = Time.zone.today
-    end
-    fee = equipment_model.late_fee * (end_date - due_date)
+    fee = equipment_model.late_fee * (end_date.to_date - due_date)
     if fee < 0
       fee = 0
     elsif equipment_model.late_fee_max > 0
@@ -276,11 +272,9 @@ class Reservation < ActiveRecord::Base
 
   def renew(user)
     # renew the reservation and return error messages if unsuccessful
-    unless self.eligible_for_renew?
-      return 'Reservation not eligible for renewal'
-    end
+    return 'Reservation not eligible for renewal' unless eligible_for_renew?
     self.due_date = find_renewal_date
-    self.notes = "#{notes}" + "\n\n### Renewed on "\
+    self.notes = notes.to_s + "\n\n### Renewed on "\
       "#{Time.zone.now.to_s(:long)} by #{user.md_link}\n\nThe new due date "\
       "is  #{due_date.to_s(:long)}."
     self.times_renewed += 1
@@ -370,56 +364,53 @@ class Reservation < ActiveRecord::Base
     assign_attributes(new_params)
     changes = self.changes
     new_notes = '' unless new_notes
-    if new_notes.empty? && changes.empty?
-      return self
-    else
-      # write notes header
-      header = "### Edited on #{Time.zone.now.to_s(:long)} by "\
-        "#{current_user.md_link}\n"
-      self.notes = notes ? notes + "\n\n" + header : header
+    return self if new_notes.empty? && changes.empty?
+    # write notes header
+    header = "### Edited on #{Time.zone.now.to_s(:long)} by "\
+      "#{current_user.md_link}\n"
+    self.notes = notes ? notes + "\n\n" + header : header
 
-      # add notes if they exist
-      self.notes += "\n\n#### Notes:\n#{new_notes}" unless new_notes.empty?
+    # add notes if they exist
+    self.notes += "\n\n#### Notes:\n#{new_notes}" unless new_notes.empty?
 
-      # record changes
-      # rubocop:disable BlockNesting
-      unless changes.empty?
-        self.notes += "\n\n#### Changes:"
-        changes.each do |param, diff|
-          case param
-          when 'reserver_id'
-            name = 'Reserver'
-            old_val = diff[0] ? User.find(diff[0]).md_link : 'nil'
-            new_val = diff[1] ? User.find(diff[1]).md_link : 'nil'
-          when 'start_date'
-            name = 'Start Date'
-            old_val = diff[0].to_s(:long)
-            new_val = diff[1].to_s(:long)
-          when 'due_date'
-            name = 'Due Date'
-            old_val = diff[0].to_s(:long)
-            new_val = diff[1].to_s(:long)
-            if checked_out?
-              if overdue? && diff[1] >= Time.zone.today
-                overdue_str = "\nReservation marked as not overdue."
-              elsif !overdue? && diff[1] < Time.zone.today
-                overdue_str = "\nReservation marked as overdue."
-              end
-            end
-          when 'equipment_item_id'
-            name = 'Item'
-            old_val = diff[0] ? EquipmentItem.find(diff[0]).md_link : 'nil'
-            new_val = diff[1] ? EquipmentItem.find(diff[1]).md_link : 'nil'
+    # record changes
+    # rubocop:disable BlockNesting
+    unless changes.empty?
+      self.notes += "\n\n#### Changes:"
+      changes.each do |param, diff|
+        case param
+        when 'reserver_id'
+          name = 'Reserver'
+          old_val = diff[0] ? User.find(diff[0]).md_link : 'nil'
+          new_val = diff[1] ? User.find(diff[1]).md_link : 'nil'
+        when 'start_date'
+          name = 'Start Date'
+          old_val = diff[0].to_s(:long)
+          new_val = diff[1].to_s(:long)
+        when 'due_date'
+          name = 'Due Date'
+          old_val = diff[0].to_s(:long)
+          new_val = diff[1].to_s(:long)
+          if checked_out?
+            overdue_str = if overdue? && diff[1] >= Time.zone.today
+                            "\nReservation marked as not overdue."
+                          elsif !overdue? && diff[1] < Time.zone.today
+                            "\nReservation marked as overdue."
+                          end
           end
-          self.notes += "\n#{name} changed from " + old_val + ' to '\
-            + new_val + '.' + overdue_str.to_s
+        when 'equipment_item_id'
+          name = 'Item'
+          old_val = diff[0] ? EquipmentItem.find(diff[0]).md_link : 'nil'
+          new_val = diff[1] ? EquipmentItem.find(diff[1]).md_link : 'nil'
         end
+        self.notes += "\n#{name} changed from " + old_val + ' to '\
+          + new_val + '.' + overdue_str.to_s
       end
-      # rubocop:enable BlockNesting
-
-      self.notes = self.notes.strip
-      self
     end
+    # rubocop:enable BlockNesting
+
+    self.notes = self.notes.strip
+    self
   end
 
   # rubocop:disable PerceivedComplexity

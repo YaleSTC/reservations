@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'Active Admin', type: :feature do
   VALID_MODELS = [:announcement, :app_config, :blackout, :category,
                   :checkin_procedure, :checkout_procedure, :equipment_item,
-                  :equipment_model, :requirement, :reservation, :user]
+                  :equipment_model, :requirement, :reservation, :user].freeze
 
   context 'as superuser' do
     before { sign_in_as_user(@superuser) }

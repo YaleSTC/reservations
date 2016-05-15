@@ -9,8 +9,8 @@ def days_of_the_week_short
 end
 
 def days_of_the_week_short_with_index
-  days_of_the_week_short_with_index = [
-    [0, 'Sun'], [1, 'Mon'], [2, 'Tues'], [3, 'Wed'], [4, 'Thurs'], [5, 'Fri'],
-    [6, 'Sat']]
+  days_of_the_week_short_with_index = [[0, 'Sun'], [1, 'Mon'], [2, 'Tues'],
+                                       [3, 'Wed'], [4, 'Thurs'], [5, 'Fri'],
+                                       [6, 'Sat']]
 end
 # rubocop:enable UselessAssignment

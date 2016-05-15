@@ -69,7 +69,7 @@ class BlackoutsController < ApplicationController
 
     # check for conflicts
     res = Reservation.overlaps_with_date_range(p[:start_date], p[:end_date])
-          .active
+                     .active
 
     # save and exit
     if res.empty? && @blackout.save
@@ -118,7 +118,7 @@ class BlackoutsController < ApplicationController
 
   def blackout_params
     params.require(:blackout)
-      .permit(:start_date, :end_date, :notice, :blackout_type, :created_by,
-              :set_id)
+          .permit(:start_date, :end_date, :notice, :blackout_type, :created_by,
+                  :set_id)
   end
 end

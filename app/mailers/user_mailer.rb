@@ -13,7 +13,7 @@ class UserMailer < ActionMailer::Base
 
   VALID_STATUSES = ['checked out', 'denied', 'due today', 'missed', 'overdue',
                     'request approved', 'requested', 'returned',
-                    'returned overdue', 'starts today']
+                    'returned overdue', 'starts today'].freeze
 
   def reservation_status_update(reservation, force = '') # rubocop:disable all
     if AppConfig.get(:disable_user_emails)

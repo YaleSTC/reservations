@@ -86,9 +86,8 @@ describe 'guest users', type: :feature do
       end
 
       it 'can add items to cart' do
-        expect(page.find(:css, '#list_items_in_cart')).to have_link(
-          @eq_model.name,
-          href: equipment_model_path(@eq_model))
+        expect(page.find(:css, '#list_items_in_cart')).to \
+          have_link(@eq_model.name, href: equipment_model_path(@eq_model))
       end
 
       it 'can remove items from cart' do
@@ -97,9 +96,8 @@ describe 'guest users', type: :feature do
         fill_in "quantity_field_#{EquipmentModel.first.id}", with: quantity.to_s
         find('#quantity_form').submit_form!
         visit '/'
-        expect(page.find(:css, '#list_items_in_cart')).not_to have_link(
-          @eq_model.name,
-          href: equipment_model_path(@eq_model))
+        expect(page.find(:css, '#list_items_in_cart')).not_to \
+          have_link(@eq_model.name, href: equipment_model_path(@eq_model))
       end
 
       it 'can change item quantities' do

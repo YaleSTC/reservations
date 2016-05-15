@@ -76,7 +76,7 @@ RSpec.feature 'Equipment model calendar view' do
   end
 
   def create_res_in_current_month(count = 1)
-    fail ArgumentError if count > 28
+    raise ArgumentError if count > 28
     day0 = Time.zone.today.beginning_of_month # to ensure it's in this month
     (1..count).each do |i|
       # make sure it's a 1-day reservation so there's only a single cell

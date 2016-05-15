@@ -15,10 +15,11 @@ class CategoryDecorator < ApplicationDecorator
       # find reservations for models in the category in the next week
       res = 0
       object.equipment_models.each do |em|
-        res += Reservation.for_eq_model(em.id).active
-               .overlaps_with_date_range(Time.zone.today - 1.day,
-                                         Time.zone.today + 7.days)
-               .count
+        res +=
+          Reservation.for_eq_model(em.id).active
+                     .overlaps_with_date_range(Time.zone.today - 1.day,
+                                               Time.zone.today + 7.days)
+                     .count
       end
       onclick_str = "handleBigDeactivation(this, #{res}, 'category');"
     end

@@ -154,7 +154,7 @@ describe Cart, type: :model do
         FactoryGirl.build(:reservation, equipment_model: @em,
                                         start_date: @start_date,
                                         due_date: @due_date)
-          .save(validate: false)
+                   .save(validate: false)
 
         expect(@cart.check_availability).not_to eq([])
         expect(@cart.validate_all).not_to eq([])
@@ -165,7 +165,7 @@ describe Cart, type: :model do
                           equipment_model: @em, start_date: @start_date,
                           due_date: @due_date,
                           equipment_item: @em.equipment_items.first)
-          .save(validate: false)
+                   .save(validate: false)
 
         expect(@cart.check_availability).not_to eq([])
         expect(@cart.validate_all).not_to eq([])

@@ -30,11 +30,11 @@ class UsersController < ApplicationController
   # ------------ end before filter methods ------------ #
 
   def index
-    if params[:show_banned]
-      @users = User.order('username ASC')
-    else
-      @users = User.active.order('username ASC')
-    end
+    @users = if params[:show_banned]
+               User.order('username ASC')
+             else
+               User.active.order('username ASC')
+             end
 
     respond_to do |format|
       format.html

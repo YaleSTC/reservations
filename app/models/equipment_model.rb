@@ -74,7 +74,8 @@ class EquipmentModel < ActiveRecord::Base
                       large: { geometry: '500x500', format: 'png' },
                       medium: { geometry: '250x250', format: 'png' },
                       small: { geometry: '150x150', format: 'png' },
-                      thumbnail: { geometry: '260x180', format: 'png' } },
+                      thumbnail: { geometry: '260x180', format: 'png' }
+                    },
                     convert_options: {
                       large:
                         '-background none -gravity center -extent 500x500',
@@ -83,7 +84,8 @@ class EquipmentModel < ActiveRecord::Base
                       small:
                         '-background none -gravity center -extent 150x150',
                       thumbnail:
-                        '-background none -gravity center -extent 260x180' },
+                        '-background none -gravity center -extent 260x180'
+                    },
                     url: '/attachments/equipment_models/:attachment/:id/'\
                       ':style/:basename.:extension',
                     path: ':rails_root/public/attachments/equipment_models/'\
@@ -213,8 +215,10 @@ class EquipmentModel < ActiveRecord::Base
 
   def available_item_select_options
     equipment_items.includes(:reservations).active.select(&:available?)\
-      .sort_by(&:name)\
-      .collect { |item| "<option value=#{item.id}>#{item.name}</option>" }\
-      .join.html_safe
+                   .sort_by(&:name)\
+                   .collect do |item|
+                     "<option value=#{item.id}>#{item.name}</option>"
+                   end\
+                   .join.html_safe
   end
 end

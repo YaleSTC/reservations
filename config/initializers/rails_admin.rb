@@ -40,11 +40,7 @@ RailsAdmin.config do |config|
 
           elsif request.delete? # DESTROY
             # optionally pass the force parameter
-            if @object.has_attribute?(:deleted_at)
-              opt = :force
-            else
-              opt = nil
-            end
+            opt = :force if @object.has_attribute?(:deleted_at)
 
             redirect_path = nil
             @auditing_adapter &&
