@@ -54,10 +54,8 @@ describe 'Reservations archiving', type: :feature do
 
       context 'with auto-deactivate enabled' do
         before do
-          @app_config.update_attributes(autodeactivate_on_archive: true)
-        end
-        after do
-          @app_config.update_attributes(autodeactivate_on_archive: false)
+          allow(@app_config).to receive(:autodeactivate_on_archive)
+            .and_return(true)
         end
 
         it 'autodeactivates the equipment item', js: true do
@@ -73,9 +71,9 @@ describe 'Reservations archiving', type: :feature do
 
       context 'without auto-deactivate enabled', js: true do
         before do
-          @app_config.update_attributes(autodeactivate_on_archive: false)
+          allow(@app_config).to receive(:autodeactivate_on_archive)
+            .and_return(false)
         end
-        after { @app_config.update_attributes(autodeactivate_on_archive: true) }
 
         it 'does not autodeactivate the equipment item' do
           visit reservation_path(@res)

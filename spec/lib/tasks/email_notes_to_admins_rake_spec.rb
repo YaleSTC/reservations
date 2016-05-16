@@ -4,7 +4,7 @@ require 'spec_helper'
 describe 'email_notes_to_admins' do
   include_context 'rake'
 
-  before(:all) { FactoryGirl.create(:app_config) }
+  before(:each) { mock_app_config(admin_email: 'admin@email.com') }
 
   STATUSES = [:checked_out_reservation, :checked_in_reservation]
 

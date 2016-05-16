@@ -50,7 +50,7 @@ describe 'guest users', type: :feature do
 
   context 'when enabled' do
     before(:each) do
-      AppConfig.first.update_attribute(:enable_guests, true)
+      allow(@app_config).to receive(:enable_guests).and_return(true)
     end
 
     it 'correctly sets the setting' do
@@ -124,7 +124,7 @@ describe 'guest users', type: :feature do
 
   context 'when disabled' do
     before(:each) do
-      AppConfig.first.update_attribute(:enable_guests, false)
+      allow(@app_config).to receive(:enable_guests).and_return(false)
     end
 
     it 'correctly sets the setting' do

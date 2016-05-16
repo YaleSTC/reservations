@@ -4,9 +4,8 @@ require 'spec_helper'
 describe 'delete_missed_reservations' do
   include_context 'rake'
 
-  before(:all) { FactoryGirl.create(:app_config) }
-
   before(:each) do
+    @ac = mock_app_config(blank?: false)
     @missed = FactoryGirl.create(:missed_reservation,
                                  start_date: Time.zone.today - 11.days,
                                  due_date: Time.zone.today - 10.days)
@@ -14,20 +13,17 @@ describe 'delete_missed_reservations' do
   end
 
   it "doesn't do anything when the res_exp_time parameter isn't set" do
-    AppConfig.first.update_attributes(res_exp_time: nil)
-    expect(AppConfig.first.res_exp_time).to be_nil
+    allow(@ac).to receive(:res_exp_time).and_return(nil)
     expect { subject.invoke }.not_to change { Reservation.count }
   end
 
   it 'deletes reservations older than the threshhold' do
-    AppConfig.first.update_attributes(res_exp_time: 5)
-    expect(AppConfig.first.res_exp_time).to eq(5)
+    allow(@ac).to receive(:res_exp_time).and_return(5)
     expect { subject.invoke }.to change { Reservation.count }.by(-1)
   end
 
   it "doesn't delete reservations within threshhold" do
-    AppConfig.first.update_attributes(res_exp_time: 15)
-    expect(AppConfig.first.res_exp_time).to eq(15)
+    allow(@ac).to receive(:res_exp_time).and_return(15)
     expect { subject.invoke }.not_to change { Reservation.count }
   end
 end

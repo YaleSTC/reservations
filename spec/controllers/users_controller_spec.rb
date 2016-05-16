@@ -11,9 +11,7 @@ shared_examples_for 'access denied' do
 end
 
 describe UsersController, type: :controller do
-  before(:all) do
-    @app_config = FactoryGirl.create(:app_config)
-  end
+  before(:each) { @ac = mock_app_config }
   let!(:user) { FactoryGirl.create(:user) }
 
   context 'with admin user' do
@@ -126,7 +124,7 @@ describe UsersController, type: :controller do
 
       context 'when new user registration is disabled' do
         before do
-          AppConfig.first.update_attributes(enable_new_users: false)
+          allow(@ac).to receive(:enable_new_users).and_return(false)
           get :new
         end
 
@@ -163,7 +161,7 @@ describe UsersController, type: :controller do
 
       context 'when new user registration is disabled and correct params' do
         before do
-          AppConfig.first.update_attributes(enable_new_users: false)
+          allow(@ac).to receive(:enable_new_users).and_return(false)
           @user_attributes = FactoryGirl.attributes_for(:user)
           post :create, user: @user_attributes
         end
@@ -334,7 +332,7 @@ describe UsersController, type: :controller do
 
     describe 'GET new when new user registration is disabled' do
       before do
-        AppConfig.first.update_attributes(enable_new_users: false)
+        allow(@ac).to receive(:enable_new_users).and_return(false)
         get :new
       end
 

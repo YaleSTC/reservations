@@ -6,28 +6,20 @@ describe ReservationsController, type: :controller do
   render_views
 
   before(:all) do
-    @app_config = FactoryGirl.create(:app_config)
-
     @user = FactoryGirl.create(:user)
     @banned = FactoryGirl.create(:banned)
     @checkout_person = FactoryGirl.create(:checkout_person)
     @admin = FactoryGirl.create(:admin)
   end
 
-  after(:all) do
-    User.delete_all
-    AppConfig.delete_all
-    Reservation.delete_all
-    Category.delete_all
-    EquipmentModel.delete_all
-    EquipmentItem.delete_all
-  end
-
   before(:each) do
+    @ac = mock_app_config(**FactoryGirl.attributes_for(:app_config),
+                          disable_user_emails: false,
+                          override_on_create: false,
+                          override_at_checkout: false,
+                          res_exp_time: false)
     @cart = FactoryGirl.build(:cart, reserver_id: @user.id)
-
     sign_in @user
-
     @reservation = FactoryGirl.create(:valid_reservation, reserver: @user)
   end
 
@@ -91,53 +83,51 @@ describe ReservationsController, type: :controller do
     # depending on admin status, default_filter changes
     # depending on admin status, source of reservations (all v. own) changes
 
-    before(:all) do
-      @filters = [:reserved, :checked_out, :overdue, :missed,
-                  :returned, :upcoming, :archived]
-    end
+    FILTERS = [:reserved, :checked_out, :overdue, :missed,
+               :returned, :upcoming, :archived]
 
     context 'when accessed by non-banned user' do
       subject { get :index }
       it { is_expected.to be_success }
       it { is_expected.to render_template(:index) }
 
-      it 'populates @reservations_set with respect to params[filter]' do
-        # Setup
-        @filters.each do |trait|
-          res = FactoryGirl.build(:valid_reservation, trait, reserver: @user)
-          res.save(validate: false)
+      shared_examples 'populates' do |trait|
+        before(:each) do
+          type = case trait
+                 when :reserved
+                   :valid_reservation
+                 when :returned
+                   :checked_in_reservation
+                 else
+                   (trait.to_s + '_reservation').to_sym
+                 end
+          FactoryGirl.create(type, reserver: @user)
         end
 
-        # Assertion and expectation
-        @filters.each do |f|
-          get :index, f => true
+        it 'with the correct set' do
+          get :index, trait => true
           expect(assigns(:reservations_set).uniq.sort).to \
-            eq(Reservation.send(f)
+            eq(Reservation.send(trait)
+              .starts_on_days(assigns(:start_date), assigns(:end_date))
+              .uniq.sort)
+        end
+
+        it 'with respect to session[:filter] first' do
+          session[:filter] = trait.to_s
+          get :index, FILTERS.sample => true
+          expect(assigns(:reservations_set).uniq.sort).to \
+            eq(Reservation.send(trait)
               .starts_on_days(assigns(:start_date), assigns(:end_date))
               .uniq.sort)
         end
       end
-      it 'populates with respect to session[:filter] first' do
-        @filters.each do |trait|
-          res = FactoryGirl.build(:valid_reservation, trait, reserver: @user)
-          res.save(validate: false)
-        end
 
-        # Assertion and expectation
-        @filters.each do |f|
-          session[:filter] = f.to_s
-          get :index, @filters.sample => true
-          expect(assigns(:reservations_set).uniq.sort).to \
-            eq(Reservation.send(f)
-              .starts_on_days(assigns(:start_date), assigns(:end_date))
-              .uniq.sort)
-        end
-      end
+      FILTERS.each { |t| it_behaves_like 'populates', t }
 
       context 'who is an admin' do
         before(:each) do
           sign_in @admin
-          @filters.each do |trait|
+          FILTERS.each do |trait|
             res = FactoryGirl.build(:valid_reservation, trait,
                                     reserver: [@user, @admin].sample)
             res.save(validate: false)
@@ -153,7 +143,7 @@ describe ReservationsController, type: :controller do
       context 'who is not an admin' do
         before(:each) do
           sign_in @user
-          @filters.each do |trait|
+          FILTERS.each do |trait|
             res = FactoryGirl.build(:valid_reservation, trait,
                                     reserver: [@user, @admin].sample)
             res.save(validate: false)
@@ -305,7 +295,7 @@ describe ReservationsController, type: :controller do
 
         context 'and user can override errors' do
           before(:each) do
-            AppConfig.first.update_attributes(override_on_create: true)
+            allow(@ac).to receive(:override_on_create).and_return(true)
             sign_in @checkout_person
           end
 
@@ -333,7 +323,7 @@ describe ReservationsController, type: :controller do
         context 'and user cannot override errors' do
           # request would be filed
           before(:each) do
-            AppConfig.first.update_attributes(override_on_create: false)
+            allow(@ac).to receive(:override_on_create).and_return(false)
             sign_in @checkout_person
           end
           it 'affects database' do
@@ -403,7 +393,7 @@ describe ReservationsController, type: :controller do
         context 'with notify_admin_on_create set' do
           before(:each) do
             ActionMailer::Base.deliveries.clear
-            AppConfig.first.update_attributes(notify_admin_on_create: true)
+            allow(@ac).to receive(:notify_admin_on_create).and_return(true)
           end
 
           it 'cc-s the admin on the confirmation email' do
@@ -418,7 +408,7 @@ describe ReservationsController, type: :controller do
         context 'without notify_admin_on_create set' do
           before(:each) do
             ActionMailer::Base.deliveries.clear
-            AppConfig.first.update_attributes(notify_admin_on_create: false)
+            allow(@ac).to receive(:notify_admin_on_create).and_return(false)
           end
 
           it 'cc-s the admin on the confirmation email' do
@@ -479,7 +469,7 @@ describe ReservationsController, type: :controller do
     context 'when accessed by checkout person disallowed by settings' do
       before(:each) do
         sign_in @checkout_person
-        AppConfig.first.update_attributes(checkout_persons_can_edit: false)
+        allow(@ac).to receive(:checkout_persons_can_edit).and_return(false)
         get 'edit', id: @reservation.id
       end
       include_examples 'cannot access page'
@@ -504,7 +494,7 @@ describe ReservationsController, type: :controller do
     context 'when accessed by checkout person allowed by settings' do
       before(:each) do
         sign_in @checkout_person
-        AppConfig.first.update_attributes(checkout_persons_can_edit: true)
+        allow(@ac).to receive(:checkout_persons_can_edit).and_return(true)
         get :edit, id: @reservation.id
       end
       include_examples 'can access edit page'
@@ -513,7 +503,7 @@ describe ReservationsController, type: :controller do
     context 'when accessed by admin' do
       before(:each) do
         sign_in @admin
-        AppConfig.first.update_attributes(checkout_persons_can_edit: false)
+        allow(@ac).to receive(:checkout_persons_can_edit).and_return(false)
         get :edit, id: @reservation.id
       end
       include_examples 'can access edit page'
@@ -551,7 +541,7 @@ describe ReservationsController, type: :controller do
     context 'when accessed by checkout person disallowed by settings' do
       before(:each) do
         sign_in @checkout_person
-        AppConfig.first.update_attributes(checkout_persons_can_edit: false)
+        allow(@ac).to receive(:checkout_persons_can_edit).and_return(false)
         put 'update',
             id: @reservation.id,
             reservation: FactoryGirl.attributes_for(:reservation)
@@ -720,7 +710,7 @@ describe ReservationsController, type: :controller do
     context 'when accessed by checkout person allowed by settings' do
       before(:each) do
         sign_in @checkout_person
-        AppConfig.first.update_attributes(checkout_persons_can_edit: true)
+        allow(@ac).to receive(:checkout_persons_can_edit).and_return(true)
       end
       include_examples 'can access update page'
     end
@@ -728,7 +718,7 @@ describe ReservationsController, type: :controller do
     context 'when accessed by admin' do
       before(:each) do
         sign_in @admin
-        AppConfig.first.update_attributes(checkout_persons_can_edit: false)
+        allow(@ac).to receive(:checkout_persons_can_edit).and_return(false)
       end
       include_examples 'can access update page'
     end
@@ -1535,11 +1525,8 @@ describe ReservationsController, type: :controller do
 
         context 'when auto-deactivate is enabled' do
           before(:each) do
-            AppConfig.first.update_attributes(autodeactivate_on_archive: true)
+            allow(@ac).to receive(:autodeactivate_on_archive).and_return(true)
             put :archive, id: @reservation.id, archive_note: 'Because I can'
-          end
-          after(:each) do
-            AppConfig.first.update_attributes(autodeactivate_on_archive: false)
           end
 
           it 'should deactivate the equipment item' do

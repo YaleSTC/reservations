@@ -105,7 +105,7 @@ shared_examples_for 'GET index success' do
 end
 
 describe EquipmentModelsController, type: :controller do
-  before(:all) { @app_config = FactoryGirl.create(:app_config) }
+  before(:each) { mock_app_config }
   let!(:model) { FactoryGirl.create(:equipment_model) }
 
   it_behaves_like 'calendarable', EquipmentModel
@@ -415,6 +415,4 @@ describe EquipmentModelsController, type: :controller do
       end
     end
   end
-
-  after(:all) { @app_config.destroy }
 end

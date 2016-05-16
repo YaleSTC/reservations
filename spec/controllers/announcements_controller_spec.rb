@@ -11,9 +11,7 @@ shared_examples_for 'access denied' do
 end
 
 describe AnnouncementsController, type: :controller do
-  before(:all) do
-    @app_config = FactoryGirl.create(:app_config)
-  end
+  before(:each) { mock_app_config }
 
   describe 'with admin' do
     before do

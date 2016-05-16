@@ -2,8 +2,6 @@ require 'spec_helper'
 include CsvExport
 
 describe CsvExport do
-  before(:all) { FactoryGirl.create(:app_config) }
-
   MODELS = [:user, :category, :equipment_model, :equipment_item]
   PROTECTED_COLS = %w(id encrypted_password reset_password_token
                       reset_password_sent_at)

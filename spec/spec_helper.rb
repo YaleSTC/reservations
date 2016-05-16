@@ -75,6 +75,11 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
+  # Remove when the last of the before(:all) blocks are removed
+  config.after(:all) do
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
   # set up app before all integration specs, wish we didn't have to use :each
   config.before(:each, type: :feature) { app_setup }
 
@@ -86,6 +91,7 @@ RSpec.configure do |config|
   config.include InjectSession, type: :feature
   config.include FeatureHelpers, type: :feature
   config.include EnvHelpers, type: :feature
+  config.include AppConfigHelpers
 end
 
 Shoulda::Matchers.configure do |config|

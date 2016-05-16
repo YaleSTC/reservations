@@ -4,9 +4,10 @@ require 'spec_helper'
 describe 'flag_overdue' do
   include_context 'rake'
 
-  before(:all) { FactoryGirl.create(:app_config) }
-
-  before(:each) { @res = FactoryGirl.create(:valid_reservation) }
+  before(:each) do
+    mock_app_config
+    @res = FactoryGirl.create(:valid_reservation)
+  end
 
   it 'flags reservations due yesterday as overdue' do
     @res.update_attributes(
@@ -36,9 +37,10 @@ end
 describe 'flag_missed' do
   include_context 'rake'
 
-  before(:all) { FactoryGirl.create(:app_config) }
-
-  before(:each) { @res = FactoryGirl.create(:valid_reservation) }
+  before(:each) do
+    mock_app_config
+    @res = FactoryGirl.create(:valid_reservation)
+  end
 
   it 'flags missed reservations as missed' do
     @res.update_attributes(start_date: Time.zone.yesterday,
@@ -61,9 +63,10 @@ end
 describe 'deny_missed_requests' do
   include_context 'rake'
 
-  before(:all) { FactoryGirl.create(:app_config) }
-
-  before(:each) { @res = FactoryGirl.create(:valid_reservation) }
+  before(:each) do
+    @ac = mock_app_config
+    @res = FactoryGirl.create(:valid_reservation)
+  end
 
   it 'flags missed requests as denied and expired' do
     @res.update_attributes(FactoryGirl.attributes_for(:request))
@@ -87,6 +90,8 @@ describe 'deny_missed_requests' do
   end
 
   it 'sends appropriate emails' do
+    allow(@ac).to receive(:admin_email).and_return('admin@email.com')
+    allow(@ac).to receive(:disable_user_emails).and_return(false)
     @res.update_attributes(FactoryGirl.attributes_for(:request))
     @res.update_attributes(start_date: Time.zone.yesterday,
                            due_date: Time.zone.today)

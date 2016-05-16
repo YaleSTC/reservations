@@ -25,10 +25,9 @@ shared_examples_for 'contains reservation' do
 end
 
 describe UserMailer, type: :mailer do
-  before(:all) do
-    @app_config = FactoryGirl.create(:app_config)
-  end
   before(:each) do
+    @ac = mock_app_config(admin_email: 'admin@email.com',
+                          disable_user_emails: false)
     ActionMailer::Base.delivery_method = :test
     ActionMailer::Base.perform_deliveries = true
     ActionMailer::Base.deliveries = []
@@ -199,7 +198,7 @@ describe UserMailer, type: :mailer do
     end
 
     it "doesn't send at all if disable_user_emails is set" do
-      AppConfig.first.update_attributes(disable_user_emails: true)
+      allow(@ac).to receive(:disable_user_emails).and_return(true)
       @mail = UserMailer.reservation_status_update(@res).deliver_now
       expect(@mail).to be_nil
     end

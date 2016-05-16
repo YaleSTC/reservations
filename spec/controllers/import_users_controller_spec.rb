@@ -15,9 +15,7 @@ shared_examples_for 'failure' do
 end
 
 describe ImportUsersController, type: :controller do
-  before(:all) do
-    @app_config = FactoryGirl.create(:app_config)
-  end
+  before(:each) { mock_app_config }
 
   before(:each) do
     sign_in FactoryGirl.create(:admin)

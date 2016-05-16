@@ -129,14 +129,18 @@ describe 'Reservations', type: :feature do
       after { sign_out }
 
       context 'without override permissions' do
-        before { AppConfig.first.update_attributes(override_on_create: false) }
+        before do
+          allow(@app_config).to receive(:override_on_create).and_return(false)
+        end
 
         it_behaves_like 'can create valid reservation', @user
         it_behaves_like 'can create reservation request', @user
       end
 
       context 'with override permissions' do
-        before { AppConfig.first.update_attributes(override_on_create: true) }
+        before do
+          allow(@app_config).to receive(:override_on_create).and_return(true)
+        end
 
         it_behaves_like 'can create failing reservation', @user
       end
@@ -147,14 +151,18 @@ describe 'Reservations', type: :feature do
       after { sign_out }
 
       context 'with override disabled' do
-        before { AppConfig.first.update_attributes(override_on_create: false) }
+        before do
+          allow(@app_config).to receive(:override_on_create).and_return(false)
+        end
 
         it_behaves_like 'can create valid reservation', @user
         it_behaves_like 'can create failing reservation', @user
       end
 
       context 'with override enabled' do
-        before { AppConfig.first.update_attributes(override_on_create: true) }
+        before do
+          allow(@app_config).to receive(:override_on_create).and_return(true)
+        end
 
         it_behaves_like 'can create failing reservation', @user
       end
@@ -165,14 +173,18 @@ describe 'Reservations', type: :feature do
       after { sign_out }
 
       context 'with override disabled' do
-        before { AppConfig.first.update_attributes(override_on_create: false) }
+        before do
+          allow(@app_config).to receive(:override_on_create).and_return(false)
+        end
 
         it_behaves_like 'can create valid reservation', @user
         it_behaves_like 'can create failing reservation', @user
       end
 
       context 'with override enabled' do
-        before { AppConfig.first.update_attributes(override_on_create: true) }
+        before do
+          allow(@app_config).to receive(:override_on_create).and_return(true)
+        end
 
         it_behaves_like 'can create failing reservation', @user
       end
@@ -433,7 +445,7 @@ describe 'Reservations', type: :feature do
 
     shared_examples 'can renew reservation when enabled and available' do
       it do
-        AppConfig.first.update_attributes(enable_renewals: true)
+        allow(@app_config).to receive(:enable_renewals).and_return(true)
         visit reservation_path(@res)
         expect(page).to have_content 'You are currently eligible to renew'
         click_link 'Renew Now', href: renew_reservation_path(@res)
@@ -444,7 +456,7 @@ describe 'Reservations', type: :feature do
 
     shared_examples 'cannot see renew button when disabled' do
       it do
-        AppConfig.first.update_attributes(enable_renewals: false)
+        allow(@app_config).to receive(:enable_renewals).and_return(false)
         visit reservation_path(@res)
         expect(page).not_to have_link 'Renew Now',
                                       href: renew_reservation_path(@res)
@@ -453,7 +465,7 @@ describe 'Reservations', type: :feature do
 
     shared_examples 'cannot renew reservation when unavailable' do
       it do
-        AppConfig.first.update_attributes(enable_renewals: true)
+        allow(@app_config).to receive(:enable_renewals).and_return(true)
         FactoryGirl.create :reservation, equipment_model: @eq_model,
                                          start_date: @res.due_date + 1.day,
                                          due_date: @res.due_date + 2.days
@@ -538,7 +550,7 @@ describe 'Reservations', type: :feature do
       it_behaves_like 'cannot renew reservation when unavailable'
 
       it 'can see renew button when disabled' do
-        AppConfig.first.update_attributes(enable_renewals: false)
+        allow(@app_config).to receive(:enable_renewals).and_return(false)
         visit reservation_path(@res)
         expect(page).to have_link 'Renew Now',
                                   href: renew_reservation_path(@res)
@@ -549,10 +561,7 @@ describe 'Reservations', type: :feature do
   context 'valid items on confirmation page' do
     before(:each) do
       empty_cart
-      select('10', from: 'items_per_page') # show more than 1 item (default)
-      find('#items_per_form').submit_form!
       add_item_to_cart(@eq_model)
-      add_item_to_cart(@eq_model2)
       update_cart_start_date(Time.zone.today)
       due_date = Time.zone.today + 1.day
       update_cart_due_date(due_date)
@@ -582,6 +591,7 @@ describe 'Reservations', type: :feature do
 
     shared_examples 'will load request page if item is invalid' do |reserver|
       before(:each) do
+        allow(@app_config).to receive(:override_on_create).and_return(false)
         visit new_reservation_path
       end
       let(:reserver) { reserver }
@@ -592,22 +602,20 @@ describe 'Reservations', type: :feature do
         fill_in "quantity_field_#{@eq_model.id}",
                 with: (@eq_model.max_per_user + 1)
         quantity_forms[0].submit_form!
-        fill_in "quantity_field_#{@eq_model2.id}",
-                with: (@eq_model2.max_per_user + 1)
-        quantity_forms[1].submit_form!
         # loading right page
         expect(page).to have_content 'Confirm Reservation Request'
         expect(page).to have_content AppConfig.get(:request_text)
         # changes applied
         expect(page).to \
           have_selector("input[value='#{@eq_model.max_per_user + 1}']")
-        expect(page).to \
-          have_selector("input[value='#{@eq_model2.max_per_user + 1}']")
       end
     end
 
     shared_examples 'can remove a valid item' do |reserver|
       before(:each) do
+        @eq_model2 = FactoryGirl.create(:equipment_model, category: @category)
+        FactoryGirl.create(:equipment_item, equipment_model: @eq_model2)
+        add_item_to_cart(@eq_model2)
         visit new_reservation_path
       end
       let(:reserver) { reserver }
@@ -625,6 +633,9 @@ describe 'Reservations', type: :feature do
 
     shared_examples 'can remove all items' do |reserver|
       before(:each) do
+        @eq_model2 = FactoryGirl.create(:equipment_model, category: @category)
+        FactoryGirl.create(:equipment_item, equipment_model: @eq_model2)
+        add_item_to_cart(@eq_model2)
         visit new_reservation_path
       end
       let(:reserver) { reserver }
@@ -667,6 +678,7 @@ describe 'Reservations', type: :feature do
 
     shared_examples 'will load request if invalid date change' do |reserver|
       before(:each) do
+        allow(@app_config).to receive(:override_on_create).and_return(false)
         visit new_reservation_path
       end
       let(:reserver) { reserver }
@@ -744,9 +756,8 @@ describe 'Reservations', type: :feature do
   context 'invalid items on confirm page' do
     before(:each) do
       empty_cart
-      # change items per page from 1 to 10 so second item shows up
-      select('10', from: 'items_per_page')
-      find('#items_per_form').submit_form!
+      @eq_model2 = FactoryGirl.create(:equipment_model, category: @category)
+      FactoryGirl.create(:equipment_item, equipment_model: @eq_model2)
       add_item_to_cart(@eq_model)
       add_item_to_cart(@eq_model2)
       quantity_forms = page.all('#quantity_form')
