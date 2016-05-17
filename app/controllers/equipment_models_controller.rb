@@ -205,31 +205,16 @@ class EquipmentModelsController < ApplicationController
     :reserver
   end
 
-  def calculate_availability # rubocop:disable all
+  def calculate_availability
     # get start and end dates
     @start_date = Time.zone.today.beginning_of_week(:sunday)
     @end_date = (Time.zone.today + 1.month).end_of_week(:sunday)
 
-    reservations =
-      (Reservation.for_eq_model(@equipment_model.id).active
-        .overlaps_with_date_range(@start_date, @end_date) + \
-      Reservation.for_eq_model(@equipment_model).overdue).uniq
     max_avail = @equipment_model.equipment_items.active.count
 
     @avail_data = []
     (@start_date..@end_date).map do |date|
-      count = 0
-      # also hack-y, we need to fix these methods
-      reservations.each do |res|
-        if res.overdue && res.checked_out?
-          count += 1
-        elsif res.start_date <= date && res.due_date >= date
-          count += 1
-        end
-      end
-
-      availability = max_avail - count
-
+      availability = @equipment_model.num_available_on(date)
       # set up colors
       if date < Time.zone.today
         color = '#888'

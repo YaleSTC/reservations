@@ -105,49 +105,57 @@ module CartValidations
     errors
   end
 
-  def check_max_items(count_hash, relevant, count_method)
-    # generic method for making sure the count_hash doesn't
-    # contain more than the item max when taking into account
-    # the relevant reservations
-
-    errors = []
-    count_hash.each do |item, q|
-      max = item.maximum_per_user
-
-      start_date.upto(due_date) do |d|
-        unless Reservation.send(count_method, d, item.id, relevant) + q > max
-          next
-        end
-        errors << "Only #{max} #{item.name.pluralize(max)} "\
-          'can be reserved at a time.'
-      end
-    end
-    errors
-  end
-
   def check_max_ems
     # check to make sure that the cart's EMs + the current resever's
     # EMs doesn't exceed any limits
+    # 1 query
 
-    count_hash = get_items
-    relevant = Reservation.for_reserver(reserver_id).active
-               .includes(:equipment_model).all
-    check_max_items(count_hash, relevant, :number_for_model_on_date)
+    # get reserver's active reservations
+    source = Reservation.active.for_reserver(reserver_id)
+
+    errors = []
+    get_items.each do |model, number_in_cart|
+      # get highest number of items reserved in date range of cart
+      valid = Reservation.number_for_date_range(source, start_date..due_date,
+                                                equipment_model_id: model.id,
+                                                overdue: false).max
+      valid ||= 0
+      # count overdue reservations for this eq model
+      overdue = source.count { |r| r.equipment_model == model && r.overdue }
+
+      next unless valid + overdue + number_in_cart > model.maximum_per_user
+
+      max = model.maximum_per_user
+      errors << "Only #{max} #{model.name.pluralize(max)} "\
+        'can be reserved at a time.'
+    end
+    errors
   end
 
   def check_max_cat
     # same but for categories. we need to build the counts of the
     # categories ourselves though
+    # 2 queries
 
-    cat_hash = {}
-    ems = EquipmentModel.where(id: items.keys).includes(:category)
-    items.each_with_index do |(_em_id, q), index|
-      cat_hash[ems[index].category] ||= 0
-      cat_hash[ems[index].category] += q
+    cat_hash = get_categories
+
+    source = Reservation.for_reserver(reserver_id).with_categories.active
+
+    # split overdue and non overdue reservations
+    overdue, source = source.partition(&:overdue)
+
+    errors = []
+    cat_hash.each do |cat, q|
+      max = cat.maximum_per_user
+      s = source.select { |r| r.equipment_model.category == cat }
+      s = Reservation.number_for_date_range(s, start_date..due_date).max
+      s ||= 0
+      o = overdue.count { |r| r.equipment_model.category == cat }
+      next unless s + o + q > max
+      errors << "Only #{max} #{cat.name.pluralize(max)} "\
+        'can be reserved at a time.'
     end
-    relevant = Reservation.for_reserver(reserver_id).active
-               .with_categories.all
-    check_max_items(cat_hash, relevant, :number_for_category_on_date)
+    errors
   end
 
   def check_availability(model = EquipmentModel.find(items.keys.first),
@@ -174,8 +182,7 @@ module CartValidations
     # 2 queries
 
     errors = []
-    max_available = model.num_available_from_source(start_date, due_date,
-                                                    source_res)
+    max_available = model.num_available(start_date, due_date, source_res)
     return errors unless max_available < quantity
     if max_available == 0
       error = "No #{model.name.pluralize} are"

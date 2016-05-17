@@ -246,8 +246,7 @@ class ApplicationController < ActionController::Base
       # build the hash using class methods that use 0 queries
       @availability_hash[em.id] =
         [EquipmentItem.for_eq_model(em.id, eq_items)\
-        - Reservation.number_overdue_for_eq_model(em.id, source_reservations)\
-        - em.num_reserved(cart.start_date, cart.due_date, source_reservations)\
+        - em.num_busy(cart.start_date, cart.due_date, source_reservations)\
         - cart.items[em.id].to_i, 0].max
 
       # have requirements as part of equipment model itself

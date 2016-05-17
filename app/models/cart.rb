@@ -31,6 +31,16 @@ class Cart # rubocop:disable ClassLength
     full_hash
   end
 
+  def get_categories # rubocop:disable AccessorMethodName
+    cat_hash = {}
+    ems = EquipmentModel.where(id: items.keys).includes(:category)
+    items.each_with_index do |(_em_id, q), index|
+      cat_hash[ems[index].category] ||= 0
+      cat_hash[ems[index].category] += q
+    end
+    cat_hash
+  end
+
   # Adds equipment model id to items hash
   def add_item(equipment_model, _quantity = nil)
     return if equipment_model.nil?

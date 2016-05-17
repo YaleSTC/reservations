@@ -28,10 +28,10 @@
         <% else %>
           <td class="text-center"><span class="label label-danger">None Available</span></td>
         <% end %>
-        <td class="text-center"><%= equipment_model.available_count(Time.zone.today) %></td>
-        <td class="text-center"><%= equipment_model.num_reserved(Time.zone.today, Time.zone.today, equipment_model.reservations)%></td>
+        <td class="text-center"><%= equipment_model.num_available_on(Time.zone.today) %></td>
+        <td class="text-center"><%= equipment_model.num_busy(Time.zone.today, Time.zone.today, equipment_model.reservations)%></td>
         <td class="text-center"><%= equipment_model.reservations.checked_out.count %></td>
-        <td class="text-center"><%= equipment_model.number_overdue %></td>
+        <td class="text-center"><%= equipment_model.overdue_count %></td>
         <td class="text-center"><%= equipment_model.equipment_items.count %></td>
         <% if can? :manage, EquipmentModel %>
           <td class="text-center"><%= link_to "Edit", edit_equipment_model_path(equipment_model), class: "btn btn-default" %></td>

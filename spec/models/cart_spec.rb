@@ -183,7 +183,7 @@ describe Cart, type: :model do
   describe 'check_consecutive' do
     before(:each) do
       @em = FactoryGirl.create(:equipment_model)
-      2.times { FactoryGirl.create(:equipment_item, equipment_model: @em) }
+      FactoryGirl.create_pair(:equipment_item, equipment_model: @em)
       @cart.add_item(@em)
     end
 
@@ -239,5 +239,65 @@ describe Cart, type: :model do
 
     it_behaves_like 'with a consecutive reservation', :valid_reservation
     it_behaves_like 'with a consecutive reservation', :checked_out_reservation
+  end
+  describe 'check_max_ems' do
+    before(:each) do
+      @em = FactoryGirl.create(:equipment_model, max_per_user: 1)
+      FactoryGirl.create_pair(:equipment_item, equipment_model: @em)
+      @cart.add_item(@em)
+    end
+    it "passes when the reserver doesn't exceed the item limit" do
+      expect(@cart.check_max_ems).to eq([])
+    end
+    it 'passes when the cart contains multiple models' do
+      em_2 = FactoryGirl.create(:equipment_model, max_per_user: 1)
+      FactoryGirl.create_pair(:equipment_item, equipment_model: em_2)
+      @cart.add_item(em_2)
+      expect(@cart.check_max_ems).to eq([])
+    end
+    it 'fails when the reserver exceeds the item limit' do
+      FactoryGirl.create(:valid_reservation,
+                         reserver: User.find_by(id: @cart.reserver_id),
+                         equipment_model: @em)
+      expect(@cart.check_max_ems).not_to eq([])
+    end
+    it 'fails when the reserver exceeds the item limit with an overdue res' do
+      FactoryGirl.create(:overdue_reservation,
+                         reserver: User.find_by(id: @cart.reserver_id),
+                         equipment_model: @em)
+      expect(@cart.check_max_ems).not_to eq([])
+    end
+  end
+  describe 'check_max_cat' do
+    before(:each) do
+      @cat = FactoryGirl.create(:category, max_per_user: 1)
+      @ems = FactoryGirl.create_pair(:equipment_model, category: @cat)
+      @ems.each do |em|
+        FactoryGirl.create_pair(:equipment_item, equipment_model: em)
+      end
+      @cart.add_item(@ems.first)
+    end
+    it "passes when the reserver doesn't exceed the item limit" do
+      expect(@cart.check_max_cat).to eq([])
+    end
+    it 'passes when the cart has items from multiple categories' do
+      cat_2 = FactoryGirl.create(:category, max_per_user: 1)
+      em_3 = FactoryGirl.create(:equipment_model, category: cat_2)
+      FactoryGirl.create_pair(:equipment_item, equipment_model: em_3)
+      @cart.add_item(em_3)
+      expect(@cart.check_max_cat).to eq([])
+    end
+    it 'fails when the reserver exceeds the item limit' do
+      FactoryGirl.create(:valid_reservation,
+                         reserver: User.find_by(id: @cart.reserver_id),
+                         equipment_model: @ems.last)
+      expect(@cart.check_max_cat).not_to eq([])
+    end
+    it 'fails when the reserver exceeds the item limit with an overdue res' do
+      FactoryGirl.create(:overdue_reservation,
+                         reserver: User.find_by(id: @cart.reserver_id),
+                         equipment_model: @ems.last)
+      expect(@cart.check_max_cat).not_to eq([])
+    end
   end
 end

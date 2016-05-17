@@ -209,11 +209,10 @@ describe EquipmentModelsController, type: :controller do
 
       context 'with returned reservation' do
         before do
-          r = FactoryGirl.build(:checked_in_reservation,
-                                equipment_model: @model,
-                                start_date: Time.zone.today - 1.day,
-                                due_date: Time.zone.today + 1.day)
-          r.save(validate: false)
+          FactoryGirl.create(:checked_in_reservation,
+                             equipment_model: @model,
+                             start_date: Time.zone.today - 1.day,
+                             due_date: Time.zone.today + 1.day)
         end
 
         it_behaves_like 'calculates availability correctly', 2
@@ -232,12 +231,13 @@ describe EquipmentModelsController, type: :controller do
 
       context 'with overdue reservation' do
         before do
-          r = FactoryGirl.build(:overdue_reservation,
-                                equipment_model: @model,
-                                start_date: Time.zone.today - 1.day,
-                                due_date: Time.zone.today - 1.day,
-                                equipment_item: @model.equipment_items.first)
-          r.save(validate: false)
+          FactoryGirl.create(:overdue_reservation,
+                             equipment_model: @model,
+                             start_date: Time.zone.today - 1.day,
+                             due_date: Time.zone.today - 1.day,
+                             equipment_item: @model.equipment_items.first)
+          # needed to persist overdue_count
+          @model.save
         end
 
         it_behaves_like 'calculates availability correctly', 1
@@ -245,12 +245,11 @@ describe EquipmentModelsController, type: :controller do
 
       context 'with checked out reservation' do
         before do
-          r = FactoryGirl.build(:checked_out_reservation,
-                                equipment_model: @model,
-                                start_date: Time.zone.today - 1.day,
-                                due_date: Time.zone.today + 1.day,
-                                equipment_item: @model.equipment_items.first)
-          r.save(validate: false)
+          FactoryGirl.create(:checked_out_reservation,
+                             equipment_model: @model,
+                             start_date: Time.zone.today - 1.day,
+                             due_date: Time.zone.today + 1.day,
+                             equipment_item: @model.equipment_items.first)
         end
 
         it_behaves_like 'calculates availability correctly', 1
@@ -262,12 +261,13 @@ describe EquipmentModelsController, type: :controller do
                              equipment_model: @model,
                              start_date: Time.zone.today + 1.day,
                              due_date: Time.zone.today + 1.day)
-          r = FactoryGirl.build(:overdue_reservation,
-                                equipment_model: @model,
-                                start_date: Time.zone.today - 1.day,
-                                due_date: Time.zone.today - 1.day,
-                                equipment_item: model.equipment_items.first)
-          r.save(validate: false)
+          FactoryGirl.create(:overdue_reservation,
+                             equipment_model: @model,
+                             start_date: Time.zone.today - 1.day,
+                             due_date: Time.zone.today - 1.day,
+                             equipment_item: @model.equipment_items.first)
+          # needed to persist overdue_count
+          @model.save
         end
 
         it_behaves_like 'calculates availability correctly', 0
