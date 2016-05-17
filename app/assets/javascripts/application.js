@@ -2,6 +2,7 @@
 //= require jquery_ujs
 //= require datatables.min.js
 //= require jquery-ui/datepicker
+//= require jquery-ui-timepicker-addon
 //= require jquery-ui/autocomplete
 //= require cocoon
 //= require autocomplete-rails

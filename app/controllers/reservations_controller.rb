@@ -361,7 +361,7 @@ class ReservationsController < ApplicationController
         end
       rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid => e
         flash[:error] = "Checking in your reservation failed: #{e.message}"
-        redirect_to :back
+        redirect_to(:back) && return
         raise ActiveRecord::Rollback
       end
     end
