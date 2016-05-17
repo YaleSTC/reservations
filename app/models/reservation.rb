@@ -25,7 +25,7 @@ class Reservation < ActiveRecord::Base
   validate :not_in_past, :available, :check_banned, on: :create
 
   # correctly update the overdue flag if necessary
-  before_save :update_overdue, if: :checked_out?
+  before_save :update_overdue, if: :checked_out?, unless: self.changes.empty?
 
   nilify_blanks only: [:notes]
 
@@ -428,7 +428,6 @@ class Reservation < ActiveRecord::Base
             old_val = diff[0] ? diff[0].to_s(:long) : 'nil'
             new_val = diff[1] ? diff[1].to_s(:long) : 'nil'
           end
-          update_overdue
           self.notes += "\n#{name} changed from " + old_val + ' to '\
             + new_val + '.' + overdue_str.to_s
         end
