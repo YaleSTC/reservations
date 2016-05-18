@@ -25,7 +25,7 @@ class Reservation < ActiveRecord::Base
   validate :not_in_past, :available, :check_banned, on: :create
 
   # correctly update the overdue flag if necessary
-  before_save :update_overdue, if: :checked_out?, unless: self.changes.empty?
+  before_save :update_overdue
 
   nilify_blanks only: [:notes]
 
@@ -488,8 +488,10 @@ class Reservation < ActiveRecord::Base
   private
 
   def update_overdue
-    return true unless checked_out?
-    self.overdue = due_date < Time.zone.today
-    true # so we don't halt the transaction if it's not overdue
+    if (checked_out? || !self.changes.empty?)
+      return true unless checked_out?
+      self.overdue = due_date < Time.zone.today
+      true # so we don't halt the transaction if it's not overdue
+    end
   end
 end
