@@ -488,10 +488,8 @@ class Reservation < ActiveRecord::Base
   private
 
   def update_overdue
-    if checked_out? || !changes.empty?
-      return true unless checked_out?
+    return true unless checked_out? || changes.empty?
       self.overdue = due_date < Time.zone.today
       true # so we don't halt the transaction if it's not overdue
-    end
   end
 end
