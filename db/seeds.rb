@@ -23,6 +23,7 @@
 
 require 'ffaker'
 require 'ruby-progressbar'
+include ActiveSupport::Testing::TimeHelpers
 
 # rubocop:disable Rails/Output
 
@@ -61,6 +62,9 @@ OVERDUE_CHANCE = 0.3
 
 # odds a scheduled reservation has not been picked up
 MISSED_CHANCE = 0.2
+
+# odds that a checked out reservation has been returned
+RETURNED_CHANCE = 0.5
 
 # time in the future reservations could be scheduled
 FUTURE_RANGE = 3.months
@@ -277,9 +281,12 @@ def throw_into_past(res)
   factor = rand(1.day..PAST_RANGE)
   res.start_date = res.start_date - factor
   res.due_date = res.due_date - factor
+  travel_to(res.start_date) { res.save }
   mark_checked_out res
+  return if res.status == 'missed' || rand < RETURNED_CHANCE
+
   mark_checked_in(res, res.equipment_model.category.max_checkout_length)
-  res.save(validate: false)
+  travel_to(res.due_date) { res.save } unless res.overdue
 end
 
 # rubocop:disable AbcSize, MethodLength
@@ -299,10 +306,9 @@ def generate_reservation
                              checkout_length.days).to_date
     res.notes = FFaker::HipsterIpsum.paragraph(8)
     res.notes_unsent = [true, false].sample
-    if rand < PAST_CHANCE
-      throw_into_past res
-      return
-    end
+
+    throw_into_past res if rand < PAST_CHANCE
+
     try_again = false
     begin
       res.save!
