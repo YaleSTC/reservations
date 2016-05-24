@@ -69,8 +69,8 @@ RailsAdmin.config do |config|
     end
 
     ## With an audit adapter, you can add:
-    # history_index
-    # history_show
+    history_index
+    history_show
   end
 
   # Include only models we care about
