@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe EquipmentItemsController, type: :controller do
-  before(:all) { @app_config = FactoryGirl.create(:app_config) }
+  before(:each) { mock_app_config }
   let!(:item) { FactoryGirl.create(:equipment_item) }
   let!(:deactivated_item) { FactoryGirl.create(:deactivated) }
 
@@ -342,6 +342,4 @@ describe EquipmentItemsController, type: :controller do
       end
     end
   end
-
-  after(:all) { @app_config.destroy }
 end

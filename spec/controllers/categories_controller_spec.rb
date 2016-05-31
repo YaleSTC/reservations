@@ -1,10 +1,8 @@
 require 'spec_helper'
 
 describe CategoriesController, type: :controller do
-  before(:all) do
-    @app_config = FactoryGirl.create(:app_config)
-  end
   before(:each) do
+    mock_app_config
     @category = FactoryGirl.create(:category)
   end
 
@@ -185,8 +183,5 @@ describe CategoriesController, type: :controller do
         it { is_expected.not_to set_flash }
       end
     end
-  end
-  after(:all) do
-    @app_config.destroy
   end
 end

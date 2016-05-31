@@ -1,12 +1,14 @@
 require 'spec_helper'
 
 describe ContactController, type: :controller do
-  before(:all) do
-    @app_config = FactoryGirl.create(:app_config)
-  end
   before(:each) do
     @category = FactoryGirl.create(:category)
     sign_in FactoryGirl.create(:user)
+
+    # goes after the above to skip certain user validations
+    @ac = mock_app_config(contact_email: 'contact@email.com',
+                          admin_email: 'admin@email.com',
+                          site_title: 'Reservations Specs')
   end
   describe 'GET new' do
     before(:each) do
@@ -48,8 +50,8 @@ describe ContactController, type: :controller do
   end
   context 'with contact e-mail set' do
     before do
-      AppConfig.first
-        .update_attributes(contact_link_location: 'contact@example.com')
+      allow(@ac).to receive(:contact_link_location)
+        .and_return('contact@example.com')
       post :create, message: FactoryGirl.attributes_for(:message)
     end
 
@@ -60,7 +62,7 @@ describe ContactController, type: :controller do
   end
   context 'with contact e-mail not set' do
     before do
-      AppConfig.first.update_attributes(contact_link_location: '')
+      allow(@ac).to receive(:contact_link_location).and_return('')
       post :create, message: FactoryGirl.attributes_for(:message)
     end
 
@@ -68,8 +70,5 @@ describe ContactController, type: :controller do
       expect(ActionMailer::Base.deliveries.last.to).to\
         include(AppConfig.first.admin_email)
     end
-  end
-  after(:all) do
-    @app_config.destroy
   end
 end

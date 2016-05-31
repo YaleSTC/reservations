@@ -4,9 +4,9 @@ require 'spec_helper'
 describe 'email_missed_reservations' do
   include_context 'rake'
 
-  before(:all) { FactoryGirl.create(:app_config) }
-
   before(:each) do
+    mock_app_config(admin_email: 'admin@email.com', disable_user_emails: false,
+                    send_notifications_for_deleted_missed_reservations: true)
     @missed = FactoryGirl.create(:missed_reservation,
                                  start_date: Time.zone.today - 2.days,
                                  due_date: Time.zone.today - 1.day)

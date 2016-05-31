@@ -2,20 +2,17 @@ require 'spec_helper'
 
 describe ReportsController, type: :controller do
   before(:all) do
-    @app_config = FactoryGirl.create(:app_config)
     @user = FactoryGirl.create(:user)
     @banned = FactoryGirl.create(:banned)
     @checkout_person = FactoryGirl.create(:checkout_person)
     @admin = FactoryGirl.create(:admin)
   end
 
-  after(:all) do
-    AppConfig.delete_all
-    User.delete_all
-  end
-
   context 'as admin user' do
-    before(:each) { sign_in @admin }
+    before(:each) do
+      mock_app_config
+      sign_in @admin
+    end
 
     describe 'PUT /reports/update' do
       it 'defaults to the past year without a session or params' do

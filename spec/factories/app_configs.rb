@@ -11,7 +11,7 @@ FactoryGirl.define do
     contact_link_location 'contact@email.com'
     home_link_text 'MyString'
     home_link_location 'MyString'
-    default_per_cat_page 1
+    default_per_cat_page 10
     upcoming_checkin_email_body 'MyText'
     upcoming_checkout_email_body 'MyText'
     overdue_checkin_email_body 'MyText'

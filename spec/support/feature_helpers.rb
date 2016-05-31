@@ -2,14 +2,11 @@ module FeatureHelpers
   # make sure we have a working app
   def app_setup
     AppConfig.delete_all
-    @app_config = FactoryGirl.create(:app_config)
+    @app_config = mock_app_config(**FactoryGirl.attributes_for(:app_config))
     @category = FactoryGirl.create(:category)
     @eq_model =
       FactoryGirl.create(:equipment_model, category: @category)
-    @eq_model2 =
-      FactoryGirl.create(:equipment_model, category: @category)
     @eq_item = FactoryGirl.create(:equipment_item, equipment_model: @eq_model)
-    @eq_item2 = FactoryGirl.create(:equipment_item, equipment_model: @eq_model2)
     @admin = FactoryGirl.create(:admin)
     @superuser = FactoryGirl.create(:superuser)
     @checkout_person = FactoryGirl.create(:checkout_person)

@@ -135,9 +135,6 @@ describe AppConfigsController, type: :controller do
       end
     end
     context 'app_config does not exist yet' do
-      before(:all) do
-        AppConfig.destroy_all
-      end
       before(:each) do
         sign_in FactoryGirl.create(:user)
         post :update

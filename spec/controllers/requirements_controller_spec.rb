@@ -4,10 +4,8 @@ require 'spec_helper'
 # -- namely, it was necessary to test two contexts for each method: the user
 # being an admin, and not.
 describe RequirementsController, type: :controller do
-  before(:all) do
-    @app_config = FactoryGirl.create(:app_config)
-  end
   before(:each) do
+    mock_app_config
     @requirement = FactoryGirl.create(:requirement, contact_name: 'Adam Bray')
   end
   describe 'GET index' do
@@ -211,8 +209,5 @@ describe RequirementsController, type: :controller do
         expect(response).to redirect_to(root_url)
       end
     end
-  end
-  after(:all) do
-    @app_config.destroy
   end
 end
