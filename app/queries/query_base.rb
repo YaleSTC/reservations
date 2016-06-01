@@ -4,10 +4,10 @@ class QueryBase
   end
 
   def initialize
-    fail NotImplementedError
+    raise NotImplementedError
   end
 
   def call
-    fail NotImplementedError
+    raise NotImplementedError
   end
 end

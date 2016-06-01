@@ -5,7 +5,7 @@ describe 'Users', type: :feature do
     shared_examples 'can ban other users' do
       it do
         visit user_path(@user)
-        expect(page).to have_link 'Ban', ban_user_path(@user)
+        expect(page).to have_link 'Ban', href: ban_user_path(@user)
         click_link 'Ban'
         expect { @user.reload }.to change { @user.role }.to('banned')
       end

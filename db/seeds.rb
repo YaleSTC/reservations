@@ -75,7 +75,7 @@ PAST_RANGE = 1.year
 IMAGES = Dir.glob(File.join(Rails.root, 'db', 'seed_images', '*'))
 
 # Progress bar format string
-PROGRESS_STR = '%t: [%B] %P%% | %c / %C | %E'
+PROGRESS_STR = '%t: [%B] %P%% | %c / %C | %E'.freeze
 
 #-------METHODS
 
@@ -258,8 +258,8 @@ def mark_checked_in(res, checkout_length)
     res.checked_in = time_rand(res.checked_out, res.checked_out.next_week,
                                checkout_length).to_datetime
     res.checkin_handler_id = User.where('role = ? OR role = ? OR role = ?',
-                                        'checkout', 'admin', 'superuser'
-                                       ).all.sample.id
+                                        'checkout', 'admin', 'superuser')
+                                 .all.sample.id
   end
 end
 
@@ -272,8 +272,8 @@ def mark_checked_out(res)
     res.checked_out = res.start_date
     res.equipment_item = res.equipment_model.equipment_items.all.sample
     res.checkout_handler_id = User.where('role = ? OR role = ? OR role = ?',
-                                         'checkout', 'admin', 'superuser'
-                                        ).all.sample.id
+                                         'checkout', 'admin', 'superuser')
+                                  .all.sample.id
   end
 end
 
@@ -324,7 +324,7 @@ end
 def generate_objs(method, obj, n)
   return if n == 0
   progress = ProgressBar.create(format: PROGRESS_STR, total: n)
-  n.times.map do
+  n.times do
     progress.increment
     send(method)
   end
@@ -358,13 +358,12 @@ if User.where('role = ?', 'superuser').empty?
     if ENV['CAS_AUTH']
       prompt_field(u, :cas_login)
       u.username = u.cas_login
-      u.save
     else
       u.username = u.email
       u.password = 'passw0rd'
       u.password_confirmation = u.password
-      u.save
     end
+    u.save
   else
     puts 'We need to create an account for you first.' \
       'Please enter the following info:'

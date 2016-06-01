@@ -87,7 +87,8 @@ class EquipmentItemsController < ApplicationController
         @equipment_item.current_reservation.archive(
           current_user,
           'The equipment item was deactivated for the following reason: '\
-          "**#{params[:deactivation_reason]}**").save(validate: false)
+          "**#{params[:deactivation_reason]}**"
+        ).save(validate: false)
       end
       super
     elsif params[:deactivation_cancelled]
@@ -112,8 +113,8 @@ class EquipmentItemsController < ApplicationController
 
   def equipment_item_params
     params.require(:equipment_item)
-      .permit(:name, :serial, :deleted_at, :equipment_model_id,
-              :deactivation_reason, :notes)
+          .permit(:name, :serial, :deleted_at, :equipment_model_id,
+                  :deactivation_reason, :notes)
   end
 
   def generate_calendar_reservations

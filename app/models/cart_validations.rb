@@ -26,7 +26,7 @@ module CartValidations
 
     source_res =
       Reservation.where(equipment_model_id: items.keys)
-      .overlaps_with_date_range(start_date, due_date).active.all
+                 .overlaps_with_date_range(start_date, due_date).active.all
 
     models.each do |model, quantity|
       errors += check_availability(model, quantity, source_res)
@@ -52,8 +52,9 @@ module CartValidations
     models = get_items.keys
     models.each do |model|
       next unless model.maximum_per_user == 1 && model.maximum_checkout_length
-      consecutive = Reservation.for_reserver(reserver).for_eq_model(model)
-                    .consecutive_with(start_date, due_date)
+      consecutive =
+        Reservation.for_reserver(reserver).for_eq_model(model)
+                   .consecutive_with(start_date, due_date)
 
       consecutive.each do |c|
         next unless c.duration + duration > model.maximum_checkout_length
@@ -162,7 +163,7 @@ module CartValidations
                          quantity = 1,
                          source_res =
                            Reservation.for_eq_model(items.keys.first)
-                             .active.all)
+                                      .active.all)
 
     # checks that the model is available for the given quantity given the
     # existence of the source_reservations

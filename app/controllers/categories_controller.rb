@@ -15,11 +15,11 @@ class CategoriesController < ApplicationController
   # --------- end before filter methods -------- #
 
   def index
-    if params[:show_deleted]
-      @categories = Category.all
-    else
-      @categories = Category.active
-    end
+    @categories = if params[:show_deleted]
+                    Category.all
+                  else
+                    Category.active
+                  end
     respond_to do |format|
       format.html
       format.zip { download_equipment_data }
@@ -72,7 +72,7 @@ class CategoriesController < ApplicationController
       @category.equipment_models.each do |em|
         Reservation.for_eq_model(em.id).finalized.each do |r|
           r.archive(current_user, 'The category was deactivated.')
-            .save(validate: false)
+           .save(validate: false)
         end
       end
       super
@@ -86,9 +86,9 @@ class CategoriesController < ApplicationController
 
   def category_params
     params.require(:category)
-      .permit(:name, :max_per_user, :max_checkout_length, :deleted_at,
-              :max_renewal_times, :max_renewal_length, :sort_order,
-              :renewal_days_before_due)
+          .permit(:name, :max_per_user, :max_checkout_length, :deleted_at,
+                  :max_renewal_times, :max_renewal_length, :sort_order,
+                  :renewal_days_before_due)
   end
 
   def generate_calendar_reservations

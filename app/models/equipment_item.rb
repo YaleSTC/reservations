@@ -20,9 +20,9 @@ class EquipmentItem < ActiveRecord::Base
   searchable_on(:name, :serial)
 
   def status
-    if self.deleted? && deactivation_reason
+    if deleted? && deactivation_reason
       "Deactivated (#{deactivation_reason})"
-    elsif self.deleted?
+    elsif deleted?
       'Deactivated'
     elsif r = current_reservation # rubocop:disable AssignmentInCondition
       "checked out by #{r.reserver.name} through "\
@@ -57,11 +57,11 @@ class EquipmentItem < ActiveRecord::Base
     new_str = "#### #{reservation.md_link(procedure_verb.capitalize)} by "\
       "#{handler.md_link} for #{reservation.reserver.md_link} on "\
       "#{time.to_s(:long)}\n"
-    if new_notes.empty?
-      new_str += "\n"
-    else
-      new_str += "##### Notes:\n#{new_notes}\n\n"
-    end
+    new_str += if new_notes.empty?
+                 "\n"
+               else
+                 "##### Notes:\n#{new_notes}\n\n"
+               end
     new_str += notes
     update_attributes(notes: new_str)
   end
@@ -71,37 +71,34 @@ class EquipmentItem < ActiveRecord::Base
     old_res_msg = old_res ? old_res.md_link : 'available'
     new_res_msg = new_res ? new_res.md_link : 'available'
     update_attributes(notes: "#### Switched by #{handler.md_link} from "\
-      "#{old_res_msg} to #{new_res_msg} on "\
-      "#{Time.zone.now.to_s(:long)}\n\n" + notes)
+                      "#{old_res_msg} to #{new_res_msg} on "\
+                      "#{Time.zone.now.to_s(:long)}\n\n" + notes)
   end
 
   def update(current_user, new_params) # rubocop:disable all
     assign_attributes(new_params)
     changes = self.changes
-    if changes.empty?
-      return self
-    else
-      new_notes = "#### Edited at #{Time.zone.now.to_s(:long)} by "\
-        "#{current_user.md_link}\n\n"
-      new_notes += "\n\n#### Changes:"
-      changes.each do |param, diff|
-        case param
-        when 'name'
-          name = 'Name'
-          old_val = diff[0].to_s
-          new_val = diff[1].to_s
-        when 'serial'
-          name = 'Serial'
-          old_val = diff[0].to_s
-          new_val = diff[1].to_s
-        when 'equipment_model_id'
-          name = 'Equipment Model'
-          old_val = diff[0] ? EquipmentModel.find(diff[0]).name : 'nil'
-          new_val = diff[1] ? EquipmentModel.find(diff[1]).name : 'nil'
-        end
-        new_notes += "\n#{name} changed from " + old_val + ' to ' + new_val\
-          + '.' if old_val && new_val
+    return self if changes.empty?
+    new_notes = "#### Edited at #{Time.zone.now.to_s(:long)} by "\
+      "#{current_user.md_link}\n\n"
+    new_notes += "\n\n#### Changes:"
+    changes.each do |param, diff|
+      case param
+      when 'name'
+        name = 'Name'
+        old_val = diff[0].to_s
+        new_val = diff[1].to_s
+      when 'serial'
+        name = 'Serial'
+        old_val = diff[0].to_s
+        new_val = diff[1].to_s
+      when 'equipment_model_id'
+        name = 'Equipment Model'
+        old_val = diff[0] ? EquipmentModel.find(diff[0]).name : 'nil'
+        new_val = diff[1] ? EquipmentModel.find(diff[1]).name : 'nil'
       end
+      new_notes += "\n#{name} changed from " + old_val + ' to ' + new_val\
+        + '.' if old_val && new_val
     end
     new_notes += "\n\n" + notes
     self.notes = new_notes.strip
@@ -126,7 +123,7 @@ class EquipmentItem < ActiveRecord::Base
       "#{options[:user].md_link}\n#{options[:reason]}\n\n" + notes
     self.notes = new_notes
     self.deactivation_reason = options[:reason]
-    self.save!
+    save!
     destroy
     self
   end

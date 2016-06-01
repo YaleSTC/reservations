@@ -203,7 +203,7 @@ describe 'Reservations', type: :feature do
                                               equipment_model: @eq_model
         @user.update_attributes(role: 'banned')
         visit manage_reservations_for_user_path(@user)
-        check "#{@checked_out_res.equipment_item.name}"
+        check @checked_out_res.equipment_item.name.to_s
         click_button 'Check-In Equipment'
 
         expect(page).to have_content 'Check-In Receipt'
@@ -218,7 +218,7 @@ describe 'Reservations', type: :feature do
         @user.update_attributes(role: 'banned')
         # check out
         visit manage_reservations_for_user_path(@user)
-        select "#{@eq_model.equipment_items.first.name}", from: 'Equipment Item'
+        select @eq_model.equipment_items.first.name.to_s, from: 'Equipment Item'
         click_button 'Check-Out Equipment'
         expect(page).to have_content 'Banned users cannot check out equipment'
       end
@@ -257,7 +257,7 @@ describe 'Reservations', type: :feature do
       it 'checks out and checks in successfully' do
         # check out
         visit manage_reservations_for_user_path(@user)
-        select "#{@eq_model.equipment_items.first.name}", from: 'Equipment Item'
+        select @eq_model.equipment_items.first.name.to_s, from: 'Equipment Item'
         click_button 'Check-Out Equipment'
 
         expect(page).to have_content 'Check-Out Receipt'
@@ -276,7 +276,7 @@ describe 'Reservations', type: :feature do
 
         # check in
         visit manage_reservations_for_user_path(@user)
-        check "#{@res.equipment_item.name}"
+        check @res.equipment_item.name.to_s
         click_button 'Check-In Equipment'
 
         expect(page).to have_content 'Check-In Receipt'
@@ -294,7 +294,7 @@ describe 'Reservations', type: :feature do
       it 'does not update equipment items for missing ToS checkbox' do
         @user.update_attributes(terms_of_service_accepted: false)
         visit manage_reservations_for_user_path(@user)
-        select "#{@eq_model.equipment_items.first.name}", from: 'Equipment Item'
+        select @eq_model.equipment_items.first.name.to_s, from: 'Equipment Item'
         click_button 'Check-Out Equipment'
 
         expect(page).to have_content 'You must confirm that the user accepts '\
@@ -310,9 +310,9 @@ describe 'Reservations', type: :feature do
                                    reserver: @user,
                                    equipment_model: @eq_model
         visit manage_reservations_for_user_path(@user)
-        select "#{@eq_model.equipment_items.first.name}",
+        select @eq_model.equipment_items.first.name.to_s,
                from: "reservations_#{@res.id}_equipment_item_id"
-        select "#{@eq_model.equipment_items.first.name}",
+        select @eq_model.equipment_items.first.name.to_s,
                from: "reservations_#{@res2.id}_equipment_item_id"
         click_button 'Check-Out Equipment'
 
@@ -374,7 +374,7 @@ describe 'Reservations', type: :feature do
 
         it 'fails when the box isn\'t checked off' do
           # skip the checkbox
-          select "#{@eq_model.equipment_items.first.name}",
+          select @eq_model.equipment_items.first.name.to_s,
                  from: 'Equipment Item'
           click_button 'Check-Out Equipment'
 
@@ -386,7 +386,7 @@ describe 'Reservations', type: :feature do
 
         it 'succeeds when the box is checked off' do
           check 'terms_of_service_accepted'
-          select "#{@eq_model.equipment_items.first.name}",
+          select @eq_model.equipment_items.first.name.to_s,
                  from: 'Equipment Item'
           click_button 'Check-Out Equipment'
 
@@ -578,7 +578,7 @@ describe 'Reservations', type: :feature do
         avail_quantity = @eq_model.num_available(Time.zone.today,
                                                  Time.zone.today + 1.day)
         fill_in "quantity_field_#{@eq_model.id}", # edit and submit
-                with: (avail_quantity)
+                with: avail_quantity
 
         quantity_forms[0].submit_form!
         # loading right page
@@ -666,13 +666,14 @@ describe 'Reservations', type: :feature do
         # valid change
         due_date = Time.zone.today + 2.days
         fill_in 'cart_due_date_cart', with: due_date
-        find(:xpath, "//input[@id='date_end_alt']").set due_date
+        find(:xpath, "//input[@id='date_end_alt']", visible: :all).set due_date
         find('#dates_form').submit_form!
         # loads right page
         expect(page).to have_content 'Confirm Reservation'
         expect(page).not_to have_content 'Confirm Reservation Request'
         # has correct date
-        expect(page).to have_selector("input[value='#{due_date}']")
+        expect(page).to have_selector("input[value='#{due_date}']",
+                                      visible: :all)
       end
     end
 
@@ -689,13 +690,15 @@ describe 'Reservations', type: :feature do
         bad_due_date =
           Time.zone.today + (@eq_model.maximum_checkout_length + 1).days
         fill_in 'cart_due_date_cart', with: bad_due_date
-        find(:xpath, "//input[@id='date_end_alt']").set bad_due_date
+        find(:xpath, "//input[@id='date_end_alt']", visible: :all)
+          .set bad_due_date
         find('#dates_form').submit_form!
         # loads right page
         expect(page).to have_content 'Confirm Reservation Request'
         expect(page).to have_content AppConfig.get(:request_text)
         # has altered date
-        expect(page).to have_selector("input[value='#{bad_due_date}']")
+        expect(page).to have_selector("input[value='#{bad_due_date}']",
+                                      visible: :all)
       end
     end
 
@@ -711,18 +714,20 @@ describe 'Reservations', type: :feature do
         bad_due_date =
           Time.zone.today + (@eq_model.maximum_checkout_length + 1).days
         fill_in 'cart_due_date_cart', with: bad_due_date
-        find(:xpath, "//input[@id='date_end_alt']").set bad_due_date
+        find(:xpath, "//input[@id='date_end_alt']", visible: :all)
+          .set bad_due_date
         find('#dates_form').submit_form!
         # changes back to valid date
         due_date = Time.zone.today + 1.day
         fill_in 'cart_due_date_cart', with: due_date
-        find(:xpath, "//input[@id='date_end_alt']").set due_date
+        find(:xpath, "//input[@id='date_end_alt']", visible: :all).set due_date
         find('#dates_form').submit_form!
         # redirect to right page
         expect(page).to have_content 'Confirm Reservation'
         expect(page).not_to have_content 'Confirm Reservation Request'
         # has correct dates
-        expect(page).to have_selector("input[value='#{due_date}']")
+        expect(page).to have_selector("input[value='#{due_date}']",
+                                      visible: :all)
       end
     end
 
@@ -777,7 +782,7 @@ describe 'Reservations', type: :feature do
         # change cart to have invalid properties, and check if it loads request
         quantity_forms = page.all('#quantity_form')
         fill_in "quantity_field_#{@eq_model.id}",
-                with: (@eq_model.max_per_user)
+                with: @eq_model.max_per_user
         quantity_forms[0].submit_form!
         expect(page).to have_content 'Confirm Reservation'
       end

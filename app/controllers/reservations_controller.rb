@@ -69,17 +69,17 @@ class ReservationsController < ApplicationController
     @filter = set_filter
     @view_all = session[:all_dates]
 
-    if can? :manage, Reservation
-      source = Reservation
-    else
-      source = current_user.reservations
-    end
+    source = if can? :manage, Reservation
+               Reservation
+             else
+               current_user.reservations
+             end
 
-    if session[:all_dates]
-      time = source
-    else
-      time = source.starts_on_days(@start_date, @end_date)
-    end
+    time = if session[:all_dates]
+             source
+           else
+             source.starts_on_days(@start_date, @end_date)
+           end
 
     set_counts(source, time)
     @reservations_set = time.send(@filter)
@@ -181,7 +181,7 @@ class ReservationsController < ApplicationController
   def edit
     @option_array =
       @reservation.equipment_model.equipment_items
-      .collect { |e| [e.name, e.id] }
+                  .collect { |e| [e.name, e.id] }
   end
 
   # for editing reservations; not for checkout or check-in
@@ -297,7 +297,7 @@ class ReservationsController < ApplicationController
         checked_out_reservations.each do |r|
           r.save!
           # update equipment item notes
-          new_notes = params[:reservations]["#{r.id}"][:notes]
+          new_notes = params[:reservations][r.id.to_s][:notes]
           r.equipment_item.make_reservation_notes('checked out', r,
                                                   r.checkout_handler,
                                                   new_notes, r.checked_out)
@@ -354,7 +354,7 @@ class ReservationsController < ApplicationController
         checked_in_reservations.each do |r|
           r.save!
           # update equipment item notes
-          new_notes = params[:reservations]["#{r.id}"][:notes]
+          new_notes = params[:reservations][r.id.to_s][:notes]
           r.equipment_item.make_reservation_notes('checked in', r,
                                                   r.checkin_handler, new_notes,
                                                   r.checked_in)
@@ -409,7 +409,7 @@ class ReservationsController < ApplicationController
 
   def send_receipt
     if UserMailer.reservation_status_update(@reservation, 'checked out')
-       .deliver_now
+                 .deliver_now
       flash[:notice] = 'Successfully delivered receipt email.'
     else
       flash[:error] = 'Unable to deliver receipt email. Please contact '\
@@ -487,13 +487,14 @@ class ReservationsController < ApplicationController
 
     begin
       @reservation.archive(current_user, params[:archive_note])
-        .save(validate: false)
+                  .save(validate: false)
       # archive equipment item if checked out
       if @reservation.equipment_item
         @reservation.equipment_item
-          .make_reservation_notes('archived', @reservation, current_user,
-                                  params[:archive_note],
-                                  @reservation.checked_in)
+                    .make_reservation_notes('archived',
+                                            @reservation, current_user,
+                                            params[:archive_note],
+                                            @reservation.checked_in)
         if AppConfig.check(:autodeactivate_on_archive)
           @reservation.equipment_item.deactivate(user: current_user,
                                                  reason: params[:archive_note])
@@ -511,10 +512,10 @@ class ReservationsController < ApplicationController
 
   def reservation_params
     params.require(:reservation)
-      .permit(:checkout_handler_id, :checkin_handler_id,
-              :checked_out, :checked_in, :equipment_item, :due_date,
-              :equipment_item_id, :notes, :notes_unsent, :times_renewed,
-              :reserver_id, :reserver, :start_date, :equipment_model_id)
+          .permit(:checkout_handler_id, :checkin_handler_id,
+                  :checked_out, :checked_in, :equipment_item, :due_date,
+                  :equipment_item_id, :notes, :notes_unsent, :times_renewed,
+                  :reserver_id, :reserver, :start_date, :equipment_model_id)
   end
 
   def format_errors(errors)

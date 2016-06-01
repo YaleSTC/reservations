@@ -93,11 +93,11 @@ class User < ActiveRecord::Base
     return nil if login.blank?
     return nil unless ENV['USE_LDAP']
 
-    if ENV['CAS_AUTH']
-      filter_param = Rails.application.secrets.ldap_login
-    else
-      filter_param = Rails.application.secrets.ldap_email
-    end
+    filter_param = if ENV['CAS_AUTH']
+                     Rails.application.secrets.ldap_login
+                   else
+                     Rails.application.secrets.ldap_email
+                   end
 
     # store affiliation parameters
     aff_params = Rails.application.secrets.ldap_affiliation
@@ -135,15 +135,14 @@ class User < ActiveRecord::Base
 
       # deal with affiliation
       out[:affiliation] = aff_params.map { |param| result[param.to_sym][0] }
-                          .select { |s| s && s.length > 0 }.join(' ')
+                                    .select { |s| s && !s.empty? }.join(' ')
 
       # define username based on authentication method
-      if ENV['CAS_AUTH']
-        out[:username] =
-          result[Rails.application.secrets.ldap_login.to_sym][0]
-      else
-        out[:username] = out[:email]
-      end
+      out[:username] = if ENV['CAS_AUTH']
+                         result[Rails.application.secrets.ldap_login.to_sym][0]
+                       else
+                         out[:email]
+                       end
 
       # return hash
       return out
@@ -154,11 +153,11 @@ class User < ActiveRecord::Base
 
   def self.select_options
     User.order('last_name ASC').all
-      .collect { |item| ["#{item.last_name}, #{item.first_name}", item.id] }
+        .collect { |item| ["#{item.last_name}, #{item.first_name}", item.id] }
   end
 
   def render_name
-    ENV['CAS_AUTH'] ? "#{name} #{username}" : "#{name}"
+    ENV['CAS_AUTH'] ? "#{name} #{username}" : name.to_s
   end
 
   # ---- Reservation methods ---- #

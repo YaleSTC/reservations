@@ -7,8 +7,7 @@ class ReportsController < ApplicationController
                    ['Returned On Time', :returned_on_time, :count],
                    ['Returned Overdue', :returned_overdue, :count],
                    ['Avg Planned Duration', :all, :duration],
-                   ['Avg Time Checked Out', :all, :time_checked_out]
-                  ]
+                   ['Avg Time Checked Out', :all, :time_checked_out]].freeze
   RES_COLUMNS = [['Reserver', :all, :name, :reserver],
                  ['Equipment Model', :all, :name, :equipment_model],
                  ['Equipment Item', :all, :name, :equipment_item],
@@ -16,7 +15,7 @@ class ReportsController < ApplicationController
                  ['Start Date', :all, :display, :start_date],
                  ['Checked Out', :all, :display, :checked_out],
                  ['Due Date', :all, :display, :due_date],
-                 ['Checked In', :all, :display, :checked_in]]
+                 ['Checked In', :all, :display, :checked_in]].freeze
 
   before_action :set_dates, only: [:index, :subreport]
 
@@ -70,7 +69,7 @@ class ReportsController < ApplicationController
     end
 
     reservations = Reservation.starts_on_days(@start_date, @end_date)
-                   .where(id_symbol => id)
+                              .where(id_symbol => id)
 
     @data_tables = build_subreports reservations
 

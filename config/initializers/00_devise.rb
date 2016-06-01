@@ -10,11 +10,11 @@ Devise.setup do |config|
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
-  if AppConfig.table_exists? && !AppConfig.first.nil?
-    config.mailer_sender = AppConfig.first.admin_email
-  else
-    config.mailer_sender = 'admin@reservations.app'
-  end
+  config.mailer_sender = if AppConfig.table_exists? && !AppConfig.first.nil?
+                           AppConfig.first.admin_email
+                         else
+                           'admin@reservations.app'
+                         end
 
   # ==> ORM configuration
   # Load and configure the ORM. Supports :active_record (default) and

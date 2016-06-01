@@ -101,7 +101,7 @@ class ApplicationController < ActionController::Base
 
   def check_active_admin_permission
     return if can? :access, :active_admin
-    fail CanCan::AccessDenied.new, 'Access Denied.'
+    raise CanCan::AccessDenied.new, 'Access Denied.'
   end
 
   def check_view_mode
@@ -116,7 +116,7 @@ class ApplicationController < ActionController::Base
   end
 
   def fix_cart_date
-    cart.start_date = (Time.zone.today) if cart.start_date < Time.zone.today
+    cart.start_date = Time.zone.today if cart.start_date < Time.zone.today
     cart.fix_due_date
   end
 
@@ -210,11 +210,13 @@ class ApplicationController < ActionController::Base
   # rubocop:disable MethodLength, AbcSize
   def prepare_catalog_index_vars(eq_models = nil)
     # prepare the catalog
-    eq_models ||= EquipmentModel.active
-                  .order('categories.sort_order ASC, equipment_models.name ASC')
-                  .includes(:category, :requirements)
-                  .page(params[:page])
-                  .per(session[:items_per_page])
+    eq_models ||=
+      EquipmentModel.active
+                    .order('categories.sort_order ASC, '\
+                           'equipment_models.name ASC')
+                    .includes(:category, :requirements)
+                    .page(params[:page])
+                    .per(session[:items_per_page])
     @eq_models_by_category = eq_models.to_a.group_by(&:category)
 
     @available_string = 'available from '\
@@ -251,10 +253,9 @@ class ApplicationController < ActionController::Base
 
       # have requirements as part of equipment model itself
       restricted = em.model_restricted?(cart.reserver_id)
-      if restricted
-        @qualifications_hash[em.id] = Requirement.list_requirement_admins(
-          reserver, em).html_safe
-      end
+      next unless restricted
+      @qualifications_hash[em.id] =
+        Requirement.list_requirement_admins(reserver, em).html_safe
     end
 
     @page_eq_models_by_category = eq_models
@@ -285,7 +286,7 @@ class ApplicationController < ActionController::Base
     # Finds the current model (EM, EI, Category)
     @items_class2 =
       params[:controller].singularize.titleize.delete(' ')
-      .constantize.find(params[:id])
+                         .constantize.find(params[:id])
     # Deactivate the model you had originally intended to deactivate
     @items_class2.destroy
     flash[:notice] = 'Successfully deactivated '\
@@ -299,7 +300,7 @@ class ApplicationController < ActionController::Base
     # Finds the current model (EM, EI, Category)
     @model_to_activate =
       params[:controller].singularize.titleize.delete(' ')
-      .constantize.find(params[:id])
+                         .constantize.find(params[:id])
     activate_parents(@model_to_activate)
     @model_to_activate.revive
     flash[:notice] = 'Successfully reactivated '\
@@ -336,6 +337,7 @@ class ApplicationController < ActionController::Base
       first_name: 'Guest',
       last_name: 'User',
       role: 'guest',
-      view_mode: 'guest')
+      view_mode: 'guest'
+    )
   end
 end

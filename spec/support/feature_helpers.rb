@@ -37,14 +37,15 @@ module FeatureHelpers
   def update_cart_start_date(new_date_str)
     # fill in both visible / datepicker and hidden field
     fill_in 'cart_start_date_cart', with: new_date_str
-    find(:xpath, "//input[@id='date_start_alt']").set new_date_str
+    find(:xpath, "//input[@id='date_start_alt']", visible: :all)
+      .set new_date_str
     find('#cart_form').submit_form!
   end
 
   def update_cart_due_date(new_date_str)
     # fill in both visible / datepicker and hidden field
     fill_in 'cart_due_date_cart', with: new_date_str
-    find(:xpath, "//input[@id='date_end_alt']").set new_date_str
+    find(:xpath, "//input[@id='date_end_alt']", visible: :all).set new_date_str
     find('#cart_form').submit_form!
   end
 

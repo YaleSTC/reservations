@@ -6,7 +6,7 @@ describe 'email_notes_to_admins' do
 
   before(:each) { mock_app_config(admin_email: 'admin@email.com') }
 
-  STATUSES = [:checked_out_reservation, :checked_in_reservation]
+  STATUSES = [:checked_out_reservation, :checked_in_reservation].freeze
 
   shared_examples 'sends appropriate emails' do |status|
     let(:notes) do
@@ -22,16 +22,16 @@ describe 'email_notes_to_admins' do
 
     it "doesn't sends emails for reservations without unsent notes" do
       expect(notes.notes_unsent).to be_falsey
-      expect { subject.invoke }.to_not(
-        change { ActionMailer::Base.deliveries.count })
+      expect { subject.invoke }.to_not \
+        change { ActionMailer::Base.deliveries.count }
     end
 
     it 'sends emails for appropriate reservations with unsent notes' do
       notes.update_attributes(notes_unsent: true)
       expect(notes.notes_unsent).to be_truthy
       notes.save!(validate: false)
-      expect { subject.invoke }.to(
-        change { ActionMailer::Base.deliveries.count }.by(1))
+      expect { subject.invoke }.to \
+        change { ActionMailer::Base.deliveries.count }.by(1)
     end
   end
 

@@ -168,39 +168,43 @@ describe EquipmentModel, type: :model do
     end
     it 'only increments once per reservation' do
       @res.update_attributes(overdue: true)
-      expect { @res.update_attribute(:notes, 'test') }.not_to(
-        change { @model.overdue_count })
+      expect { @res.update_attribute(:notes, 'test') }.not_to \
+        change { @model.overdue_count }
     end
     it 'decrements when an overdue reservation is checked in' do
       @res.update_attributes(overdue: true)
       expect do
         @res.update_attributes(
           FactoryGirl.attributes_for(:overdue_returned_reservation,
-                                     equipment_model: @model))
+                                     equipment_model: @model)
+        )
       end.to change { @model.overdue_count }.from(1).to(0)
     end
     it 'only decrements once per reservation' do
       @res.update_attributes(overdue: true)
       @res.update_attributes(
         FactoryGirl.attributes_for(:overdue_returned_reservation,
-                                   equipment_model: @model))
+                                   equipment_model: @model)
+      )
       expect { @res.update_attribute(:notes, 'test') }
         .not_to change { @model.overdue_count }
     end
     it "doesn't change when a normal reservation is checked in" do
       @res.update_attributes(
         FactoryGirl.attributes_for(:checked_out_reservation,
-                                   equipment_model: @model))
+                                   equipment_model: @model)
+      )
       expect do
         @res.update_attributes(
           FactoryGirl.attributes_for(:checked_in_reservation,
-                                     equipment_model: @model))
+                                     equipment_model: @model)
+        )
       end.not_to change { @model.overdue_count }
     end
     it 'decrements when a reservation is extended' do
       @res.update_attributes(overdue: true)
-      expect { @res.update_attribute(:due_date, Time.zone.today + 1.day) }.to(
-        change { @model.overdue_count }.from(1).to(0))
+      expect { @res.update_attribute(:due_date, Time.zone.today + 1.day) }.to \
+        change { @model.overdue_count }.from(1).to(0)
     end
   end
 
@@ -213,14 +217,16 @@ describe EquipmentModel, type: :model do
             name: 'Tumblr hipster woodstock PBR messenger bag',
             description: "You probably haven't heard of them jean shorts. "\
               "Raw denim you probably haven't heard of them vegan 8-bit "\
-              'occupy mustache four loko.')
+              'occupy mustache four loko.'
+          )
         @another_model =
           FactoryGirl.create(
             :equipment_model,
             name: 'Tumblr hipster starbucks alternative music',
             description: 'Craft beer sartorial four loko blog jean shorts '\
               'chillwave aesthetic. Roof party art party banh mi '\
-              'aesthetic, ennui Marfa kitsch readymade vegan food truck bag.')
+              'aesthetic, ennui Marfa kitsch readymade vegan food truck bag.'
+          )
       end
       it 'Should return equipment_models with all of the query words in '\
         'either name or description' do
@@ -339,9 +345,9 @@ describe EquipmentModel, type: :model do
 
     context 'methods involving reservations' do
       # @model and @category are already set.
-      ACTIVE = [:valid_reservation, :checked_out_reservation]
+      ACTIVE = [:valid_reservation, :checked_out_reservation].freeze
       INACTIVE = [:checked_in_reservation, :overdue_returned_reservation,
-                  :missed_reservation, :request]
+                  :missed_reservation, :request].freeze
       describe '.num_available' do
         shared_examples 'overlapping' do |start_offset, due_offset|
           it 'is correct' do

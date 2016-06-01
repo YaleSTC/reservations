@@ -47,11 +47,11 @@ class EquipmentModelsController < ApplicationController
     calendar_length = 1.month
 
     @reservation_data = relevant_reservations.collect do |r|
-      if r.overdue
-        end_date = Time.zone.today + calendar_length
-      else
-        end_date = r.due_date
-      end
+      end_date = if r.overdue
+                   Time.zone.today + calendar_length
+                 else
+                   r.due_date
+                 end
       { start: r.start_date, end: end_date }
       # the above code mimics the current available? setup to show overdue
       # equipment as permanently 'out'.
@@ -68,9 +68,10 @@ class EquipmentModelsController < ApplicationController
     @restricted = @equipment_model.model_restricted?(cart.reserver_id)
 
     # For pending reservations table
-    @pending = relevant_reservations.reserved
-               .overlaps_with_date_range(Time.zone.today,
-                                         Time.zone.today + 8.days)
+    @pending =
+      relevant_reservations.reserved
+                           .overlaps_with_date_range(Time.zone.today,
+                                                     Time.zone.today + 8.days)
     # Future reservations using Query object
     @future = @pending.future
   end
@@ -118,7 +119,7 @@ class EquipmentModelsController < ApplicationController
     elsif params[:deactivation_confirmed]
       Reservation.for_eq_model(@equipment_model.id).finalized.each do |r|
         r.archive(current_user, 'The equipment model was deactivated.')
-          .save(validate: false)
+         .save(validate: false)
       end
       super
     else
@@ -149,7 +150,7 @@ class EquipmentModelsController < ApplicationController
               'clear_photo' => :photo }
 
     # only keep pairs that occur as keys with non-nil values in params
-    types.select! { |k, v| params.keys.member?((k)) && !v.nil? }
+    types.select! { |k, v| params.keys.member?(k) && !v.nil? }
     types.each { |_k, attr| params[:equipment_model][attr] = nil }
   end
 
@@ -158,13 +159,13 @@ class EquipmentModelsController < ApplicationController
     # don't have fixed hash keys (check to see if they exist first
     # to resolve test failures)
     params.require(:equipment_model)
-      .permit(:name, :category_id, :category, :description, :late_fee,
-              :replacement_fee, :max_per_user, :document_attributes,
-              :deleted_at, :photo, :documentation, :max_renewal_times,
-              :max_renewal_length, :renewal_days_before_due, :late_fee_max,
-              { associated_equipment_model_ids: [] }, :requirement_ids,
-              :requirements, :max_checkout_length)
-      .tap do |whitelisted|
+          .permit(:name, :category_id, :category, :description, :late_fee,
+                  :replacement_fee, :max_per_user, :document_attributes,
+                  :deleted_at, :photo, :documentation, :max_renewal_times,
+                  :max_renewal_length, :renewal_days_before_due, :late_fee_max,
+                  { associated_equipment_model_ids: [] }, :requirement_ids,
+                  :requirements, :max_checkout_length)
+          .tap do |whitelisted|
       whitelisted[:checkin_procedures_attributes] =
         params[:equipment_model][:checkin_procedures_attributes] if
         params[:equipment_model][:checkin_procedures_attributes]

@@ -1,7 +1,7 @@
 desc 'Flag not checked out reservations starting yesterday as missed'
 task flag_missed: :environment do
-  new_missed = Reservation.where(
-    'start_date <= ?', Time.zone.today - 1.day).reserved
+  new_missed =
+    Reservation.where('start_date <= ?', Time.zone.today - 1.day).reserved
 
   Rails.logger.info "Found #{new_missed.size} newly missed reservations"
 

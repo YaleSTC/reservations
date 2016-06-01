@@ -37,19 +37,19 @@ describe Report, type: :model do
 
   describe '.average2' do
     it 'returns N/A for arrays of size 0' do
-      expect(Report.average2 []).to eq('N/A')
+      expect(Report.average2([])).to eq('N/A')
     end
     it 'returns N/A for arrays consisting of nil' do
-      expect(Report.average2 [nil, nil]).to eq('N/A')
+      expect(Report.average2([nil, nil])).to eq('N/A')
     end
     it 'calculates averages correctly' do
-      expect(Report.average2 [1, 2, 3]).to eq(2)
+      expect(Report.average2([1, 2, 3])).to eq(2)
     end
     it 'throws out nils' do
-      expect(Report.average2 [1, 2, 3, nil]).to eq(2)
+      expect(Report.average2([1, 2, 3, nil])).to eq(2)
     end
     it 'rounds to 2 decimal places' do
-      expect(Report.average2 [0.12, 1.799, 4.3]).to eq(2.07)
+      expect(Report.average2([0.12, 1.799, 4.3])).to eq(2.07)
     end
   end
 
@@ -72,7 +72,7 @@ describe Report, type: :model do
                        ['Overdue', :overdue, :count],
                        ['Returned On Time', :returned_on_time, :count],
                        ['Returned Overdue', :returned_overdue, :count],
-                       ['User Count', :all, :count, :reserver_id]]
+                       ['User Count', :all, :count, :reserver_id]].freeze
     before(:each) do
       @id = :equipment_item_id
       @class = EquipmentItem
@@ -113,7 +113,7 @@ describe Report, type: :model do
     it 'has the correctly headed rows' do
       items = @class.all
       items.each do |item|
-        expect(@report.rows).to include?(Report::Row.item_to_row item)
+        expect(@report.rows).to include?(Report::Row.item_to_row(item))
       end
     end
   end

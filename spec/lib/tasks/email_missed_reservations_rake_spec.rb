@@ -14,21 +14,21 @@ describe 'email_missed_reservations' do
   end
 
   it 'updates flags after email is sent' do
-    expect { subject.invoke }.to(
+    expect { subject.invoke }.to \
       change { Reservation.find(@missed.id).flagged?(:missed_email_sent) }
-      .from(false).to(true))
+      .from(false).to(true)
   end
 
   it 'sends emails for reservations that were missed' do
     expect(@missed.missed?).to be_truthy
-    expect { subject.invoke }.to(
-      change { ActionMailer::Base.deliveries.count }.by(1))
+    expect { subject.invoke }.to \
+      change { ActionMailer::Base.deliveries.count }.by(1)
   end
 
   it "doesn't send emails if the missed_email_sent flag is set" do
     @missed.flag(:missed_email_sent)
     @missed.save!
-    expect { subject.invoke }.to_not(
-      change { ActionMailer::Base.deliveries.count })
+    expect { subject.invoke }.not_to \
+      change { ActionMailer::Base.deliveries.count }
   end
 end

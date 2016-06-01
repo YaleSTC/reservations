@@ -10,7 +10,7 @@ unless ENV['SKIP_AUTH_INIT'] || !User.table_exists? ||
   if ENV['CAS_AUTH'] && user && (user.username != user.cas_login)
     # if there are any users that don't have cas_logins, we can't use CAS
     if User.where(cas_login: ['', nil]).count > 0
-      fail 'There are users missing their CAS logins, you cannot use CAS '\
+      raise 'There are users missing their CAS logins, you cannot use CAS '\
         'authentication.'
     else
       User.update_all 'username = cas_login'

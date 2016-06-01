@@ -31,12 +31,12 @@ describe Reservation, type: :model do
     it 'counts the number that overlap with a given day' do
       @source.last.assign_attributes(start_date: Time.zone.today + 2,
                                      due_date: Time.zone.today + 3)
-      expect(Reservation.number_for(@source, date: Time.zone.today + 2.days)
-            ).to eq(1)
+      expect(Reservation.number_for(@source, date: Time.zone.today + 2.days))
+        .to eq(1)
     end
     it 'can count only not overdue reservations' do
-      @source.last.attributes = FactoryGirl.attributes_for(
-        :overdue_reservation)
+      @source.last.attributes =
+        FactoryGirl.attributes_for(:overdue_reservation)
       @source.first.start_date = @source.last.start_date
       expect(Reservation.number_for(@source, date: @source.last.start_date + 1,
                                              overdue: false)).to eq(1)
@@ -47,8 +47,8 @@ describe Reservation, type: :model do
       expect(Reservation.number_for(@source, equipment_model_id: 1)).to eq(1)
     end
     it 'can count not overdue reservations on a model' do
-      @source.last.attributes = FactoryGirl.attributes_for(
-        :overdue_reservation, equipment_model_id: 1)
+      @source.last.attributes =
+        FactoryGirl.attributes_for(:overdue_reservation, equipment_model_id: 1)
       @source.first.attributes = { start_date: @source.last.start_date,
                                    equipment_model_id: 1 }
       expect(Reservation.number_for(@source,
@@ -613,13 +613,15 @@ describe Reservation, type: :model do
     end
     it 'the status should not be able to be changed if missed' do
       reservation.update_attributes(
-        FactoryGirl.attributes_for(:missed_reservation))
+        FactoryGirl.attributes_for(:missed_reservation)
+      )
       reservation.status = 'reserved'
       expect { reservation.save! }.to raise_error ActiveRecord::RecordInvalid
     end
     it 'the status should not be able to be changed if returned' do
       reservation.update_attributes(
-        FactoryGirl.attributes_for(:checked_in_reservation))
+        FactoryGirl.attributes_for(:checked_in_reservation)
+      )
       reservation.status = 'reserved'
       expect { reservation.save! }.to raise_error ActiveRecord::RecordInvalid
     end

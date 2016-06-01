@@ -37,8 +37,9 @@ module LayoutHelper
     else
       # this variable is called in _navbar.html.erb to list a user's current
       # reservations in the dropdown.
-      @current_reservations = current_or_guest_user.reservations
-                              .active_or_requested.includes(:equipment_model)
+      @current_reservations =
+        current_or_guest_user.reservations
+                             .active_or_requested.includes(:equipment_model)
       count = @current_reservations.size
     end
   end
