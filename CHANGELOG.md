@@ -2,6 +2,38 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+## v6.2.0 - 2016-07-04
+### Important
+*This release includes an update to Ruby 2.3.1 along with other dependencies*
+
+### Fixed
+* Fixed intermittent asset failure in specs ([#1528](https://github.com/YaleSTC/reservations/issues/1528)).
+* Downgraded Permanent Record gem to fix deactivation issue ([#1638](https://github.com/YaleSTC/reservations/issues/1638)).
+* Fixed cart validation counting error ([#1641](https://github.com/YaleSTC/reservations/issues/1641)).
+* Fixed User phone number validation regex ([#1633](https://github.com/YaleSTC/reservations/issues/1633)).
+* Use AppConfig#check everywhere ([#1584](https://github.com/YaleSTC/reservations/issues/1584)).
+
+
+### Added
+* Configuration for Hound CI ([#1577](https://github.com/YaleSTC/reservations/issues/1577)).
+* Setting to allow requests to block availability ([#1521](https://github.com/YaleSTC/reservations/issues/1521)).
+* Buttons to run cron jobs manually ([#1275](https://github.com/YaleSTC/reservations/issues/1275)).
+* TravisCI now runs ESlint ([#1581](https://github.com/YaleSTC/reservations/issues/1581)).
+
+
+### Changed
+* Refactor EquipmentModel model spec ([#1600](https://github.com/YaleSTC/reservations/issues/1600)).
+* Refactor EquipmentModels controller spec ([#1587](https://github.com/YaleSTC/reservations/issues/1587)).
+* Periodic rake tasks moved to ActiveJob ([#1275](https://github.com/YaleSTC/reservations/issues/1275)).
+* Refactor Reservation model spec ([#1554](https://github.com/YaleSTC/reservations/issues/1554)).
+* Refactor EquipmentItems controller spec ([#1588](https://github.com/YaleSTC/reservations/issues/1588)).
+* Refactor Reservations controller spec ([#1586](https://github.com/YaleSTC/reservations/issues/1586)).
+* Refactor EquipmentItem model spec ([#1610](https://github.com/YaleSTC/reservations/issues/1600)).
+* Refactor Users controller spec ([#1595](https://github.com/YaleSTC/reservations/issues/1595)).
+* Refactor Categories controller spec ([#1589](https://github.com/YaleSTC/reservations/issues/1589)).
+* Overhaul seed script ([#1327](https://github.com/YaleSTC/reservations/issues/1327)).
+* Default LDAP to nil in test suite ([#1411](https://github.com/YaleSTC/reservations/issues/1411)).
+
 ## v6.1.0 - 2016-06-01
 ### Fixed
 * Seed script no longer saves reservations with invalid dates ([#1229](https://github.com/YaleSTC/reservations/issues/1229)).
