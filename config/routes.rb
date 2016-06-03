@@ -1,4 +1,5 @@
 Reservations::Application.routes.draw do
+  get 'hello_world', to: 'hello_world#index'
   root to: 'catalog#index'
 
   # routes for Devise
