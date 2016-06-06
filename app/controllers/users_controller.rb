@@ -1,5 +1,7 @@
 # rubocop:disable ClassLength
 class UsersController < ApplicationController
+  include ReactOnRails::Controller
+
   load_and_authorize_resource
   layout 'application_with_sidebar', only: [:show, :edit]
 
@@ -12,6 +14,8 @@ class UsersController < ApplicationController
                 only: [:show, :edit, :update, :destroy, :ban, :unban]
   before_action :check_cas_auth, only: [:show, :new, :create, :quick_create,
                                         :edit, :update]
+  before_action :props, only: [:show, :edit]
+  before_action :init_store, only: [:show, :edit]
 
   include Autocomplete
   include Calendarable
@@ -272,5 +276,15 @@ class UsersController < ApplicationController
 
   def calendar_name_method
     :equipment_model
+  end
+
+  # React on Rails / Redux methods
+
+  def init_store
+    redux_store("UserStore", props: @props)
+  end
+
+  def props
+    @props = ActiveModelSerializers::SerializableResource.new(@user)
   end
 end

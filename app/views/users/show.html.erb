@@ -27,6 +27,8 @@
 
 <div class="row">
 
+  <%= react_component('UserApp', props: @props) %>
+
   <dl id="user_info" class="dl-horizontal col-md-6">
     <div class="well">
       <% if @cas_auth %>
