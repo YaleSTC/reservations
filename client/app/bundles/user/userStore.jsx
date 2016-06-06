@@ -1,4 +1,5 @@
 import { compose, createStore, applyMiddleware, combineReducers } from 'redux';
+import thunkMiddleware from 'redux-thunk';
 
 // See
 // https://github.com/gaearon/redux-thunk and http://redux.js.org/docs/advanced/AsyncActions.html
@@ -6,12 +7,11 @@ import { compose, createStore, applyMiddleware, combineReducers } from 'redux';
 // once your app has asynchronous actions.
 // import thunkMiddleware from 'redux-thunk';
 
-import reducers from './userReducer';
-import { initialState } from './userReducer';
+import reducers, { initialStates } from '../reducers';
 
 export default props => {
   // This is how we get initial props Rails into redux.
-  const { $$userState } = initialState;
+  const { $$userState } = initialStates;
 
   // Redux expects to initialize the store using an Object, not an Immutable.Map
   const initialState = {

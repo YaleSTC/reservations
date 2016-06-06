@@ -15,7 +15,7 @@ class UsersController < ApplicationController
   before_action :check_cas_auth, only: [:show, :new, :create, :quick_create,
                                         :edit, :update]
   before_action :props, only: [:show, :edit]
-  before_action :init_store, only: [:show, :edit]
+  #before_action :init_store, only: [:show, :edit]
 
   include Autocomplete
   include Calendarable
@@ -280,9 +280,9 @@ class UsersController < ApplicationController
 
   # React on Rails / Redux methods
 
-  def init_store
-    redux_store("UserStore", props: @props)
-  end
+  #def init_store
+  #  redux_store("UserStore", props: @props)
+  #end
 
   def props
     @props = ActiveModelSerializers::SerializableResource.new(@user)

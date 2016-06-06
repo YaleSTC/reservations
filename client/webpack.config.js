@@ -11,6 +11,7 @@ config = {
     'babel-polyfill',
     './app/bundles/HelloWorld/startup/HelloWorldApp',
     './app/bundles/user/UserApp',
+    './app/bundles/user/UserProfile',
   ],
 
   output: {

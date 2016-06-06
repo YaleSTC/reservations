@@ -14,9 +14,10 @@ const User = (props) => {
   const actions = bindActionCreators(userActionCreators, dispatch);
   const { toggleEditMode } = actions;
   const editMode = $$userStore.get('editMode');
+  const user = $$userStore.get('user');
 
   return (
-    <UserInfoTable {...{ toggleEditMode, editMode }} />
+    <UserInfoTable {...{ toggleEditMode, editMode, user }} />
   );
 };
 
