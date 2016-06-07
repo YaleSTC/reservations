@@ -1,21 +1,38 @@
-import Immutable from 'immutable';
+import React, { PropTypes } from 'react';
 
-import actionTypes from './userConstants';
-
-// this is the default state that would be used if one were not passed into the store
-export const $$initialState = Immutable.fromJS({
+const initialState = {
   editMode: false,
-});
-
-export default function userReducer($$state = $$initialState, action) {
-  const { type } = action;
-
-  switch (type) {
-    case actionTypes.USER_EDIT_MODE_TOGGLE:
-      return $$state.set('editMode', !$$state.editMode);
-
-    default:
-      return $$state;
-  }
+  user: null
 }
 
+export default function userReducer(state = initialState, action) {
+  switch (action.type) {
+    case 'SET_USER':
+      return {
+        ...state,
+        user: action.user
+      };
+    case 'TOGGLE_EDIT_MODE':
+      const user = action.user;
+      if (state.editMode) {
+        $.ajax({
+          type: 'PUT',
+          url: `/users/${user.id}`,
+          data: { user: user },
+          dataType: 'json',
+        });
+      }
+      return {
+        ...state,
+        editMode: !state.editMode,
+        user: user
+      };
+    case 'CANCEL_EDIT_MODE':
+      return {
+        ...state,
+        editMode: false
+      };
+    default:
+      return state;
+  }
+}

@@ -9,9 +9,8 @@ config = {
     'es5-shim/es5-shim',
     'es5-shim/es5-sham',
     'babel-polyfill',
-    './app/bundles/HelloWorld/startup/HelloWorldApp',
-    './app/bundles/user/UserApp',
-    './app/bundles/user/UserProfile',
+    './app/bundles/user/registration',
+    './app/bundles/user/Profile',
   ],
 
   output: {

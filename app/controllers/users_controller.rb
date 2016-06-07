@@ -245,6 +245,10 @@ class UsersController < ApplicationController
     end
   end
 
+  def js_update
+    flash[:error] unless @user.update(user_params)
+  end
+
   private
 
   def user_params

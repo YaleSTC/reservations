@@ -1,32 +1,46 @@
 import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
+import ReactOnRails from 'react-on-rails';
+import { compose, createStore, applyMiddleware, combineReducers } from 'redux';
 import { bindActionCreators } from 'redux';
+import thunkMiddleware from 'redux-thunk';
+import { Provider } from 'react-redux';
+import { connect } from 'react-redux';
+import mirrorCreator from 'mirror-creator';
 import Immutable from 'immutable';
-import UserInfoTable from './userInfoTable';
-import * as userActionCreators from './userActionCreators';
 
-function select(state) {
-  return { $$userStore: state.$$userStore };
-}
+import EditableTable from './editableTable'
 
-const User = (props) => {
-  const { dispatch, $$userStore } = props;
-  const actions = bindActionCreators(userActionCreators, dispatch);
-  const { toggleEditMode } = actions;
-  const editMode = $$userStore.get('editMode');
-  const user = $$userStore.get('user');
+const UserInfo = ({ user, editing, onEditClick, onCancelClick }) => {
+  const color = editing ? 'success' : 'primary';
+  const text = editing ? 'Save' : 'Edit User';
+  const cancel = editing 
+    ? <button className='btn btn-default' onClick={() => { onCancelClick() }}> Cancel </button>
+    : null;
 
   return (
-    <UserInfoTable {...{ toggleEditMode, editMode, user }} />
+    <div className='col-md-6'>
+      <EditableTable />
+      <div className="row btn-group">
+        <button className={`btn btn-${color}`} onClick={() => { onEditClick(user) }}> {text} </button>
+        {cancel}
+      </div>
+    </div>
   );
-};
+}
 
-User.propTypes = {
-  dispatch: PropTypes.func.isRequired,
+const mapStateToProps = (state) => {
+  return {
+    editing: state.editMode,
+    user: state.user,
+  }
+}
 
-  $$userStore: PropTypes.instanceOf(Immutable.Map).isRequired,
-};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onEditClick: (user) => {
+      dispatch({ type: 'TOGGLE_EDIT_MODE', user: user }) },
+    onCancelClick: () => { dispatch({ type: 'CANCEL_EDIT_MODE' }) },
+  }
+}
 
-// Don't forget to actually use connect!
-export default connect(select)(User);
-
+export default connect(mapStateToProps, mapDispatchToProps)(UserInfo)

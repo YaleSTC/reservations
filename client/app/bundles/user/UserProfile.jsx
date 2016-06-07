@@ -8,76 +8,12 @@ import { connect } from 'react-redux';
 import mirrorCreator from 'mirror-creator';
 import Immutable from 'immutable';
 
-const initialState = {
-  editMode: false,
-  user: null
-}
+import User from './userContainer';
+import userReducer from './userReducer';
 
-const userReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case 'SET_USER':
-      return {
-        ...state,
-        user: action.user
-      };
-    case 'TOGGLE_EDIT_MODE':
-      return {
-        ...state,
-        editMode: !state.editMode
-      };
-    default:
-      return state;
-  }
-};
 
-const store = createStore(userReducer);
-
-class UserInfo extends React.Component {
-  render() {
-    let editing = this.props.editMode;
-    let color = editing ? 'red' : '';
-    return (
-      <div>
-        <button onClick={() => {
-          store.dispatch({
-            type: 'TOGGLE_EDIT_MODE'
-          });
-        }}>
-          Edit
-        </button>
-        {EditableTable(this.props.user, this.props.editMode)}
-      </div>
-    );
-  }
-}
-
-const EditableTable = (user, editMode) => {
-  return (
-    <dl id="user_info" class="dl-horizontal col-md-6">
-      <div class="well">
-        <dt>First Name</dt>
-        <dd> {user.first_name} </dd>
-
-        <dt>Last Name</dt>
-        <dd> {user.last_name} </dd>
-
-        <dt>Nickname</dt>
-        <dd> {user.nickname.blank} </dd>
-
-        <dt>Phone</dt>
-        <dd> {user.phone} </dd>
-
-        <dt>Email</dt>
-        <dd> {user.email} </dd>
-
-        <dt>Affiliation</dt>
-        <dd> {user.affiliation} </dd>
-      </div>
-    </dl>
-  );
-}
-
-const UserProfile = (props, _railsContext) => {
+export default (props, _railsContext) => {
+  const store = createStore(userReducer);
   if (store.getState().user === null) {
     store.dispatch({
       type: 'SET_USER',
@@ -86,16 +22,10 @@ const UserProfile = (props, _railsContext) => {
   }
   
   const reactComponent = (
-    <UserInfo
-      user={store.getState().user}
-      editMode={store.getState().editMode}
-    />
+    <Provider store={store}>
+      <User />
+    </Provider>
   );
   return reactComponent;
 };
-
-store.subscribe(UserProfile);
-
-// This is how react_on_rails can see the HelloWorldApp in the browser.
-ReactOnRails.register({ UserProfile });
 
