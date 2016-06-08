@@ -173,28 +173,9 @@ class UsersController < ApplicationController
   end
 
   def update # rubocop:disable CyclomaticComplexity, PerceivedComplexity
-    @edit_title_text = (current_user == @user) ? 'Profile' : 'User'
-    par = user_params
-    # use :update_with_password when we're not using CAS and you're editing
-    # your own profile
-    if @cas_auth || ((can? :manage, User) && (@user.id != current_user.id))
-      method = :update_attributes
-      # delete the current_password key from the params hash just in case it's
-      # present (and :update_attributes will throw an error)
-      par.delete('current_password')
-    else
-      method = :update_with_password
-      # make sure we update the username as well
-      par[:username] = par[:email]
-    end
-    if @user.send(method, par)
-      # sign in the user if you've edited yourself since you have a new
-      # password, otherwise don't
-      sign_in @user, bypass: true if @user.id == current_user.id
-      flash[:notice] = 'Successfully updated user.'
-      redirect_to user_path(@user)
-    else
-      render :edit
+    respond_to do |format|
+      format.html { html_update }
+      format.json { js_update }
     end
   end
 
@@ -245,11 +226,37 @@ class UsersController < ApplicationController
     end
   end
 
+  private
+
+  def html_update
+    @edit_title_text = (current_user == @user) ? 'Profile' : 'User'
+    par = user_params
+    # use :update_with_password when we're not using CAS and you're editing
+    # your own profile
+    if @cas_auth || ((can? :manage, User) && (@user.id != current_user.id))
+      method = :update_attributes
+      # delete the current_password key from the params hash just in case it's
+      # present (and :update_attributes will throw an error)
+      par.delete('current_password')
+    else
+      method = :update_with_password
+      # make sure we update the username as well
+      par[:username] = par[:email]
+    end
+    if @user.send(method, par)
+      # sign in the user if you've edited yourself since you have a new
+      # password, otherwise don't
+      sign_in @user, bypass: true if @user.id == current_user.id
+      flash[:notice] = 'Successfully updated user.'
+      redirect_to user_path(@user)
+    else
+      render :edit
+    end
+  end
+
   def js_update
     flash[:error] unless @user.update(user_params)
   end
-
-  private
 
   def user_params
     permitted_attributes = [:first_name, :last_name, :nickname, :phone,

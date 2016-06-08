@@ -9,20 +9,31 @@ import mirrorCreator from 'mirror-creator';
 import Immutable from 'immutable';
 
 import EditableTable from './editableTable'
+import Table from './table'
 
-const UserInfo = ({ user, editing, onEditClick, onCancelClick }) => {
-  const color = editing ? 'success' : 'primary';
-  const text = editing ? 'Save' : 'Edit User';
-  const cancel = editing 
-    ? <button className='btn btn-default' onClick={() => { onCancelClick() }}> Cancel </button>
+const UserInfo = ({ user, editing, onEditClick }) => {
+  const table = editing ? <EditableTable /> : <Table />;
+  const save = editing 
+    ? <button form="userForm" type="submit" className="btn btn-primary">Save</button>
     : null;
-
+  const color = editing ? 'default' : 'primary';
+  const text = editing ? 'Cancel' : 'Edit User';
   return (
     <div className='col-md-6'>
-      <EditableTable />
-      <div className="row btn-group">
-        <button className={`btn btn-${color}`} onClick={() => { onEditClick(user) }}> {text} </button>
-        {cancel}
+      <div className="well">
+        <div className='row'>
+          {table}
+        </div>
+        <div className="row">
+          <div className="col-md-offset-1 btn-group">
+            {save}
+            <button 
+              className={`btn btn-${color}`}
+              onClick={() => { onEditClick() }}>
+              {text}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -36,11 +47,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return {
-    onEditClick: (user) => {
-      dispatch({ type: 'TOGGLE_EDIT_MODE', user: user }) },
-    onCancelClick: () => { dispatch({ type: 'CANCEL_EDIT_MODE' }) },
-  }
+  return { onEditClick: () => { dispatch({ type: 'TOGGLE_EDIT_MODE' }) }, }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserInfo)

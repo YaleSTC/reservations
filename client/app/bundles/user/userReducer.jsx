@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 
 const initialState = {
   editMode: false,
-  user: null
+  user: null,
 }
 
 export default function userReducer(state = initialState, action) {
@@ -10,27 +10,28 @@ export default function userReducer(state = initialState, action) {
     case 'SET_USER':
       return {
         ...state,
-        user: action.user
+        user: action.user,
       };
     case 'TOGGLE_EDIT_MODE':
-      const user = action.user;
+      return {
+        ...state,
+        editMode: !state.editMode,
+      };
+    case 'UPDATE_USER':
+      const user = state.user;
+      const changes = action.changes
       if (state.editMode) {
         $.ajax({
           type: 'PUT',
           url: `/users/${user.id}`,
-          data: { user: user },
+          data: { user: changes },
           dataType: 'json',
         });
       }
       return {
         ...state,
         editMode: !state.editMode,
-        user: user
-      };
-    case 'CANCEL_EDIT_MODE':
-      return {
-        ...state,
-        editMode: false
+        user: { ...user, ...changes }
       };
     default:
       return state;
