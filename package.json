@@ -7,7 +7,7 @@
   },
   "scripts": {
     "postinstall": "cd client && npm install",
-    "rails-server": "echo 'visit http://localhost:3000/hello_world' && foreman start -f Procfile.dev",
+    "rails-server": "foreman start -f Procfile.dev",
     "test": "rspec"
   }
 }
