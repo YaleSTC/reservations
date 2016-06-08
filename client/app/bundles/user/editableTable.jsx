@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 const Form = ({ user, onSave, id }) => {
-  let firstName, lastName, nickname, phone, email, affiliation;
+  let firstName, lastName, nickname, phone, email, affiliation, tos;
 
   return (
     <div>
@@ -15,6 +15,7 @@ const Form = ({ user, onSave, id }) => {
           phone: phone.value,
           email: email.value,
           affiliation: affiliation.value,
+          terms_of_service_accepted: tos.value,
         })
       }}>
       <div className="form-group">
@@ -63,6 +64,19 @@ const Form = ({ user, onSave, id }) => {
           <input type="text" class="form-control" 
             defaultValue={`${user.affiliation}`}
             ref={node => { affiliation = node } }/>
+        </div>
+      </div>
+      <div className="form-group">
+        <div className="col-sm-offset-4 col-sm-8">
+          <div className="checkbox">
+            <label>
+              <input 
+                type="checkbox" checked={user.terms_of_service_accepted}
+                ref={node => { tos = node } }
+              />
+              Accept the <a href='/terms_of_service'> TOS </a>
+            </label>
+          </div>
         </div>
       </div>
     </form>

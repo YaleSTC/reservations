@@ -11,13 +11,13 @@ import Immutable from 'immutable';
 import EditableTable from './editableTable'
 import Table from './table'
 
-const UserInfo = ({ user, editing, onEditClick }) => {
+const UserInfo = ({ user, canEdit, editing, onEditClick }) => {
   const table = editing ? <EditableTable /> : <Table />;
   const save = editing 
     ? <button form="userForm" type="submit" className="btn btn-primary">Save</button>
     : null;
   const color = editing ? 'default' : 'primary';
-  const text = editing ? 'Cancel' : 'Edit User';
+  const text = editing ? 'Cancel' : 'Edit';
   return (
     <div className='col-md-6'>
       <div className="well">

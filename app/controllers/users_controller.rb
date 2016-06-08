@@ -256,6 +256,7 @@ class UsersController < ApplicationController
 
   def js_update
     flash[:error] unless @user.update(user_params)
+    render nothing: true
   end
 
   def user_params
@@ -296,6 +297,7 @@ class UsersController < ApplicationController
   #end
 
   def props
-    @props = ActiveModelSerializers::SerializableResource.new(@user)
+    @props = ActiveModelSerializers::SerializableResource
+      .new(@user, scope: current_user, scope_name: :current_user)
   end
 end
