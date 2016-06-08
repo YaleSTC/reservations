@@ -1,13 +1,5 @@
-import React, { PropTypes } from 'react';
-import ReactOnRails from 'react-on-rails';
-import { compose, createStore, applyMiddleware, combineReducers } from 'redux';
-import { bindActionCreators } from 'redux';
-import thunkMiddleware from 'redux-thunk';
-import { Provider } from 'react-redux';
+import React from 'react';
 import { connect } from 'react-redux';
-import mirrorCreator from 'mirror-creator';
-import Immutable from 'immutable';
-
 import EditableTable from './editableTable'
 import Table from './table'
 

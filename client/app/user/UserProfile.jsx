@@ -1,13 +1,6 @@
-import React, { PropTypes } from 'react';
-import ReactOnRails from 'react-on-rails';
-import { compose, createStore, applyMiddleware, combineReducers } from 'redux';
-import { bindActionCreators } from 'redux';
-import thunkMiddleware from 'redux-thunk';
+import React from 'react';
+import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import { connect } from 'react-redux';
-import mirrorCreator from 'mirror-creator';
-import Immutable from 'immutable';
-
 import User from './userContainer';
 import userReducer from './userReducer';
 

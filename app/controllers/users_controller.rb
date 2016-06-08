@@ -14,8 +14,7 @@ class UsersController < ApplicationController
                 only: [:show, :edit, :update, :destroy, :ban, :unban]
   before_action :check_cas_auth, only: [:show, :new, :create, :quick_create,
                                         :edit, :update]
-  before_action :props, only: [:show, :edit]
-  #before_action :init_store, only: [:show, :edit]
+  before_action :props, only: [:show]
 
   include Autocomplete
   include Calendarable
@@ -172,7 +171,7 @@ class UsersController < ApplicationController
     @can_edit_username = can? :edit_username, User
   end
 
-  def update # rubocop:disable CyclomaticComplexity, PerceivedComplexity
+  def update
     respond_to do |format|
       format.html { html_update }
       format.json { js_update }
@@ -228,7 +227,7 @@ class UsersController < ApplicationController
 
   private
 
-  def html_update
+  def html_update # rubocop:disable CyclomaticComplexity, PerceivedComplexity
     @edit_title_text = (current_user == @user) ? 'Profile' : 'User'
     par = user_params
     # use :update_with_password when we're not using CAS and you're editing
@@ -292,12 +291,8 @@ class UsersController < ApplicationController
 
   # React on Rails / Redux methods
 
-  #def init_store
-  #  redux_store("UserStore", props: @props)
-  #end
-
   def props
     @props = ActiveModelSerializers::SerializableResource
-      .new(@user, scope: current_user, scope_name: :current_user)
+             .new(@user, scope: current_user, scope_name: :current_user)
   end
 end

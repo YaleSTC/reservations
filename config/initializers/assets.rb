@@ -19,4 +19,5 @@ Rails.application.config.assets.precompile += %w( print.css )
 # Rails.application.config.assets.precompile += %w( server-bundle.js )
 
 # Add folder with webpack generated assets to assets.paths
-Rails.application.config.assets.paths << Rails.root.join("app", "assets", "webpack")
+Rails.application.config.assets.paths << Rails.root.join('app', 'assets',
+                                                         'webpack')
