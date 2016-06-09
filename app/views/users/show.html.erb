@@ -25,25 +25,7 @@
 </div>
 
 
-<div class="row">
-
-  <%= react_component('UserProfile', props: @props) %>
-
-  <div id="user_stats" class="col-md-6">
-
-    <%# @show_equipment has reservation status (:overdue, ...) as key, full
-    reservations in question as value %>
-    <% @show_equipment.each do |status, reservations| %>
-      <%= content_tag :div, :id => "#{status}_count", :class => 'col-md-6' do %>
-        <%= content_tag :h4, status.to_s.titleize %>
-        <%= content_tag :div, :class => "#{status}_num" do %>
-          <%= content_tag :i, nil, :class => stats_icons(status) %>
-          <%= reservations.size %>
-        <% end %>
-      <% end %>
-    <% end %>
-  </div>
-</div>
+<%= react_component('UserProfile', props: @props) %>
 
 <%# TODO: Make this prettier %>
 <% unless @user.requirements.empty? %>
