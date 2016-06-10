@@ -1,0 +1,7 @@
+ruby:
+  config_file: .rubocop.yml
+javascript:
+  enabled: false
+eslint:
+  enabled: true
+fail_on_violations: true
