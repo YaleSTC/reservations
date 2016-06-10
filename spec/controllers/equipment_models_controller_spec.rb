@@ -105,7 +105,7 @@ shared_examples_for 'GET index success' do
 end
 
 describe EquipmentModelsController, type: :controller do
-  before(:each) { mock_app_config }
+  before(:each) { mock_app_config(requests_affect_availability: false) }
   let!(:model) { FactoryGirl.create(:equipment_model) }
 
   it_behaves_like 'calendarable', EquipmentModel
