@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # rubocop:disable Metrics/ClassLength
 class Reservation < ActiveRecord::Base
   include Linkable
@@ -103,6 +104,17 @@ class Reservation < ActiveRecord::Base
       .select('reservations.*, equipment_models.category_id as category_id')
   }
 
+  # for status modifying jobs
+  scope :missed_not_emailed, ->() { missed.not_flagged(:missed_email_sent) }
+  scope :newly_missed, ->() { reserved.past_date(:start_date) }
+  scope :newly_overdue, ->() { not_overdue.checked_out.past_date(:due_date) }
+
+  def self.deletable_missed
+    return Reservation.none if AppConfig.check(:res_exp_time, '').blank?
+    threshold = Time.zone.today - AppConfig.get(:res_exp_time).days
+    Reservation.missed.where('start_date < ?', threshold)
+  end
+
   ## Class methods ##
 
   def self.completed_procedures(procedures)
@@ -161,6 +173,12 @@ class Reservation < ActiveRecord::Base
 
   def unflag(flag)
     self.flags - FLAGS[flag]
+  end
+
+  def expire!
+    self.status = 'denied'
+    flag(:expired)
+    save
   end
 
   def human_status # rubocop:disable all
