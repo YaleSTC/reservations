@@ -31,7 +31,7 @@ Devise.setup do |config|
   config.skip_session_storage = [:http_auth]
 
   # ==> Configuration for :database_authenticatable
-  unless ENV['CAS_AUTH']
+  unless env?('CAS_AUTH')
     # For bcrypt, this is the cost for hashing the password and defaults to 10.
     # If using other encryptors, it sets how many times you want the password
     # re-encrypted.
@@ -72,7 +72,7 @@ Devise.setup do |config|
   end
 
   # ==> devise_cas_authenticatable configuration
-  if ENV['CAS_AUTH']
+  if env?('CAS_AUTH')
     # configure the base URL of your CAS server
     config.cas_base_url = Rails.application.secrets.cas_base_url
 

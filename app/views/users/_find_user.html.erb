@@ -3,7 +3,7 @@
     <%= label_tag :searched_id, 'Find User' %>
     <div class="input-group">
       <%= autocomplete_field_tag 'fake_searched_id', '', autocomplete_user_last_name_users_path,
-        size: 30, update_elements: {id: '#searched_id'}, placeholder: "Enter a name or #{ENV['CAS_AUTH'] ? 'username' : 'email'}", class: 'submittable form-control' %>
+        size: 30, update_elements: {id: '#searched_id'}, placeholder: "Enter a name or #{env?('CAS_AUTH') ? 'username' : 'email'}", class: 'submittable form-control' %>
         <%= hidden_field_tag 'searched_id' %>
         <span class="input-group-btn">
           <%= button_tag sanitize("#{content_tag :i, nil, class: "fa fa-search"}"), class: "btn btn-default", rel: 'tooltip', title: 'Search Users' %>

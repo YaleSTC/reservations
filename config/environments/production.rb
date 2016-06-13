@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 Rails.application.configure do
+  ENV_FALSE = [0, '0', false, 'false', nil, ''].freeze
+
   # Settings specified here will take precedence over those in
   # config/application.rb
 
@@ -24,7 +26,8 @@ Rails.application.configure do
 
   # Disable serving static files from the `/public` folder by default since
   # Apache or NGINX already handles this.
-  config.serve_static_files = ENV['RAILS_SERVE_STATIC_FILES'].present?
+  config.serve_static_files =
+    !ENV_FALSE.include?(ENV['RAILS_SERVE_STATIC_FILES'])
 
   # Compress JavaScripts and CSS.
   config.assets.js_compressor = :uglifier
@@ -77,7 +80,8 @@ Rails.application.configure do
   # config.action_controller.asset_host = 'http://assets.example.com'
 
   # Disable e-mails if environment variable is set
-  config.action_mailer.perform_deliveries = ENV['DISABLE_EMAILS'].nil?
+  config.action_mailer.perform_deliveries =
+    ENV_FALSE.include?(ENV['DISABLE_EMAILS'])
 
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false
@@ -105,5 +109,7 @@ Rails.application.configure do
   config.assets.precompile += %w(print.css)
 
   # set up PartyFoul
-  config.middleware.use('PartyFoul::Middleware') if ENV['PARTY_FOUL_TOKEN']
+  unless ENV_FALSE.include?(ENV['PARTY_FOUL_TOKEN'])
+    config.middleware.use('PartyFoul::Middleware')
+  end
 end

@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
   # :cas_authenticatable module. If not, we implement password authentcation
   # using the :database_authenticatable module and also allow for password
   # resets.
-  if ENV['CAS_AUTH']
+  if env?('CAS_AUTH')
     devise :cas_authenticatable
   else
     devise :database_authenticatable, :recoverable, :rememberable
@@ -38,7 +38,7 @@ class User < ActiveRecord::Base
             presence: true, uniqueness: true,
             format: { with: /\A([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})\z/i }
   # validations for CAS authentication
-  if ENV['CAS_AUTH']
+  if env?('CAS_AUTH')
     validates :cas_login, presence: true, uniqueness: true
   # validations for password authentication
   else
@@ -92,9 +92,9 @@ class User < ActiveRecord::Base
   # rubocop:disable CyclomaticComplexity
   def self.search_ldap(login)
     return nil if login.blank?
-    return nil unless ENV['USE_LDAP']
+    return nil unless env?('USE_LDAP')
 
-    filter_param = if ENV['CAS_AUTH']
+    filter_param = if env?('CAS_AUTH')
                      Rails.application.secrets.ldap_login
                    else
                      Rails.application.secrets.ldap_email
@@ -139,7 +139,7 @@ class User < ActiveRecord::Base
                                     .select { |s| s && !s.empty? }.join(' ')
 
       # define username based on authentication method
-      out[:username] = if ENV['CAS_AUTH']
+      out[:username] = if env?('CAS_AUTH')
                          result[Rails.application.secrets.ldap_login.to_sym][0]
                        else
                          out[:email]
@@ -158,7 +158,7 @@ class User < ActiveRecord::Base
   end
 
   def render_name
-    ENV['CAS_AUTH'] ? "#{name} #{username}" : name.to_s
+    env?('CAS_AUTH') ? "#{name} #{username}" : name.to_s
   end
 
   # ---- Reservation methods ---- #
