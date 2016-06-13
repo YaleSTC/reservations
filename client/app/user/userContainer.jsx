@@ -37,15 +37,13 @@ const UserInfo = ({ user, canEdit, editing, onEditClick }) => {
   );
 }
 
-const mapStateToProps = (state) => {
-  return {
-    editing: state.editMode,
-    user: state.user,
-  }
-}
+const mapStateToProps = (state) => ({
+  editing: state.editMode,
+  user: state.user,
+});
 
-const mapDispatchToProps = (dispatch) => {
-  return { onEditClick: () => { dispatch({ type: 'TOGGLE_EDIT_MODE' }) }, }
-}
+const mapDispatchToProps = (dispatch) => ({
+  onEditClick: () => { dispatch({ type: 'TOGGLE_EDIT_MODE' }) },
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserInfo)

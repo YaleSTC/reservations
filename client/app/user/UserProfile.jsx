@@ -6,14 +6,7 @@ import userReducer from './userReducer';
 
 
 export default (props, _railsContext) => {
-  const store = createStore(userReducer);
-  if (store.getState().user === null) {
-    store.dispatch({
-      type: 'SET_USER',
-      user: props
-    });
-  }
-  
+  const store = createStore(userReducer, { user: props });
   const reactComponent = (
     <Provider store={store}>
       <User />
