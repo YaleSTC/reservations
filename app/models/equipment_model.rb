@@ -177,6 +177,7 @@ class EquipmentModel < ActiveRecord::Base
   end
 
   def num_available(start_date, due_date, source = nil)
+    self.reload if Rails.env.test?
     # get the number available in the given date range
     # 1 queries if source given; 2 otherwise
     #
@@ -190,6 +191,7 @@ class EquipmentModel < ActiveRecord::Base
   end
 
   def num_available_on(date)
+    self.reload if Rails.env.test?
     # get the total number of items of this kind then subtract the total
     # quantity currently reserved, checked-out, and overdue
     busy = reservations.active.overlaps_with_date_range(date, date).count
