@@ -186,20 +186,20 @@ class EquipmentModel < ActiveRecord::Base
       source = reservations.active.overlaps_with_date_range(start_date,
                                                             due_date)
     end
-    equipment_items.active.count - num_busy(start_date, due_date, source)
+    equipment_items_count - num_busy(start_date, due_date, source)
   end
 
   def num_available_on(date)
     # get the total number of items of this kind then subtract the total
     # quantity currently reserved, checked-out, and overdue
     busy = reservations.active.overlaps_with_date_range(date, date).count
-    equipment_items.active.count - busy - overdue_count
+    equipment_items_count - busy - overdue_count
   end
 
   # figure out the qualitative status of this model's items
   def availability(date)
     num = num_available_on(date)
-    total = equipment_items.active.count
+    total = equipment_items_count
     if num <= 0 then 'none'
     elsif num == total then 'all'
     else 'some'
