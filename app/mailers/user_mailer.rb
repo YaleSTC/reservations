@@ -3,10 +3,10 @@ class UserMailer < ActionMailer::Base
   # Workaround so that RSpec start-up doesn't fail.
   # TODO: Have RSpec initialize AppConfig with configuration.
   add_template_helper(ApplicationHelper)
-  if AppConfig.first.nil?
-    default from: 'no-reply@reservations.app'
-  else
+  if AppConfig.check :admin_email
     default from: AppConfig.get(:admin_email), cc: AppConfig.get(:admin_email)
+  else
+    default from: 'no-reply@reservations.app'
   end
 
   # checks the status of the current reservation and sends the appropriate email

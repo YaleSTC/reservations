@@ -13,7 +13,7 @@ shared_examples_for 'valid user email' do
   # FIXME: Workaround for #398 disables this functionality for RSpec testing
   # it "is from the admin" do
   #   expect(@mail.from.size).to eq(1)
-  #   expect(@mail.from.first).to eq(AppConfig.first.admin_email)
+  #   expect(@mail.from.first).to eq(AppConfig.check :admin_email)
   # end
 end
 

@@ -55,7 +55,7 @@ describe 'guest users', type: :feature do
     end
 
     it 'correctly sets the setting' do
-      expect(AppConfig.first.enable_guests).to be_truthy
+      expect(AppConfig.check(:enable_guests)).to be_truthy
     end
 
     it_behaves_like 'unauthorized'
@@ -127,7 +127,7 @@ describe 'guest users', type: :feature do
     end
 
     it 'correctly sets the setting' do
-      expect(AppConfig.first.enable_guests).to be_falsey
+      expect(AppConfig.check(:enable_guests)).to be_falsey
     end
 
     it_behaves_like 'unauthorized'
