@@ -84,17 +84,13 @@ const Form = ({ user, onSave, id }) => {
   );
 }
 
-const mapStateToProps = (state) => {
-  return {
-    user: state.user,
-  }
-}
+const mapStateToProps = (state) => ({
+  user: state.user,
+});
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onSave: (changes) => { 
-      dispatch({ type: 'UPDATE_USER', changes: changes })
-    },
+    onSave(changes) { dispatch({ type: 'UPDATE_USER', changes: changes }) },
   }
 }
 
