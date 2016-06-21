@@ -166,6 +166,14 @@ class EquipmentModel < ActiveRecord::Base
     end
   end
 
+  def active_reservations
+    if AppConfig.check :requests_affect_availability
+      reservations.not_overdue.active_or_requested
+    else
+      reservations.not_overdue.active
+    end
+  end
+
   def num_busy(start_date, due_date, source)
     # get the number busy (not able to be reserved) in the source reservations
     # uses 0 queries
@@ -182,17 +190,15 @@ class EquipmentModel < ActiveRecord::Base
     #
     # source is an array of reservations that can replace a database call
     #   for database query optimization purposes
-    unless source
-      source = reservations.active.overlaps_with_date_range(start_date,
+    source ||= active_reservations.overlaps_with_date_range(start_date,
                                                             due_date)
-    end
     equipment_items.active.count - num_busy(start_date, due_date, source)
   end
 
   def num_available_on(date)
     # get the total number of items of this kind then subtract the total
     # quantity currently reserved, checked-out, and overdue
-    busy = reservations.active.overlaps_with_date_range(date, date).count
+    busy = active_reservations.overlaps_with_date_range(date, date).count
     equipment_items.active.count - busy - overdue_count
   end
 

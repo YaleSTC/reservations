@@ -370,6 +370,11 @@ describe EquipmentModel, type: :model do
 
         ACTIVE.each { |s| it_behaves_like 'with an active reservation', s }
 
+        context 'when requests_affect_availability is set' do
+          before { mock_app_config(requests_affect_availability: true) }
+          it_behaves_like 'with an active reservation', :request
+        end
+
         context 'with a checked-out, overdue reservation' do
           before do
             @res = FactoryGirl.create(:overdue_reservation,
