@@ -1,14 +1,21 @@
-# some basic helpers to simulate devise controller methods in specs
+# frozen_string_literal: true
+require Rails.root.join('spec/support/mockers/user_mock.rb')
+
 module ControllerHelpers
-  def current_user
-    user_session_info =
-      response.request.env['rack.session']['warden.user.user.key']
-    return unless user_session_info
-    user_id = user_session_info[0][0]
-    User.find(user_id)
+  def mock_user_sign_in(user = UserMock.new(traits: [:findable]))
+    pass_app_setup_check
+    allow(request.env['warden']).to receive(:authenticate!).and_return(user)
+    # necessary for permissions to work
+    allow(ApplicationController).to receive(:current_user).and_return(user)
+    allow(Ability).to receive(:new).and_return(Ability.new(user))
+    allow_any_instance_of(described_class).to \
+      receive(:current_user).and_return(user)
   end
 
-  def user_signed_in?
-    !current_user.nil?
+  private
+
+  def pass_app_setup_check
+    allow(AppConfig).to receive(:first).and_return(true) unless AppConfig.first
+    allow(User).to receive(:count).and_return(1) unless User.first
   end
 end
