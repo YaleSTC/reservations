@@ -2,187 +2,204 @@
 require 'spec_helper'
 
 describe CategoriesController, type: :controller do
-  before(:each) do
-    mock_app_config
-    @category = FactoryGirl.create(:category)
-  end
+  before(:each) { mock_app_config }
 
   it_behaves_like 'calendarable', Category
 
   describe 'GET index' do
-    before(:each) do
-      @inactive_category =
-        FactoryGirl.create(:category, deleted_at: Time.zone.today - 1)
-    end
     context 'user is admin' do
-      before(:each) do
-        sign_in FactoryGirl.create(:admin)
+      before do
+        mock_user_sign_in(UserMock.new(:admin))
         get :index
       end
-      it 'should populate an array of all categories if show deleted is true' do
-        get :index, show_deleted: true
-        expect(assigns(:categories)).to eq([@category, @inactive_category])
+      it_behaves_like 'successful request', :index
+      it 'populates an array of active categories' do
+        allow(Category).to receive(:active)
+        get :index
+        expect(Category).to have_received(:active)
       end
-      it 'should populate an array of active categories if show deleted is '\
-        'nil or false' do
-        expect(assigns(:categories)).to eq([@category])
+      context 'show_deleted' do
+        it 'populates an array of all categories' do
+          allow(Category).to receive(:all)
+          get :index, show_deleted: true
+          expect(Category).to have_received(:all)
+        end
       end
-      it { is_expected.to respond_with(:success) }
-      it { is_expected.to render_template(:index) }
-      it { is_expected.not_to set_flash }
     end
     context 'user is not admin' do
-      before(:each) do
-        sign_in FactoryGirl.create(:user)
+      before do
+        mock_user_sign_in
         get :index
       end
-      it { is_expected.to redirect_to(root_url) }
-      it { is_expected.to set_flash }
+      it_behaves_like 'redirected request'
     end
   end
+
   describe 'GET show' do
     context 'user is admin' do
-      before(:each) do
-        sign_in FactoryGirl.create(:admin)
-        get :show, id: @category
+      # NOTE: this may be a superfluous test; #show doesn't do much
+      let!(:cat) { CategoryMock.new(traits: [:findable]) }
+      before do
+        mock_user_sign_in(UserMock.new(:admin))
+        get :show, id: cat.id
       end
-      it { is_expected.to respond_with(:success) }
-      it { is_expected.to render_template(:show) }
-      it { is_expected.not_to set_flash }
-      it 'should set @category to the selected category' do
-        expect(assigns(:category)).to eq(@category)
+      it_behaves_like 'successful request', :show
+      it 'sets category to the selected category' do
+        get :show, id: cat.id
+        expect(Category).to have_received(:find).with(cat.id.to_s)
+          .at_least(:once)
       end
     end
     context 'user is not admin' do
-      before(:each) do
-        sign_in FactoryGirl.create(:user)
-        get :show, id: @category
+      before do
+        mock_user_sign_in
+        get :show, id: 1
       end
-      it { is_expected.to redirect_to(root_url) }
-      it { is_expected.to set_flash }
+      it_behaves_like 'redirected request'
     end
   end
-  # all methods below should redirect to root_url if user is not an admin
+
   describe 'GET new' do
-    context 'is admin' do
-      before(:each) do
-        sign_in FactoryGirl.create(:admin)
+    context 'user is admin' do
+      before do
+        mock_user_sign_in(UserMock.new(:admin))
         get :new
       end
-      it { is_expected.to respond_with(:success) }
-      it { is_expected.to render_template(:new) }
-      it { is_expected.not_to set_flash }
+      it_behaves_like 'successful request', :new
       it 'assigns a new category to @category' do
         expect(assigns(:category)).to be_new_record
         expect(assigns(:category).is_a?(Category)).to be_truthy
       end
     end
-    context 'not admin' do
-      it 'should redirect to root_url' do
-        sign_in FactoryGirl.create(:user)
+    context 'user is not admin' do
+      before do
+        mock_user_sign_in
         get :new
-        expect(response).to redirect_to(root_url)
       end
+      it_behaves_like 'redirected request'
     end
   end
+
   describe 'POST create' do
-    context 'is admin' do
-      before(:each) do
-        sign_in FactoryGirl.create(:admin)
+    context 'user is admin' do
+      before { mock_user_sign_in(UserMock.new(:admin)) }
+      context 'successful save' do
+        let!(:cat) { FactoryGirl.build_stubbed(:category) }
+        before do
+          allow(Category).to receive(:new).and_return(cat)
+          allow(cat).to receive(:save).and_return(true)
+          post :create, category: { name: 'Name' }
+        end
+        it { is_expected.to set_flash[:notice] }
+        it { is_expected.to redirect_to(cat) }
       end
-      context 'with valid attributes' do
-        before(:each) do
-          post :create, category: FactoryGirl.attributes_for(:category)
+      context 'unsuccessful save' do
+        let!(:cat) { CategoryMock.new }
+        before do
+          allow(Category).to receive(:new).and_return(cat)
+          allow(cat).to receive(:save).and_return(false)
+          post :create, category: { name: 'Name' }
         end
-        it 'saves a new category to the database' do
-          expect do
-            post :create, category: FactoryGirl.attributes_for(:category)
-          end.to change(Category, :count).by(1)
-        end
-        it { is_expected.to redirect_to(Category.last) }
-        it { is_expected.to set_flash }
-      end
-      context 'with invalid attributes' do
-        before(:each) do
-          post :create,
-               category: FactoryGirl.attributes_for(:category, name: nil)
-        end
-        it 'fails to save a new category' do
-          expect do
-            post :create,
-                 category: FactoryGirl.attributes_for(:category, name: nil)
-          end.not_to change(Category, :count)
-        end
-        it { is_expected.to set_flash }
+        it { is_expected.to set_flash[:error] }
         it { is_expected.to render_template(:new) }
       end
     end
-    context 'not admin' do
-      it 'should redirect to root url' do
-        sign_in FactoryGirl.create(:user)
-        post :create, category: FactoryGirl.attributes_for(:category)
-        expect(response).to redirect_to(root_url)
+    context 'user is not admin' do
+      before do
+        mock_user_sign_in
+        post :create, category: { name: 'Name' }
       end
+      it_behaves_like 'redirected request'
     end
   end
-  describe 'GET edit' do
-    context 'is admin' do
-      before(:each) do
-        sign_in FactoryGirl.create(:admin)
-        get :edit, id: @category
-      end
-      it 'should set @category to the selected category' do
-        expect(assigns(:category)).to eq(@category)
-      end
-      it { is_expected.to respond_with(:success) }
-      it { is_expected.to render_template(:edit) }
-      it { is_expected.not_to set_flash }
-    end
-    context 'not admin' do
-      it 'should redirect to root_url' do
-        sign_in FactoryGirl.create(:user)
-        get :edit, id: @category
-        expect(response).to redirect_to(root_url)
-      end
-    end
-  end
+
   describe 'PUT update' do
     context 'is admin' do
-      before(:each) do
-        sign_in FactoryGirl.create(:admin)
+      before { mock_user_sign_in(UserMock.new(:admin)) }
+      context 'successful update' do
+        let!(:cat) { FactoryGirl.build_stubbed(:category) }
+        before do
+          allow(Category).to receive(:find).with(cat.id.to_s).and_return(cat)
+          allow(cat).to receive(:update_attributes).and_return(true)
+          attributes_hash = { id: 2 }
+          put :update, id: cat.id, category: attributes_hash
+        end
+        it { is_expected.to set_flash[:notice] }
+        it { is_expected.to redirect_to(cat) }
       end
-      context 'with valid attributes' do
-        before(:each) do
-          put :update,
-              id: @category,
-              category: FactoryGirl.attributes_for(:category, name: 'Updated')
-        end
-        it 'should set @category to the correct category' do
-          expect(assigns(:category)).to eq(@category)
-        end
-        it 'should successfully save new attributes to the database' do
-          @category.reload
-          expect(@category.name).to eq('Updated')
-        end
-        it { is_expected.to redirect_to(@category) }
-        it { is_expected.to set_flash }
-      end
-      context 'with invalid attributes' do
-        before(:each) do
-          put :update,
-              id: @category,
-              category: FactoryGirl.attributes_for(:category,
-                                                   name: nil,
-                                                   max_per_user: 10)
-        end
-        it 'should not update attributes of @category in the database' do
-          @category.reload
-          expect(@category.name).not_to be_nil
-          expect(@category.max_per_user).not_to eq(10)
+      context 'unsuccessful update' do
+        let!(:cat) { CategoryMock.new(traits: [:findable]) }
+        before do
+          allow(cat).to receive(:update_attributes).and_return(false)
+          put :update, id: cat.id, category: { id: 2 }
         end
         it { is_expected.to render_template(:edit) }
-        it { is_expected.not_to set_flash }
       end
+    end
+    context 'user is not admin' do
+      before do
+        mock_user_sign_in
+        put :update, id: 1, category: { id: 2 }
+      end
+      it_behaves_like 'redirected request'
+    end
+  end
+
+  describe 'PUT deactivate' do
+    context 'is admin' do
+      before { mock_user_sign_in(UserMock.new(:admin)) }
+      shared_examples 'not confirmed' do |flash_type, **opts|
+        let!(:cat) { FactoryGirl.build_stubbed(:category) }
+        before do
+          allow(Category).to receive(:find).with(cat.id.to_s).and_return(cat)
+          allow(cat).to receive(:destroy)
+          put :deactivate, id: cat.id, **opts
+        end
+        it { is_expected.to set_flash[flash_type] }
+        it { is_expected.to redirect_to(cat) }
+        it "doesn't destroy the category" do
+          expect(cat).not_to have_received(:destroy)
+        end
+      end
+      it_behaves_like 'not confirmed', :notice, deactivation_cancelled: true
+      it_behaves_like 'not confirmed', :error
+
+      context 'confirmed' do
+        let!(:cat) do
+          CategoryMock.new(traits: [:findable], equipment_models: [])
+        end
+        before do
+          request.env['HTTP_REFERER'] = 'where_i_came_from'
+          put :deactivate, id: cat.id, deactivation_confirmed: true
+        end
+        it 'destroys the category' do
+          expect(cat).to have_received(:destroy)
+        end
+      end
+
+      context 'with reservations' do
+        let!(:cat) { CategoryMock.new(traits: [:findable]) }
+        let!(:res) { instance_spy('reservation') }
+        before do
+          model = EquipmentModelMock.new(traits: [[:with_category, cat: cat]])
+          # stub out scope chain -- SMELL
+          allow(Reservation).to receive(:for_eq_model).with(model.id)
+            .and_return(Reservation)
+          allow(Reservation).to receive(:finalized).and_return([res])
+          request.env['HTTP_REFERER'] = 'where_i_came_from'
+          put :deactivate, id: cat.id, deactivation_confirmed: true
+        end
+        it 'archives the reservation' do
+          expect(res).to have_received(:archive)
+        end
+      end
+    end
+    context 'user is not admin' do
+      before do
+        mock_user_sign_in
+        put :deactivate, id: 1
+      end
+      it_behaves_like 'redirected request'
     end
   end
 end
