@@ -124,15 +124,6 @@ class EquipmentModel < ActiveRecord::Base
     "#{id}-#{photo_file_name.gsub(/[^a-zA-Z0-9_\.]/, '_')}"
   end
 
-  ###################
-  ## Class Methods ##
-  ###################
-
-  # TODO: this appears to be dead code - verify and remove
-  def self.select_options
-    order('name ASC').collect { |item| [item.name, item.id] }
-  end
-
   ######################
   ## Instance Methods ##
   ######################
@@ -157,13 +148,6 @@ class EquipmentModel < ActiveRecord::Base
 
   def maximum_renewal_days_before_due
     renewal_days_before_due || category.maximum_renewal_days_before_due
-  end
-
-  # TODO: This appears to be dead code, verify and delete
-  def document_attributes=(document_attributes)
-    document_attributes.each do |attributes|
-      documents.build(attributes)
-    end
   end
 
   def active_reservations
