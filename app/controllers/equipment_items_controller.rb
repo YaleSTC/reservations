@@ -26,11 +26,11 @@ class EquipmentItemsController < ApplicationController
 
   def index
     method = params[:show_deleted] ? :all : :active
-    if @equipment_model
-      @equipment_items = @equipment_model.equipment_items.send(method)
-    else
-      @equipment_items = EquipmentItem.send(method)
-    end
+    @equipment_items = if @equipment_model
+                         @equipment_model.equipment_items.send(method)
+                       else
+                         EquipmentItem.send(method).includes(:equipment_model)
+                       end
     respond_to do |format|
       format.html
       format.zip { download_equipment_data }
