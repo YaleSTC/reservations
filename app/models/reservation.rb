@@ -1,5 +1,9 @@
 # rubocop:disable Metrics/ClassLength
 class Reservation < ActiveRecord::Base
+  # SMELLS:
+  #   - renewal should be handled by a separate object
+  #   - defintely need a notes object
+  #   - check in/out service objects
   include Linkable
   include ReservationValidations
 
@@ -357,6 +361,9 @@ class Reservation < ActiveRecord::Base
   end
 
   def update(current_user, new_params, new_notes) # rubocop:disable all
+    # SMELLS: 
+    #   - needs to have methods extracted
+    #   - this is pretty much just interacting with notes
     # updates a reservation and records changes in the notes
     #
     # takes the current user, the new params from the controller that have

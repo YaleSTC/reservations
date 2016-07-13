@@ -1,4 +1,6 @@
 class EquipmentItem < ActiveRecord::Base
+  # SMELLS:
+  #   - possibly extract notes handling to a separate class?
   include Linkable
   include Searchable
 
@@ -41,6 +43,7 @@ class EquipmentItem < ActiveRecord::Base
   end
 
   def self.for_eq_model(model_id, source_objects)
+    # SMELL: similar to reservation#number_for
     # count the number of equipment items for a given
     # model out of an array of source objects
     # 0 queries
@@ -54,6 +57,7 @@ class EquipmentItem < ActiveRecord::Base
 
   def make_reservation_notes(procedure_verb, reservation, handler, new_notes,
                              time)
+    # SMELL: too many arguments
     new_str = "#### #{reservation.md_link(procedure_verb.capitalize)} by "\
       "#{handler.md_link} for #{reservation.reserver.md_link} on "\
       "#{time.to_s(:long)}\n"
@@ -76,6 +80,7 @@ class EquipmentItem < ActiveRecord::Base
   end
 
   def update(current_user, new_params) # rubocop:disable all
+    # SMELL: need to extract some methods
     assign_attributes(new_params)
     changes = self.changes
     return self if changes.empty?

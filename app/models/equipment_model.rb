@@ -1,5 +1,8 @@
 # rubocop:disable ClassLength
 class EquipmentModel < ActiveRecord::Base
+  # SMELLS: 
+  #   - extract availability calculation class
+  #   - photos + documentation should be separate objects ?
   include ApplicationHelper
   include Linkable
   include Searchable
@@ -204,6 +207,7 @@ class EquipmentModel < ActiveRecord::Base
 
   # figure out the qualitative status of this model's items
   def availability(date)
+    # SMELL: belongs in a view helper probably
     num = num_available_on(date)
     total = equipment_items.active.count
     if num <= 0 then 'none'
@@ -220,6 +224,7 @@ class EquipmentModel < ActiveRecord::Base
   end
 
   def available_item_select_options
+    # SMELL: belongs in a view helper probably
     equipment_items.includes(:reservations).active.select(&:available?)\
                    .sort_by(&:name)\
                    .collect do |item|
