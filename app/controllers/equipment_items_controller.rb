@@ -1,5 +1,8 @@
 # rubocop:disable Metrics/ClassLength
 class EquipmentItemsController < ApplicationController
+  # GENERAL SMELLS:
+  #   - duplication: item -> model is very similar to model -> category
+  #     fix: extract common parent class
   load_and_authorize_resource
   decorates_assigned :equipment_item
   before_action :set_current_equipment_item,
@@ -25,6 +28,8 @@ class EquipmentItemsController < ApplicationController
   # ---------- end before filter methods ---------- #
 
   def index
+    # SMELL: 
+    # - duplication in models + categories controller
     method = params[:show_deleted] ? :all : :active
     if @equipment_model
       @equipment_items = @equipment_model.equipment_items.send(method)
@@ -79,6 +84,7 @@ class EquipmentItemsController < ApplicationController
   # extend ApplicationController method; calls destroy twice due to presence of
   # model method
   def deactivate
+    # SMELL: duplication in equipment resource controllers
     if params[:deactivation_reason] && !params[:deactivation_cancelled]
       @equipment_item.deactivate(user: current_user,
                                  reason: params[:deactivation_reason])

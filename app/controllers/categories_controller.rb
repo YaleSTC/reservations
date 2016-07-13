@@ -1,4 +1,6 @@
 class CategoriesController < ApplicationController
+  # SMELLS:
+  #   - duplication amongst equipment resource controllers
   load_and_authorize_resource
   decorates_assigned :category
   before_action :set_current_category,
@@ -15,6 +17,8 @@ class CategoriesController < ApplicationController
   # --------- end before filter methods -------- #
 
   def index
+    # SMELL: 
+    # - duplication in models + items controller
     @categories = if params[:show_deleted]
                     Category.all
                   else
@@ -65,6 +69,7 @@ class CategoriesController < ApplicationController
   end
 
   def deactivate
+    # SMELL: duplication in equipment resource controllers
     if params[:deactivation_cancelled]
       flash[:notice] = 'Deactivation cancelled.'
       redirect_to @category

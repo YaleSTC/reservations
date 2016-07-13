@@ -1,5 +1,8 @@
 # rubocop:disable ClassLength
 class EquipmentModelsController < ApplicationController
+  # GENERAL SMELLS:
+  #   - duplication: item -> model is very similar to model -> category
+  #     fix: extract common parent class
   layout 'application_with_sidebar', only: :show
   load_and_authorize_resource
   decorates_assigned :equipment_model
@@ -24,6 +27,8 @@ class EquipmentModelsController < ApplicationController
   # --------- end before filter methods --------- #
 
   def index
+    # SMELL: 
+    # - duplication in categories + items controller
     base = @category ? @category.equipment_models : EquipmentModel.all
     if params[:show_deleted]
       @equipment_models = base.includes(:reservations)
@@ -39,13 +44,18 @@ class EquipmentModelsController < ApplicationController
 
   def show # rubocop:disable AbcSize, MethodLength
     calculate_availability
+    # SMELL: should be a model method
     relevant_reservations =
       Reservation.for_eq_model(@equipment_model.id).active
+    # SMELL: sample(6) ??
     @associated_equipment_models =
       @equipment_model.associated_equipment_models.sample(6)
 
+    # SMELL: constant
     calendar_length = 1.month
 
+    # SMELL: overdue reservation handling like this should be done in the 
+    # reservation model
     @reservation_data = relevant_reservations.collect do |r|
       end_date = if r.overdue
                    Time.zone.today + calendar_length
@@ -57,6 +67,7 @@ class EquipmentModelsController < ApplicationController
       # equipment as permanently 'out'.
     end
 
+    # SMELL: message chain
     @blackouts = Blackout.active.collect do |b|
       { start: b.start_date, end: b.end_date }
     end
@@ -67,6 +78,7 @@ class EquipmentModelsController < ApplicationController
 
     @restricted = @equipment_model.model_restricted?(cart.reserver_id)
 
+    # SMELL: message chain
     # For pending reservations table
     @pending =
       relevant_reservations.reserved
@@ -102,6 +114,7 @@ class EquipmentModelsController < ApplicationController
     eq_params[:documentation] = fix_content_type(eq_params[:documentation])
 
     if @equipment_model.update_attributes(eq_params)
+      # SMELL: belongs in a callback on the model
       # hard-delete any deleted checkin/checkout procedures
       delete_procedures(params, 'checkout')
       delete_procedures(params, 'checkin')
@@ -113,10 +126,12 @@ class EquipmentModelsController < ApplicationController
   end
 
   def deactivate
+    # SMELL: duplication in equipment resource controllers
     if params[:deactivation_cancelled]
       flash[:notice] = 'Deactivation cancelled.'
       redirect_to @equipment_model
     elsif params[:deactivation_confirmed]
+      # SMELL: this should just call a method EquipmentModel#deactivate
       Reservation.for_eq_model(@equipment_model.id).finalized.each do |r|
         r.archive(current_user, 'The equipment model was deactivated.')
          .save(validate: false)
@@ -132,6 +147,7 @@ class EquipmentModelsController < ApplicationController
 
   # function to check for deleted checkin/checkout procedures and hard-delete
   # them after equipment model update
+  # SMELL: should be a model method
   def delete_procedures(params, phase)
     # phase needs to be equal to either "checkout" or "checkin"
     phase_params = params[:equipment_model][:"#{phase}_procedures_attributes"]
@@ -192,6 +208,7 @@ class EquipmentModelsController < ApplicationController
   def generate_calendar_reservations
     # we need uniq because it otherwise includes overdue reservations in the
     # date range twice
+    # SMELL ?
     (Reservation.for_eq_model(@equipment_model.id).includes(:equipment_item)
       .overlaps_with_date_range(@start_date, @end_date).finalized + \
       Reservation.for_eq_model(@equipment_model.id).includes(:equipment_item)
