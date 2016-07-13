@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do
@@ -23,9 +24,7 @@ FactoryGirl.define do
       start_date { Time.zone.today }
       due_date { Time.zone.today + 1.day }
       status { 'requested' }
-      after(:build) do |res|
-        res.flag(:request)
-      end
+      flags { 1 | Reservation::FLAGS[:request] }
     end
 
     trait :reserved do
