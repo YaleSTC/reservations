@@ -160,9 +160,9 @@ class EquipmentModelsController < ApplicationController
     # to resolve test failures)
     params.require(:equipment_model)
           .permit(:name, :category_id, :category, :description, :late_fee,
-                  :replacement_fee, :max_per_user, :document_attributes,
-                  :deleted_at, :photo, :documentation, :max_renewal_times,
-                  :max_renewal_length, :renewal_days_before_due, :late_fee_max,
+                  :replacement_fee, :max_per_user, :deleted_at, :photo,
+                  :documentation, :max_renewal_times, :max_renewal_length,
+                  :renewal_days_before_due, :late_fee_max,
                   { associated_equipment_model_ids: [] }, :requirement_ids,
                   :requirements, :max_checkout_length)
           .tap do |whitelisted|

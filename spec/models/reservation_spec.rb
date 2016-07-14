@@ -21,6 +21,72 @@ describe Reservation, type: :model do
   # can't run if nil (?)
   #
 
+  describe 'counter cache' do
+    context 'newly overdue reservation' do
+      it 'increments when a reservation is marked as overdue' do
+        model = FactoryGirl.build_stubbed(:equipment_model)
+        allow(EquipmentModel).to receive(:find).with(model.id).and_return(model)
+        res = FactoryGirl.create(:checked_out_reservation,
+                                 equipment_model: model,
+                                 start_date: Time.zone.today - 2.days,
+                                 due_date: Time.zone.today - 1.day)
+        res.update_columns(overdue: false)
+        expect(model).to receive(:increment).with(:overdue_count).once
+        res.update_attributes(overdue: true)
+      end
+    end
+    context 'already overdue reservation' do
+      it "updating other attributes doesn't affect the cache" do
+        model = FactoryGirl.build_stubbed(:equipment_model)
+        allow(EquipmentModel).to receive(:find).with(model.id).and_return(model)
+        res = FactoryGirl.create(:overdue_reservation, equipment_model: model)
+        expect(model).not_to receive(:increment)
+        res.update_attribute(:notes, 'test')
+      end
+      it 'decrements when checked in' do
+        model = FactoryGirl.build_stubbed(:equipment_model)
+        allow(EquipmentModel).to receive(:find).with(model.id).and_return(model)
+        res = FactoryGirl.create(:overdue_reservation, equipment_model: model)
+        expect(model).to receive(:decrement).with(:overdue_count).once
+        res.update_attributes(
+          FactoryGirl.attributes_for(:overdue_returned_reservation,
+                                     equipment_model: model)
+        )
+      end
+      it 'decrements when a reservation is extended' do
+        model = FactoryGirl.build_stubbed(:equipment_model)
+        allow(EquipmentModel).to receive(:find).with(model.id).and_return(model)
+        res = FactoryGirl.create(:overdue_reservation, equipment_model: model)
+        expect(model).to receive(:decrement).with(:overdue_count).once
+        res.update_attribute(:due_date, Time.zone.today + 1.day)
+      end
+    end
+    context 'overdue, returned reservation' do
+      it 'only decrements once per reservation' do
+        model = FactoryGirl.build_stubbed(:equipment_model)
+        allow(EquipmentModel).to receive(:find).with(model.id).and_return(model)
+        res = FactoryGirl.create(:overdue_returned_reservation,
+                                 equipment_model: model)
+        expect(model).not_to receive(:decrement)
+        res.update_attribute(:notes, 'test')
+      end
+    end
+    context 'normal checked out reservation' do
+      it "doesn't change when a normal reservation is checked in" do
+        model = FactoryGirl.build_stubbed(:equipment_model)
+        allow(EquipmentModel).to receive(:find).with(model.id).and_return(model)
+        res = FactoryGirl.create(:checked_out_reservation,
+                                 equipment_model: model)
+        expect(model).not_to receive(:decrement)
+        expect(model).not_to receive(:increment)
+        res.update_attributes(
+          FactoryGirl.attributes_for(:checked_in_reservation,
+                                     equipment_model: model)
+        )
+      end
+    end
+  end
+
   describe '.number_for' do
     before(:each) do
       @source = FactoryGirl.build_pair(:valid_reservation)
