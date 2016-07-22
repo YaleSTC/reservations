@@ -100,4 +100,41 @@ describe 'Equipment Model views', type: :feature do
       end
     end
   end
+  describe 'creation' do
+    let!(:cat) { FactoryGirl.create(:category) }
+    before do
+      sign_in_as_user @superuser
+      visit new_equipment_model_path
+    end
+    it 'succeeds' do
+      attrs = { name: 'EQ MODEL', description: 'DESC', late_fee: 5,
+                replacement_fee: 10, late_fee_max: 15, max_per_user: 1,
+                max_checkout_length: 3, max_renewal_times: 2,
+                max_renewal_length: 4, renewal_days_before_due: 5 }
+      select(cat.name, from: 'equipment_model_category_id')
+      attrs.each do |attr, value|
+        fill_in("equipment_model_#{attr}", with: value)
+      end
+      click_button 'Create Equipment model'
+      expect(EquipmentModel.where(name: attrs[:name])).not_to be_empty
+    end
+  end
+  describe 'editing' do
+    let!(:model) { FactoryGirl.create(:equipment_model) }
+    before { sign_in_as_user @superuser }
+    shared_examples 'can update' do |attr, value|
+      it attr.to_s do
+        visit edit_equipment_model_path(model)
+        fill_in("equipment_model_#{attr}", with: value)
+        click_button 'Update Equipment model'
+        model.reload
+        expect(model.send(attr)).to eq(value)
+      end
+    end
+    ATTRS = { name: 'EQ MODEL', description: 'DESC', late_fee: 5,
+              replacement_fee: 10, late_fee_max: 15, max_per_user: 1,
+              max_checkout_length: 3, max_renewal_times: 2,
+              max_renewal_length: 4, renewal_days_before_due: 5 }.freeze
+    ATTRS.each { |attr, value| it_behaves_like 'can update', attr, value }
+  end
 end
