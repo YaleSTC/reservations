@@ -27,4 +27,13 @@ describe 'Equipment Items', type: :feature do
     ATTRS = { name: 'ITEM', serial: '12345' }.freeze
     ATTRS.each { |attr, value| it_behaves_like 'can update', attr, value }
   end
+  describe 'deactivation' do
+    let!(:item) { FactoryGirl.create(:equipment_item) }
+    before { sign_in_as_user @superuser }
+    it 'succeeds', js: true do
+      visit equipment_item_path(item)
+      accept_prompt(with: 'reason') { click_on 'Deactivate' }
+      expect(page).to have_content 'Deactivated'
+    end
+  end
 end
