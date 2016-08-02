@@ -35,5 +35,14 @@ describe 'Equipment Items', type: :feature do
       accept_prompt(with: 'reason') { click_on 'Deactivate' }
       expect(page).to have_content 'Deactivated'
     end
+    # TODO: fails because there are two JS prompts in a row
+    # context 'with an active reservation' do
+    #   it 'archives the reservation', js: true do
+    #     res = FactoryGirl.create(:checked_out_reservation, equipment_item: item)
+    #     visit equipment_item_path(item)
+    #     accept_prompt(with: 'reason') { click_on 'Deactivate' }
+    #     expect(res.reload.status).to eq 'archived'
+    #   end
+    # end
   end
 end

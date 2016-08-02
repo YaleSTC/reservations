@@ -32,4 +32,8 @@ describe 'Categories', type: :feature do
               renewal_days_before_due: 5 }.freeze
     ATTRS.each { |attr, value| it_behaves_like 'can update', attr, value }
   end
+  describe 'deactivation' do
+    it 'succeeds' do
+    end
+  end
 end

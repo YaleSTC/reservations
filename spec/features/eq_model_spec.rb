@@ -137,4 +137,20 @@ describe 'Equipment Model views', type: :feature do
               max_renewal_length: 4, renewal_days_before_due: 5 }.freeze
     ATTRS.each { |attr, value| it_behaves_like 'can update', attr, value }
   end
+  # TODO: 
+  #   - multiple deactivate buttons
+  #   - currently doesn't pass right params?
+  #describe 'deactivation' do
+  #  let!(:model) { FactoryGirl.create(:equipment_model) }
+  #  before { sign_in_as_user @superuser }
+  #  it 'succeeds' do
+  #    visit equipment_model_path(model)
+  #    save_and_open_page
+  #    expect(page).to have_content 'deactivated'
+  #  end
+  #  context 'with items' do
+  #    it 'also deactivates the items' do
+  #    end
+  #  end
+  #end
 end
