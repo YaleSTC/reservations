@@ -1,164 +1,120 @@
+# frozen_string_literal: true
 require 'spec_helper'
 
 describe CatalogController, type: :controller do
+  let!(:user) { UserMock.new(traits: [:findable]) }
+  let!(:cart) { CartMock.new(reserver_id: user.id, items: {}) }
   before(:each) do
-    @app_config = FactoryGirl.create(:app_config)
-    @user = FactoryGirl.create(:user)
-    @cart = FactoryGirl.build(:cart, reserver_id: @user.id)
-    sign_in @user
-    # @controller.stub(:cart).and_return(session[@cart])
-    # @controller.stub(:fix_cart_date)
+    mock_app_config
+    mock_user_sign_in(user)
+    allow_any_instance_of(described_class).to receive(:fix_cart_date)
+    allow_any_instance_of(ApplicationController).to receive(:fix_cart_date)
+    allow_any_instance_of(described_class).to \
+      receive(:prepare_catalog_index_vars)
+    allow_any_instance_of(described_class).to receive(:cart).and_return(cart)
   end
+
   describe 'GET index' do
-    before(:each) do
-      # the first hash passed here is params[] and the second is session[]
-      get :index, {} # , { cart: @cart }
+    before(:each) { get :index, {}, cart: cart }
+    it 'gets the reserver id' do
+      expect(cart).to have_received(:reserver_id).at_least(:once)
     end
-    it 'sets @reserver_id to the current cart.reserver_id' do
-      expect(assigns(:reserver_id)).to eq(@user.id)
-    end
-    it { is_expected.to respond_with(:success) }
-    it { is_expected.to render_template(:index) }
-    it { is_expected.not_to set_flash }
+    it_behaves_like 'successful request', :index
   end
+
   describe 'PUT add_to_cart' do
     context 'valid equipment_model selected' do
-      before(:each) do
-        @equipment_model = FactoryGirl.create(:equipment_model)
-        put :add_to_cart, id: @equipment_model.id
+      let!(:eq_model) { EquipmentModelMock.new(traits: [:findable]) }
+      before do
+        allow(cart).to receive(:validate_all).and_return([])
+        put :add_to_cart, { id: eq_model.id }, cart: cart
       end
-      it 'should call cart.add_item to add item to cart' do
-        expect do
-          put :add_to_cart, id: @equipment_model.id
-        end.to change { session[:cart].items[@equipment_model.id] }.by(1)
+      it 'calls cart.add_item to add item to cart' do
+        expect(cart).to have_received(:add_item).with(eq_model, any_args)
       end
       it 'should set flash[:error] if errors exist' do
-        allow(@cart).to receive(:validate_items).and_return('test')
-        allow(@cart).to receive(:validate_dates_and_items).and_return('test2')
+        allow(cart).to receive(:validate_all).and_return(['ERROR'])
+        put :add_to_cart, id: eq_model.id
         expect(flash[:error]).not_to be_nil
       end
+      it { is_expected.to set_flash[:notice] }
       it { is_expected.to redirect_to(root_path) }
     end
-    context 'invalid equipment_model selected' do
+    context 'no equipment_model selected' do
       before(:each) do
-        # there are no equipment models in the db so this is invalid
-        put :add_to_cart, id: 1
+        allow(Rails.logger).to receive(:error)
+        put :add_to_cart, { id: 1 }, cart: cart
       end
-      it { is_expected.to redirect_to(root_path) }
-      it { is_expected.to set_flash }
       it 'should add logger error' do
-        expect(Rails.logger).to\
-          receive(:error).with('Attempt to add invalid equipment model 1')
-        # this call has to come after the previous line
-        put :add_to_cart, id: 1
+        expect(Rails.logger).to have_received(:error)
+          .with('Attempt to add invalid equipment model 1')
       end
+      it_behaves_like 'redirected request'
     end
   end
 
   describe 'POST submit_cart_updates_form on item' do
-    before(:each) do
-      @equipment_model = FactoryGirl.create(:equipment_model)
-      put :add_to_cart, id: @equipment_model.id
+    let!(:eq_model) { EquipmentModelMock.new(traits: [:findable]) }
+    let!(:attrs) { { id: eq_model.id, quantity: 2, reserver_id: user.id } }
+    it 'adjusts item quantity with cart#edit_cart_item' do
+      post :submit_cart_updates_form, attrs, cart: cart
+      expect(cart).to have_received(:edit_cart_item).with(eq_model, 2)
     end
-    it 'should adjust item quantity' do
-      params = { id: @equipment_model.id,
-                 quantity: 2,
-                 reserver_id: @user.id }
-      post :submit_cart_updates_form, params
-      expect(session[:cart].items[@equipment_model.id]).to eq(2)
-      expect(assigns(:errors)).to eq session[:cart].validate_all
-      is_expected.to redirect_to(new_reservation_path)
+    context 'newly empty cart' do
+      before do
+        allow(cart).to receive(:items).and_return(spy('Array', empty?: true))
+        post :submit_cart_updates_form, attrs, cart: cart
+      end
+      it { is_expected.to redirect_to(root_path) }
     end
-    it 'should remove item when quantity is 0' do
-      params = { id: @equipment_model.id,
-                 quantity: 0,
-                 reserver_id: @user.id }
-      post :submit_cart_updates_form, params
-      # should remove the item after setting quantity to 0
-      expect(session[:cart].items).to be_empty
-      is_expected.to redirect_to(root_path)
+    context 'non empty cart' do
+      before do
+        allow(cart).to receive(:items).and_return(spy('Array', empty?: false))
+        post :submit_cart_updates_form, attrs, cart: cart
+      end
+      it { is_expected.to redirect_to(new_reservation_path) }
     end
   end
 
   describe 'PUT changing dates on confirm reservation page' do
-    before(:each) do
-      @equipment_model = FactoryGirl.create(:equipment_model)
-      put :add_to_cart, id: @equipment_model.id
-    end
-    it 'should set new dates' do
-      # sets start and due dates to tomorrow and day after tomorrow
+    # TODO: refactor update_cart so we can actually check that dates are
+    # being set
+    it 'calls update_cart' do
       tomorrow = Time.zone.today + 1.day
       params = { cart: { start_date_cart: tomorrow.strftime('%Y-%m-%d'),
                          due_date_cart:
                          (tomorrow + 1.day).strftime('%Y-%m-%d') },
-                 reserver_id: @user.id }
-      post :change_reservation_dates, params
-      expect(session[:cart].start_date).to eq(tomorrow)
-      expect(session[:cart].due_date).to eq(tomorrow + 1.day)
+                 reserver_id: user.id }
+      expect_any_instance_of(described_class).to receive(:update_cart)
+      post :change_reservation_dates, params, cart: cart
     end
   end
 
   describe 'PUT update_user_per_cat_page' do
-    before(:each) do
-      put :update_user_per_cat_page
-    end
-    it 'should set session[:items_per_page] to params[items_per_page] '\
-      'if exists' do
-      put :update_user_per_cat_page, items_per_page: 20
-      expect(session[:items_per_page]).to eq('20')
-    end
-    it 'should not alter session[:items_per_page] if '\
-      'params[:items_per_page] is nil' do
-      session[:items_per_page] = '15'
-      put :update_user_per_cat_page, items_per_page: nil
-      expect(session[:items_per_page]).not_to eq(nil)
-      expect(session[:items_per_page]).to eq('15')
-    end
+    before(:each) { put :update_user_per_cat_page, {}, cart: cart }
     it { is_expected.to redirect_to(root_path) }
   end
 
-  # I don't like that this test is actually searching the database, but
-  # unfortunately I couldn't get the model methods to stub correctly
   describe 'PUT search' do
     context 'query is blank' do
-      before(:each) do
-        put :search, query: ''
-      end
+      before(:each) { put :search, { query: '' }, cart: cart }
       it { is_expected.to redirect_to(root_path) }
     end
     context 'query is not blank' do
-      it 'should call catalog_search on EquipmentModel and return active '\
-        'equipment models' do
-        @equipment_model = FactoryGirl.create(:equipment_model,
-                                              active: true,
-                                              description: 'query')
-        # EquipmentModel.stub(:catelog_search).with('query')
-        #   .and_return(@equipment_model)
-        put :search, query: 'query'
-        expect(assigns(:equipment_model_results)).to eq([@equipment_model])
+      it 'calls catalog_search on EquipmentModel' do
+        expect(EquipmentModel).to \
+          receive_message_chain(:active, :catalog_search)
+        put :search, { query: 'query' }, cart: cart
       end
-      it 'should give unique results even with multiple matches' do
-        @equipment_model = FactoryGirl.create(:equipment_model,
-                                              active: true,
-                                              name: 'query',
-                                              description: 'query')
-        put :search, query: 'query'
-        expect(assigns(:equipment_model_results)).to eq([@equipment_model])
-        expect(assigns(:equipment_model_results).uniq!).to eq(nil) # no dups
+      it 'calls catalog_search on EquipmentItem' do
+        allow(EquipmentItem).to receive(:catalog_search)
+        put :search, { query: 'query' }, cart: cart
+        expect(EquipmentItem).to have_received(:catalog_search).with('query')
       end
-      it 'should call catalog_search on EquipmentItem' do
-        @equipment_item =
-          FactoryGirl.create(:equipment_item, serial: 'query')
-        # EquipmentItem.stub(:catelog_search).with('query')
-        #   .and_return(@equipment_item)
-        put :search, query: 'query'
-        expect(assigns(:equipment_item_results)).to eq([@equipment_item])
-      end
-      it 'should call catalog_search on Category' do
-        @category = FactoryGirl.create(:category, name: 'query')
-        # Category.stub(:catelog_search).with('query').and_return(@category)
-        put :search, query: 'query'
-        expect(assigns(:category_results)).to eq([@category])
+      it 'calls catalog_search on Category' do
+        allow(Category).to receive(:catalog_search)
+        put :search, { query: 'query' }, cart: cart
+        expect(Category).to have_received(:catalog_search).with('query')
       end
     end
   end
