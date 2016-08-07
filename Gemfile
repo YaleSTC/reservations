@@ -46,6 +46,8 @@ gem 'select2-rails', '~> 4.0.2'
 gem 'kaminari', '~> 0.16.3'
 gem 'draper', '~> 2.1.0'
 gem 'inline_svg', '~> 0.8.0'
+gem 'react_on_rails', '~> 6.0.1'
+gem 'active_model_serializers', '~> 0.10.0'
 
 # forms / formatting
 gem 'simple_form', '~> 3.2.1'

@@ -1,5 +1,7 @@
 # rubocop:disable ClassLength
 class UsersController < ApplicationController
+  include ReactOnRails::Controller
+
   load_and_authorize_resource
   layout 'application_with_sidebar', only: [:show, :edit]
 
@@ -12,6 +14,7 @@ class UsersController < ApplicationController
                 only: [:show, :edit, :update, :destroy, :ban, :unban]
   before_action :check_cas_auth, only: [:show, :new, :create, :quick_create,
                                         :edit, :update]
+  before_action :props, only: [:show]
 
   include Autocomplete
   include Calendarable
@@ -168,29 +171,10 @@ class UsersController < ApplicationController
     @can_edit_username = can? :edit_username, User
   end
 
-  def update # rubocop:disable CyclomaticComplexity, PerceivedComplexity
-    @edit_title_text = (current_user == @user) ? 'Profile' : 'User'
-    par = user_params
-    # use :update_with_password when we're not using CAS and you're editing
-    # your own profile
-    if @cas_auth || ((can? :manage, User) && (@user.id != current_user.id))
-      method = :update_attributes
-      # delete the current_password key from the params hash just in case it's
-      # present (and :update_attributes will throw an error)
-      par.delete('current_password')
-    else
-      method = :update_with_password
-      # make sure we update the username as well
-      par[:username] = par[:email]
-    end
-    if @user.send(method, par)
-      # sign in the user if you've edited yourself since you have a new
-      # password, otherwise don't
-      sign_in @user, bypass: true if @user.id == current_user.id
-      flash[:notice] = 'Successfully updated user.'
-      redirect_to user_path(@user)
-    else
-      render :edit
+  def update
+    respond_to do |format|
+      format.html { html_update }
+      format.json { js_update }
     end
   end
 
@@ -243,6 +227,37 @@ class UsersController < ApplicationController
 
   private
 
+  def html_update # rubocop:disable CyclomaticComplexity, PerceivedComplexity
+    @edit_title_text = (current_user == @user) ? 'Profile' : 'User'
+    par = user_params
+    # use :update_with_password when we're not using CAS and you're editing
+    # your own profile
+    if @cas_auth || ((can? :manage, User) && (@user.id != current_user.id))
+      method = :update_attributes
+      # delete the current_password key from the params hash just in case it's
+      # present (and :update_attributes will throw an error)
+      par.delete('current_password')
+    else
+      method = :update_with_password
+      # make sure we update the username as well
+      par[:username] = par[:email]
+    end
+    if @user.send(method, par)
+      # sign in the user if you've edited yourself since you have a new
+      # password, otherwise don't
+      sign_in @user, bypass: true if @user.id == current_user.id
+      flash[:notice] = 'Successfully updated user.'
+      redirect_to user_path(@user)
+    else
+      render :edit
+    end
+  end
+
+  def js_update
+    flash[:error] unless @user.update(user_params)
+    render nothing: true
+  end
+
   def user_params
     permitted_attributes = [:first_name, :last_name, :nickname, :phone,
                             :email, :affiliation, :terms_of_service_accepted,
@@ -272,5 +287,12 @@ class UsersController < ApplicationController
 
   def calendar_name_method
     :equipment_model
+  end
+
+  # React on Rails / Redux methods
+
+  def props
+    @props = ActiveModelSerializers::SerializableResource
+             .new(@user, scope: current_user, scope_name: :current_user)
   end
 end

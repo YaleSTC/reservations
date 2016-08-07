@@ -29,6 +29,7 @@ before_script:
   - cp config/secrets.yml.example config/secrets.yml
   - bundle exec rake db:create
   - bundle exec rake db:schema:load
+  - npm run build:test
 
 script:
   # JS linters, uncomment once code passes

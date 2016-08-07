@@ -14,9 +14,11 @@ AllCops:
     # 2015/01/04 - skipping Capistrano deploy.rb file for now, remove the
     # following line once #1074 is resolved
     - 'config/deploy.rb'
+    - 'config/initializers/react_on_rails.rb'
     - 'lib/**/*.erb'
     - 'script/**/*'
     - 'vendor/**/*'
+    - 'node_modules/**/*'
 # disable the documentation check at the start of classes / modules
 Documentation:
   Enabled: false
