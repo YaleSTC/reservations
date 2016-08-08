@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require Rails.root.join('spec/support/mockers/user.rb')
 
 module ControllerHelpers

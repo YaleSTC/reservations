@@ -124,7 +124,7 @@ describe AnnouncementsController, type: :controller do
     # ROLES.each { |r| it_behaves_like 'can hide announcement', r }
     PASSING_ROLES = [:superuser, :admin].freeze
     PASSING_ROLES.each { |r| it_behaves_like 'can hide announcement', r }
-    # FAILING_ROLES = [:checkout_person, :user, :guest, :banned]
-    # FAILING_ROLES.each { |r| it_behaves_like 'can hide announcement', r }
+    FAILING_ROLES = [:checkout_person, :user, :guest, :banned].freeze
+    FAILING_ROLES.each { |r| it_behaves_like 'can hide announcement', r }
   end
 end
