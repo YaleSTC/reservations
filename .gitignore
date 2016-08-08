@@ -22,3 +22,5 @@ Vagrantfile
 *.sublime*
 coverage/
 .env
+node_modules/*
+*.swp
