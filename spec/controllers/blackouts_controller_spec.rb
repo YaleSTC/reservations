@@ -1,323 +1,220 @@
+# frozen_string_literal: true
 require 'spec_helper'
-
-shared_examples_for 'page success' do
-  it { is_expected.to respond_with(:success) }
-  it { is_expected.not_to set_flash }
-end
-
-shared_examples_for 'access denied' do
-  it { is_expected.to redirect_to(root_url) }
-  it { is_expected.to set_flash }
-end
 
 describe BlackoutsController, type: :controller do
   before(:each) { mock_app_config }
 
-  describe 'with admin' do
-    before do
-      sign_in FactoryGirl.create(:admin)
-    end
-    context 'GET index' do
+  context 'with admin' do
+    before { mock_user_sign_in(UserMock.new(:admin)) }
+
+    describe 'GET index' do
       before do
+        allow(Blackout).to receive(:all).and_return(Blackout.none)
         get :index
       end
-      it_behaves_like 'page success'
-      it { is_expected.to render_template(:index) }
-      it 'should assign @blackouts to all blackouts' do
-        expect(assigns(:blackouts)).to eq(Blackout.all)
+      it_behaves_like 'successful request', :index
+      it 'gets all blackouts' do
+        expect(Blackout).to have_received(:all).at_least(:once)
       end
     end
-    context 'GET show' do
-      before do
-        get :show, id: FactoryGirl.create(:blackout)
-      end
-      it_behaves_like 'page success'
-      it { is_expected.to render_template(:show) }
+
+    describe 'GET show' do
       context 'single blackout' do
-        it 'should not display a set' do
-          expect(assigns(:blackout_set).nil?)
+        it 'does not try to get a set' do
+          blackout = BlackoutMock.new(traits: [:findable], set_id: nil)
+          allow(Blackout).to receive(:where)
+          get :show, id: blackout.id
+          expect(Blackout).not_to have_received(:where)
         end
       end
-    end
-    context 'GET show' do
-      before do
-        @blackout = FactoryGirl.create(:blackout, set_id: 1)
-        @blackout_set = Blackout.where(set_id: 1)
-        get :show, id: @blackout
-      end
-      it_behaves_like 'page success'
       context 'recurring blackout' do
-        it 'should display the correct set' do
-          expect(assigns(:blackout_set).uniq.sort).to\
-            eq(@blackout_set.uniq.sort)
+        it 'gets the set' do
+          blackout = BlackoutMock.new(traits: [:findable], set_id: 1)
+          allow(Blackout).to receive(:where)
+          get :show, id: blackout.id
+          expect(Blackout).to have_received(:where)
+            .with('set_id = ?', blackout.set_id)
         end
-        # the above code doesn't work; i'm too much of an rspec newbie
       end
     end
-    context 'GET new' do
+
+    describe 'GET new' do
       before do
+        allow(Blackout).to receive(:new)
         get :new
       end
-      it_behaves_like 'page success'
-      it { is_expected.to render_template(:new) }
+      it 'uses the appropriate date defaults' do
+        expect(Blackout).to have_received(:new)
+          .with(start_date: Time.zone.today, end_date: Time.zone.today + 1.day)
+      end
+      it_behaves_like 'successful request', :new
     end
-    context 'GET new_recurring' do
+
+    describe 'GET new_recurring' do
       before do
+        allow(Blackout).to receive(:new)
         get :new_recurring
       end
-      it_behaves_like 'page success'
-      it { is_expected.to render_template(:new_recurring) }
-    end
-    context 'GET edit' do
-      before do
-        get :edit, id: FactoryGirl.create(:blackout)
+      it 'uses the appropriate date defaults' do
+        expect(Blackout).to have_received(:new)
+          .with(start_date: Time.zone.today, end_date: Time.zone.today + 1.day)
       end
-      it_behaves_like 'page success'
-      it { is_expected.to render_template(:edit) }
+      it_behaves_like 'successful request', :new_recurring
     end
-    context 'POST create_recurring' do
+
+    describe 'POST create_recurring' do
       context 'with correct params' do
+        let!(:blackout) { BlackoutMock.new(valid?: true) }
         before do
-          @new_set_id = Blackout.last ? Blackout.last.id + 1 : 0
-          @attributes = FactoryGirl.attributes_for(:blackout, days: ['1', ''])
-          post :create_recurring, blackout: @attributes
+          allow(Blackout).to receive(:new).and_return(blackout)
+          allow(Blackout).to receive(:create_blackout_set)
+          post :create_recurring, blackout: { days: ['1', ''] }
         end
-        it 'should create a set' do
-          expect(Blackout.where(set_id: @new_set_id)).not_to be_empty
+        it 'creates a set' do
+          expect(Blackout).to have_received(:create_blackout_set)
         end
         it { is_expected.to redirect_to(blackouts_path) }
-        it { is_expected.to set_flash }
+        it { is_expected.to set_flash[:notice] }
       end
       context 'with incorrect params' do
         before do
           request.env['HTTP_REFERER'] = 'where_i_came_from'
-          @attributes = FactoryGirl.attributes_for(:blackout, days: [''])
-          post :create_recurring, blackout: @attributes
+          post :create_recurring, blackout: { days: [''] }
         end
-        it { is_expected.to set_flash }
+        it { is_expected.to set_flash[:error] }
         it { is_expected.to render_template('new_recurring') }
       end
-      context 'with conflicting reservation' do
+      context 'with error during creation' do
+        let!(:blackout) { BlackoutMock.new(valid?: true) }
         before do
-          @res = FactoryGirl.create(:valid_reservation,
-                                    due_date: Time.zone.today + 1.day)
-          @attributes = FactoryGirl.attributes_for(
-            :blackout, days: [(Time.zone.today + 1.day).wday.to_s]
-          )
-          post :create_recurring, blackout: @attributes
+          allow(Blackout).to receive(:new).and_return(blackout)
+          allow(Blackout).to receive(:create_blackout_set).and_return('ERROR')
+          post :create_recurring, blackout: { days: ['1', ''] }
         end
-
-        it { is_expected.to set_flash }
+        it { is_expected.to set_flash[:error] }
         it { is_expected.to render_template('new_recurring') }
-        it 'should not save the blackouts' do
-          expect { post :create_recurring, blackout: @attributes }.not_to \
-            change { Blackout.all.count }
-        end
       end
     end
 
     context 'POST create' do
-      shared_examples_for 'creates blackout' do |attributes|
-        before { post :create, blackout: attributes }
-
-        it 'should create the new blackout' do
-          expect(Blackout.find(assigns(:blackout).id)).not_to be_nil
-        end
-        it 'should pass the correct params' do
-          expect(assigns(:blackout)[:notice]).to eq(attributes[:notice])
-          expect(assigns(:blackout)[:start_date]).to\
-            eq(attributes[:start_date])
-          expect(assigns(:blackout)[:end_date]).to eq(attributes[:end_date])
-          expect(assigns(:blackout)[:blackout_type]).to\
-            eq(attributes[:blackout_type])
-        end
-        it { is_expected.to redirect_to(blackout_path(assigns(:blackout))) }
-        it { is_expected.to set_flash }
-      end
-
-      shared_examples_for 'does not create blackout' do |attributes|
-        before { post :create, blackout: attributes }
-
-        it { is_expected.to set_flash }
-        it { is_expected.to render_template(:new) }
-        it 'should not save the blackout' do
-          expect { post :create, blackout: attributes }.not_to\
-            change { Blackout.all.count }
-        end
-      end
-
-      context 'with correct params' do
-        attributes = FactoryGirl.attributes_for(:blackout)
-
-        it_behaves_like 'creates blackout', attributes
-      end
-
-      context 'with overlapping archived reservation' do
+      context 'successful creation' do
+        let!(:blackout) { FactoryGirl.build_stubbed(:blackout) }
         before do
-          FactoryGirl.create(:archived_reservation,
-                             start_date: Time.zone.today + 1.day,
-                             due_date: Time.zone.today + 3.days)
+          allow(Blackout).to receive(:new).and_return(blackout)
+          allow(blackout).to receive(:save).and_return(true)
+          post :create, blackout: { id: 1 }
         end
-
-        attributes =
-          FactoryGirl.attributes_for(:blackout,
-                                     start_date: Time.zone.today,
-                                     end_date: Time.zone.today + 2.days)
-
-        it_behaves_like 'creates blackout', attributes
+        it { is_expected.to redirect_to(blackout) }
+        it { is_expected.to set_flash[:notice] }
       end
-
-      context 'with overlapping missed reservation' do
-        before do
-          FactoryGirl.create(:missed_reservation,
-                             start_date: Time.zone.today + 1.day,
-                             due_date: Time.zone.today + 3.days)
+      context 'failed creation' do
+        context 'failed save' do
+          let!(:blackout) { BlackoutMock.new(save: false) }
+          before do
+            allow(Blackout).to receive(:new).and_return(blackout)
+            post :create, blackout: { id: 1 }
+          end
+          it { is_expected.to render_template(:new) }
+          it { is_expected.to set_flash[:error] }
         end
-
-        attributes =
-          FactoryGirl.attributes_for(:blackout,
-                                     start_date: Time.zone.today,
-                                     end_date: Time.zone.today + 2.days)
-
-        it_behaves_like 'creates blackout', attributes
-      end
-
-      context 'with incorrect params' do
-        attributes =
-          FactoryGirl.attributes_for(:blackout,
-                                     end_date: Time.zone.today - 1.day)
-
-        it_behaves_like 'does not create blackout', attributes
-      end
-
-      context 'with conflicting reservation start date' do
-        before do
-          FactoryGirl.create(:valid_reservation,
-                             start_date: Time.zone.today + 1.day,
-                             due_date: Time.zone.today + 3.days)
+        context 'overlapping reservations' do
+          let!(:blackout) { BlackoutMock.new(save: true) }
+          before do
+            allow(Blackout).to receive(:new).and_return(blackout)
+            allow(Reservation).to \
+              receive_message_chain(:overlaps_with_date_range, :active)
+              .and_return(instance_spy('Array', empty?: false))
+            post :create, blackout: { id: 1 }
+          end
+          it { is_expected.to render_template(:new) }
+          it { is_expected.to set_flash[:error] }
         end
-
-        attributes =
-          FactoryGirl.attributes_for(:blackout,
-                                     start_date: Time.zone.today,
-                                     end_date: Time.zone.today + 2.days)
-
-        it_behaves_like 'does not create blackout', attributes
-      end
-
-      context 'with conflicting reservation due date' do
-        before do
-          FactoryGirl.create(:valid_reservation,
-                             start_date: Time.zone.today,
-                             due_date: Time.zone.today + 2.days)
-        end
-
-        attributes =
-          FactoryGirl.attributes_for(:blackout,
-                                     start_date: Time.zone.today + 1.day,
-                                     end_date: Time.zone.today + 3.days)
-
-        it_behaves_like 'does not create blackout', attributes
       end
     end
 
-    context 'PUT update' do
-      context 'single blackout' do
+    describe 'PUT update' do
+      context 'successful update' do
+        let!(:blackout) { FactoryGirl.build_stubbed(:blackout) }
         before do
-          @new_attributes = FactoryGirl.attributes_for(:blackout)
-          @new_attributes[:notice] = 'New Message!!'
-          put :update, id: FactoryGirl.create(:blackout),
-                       blackout: @new_attributes
+          allow(Blackout).to receive(:find)
+          allow(Blackout).to receive(:find)
+            .with(blackout.id.to_s).and_return(blackout)
+          allow(blackout).to receive(:update_attributes).and_return(true)
+          allow(blackout).to receive(:set_id=)
+          put :update, id: blackout.id, blackout: { id: 1 }
         end
-        it 'updates the blackout' do
-          expect(assigns(:blackout)[:notice]).to eq(@new_attributes[:notice])
+        it { is_expected.to redirect_to(blackout) }
+        it { is_expected.to set_flash[:notice] }
+        it 'deletes the set_id' do
+          expect(blackout).to have_received(:set_id=).with(nil)
         end
       end
-      context 'recurring blackout' do
+      context 'unsuccessful update' do
+        let!(:blackout) { BlackoutMock.new(traits: [:findable]) }
         before do
-          @new_attributes = FactoryGirl.attributes_for(:blackout)
-          @new_attributes[:notice] = 'New Message!!'
-          put :update, id: FactoryGirl.create(:blackout, set_id: 1),
-                       blackout: @new_attributes
+          allow(blackout).to receive(:update_attributes).and_return(false)
+          put :update, id: blackout.id, blackout: { id: 1 }
         end
-        it 'updates the blackout' do
-          expect(assigns(:blackout)[:notice]).to eq(@new_attributes[:notice])
-        end
-        it 'sets the set_id to nil' do
-          expect(assigns(:blackout)[:set_id]).to be_nil
+        it { is_expected.to render_template(:edit) }
+        it 'deletes the set_id' do
+          expect(blackout).to have_received(:set_id=).with(nil)
         end
       end
     end
-    context 'DELETE destroy' do
-      before do
-        delete :destroy, id: FactoryGirl.create(:blackout)
-      end
-      it 'should delete the blackout' do
-        expect(Blackout.where(id:  assigns(:blackout)[:id])).to be_empty
+
+    describe 'DELETE destroy' do
+      let!(:blackout) { BlackoutMock.new(traits: [:findable]) }
+      before { delete :destroy, id: blackout.id }
+      it 'deletes the blackout' do
+        expect(blackout).to have_received(:destroy).with(:force)
       end
       it { is_expected.to redirect_to(blackouts_path) }
     end
-    context 'DELETE destroy recurring' do
+
+    describe 'DELETE destroy recurring' do
+      let!(:blackout) { BlackoutMock.new(traits: [:findable], set_id: 1) }
       before do
-        # create an extra instance to test that the whole set was deleted
-        @extra = FactoryGirl.create(:blackout, set_id: 1)
-        delete :destroy_recurring, id: FactoryGirl.create(:blackout, set_id: 1)
+        allow(Blackout).to receive(:where)
+          .with('set_id = ?', 1).and_return([blackout])
+        delete :destroy_recurring, id: blackout.id
       end
-      it 'should delete the whole set' do
-        expect(Blackout.where(set_id: @extra[:set_id])).to be_empty
+      it 'deletes the whole set' do
+        expect(blackout).to have_received(:destroy).with(:force)
       end
-      it { is_expected.to set_flash }
+      it { is_expected.to set_flash[:notice] }
       it { is_expected.to redirect_to(blackouts_path) }
     end
   end
-  context 'is not admin' do
-    before do
-      sign_in FactoryGirl.create(:user)
-      @blackout = FactoryGirl.create(:blackout)
-      @attributes = FactoryGirl.attributes_for(:blackout)
-    end
 
+  context 'is not admin' do
+    before { mock_user_sign_in }
     context 'GET index' do
-      before do
-        get :index
-      end
-      it_behaves_like 'access denied'
+      before { get :index }
+      it_behaves_like 'redirected request'
     end
     context 'GET show' do
-      before do
-        get :show, id: @blackout
-      end
-      it_behaves_like 'access denied'
+      before { get :show, id: 1 }
+      it_behaves_like 'redirected request'
     end
     context 'POST create' do
-      before do
-        post :create, blackout: @attributes
-      end
-      it_behaves_like 'access denied'
+      before { post :create, blackout: { id: 1 } }
+      it_behaves_like 'redirected request'
     end
     context 'PUT update' do
-      before do
-        put :update, id: @blackout
-      end
-      it_behaves_like 'access denied'
+      before { put :update, id: 1 }
+      it_behaves_like 'redirected request'
     end
     context 'POST create recurring' do
-      before do
-        post :create_recurring, blackout: @attributes
-      end
-      it_behaves_like 'access denied'
+      before { post :create_recurring, blackout: { id: 1 } }
+      it_behaves_like 'redirected request'
     end
     context 'DELETE destroy' do
-      before do
-        delete :destroy, id: @blackout
-      end
-      it_behaves_like 'access denied'
+      before { delete :destroy, id: 1 }
+      it_behaves_like 'redirected request'
     end
     context 'DELETE destroy recurring' do
-      before do
-        delete :destroy_recurring, id: @blackout
-      end
-      it_behaves_like 'access denied'
+      before { delete :destroy_recurring, id: 1 }
+      it_behaves_like 'redirected request'
     end
   end
 end
