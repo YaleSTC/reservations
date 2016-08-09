@@ -28,7 +28,11 @@ end
 describe UserMailer, type: :mailer do
   before(:each) do
     @ac = mock_app_config(admin_email: 'admin@email.com',
-                          disable_user_emails: false)
+                          disable_user_emails: false,
+                          upcoming_checkout_email_body: nil,
+                          upcoming_checkin_email_body: nil,
+                          deleted_missed_reservation_email_body: nil,
+                          overdue_checkin_email_body: nil)
     ActionMailer::Base.delivery_method = :test
     ActionMailer::Base.perform_deliveries = true
     ActionMailer::Base.deliveries = []

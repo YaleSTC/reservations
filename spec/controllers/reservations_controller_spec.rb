@@ -8,7 +8,6 @@ describe ReservationsController, type: :controller do
                   override_at_checkout: false,
                   res_exp_time: false,
                   admin_email: 'admin@email.com' }.freeze
-
   before(:each) { mock_app_config(AC_DEFAULTS) }
 
   shared_examples 'inaccessible by banned user' do
@@ -198,209 +197,104 @@ describe ReservationsController, type: :controller do
   end
 
   describe '#create (POST /reservations/create)' do
-    # SMELLS: so, so many of them
-    # not going to refactor this yet
-    before(:all) do
-      @user = FactoryGirl.create(:user)
-      @checkout_person = FactoryGirl.create(:checkout_person)
+    let!(:cart) { instance_spy('Cart') }
+    before do
+      allow_any_instance_of(described_class).to \
+        receive(:cart).and_return(cart)
+      allow_any_instance_of(described_class).to receive(:fix_cart_date)
+      allow_any_instance_of(ApplicationController).to \
+        receive(:fix_cart_date)
+      allow_any_instance_of(ApplicationController).to \
+        receive(:make_cart_compatible)
     end
-    after(:all) do
-      User.destroy_all
+    context 'successful create' do
+      context 'priviliged user, not a request' do
+        let!(:user) { UserMock.new(:checkout_person) }
+        let!(:reserver) { UserMock.new(:user) }
+        before do
+          mock_user_sign_in(user)
+          allow(cart).to receive(:reserver_id).and_return(reserver.id)
+          creator = instance_spy('ReservationCreator',
+                                 create!: { result: 'msg', error: nil },
+                                 request?: false)
+          allow(ReservationCreator).to receive(:new).and_return(creator)
+          post :create, reservation: { id: 1 }
+        end
+        it { is_expected.to set_flash[:notice] }
+        it do
+          is_expected.to \
+            redirect_to(manage_reservations_for_user_path(reserver.id))
+        end
+      end
+      context 'nonpriviliged user' do
+        let!(:user) { UserMock.new(:user) }
+        before do
+          mock_user_sign_in(user)
+          creator = instance_spy('ReservationCreator',
+                                 create!: { result: 'msg', error: nil },
+                                 request?: false)
+          allow(ReservationCreator).to receive(:new).and_return(creator)
+          post :create, reservation: { id: 1 }
+        end
+        it { is_expected.to set_flash[:notice] }
+        it { is_expected.to redirect_to(catalog_path) }
+      end
+      context 'request' do
+        let!(:user) { UserMock.new(:checkout_person) }
+        before do
+          mock_user_sign_in(user)
+          creator = instance_spy('ReservationCreator',
+                                 create!: { result: 'msg', error: nil },
+                                 request?: true)
+          allow(ReservationCreator).to receive(:new).and_return(creator)
+          post :create, reservation: { id: 1 }
+        end
+        it { is_expected.to set_flash[:notice] }
+        it { is_expected.to redirect_to(catalog_path) }
+      end
+    end
+
+    context 'unsuccessful create' do
+      context 'needs notes' do
+        before do
+          mock_app_config(AC_DEFAULTS.merge(request_text: ''))
+          mock_user_sign_in(UserMock.new(:checkout_person))
+          creator = instance_spy('ReservationCreator',
+                                 create!: { result: nil, error: 'needs notes' })
+          allow(ReservationCreator).to receive(:new).and_return(creator)
+          post :create, reservation: { id: 1 }
+        end
+        it { is_expected.to set_flash[:error] }
+        it { is_expected.to render_template(:new_request) }
+      end
+      context 'requests disabled' do
+        before do
+          mock_user_sign_in(UserMock.new(:checkout_person))
+          creator = instance_spy('ReservationCreator',
+                                 create!: { result: nil,
+                                            error: 'requests disabled' })
+          allow(ReservationCreator).to receive(:new).and_return(creator)
+          post :create, reservation: { id: 1 }
+        end
+        it { is_expected.to set_flash[:error] }
+        it { is_expected.to render_template(:requests_disabled) }
+      end
+      context 'other error' do
+        before do
+          mock_user_sign_in(UserMock.new(:checkout_person))
+          creator = instance_spy('ReservationCreator',
+                                 create!: { result: nil, error: 'err' })
+          allow(ReservationCreator).to receive(:new).and_return(creator)
+          post :create, reservation: { id: 1 }
+        end
+        it { is_expected.to set_flash[:error] }
+        it { is_expected.to redirect_to(catalog_path) }
+      end
     end
     it_behaves_like 'inaccessible by banned user' do
       before do
         post :create,
              reservation: FactoryGirl.attributes_for(:valid_reservation)
-      end
-    end
-
-    context 'when accessed by non-banned user' do
-      before(:each) { sign_in @user }
-
-      context 'with validation-failing items in Cart' do
-        before(:each) do
-          @invalid_cart =
-            FactoryGirl.build(:invalid_cart, reserver_id: @user.id)
-          @req = proc do
-            post :create,
-                 { reservation: { notes: 'because I can' } },
-                 cart: @invalid_cart
-          end
-          @req_no_notes = proc do
-            post :create,
-                 { reservation: { notes: '' } },
-                 cart: @invalid_cart
-          end
-        end
-
-        context 'no justification provided' do
-          before do
-            sign_in @checkout_person
-            @req_no_notes.call
-          end
-
-          it { is_expected.to render_template(:new) }
-
-          it 'should set @notes_required to true' do
-            expect(assigns(:notes_required)).to be_truthy
-          end
-        end
-
-        context 'and user can override errors' do
-          before(:each) do
-            mock_app_config(AC_DEFAULTS.merge(override_on_create: true))
-            sign_in @checkout_person
-          end
-
-          it 'affects the database' do
-            expect { @req.call }.to change { Reservation.count }
-          end
-
-          it 'sets the reservation notes' do
-            @req.call
-            expect(Reservation.last.notes.empty?).not_to be_truthy
-          end
-
-          it 'should redirect' do
-            @req.call
-            expect(response).to\
-              redirect_to(manage_reservations_for_user_path(@user.id))
-          end
-
-          it 'sets the flash' do
-            @req.call
-            expect(flash[:notice]).not_to be_nil
-          end
-        end
-
-        context 'and user cannot override errors' do
-          # request would be filed
-          before(:each) do
-            mock_app_config(AC_DEFAULTS.merge(override_on_create: false))
-            sign_in @checkout_person
-          end
-          it 'affects database' do
-            expect { @req.call }.to change { Reservation.count }
-          end
-
-          it 'sets the reservation notes' do
-            @req.call
-            expect(Reservation.last.notes.empty?).not_to be_truthy
-          end
-
-          it 'redirects to catalog_path' do
-            @req.call
-            expect(response).to redirect_to(catalog_path)
-          end
-
-          it 'should not set the flash' do
-            @req.call
-            expect(flash[:error]).to be_nil
-          end
-        end
-      end
-
-      context 'with validation-passing items in Cart' do
-        before(:each) do
-          @valid_cart = FactoryGirl.build(:cart_with_items)
-          @req = proc do
-            post :create,
-                 { reservation: { start_date: Time.zone.today,
-                                  due_date: (Time.zone.today + 1.day),
-                                  reserver_id: @user.id } },
-                 cart: @valid_cart
-          end
-        end
-
-        it 'saves items into database' do
-          expect { @req.call }.to change { Reservation.count }
-        end
-
-        it 'sets the reservation notes' do
-          @req.call
-          expect(Reservation.last.notes.empty?).not_to be_truthy
-        end
-
-        it 'sets the status to reserved' do
-          @req.call
-          expect(Reservation.last.reserved?)
-        end
-
-        it 'empties the Cart' do
-          @req.call
-          expect(response.request.env['rack.session'][:cart].items.count)
-            .to eq(0)
-          # Cart.should_receive(:new)
-        end
-
-        it 'sets flash[:notice]' do
-          @req.call
-          expect(flash[:notice]).not_to be_nil
-        end
-
-        it 'is a redirect' do
-          @req.call
-          expect(response).to be_redirect
-        end
-
-        context 'with notify_admin_on_create set' do
-          before(:each) do
-            ActionMailer::Base.deliveries.clear
-            mock_app_config(AC_DEFAULTS.merge(notify_admin_on_create: true))
-          end
-
-          it 'cc-s the admin on the confirmation email' do
-            @req.call
-            delivered = ActionMailer::Base.deliveries.last
-            expect(delivered).not_to be_nil
-            expect(delivered.subject).to \
-              eq('[Reservations] Reservation created')
-          end
-        end
-
-        context 'without notify_admin_on_create set' do
-          before(:each) do
-            ActionMailer::Base.deliveries.clear
-            mock_app_config(AC_DEFAULTS.merge(notify_admin_on_create: false))
-          end
-
-          it 'cc-s the admin on the confirmation email' do
-            @req.call
-            delivered = ActionMailer::Base.deliveries.last
-            expect(delivered).to be_nil
-          end
-        end
-      end
-
-      context 'with banned reserver' do
-        before(:each) do
-          sign_in @checkout_person
-          @valid_cart = FactoryGirl.build(:cart_with_items)
-          @banned = FactoryGirl.create(:banned)
-          @valid_cart.reserver_id = @banned.id
-          @req = proc do
-            post :create,
-                 { reservation: { start_date: Time.zone.today,
-                                  due_date: (Time.zone.today + 1.day),
-                                  reserver_id: @banned.id,
-                                  notes: 'because I can' } },
-                 cart: @valid_cart
-          end
-        end
-
-        it 'does not save' do
-          expect { @req.call }.not_to change { Reservation.count }
-        end
-
-        it 'is a redirect' do
-          @req.call
-          expect(response).to be_redirect
-        end
-
-        it 'sets flash[:error]' do
-          @req.call
-          expect(flash[:error]).not_to be_nil
-        end
       end
     end
   end

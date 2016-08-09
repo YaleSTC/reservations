@@ -1,10 +1,13 @@
 resume_cart();
 
 <% if @errors.empty? or (can? :override, :reservation_errors) %>
-  $('#confirm-res-form').html('<%= escape_javascript(render :partial => '/reservations/new_reservation') %>');
+  $('#confirm-res-form').html('<%= escape_javascript(render partial: '/reservations/new_reservation') %>');
   $('.page-header').html('<h1>Confirm Reservation</h1>');
+<% elsif AppConfig.check(:disable_requests) %>
+  $('#confirm-res-form').html('<%= escape_javascript(render partial: '/reservations/requests_disabled') %>');
+  $('.page-header').html('<h1>Reservation Denied</h1>');
 <% else %>
-  $('#confirm-res-form').html('<%= escape_javascript(render :partial => '/reservations/new_request' ) %>');
+  $('#confirm-res-form').html('<%= escape_javascript(render partial: '/reservations/new_request' ) %>');
   $('.page-header').html('<h1>Confirm Reservation Request</h1>');
 <% end %>
 
