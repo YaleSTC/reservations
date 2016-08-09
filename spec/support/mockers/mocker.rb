@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rspec/mocks/standalone'
 
 # This class behaves as an extension of rspec-mocks' instance_spy.
@@ -27,7 +28,7 @@ require 'rspec/mocks/standalone'
 class Mocker < RSpec::Mocks::InstanceVerifyingDouble
   include RSpec::Mocks
 
-  FIND_METHODS = [:find, :find_by_id]
+  FIND_METHODS = [:find, :find_by_id].freeze
 
   def initialize(traits: [], **attrs)
     # from RSpec::Mocks::ExampleMethods
@@ -38,7 +39,7 @@ class Mocker < RSpec::Mocks::InstanceVerifyingDouble
     end
     attrs ||= {}
     super(ref, attrs)
-    self.as_null_object
+    as_null_object
     process_traits(traits)
   end
 

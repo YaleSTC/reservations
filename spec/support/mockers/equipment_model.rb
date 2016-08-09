@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require Rails.root.join('spec/support/mockers/mocker.rb')
 require Rails.root.join('spec/support/mockers/category.rb')
 require Rails.root.join('spec/support/mockers/equipment_item.rb')
