@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 require 'cancan/matchers'
 
@@ -21,7 +22,7 @@ describe Ability, type: :model do
     it { is_expected.to be_able_to(:create, Reservation, reserver_id: user.id) }
     it do
       expect(ability).to be_able_to(:destroy, Reservation, reserver_id: user.id,
-                                    checked_out: nil)
+                                                           checked_out: nil)
     end
     it { is_expected.to be_able_to(:renew, Reservation, reserver_id: user.id) }
     it { is_expected.to be_able_to(:update_index_dates, Reservation) }
