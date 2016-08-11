@@ -58,6 +58,12 @@ module ReservationValidations
     errors.add(:base, "Reserver cannot be banned.\n")
   end
 
+  def not_overlapping_hard_blackout
+    blackouts = Blackout.hard.overlaps_with_date_range(start_date, due_date)
+    return unless !blackouts.empty?
+    errors.add(:base, "Overlaps with hard blackout")
+  end
+
   # Checks that the status column agrees with the actual reservation data
   # rubocop:disable all
   def check_status

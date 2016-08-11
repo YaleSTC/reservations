@@ -18,6 +18,7 @@ class Reservation < ActiveRecord::Base
   validate :check_status
   validate :status_final_state
   validate :not_in_past, :available, :check_banned, on: :create
+  validate :not_overlapping_hard_blackout, on: :create
 
   # conditional counter cache for overdue reservations
   after_update :increment_cache, if: :checked_out?

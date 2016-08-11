@@ -173,6 +173,19 @@ describe Reservation, type: :model do
     end
   end
 
+  describe 'blackouts validation' do
+    context 'when overlapping with a hard blackout' do
+      it 'is invalid' do
+        FactoryGirl.create(:blackout, start_date: Time.zone.today + 1.day,
+                                      end_date: Time.zone.today + 1.week)
+        res = FactoryGirl.build(:valid_reservation,
+                                start_date: Time.zone.today,
+                                due_date: Time.zone.today + 3.days)
+        expect(res.valid?).to be_falsey
+      end
+    end
+  end
+
   context 'when valid' do
     it { is_expected.to be_valid }
     it 'should have a valid reserver' do

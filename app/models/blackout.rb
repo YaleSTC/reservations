@@ -14,6 +14,9 @@ class Blackout < ActiveRecord::Base
   scope :for_date, lambda { |date|
     where('end_date >= ? and start_date <= ?', date, date)
   }
+  scope :overlaps_with_date_range, lambda { |start_date, end_date|
+    where('end_date >= ? and start_date <= ?', start_date, end_date)
+  }
   scope :hard, ->() { where(blackout_type: 'hard') }
   scope :soft, ->() { where(blackout_type: 'soft') }
 
