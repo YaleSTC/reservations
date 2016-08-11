@@ -92,7 +92,7 @@ describe Ability, type: :model do
     end
     context 'new users disabled' do
       it do
-        mock_app_config(enable_new_users: true)
+        mock_app_config(enable_new_users: false)
         ability = Ability.new(user)
         expect(ability).not_to be_able_to(:create, User)
         expect(ability).not_to be_able_to(:quick_new, User)
