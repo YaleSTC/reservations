@@ -1,421 +1,276 @@
+# frozen_string_literal: true
 require 'spec_helper'
-
-shared_examples_for 'GET show success' do
-  it { is_expected.to respond_with(:success) }
-  it { is_expected.to render_template(:show) }
-  it { is_expected.not_to set_flash }
-  it 'should set to correct equipment model' do
-    expect(assigns(:equipment_model)).to eq(model)
-  end
-  it 'should set @associated_equipment_models' do
-    mod1 = FactoryGirl.create(:equipment_model)
-    model.associated_equipment_models = [mod1]
-    get :show, id: model
-    expect(assigns(:associated_equipment_models).size).to eq(1)
-    expect(assigns(:associated_equipment_models)).to eq([] << mod1)
-  end
-
-  it 'should limit @associated_equipment_models to maximum 6' do
-    mod1 = FactoryGirl.create(:equipment_model)
-    mod2 = FactoryGirl.create(:equipment_model)
-    mod3 = FactoryGirl.create(:equipment_model)
-    mod4 = FactoryGirl.create(:equipment_model)
-    mod5 = FactoryGirl.create(:equipment_model)
-    mod6 = FactoryGirl.create(:equipment_model)
-    mod7 = FactoryGirl.create(:equipment_model)
-    model.associated_equipment_models =
-      [mod1, mod2, mod3, mod4, mod5, mod6, mod7]
-    get :show, id: model
-    expect(assigns(:associated_equipment_models).size).to eq(6)
-  end
-end
-
-shared_examples_for 'GET index success' do
-  it { is_expected.to respond_with(:success) }
-  it { is_expected.to render_template(:index) }
-  it { is_expected.not_to set_flash }
-  context 'without show deleted' do
-    let!(:mod_other_cat_active) { FactoryGirl.create(:equipment_model) }
-    let!(:mod_other_cat_inactive) do
-      FactoryGirl.create(:equipment_model,
-                         deleted_at: Time.zone.today)
-    end
-    context 'with @category set' do
-      it 'should populate an array of of active category-type equipment '\
-        'models' do
-        mod_same_cat_inactive =
-          FactoryGirl.create(:equipment_model, category: model.category,
-                                               deleted_at: Time.zone.today)
-        get :index, category_id: model.category
-        expect(assigns(:equipment_models).include?(model)).to be_truthy
-        expect(assigns(:equipment_models).include?(mod_other_cat_active))
-          .not_to be_truthy
-        expect(assigns(:equipment_models).include?(mod_same_cat_inactive))
-          .not_to be_truthy
-        expect(assigns(:equipment_models).include?(mod_other_cat_inactive))
-          .not_to be_truthy
-        expect(assigns(:equipment_models).size).to eq(1)
-      end
-    end
-    context 'without @category set' do
-      it 'should populate an array of all active equipment models' do
-        expect(assigns(:equipment_models).include?(model)).to be_truthy
-        expect(assigns(:equipment_models).include?(mod_other_cat_active))
-          .to be_truthy
-        expect(assigns(:equipment_models).include?(mod_other_cat_inactive))
-          .not_to be_truthy
-        expect(assigns(:equipment_models).size).to eq(2)
-      end
-    end
-  end
-  context 'with show deleted' do
-    let!(:mod_other_cat_active) { FactoryGirl.create(:equipment_model) }
-    let!(:mod_other_cat_inactive) do
-      FactoryGirl.create(:equipment_model,
-                         deleted_at: Time.zone.today)
-    end
-    context 'with @category set' do
-      it 'should populate an array of category-type equipment models' do
-        mod_same_cat_inactive =
-          FactoryGirl.create(:equipment_model, category: model.category,
-                                               deleted_at: Time.zone.today)
-        get :index, category_id: model.category, show_deleted: true
-        expect(assigns(:equipment_models).include?(model)).to be_truthy
-        expect(assigns(:equipment_models).include?(mod_other_cat_active))
-          .not_to be_truthy
-        expect(assigns(:equipment_models).include?(mod_same_cat_inactive))
-          .to be_truthy
-        expect(assigns(:equipment_models).include?(mod_other_cat_inactive))
-          .not_to be_truthy
-        expect(assigns(:equipment_models).size).to eq(2)
-      end
-    end
-    context 'without @category set' do
-      it 'should populate an array of all equipment models' do
-        get :index, show_deleted: true
-        expect(assigns(:equipment_models).include?(model)).to be_truthy
-        expect(assigns(:equipment_models).include?(mod_other_cat_active))
-          .to be_truthy
-        expect(assigns(:equipment_models).include?(mod_other_cat_inactive))
-          .to be_truthy
-        expect(assigns(:equipment_models).size).to eq(3)
-      end
-    end
-  end
-end
 
 describe EquipmentModelsController, type: :controller do
   before(:each) { mock_app_config(requests_affect_availability: false) }
-  let!(:model) { FactoryGirl.create(:equipment_model) }
-
   it_behaves_like 'calendarable', EquipmentModel
 
+  USER_ROLES = [:admin, :user].freeze
+
   describe 'GET index' do
-    context 'with admin user' do
+    shared_examples_for 'GET index success' do |user_role|
       before do
-        sign_in FactoryGirl.create(:admin)
-        get :index
+        mock_user_sign_in(UserMock.new(user_role))
       end
-      it_behaves_like 'GET index success'
-    end
-    context 'with non-admin user' do
-      before { sign_in FactoryGirl.create(:user) }
-      describe 'should redirect to root' do
+
+      describe 'basic function' do
         before { get :index }
-        it_behaves_like 'GET index success'
+        it_behaves_like 'successful request', :index
+      end
+
+      it 'defaults to all active equipment models' do
+        # UNSAFE, but a stand in for a relation
+        models = spy('Array')
+        # get around the eager loading
+        allow(models).to receive(:includes).and_return(models)
+        allow(EquipmentModel).to receive(:where).and_return([])
+        allow(EquipmentModel).to receive(:all).and_return(models)
+        get :index
+        expect(EquipmentModel).to have_received(:all)
+        expect(models).to have_received(:active)
+      end
+
+      context '@category set' do
+        it 'restricts results to category' do
+          models = spy('Array')
+          cat = CategoryMock.new(traits: [:findable,
+                                          [:with_equipment_models,
+                                           models: models]])
+          allow(models).to receive(:includes).and_return(models)
+          allow(EquipmentModel).to receive(:where).and_return([])
+          get :index, category_id: cat.id
+          expect(cat).to have_received(:equipment_models)
+          expect(models).to have_received(:active)
+        end
+      end
+
+      context 'with show deleted' do
+        it 'populates an array of all equipment models' do
+          models = spy('Array')
+          allow(EquipmentModel).to receive(:where).and_return([])
+          allow(EquipmentModel).to receive(:all).and_return(models)
+          get :index, show_deleted: true
+          expect(EquipmentModel).to have_received(:all)
+          expect(models).to have_received(:includes)
+          expect(models).not_to have_received(:active)
+        end
       end
     end
-  end
-
-  describe 'GET show' do
-    context 'with admin user' do
-      before do
-        sign_in FactoryGirl.create(:admin)
-        get :show, id: model
-      end
-
-      it_behaves_like 'GET show success'
-      it 'should include @pending reservations' do
-        # Make one overdue reservations, one active reservation that started
-        # in the past, one active reservation starting today,
-        # one reservation starting within the next week,
-        # and one starting more than a week in the future
-        #
-        #
-        # First, make sure we have enough equipment objects available
-        FactoryGirl.create(:equipment_item, equipment_model: model)
-        FactoryGirl.create(:equipment_item, equipment_model: model)
-        FactoryGirl.create(:missed_reservation, equipment_model: model)
-        res_starting_today =
-          FactoryGirl.create(:reservation, equipment_model: model,
-                                           start_date: Time.zone.today,
-                                           due_date: Time.zone.today + 2.days)
-        res_starting_this_week =
-          FactoryGirl.create(:reservation, equipment_model: model,
-                                           start_date: Time.zone.today + 2.days,
-                                           due_date: Time.zone.today + 4.days)
-
-        FactoryGirl.create(:reservation, equipment_model: model,
-                                         start_date: Time.zone.today + 10.days,
-                                         due_date: Time.zone.today + 12.days)
-        get :show, id: model
-        expect(assigns(:pending)).to eq([] << res_starting_today <<
-                                            res_starting_this_week)
-      end
-    end
-
-    context 'with non-admin user' do
-      before do
-        sign_in FactoryGirl.create(:user)
-        get :show, id: model
-      end
-
-      it_behaves_like 'GET show success'
-    end
-
-    context 'availability calendar' do
-      before(:each) do
-        @model = FactoryGirl.create(:equipment_model)
-        2.times do
-          FactoryGirl.create(:equipment_item, equipment_model: @model)
-        end
-        sign_in FactoryGirl.create(:user)
-      end
-
-      shared_examples_for 'calculates availability correctly' do |expected|
-        it do
-          get :show, id: @model
-          day_data = assigns(:avail_data).select do |d|
-            d[:start] == Time.zone.today + 1.day
-          end
-          expect(day_data.first[:title]).to eq(expected.to_s)
-        end
-      end
-
-      context 'with no reservations' do
-        it_behaves_like 'calculates availability correctly', 2
-      end
-
-      context 'with upcoming request' do
-        before do
-          FactoryGirl.create(:request,
-                             equipment_model: @model,
-                             start_date: Time.zone.today + 1.day,
-                             due_date: Time.zone.today + 1.day)
-        end
-
-        it_behaves_like 'calculates availability correctly', 2
-      end
-
-      context 'with returned reservation' do
-        before do
-          FactoryGirl.create(:checked_in_reservation,
-                             equipment_model: @model,
-                             start_date: Time.zone.today - 1.day,
-                             due_date: Time.zone.today + 1.day)
-        end
-
-        it_behaves_like 'calculates availability correctly', 2
-      end
-
-      context 'with upcoming reservation' do
-        before do
-          FactoryGirl.create(:valid_reservation,
-                             equipment_model: @model,
-                             start_date: Time.zone.today + 1.day,
-                             due_date: Time.zone.today + 1.day)
-        end
-
-        it_behaves_like 'calculates availability correctly', 1
-      end
-
-      context 'with overdue reservation' do
-        before do
-          FactoryGirl.create(:overdue_reservation,
-                             equipment_model: @model,
-                             start_date: Time.zone.today - 1.day,
-                             due_date: Time.zone.today - 1.day,
-                             equipment_item: @model.equipment_items.first)
-          # needed to persist overdue_count
-          @model.save
-        end
-
-        it_behaves_like 'calculates availability correctly', 1
-      end
-
-      context 'with checked out reservation' do
-        before do
-          FactoryGirl.create(:checked_out_reservation,
-                             equipment_model: @model,
-                             start_date: Time.zone.today - 1.day,
-                             due_date: Time.zone.today + 1.day,
-                             equipment_item: @model.equipment_items.first)
-        end
-
-        it_behaves_like 'calculates availability correctly', 1
-      end
-
-      context 'with upcoming and overdue reservations' do
-        before do
-          FactoryGirl.create(:valid_reservation,
-                             equipment_model: @model,
-                             start_date: Time.zone.today + 1.day,
-                             due_date: Time.zone.today + 1.day)
-          FactoryGirl.create(:overdue_reservation,
-                             equipment_model: @model,
-                             start_date: Time.zone.today - 1.day,
-                             due_date: Time.zone.today - 1.day,
-                             equipment_item: @model.equipment_items.first)
-          # needed to persist overdue_count
-          @model.save
-        end
-
-        it_behaves_like 'calculates availability correctly', 0
-      end
-    end
+    USER_ROLES.each { |type| it_behaves_like 'GET index success', type }
   end
 
   describe 'GET new' do
     context 'with admin user' do
       before do
-        sign_in FactoryGirl.create(:admin)
+        mock_user_sign_in(UserMock.new(:admin))
         get :new
       end
-      it { is_expected.to respond_with(:success) }
-      it { is_expected.to render_template(:new) }
-      it { is_expected.not_to set_flash }
+      it_behaves_like 'successful request', :new
       it 'assigns a new equipment model to @equipment_model' do
         expect(assigns(:equipment_model)).to be_new_record
         expect(assigns(:equipment_model)).to be_kind_of(EquipmentModel)
       end
-      it 'sets equipment_model to nil when no category is specified' do
-        expect(assigns(:equipment_model).category).to be_nil
-      end
       it 'sets category when one is passed through params' do
-        cat = model.category
-        get :new, category_id: cat
-        expect(assigns(:equipment_model).category).to eq(cat)
+        cat = CategoryMock.new(traits: [:findable])
+        allow(EquipmentModel).to receive(:new)
+        get :new, category_id: cat.id
+        expect(EquipmentModel).to have_received(:new).with(category: cat)
       end
     end
-    context 'with non-admin user' do
-      before { sign_in FactoryGirl.create(:user) }
-      it 'should redirect to root' do
-        get :new
-        expect(response).to redirect_to(root_url)
-      end
-    end
-  end
-
-  describe 'GET edit' do
-    context 'with admin user' do
+    context 'when not admin' do
       before do
-        sign_in FactoryGirl.create(:admin)
-        get :edit, id: model
+        mock_user_sign_in
+        get :new
       end
-      it { is_expected.to respond_with(:success) }
-      it { is_expected.to render_template(:edit) }
-      it { is_expected.not_to set_flash }
-      it 'sets @equipment_model to selected model' do
-        expect(assigns(:equipment_model)).to eq(model)
-      end
-    end
-    context 'with non-admin user' do
-      before { sign_in FactoryGirl.create(:user) }
-      it 'should redirect to root' do
-        get :edit, id: model
-        expect(response).to redirect_to(root_url)
-      end
+      it_behaves_like 'redirected request'
     end
   end
 
   describe 'POST create' do
     context 'with admin user' do
-      before { sign_in FactoryGirl.create(:admin) }
-      context 'with valid attributes' do
+      before { mock_user_sign_in(UserMock.new(:admin)) }
+      context 'successful save' do
+        let!(:model) { FactoryGirl.build_stubbed(:equipment_model) }
         before do
-          post :create, equipment_model: FactoryGirl.attributes_for(
-            :equipment_model, category_id: model.category
-          )
+          allow(EquipmentModel).to receive(:new).and_return(model)
+          allow(model).to receive(:save).and_return(true)
+          post :create, equipment_model: { name: 'Model' }
         end
-        it 'should save model' do
-          expect do
-            post :create, equipment_model: FactoryGirl.attributes_for(
-              :equipment_model, category_id: model.category
-            )
-          end.to change(EquipmentModel, :count).by(1)
-        end
-        it { is_expected.to set_flash }
-        it { is_expected.to redirect_to(EquipmentModel.last) }
+        it { is_expected.to set_flash[:notice] }
+        it { is_expected.to redirect_to(model) }
       end
 
-      context 'without valid attributes' do
+      context 'unsuccessful save' do
         before do
-          post :create,
-               equipment_model: FactoryGirl.attributes_for(:equipment_model,
-                                                           name: nil)
+          model = EquipmentModelMock.new(save: false)
+          allow(EquipmentModel).to receive(:new).and_return(model)
+          post :create, equipment_model: { id: model.id }
         end
-        it { is_expected.to set_flash }
-        it { is_expected.to render_template(:new) }
-        it 'should not save' do
-          expect do
-            post :create,
-                 equipment_model: FactoryGirl.attributes_for(:equipment_model,
-                                                             name: nil)
-          end.not_to change(EquipmentModel, :count)
-        end
+        it { is_expected.to set_flash[:error] }
         it { is_expected.to render_template(:new) }
       end
     end
-    context 'with non-admin user' do
-      before { sign_in FactoryGirl.create(:user) }
-      it 'should redirect to root' do
-        post :create,
-             equipment_model: FactoryGirl.attributes_for(:equipment_model)
-        expect(response).to redirect_to(root_url)
+
+    context 'when not admin' do
+      before do
+        mock_user_sign_in
+        post :create, equipment_model:
+          FactoryGirl.attributes_for(:equipment_model)
       end
+      it_behaves_like 'redirected request'
     end
   end
 
   describe 'PUT update' do
     context 'with admin user' do
-      before { sign_in FactoryGirl.create(:admin) }
-      context 'with valid attributes' do
+      before { mock_user_sign_in(UserMock.new(:admin)) }
+      context 'successful update' do
+        let!(:model) { FactoryGirl.build_stubbed(:equipment_model) }
         before do
-          put :update, id: model, equipment_model:
-          FactoryGirl.attributes_for(:equipment_model, name: 'Mod')
+          allow(EquipmentModel).to receive(:find).with(model.id.to_s)
+            .and_return(model)
+          allow(model).to receive(:update_attributes).and_return(true)
+          put :update, id: model.id, equipment_model: { name: 'Model' }
         end
-        it { is_expected.to set_flash }
-        it 'sets @equipment_model to selected model' do
-          expect(assigns(:equipment_model)).to eq(model)
-        end
-        it 'updates attributes' do
-          model.reload
-          expect(model.name).to eq('Mod')
-        end
+        it { is_expected.to set_flash[:notice] }
         it { is_expected.to redirect_to(model) }
       end
 
-      context 'without valid attributes' do
+      context 'unsuccessful update' do
         before do
-          put :update, id: model, equipment_model:
-          FactoryGirl.attributes_for(:equipment_model, name: nil)
+          model = EquipmentModelMock.new(traits: [:findable],
+                                         update_attributes: false)
+          put :update, id: model.id, equipment_model: { name: 'Model' }
         end
         it { is_expected.not_to set_flash }
-        it 'should not update attributes' do
-          model.reload
-          expect(model.name).not_to be_nil
-        end
         it { is_expected.to render_template(:edit) }
       end
-      it 'calls delete_files'
     end
-    context 'with non-admin user' do
-      before { sign_in FactoryGirl.create(:user) }
-      it 'should redirect to root' do
-        put :update,
-            id: model,
-            equipment_model: FactoryGirl.attributes_for(:equipment_model)
-        expect(response).to redirect_to(root_url)
+    context 'when not admin' do
+      before do
+        mock_user_sign_in
+        put :update, id: 1, equipment_model: { name: 'Model' }
+      end
+      it_behaves_like 'redirected request'
+    end
+  end
+
+  describe 'PUT deactivate' do
+    context 'as admin' do
+      before { mock_user_sign_in(UserMock.new(:admin)) }
+      shared_examples 'not confirmed' do |flash_type, **opts|
+        let!(:model) { FactoryGirl.build_stubbed(:equipment_model) }
+        before do
+          allow(EquipmentModel).to receive(:find).with(model.id.to_s)
+            .and_return(model)
+          allow(model).to receive(:destroy)
+          put :deactivate, id: model.id, **opts
+        end
+        it { is_expected.to set_flash[flash_type] }
+        it { is_expected.to redirect_to(model) }
+        it 'does not deactivate model' do
+          expect(model).not_to have_received(:destroy)
+        end
+      end
+      it_behaves_like 'not confirmed', :error
+      it_behaves_like 'not confirmed', :notice, deactivation_cancelled: true
+
+      context 'confirmed' do
+        let!(:model) { EquipmentModelMock.new(traits: [:findable]) }
+        before do
+          request.env['HTTP_REFERER'] = 'where_i_came_from'
+          put :deactivate, id: model.id, deactivation_confirmed: true
+        end
+        it { is_expected.to set_flash[:notice] }
+        it { is_expected.to redirect_to('where_i_came_from') }
+        it 'deactivates model' do
+          expect(model).to have_received(:destroy)
+        end
+      end
+
+      context 'with reservations' do
+        it "archives the model's reservations on deactivation" do
+          model = EquipmentModelMock.new(traits: [:findable])
+          res = ReservationMock.new
+          # stub out scope chain -- SMELL
+          allow(Reservation).to receive(:for_eq_model).and_return(Reservation)
+          allow(Reservation).to receive(:finalized).and_return([res])
+          allow(res).to receive(:archive).and_return(res)
+          request.env['HTTP_REFERER'] = 'where_i_came_from'
+          put :deactivate, id: model.id, deactivation_confirmed: true
+          expect(res).to have_received(:archive)
+          expect(res).to have_received(:save).with(validate: false)
+        end
+      end
+    end
+    context 'not admin' do
+      before do
+        mock_user_sign_in
+        put :deactivate, id: 1
+      end
+      it_behaves_like 'redirected request'
+    end
+  end
+
+  describe 'GET show' do
+    # the current controller method is too complex to be tested
+    # appropriately. FIXME when refactoring the controller
+    let!(:model) { FactoryGirl.create(:equipment_model) }
+    shared_examples 'GET show success' do |user_role|
+      before { mock_user_sign_in(UserMock.new(user_role, requirements: [])) }
+
+      describe 'basic function' do
+        before { get :show, id: model }
+        it_behaves_like 'successful request', :show
+      end
+
+      it 'sets to correct equipment model' do
+        get :show, id: model
+        expect(assigns(:equipment_model)).to eq(model)
+      end
+      it 'sets @associated_equipment_models' do
+        mod1 = FactoryGirl.create(:equipment_model)
+        model.associated_equipment_models = [mod1]
+        get :show, id: model
+        expect(assigns(:associated_equipment_models)).to eq([mod1])
+      end
+
+      it 'limits @associated_equipment_models to maximum 6' do
+        model.associated_equipment_models =
+          FactoryGirl.create_list(:equipment_model, 7)
+        get :show, id: model
+        expect(assigns(:associated_equipment_models).size).to eq(6)
+      end
+    end
+    USER_ROLES.each { |type| it_behaves_like 'GET show success', type }
+
+    context 'with admin user' do
+      before do
+        FactoryGirl.create_pair(:equipment_item, equipment_model: model)
+        sign_in FactoryGirl.create(:admin)
+      end
+      let!(:missed) do
+        FactoryGirl.create(:missed_reservation, equipment_model: model)
+      end
+      let!(:starts_today) do
+        FactoryGirl.create(:reservation, equipment_model: model,
+                                         start_date: Time.zone.today,
+                                         due_date: Time.zone.today + 2.days)
+      end
+      let!(:starts_this_week) do
+        FactoryGirl.create(:reservation, equipment_model: model,
+                                         start_date: Time.zone.today + 2.days,
+                                         due_date: Time.zone.today + 4.days)
+      end
+      let!(:starts_next_week) do
+        FactoryGirl.create(:reservation, equipment_model: model,
+                                         start_date: Time.zone.today + 9.days,
+                                         due_date: Time.zone.today + 11.days)
+      end
+      it 'includes @pending reservations' do
+        get :show, id: model
+        expect(assigns(:pending)).to \
+          match_array([starts_today, starts_this_week])
       end
     end
   end
