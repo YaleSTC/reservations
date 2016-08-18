@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 
 # Routes:
@@ -145,5 +146,69 @@ describe AppConfigsController, type: :controller do
       it { is_expected.to set_flash }
       it { is_expected.to render_template('application_setup/index') }
     end
+  end
+
+  describe '#run_daily_tasks (PUT /app_configs/run_daily_tasks)' do
+    before(:each) do
+      mock_app_config
+      request.env['HTTP_REFERER'] = 'where_i_came_from'
+    end
+
+    context 'as superuser' do
+      before(:each) do
+        sign_in FactoryGirl.create(:superuser)
+      end
+
+      it 'enqueues the daily tasks' do
+        expect(DailyTasksJob).to receive(:perform_now)
+        put :run_daily_tasks
+      end
+    end
+
+    shared_examples 'as other users' do |user|
+      before(:each) do
+        sign_in FactoryGirl.create(user)
+      end
+
+      it "doesn't enqueue the daily tasks" do
+        expect(DailyTasksJob).to_not receive(:perform_now)
+        put :run_daily_tasks
+      end
+    end
+
+    NON_SUPERUSERS = %i(user admin checkout_person banned guest).freeze
+    NON_SUPERUSERS.each { |u| it_behaves_like 'as other users', u }
+  end
+
+  describe '#run_hourly_tasks (PUT /app_configs/run_hourly_tasks)' do
+    before(:each) do
+      mock_app_config
+      request.env['HTTP_REFERER'] = 'where_i_came_from'
+    end
+
+    context 'as superuser' do
+      before(:each) do
+        sign_in FactoryGirl.create(:superuser)
+      end
+
+      it 'enqueues the hourly tasks' do
+        expect(HourlyTasksJob).to receive(:perform_now)
+        put :run_hourly_tasks
+      end
+    end
+
+    shared_examples 'as other users' do |user|
+      before(:each) do
+        sign_in FactoryGirl.create(user)
+      end
+
+      it "doesn't enqueue the hourly tasks" do
+        expect(HourlyTasksJob).to_not receive(:perform_now)
+        put :run_hourly_tasks
+      end
+    end
+
+    NON_SUPERUSERS = %i(user admin checkout_person banned guest).freeze
+    NON_SUPERUSERS.each { |u| it_behaves_like 'as other users', u }
   end
 end

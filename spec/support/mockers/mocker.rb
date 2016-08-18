@@ -75,7 +75,6 @@ class Mocker < RSpec::Mocks::InstanceVerifyingDouble
     id = FactoryGirl.generate(:unique_id)
     allow(spy).to receive(:id).and_return(id)
     FIND_METHODS.each do |method|
-      allow(self.class.klass).to receive(method)
       allow(self.class.klass).to receive(method).with(id).and_return(spy)
       allow(self.class.klass).to receive(method).with(id.to_s).and_return(spy)
     end

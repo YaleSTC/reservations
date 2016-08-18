@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class AppConfigsController < ApplicationController
   authorize_resource class: false
   skip_before_action :seen_app_configs, only: [:edit]
@@ -33,6 +34,22 @@ class AppConfigsController < ApplicationController
       # flash[:error] = "Error saving application settings."
       render action: 'edit'
     end
+  end
+
+  def run_daily_tasks
+    if can? :run, :jobs
+      DailyTasksJob.perform_now
+      flash[:notice] = 'Daily tasks queued and running'
+    end
+    redirect_to :back
+  end
+
+  def run_hourly_tasks
+    if can? :run, :jobs
+      HourlyTasksJob.perform_now
+      flash[:notice] = 'Hourly tasks queued and running'
+    end
+    redirect_to :back
   end
 
   private

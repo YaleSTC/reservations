@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Ability
   include CanCan::Ability
 
@@ -30,6 +31,7 @@ class Ability
     cannot :appoint, :superuser
     cannot :access, :rails_admin
     cannot [:destroy, :update], User, role: 'superuser'
+    cannot :run, :jobs
   end
 
   def checkout

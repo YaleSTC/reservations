@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
@@ -14,7 +15,8 @@ module Reservations
     # -- all .rb files in that directory are automatically loaded.
 
     # Custom directories with classes and modules you want to be autoloadable.
-    config.autoload_paths += %W(#{config.root}/lib/extras #{config.root}/lib/)
+    config.autoload_paths += %W(#{config.root}/lib/extras #{config.root}/lib/
+                                #{config.root}/lib/job_helpers)
     config.watchable_dirs['lib'] = [:rb]
 
     # Activate observers that should always be running.
