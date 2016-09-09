@@ -25,7 +25,7 @@ There are two mains steps to setting up Reservations: setting up a deployment se
 
 ### Prerequisites
 You'll need the following to run Reservations:
-* [Ruby 2.1](http://www.ruby-lang.org/)
+* [Ruby 2.3](http://www.ruby-lang.org/)
 * [Bundler](http://bundler.io/)
 * a database server ([MySQL](http://www.mysql.com/) or any database supported by Rails)
 * [ImageMagick](http://www.imagemagick.org/script/index.php)
