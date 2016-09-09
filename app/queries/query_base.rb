@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class QueryBase
   class << self
     delegate :call, to: :new

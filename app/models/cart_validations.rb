@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # rubocop:disable ModuleLength
 module CartValidations
   # These validation methods were carefully written to use as few database

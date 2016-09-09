@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # rubocop:disable ModuleLength
 module EquipmentImport
   # IMPORT FUNCTIONS - these are all kinda similar, but we'll write them

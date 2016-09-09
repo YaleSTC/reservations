@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module CsvImport
   # method used to convert a csv filepath to an array of objects specified by
   # the file

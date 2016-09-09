@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # rubocop:disable ClassLength
 class EquipmentModelsController < ApplicationController
   layout 'application_with_sidebar', only: :show

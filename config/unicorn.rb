@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # rubocop:disable Rails/Output
 worker_processes Integer(ENV['WEB_CONCURRENCY'] || 3)
 timeout 15

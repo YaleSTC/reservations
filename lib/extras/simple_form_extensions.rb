@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ButtonComponents
   def submit_button(*args, &block)
     options = args.extract_options!

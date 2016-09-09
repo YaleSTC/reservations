@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # This script is used to populate the database with preload data.
 # It does not clear the database - mainly because that would mean deleting your
 # admin login. All the numbers are pretty arbitrary, and can be changed to suit
@@ -75,7 +76,7 @@ PAST_RANGE = 1.year
 IMAGES = Dir.glob(File.join(Rails.root, 'db', 'seed_images', '*'))
 
 # Progress bar format string
-PROGRESS_STR = '%t: [%B] %P%% | %c / %C | %E'.freeze
+PROGRESS_STR = '%t: [%B] %P%% | %c / %C | %E'
 
 #-------METHODS
 

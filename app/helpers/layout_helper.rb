@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # These helper methods can be called in your template to set variables to be
 # used in the layout
 # This module should be included in all views globally,

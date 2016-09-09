@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # based on http://stackoverflow.com/a/20010923/2187922
 
 require 'spec_helper'

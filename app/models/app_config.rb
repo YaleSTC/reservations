@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class AppConfig < ActiveRecord::Base
   has_attached_file :favicon,
                     url: '/system/:attachment/:id/:style/favicon.:extension'

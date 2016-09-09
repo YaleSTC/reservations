@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'codeclimate-test-reporter'
 CodeClimate::TestReporter.start
 # Rspec should submit the result to CodeClimate automatically with each Travis

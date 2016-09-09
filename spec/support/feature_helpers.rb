@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module FeatureHelpers
   # make sure we have a working app
   def app_setup

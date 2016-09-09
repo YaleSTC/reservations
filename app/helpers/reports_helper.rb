@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ReportsHelper
   require 'csv'
   def generate_report_csv_helper(table, name = 'Reservation Set')

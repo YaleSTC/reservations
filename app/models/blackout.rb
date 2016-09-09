@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Blackout < ActiveRecord::Base
   attr_accessor :days # needed for days of the week checkboxes in new_recurring
 

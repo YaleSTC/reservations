@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Searchable
   def self.included(base) # rubocop:disable MethodLength
     def base.searchable_on(*args)

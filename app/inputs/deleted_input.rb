@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class DeletedInput < SimpleForm::Inputs::BooleanInput
   def input
     build_check_box

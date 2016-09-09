@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module EnvHelpers
   # wrapper for modifying the environment variables for specific code
   # see: https://github.com/ScrappyAcademy/rock_candy

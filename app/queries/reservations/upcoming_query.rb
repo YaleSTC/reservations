@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Reservations
   class UpcomingQuery < Reservations::ReservationsQueryBase
     def call

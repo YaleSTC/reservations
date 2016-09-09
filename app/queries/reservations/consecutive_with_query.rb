@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Reservations
   class ConsecutiveWithQuery < Reservations::ReservationsQueryBase
     def call(start_date, due_date)

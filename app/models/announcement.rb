@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Announcement < ActiveRecord::Base
   validates :message,
             :ends_at,

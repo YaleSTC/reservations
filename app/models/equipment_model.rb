@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # rubocop:disable ClassLength
 class EquipmentModel < ActiveRecord::Base
   include ApplicationHelper

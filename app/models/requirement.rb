@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Requirement < ActiveRecord::Base
   has_and_belongs_to_many :equipment_models
   # This join table associates users with the requirements that they have
