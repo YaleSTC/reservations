@@ -12,8 +12,6 @@ module ControllerHelpers
       receive(:current_user).and_return(user)
   end
 
-  private
-
   def pass_app_setup_check
     allow(AppConfig).to receive(:first).and_return(true) unless AppConfig.first
     allow(User).to receive(:count).and_return(1) unless User.first
