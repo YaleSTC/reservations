@@ -144,16 +144,19 @@ class Reservation < ActiveRecord::Base
     date_range.map { |d| Reservation.number_for(source, date: d, **attrs) }
   end
 
+  def self.flag_exists?(flag)
+    FLAGS.key? flag
+  end
+
   ## Getter style instance methods ##
 
   def approved?
     flagged?(:request) && !%w(denied requested).include?(status)
   end
 
-  def flagged?(flag)
-    # checks to see if the given flag is set
-    # you must pass the symbol for the flag
-    flags & FLAGS[flag] > 0
+  def flagged?(flag_sym)
+    return unless Reservation.flag_exists? flag_sym
+    flags & FLAGS[flag_sym] > 0
   end
 
   # Generic method for checking if a reservation fits a hash of attributes
@@ -167,12 +170,14 @@ class Reservation < ActiveRecord::Base
     start_date <= d && due_date >= d
   end
 
-  def flag(flag)
-    self.flags |= FLAGS[flag]
+  def flag(flag_sym)
+    return unless Reservation.flag_exists? flag_sym
+    self.flags |= FLAGS[flag_sym]
   end
 
-  def unflag(flag)
-    self.flags - FLAGS[flag]
+  def unflag(flag_sym)
+    return unless flagged? flag_sym
+    self.flags -= FLAGS[flag_sym]
   end
 
   def expire!
