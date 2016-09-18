@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module UsersHelper
   def active_tab(key)
     return 'active' if key == :current_equipment

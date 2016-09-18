@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 FactoryGirl.define do
   factory :cart do
     reserver_id { FactoryGirl.create(:user).id }

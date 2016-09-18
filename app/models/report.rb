@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Report
   attr_accessor :columns, :row_item_type, :rows
   DEFAULT_COLUMNS = [['Total', :all, :count],

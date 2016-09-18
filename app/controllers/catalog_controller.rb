@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # rubocop:disable ClassLength
 class CatalogController < ApplicationController
   helper ReservationsHelper # for request_text

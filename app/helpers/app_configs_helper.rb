@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module AppConfigsHelper
   def current_favicon_and_options
     return unless @app_configs.favicon.present?

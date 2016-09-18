@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class AdminMailer < ActionMailer::Base
   add_template_helper(ApplicationHelper)
   default from: "no-reply@#{ActionMailer::Base.default_url_options[:host]}"

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Reservations
   class CheckoutableQuery < Reservations::ReservationsQueryBase
     def call

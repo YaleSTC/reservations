@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module EquipmentItemsHelper
   def add_equipment_item_link(name)
     # TODO: link_to_function is deprecated and this can probably be removed

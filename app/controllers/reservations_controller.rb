@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # rubocop:disable ClassLength
 class ReservationsController < ApplicationController
   load_and_authorize_resource

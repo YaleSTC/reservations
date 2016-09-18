@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Autocomplete
   def get_autocomplete_items(parameters)
     query = '%' + parameters[:term].downcase + '%'

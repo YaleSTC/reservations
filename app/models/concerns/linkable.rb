@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Linkable
   extend ActiveSupport::Concern
   include Rails.application.routes.url_helpers

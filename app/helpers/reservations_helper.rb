@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ReservationsHelper
   def filter_message(set, source, filter, view_all)
     if view_all

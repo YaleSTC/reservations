@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class UserMailer < ActionMailer::Base
   # Workaround so that RSpec start-up doesn't fail.
   # TODO: Have RSpec initialize AppConfig with configuration.

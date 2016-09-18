@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 FactoryGirl.define do
   factory :checkin_procedure do
     equipment_model_id { FactoryGirl.create(:equipment_model).id }

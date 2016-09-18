@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Cart # rubocop:disable ClassLength
   include ActiveModel::Validations
   include CartValidations

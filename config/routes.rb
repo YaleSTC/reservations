@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 Reservations::Application.routes.draw do
   root to: 'catalog#index'
 

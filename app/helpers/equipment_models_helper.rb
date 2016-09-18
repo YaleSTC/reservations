@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module EquipmentModelsHelper
   def evaluate_img_presence(equipment_model)
     if equipment_model.photo.exists?

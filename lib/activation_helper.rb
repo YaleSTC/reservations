@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ActivationHelper
   def activate_parents(current_item)
     # Equipment Items have EMs and Categories that may need to be

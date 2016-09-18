@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Be sure to restart your server when you modify this file.
 
 # These settings change the behavior of Rails 2 apps and will be defaults

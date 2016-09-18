@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 ##
 # This concern adds a monthly calendar view of reservations for a given resource
 # to a controller. It can be used to provide a standalone view with the

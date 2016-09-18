@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Category < ActiveRecord::Base
   include Searchable
   searchable_on(:name)

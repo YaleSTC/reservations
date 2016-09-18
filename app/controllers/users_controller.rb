@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # rubocop:disable ClassLength
 class UsersController < ApplicationController
   load_and_authorize_resource

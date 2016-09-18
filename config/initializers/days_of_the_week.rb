@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # rubocop:disable UselessAssignment
 def days_of_the_week_long
   days_of_the_week_long = %w(Sunday, Monday, Tuesday, Wednesday, Thursday,

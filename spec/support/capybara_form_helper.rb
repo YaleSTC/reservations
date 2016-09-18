@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 ## Load code after Capybara
 # see http://minimul.com/submitting-a-form-without-a-button-using-capybara.html
 module Capybara

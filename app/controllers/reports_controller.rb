@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class ReportsController < ApplicationController
   authorize_resource class: false
   MODEL_COLUMNS = [['Total', :all, :count],

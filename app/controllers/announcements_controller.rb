@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class AnnouncementsController < ApplicationController
   load_and_authorize_resource
   before_action :set_current_announcement, only: [:edit, :update, :destroy]
