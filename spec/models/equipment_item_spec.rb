@@ -3,159 +3,272 @@ require 'spec_helper'
 require 'concerns/linkable_spec.rb'
 
 describe EquipmentItem, type: :model do
-  context 'validations' do
-    before(:each) do
-      @item = FactoryGirl.build(:equipment_item)
-    end
+  include ActiveSupport::Testing::TimeHelpers
 
-    it 'has a working factory' do
-      expect(@item.save).to be_truthy
-    end
+  it_behaves_like 'linkable'
 
+  describe 'basic validations' do
+    subject(:item) { FactoryGirl.build(:equipment_item) }
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:equipment_model) }
+  end
 
-    # 2015-11-09: we can't use the shoulda matchers test for scoped uniqueness
-    # due to the lack of a default value for notes - we could potentially
-    # rework our database schema to add a default value but it seems
-    # unnecessary at the moment
-    it 'ensures unique serials scoped to equipment model if it exists' do
-      em1 = FactoryGirl.create(:equipment_model)
-      em2 = FactoryGirl.create(:equipment_model)
-      FactoryGirl.create(:equipment_item, equipment_model: em1, serial: 'a')
-      em1_a2 = FactoryGirl.build(:equipment_item, equipment_model: em1,
-                                                  serial: 'a')
-      em1_nil1 = FactoryGirl.build(:equipment_item, equipment_model: em1,
-                                                    serial: nil)
-      em1_nil2 = FactoryGirl.build(:equipment_item, equipment_model: em1,
-                                                    serial: nil)
-      em1_blank1 = FactoryGirl.build(:equipment_item, equipment_model: em1,
-                                                      serial: '')
-      em1_blank2 = FactoryGirl.build(:equipment_item, equipment_model: em1,
-                                                      serial: '')
-      em2_a = FactoryGirl.build(:equipment_item, equipment_model: em2,
-                                                 serial: 'a')
-
-      expect(em1_a2.valid?).to be_falsey
-      expect(em1_nil1.save!).to be_truthy
-      expect(em1_nil2.valid?).to be_truthy
-      expect(em1_blank1.save!).to be_truthy
-      expect(em1_blank2.valid?).to be_truthy
-      expect(em2_a.valid?).to be_truthy
+  describe 'serial' do
+    it 'can be blank' do
+      item = FactoryGirl.build_stubbed(:equipment_item, serial: '')
+      expect(item.valid?).to be_truthy
     end
+    it 'can be nil' do
+      item = FactoryGirl.build_stubbed(:equipment_item, serial: nil)
+      expect(item.valid?).to be_truthy
+    end
+    it 'cannot be the same as another item of the same model' do
+      model = FactoryGirl.create(:equipment_model)
+      FactoryGirl.create(:equipment_item, equipment_model: model, serial: 'a')
+      item = FactoryGirl.build(:equipment_item, equipment_model: model,
+                                                serial: 'a')
+      expect(item.valid?).to be_falsey
+    end
+    it 'can be the same as another item of a different model' do
+      FactoryGirl.create(:equipment_item,
+                         serial: 'a',
+                         equipment_model: FactoryGirl.create(:equipment_model))
+      item =
+        FactoryGirl.build(:equipment_item,
+                          serial: 'a',
+                          equipment_model: FactoryGirl.create(:equipment_model))
+      expect(item.valid?).to be_truthy
+    end
+  end
 
+  it 'saves an empty string value as nil for deleted_at field' do
     # this test passes even without the nilify_blanks call in the model, maybe
     # delete the call?
-    it 'saves an empty string value as nil for deleted_at field' do
-      @item.deleted_at = '   '
-      @item.save
-      expect(@item.deleted_at).to eq(nil)
+    item = FactoryGirl.build(:equipment_item)
+    item.deleted_at = '   '
+    item.save
+    expect(item.deleted_at).to eq(nil)
+  end
+
+  describe '#active' do
+    it 'returns active equipment items' do
+      active = FactoryGirl.create(:equipment_item)
+      FactoryGirl.create(:deactivated_item)
+      expect(described_class.active).to match_array([active])
     end
   end
 
-  describe '.active' do
-    before(:each) do
-      @active = FactoryGirl.create(:equipment_item)
-      @deactivated = FactoryGirl.create(:deactivated)
-    end
-
-    it 'Should return all active equipment items' do
-      expect(EquipmentItem.active).to include(@active)
-    end
-
-    it 'Should not return inactive equipment items' do
-      expect(EquipmentItem.active).not_to include(@deactivated)
+  describe '#for_eq_model' do
+    it 'counts the number of items for the given model' do
+      items = Array.new(2) { |i| EquipmentItemMock.new(equipment_model_id: i) }
+      expect(described_class.for_eq_model(0, items)).to eq(1)
     end
   end
 
-  describe '.status' do
-    it "returns 'Deactivated' if the item has a value for deleted_at" do
-      @item = FactoryGirl.create(:equipment_item,
-                                 deleted_at: Time.zone.today)
-      expect(@item.status).to eq('Deactivated')
+  describe '#status' do
+    it "returns 'Deactivated' when deleted_at is set" do
+      item = FactoryGirl.build_stubbed(:equipment_item,
+                                       deleted_at: Time.zone.today)
+      expect(item.status).to eq('Deactivated')
     end
-    it "returns 'available' if the item is active and not currently "\
-      'checked out' do
-      @item = FactoryGirl.create(:equipment_item)
-      expect(@item.status).to eq('available')
-      @reservation = FactoryGirl.create(:valid_reservation)
-      @reserved_item =
-        EquipmentItem
-        .find_by_equipment_model_id(@reservation.equipment_model.id)
-      expect(@reserved_item.status).to eq('available')
+    it "returns 'available' when active and not currently checked out" do
+      item = FactoryGirl.build_stubbed(:equipment_item)
+      expect(item.status).to eq('available')
     end
-    it 'returns a description of the reservation that it is currently '\
-      'associated with if it is active and checked out' do
-      @reservation = FactoryGirl.create(:checked_out_reservation)
-      @checked_out_item = @reservation.equipment_item
-      expect(@checked_out_item.status).to\
-        eq("checked out by #{@reservation.reserver.name} through "\
-          "#{@reservation.due_date.strftime('%b %d')}")
+    it 'includes reservation information when checked out' do
+      res = FactoryGirl.create(:checked_out_reservation)
+      item = res.equipment_item
+      expect(item.status).to include('checked out by')
+    end
+    it 'includes deactivation reason if it is set' do
+      reason = 'because i can'
+      item = FactoryGirl.build_stubbed(:equipment_item,
+                                       deleted_at: Time.zone.today,
+                                       deactivation_reason: reason)
+      expect(item.status).to include(reason)
     end
   end
 
-  describe '.current_reservation' do
-    it 'returns nil if the equipment item does not have an associated '\
-      'reservation' do
-      @item = FactoryGirl.create(:equipment_item)
-      expect(@item.current_reservation).to be_nil
+  describe '#current_reservation' do
+    it 'returns nil if no associated reservation' do
+      item = FactoryGirl.build_stubbed(:equipment_item)
+      expect(item.current_reservation).to be_nil
     end
-    it 'returns the reservation item currently holding this '\
-      'equipment_item if there is one that does' do
-      @reservation = FactoryGirl.create(:checked_out_reservation)
-      @reserved_item = @reservation.equipment_item
-      expect(@reserved_item.current_reservation).to eq(@reservation)
+    it 'returns the reservation that currently has the item checked out' do
+      res = FactoryGirl.create(:checked_out_reservation)
+      item = res.equipment_item
+      expect(item.current_reservation).to eq(res)
     end
   end
 
-  describe '.available?' do
-    it 'returns true if the equipment item is not checked out' do
-      @item = FactoryGirl.create(:equipment_item)
-      expect(@item.available?).to be_truthy
+  describe '#available?' do
+    it 'returns true when the status is available' do
+      item = FactoryGirl.build_stubbed(:equipment_item)
+      expect(item.available?).to be_truthy
     end
-    it 'returns false if the equipment item is currently checked out' do
-      @reservation = FactoryGirl.create(:checked_out_reservation)
-      @checked_out_item = @reservation.equipment_item
-      expect(@checked_out_item.available?).to be_falsey
+    it 'returns false if when the status is not available' do
+      item = FactoryGirl.build_stubbed(:equipment_item)
+      allow(item).to receive(:status).and_return('not')
+      expect(item.available?).to be_falsey
+    end
+  end
+
+  describe '#make_reservation_notes' do
+    let!(:user) { UserMock.new(md_link: 'md_link') }
+    let!(:item) { FactoryGirl.build(:equipment_item) }
+    it 'updates the notes' do
+      allow(item).to receive(:update_attributes)
+      item.make_reservation_notes('', ReservationMock.new(reserver: user), user,
+                                  '', Time.zone.now)
+      expect(item).to have_received(:update_attributes)
+        .with(hash_including(:notes))
+    end
+    it 'includes the given time' do
+      time = Time.zone.now
+      item.make_reservation_notes('', ReservationMock.new(reserver: user), user,
+                                  '', time)
+      expect(item.notes).to include(time.to_s(:long))
+    end
+    it 'includes the current user link' do
+      item.make_reservation_notes('',
+                                  ReservationMock.new(reserver: UserMock.new),
+                                  user, '', Time.zone.now)
+      expect(item.notes).to include(user.md_link)
+    end
+    it 'includes the reservation link' do
+      res = ReservationMock.new(reserver: UserMock.new, md_link: 'res_link')
+      item.make_reservation_notes('', res, user, '', Time.zone.now)
+      expect(item.notes).to include(res.md_link)
+    end
+    it 'includes the reserver link' do
+      reserver = UserMock.new(md_link: 'reserver_link')
+      res = ReservationMock.new(reserver: reserver)
+      item.make_reservation_notes('', res, user, '', Time.zone.now)
+      expect(item.notes).to include(reserver.md_link)
+    end
+    it 'includes extra notes' do
+      item.make_reservation_notes('',
+                                  ReservationMock.new(reserver: UserMock.new),
+                                  user, 'extra_note', Time.zone.now)
+      expect(item.notes).to include('extra_note')
+    end
+  end
+
+  describe '#make_switch_notes' do
+    let!(:user) { UserMock.new }
+    let!(:item) { FactoryGirl.build(:equipment_item) }
+    it 'updates the notes' do
+      allow(item).to receive(:update_attributes)
+      item.make_switch_notes(nil, nil, user)
+      expect(item).to have_received(:update_attributes)
+        .with(hash_including(:notes))
+    end
+    it 'includes the reservation links when passed' do
+      old = ReservationMock.new(md_link: 'old_link')
+      new = ReservationMock.new(md_link: 'new_link')
+      item.make_switch_notes(old, new, user)
+      expect(item.notes).to include(old.md_link)
+      expect(item.notes).to include(new.md_link)
+    end
+    it 'includes the current time' do
+      travel(-1.days) do
+        time = Time.zone.now.to_s(:long)
+        item.make_switch_notes(nil, nil, user)
+        expect(item.notes).to include(time)
+      end
+    end
+    it 'includes the handler link' do
+      allow(user).to receive(:md_link).and_return('user_link')
+      item.make_switch_notes(nil, nil, user)
+      expect(item.notes).to include(user.md_link)
+    end
+  end
+
+  describe '#update' do
+    let!(:user) { UserMock.new }
+    context 'no changes' do
+      let!(:item) { FactoryGirl.build_stubbed(:equipment_item) }
+      it 'does nothing' do
+        expect { item.update(user, {}) }.not_to change { item.notes }
+      end
+    end
+    context 'any changes' do
+      let!(:item) { FactoryGirl.build_stubbed(:equipment_item) }
+      it 'includes the current time' do
+        travel(-1.days) do
+          time = Time.zone.now.to_s(:long)
+          item.update(user, serial: 'a')
+          expect(item.notes).to include(time)
+        end
+      end
+      it 'includes the current user' do
+        allow(user).to receive(:md_link).and_return('user_link')
+        item.update(user, serial: 'a')
+        expect(item.notes).to include(user.md_link)
+      end
+    end
+    shared_examples 'string change noted' do |attr|
+      it do
+        old_value = 'a'
+        new_value = 'b'
+        item = FactoryGirl.build_stubbed(:equipment_item, attr => old_value)
+        item.update(user, attr => new_value)
+        expect(item.notes).to include(old_value)
+        expect(item.notes).to include(new_value)
+      end
+    end
+    it_behaves_like 'string change noted', :name
+    it_behaves_like 'string change noted', :serial
+    context 'changing the equipment model' do
+      it 'notes the change' do
+        old_model = FactoryGirl.create(:equipment_model)
+        new_model = FactoryGirl.create(:equipment_model)
+        item = FactoryGirl.build_stubbed(:equipment_item,
+                                         equipment_model: old_model)
+        item.update(user, equipment_model_id: new_model.id)
+        expect(item.notes).to include('Equipment Model')
+        expect(item.notes).to include(old_model.name)
+        expect(item.notes).to include(new_model.name)
+      end
     end
   end
 
   describe '#deactivate' do
+    let!(:user) { UserMock.new(md_link: 'md_link') }
+    let!(:item) { FactoryGirl.build_stubbed(:equipment_item) }
     before do
-      @ei = FactoryGirl.build(:equipment_item)
-      @user = FactoryGirl.build(:admin)
+      allow(item).to receive(:destroy)
+      allow(item).to receive(:save!)
     end
-
     context 'with user and notes' do
-      before { @ei.deactivate(user: @user, reason: 'reason') }
-
-      it 'prepends to the notes' do
-        expect(@ei.notes).to include('reason')
-        expect(@ei.notes).to include(@user.md_link)
+      it 'saves the updated attributes' do
+        item.deactivate(user: user, reason: 'reason')
+        expect(item).to have_received(:save!)
       end
-      it 'sets deleted_at' do
-        expect(@ei.deleted_at).not_to be_nil
+      it 'destroys the item' do
+        item.deactivate(user: user, reason: 'reason')
+        expect(item).to have_received(:destroy)
+      end
+      it 'prepends to the notes' do
+        item.deactivate(user: user, reason: 'reason')
+        expect(item.notes).to include('reason')
+        expect(item.notes).to include(user.md_link)
       end
     end
-
     context 'without user' do
       it 'does nothing' do
-        expect { @ei.deactivate(reason: 'reason') }.not_to change { @ei }
+        expect { item.deactivate(reason: 'reason') }.not_to change { item }
       end
     end
-
     context 'without notes' do
       it 'does nothing' do
-        expect { @ei.deactivate(user: @user) }.not_to change { @ei }
+        expect { item.deactivate(user: user) }.not_to change { item }
       end
     end
-
     context 'without parameters' do
       it 'does nothing' do
-        expect { @ei.deactivate }.not_to change { @ei }
+        expect { item.deactivate }.not_to change { item }
       end
     end
   end
-
-  it_behaves_like 'linkable'
 end

@@ -20,6 +20,18 @@ class EquipmentItem < ActiveRecord::Base
 
   searchable_on(:name, :serial)
 
+  def self.for_eq_model(model_id, source_objects)
+    # count the number of equipment items for a given
+    # model out of an array of source objects
+    # 0 queries
+
+    count = 0
+    source_objects.each do |o|
+      count += 1 if o.equipment_model_id == model_id
+    end
+    count
+  end
+
   def status
     if deleted? && deactivation_reason
       "Deactivated (#{deactivation_reason})"
@@ -39,18 +51,6 @@ class EquipmentItem < ActiveRecord::Base
 
   def available?
     status == 'available'
-  end
-
-  def self.for_eq_model(model_id, source_objects)
-    # count the number of equipment items for a given
-    # model out of an array of source objects
-    # 0 queries
-
-    count = 0
-    source_objects.each do |o|
-      count += 1 if o.equipment_model_id == model_id
-    end
-    count
   end
 
   def make_reservation_notes(procedure_verb, reservation, handler, new_notes,
