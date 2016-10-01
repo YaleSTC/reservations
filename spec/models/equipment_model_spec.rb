@@ -79,6 +79,10 @@ describe EquipmentModel, type: :model do
       it_behaves_like 'integer attribute', :renewal_days_before_due
       it_behaves_like 'allows 0', :renewal_days_before_due
     end
+    describe 'max_future_res' do
+      it_behaves_like 'integer attribute', :max_future_res
+      it_behaves_like 'allows 0', :max_future_res
+    end
     shared_examples 'string attribute' do |attr|
       it 'fails when less than 0' do
         model = mock_eq_model(attr => '-1.00')
