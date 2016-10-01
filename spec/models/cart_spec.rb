@@ -301,4 +301,62 @@ describe Cart, type: :model do
       expect(@cart.check_max_cat).not_to eq([])
     end
   end
+  describe 'check_future_res' do
+    context 'reserver has fewer active reservations than the limit' do
+      it 'return true' do
+        limit = 3
+        reserver = UserMock.new(:user, traits: [:findable], id: 1)
+        model = EquipmentModelMock.new(max_future_res: limit, id: 1)
+        reservations = spy('Array', count: limit - 1)
+        allow(reservations).to receive(:for_eq_model).and_return(reservations)
+        allow(reserver).to receive(:active_reservations).and_return(reservations)
+        cart = Cart.new(reserver_id: reserver.id, start_date: Time.zone.today,
+                        due_date: Time.zone.today + 1, items: { model.id => 1 })
+        expect(cart.check_future_res).to eq([])
+      end
+      it "doesn't count reservations for other models" do
+        limit = 3
+        reserver = UserMock.new(:user, traits: [:findable], id: 1)
+        model = EquipmentModelMock.new(max_future_res: limit, id: 1)
+        other_model = EquipmentModelMock.new(id: 2)
+        reservations = spy('Array', count: limit - 1)
+        allow(reservations).to receive(:for_eq_model).with(model.id)
+          .and_return(reservations)
+        allow(reservations).to receive(:for_eq_model).with(other_model.id)
+          .and_return(spy('Array', count: 1))
+        allow(reserver).to receive(:active_reservations).and_return(reservations)
+        cart = Cart.new(reserver_id: reserver.id, start_date: Time.zone.today,
+                        due_date: Time.zone.today + 1, items: { model.id => 1 })
+        expect(cart.check_future_res).to eq([])
+      end
+    end
+    context 'reserver has more or equal active reservations than the limit' do
+      it 'returns false' do
+        limit = 3
+        reserver = UserMock.new(:user, traits: [:findable], id: 1)
+        model = EquipmentModelMock.new(max_future_res: limit, id: 1)
+        reservations = spy('Array', count: limit)
+        allow(reservations).to receive(:for_eq_model).and_return(reservations)
+        allow(reserver).to receive(:active_reservations).and_return(reservations)
+        cart = Cart.new(reserver_id: reserver.id, start_date: Time.zone.today,
+                        due_date: Time.zone.today + 1, items: { model.id => 1 })
+        expect(cart.check_future_res).not_to eq([])
+      end
+    end
+    context 'model has no active reservations limit' do
+      it 'return true' do
+        limit = 3
+        reserver = UserMock.new(:user, traits: [:findable], id: 1)
+        model = EquipmentModelMock.new(id: 1)
+        reservations = spy('Array', count: limit)
+        allow(reservations).to receive(:for_eq_model).and_return(reservations)
+        allow(reserver).to receive(:active_reservations).and_return(reservations)
+        cart = Cart.new(reserver_id: reserver.id, start_date: Time.zone.today,
+                        due_date: Time.zone.today + 1, items: { model.id => 1 })
+        cart.check_future_res
+        expect(reservations).not_to have_received(:count)
+      end
+    end
+
+  end
 end
