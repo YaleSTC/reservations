@@ -275,5 +275,11 @@ describe EquipmentModel, type: :model do
           eq("<option value=#{item.id}>#{item.name}</option>")
       end
     end
+    describe 'destroy' do
+      it 'destroys the model' do
+        model = FactoryGirl.create(:equipment_model)
+        expect(model.destroy).to be_truthy
+      end
+    end
   end
 end
