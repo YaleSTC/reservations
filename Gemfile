@@ -32,7 +32,7 @@ gem 'paperclip', '~> 4.3.6'
 gem 'rubyzip', '~> 1.2.0'
 
 # soft deletion
-gem 'permanent_records', '~> 4.1.5'
+gem 'permanent_records', '= 4.1.5'
 gem 'nilify_blanks', '~> 1.2.1'
 
 # ui
