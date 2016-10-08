@@ -307,7 +307,7 @@ describe Cart, type: :model do
         limit = 3
         reserver = UserMock.new(:user, traits: [:findable], id: 1)
         model = EquipmentModelMock.new(max_future_res: limit, id: 1)
-        reservations = spy('Array', count: limit - 1)
+        reservations = spy('Array', count: limit - 1, empty?: false)
         allow(reservations).to receive(:for_eq_model).and_return(reservations)
         allow(reserver).to receive(:active_reservations).and_return(reservations)
         cart = Cart.new
@@ -321,7 +321,7 @@ describe Cart, type: :model do
         limit = 3
         reserver = UserMock.new(:user, traits: [:findable], id: 1)
         model = EquipmentModelMock.new(max_future_res: limit, id: 1)
-        reservations = spy('Array', count: limit)
+        reservations = spy('Array', count: limit, empty?: false)
         allow(reservations).to receive(:for_eq_model).and_return(reservations)
         allow(reserver).to receive(:active_reservations).and_return(reservations)
         cart = Cart.new
