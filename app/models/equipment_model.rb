@@ -54,6 +54,7 @@ class EquipmentModel < ActiveRecord::Base
   validates :max_renewal_length,
             :max_renewal_times,
             :renewal_days_before_due,
+            :max_future_res,
             numericality: { allow_nil: true, only_integer: true,
                             greater_than_or_equal_to: 0 }
 
