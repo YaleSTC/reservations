@@ -174,4 +174,8 @@ class User < ActiveRecord::Base
   def due_for_checkin
     reservations.checked_out.order('due_date ASC')
   end
+
+  def active_reservations
+    reservations.active
+  end
 end

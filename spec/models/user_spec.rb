@@ -178,6 +178,13 @@ describe User, type: :model do
       end
     end
   end
-
+  describe 'active_reservations' do
+    it "returns the user's active reservatons" do
+      reservations = spy('Array', active: spy('Array'))
+      user = FactoryGirl.build(:user)
+      allow(user).to receive(:reservations).and_return(reservations)
+      expect(user.active_reservations).to eq(reservations.active)
+    end
+  end
   it_behaves_like 'linkable'
 end
