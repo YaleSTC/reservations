@@ -33,6 +33,7 @@ module CartValidations
       errors += check_availability(model, quantity, source_res)
       errors += check_duration(model) unless renew
       errors += check_should_be_renewed(user_reservations, model, start_date)
+      errors += check_future_res(model)
     end
     errors.uniq.reject(&:blank?)
   end

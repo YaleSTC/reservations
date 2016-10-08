@@ -17,6 +17,17 @@ describe Cart, type: :model do
     it { is_expected.to validate_presence_of(:due_date) }
   end
 
+  describe 'validate_all' do
+    it 'checks max future reservations' do
+      cart = FactoryGirl.build(:cart)
+      model = FactoryGirl.create(:equipment_model)
+      cart.items = { model.id => 1 }
+      allow(cart).to receive(:check_future_res).and_return([])
+      cart.validate_all
+      expect(cart).to have_received(:check_future_res).with(model)
+    end
+  end
+
   describe '.initialize' do
     it 'has no items' do
       @cart.items.nil?
