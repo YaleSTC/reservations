@@ -253,4 +253,18 @@ module CartValidations
     ["#{user.name} is missing the following certifications: "\
       "#{unfulfilled_req_text.to_sentence}"]
   end
+
+  def check_future_res(model)
+    return [] unless model.max_future_res
+    user = User.find(reserver_id)
+    user_res = user.active_reservations.for_eq_model(model.id)
+    return [] if user_res == []
+    model_name = model.name
+    model_max_res = model.max_future_res
+    count = user_res.count
+    if count >= model_max_res
+      return ["#{user.name} has reached the limit for #{model.name}"]
+    end
+    []
+  end
 end

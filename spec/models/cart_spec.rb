@@ -313,23 +313,7 @@ describe Cart, type: :model do
         cart = Cart.new
         cart.reserver_id = reserver.id
         cart.items = { model.id => 1 }
-        expect(cart.check_future_res).to eq([])
-      end
-      it "doesn't count reservations for other models" do
-        limit = 3
-        reserver = UserMock.new(:user, traits: [:findable], id: 1)
-        model = EquipmentModelMock.new(max_future_res: limit, id: 1)
-        other_model = EquipmentModelMock.new(id: 2)
-        reservations = spy('Array', count: limit - 1)
-        allow(reservations).to receive(:for_eq_model).with(model.id)
-          .and_return(reservations)
-        allow(reservations).to receive(:for_eq_model).with(other_model.id)
-          .and_return(spy('Array', count: 1))
-        allow(reserver).to receive(:active_reservations).and_return(reservations)
-        cart = Cart.new
-        cart.reserver_id = reserver.id
-        cart.items = { model.id => 1 }
-        expect(cart.check_future_res).to eq([])
+        expect(cart.check_future_res(model)).to eq([])
       end
     end
     context 'reserver has more or equal active reservations than the limit' do
@@ -343,21 +327,21 @@ describe Cart, type: :model do
         cart = Cart.new
         cart.reserver_id = reserver.id
         cart.items = { model.id => 1 }
-        expect(cart.check_future_res).not_to eq([])
+        expect(cart.check_future_res(model)).not_to be_empty
       end
     end
     context 'model has no active reservations limit' do
       it 'return true' do
         limit = 3
         reserver = UserMock.new(:user, traits: [:findable], id: 1)
-        model = EquipmentModelMock.new(id: 1)
+        model = EquipmentModelMock.new(max_future_res: nil, id: 1)
         reservations = spy('Array', count: limit)
         allow(reservations).to receive(:for_eq_model).and_return(reservations)
         allow(reserver).to receive(:active_reservations).and_return(reservations)
         cart = Cart.new
         cart.reserver_id = reserver.id
         cart.items = { model.id => 1 }
-        cart.check_future_res
+        expect(cart.check_future_res(model)).to eq([])
         expect(reservations).not_to have_received(:count)
       end
     end
