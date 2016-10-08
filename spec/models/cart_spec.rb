@@ -310,8 +310,9 @@ describe Cart, type: :model do
         reservations = spy('Array', count: limit - 1)
         allow(reservations).to receive(:for_eq_model).and_return(reservations)
         allow(reserver).to receive(:active_reservations).and_return(reservations)
-        cart = Cart.new(reserver_id: reserver.id, start_date: Time.zone.today,
-                        due_date: Time.zone.today + 1, items: { model.id => 1 })
+        cart = Cart.new
+        cart.reserver_id = reserver.id
+        cart.items = { model.id => 1 }
         expect(cart.check_future_res).to eq([])
       end
       it "doesn't count reservations for other models" do
@@ -325,8 +326,9 @@ describe Cart, type: :model do
         allow(reservations).to receive(:for_eq_model).with(other_model.id)
           .and_return(spy('Array', count: 1))
         allow(reserver).to receive(:active_reservations).and_return(reservations)
-        cart = Cart.new(reserver_id: reserver.id, start_date: Time.zone.today,
-                        due_date: Time.zone.today + 1, items: { model.id => 1 })
+        cart = Cart.new
+        cart.reserver_id = reserver.id
+        cart.items = { model.id => 1 }
         expect(cart.check_future_res).to eq([])
       end
     end
@@ -338,8 +340,9 @@ describe Cart, type: :model do
         reservations = spy('Array', count: limit)
         allow(reservations).to receive(:for_eq_model).and_return(reservations)
         allow(reserver).to receive(:active_reservations).and_return(reservations)
-        cart = Cart.new(reserver_id: reserver.id, start_date: Time.zone.today,
-                        due_date: Time.zone.today + 1, items: { model.id => 1 })
+        cart = Cart.new
+        cart.reserver_id = reserver.id
+        cart.items = { model.id => 1 }
         expect(cart.check_future_res).not_to eq([])
       end
     end
@@ -351,8 +354,9 @@ describe Cart, type: :model do
         reservations = spy('Array', count: limit)
         allow(reservations).to receive(:for_eq_model).and_return(reservations)
         allow(reserver).to receive(:active_reservations).and_return(reservations)
-        cart = Cart.new(reserver_id: reserver.id, start_date: Time.zone.today,
-                        due_date: Time.zone.today + 1, items: { model.id => 1 })
+        cart = Cart.new
+        cart.reserver_id = reserver.id
+        cart.items = { model.id => 1 }
         cart.check_future_res
         expect(reservations).not_to have_received(:count)
       end
