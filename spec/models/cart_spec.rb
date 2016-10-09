@@ -268,6 +268,16 @@ describe Cart, type: :model do
                          equipment_model: @em)
       expect(@cart.check_max_ems).not_to eq([])
     end
+
+    context 'reserver has unrelated reservation' do
+      it 'passes' do
+        other_em = FactoryGirl.create(:equipment_model)
+        reserver = User.find(@cart.reserver_id)
+        FactoryGirl.create(:valid_reservation, reserver: reserver,
+                                               equipment_model: other_em)
+        expect(@cart.check_max_ems).to be_empty
+      end
+    end
   end
   describe 'check_max_cat' do
     before(:each) do
@@ -299,6 +309,16 @@ describe Cart, type: :model do
                          reserver: User.find_by(id: @cart.reserver_id),
                          equipment_model: @ems.last)
       expect(@cart.check_max_cat).not_to eq([])
+    end
+    context 'reserver has unrelated reservation' do
+      it 'passes' do
+        other_cat = FactoryGirl.create(:equipment_model,
+                                       category: FactoryGirl.create(:category))
+        reserver = User.find(@cart.reserver_id)
+        FactoryGirl.create(:valid_reservation, reserver: reserver,
+                                               equipment_model: other_cat)
+        expect(@cart.check_max_cat).to be_empty
+      end
     end
   end
 end

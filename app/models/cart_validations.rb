@@ -113,7 +113,7 @@ module CartValidations
     # 1 query
 
     # get reserver's active reservations
-    source = Reservation.active.for_reserver(reserver_id)
+    source = Reservation.active.for_reserver(reserver_id).to_a
 
     errors = []
     get_items.each do |model, number_in_cart|
