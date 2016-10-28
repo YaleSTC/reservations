@@ -58,6 +58,7 @@ RSpec.configure do |config|
   # DatabaseCleaner setup (2016-01-04 based on Rails Testing book)
   config.before(:suite) do
     DatabaseCleaner.clean_with(:deletion)
+    ENV.delete('USE_LDAP')
   end
 
   config.before(:each) do
