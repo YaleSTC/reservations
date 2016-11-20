@@ -4,7 +4,7 @@ require 'spec_helper'
 shared_examples_for 'a valid admin email' do
   it 'sends to the admin' do
     expect(@mail.to.size).to eq(1)
-    expect(@mail.to.first).to eq(AppConfig.first.admin_email)
+    expect(@mail.to.first).to eq(AppConfig.check(:admin_email))
   end
   it "is from no-reply@#{ActionMailer::Base.default_url_options[:host]}" do
     expect(@mail.from).to \

@@ -69,7 +69,7 @@ describe ContactController, type: :controller do
 
     it 'sends the message to the admin address' do
       expect(ActionMailer::Base.deliveries.last.to).to\
-        include(AppConfig.first.admin_email)
+        include(AppConfig.check(:admin_email))
     end
   end
 end
