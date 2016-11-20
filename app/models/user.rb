@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 require 'net/ldap'
 
-# rubocop:disable ClassLength
 class User < ActiveRecord::Base
   include Linkable
 
@@ -66,6 +65,17 @@ class User < ActiveRecord::Base
   scope :active, ->() { where("role != 'banned'") }
   scope :no_phone, ->() { where('phone = ? OR phone IS NULL', '') }
 
+  def self.search_ldap(login)
+    return nil if login.blank?
+    return nil unless ENV['USE_LDAP']
+    LDAPHelper.new(user: login).search
+  end
+
+  def self.select_options
+    User.order('last_name ASC').all
+        .collect { |item| ["#{item.last_name}, #{item.first_name}", item.id] }
+  end
+
   # ------- validations -------- #
   def skip_phone_validation?
     return true unless AppConfig.check(:require_phone)
@@ -86,75 +96,6 @@ class User < ActiveRecord::Base
 
   def equipment_items
     reservations.collect(&:equipment_item).flatten
-  end
-
-  # rubocop:disable AbcSize, MethodLength, PerceivedComplexity
-  # rubocop:disable CyclomaticComplexity
-  def self.search_ldap(login)
-    return nil if login.blank?
-    return nil unless ENV['USE_LDAP']
-
-    filter_param = if ENV['CAS_AUTH']
-                     Rails.application.secrets.ldap_login
-                   else
-                     Rails.application.secrets.ldap_email
-                   end
-
-    # store affiliation parameters
-    aff_params = Rails.application.secrets.ldap_affiliation
-    aff_params = aff_params ? aff_params.split(',') : []
-
-    # set up LDAP object and filter parameters
-    ldap = Net::LDAP.new(host: Rails.application.secrets.ldap_host,
-                         port: Rails.application.secrets.ldap_port)
-    filter = Net::LDAP::Filter.eq(filter_param, login)
-
-    # set up attributes hash based on configuration
-    attrs = [Rails.application.secrets.ldap_login,
-             Rails.application.secrets.ldap_email,
-             Rails.application.secrets.ldap_first_name,
-             Rails.application.secrets.ldap_last_name,
-             Rails.application.secrets.ldap_nickname] + aff_params
-
-    # actually look up query
-    result = ldap.search(base: Rails.application.secrets.ldap_base,
-                         filter: filter,
-                         attributes: attrs)
-
-    unless result.empty?
-      # store output hash
-      out = {}
-      result = result[0] # since we're doing this anyway
-      out[:first_name] =
-        result[Rails.application.secrets.ldap_first_name.to_sym][0]
-      out[:last_name] =
-        result[Rails.application.secrets.ldap_last_name.to_sym][0]
-      out[:nickname] =
-        result[Rails.application.secrets.ldap_nickname.to_sym][0]
-      out[:email] =
-        result[Rails.application.secrets.ldap_email.to_sym][0]
-
-      # deal with affiliation
-      out[:affiliation] = aff_params.map { |param| result[param.to_sym][0] }
-                                    .select { |s| s && !s.empty? }.join(' ')
-
-      # define username based on authentication method
-      out[:username] = if ENV['CAS_AUTH']
-                         result[Rails.application.secrets.ldap_login.to_sym][0]
-                       else
-                         out[:email]
-                       end
-
-      # return hash
-      return out
-    end
-  end
-  # rubocop:enable CyclomaticComplexity
-  # rubocop:enable AbcSize, MethodLength, PerceivedComplexity
-
-  def self.select_options
-    User.order('last_name ASC').all
-        .collect { |item| ["#{item.last_name}, #{item.first_name}", item.id] }
   end
 
   def render_name
