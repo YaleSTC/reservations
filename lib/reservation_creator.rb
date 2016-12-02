@@ -28,11 +28,7 @@ class ReservationCreator
   end
 
   def needs_notes?
-    (request? || override?) && notes.blank?
-  end
-
-  def override?
-    override && !cart_errors.blank?
+    !cart_errors.blank? && notes.blank?
   end
 
   def reservation_transaction
