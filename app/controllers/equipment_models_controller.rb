@@ -83,8 +83,8 @@ class EquipmentModelsController < ApplicationController
 
   def create
     @equipment_model = EquipmentModel.new(equipment_model_params)
+    OrderingHelper.new(@equipment_model).assign_order
     if @equipment_model.save
-      OrderingHelper.new(@equipment_model).assign_order
       flash[:notice] = 'Successfully created equipment model.'
       redirect_to @equipment_model
     else
@@ -137,8 +137,8 @@ class EquipmentModelsController < ApplicationController
         r.archive(current_user, 'The equipment model was deactivated.')
          .save(validate: false)
       end
-      OrderingHelper.new(@equipment_model).deactivate_order
       super
+      OrderingHelper.new(@equipment_model).deactivate_order
     else
       flash[:error] = 'Oops, something went wrong.'
       redirect_to @equipment_model

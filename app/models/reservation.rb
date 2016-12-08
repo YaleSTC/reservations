@@ -24,6 +24,9 @@ class Reservation < ActiveRecord::Base
   after_update :increment_cache, if: :checked_out?
   after_update :decrement_cache, if: :overdue
 
+  after_create do
+    OrderingHelper.new(@equipment_model).assign_order
+  end
   # make counter cache update on create
   # should only ever get called in the test suite
   after_create :test_cache, if: :overdue
