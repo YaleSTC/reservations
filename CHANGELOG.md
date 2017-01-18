@@ -2,14 +2,23 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
-## Unreleased
+## v6.3.0 - 2017-09-01
 ### Important
 *This release includes an update to Ruby 2.4.1 and Rails 5.1 along with other dependencies*
 *This release fixes several long-standing security vulnerabilities*
 
 ### Fixed
+* Put headers in order corresponding to their order on reservation page ([#1661](https://github.com/YaleSTC/reservations/issues/1661)).
+* Fixed the equipment model seed script generator ([#1662](https://github.com/YaleSTC/reservations/issues/1662)).
 * Fixed broken database migrations ([#1676](https://github.com/YaleSTC/reservations/issues/1676)).
 * Fixed Heroku deployments by updating post-deploy script ([#1680](https://github.com/YaleSTC/reservations/issues/1680)).
+
+### Added
+* Added ordering of equipment models within the catalog ([#1418](https://github.com/YaleSTC/reservations/issues/1418)).
+* Add API-based user lookup functionality in addition to LDAP ([#1648](https://github.com/YaleSTC/reservations/issues/1648)).
+
+### Changed
+* Refactor LDAP functionality into a separate class ([#1649](https://github.com/YaleSTC/reservations/issues/1649)).
 
 ## v6.2.0 - 2016-07-04
 ### Important
