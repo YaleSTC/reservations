@@ -8,15 +8,22 @@ describe Generator do
       expect(Generator.send(method)).to be_truthy
     end
   end
+  shared_examples 'generates multiple valid' do |method, klass|
+    it method.to_s do
+      expect(5.times { Generator.send(method) }).to be_truthy
+      expect(klass.count).to eq(5)
+    end
+  end
   OBJECTS.each { |o| it_behaves_like 'generates a valid', o }
 
   context 'blackout generation' do
     before { Generator.user }
-    it_behaves_like 'generates a valid', :blackout
+    it_behaves_like 'generates multiple valid', :blackout, Blackout
   end
   context 'equipment_model generation' do
     before { Generator.category }
-    it_behaves_like 'generates a valid', :equipment_model
+    it_behaves_like 'generates multiple valid', :equipment_model,
+                    EquipmentModel
   end
 
   context 'requiring a category and equipment model' do
@@ -24,9 +31,12 @@ describe Generator do
       Generator.category
       Generator.equipment_model
     end
-    it_behaves_like 'generates a valid', :equipment_item
-    it_behaves_like 'generates a valid', :checkout_procedure
-    it_behaves_like 'generates a valid', :checkin_procedure
+    it_behaves_like 'generates multiple valid', :equipment_item,
+                    EquipmentItem
+    it_behaves_like 'generates multiple valid', :checkout_procedure,
+                    CheckoutProcedure
+    it_behaves_like 'generates multiple valid', :checkin_procedure,
+                    CheckinProcedure
   end
 
   context 'reservation generation' do
