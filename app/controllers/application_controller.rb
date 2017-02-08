@@ -143,6 +143,13 @@ class ApplicationController < ActionController::Base
       .include?(params[:action]) && !guests_disabled?)
   end
 
+  def set_user
+    @user = User.find(params[:user_id])
+    return unless @user.role == 'banned'
+    flash[:error] = 'This user is banned and cannot check out equipment.'
+    params[:banned] = true
+  end
+
   #-------- end before_filter methods --------#
 
   def update_cart # rubocop:disable MethodLength, AbcSize

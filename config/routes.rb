@@ -72,15 +72,12 @@ Reservations::Application.routes.draw do
 
   resources :reservations do
     member do
-      get :send_receipt
       put :renew
       put :archive
     end
   end
 
   # reservations views
-  get '/reservations/manage/:user_id', to: 'reservations#manage',
-                                       as: :manage_reservations_for_user
   get '/reservations/current/:user_id', to: 'reservations#current',
                                         as: :current_reservations_for_user
 
@@ -90,12 +87,6 @@ Reservations::Application.routes.draw do
                                    as: :approve_request
   put '/reservations/deny/:id', to: 'reservations#deny_request',
                                 as: :deny_request
-
-  # reservation checkout / check-in actions
-  put '/reservations/checkout/:user_id', to: 'reservations#checkout',
-                                         as: :checkout
-  put '/reservations/check-in/:user_id', to: 'reservations#checkin',
-                                         as: :checkin
   get '/blackouts/flash_message', to: 'blackouts#flash_message',
                                   as: :flash_message
   get '/blackouts/new_recurring', to: 'blackouts#new_recurring',
@@ -106,6 +97,16 @@ Reservations::Application.routes.draw do
   put '/reservation/view_all_dates', to: 'reservations#view_all_dates',
                                      as: :view_all_dates
 
+  get 'manage/:user_id', to: 'manage#show',
+                         as: :manage_reservations_for_user
+
+  put 'manage/checkout/:user_id', to: 'manage#checkout',
+                                  as: :checkout
+  put 'manage/check-in/:user_id', to: 'manage#checkin',
+                                  as: :checkin
+
+  put 'manage/send_receipt/:receipt_id', to: 'manage#send_receipt',
+                                         as: :send_receipt
   resources :blackouts do
     collection do
       post :create_recurring

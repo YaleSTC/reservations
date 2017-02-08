@@ -141,6 +141,7 @@ ActiveRecord::Schema.define(version: 20160610135455) do
     t.integer  "equipment_items_count",      limit: 4,                              default: 0,     null: false
     t.decimal  "late_fee_max",                             precision: 10, scale: 2, default: 0.0
     t.integer  "overdue_count",              limit: 4,                              default: 0,     null: false
+    t.integer  "ordering",                   limit: 4,                                              null: false
   end
 
   create_table "equipment_models_associated_equipment_models", id: false, force: :cascade do |t|

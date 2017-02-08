@@ -361,7 +361,6 @@ class Reservation < ActiveRecord::Base
     # notes from the checkout.
     #
     # Returns the unsaved, checked out reservation
-
     self.checkout_handler = checkout_handler
     self.checked_out = Time.zone.now
     self.equipment_item_id = eq_item

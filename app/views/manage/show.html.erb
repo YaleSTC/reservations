@@ -2,7 +2,7 @@
 
 <div class="row">
   <div class="col-md-12">
-    <%= render partial: 'top_buttons', locals: {reserver: @user} %>
+    <%= render partial: '/reservations/top_buttons', locals: {reserver: @user} %>
   </div>
 </div>
 <% unless @check_in_set.empty? %>
