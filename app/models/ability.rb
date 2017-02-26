@@ -33,7 +33,6 @@ class Ability
   end
 
   def checkout
-    can :manage, Reservation
     cannot :archive, Reservation
     cannot :renew, Reservation unless AppConfig.check(:enable_renewals)
     cannot :destroy, Reservation do |r|
@@ -49,6 +48,7 @@ class Ability
     can :read, EquipmentItem
     can :override, :reservation_errors if AppConfig.get(:override_on_create)
     can :override, :checkout_errors if AppConfig.get(:override_at_checkout)
+    can :hide, [Announcement, AnnouncementMock]
     normal
   end
 
@@ -65,7 +65,7 @@ class Ability
     can :update_index_dates, Reservation
     can :view_all_dates, Reservation
     can :view_detailed, EquipmentModel
-    can :hide, Announcement
+    can :hide, [Announcement, AnnouncementMock]
   end
 
   def guest
@@ -75,10 +75,10 @@ class Ability
     can :reload_catalog_cart, :all
     can :update_cart, :all
     can :create, User if AppConfig.check(:enable_new_users)
-    can :hide, Announcement
+    can :hide, [Announcement, AnnouncementMock]
   end
 
   def banned
-    can :hide, Announcement
+    can :hide, [Announcement, AnnouncementMock]
   end
 end

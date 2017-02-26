@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require 'spec_helper'
+require "cancan/matchers"
 
 describe AnnouncementsController, type: :controller do
   before(:each) { mock_app_config }
@@ -111,6 +112,7 @@ describe AnnouncementsController, type: :controller do
       before do
         mock_user_sign_in(UserMock.new(user_type))
         request.env['HTTP_REFERER'] = 'where_i_came_from'
+        #puts "id! ", announcement.id
         get :hide, id: announcement.id
       end
       it 'sets some cookie values' do
@@ -120,11 +122,7 @@ describe AnnouncementsController, type: :controller do
         expect(response.cookies[name]).to eq(jar[name])
       end
     end
-    # ROLES = [:superuser, :admin, :checkout_person, :user, :guest, :banned]
-    # ROLES.each { |r| it_behaves_like 'can hide announcement', r }
-    PASSING_ROLES = [:superuser, :admin].freeze
-    PASSING_ROLES.each { |r| it_behaves_like 'can hide announcement', r }
-    FAILING_ROLES = [:checkout_person, :user, :guest, :banned].freeze
-    FAILING_ROLES.each { |r| it_behaves_like 'can hide announcement', r }
+    ROLES = [:superuser, :admin, :checkout_person, :user, :guest, :banned]
+    ROLES.each { |r| it_behaves_like 'can hide announcement', r }
   end
 end
