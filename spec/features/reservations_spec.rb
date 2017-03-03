@@ -851,29 +851,29 @@ describe 'Reservations', type: :feature do
       page.reset!
       visit root_path
     end
-    
+
     after do
       @eq_model1[:overdue_count] = @temp
       @eq_model1.save!
       @eq_model1.reload
       page.reset!
     end
-    
+
     it 'shows all items by default' do
-      expect(page).to have_css(".availability-num", :text => 1, visible: true)
-      expect(page).to have_css(".availability-num", :text => 0, visible: true)
+      expect(page).to have_css('.availability-num', text: 1, visible: true)
+      expect(page).to have_css('.availability-num', text: 0, visible: true)
     end
-    
+
     it 'hides only unavailable items when clicked' do
-      click_button "toggle_unavailable"
-      expect(page).to have_css(".availability-num", :text => 1, visible: true)
-      expect(page).to have_css(".availability-num", :text => 0, visible: false)
+      click_button 'toggle_unavailable'
+      expect(page).to have_css('.availability-num', text: 1, visible: true)
+      expect(page).to have_css('.availability-num', text: 0, visible: false)
     end
 
     it 'reshows all items when clicked again' do
-      click_button "toggle_unavailable"
-      expect(page).to have_css(".availability-num", :text => 1, visible: true)
-      expect(page).to have_css(".availability-num", :text => 0, visible: true)
+      click_button 'toggle_unavailable'
+      expect(page).to have_css('.availability-num', text: 1, visible: true)
+      expect(page).to have_css('.availability-num', text: 0, visible: true)
     end
   end
 end

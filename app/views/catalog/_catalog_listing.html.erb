@@ -5,7 +5,7 @@
     </h2>
     <div class="thumbnails row">
       <% (equipment_models[0, 3]).each do |equipment_model| %>
-        <div class="col-md-4">
+        <div class="col-md-4 eq-item">
           <%= render partial: 'catalog/equipment_model_div', locals: {
             equipment_model: equipment_model,
             availability_hash: availability_hash,
