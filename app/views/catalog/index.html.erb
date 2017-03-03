@@ -5,18 +5,21 @@
     <%= render partial: 'no_equipment' %>
   <% else %>
     <div class="row">
-      <div id="pagination_line" class="col-md-12">
+      <div id="pagination_line" class="col-md-10">
         <%# for kaminari pagination %>
         <%= paginate @page_eq_models_by_category,
               params: { controller: 'catalog', action: 'index' } %>
-        <%= form_tag update_user_per_cat_page_path,
+	<%= form_tag update_user_per_cat_page_path,
               id: 'items_per_form', class: 'form-inline pull-right',
               remote: true, method: 'put' do %>
           <%= label_tag :items_per_page, 'Items per page:' %>
           <%= select_tag :items_per_page,
                 options_for_select(@per_page_opts, session[:items_per_page]),
                 class: 'autosubmitme form-control' %>
-        <% end %>
+	<% end %>
+      </div>
+      <div id="etc" class="col-md-2" style="margin-top: 17.6px;">
+        <%= button_tag 'Hide unavailable', id: 'toggle_unavailable', class: 'btn btn-default'%>
       </div>
     </div>
 
@@ -31,3 +34,28 @@
     <%= paginate @page_eq_models_by_category %>
   <% end %>
 </div>
+
+<script>
+$(document).ready(function() {
+  $('#toggle_unavailable').width(
+    Math.max.apply(
+      Math,
+      $('#toggle_unavailable').map(function(){
+        return $(this).width();
+      }).get()
+    )
+  );
+  $("#toggle_unavailable").click(function() {
+    if ($("#toggle_unavailable").text() == "Hide unavailable") {
+      $("#toggle_unavailable").text("Show unavailable");
+    } else {
+      $("#toggle_unavailable").text("Hide unavailable");
+    }
+    $(".col-md-4").each(function() {
+      if ($(this).find(".col-md-3").text() <= 0) {
+        $(this).toggle();
+      }
+    });
+  });
+});
+</script>

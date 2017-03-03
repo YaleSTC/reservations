@@ -836,4 +836,44 @@ describe 'Reservations', type: :feature do
       expect(page).to have_content('Description')
     end
   end
+
+  context 'when hide unavailable button is clicked' do
+    before do
+      empty_cart
+      @eq_model1 = FactoryGirl.create(:equipment_model, category: @category)
+      FactoryGirl.create(:equipment_item, equipment_model: @eq_model1)
+
+      # update availability of eq_model1 to 0 without making a reservation
+      @temp = @eq_model1[:overdue_count]
+      @eq_model1[:overdue_count] = 1
+      @eq_model1.save!
+      @eq_model1.reload
+      page.reset!
+      visit root_path
+    end
+    
+    after do
+      @eq_model1[:overdue_count] = @temp
+      @eq_model1.save!
+      @eq_model1.reload
+      page.reset!
+    end
+    
+    it 'shows all items by default' do
+      expect(page).to have_css(".availability-num", :text => 1, visible: true)
+      expect(page).to have_css(".availability-num", :text => 0, visible: true)
+    end
+    
+    it 'hides only unavailable items when clicked' do
+      click_button "toggle_unavailable"
+      expect(page).to have_css(".availability-num", :text => 1, visible: true)
+      expect(page).to have_css(".availability-num", :text => 0, visible: false)
+    end
+
+    it 'reshows all items when clicked again' do
+      click_button "toggle_unavailable"
+      expect(page).to have_css(".availability-num", :text => 1, visible: true)
+      expect(page).to have_css(".availability-num", :text => 0, visible: true)
+    end
+  end
 end
