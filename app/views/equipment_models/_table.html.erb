@@ -1,4 +1,4 @@
-<table id="table_equipment_models" class="datatable-wide table table-striped table-bordered">
+<table id="table_equipment_models" class="datatable-order table table-striped table-bordered">
   <thead>
   <tr>
     <th class="text-center col-md-2">Name</th>
@@ -12,6 +12,9 @@
       <% if can? :manage, EquipmentModel %>
         <th class="no_sort text-center"> </th>
         <th class="no_sort text-center"> </th>
+        <% unless @category.blank? %>
+          <th class="text-center">Ordering</th>
+        <%end %>
       <% end%>
     <% end %>
   </tr>
@@ -36,6 +39,9 @@
         <% if can? :manage, EquipmentModel %>
           <td class="text-center"><%= link_to "Edit", edit_equipment_model_path(equipment_model), class: "btn btn-default" %></td>
           <td class="text-center"><%= equipment_model.decorate.make_deactivate_btn %></td>
+          <% unless @category.blank? %> 
+            <td class="text-center"><%= display_order(equipment_model) %><%= link_to '', sort_up_path(equipment_model), class: "btn glyphicon glyphicon-arrow-up" , method: :put%><%= link_to "", sort_down_path(equipment_model), class: "btn glyphicon glyphicon-arrow-down" , method: :put%></td> 
+          <% end %>
         <% end%>
       <% end %>
     </tr>

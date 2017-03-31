@@ -94,10 +94,15 @@ class BlackoutsController < ApplicationController
 
   def update
     @blackout.set_id = nil
-    if @blackout.update_attributes(blackout_params)
-      redirect_to @blackout, notice: 'Blackout was successfully updated.'
-    else
+    updater = BlackoutUpdater.new(blackout: @blackout,
+                                  params: blackout_params)
+    result = updater.update
+
+    if result[:error]
+      flash[:error] = result[:error]
       render action: 'edit'
+    else
+      redirect_to @blackout, notice: result[:result]
     end
   end
 

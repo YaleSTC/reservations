@@ -43,10 +43,15 @@ class EquipmentModel < ActiveRecord::Base
 
   validates :name,
             :description,
+            :ordering,
             :category,     presence: true
-  validates :name,         uniqueness: true
+  validates :name,
+            :ordering,     uniqueness: true
   validates :late_fee,     :replacement_fee,
             numericality: { greater_than_or_equal_to: 0 }
+  validates :ordering, numericality: { greater_than_or_equal_to: -1,
+                                       only_integer: true }
+
   validates :max_per_user,
             :max_checkout_length, numericality: { allow_nil: true, \
                                                   only_integer: true, \
@@ -121,6 +126,8 @@ class EquipmentModel < ActiveRecord::Base
     attachment.instance.normalized_photo_name
   end
 
+  after_create :assign_ordering, unless: ->(em) { em.ordering }
+
   def normalized_photo_name
     "#{id}-#{photo_file_name.gsub(/[^a-zA-Z0-9_\.]/, '_')}"
   end
@@ -149,6 +156,15 @@ class EquipmentModel < ActiveRecord::Base
 
   def maximum_renewal_days_before_due
     renewal_days_before_due || category.maximum_renewal_days_before_due
+  end
+
+  def active_in_category
+    category.active_models
+  end
+
+  def category_ordering
+    EquipmentModel.where(category: category)
+                  .map(&:ordering).sort
   end
 
   def active_reservations
@@ -211,5 +227,11 @@ class EquipmentModel < ActiveRecord::Base
                      "<option value=#{item.id}>#{item.name}</option>"
                    end\
                    .join.html_safe
+  end
+
+  private
+
+  def assign_ordering
+    update_attribute(:ordering, id)
   end
 end

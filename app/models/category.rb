@@ -18,6 +18,18 @@ class Category < ActiveRecord::Base
   # 'includes'
   scope :active, ->() { where("#{table_name}.deleted_at is null") }
 
+  def active_models
+    equipment_models.where(deleted_at: nil)
+  end
+
+  def active_model_count
+    active_models.count
+  end
+
+  def inactive_models
+    equipment_models.where.not(deleted_at: nil)
+  end
+
   def maximum_per_user
     max_per_user || Float::INFINITY
   end
