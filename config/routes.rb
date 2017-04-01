@@ -24,6 +24,10 @@ Reservations::Application.routes.draw do
   resources :documents,
             :requirements
 
+  resources :requirements do
+    resources :users
+  end
+
   resources :equipment_items, concerns: [:deactivatable, :calendarable]
 
   resources :announcements, except: [:show]
