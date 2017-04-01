@@ -838,13 +838,11 @@ describe 'Reservations', type: :feature do
   end
 
   context 'when hide unavailable button is clicked' do
-    before do
+    before(:each) do
       empty_cart
+      Capybara.ignore_hidden_elements = false
       @eq_model1 = FactoryGirl.create(:equipment_model, category: @category)
       FactoryGirl.create(:equipment_item, equipment_model: @eq_model1)
-
-      # update availability of eq_model1 to 0 without making a reservation
-      @temp = @eq_model1[:overdue_count]
       @eq_model1[:overdue_count] = 1
       @eq_model1.save!
       @eq_model1.reload
@@ -852,10 +850,9 @@ describe 'Reservations', type: :feature do
       visit root_path
     end
 
-    after do
-      @eq_model1[:overdue_count] = @temp
-      @eq_model1.save!
-      @eq_model1.reload
+    after(:each) do
+      Capybara.ignore_hidden_elements = true
+      @eq_model1.destroy
       page.reset!
     end
 
@@ -872,8 +869,9 @@ describe 'Reservations', type: :feature do
 
     it 'reshows all items when clicked again' do
       click_button 'toggle_unavailable'
-      expect(page).to have_css('.availability-num', text: 1, visible: true)
-      expect(page).to have_css('.availability-num', text: 0, visible: true)
+      click_button 'toggle_unavailable'
+      expect(page).to have_css('.availability-num', text: 1, visible: :true)
+      expect(page).to have_css('.availability-num', text: 0, visible: :true)
     end
   end
 end
