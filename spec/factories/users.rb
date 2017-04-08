@@ -18,7 +18,7 @@ FactoryGirl.define do
     role 'normal'
     view_mode 'normal'
 
-    if ENV['CAS_AUTH']
+    if env?('CAS_AUTH')
       username { cas_login }
     else
       username { email }

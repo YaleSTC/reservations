@@ -14,8 +14,8 @@ if EquipmentModel.all.empty?
 end
 
 # GLOBAL VARIABLES
-MANUAL = ENV['manual'].present? || ENV['friendly'].present?
-NO_PICS = ENV['no_pics'].present? || !MANUAL
+MANUAL = env?('manual') || env?('friendly')
+NO_PICS = env?('no_pics') || !MANUAL
 IMAGES = Dir.glob(File.join(Rails.root, 'db', 'seed_images', '*'))
 
 # run script

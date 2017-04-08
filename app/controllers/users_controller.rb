@@ -25,7 +25,7 @@ class UsersController < ApplicationController
   end
 
   def check_cas_auth
-    @cas_auth = ENV['CAS_AUTH']
+    @cas_auth = env?('CAS_AUTH')
   end
 
   # ------------ end before filter methods ------------ #

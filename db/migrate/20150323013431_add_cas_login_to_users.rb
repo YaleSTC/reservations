@@ -3,7 +3,7 @@ class AddCasLoginToUsers < ActiveRecord::Migration
     add_column :users, :cas_login, :string
 
     # copy username to cas_login if you use CAS already
-    if ENV['CAS_AUTH']
+    if env?('CAS_AUTH')
       ActiveRecord::Base.connection
         .execute('update users set cas_login=username')
     end
