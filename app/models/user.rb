@@ -65,10 +65,15 @@ class User < ActiveRecord::Base
   scope :active, ->() { where("role != 'banned'") }
   scope :no_phone, ->() { where('phone = ? OR phone IS NULL', '') }
 
-  def self.search_ldap(login)
+  def self.search(login:)
     return nil if login.blank?
-    return nil unless ENV['USE_LDAP']
-    LDAPHelper.new(user: login).search
+    helper_class = if ENV['USE_PEOPLE_API'].present?
+                     PeopleAPIHelper
+                   elsif ENV['USE_LDAP'].present?
+                     LDAPHelper
+                   end
+    return nil unless helper_class
+    helper_class.search(login: login)
   end
 
   def self.select_options

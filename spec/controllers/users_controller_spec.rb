@@ -64,13 +64,13 @@ describe UsersController, type: :controller do
   describe 'POST quick_new' do
     before { mock_user_sign_in(UserMock.new(:admin)) }
     it 'gets the username from ldap' do
-      allow(User).to receive(:search_ldap)
+      allow(User).to receive(:search)
       post :quick_new, format: :js, possible_netid: 'csw3'
-      expect(User).to have_received(:search_ldap)
+      expect(User).to have_received(:search)
     end
     it 'attempts to make a new user from the ldap result' do
       netid = 'sky3'
-      allow(User).to receive(:search_ldap).and_return(netid)
+      allow(User).to receive(:search).and_return(netid)
       allow(User).to receive(:new)
       post :quick_new, format: :js, possible_netid: netid
       expect(User).to have_received(:new).with(netid)
