@@ -120,11 +120,11 @@ describe User, type: :model do
   end
 
   # TODO: find a way to simulate an ldap database using a test fixture/factory
-  # of some kind
-  describe '.search_ldap' do
-    it 'should return a hash of user attributes if the ldap database has the '\
+  # of some kind, esp now that we have both LDAP and API functionality
+  describe '.search' do
+    xit 'should return a hash of user attributes if the ldap database has the '\
       'login associated with user'
-    it 'should return nil if the user is not in the ldap database'
+    xit 'should return nil if the user is not in the ldap database'
   end
 
   describe '.select_options' do

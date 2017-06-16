@@ -70,7 +70,7 @@ class UsersController < ApplicationController
       @can_edit_username = current_user.present? && (can? :create, User)
       if current_user.nil? && session[:new_username]
         # This is a new user -> create an account for them
-        @user = User.new(User.search_ldap(session[:new_username]))
+        @user = User.new(User.search(login: session[:new_username]))
         @user.username = session[:new_username] # default to current username
         flash[:notice] = 'Hey there! Since this is your first time making a '\
           'reservation, we\'ll need you to supply us with some basic '\
@@ -131,7 +131,7 @@ class UsersController < ApplicationController
   end
 
   def quick_new
-    ldap_result = User.search_ldap(params[:possible_login])
+    ldap_result = User.search(login: params[:possible_login])
     @user = User.new(ldap_result)
 
     # Does netID exist?

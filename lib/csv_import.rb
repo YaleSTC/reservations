@@ -49,8 +49,8 @@ module CsvImport
       user_data[:role] = user_type
       user_data[:csv_import] = true
       next if attempt_save_with_csv_data?(user_data)
-      if ENV['USE_LDAP']
-        attempt_save_with_ldap(user_data)
+      if ENV['USE_LDAP'] || ENV['USE_PEOPLE_API']
+        attempt_save_with_search(user_data)
       else
         @array_of_fail << [user_data, 'Invalid user parameters.']
       end
@@ -61,22 +61,20 @@ module CsvImport
     # rubocop:enable UselessAssignment
   end
 
-  # attempts to import with LDAP, returns nil if the login is not found,
-  # otherwise it replaces the keys in the data hash with the ldap data.
-  def import_with_ldap(user_data)
+  # attempts to import with LDAP or People, returns nil if the login is not
+  # found, otherwise it replaces the keys in the data hash with the search data.
+  def import_with_search(user_data)
     # use username if using cas, email otherwise
-    ldap_param = user_data[ENV['CAS_AUTH'] ? :username : :email]
+    search_param = user_data[:username]
 
-    # check LDAP for missing data
-    ldap_user_hash = User.search_ldap(ldap_param)
+    search_user_hash = User.search(login: search_param)
 
-    # if nothing found via LDAP
-    return if ldap_user_hash.nil?
+    return if search_user_hash.nil?
 
-    # fill-in missing key-values with LDAP data
+    # fill-in missing key-values with search data
     user_data.keys.each do |key|
-      if user_data[key].blank? && !ldap_user_hash[key].blank?
-        user_data[key] = ldap_user_hash[key]
+      if user_data[key].blank? && !search_user_hash[key].blank?
+        user_data[key] = search_user_hash[key]
       end
     end
     user_data
@@ -88,7 +86,7 @@ module CsvImport
     if ENV['CAS_AUTH']
       # set the cas login
       user_data[:cas_login] = user_data[:username]
-    else
+    elsif user_data[:username].blank?
       # set the username
       user_data[:username] = user_data[:email]
     end
@@ -104,15 +102,15 @@ module CsvImport
     true
   end
 
-  # attempts to save a user with ldap lookup
-  def attempt_save_with_ldap(user_data)
-    ldap_hash = import_with_ldap(user_data)
-    if ldap_hash
-      user_data = ldap_hash
+  # attempts to save a user with search lookup
+  def attempt_save_with_search(user_data)
+    search_hash = import_with_search(user_data)
+    if search_hash
+      user_data = search_hash
     else
       @array_of_fail << [user_data,
                          'Incomplete user information. Unable to find user '\
-                         'in online directory (LDAP).']
+                         'in online directory.']
       return
     end
 
