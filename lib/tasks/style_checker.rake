@@ -2,8 +2,8 @@
 
 RUBY = /\.(rb)|(rake)$/
 JS = /\.jsx?$/
-RUBY_PASS = %w(true no\ offenses files\ found).freeze
-JS_PASS = %w(true files\ found).freeze
+RUBY_PASS = %w[true no\ offenses files\ found].freeze
+JS_PASS = %w[true files\ found].freeze
 
 EXISTING_FILES = /^[^D].*/
 FILE = /^[A-Z]\t(.*)$/

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class ImportEquipmentController < ApplicationController
   include CsvImport
   include EquipmentImport
@@ -27,7 +28,7 @@ class ImportEquipmentController < ApplicationController
         # create categories
         @cat_statuses = import_cats(processed_cats, cat_overwrite)
       else
-        redirect_to(:back) && return
+        redirect_back(fallback_location: root_path) && return
       end
     end
 
@@ -46,7 +47,7 @@ class ImportEquipmentController < ApplicationController
         @model_statuses = import_models(processed_models, model_overwrite)
         @equipment_models = @model_statuses[:success]
       else
-        redirect_to(:back) && return
+        redirect_back(fallback_location: root_path) && return
       end
     end
 
@@ -60,7 +61,7 @@ class ImportEquipmentController < ApplicationController
       if valid_item_import?(processed_items, item_file)
         @item_statuses = import_items(processed_items)
       else
-        redirect_to(:back) && return
+        redirect_back(fallback_location: root_path) && return
       end
     end
 

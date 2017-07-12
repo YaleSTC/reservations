@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 Reservations::Application.routes.draw do
   root to: 'catalog#index'
 
@@ -24,15 +25,15 @@ Reservations::Application.routes.draw do
   resources :documents,
             :requirements
 
-  resources :equipment_items, concerns: [:deactivatable, :calendarable]
+  resources :equipment_items, concerns: %i[deactivatable calendarable]
 
   resources :announcements, except: [:show]
 
-  resources :categories, concerns: [:deactivatable, :calendarable] do
+  resources :categories, concerns: %i[deactivatable calendarable] do
     resources :equipment_models, concern: :calendarable
   end
 
-  resources :equipment_models, concerns: [:deactivatable, :calendarable] do
+  resources :equipment_models, concerns: %i[deactivatable calendarable] do
     collection do
       put 'update_catalog_cart'
       delete 'empty_cart'
@@ -41,7 +42,7 @@ Reservations::Application.routes.draw do
   end
 
   get 'equipment_objects', to: redirect('equipment_items')
-  get 'equipment_objects/:id', to: redirect('equipment_items/%{id}')
+  get 'equipment_objects/:id', to: redirect('equipment_items/%<id>')
 
   get '/import_users/import', to: 'import_users#import_page',
                               as: :csv_import_page
@@ -62,11 +63,11 @@ Reservations::Application.routes.draw do
     member do
       put :ban
       put :unban
+      delete :empty_cart
     end
     get :autocomplete_user_last_name, on: :collection
   end
 
-  # what kind of http request is this?
   get '/catalog/search', to: 'catalog#search', as: :catalog_search
   get '/markdown_help', to: 'application#markdown_help', as: :markdown_help
 
@@ -124,6 +125,15 @@ Reservations::Application.routes.draw do
                                as: :remove_from_cart
   put '/catalog/edit_cart_item/:id', to: 'catalog#edit_cart_item',
                                      as: :edit_cart_item
+  post '/catalog/submit_cart_updates_form/:id',
+       to: 'catalog#submit_cart_updates_form', as: :submit_cart_updates
+  put '/catalog/reload_catalog_cart', to: 'catalog#reload_catalog_cart',
+                                      as: :reload_catalog_cart
+  put '/catalog/change_reservation_dates',
+      to: 'catalog#change_reservation_dates',
+      as: :change_reservations_dates
+  delete '/catalog/empty_cart', to: 'catalog#empty_cart',
+                                as: :catalog_empty_cart
 
   get '/reports/index', to: 'reports#index', as: :reports
   get '/reports/subreport/:class/:id', to: 'reports#subreport', as: :subreport
@@ -134,18 +144,27 @@ Reservations::Application.routes.draw do
   # yes, both of these are needed to override rails defaults of
   # /controller/:id/edit
   get '/app_configs/', to: 'app_configs#edit', as: :edit_app_configs # match
-  resources :app_configs, only: [:update]
+  resources :app_configs, only: %i[] do
+    collection do
+      post :update
+      put :run_hourly_tasks
+      put :run_daily_tasks
+    end
+  end
 
   get '/new_admin_user', to: 'application_setup#new_admin_user',
                          as: :new_admin_user
   post '/create_admin_user', to: 'application_setup#create_admin_user',
                              as: :create_admin_user
-  resources :application_setup, only: [:new_admin_user, :create_admin_user]
+  resources :application_setup, only: %i[new_admin_user create_admin_user]
 
   get '/new_app_configs', to: 'application_setup#new_app_configs',
                           as: :new_app_configs
   post '/create_app_configs', to: 'application_setup#create_app_configs',
                               as: :create_app_configs
+  put '/reload_catalog_cart', to: 'application#reload_catalog_cart',
+                              as: :reload_cart
+  delete '/empty_cart', to: 'application#empty_cart', as: :empty_cart
 
   get 'contact', to: 'contact#new', as: 'contact_us'
   post 'contact', to: 'contact#create', as: 'contact_submitted'
@@ -162,9 +181,6 @@ Reservations::Application.routes.draw do
       as: 'sort_up'
   put '/equipment_models/:id/down' => 'equipment_models#down',
       as: 'sort_down'
-  # generalized matcher
-  match ':controller(/:action(/:id(.:format)))', via: [:get, :post, :put,
-                                                       :delete]
 
   # this is a fix for running letter opener inside vagrant
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?

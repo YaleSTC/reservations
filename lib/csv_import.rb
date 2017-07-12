@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module CsvImport
   # method used to convert a csv filepath to an array of objects specified by
   # the file
@@ -73,7 +74,7 @@ module CsvImport
 
     # fill-in missing key-values with search data
     user_data.keys.each do |key|
-      if user_data[key].blank? && !search_user_hash[key].blank?
+      if user_data[key].blank? && search_user_hash[key].present?
         user_data[key] = search_user_hash[key]
       end
     end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 
 describe EquipmentItemsController, type: :controller do
@@ -27,7 +28,7 @@ describe EquipmentItemsController, type: :controller do
           model = EquipmentModelMock.new(traits: [:findable,
                                                   [:with_items, items: items]])
           allow(items).to receive(:active)
-          get :index, equipment_model_id: model.id
+          get :index, params: { equipment_model_id: model.id }
           expect(model).to have_received(:equipment_items)
         end
       end
@@ -35,7 +36,7 @@ describe EquipmentItemsController, type: :controller do
       context 'show_deleted set' do
         it 'gets all equipment items' do
           allow(EquipmentItem).to receive(:all).and_return(EquipmentItem.none)
-          get :index, show_deleted: true
+          get :index, params: { show_deleted: true }
           expect(EquipmentItem).to have_received(:all).twice
         end
       end
@@ -61,18 +62,18 @@ describe EquipmentItemsController, type: :controller do
       let!(:item) { EquipmentItemMock.new(traits: [:findable]) }
       before do
         mock_user_sign_in(UserMock.new(:admin))
-        get :show, id: item.id
+        get :show, params: { id: item.id }
       end
       it_behaves_like 'successful request', :show
       it 'sets to correct equipment item' do
         expect(EquipmentItem).to have_received(:find).with(item.id.to_s)
-          .at_least(:once)
+                                                     .at_least(:once)
       end
     end
     context 'with normal user' do
       before do
         mock_user_sign_in
-        get :show, id: 1
+        get :show, params: { id: 1 }
       end
       it_behaves_like 'redirected request'
     end
@@ -92,7 +93,7 @@ describe EquipmentItemsController, type: :controller do
       it 'sets equipment_model when one is passed through params' do
         model = EquipmentModelMock.new(traits: [:findable])
         allow(EquipmentItem).to receive(:new)
-        get :new, equipment_model_id: model.id
+        get :new, params: { equipment_model_id: model.id }
         expect(EquipmentItem).to have_received(:new)
           .with(equipment_model: model)
       end
@@ -117,7 +118,7 @@ describe EquipmentItemsController, type: :controller do
         before do
           allow(EquipmentItem).to receive(:new).and_return(item)
           allow(item).to receive(:save).and_return(true)
-          post :create, equipment_item: { id: 1 }
+          post :create, params: { equipment_item: { id: 1 } }
         end
         it { is_expected.to set_flash[:notice] }
         it { is_expected.to redirect_to(model) }
@@ -130,7 +131,7 @@ describe EquipmentItemsController, type: :controller do
         before do
           allow(EquipmentItem).to receive(:new).and_return(item)
           allow(item).to receive(:save).and_return(false)
-          post :create, equipment_item: { id: 1 }
+          post :create, params: { equipment_item: { id: 1 } }
         end
         it { is_expected.not_to set_flash[:error] }
         it { is_expected.to render_template(:new) }
@@ -140,7 +141,7 @@ describe EquipmentItemsController, type: :controller do
     context 'with normal user' do
       before do
         mock_user_sign_in
-        post :create, equipment_item: { id: 1 }
+        post :create, params: { equipment_item: { id: 1 } }
       end
       it_behaves_like 'redirected request'
     end
@@ -153,10 +154,10 @@ describe EquipmentItemsController, type: :controller do
       context 'successful update' do
         before do
           allow(EquipmentItem).to receive(:find).with(item.id.to_s)
-            .and_return(item)
+                                                .and_return(item)
           allow(item).to receive(:update)
           allow(item).to receive(:save).and_return(true)
-          put :update, id: item.id, equipment_item: { id: 3 }
+          put :update, params: { id: item.id, equipment_item: { id: 3 } }
         end
         it { is_expected.to set_flash[:notice] }
         it { is_expected.to redirect_to(item) }
@@ -164,10 +165,10 @@ describe EquipmentItemsController, type: :controller do
       context 'unsuccessful update' do
         before do
           allow(EquipmentItem).to receive(:find).with(item.id.to_s)
-            .and_return(item)
+                                                .and_return(item)
           allow(item).to receive(:update)
           allow(item).to receive(:save).and_return(false)
-          put :update, id: item.id, equipment_item: { id: 3 }
+          put :update, params: { id: item.id, equipment_item: { id: 3 } }
         end
         it { is_expected.not_to set_flash }
         it { is_expected.to render_template(:edit) }
@@ -176,7 +177,7 @@ describe EquipmentItemsController, type: :controller do
     context 'with normal user' do
       before do
         mock_user_sign_in
-        put :update, id: 1, equipment_item: { id: 3 }
+        put :update, params: { id: 1, equipment_item: { id: 3 } }
       end
       it_behaves_like 'redirected request'
     end
@@ -190,7 +191,7 @@ describe EquipmentItemsController, type: :controller do
         let!(:item) do
           EquipmentItemMock.new(traits: [:findable], equipment_model: model)
         end
-        before { put :deactivate, id: item.id, **opts }
+        before { put :deactivate, params: { id: item.id, **opts } }
         it { is_expected.to set_flash[flash_type] }
         it { is_expected.to redirect_to(model) }
         it 'does not deactivate the item' do
@@ -206,7 +207,8 @@ describe EquipmentItemsController, type: :controller do
         before do
           request.env['HTTP_REFERER'] = '/referrer'
           allow(item).to receive(:current_reservation).and_return(false)
-          put :deactivate, id: item.id, deactivation_reason: 'reason'
+          put :deactivate,
+              params: { id: item.id, deactivation_reason: 'reason' }
         end
         it { is_expected.to redirect_to('/referrer') }
         it 'deactivates the item' do
@@ -220,7 +222,8 @@ describe EquipmentItemsController, type: :controller do
         before do
           request.env['HTTP_REFERER'] = '/referrer'
           allow(item).to receive(:current_reservation).and_return(res)
-          put :deactivate, id: item.id, deactivation_reason: 'reason'
+          put :deactivate,
+              params: { id: item.id, deactivation_reason: 'reason' }
         end
         it 'archives the reservation' do
           expect(res).to have_received(:archive)
@@ -230,7 +233,7 @@ describe EquipmentItemsController, type: :controller do
     context 'with normal user' do
       before do
         mock_user_sign_in
-        put :deactivate, id: 1, deactivation_reason: 'reason'
+        put :deactivate, params: { id: 1, deactivation_reason: 'reason' }
       end
       it_behaves_like 'redirected request'
     end
@@ -242,7 +245,7 @@ describe EquipmentItemsController, type: :controller do
       before do
         mock_user_sign_in(UserMock.new(:admin, md_link: 'admin'))
         request.env['HTTP_REFERER'] = '/referrer'
-        put :activate, id: item.id
+        put :activate, params: { id: item.id }
       end
       it { is_expected.to redirect_to('/referrer') }
       it 'updates the deactivation reason and the notes' do
@@ -253,7 +256,7 @@ describe EquipmentItemsController, type: :controller do
     context 'with normal user' do
       before do
         mock_user_sign_in
-        put :activate, id: 1
+        put :activate, params: { id: 1 }
       end
       it_behaves_like 'redirected request'
     end

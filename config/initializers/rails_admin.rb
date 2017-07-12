@@ -1,6 +1,10 @@
 # frozen_string_literal: true
+
 RailsAdmin.config do |config|
   ### Popular gems integration
+
+  # inherit from application controller
+  config.parent_controller = 'ApplicationController'
 
   ## == Devise ==
   config.authenticate_with do

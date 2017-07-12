@@ -1,10 +1,11 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 
 shared_examples_for 'successful upload' do |filename|
   before do
     file = fixture_file_upload(filename, 'text/csv')
-    post :import, csv_upload: file
+    post :import, params: { csv_upload: file }
   end
   it { is_expected.to respond_with(:success) }
   it { is_expected.not_to set_flash }

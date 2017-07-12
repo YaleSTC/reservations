@@ -1,6 +1,7 @@
 # frozen_string_literal: true
+
 # rubocop:disable ClassLength
-class EquipmentModel < ActiveRecord::Base
+class EquipmentModel < ApplicationRecord
   include ApplicationHelper
   include Linkable
   include Searchable
@@ -53,8 +54,8 @@ class EquipmentModel < ActiveRecord::Base
                                        only_integer: true }
 
   validates :max_per_user,
-            :max_checkout_length, numericality: { allow_nil: true, \
-                                                  only_integer: true, \
+            :max_checkout_length, numericality: { allow_nil: true,
+                                                  only_integer: true,
                                                   greater_than_or_equal_to: 1 }
   validates :max_renewal_length,
             :max_renewal_times,
@@ -221,6 +222,7 @@ class EquipmentModel < ActiveRecord::Base
   end
 
   def available_item_select_options
+    # TODO: this is apparently a security risk
     equipment_items.includes(:reservations).active.select(&:available?)\
                    .sort_by(&:name)\
                    .collect do |item|
@@ -232,6 +234,6 @@ class EquipmentModel < ActiveRecord::Base
   private
 
   def assign_ordering
-    update_attribute(:ordering, id)
+    update_attributes(ordering: id)
   end
 end

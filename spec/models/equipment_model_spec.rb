@@ -1,4 +1,7 @@
 # frozen_string_literal: true
+
+# rubocop:disable Lint/AmbiguousBlockAssociation
+
 require 'spec_helper'
 require 'concerns/linkable_spec.rb'
 
@@ -41,7 +44,8 @@ describe EquipmentModel, type: :model do
         expect(model.valid?).to be_truthy
       end
       it 'is not valid with a non integer value' do
-        model = mock_eq_model(attr => 2.3)
+        model = FactoryGirl.build(:equipment_model)
+        model.send("#{attr}=", 2.3)
         expect(model.valid?).to be_falsey
       end
       it 'is not valid when negative' do
@@ -224,9 +228,9 @@ describe EquipmentModel, type: :model do
   end
 
   context 'methods involving reservations' do
-    ACTIVE = [:valid_reservation, :checked_out_reservation].freeze
-    INACTIVE = [:checked_in_reservation, :overdue_returned_reservation,
-                :missed_reservation, :request].freeze
+    ACTIVE = %i[valid_reservation checked_out_reservation].freeze
+    INACTIVE = %i[checked_in_reservation overdue_returned_reservation
+                  missed_reservation request].freeze
     describe '.num_available' do
       shared_examples 'overlapping' do |type, start_offset, due_offset|
         it 'is correct' do

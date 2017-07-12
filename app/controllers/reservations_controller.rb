@@ -1,13 +1,14 @@
 # frozen_string_literal: true
+
 # rubocop:disable ClassLength
 class ReservationsController < ApplicationController
   load_and_authorize_resource
 
   before_action :set_reservation,
-                only: [:show, :edit, :update, :destroy, :checkout_email,
-                       :checkin_email, :renew, :review, :approve_request,
-                       :deny_request]
-  before_action :set_user, only: [:manage, :current, :checkout]
+                only: %i[show edit update destroy checkout_email
+                         checkin_email renew review approve_request
+                         deny_request]
+  before_action :set_user, only: %i[manage current checkout]
 
   private
 
@@ -33,10 +34,10 @@ class ReservationsController < ApplicationController
     # set the filter for #index action, pulling from session, then
     # params, then falling back to default
 
-    f = (can? :manage, Reservation) ? :upcoming : :reserved
+    f = can?(:manage, Reservation) ? :upcoming : :reserved
 
-    @filters = [:reserved, :checked_out, :overdue, :returned, :returned_overdue,
-                :upcoming, :requested, :approved_requests, :denied, :archived]
+    @filters = %i[reserved checked_out overdue returned returned_overdue
+                  upcoming requested approved_requests denied archived]
     @filters << :missed unless AppConfig.check :res_exp_time
 
     # if filter in session set it
@@ -99,34 +100,30 @@ class ReservationsController < ApplicationController
     redirect_to action: 'index'
   end
 
-  def show
-  end
+  def show; end
 
-  def new # rubocop:disable MethodLength
+  def new
     if cart.items.empty?
       flash[:error] = 'You need to add items to your cart before making a '\
         'reservation.'
-      redirect_loc = (request.env['HTTP_REFERER'].present? ? :back : root_path)
-      redirect_to redirect_loc
-    else
-      # error handling
-      @errors = cart.validate_all
-      unless @errors.empty?
-        if can? :override, :reservation_errors
-          flash[:error] = 'Are you sure you want to continue? Please review '\
-            'the errors below.'
-        else
-          flash[:error] = 'Please review the errors below. If uncorrected, '\
-            'any reservations with errors will be filed as a request, and '\
-            'subject to administrator approval.'
-        end
-      end
-
-      # this is used to initialize each reservation later
-      @reservation = Reservation.new(start_date: cart.start_date,
-                                     due_date: cart.due_date,
-                                     reserver_id: cart.reserver_id)
+      redirect_back(fallback_location: root_path) && return
     end
+    @errors = cart.validate_all
+    unless @errors.empty?
+      flash[:error] = if can? :override, :reservation_errors
+                        'Are you sure you want to continue? Please review '\
+                          'the errors below.'
+                      else
+                        'Please review the errors below. If uncorrected, '\
+                          'any reservations with errors will be filed as a '\
+                          'request, and subject to administrator approval.'
+                      end
+    end
+
+    # this is used to initialize each reservation later
+    @reservation = Reservation.new(start_date: cart.start_date,
+                                   due_date: cart.due_date,
+                                   reserver_id: cart.reserver_id)
   end
 
   def create # rubocop:disable all
@@ -135,7 +132,7 @@ class ReservationsController < ApplicationController
     requested = !@errors.empty? && (cannot? :override, :reservation_errors)
 
     # check for missing notes and validation errors
-    if !@errors.blank? && notes.blank?
+    if @errors.present? && notes.blank?
       # there were errors but they didn't fill out the notes
       flash[:error] = 'Please give a short justification for this '\
         "reservation #{requested ? 'request' : 'override'}"
@@ -172,6 +169,7 @@ class ReservationsController < ApplicationController
         end
         redirect_to(manage_reservations_for_user_path(reserver)) && return
       rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid => e
+        # TODO: html_safe is a security risk
         redirect_to catalog_path, flash: { error: 'Oops, something went '\
           "wrong with making your reservation.<br/> #{e.message}".html_safe }
         raise ActiveRecord::Rollback
@@ -191,7 +189,7 @@ class ReservationsController < ApplicationController
     res = reservation_params
     # add new equipment item id to hash if it's being changed and save old
     # and new items for later
-    unless params[:equipment_item].blank?
+    if params[:equipment_item].present?
       res[:equipment_item_id] = params[:equipment_item]
       new_item = EquipmentItem.find(params[:equipment_item])
       old_item =
@@ -209,7 +207,7 @@ class ReservationsController < ApplicationController
     @reservation.update(current_user, res, params[:new_notes])
     if @reservation.save
       # code for switching equipment items
-      unless params[:equipment_item].blank?
+      if params[:equipment_item].present?
         # if the item was previously assigned to a different reservation
         if r
           r.save
@@ -219,7 +217,7 @@ class ReservationsController < ApplicationController
         end
 
         # update the item history / histories
-        old_item.make_switch_notes(@reservation, r, current_user) if old_item
+        old_item&.make_switch_notes(@reservation, r, current_user)
 
         new_item.make_switch_notes(r, @reservation, current_user)
       end
@@ -252,7 +250,7 @@ class ReservationsController < ApplicationController
            params[:terms_of_service_accepted].present?
       flash[:error] = 'You must confirm that the user accepts the Terms of '\
         'Service.'
-      redirect_to(:back) && return
+      redirect_back(fallback_location: root_path) && return
     end
 
     # Overdue validation
@@ -265,8 +263,13 @@ class ReservationsController < ApplicationController
         # Everyone else is redirected
         flash[:error] = 'Could not check out the equipment, because the '\
           'reserver has reservations that are overdue.'
-        redirect_to(:back) && return
+        redirect_back(fallback_location: root_path) && return
       end
+    end
+
+    unless params[:reservations]
+      flash[:notice] = 'No reservations selected for checkout.'
+      redirect_back(fallback_location: root_path) && return
     end
 
     checked_out_reservations = []
@@ -283,13 +286,13 @@ class ReservationsController < ApplicationController
 
     if checked_out_reservations.empty?
       flash[:error] = 'No reservation selected.'
-      redirect_to(:back) && return
+      redirect_back(fallback_location: root_path) && return
     end
 
     unless Reservation.unique_equipment_items?(checked_out_reservations)
       flash[:error] = 'The same equipment item cannot be simultaneously '\
         'checked out in multiple reservations.'
-      redirect_to(:back) && return
+      redirect_back(fallback_location: root_path) && return
     end
 
     ## Save reservations
@@ -329,6 +332,11 @@ class ReservationsController < ApplicationController
   def checkin # rubocop:disable all
     # see comments for checkout, this method proceeds in a similar way
 
+    unless params[:reservations]
+      flash[:notice] = 'No reservations selected for check in.'
+      redirect_back(fallback_location: root_path) && return
+    end
+
     checked_in_reservations = []
     params[:reservations].each do |r_id, r_attrs|
       next if r_attrs[:checkin?].blank?
@@ -336,7 +344,9 @@ class ReservationsController < ApplicationController
       if r.checked_in
         flash[:error] = 'One of the items you tried to check in has already '\
           'been checked in.'
-        redirect_to(:back) && return # rubocop:disable NonLocalExitFromIterator
+        # rubocop:disable Lint/NonLocalExitFromIterator
+        redirect_back(fallback_location: root_path) && return
+        # rubocop:enable Lint/NonLocalExitFromIterator
       end
 
       checked_in_reservations << r.checkin(current_user,
@@ -346,7 +356,7 @@ class ReservationsController < ApplicationController
 
     if checked_in_reservations.empty?
       flash[:error] = 'No reservation selected!'
-      redirect_to(:back) && return
+      redirect_back(fallback_location: root_path) && return
     end
 
     ## Save reservations
@@ -362,7 +372,7 @@ class ReservationsController < ApplicationController
         end
       rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid => e
         flash[:error] = "Checking in your reservation failed: #{e.message}"
-        redirect_to :back
+        redirect_back(fallback_location: root_path)
         raise ActiveRecord::Rollback
       end
     end
@@ -475,15 +485,15 @@ class ReservationsController < ApplicationController
   def archive # rubocop:disable all
     if params[:archive_cancelled]
       flash[:notice] = 'Reservation archiving cancelled.'
-      redirect_to(:back) && return
+      redirect_back(fallback_location: root_path) && return
     elsif params[:archive_note].nil? || params[:archive_note].strip.empty?
       flash[:error] = 'Reason for archiving cannot be empty.'
-      redirect_to(:back) && return
+      redirect_back(fallback_location: root_path) && return
     end
     set_reservation
     if @reservation.checked_in
       flash[:error] = 'Cannot archive checked-in reservation.'
-      redirect_to(:back) && return
+      redirect_back(fallback_location: root_path) && return
     end
 
     begin
@@ -506,7 +516,7 @@ class ReservationsController < ApplicationController
     rescue ActiveRecord::RecordNotSaved => e
       flash[:error] = "Archiving your reservation failed: #{e.message}"
     end
-    redirect_to :back
+    redirect_back(fallback_location: root_path)
   end
 
   private

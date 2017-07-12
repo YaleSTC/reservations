@@ -1,4 +1,7 @@
 # frozen_string_literal: true
+
+# rubocop:disable Lint/AmbiguousBlockAssociation, Rails/SkipsModelValidations
+
 require 'spec_helper'
 require 'concerns/linkable_spec.rb'
 
@@ -10,64 +13,52 @@ describe Reservation, type: :model do
   describe 'counter cache' do
     context 'newly overdue reservation' do
       it 'increments when a reservation is marked as overdue' do
-        model = FactoryGirl.build_stubbed(:equipment_model)
-        allow(EquipmentModel).to receive(:find).with(model.id).and_return(model)
         res = FactoryGirl.create(:checked_out_reservation,
-                                 equipment_model: model,
                                  start_date: Time.zone.today - 2.days,
                                  due_date: Time.zone.today - 1.day)
         res.update_columns(overdue: false)
-        expect(model).to receive(:increment).with(:overdue_count).once
+        expect(res.equipment_model).to \
+          receive(:increment!).with(:overdue_count).once
         res.update_attributes(overdue: true)
       end
     end
     context 'already overdue reservation' do
       it "updating other attributes doesn't affect the cache" do
-        model = FactoryGirl.build_stubbed(:equipment_model)
-        allow(EquipmentModel).to receive(:find).with(model.id).and_return(model)
-        res = FactoryGirl.create(:overdue_reservation, equipment_model: model)
-        expect(model).not_to receive(:increment)
+        res = FactoryGirl.create(:overdue_reservation)
+        expect(res.equipment_model).not_to receive(:increment!)
         res.update_attribute(:notes, 'test')
       end
       it 'decrements when checked in' do
-        model = FactoryGirl.build_stubbed(:equipment_model)
-        allow(EquipmentModel).to receive(:find).with(model.id).and_return(model)
-        res = FactoryGirl.create(:overdue_reservation, equipment_model: model)
-        expect(model).to receive(:decrement).with(:overdue_count).once
+        res = FactoryGirl.create(:overdue_reservation)
+        expect(res.equipment_model).to \
+          receive(:decrement!).with(:overdue_count).once
         res.update_attributes(
           FactoryGirl.attributes_for(:overdue_returned_reservation,
-                                     equipment_model: model)
+                                     equipment_model: res.equipment_model)
         )
       end
       it 'decrements when a reservation is extended' do
-        model = FactoryGirl.build_stubbed(:equipment_model)
-        allow(EquipmentModel).to receive(:find).with(model.id).and_return(model)
-        res = FactoryGirl.create(:overdue_reservation, equipment_model: model)
-        expect(model).to receive(:decrement).with(:overdue_count).once
+        res = FactoryGirl.create(:overdue_reservation)
+        expect(res.equipment_model).to \
+          receive(:decrement!).with(:overdue_count).once
         res.update_attribute(:due_date, Time.zone.today + 1.day)
       end
     end
     context 'overdue, returned reservation' do
       it 'only decrements once per reservation' do
-        model = FactoryGirl.build_stubbed(:equipment_model)
-        allow(EquipmentModel).to receive(:find).with(model.id).and_return(model)
-        res = FactoryGirl.create(:overdue_returned_reservation,
-                                 equipment_model: model)
-        expect(model).not_to receive(:decrement)
+        res = FactoryGirl.create(:overdue_returned_reservation)
+        expect(res.equipment_model).not_to receive(:decrement!)
         res.update_attribute(:notes, 'test')
       end
     end
     context 'normal checked out reservation' do
       it "doesn't change when a normal reservation is checked in" do
-        model = FactoryGirl.build_stubbed(:equipment_model)
-        allow(EquipmentModel).to receive(:find).with(model.id).and_return(model)
-        res = FactoryGirl.create(:checked_out_reservation,
-                                 equipment_model: model)
-        expect(model).not_to receive(:decrement)
-        expect(model).not_to receive(:increment)
+        res = FactoryGirl.create(:checked_out_reservation)
+        expect(res.equipment_model).not_to receive(:decrement!)
+        expect(res.equipment_model).not_to receive(:increment!)
         res.update_attributes(
           FactoryGirl.attributes_for(:checked_in_reservation,
-                                     equipment_model: model)
+                                     equipment_model: res.equipment_model)
         )
       end
     end
@@ -131,7 +122,7 @@ describe Reservation, type: :model do
       source = Array.new(2) { ReservationMock.new }
       source.each do |r|
         allow(r).to receive(:overlaps_with).with(Time.zone.today)
-          .and_return(true)
+                                           .and_return(true)
       end
       expect(described_class.number_for(source)).to eq(2)
     end
@@ -517,7 +508,7 @@ describe Reservation, type: :model do
         expect(FactoryGirl.build_stubbed(type).eligible_for_renew?).to be_falsey
       end
     end
-    [:valid_reservation, :checked_in_reservation, :request].each do |type|
+    %i[valid_reservation checked_in_reservation request].each do |type|
       it_behaves_like 'not checked out', type
     end
     it 'returns false when overdue' do
@@ -541,7 +532,7 @@ describe Reservation, type: :model do
       res = FactoryGirl.build_stubbed(:checked_out_reservation,
                                       equipment_model: model)
       allow(model).to receive(:num_available_on).with(res.due_date + 1.day)
-        .and_return(0)
+                                                .and_return(0)
       expect(res.eligible_for_renew?).to be_falsey
     end
     it 'returns false when renewed more than the max allowed times' do
@@ -550,7 +541,7 @@ describe Reservation, type: :model do
                                       equipment_model: model,
                                       times_renewed: 1)
       allow(model).to receive(:num_available_on).with(res.due_date + 1.day)
-        .and_return(1)
+                                                .and_return(1)
       allow(model).to receive(:maximum_renewal_times).and_return(1)
       expect(res.eligible_for_renew?).to be_falsey
     end
@@ -560,7 +551,7 @@ describe Reservation, type: :model do
                                       equipment_model: model,
                                       due_date: Time.zone.today + 2.days)
       allow(model).to receive(:num_available_on).with(res.due_date + 1.day)
-        .and_return(1)
+                                                .and_return(1)
       allow(model).to receive(:maximum_renewal_times).and_return(1)
       allow(model).to receive(:maximum_renewal_days_before_due).and_return(1)
       expect(res.eligible_for_renew?).to be_falsey
@@ -571,7 +562,7 @@ describe Reservation, type: :model do
                                       equipment_model: model,
                                       due_date: Time.zone.today + 2.days)
       allow(model).to receive(:num_available_on).with(res.due_date + 1.day)
-        .and_return(1)
+                                                .and_return(1)
       allow(model).to receive(:maximum_renewal_times).and_return(1)
       allow(model).to receive(:maximum_renewal_days_before_due).and_return(3)
       expect(res.eligible_for_renew?).to be_truthy

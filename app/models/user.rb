@@ -1,7 +1,8 @@
 # frozen_string_literal: true
+
 require 'net/ldap'
 
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   include Linkable
 
   # Include authentication modules
@@ -46,7 +47,7 @@ class User < ActiveRecord::Base
                           length: { minimum: 8 },
                           unless: ->(u) { u.password.nil? }
     # check password confirmations
-    validates :password, confirmation: :true, on: [:create, :update]
+    validates :password, confirmation: :true, on: %i[create update]
   end
   validates :nickname,    format:      { with: /\A[^0-9`!@#\$%\^&*+_=]+\z/ },
                           allow_blank: true
@@ -55,7 +56,7 @@ class User < ActiveRecord::Base
                           message: 'You must accept the terms of service.' },
             on: :create,
             if: proc { |u| !u.created_by_admin == 'true' }
-  roles = %w(admin normal checkout superuser banned)
+  roles = %w[admin normal checkout superuser banned]
   validates :role,        inclusion: { in: roles }
   validates :view_mode,   inclusion: { in: roles << 'guest' }
   validate :view_mode_reset
@@ -110,7 +111,7 @@ class User < ActiveRecord::Base
   # ---- Reservation methods ---- #
 
   def overdue_reservations?
-    reservations.overdue.count > 0
+    reservations.overdue.count.positive?
   end
 
   def due_for_checkout

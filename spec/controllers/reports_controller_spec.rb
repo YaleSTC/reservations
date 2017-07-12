@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 
 describe ReportsController, type: :controller do
@@ -26,11 +27,13 @@ describe ReportsController, type: :controller do
 
       it 'keeps the session values with no params' do
         # set @start_date and @end_date to session values
-        get :index, nil, report_start_date: Time.zone.today - 2.days,
-                         report_end_date: Time.zone.today - 1.day
-        put :update_dates, { format: :js },
-            report_start_date: Time.zone.today - 2.days,
-            report_end_date: Time.zone.today - 1.day
+        get :index, params: {},
+                    session: { report_start_date: Time.zone.today - 2.days,
+                               report_end_date: Time.zone.today - 1.day }
+        put :update_dates,
+            params: { format: :js },
+            session: { report_start_date: Time.zone.today - 2.days,
+                       report_end_date: Time.zone.today - 1.day }
 
         expect(assigns(:start_date)).to eq(Time.zone.today - 2.days)
         expect(assigns(:end_date)).to eq(Time.zone.today - 1.day)
@@ -38,13 +41,15 @@ describe ReportsController, type: :controller do
 
       it 'changes the dates and session with valid params' do
         # set @start_date and @end_date to session values
-        get :index, nil, report_start_date: Time.zone.today - 2.days,
-                         report_end_date: Time.zone.today - 1.day
-        put :update_dates, { format: :js,
-                             report: { start_date: Time.zone.today + 1.day,
-                                       end_date: Time.zone.today + 2.days } },
-            report_start_date: Time.zone.today - 2.days,
-            report_end_date: Time.zone.today - 1.day
+        get :index, params: {},
+                    session: { report_start_date: Time.zone.today - 2.days,
+                               report_end_date: Time.zone.today - 1.day }
+        put :update_dates,
+            params: { format: :js,
+                      report: { start_date: Time.zone.today + 1.day,
+                                end_date: Time.zone.today + 2.days } },
+            session: { report_start_date: Time.zone.today - 2.days,
+                       report_end_date: Time.zone.today - 1.day }
 
         expect(assigns(:start_date)).to eq(Time.zone.today + 1.day)
         expect(assigns(:end_date)).to eq(Time.zone.today + 2.days)
