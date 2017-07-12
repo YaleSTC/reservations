@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class Ability
   include CanCan::Ability
 
@@ -18,11 +19,13 @@ class Ability
       can :change, :views
       cannot :view_as, :superuser
     end
-    cannot :change, :views unless %w(admin superuser).include?(user.role)
+    cannot :change, :views unless %w[admin superuser].include?(user.role)
   end
 
   def superuser
     can :manage, :all
+    can :access, :rails_admin
+    can :dashboard
   end
 
   def admin
@@ -30,7 +33,7 @@ class Ability
     cannot :renew, Reservation unless AppConfig.check(:enable_renewals)
     cannot :appoint, :superuser
     cannot :access, :rails_admin
-    cannot [:destroy, :update], User, role: 'superuser'
+    cannot %i[destroy update], User, role: 'superuser'
     cannot :run, :jobs
   end
 
@@ -44,9 +47,9 @@ class Ability
     unless AppConfig.check(:checkout_persons_can_edit)
       cannot :update, Reservation
     end
-    can [:read, :update, :find, :autocomplete_user_last_name], User
+    can %i[read update find autocomplete_user_last_name], User
     if AppConfig.check(:enable_new_users)
-      can [:create, :quick_new, :quick_create], User
+      can %i[create quick_new quick_create], User
     end
     can :read, EquipmentItem
     can :override, :reservation_errors if AppConfig.get(:override_on_create)
@@ -55,9 +58,9 @@ class Ability
   end
 
   def normal
-    can [:update, :show], User, id: @user.id
+    can %i[update show], User, id: @user.id
     can :read, EquipmentModel
-    can [:read, :create], Reservation, reserver_id: @user.id
+    can %i[read create], Reservation, reserver_id: @user.id
     can :destroy, Reservation, reserver_id: @user.id, checked_out: nil
     if AppConfig.check(:enable_renewals)
       can :renew, Reservation, reserver_id: @user.id

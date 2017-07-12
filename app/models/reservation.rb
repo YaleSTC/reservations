@@ -1,6 +1,7 @@
 # frozen_string_literal: true
+
 # rubocop:disable Metrics/ClassLength
-class Reservation < ActiveRecord::Base
+class Reservation < ApplicationRecord
   include Linkable
   include ReservationValidations
 
@@ -34,8 +35,8 @@ class Reservation < ActiveRecord::Base
   nilify_blanks only: [:notes]
 
   # see https://robots.thoughtbot.com/whats-new-in-edge-rails-active-record-enum
-  enum status: %w(requested reserved denied checked_out missed returned
-                  archived)
+  enum status: %w[requested reserved denied checked_out missed returned
+                  archived]
 
   # valid bitmask flags
   # set by reservation |= FLAGS[:flag]
@@ -60,14 +61,14 @@ class Reservation < ActiveRecord::Base
 
   # basic status scopes
   scope :active, lambda {
-    where(status: Reservation.statuses.values_at(*%w(reserved checked_out)))
+    where(status: Reservation.statuses.values_at('reserved', 'checked_out'))
   }
   scope :finalized, lambda {
-    where.not(status: Reservation.statuses.values_at(*%w(denied requested)))
+    where.not(status: Reservation.statuses.values_at('denied', 'requested'))
   }
   scope :active_or_requested, lambda {
     where(status: Reservation.statuses.values_at(
-      *%w(requested reserved checked_out)
+      'requested', 'reserved', 'checked_out'
     ))
   }
 
@@ -151,12 +152,12 @@ class Reservation < ActiveRecord::Base
   ## Getter style instance methods ##
 
   def approved?
-    flagged?(:request) && !%w(denied requested).include?(status)
+    flagged?(:request) && !%w[denied requested].include?(status)
   end
 
   def flagged?(flag_sym)
     return unless Reservation.flag_exists? flag_sym
-    flags & FLAGS[flag_sym] > 0
+    (flags & FLAGS[flag_sym]).positive?
   end
 
   # Generic method for checking if a reservation fits a hash of attributes
@@ -221,11 +222,9 @@ class Reservation < ActiveRecord::Base
   def late_fee
     return 0 unless overdue
     fee = equipment_model.late_fee * (end_date.to_date - due_date)
-    if fee < 0
-      fee = 0
-    elsif equipment_model.late_fee_max > 0
-      fee = [fee, equipment_model.late_fee_max].min
-    end
+    return 0 if fee.negative?
+    max_fee = equipment_model.late_fee_max
+    return [fee, max_fee].min if max_fee.positive?
     fee
   end
 
@@ -242,8 +241,7 @@ class Reservation < ActiveRecord::Base
              affiliation: 'Deleted')
   end
 
-  def fake_reserver_id # this is necessary for autocomplete! delete me not!
-  end
+  def fake_reserver_id; end
 
   ## Instance method helper/misc  ##
 
@@ -271,8 +269,10 @@ class Reservation < ActiveRecord::Base
 
     # check some basic conditions
     return false if !checked_out? || overdue? || reserver.role == 'banned'
-    return false unless equipment_model.maximum_renewal_length > 0
-    return false unless equipment_model.num_available_on(due_date + 1.day) > 0
+    return false unless equipment_model.maximum_renewal_length.positive?
+    unless equipment_model.num_available_on(due_date + 1.day).positive?
+      return false
+    end
 
     self.times_renewed ||= 0
 
@@ -485,41 +485,41 @@ class Reservation < ActiveRecord::Base
   private
 
   def update_overdue
-    return true unless checked_out?
+    return unless checked_out?
     if due_date < Time.zone.today
       self.overdue = true
     else
       # decrement the counter cache if we're changing overdue
       # check for id to make sure this is not a new, unsaved reservation
       # (only relevant in testing when overdue reservations are created)
-      equipment_model.decrement(:overdue_count) if overdue && id && checked_out?
+      if overdue && id && checked_out?
+        # rubocop:disable Rails/SkipsModelValidations
+        equipment_model.decrement!(:overdue_count)
+      end
       self.overdue = false
     end
-    true # so we don't halt the transaction if it's not overdue
   end
 
   # custom counter cache methods
   # keeps a count of how many actively overdue reservations there are for
   # every equipment model
   def increment_cache
-    return true unless overdue && overdue_changed?
+    return unless overdue && !overdue_before_last_save
     # just made overdue
-    equipment_model.increment(:overdue_count)
-    true
+    equipment_model.increment!(:overdue_count)
   end
 
   def decrement_cache
-    return true unless checked_in? && status_changed?
+    return unless checked_in? && status_before_last_save == 'checked_out'
     # just checked in
-    equipment_model.decrement(:overdue_count)
-    true
+    equipment_model.decrement!(:overdue_count)
   end
 
   # Only used when overdue reservations are created in the test suite
   def test_cache
     # check for id to make sure this is a new, unsaved reservation
-    return true if checked_in? || id
-    equipment_model.increment(:overdue_count)
-    true
+    return if checked_in? || id
+    equipment_model.increment!(:overdue_count)
   end
+  # rubocop:enable Rails/SkipsModelValidations
 end

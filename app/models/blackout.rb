@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-class Blackout < ActiveRecord::Base
+
+class Blackout < ApplicationRecord
   attr_accessor :days # needed for days of the week checkboxes in new_recurring
 
   validates :notice,
@@ -63,7 +64,7 @@ class Blackout < ActiveRecord::Base
       query = query.send(:where, due_date: date..date + 1.day)
     end
     # stick em all together and find conflicting reservations
-    res = Reservation.where(query.where_values.inject(:or))
+    res = Reservation.where(query.where_values_hash.inject(:or))
     if res.empty?
       # try to save all of the blackouts
       successful_save = nil
@@ -80,10 +81,10 @@ class Blackout < ActiveRecord::Base
         'try again.'
     end
 
-    unless successful_save
-      return 'The combination of days and dates chosen did not produce any '\
-        'valid blackout dates. Please change your selection and try again.'
-    end
+    invalid_dates_msg = 'The combination of days and dates chosen did not '\
+      'produce any valid blackout dates. Please change your selection and try '\
+      'again.'
+    return invalid_dates_msg unless successful_save
   end
 
   private

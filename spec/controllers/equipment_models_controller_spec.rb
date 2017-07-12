@@ -1,11 +1,12 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 
 describe EquipmentModelsController, type: :controller do
   before(:each) { mock_app_config(requests_affect_availability: false) }
   it_behaves_like 'calendarable', EquipmentModel
 
-  USER_ROLES = [:admin, :user].freeze
+  USER_ROLES = %i[admin user].freeze
 
   describe 'GET index' do
     shared_examples_for 'GET index success' do |user_role|
@@ -38,7 +39,7 @@ describe EquipmentModelsController, type: :controller do
                                            models: models]])
           allow(models).to receive(:includes).and_return(models)
           allow(EquipmentModel).to receive(:where).and_return([])
-          get :index, category_id: cat.id
+          get :index, params: { category_id: cat.id }
           expect(cat).to have_received(:equipment_models)
           expect(models).to have_received(:active)
         end
@@ -49,7 +50,7 @@ describe EquipmentModelsController, type: :controller do
           models = spy('Array')
           allow(EquipmentModel).to receive(:where).and_return([])
           allow(EquipmentModel).to receive(:all).and_return(models)
-          get :index, show_deleted: true
+          get :index, params: { show_deleted: true }
           expect(EquipmentModel).to have_received(:all)
           expect(models).to have_received(:includes)
           expect(models).not_to have_received(:active)
@@ -73,7 +74,7 @@ describe EquipmentModelsController, type: :controller do
       it 'sets category when one is passed through params' do
         cat = CategoryMock.new(traits: [:findable])
         allow(EquipmentModel).to receive(:new)
-        get :new, category_id: cat.id
+        get :new, params: { category_id: cat.id }
         expect(EquipmentModel).to have_received(:new).with(category: cat)
       end
     end
@@ -98,7 +99,7 @@ describe EquipmentModelsController, type: :controller do
           allow(model).to receive(:update_attribute)
           allow(EquipmentModel).to receive(:new).and_return(model)
           allow(model).to receive(:save).and_return(true)
-          post :create, equipment_model: { name: 'Model' }
+          post :create, params: { equipment_model: { name: 'Model' } }
         end
         it { is_expected.to set_flash[:notice] }
         it { is_expected.to redirect_to(model) }
@@ -107,7 +108,7 @@ describe EquipmentModelsController, type: :controller do
       context 'unsuccessful save' do
         before do
           model = EquipmentModelMock.new(save: false)
-          post :create, equipment_model: { id: model.id }
+          post :create, params: { equipment_model: { id: model.id } }
         end
         it { is_expected.to set_flash[:error] }
         it { is_expected.to render_template(:new) }
@@ -117,8 +118,8 @@ describe EquipmentModelsController, type: :controller do
     context 'when not admin' do
       before do
         mock_user_sign_in
-        post :create, equipment_model:
-          FactoryGirl.attributes_for(:equipment_model)
+        attr = FactoryGirl.attributes_for(:equipment_model)
+        post :create, params: { equipment_model: attr }
       end
       it_behaves_like 'redirected request'
     end
@@ -131,9 +132,10 @@ describe EquipmentModelsController, type: :controller do
         let!(:model) { FactoryGirl.build_stubbed(:equipment_model) }
         before do
           allow(EquipmentModel).to receive(:find).with(model.id.to_s)
-            .and_return(model)
+                                                 .and_return(model)
           allow(model).to receive(:update_attributes).and_return(true)
-          put :update, id: model.id, equipment_model: { name: 'Model' }
+          put :update,
+              params: { id: model.id, equipment_model: { name: 'Model' } }
         end
         it { is_expected.to set_flash[:notice] }
         it { is_expected.to redirect_to(model) }
@@ -141,9 +143,10 @@ describe EquipmentModelsController, type: :controller do
 
       context 'unsuccessful update' do
         before do
-          model = EquipmentModelMock.new(traits: [:findable, :with_category],
+          model = EquipmentModelMock.new(traits: %i[findable with_category],
                                          update_attributes: false)
-          put :update, id: model.id, equipment_model: { name: 'Model' }
+          put :update,
+              params: { id: model.id, equipment_model: { name: 'Model' } }
         end
         it { is_expected.not_to set_flash }
         it { is_expected.to render_template(:edit) }
@@ -152,7 +155,8 @@ describe EquipmentModelsController, type: :controller do
     context 'when not admin' do
       before do
         mock_user_sign_in
-        put :update, id: 1, equipment_model: { name: 'Model' }
+        put :update,
+            params: { id: 1, equipment_model: { name: 'Model' } }
       end
       it_behaves_like 'redirected request'
     end
@@ -164,9 +168,9 @@ describe EquipmentModelsController, type: :controller do
         let!(:model) { FactoryGirl.build_stubbed(:equipment_model) }
         before do
           allow(EquipmentModel).to receive(:find).with(model.id.to_s)
-            .and_return(model)
+                                                 .and_return(model)
           allow(model).to receive(:destroy)
-          put :deactivate, id: model.id, **opts
+          put :deactivate, params: { id: model.id, **opts }
         end
         it { is_expected.to set_flash[flash_type] }
         it { is_expected.to redirect_to(model) }
@@ -179,14 +183,15 @@ describe EquipmentModelsController, type: :controller do
 
       context 'confirmed' do
         let!(:model) do
-          EquipmentModelMock.new(traits: [:findable, :with_category])
+          EquipmentModelMock.new(traits: %i[findable with_category])
         end
         let!(:orderer) { instance_spy('OrderingHelper') }
         before do
           allow(OrderingHelper).to receive(:new).with(model).and_return(orderer)
           allow(orderer).to receive(:deactivate_order)
           request.env['HTTP_REFERER'] = 'where_i_came_from'
-          put :deactivate, id: model.id, deactivation_confirmed: true
+          put :deactivate,
+              params: { id: model.id, deactivation_confirmed: true }
         end
         it { is_expected.to set_flash[:notice] }
         it { is_expected.to redirect_to('where_i_came_from') }
@@ -199,7 +204,7 @@ describe EquipmentModelsController, type: :controller do
       context 'with reservations' do
         it "archives the model's reservations on deactivation" do
           orderer = instance_spy('OrderingHelper')
-          model = EquipmentModelMock.new(traits: [:findable, :with_category])
+          model = EquipmentModelMock.new(traits: %i[findable with_category])
           res = ReservationMock.new
           allow(OrderingHelper).to receive(:new).with(model).and_return(orderer)
           # stub out scope chain -- SMELL
@@ -207,7 +212,8 @@ describe EquipmentModelsController, type: :controller do
           allow(Reservation).to receive(:finalized).and_return([res])
           allow(res).to receive(:archive).and_return(res)
           request.env['HTTP_REFERER'] = 'where_i_came_from'
-          put :deactivate, id: model.id, deactivation_confirmed: true
+          put :deactivate,
+              params: { id: model.id, deactivation_confirmed: true }
           expect(res).to have_received(:archive)
           expect(res).to have_received(:save).with(validate: false)
         end
@@ -216,7 +222,7 @@ describe EquipmentModelsController, type: :controller do
     context 'not admin' do
       before do
         mock_user_sign_in
-        put :deactivate, id: 1
+        put :deactivate, params: { id: 1 }
       end
       it_behaves_like 'redirected request'
     end
@@ -229,25 +235,25 @@ describe EquipmentModelsController, type: :controller do
       before { mock_user_sign_in(UserMock.new(user_role, requirements: [])) }
 
       describe 'basic function' do
-        before { get :show, id: model }
+        before { get :show, params: { id: model } }
         it_behaves_like 'successful request', :show
       end
 
       it 'sets to correct equipment model' do
-        get :show, id: model
+        get :show, params: { id: model }
         expect(assigns(:equipment_model)).to eq(model)
       end
       it 'sets @associated_equipment_models' do
         mod1 = FactoryGirl.create(:equipment_model)
         model.associated_equipment_models = [mod1]
-        get :show, id: model
+        get :show, params: { id: model }
         expect(assigns(:associated_equipment_models)).to eq([mod1])
       end
 
       it 'limits @associated_equipment_models to maximum 6' do
         model.associated_equipment_models =
           FactoryGirl.create_list(:equipment_model, 7)
-        get :show, id: model
+        get :show, params: { id: model }
         expect(assigns(:associated_equipment_models).size).to eq(6)
       end
     end
@@ -277,7 +283,7 @@ describe EquipmentModelsController, type: :controller do
                                          due_date: Time.zone.today + 11.days)
       end
       it 'includes @pending reservations' do
-        get :show, id: model
+        get :show, params: { id: model }
         expect(assigns(:pending)).to \
           match_array([starts_today, starts_this_week])
       end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 
 shared_examples_for 'page success' do
@@ -43,7 +44,7 @@ describe AnnouncementsController, type: :controller do
     end
     context 'GET edit' do
       before do
-        get :edit, id: FactoryGirl.create(:announcement)
+        get :edit, params: { id: FactoryGirl.create(:announcement) }
       end
       it_behaves_like 'page success'
       it { is_expected.to render_template(:edit) }
@@ -52,7 +53,7 @@ describe AnnouncementsController, type: :controller do
       context 'with correct params' do
         before do
           @attributes = FactoryGirl.attributes_for(:announcement)
-          post :create, announcement: @attributes
+          post :create, params: { announcement: @attributes }
         end
         it 'should create the new announcement' do
           expect(Announcement.find(assigns(:announcement).id)).not_to be_nil
@@ -70,7 +71,7 @@ describe AnnouncementsController, type: :controller do
         before do
           @attributes = FactoryGirl.attributes_for(:announcement)
           @attributes[:ends_at] = Time.zone.today - 1.day
-          post :create, announcement: @attributes
+          post :create, params: { announcement: @attributes }
         end
         it { is_expected.to render_template(:new) }
       end
@@ -79,8 +80,8 @@ describe AnnouncementsController, type: :controller do
       before do
         @new_attributes = FactoryGirl.attributes_for(:announcement)
         @new_attributes[:message] = 'New Message!!'
-        put :update, id: FactoryGirl.create(:announcement),
-                     announcement: @new_attributes
+        put :update, params: { id: FactoryGirl.create(:announcement),
+                               announcement: @new_attributes }
       end
       it 'updates the announcement' do
         expect(assigns(:announcement)[:message]).to\
@@ -89,7 +90,7 @@ describe AnnouncementsController, type: :controller do
     end
     context 'DELETE destroy' do
       before do
-        delete :destroy, id: FactoryGirl.create(:announcement)
+        delete :destroy, params: { id: FactoryGirl.create(:announcement) }
       end
       it 'should delete the announcement' do
         expect(Announcement.where(id:  assigns(:announcement)[:id])).to be_empty
@@ -112,19 +113,19 @@ describe AnnouncementsController, type: :controller do
     end
     context 'POST create' do
       before do
-        post :create, announcement: @attributes
+        post :create, params: { announcement: @attributes }
       end
       it_behaves_like 'access denied'
     end
     context 'PUT update' do
       before do
-        put :update, id: @announcement
+        put :update, params: { id: @announcement }
       end
       it_behaves_like 'access denied'
     end
     context 'DELETE destroy' do
       before do
-        delete :destroy, id: @announcement
+        delete :destroy, params: { id: @announcement }
       end
       it_behaves_like 'access denied'
     end
@@ -134,7 +135,7 @@ describe AnnouncementsController, type: :controller do
       before do
         @announcement = FactoryGirl.create(:announcement)
         request.env['HTTP_REFERER'] = 'where_i_came_from'
-        get :hide, id: @announcement
+        get :hide, params: { id: @announcement }
       end
       it 'should set some cookie values' do
         name = 'hidden_announcement_ids'

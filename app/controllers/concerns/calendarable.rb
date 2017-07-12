@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 ##
 # This concern adds a monthly calendar view of reservations for a given resource
 # to a controller. It can be used to provide a standalone view with the
@@ -54,7 +55,7 @@ module Calendarable
         response.headers['Content-Type'] = 'text/calendar'
         response.headers['Content-Disposition'] =
           'attachment; filename=reservations.ics'
-        render text: cal.to_ical
+        render plain: cal.to_ical
       end
     end
   end

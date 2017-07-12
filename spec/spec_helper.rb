@@ -1,6 +1,7 @@
 # frozen_string_literal: true
-require 'codeclimate-test-reporter'
-CodeClimate::TestReporter.start
+
+require 'simplecov'
+SimpleCov.start
 # Rspec should submit the result to CodeClimate automatically with each Travis
 # CI build (repo token is encrypted in .travis.yml)
 
@@ -16,7 +17,7 @@ require 'capybara/rails'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
-Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
+Dir[Rails.root.join('spec', 'support', '**', '*.rb')].each { |f| require f }
 
 ActiveRecord::Migration.maintain_test_schema!
 
@@ -86,7 +87,7 @@ RSpec.configure do |config|
   config.before(:each, type: :feature) { app_setup }
 
   # Devise helpers
-  config.include Devise::TestHelpers, type: :controller
+  config.include Devise::Test::ControllerHelpers, type: :controller
   config.include ControllerHelpers, type: :controller
   config.include EnvHelpers, type: :controller
   config.include Warden::Test::Helpers, type: :feature

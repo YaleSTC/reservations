@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 
 # note, these tests are complex in order to test the admin security features
@@ -34,7 +35,7 @@ describe RequirementsController, type: :controller do
     context 'is an admin' do
       before(:each) do
         sign_in FactoryGirl.create(:admin)
-        get :show, id: @requirement
+        get :show, params: { id: @requirement }
       end
       it { is_expected.to respond_with(:success) }
       it { is_expected.to render_template(:show) }
@@ -46,7 +47,7 @@ describe RequirementsController, type: :controller do
     context 'not an admin' do
       it 'should redirect to root url if not an admin' do
         sign_in FactoryGirl.create(:user)
-        get :show, id: @requirement
+        get :show, params: { id: @requirement }
         expect(response).to redirect_to(root_url)
       end
     end
@@ -77,7 +78,7 @@ describe RequirementsController, type: :controller do
     context 'is admin' do
       before(:each) do
         sign_in FactoryGirl.create(:admin)
-        get :edit, id: @requirement
+        get :edit, params: { id: @requirement }
       end
       it 'should set @requirement to the selected requirement' do
         expect(assigns(:requirement)).to eq(@requirement)
@@ -89,7 +90,7 @@ describe RequirementsController, type: :controller do
     context 'not admin' do
       it 'should redirect to root url if not an admin' do
         sign_in FactoryGirl.create(:user)
-        get :edit, id: @requirement
+        get :edit, params: { id: @requirement }
         expect(response).to redirect_to(root_url)
       end
     end
@@ -101,10 +102,9 @@ describe RequirementsController, type: :controller do
       end
       context 'with valid attributes' do
         before(:each) do
-          put :update,
-              id: @requirement,
-              requirement: FactoryGirl.attributes_for(:requirement,
-                                                      contact_name: 'John Doe')
+          attrs = FactoryGirl.attributes_for(:requirement,
+                                             contact_name: 'John Doe')
+          put :update, params: { id: @requirement, requirement: attrs }
         end
         it 'should set @requirement to the correct requirement' do
           expect(assigns(:requirement)).to eq(@requirement)
@@ -118,10 +118,8 @@ describe RequirementsController, type: :controller do
       end
       context 'with invalid attributes' do
         before(:each) do
-          put :update,
-              id: @requirement,
-              requirement: FactoryGirl.attributes_for(:requirement,
-                                                      contact_name: '')
+          attrs = FactoryGirl.attributes_for(:requirement, contact_name: '')
+          put :update, params: { id: @requirement, requirement: attrs }
         end
         it 'should not update the attributes of @requirement' do
           @requirement.reload
@@ -136,8 +134,8 @@ describe RequirementsController, type: :controller do
       it 'should redirect to root url if not an admin' do
         sign_in FactoryGirl.create(:user)
         get :update,
-            id: @requirement,
-            requirement: FactoryGirl.attributes_for(:requirement)
+            params: { id: @requirement,
+                      requirement: FactoryGirl.attributes_for(:requirement) }
         expect(response).to redirect_to(root_url)
       end
     end
@@ -149,11 +147,13 @@ describe RequirementsController, type: :controller do
       end
       context 'with valid attributes' do
         before(:each) do
-          post :create, requirement: FactoryGirl.attributes_for(:requirement)
+          post :create,
+               params: { requirement: FactoryGirl.attributes_for(:requirement) }
         end
         it 'saves a new requirement' do
           expect do
-            post :create, requirement: FactoryGirl.attributes_for(:requirement)
+            attrs = FactoryGirl.attributes_for(:requirement)
+            post :create, params: { requirement: attrs }
           end.to change(Requirement, :count).by(1)
         end
         it { is_expected.to redirect_to(Requirement.last) }
@@ -161,15 +161,13 @@ describe RequirementsController, type: :controller do
       end
       context 'with invalid attributes' do
         before(:each) do
-          post :create,
-               requirement: FactoryGirl.attributes_for(:requirement,
-                                                       contact_name: nil)
+          attrs = FactoryGirl.attributes_for(:requirement, contact_name: nil)
+          post :create, params: { requirement: attrs }
         end
         it 'fails to save a new requirment' do
           expect do
-            post :create,
-                 requirement: FactoryGirl.attributes_for(:requirement,
-                                                         contact_name: nil)
+            attrs = FactoryGirl.attributes_for(:requirement, contact_name: nil)
+            post :create, params: { requirement: attrs }
           end.not_to change(Requirement, :count)
         end
         it { is_expected.not_to set_flash }
@@ -179,7 +177,8 @@ describe RequirementsController, type: :controller do
     context 'not admin' do
       it 'should redirect to root url if not an admin' do
         sign_in FactoryGirl.create(:user)
-        post :create, requirement: FactoryGirl.attributes_for(:requirement)
+        post :create,
+             params: { requirement: FactoryGirl.attributes_for(:requirement) }
         expect(response).to redirect_to(root_url)
       end
     end
@@ -190,23 +189,23 @@ describe RequirementsController, type: :controller do
         sign_in FactoryGirl.create(:admin)
       end
       it 'assigns the selected requirement to @requirement' do
-        delete :destroy, id: @requirement
+        delete :destroy, params: { id: @requirement }
         expect(assigns(:requirement)).to eq(@requirement)
       end
       it 'removes @requirement from the database' do
         expect do
-          delete :destroy, id: @requirement
+          delete :destroy, params: { id: @requirement }
         end.to change(Requirement, :count).by(-1)
       end
       it 'should redirect to the requirements index page' do
-        delete :destroy, id: @requirement
+        delete :destroy, params: { id: @requirement }
         expect(response).to redirect_to requirements_url
       end
     end
     context 'not admin' do
       it 'should redirect to root url if not an admin' do
         sign_in FactoryGirl.create(:user)
-        delete :destroy, id: @requirement
+        delete :destroy, params: { id: @requirement }
         expect(response).to redirect_to(root_url)
       end
     end

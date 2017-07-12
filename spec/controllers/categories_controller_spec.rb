@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 
 describe CategoriesController, type: :controller do
@@ -21,7 +22,7 @@ describe CategoriesController, type: :controller do
       context 'show_deleted' do
         it 'populates an array of all categories' do
           allow(Category).to receive(:all)
-          get :index, show_deleted: true
+          get :index, params: { show_deleted: true }
           expect(Category).to have_received(:all)
         end
       end
@@ -41,19 +42,19 @@ describe CategoriesController, type: :controller do
       let!(:cat) { CategoryMock.new(traits: [:findable]) }
       before do
         mock_user_sign_in(UserMock.new(:admin))
-        get :show, id: cat.id
+        get :show, params: { id: cat.id }
       end
       it_behaves_like 'successful request', :show
       it 'sets category to the selected category' do
-        get :show, id: cat.id
+        get :show, params: { id: cat.id }
         expect(Category).to have_received(:find).with(cat.id.to_s)
-          .at_least(:once)
+                                                .at_least(:once)
       end
     end
     context 'user is not admin' do
       before do
         mock_user_sign_in
-        get :show, id: 1
+        get :show, params: { id: 1 }
       end
       it_behaves_like 'redirected request'
     end
@@ -88,7 +89,7 @@ describe CategoriesController, type: :controller do
         before do
           allow(Category).to receive(:new).and_return(cat)
           allow(cat).to receive(:save).and_return(true)
-          post :create, category: { name: 'Name' }
+          post :create, params: { category: { name: 'Name' } }
         end
         it { is_expected.to set_flash[:notice] }
         it { is_expected.to redirect_to(cat) }
@@ -98,7 +99,7 @@ describe CategoriesController, type: :controller do
         before do
           allow(Category).to receive(:new).and_return(cat)
           allow(cat).to receive(:save).and_return(false)
-          post :create, category: { name: 'Name' }
+          post :create, params: { category: { name: 'Name' } }
         end
         it { is_expected.to set_flash[:error] }
         it { is_expected.to render_template(:new) }
@@ -107,7 +108,7 @@ describe CategoriesController, type: :controller do
     context 'user is not admin' do
       before do
         mock_user_sign_in
-        post :create, category: { name: 'Name' }
+        post :create, params: { category: { name: 'Name' } }
       end
       it_behaves_like 'redirected request'
     end
@@ -122,7 +123,7 @@ describe CategoriesController, type: :controller do
           allow(Category).to receive(:find).with(cat.id.to_s).and_return(cat)
           allow(cat).to receive(:update_attributes).and_return(true)
           attributes_hash = { id: 2 }
-          put :update, id: cat.id, category: attributes_hash
+          put :update, params: { id: cat.id, category: attributes_hash }
         end
         it { is_expected.to set_flash[:notice] }
         it { is_expected.to redirect_to(cat) }
@@ -131,7 +132,7 @@ describe CategoriesController, type: :controller do
         let!(:cat) { CategoryMock.new(traits: [:findable]) }
         before do
           allow(cat).to receive(:update_attributes).and_return(false)
-          put :update, id: cat.id, category: { id: 2 }
+          put :update, params: { id: cat.id, category: { id: 2 } }
         end
         it { is_expected.to render_template(:edit) }
       end
@@ -139,7 +140,7 @@ describe CategoriesController, type: :controller do
     context 'user is not admin' do
       before do
         mock_user_sign_in
-        put :update, id: 1, category: { id: 2 }
+        put :update, params: { id: 1, category: { id: 2 } }
       end
       it_behaves_like 'redirected request'
     end
@@ -153,7 +154,7 @@ describe CategoriesController, type: :controller do
         before do
           allow(Category).to receive(:find).with(cat.id.to_s).and_return(cat)
           allow(cat).to receive(:destroy)
-          put :deactivate, id: cat.id, **opts
+          put :deactivate, params: { id: cat.id, **opts }
         end
         it { is_expected.to set_flash[flash_type] }
         it { is_expected.to redirect_to(cat) }
@@ -170,7 +171,7 @@ describe CategoriesController, type: :controller do
         end
         before do
           request.env['HTTP_REFERER'] = 'where_i_came_from'
-          put :deactivate, id: cat.id, deactivation_confirmed: true
+          put :deactivate, params: { id: cat.id, deactivation_confirmed: true }
         end
         it 'destroys the category' do
           expect(cat).to have_received(:destroy)
@@ -184,10 +185,10 @@ describe CategoriesController, type: :controller do
           model = EquipmentModelMock.new(traits: [[:with_category, cat: cat]])
           # stub out scope chain -- SMELL
           allow(Reservation).to receive(:for_eq_model).with(model.id)
-            .and_return(Reservation)
+                                                      .and_return(Reservation)
           allow(Reservation).to receive(:finalized).and_return([res])
           request.env['HTTP_REFERER'] = 'where_i_came_from'
-          put :deactivate, id: cat.id, deactivation_confirmed: true
+          put :deactivate, params: { id: cat.id, deactivation_confirmed: true }
         end
         it 'archives the reservation' do
           expect(res).to have_received(:archive)
@@ -197,7 +198,7 @@ describe CategoriesController, type: :controller do
     context 'user is not admin' do
       before do
         mock_user_sign_in
-        put :deactivate, id: 1
+        put :deactivate, params: { id: 1 }
       end
       it_behaves_like 'redirected request'
     end

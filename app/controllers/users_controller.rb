@@ -1,18 +1,19 @@
 # frozen_string_literal: true
+
 # rubocop:disable ClassLength
 class UsersController < ApplicationController
   load_and_authorize_resource
-  layout 'application_with_sidebar', only: [:show, :edit]
+  layout 'application_with_sidebar', only: %i[show edit]
 
-  autocomplete :user, :last_name, extra_data: [:first_name, :username],
+  autocomplete :user, :last_name, extra_data: %i[first_name username],
                                   display_value: :render_name
 
-  skip_action_callback :cart, only: [:new, :create]
-  skip_action_callback :authenticate_user!, only: [:new, :create]
+  skip_before_action :cart, only: %i[new create]
+  skip_before_action :authenticate_user!, only: %i[new create]
   before_action :set_user,
-                only: [:show, :edit, :update, :destroy, :ban, :unban]
-  before_action :check_cas_auth, only: [:show, :new, :create, :quick_create,
-                                        :edit, :update]
+                only: %i[show edit update destroy ban unban]
+  before_action :check_cas_auth, only: %i[show new create quick_create
+                                          edit update]
 
   include Autocomplete
   include Calendarable
@@ -40,7 +41,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       format.html
       format.csv do
-        col = %w(username first_name last_name nickname phone email affiliation)
+        col = %w[username first_name last_name nickname phone email affiliation]
         download_csv(User.all, col, "users_#{Time.zone.today}")
       end
     end
@@ -58,9 +59,11 @@ class UsersController < ApplicationController
                         future:       @user_reservations.reserved,
                         past:         @user_reservations.returned,
                         past_overdue: @user_reservations.returned_overdue }
-    @show_equipment[:missed] =
-      @user_reservations.missed unless AppConfig.check(:res_exp_time)
-    @has_pending = @user_reservations.requested.count > 0
+    unless AppConfig.check(:res_exp_time)
+      @show_equipment[:missed] =
+        @user_reservations.missed
+    end
+    @has_pending = @user_reservations.requested.count.positive?
   end
 
   def new # rubocop:disable all
@@ -99,7 +102,7 @@ class UsersController < ApplicationController
   end
 
   def create # rubocop:disable all
-    @user = User.new(user_params)
+    @user = User.new(user_params.to_h)
     @user.role = 'normal' if user_params[:role].blank?
     @user.view_mode = @user.role
     # if we're using CAS
@@ -121,7 +124,7 @@ class UsersController < ApplicationController
       session.delete(:new_username) if @cas_auth
       flash[:notice] = 'Successfully created user.'
       # log in the new user
-      sign_in @user, bypass: true unless current_user.present?
+      bypass_sign_in @user unless current_user
       redirect_to user_path(@user)
     else
       # variable used in view
@@ -139,7 +142,7 @@ class UsersController < ApplicationController
       @message = 'Sorry, the login that you entered does not exist.
       You cannot create a user profile without a valid login.'
     # Is there a user record already?
-    elsif User.find_by_username(params[:possible_login])
+    elsif User.find_by(username: params[:possible_login])
       @message = 'You cannot create a new user, as the login you entered is '\
       'already associated with a user. If you would like to reserve for '\
       'them, please select their name from the drop-down options in the cart.'
@@ -148,7 +151,7 @@ class UsersController < ApplicationController
   end
 
   def quick_create
-    @user = User.new(user_params)
+    @user = User.new(user_params.to_h)
     @user.role = 'normal' if user_params[:role].blank?
     @user.view_mode = @user.role
     # if we're using CAS, set the cas_login correctly
@@ -165,12 +168,12 @@ class UsersController < ApplicationController
 
   def edit
     # refer to the page as Profile if current user, and as User elsewise
-    @edit_title_text = (current_user == @user) ? 'Profile' : 'User'
+    @edit_title_text = current_user == @user ? 'Profile' : 'User'
     @can_edit_username = can? :edit_username, User
   end
 
   def update # rubocop:disable CyclomaticComplexity, PerceivedComplexity
-    @edit_title_text = (current_user == @user) ? 'Profile' : 'User'
+    @edit_title_text = current_user == @user ? 'Profile' : 'User'
     par = user_params
     # use :update_with_password when we're not using CAS and you're editing
     # your own profile
@@ -187,7 +190,7 @@ class UsersController < ApplicationController
     if @user.send(method, par)
       # sign in the user if you've edited yourself since you have a new
       # password, otherwise don't
-      sign_in @user, bypass: true if @user.id == current_user.id
+      bypass_sign_in @user if @user.id == current_user.id
       flash[:notice] = 'Successfully updated user.'
       redirect_to user_path(@user)
     else
@@ -222,19 +225,19 @@ class UsersController < ApplicationController
   def find # rubocop:disable CyclomaticComplexity, PerceivedComplexity
     if params[:fake_searched_id].blank?
       flash[:alert] = 'Search field cannot be blank'
-      redirect_to(:back) && return
+      redirect_back(fallback_location: root_path) && return
     elsif params[:searched_id].blank?
       # this code is a hack to allow hitting enter in the search box to go
       # direclty to the first user and still user the
       # rails3-jquery-autocomplete gem for the search box. Unfortunately the
       # feature isn't built into the gem.
       users = get_autocomplete_items(term: params[:fake_searched_id])
-      if !users.blank?
+      if users.present?
         @user = users.first
         redirect_to(manage_reservations_for_user_path(@user.id)) && return
       else
         flash[:alert] = 'Please select a valid user'
-        redirect_to(:back) && return
+        redirect_back(fallback_location: root_path) && return
       end
     else
       @user = User.find(params[:searched_id])
@@ -245,11 +248,13 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    permitted_attributes = [:first_name, :last_name, :nickname, :phone,
-                            :email, :affiliation, :terms_of_service_accepted,
-                            :created_by_admin]
-    permitted_attributes += [:password, :password_confirmation,
-                             :current_password] unless @cas_auth
+    permitted_attributes = %i[first_name last_name nickname phone
+                              email affiliation terms_of_service_accepted
+                              created_by_admin]
+    unless @cas_auth
+      permitted_attributes += %i[password password_confirmation
+                                 current_password]
+    end
     permitted_attributes << :username if can? :manage, Reservation
     if can? :assign, :requirements
       permitted_attributes += [:user_ids, :role, requirement_ids: []]

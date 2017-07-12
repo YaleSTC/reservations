@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 
 shared_examples_for 'a valid admin email' do
@@ -26,10 +27,10 @@ describe AdminMailer, type: :mailer do
 
   describe 'notes_reservation_notification' do
     before do
-      @res1 = FactoryGirl.create(:valid_reservation)
-      @res2 = FactoryGirl.create(:valid_reservation)
+      @out = FactoryGirl.create(:checked_out_reservation)
+      @in = FactoryGirl.create(:checked_in_reservation)
       @mail =
-        AdminMailer.notes_reservation_notification(@res1, @res2).deliver_now
+        AdminMailer.notes_reservation_notification([@out], [@in]).deliver_now
     end
     it 'renders the subject' do
       expect(@mail.subject).to\

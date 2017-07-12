@@ -1,7 +1,8 @@
 # frozen_string_literal: true
+
 class AnnouncementsController < ApplicationController
   load_and_authorize_resource
-  before_action :set_current_announcement, only: [:edit, :update, :destroy]
+  before_action :set_current_announcement, only: %i[edit update destroy]
 
   # ------------- before filter methods ------------- #
   def set_current_announcement
@@ -13,7 +14,7 @@ class AnnouncementsController < ApplicationController
     ids = [params[:id], *cookies.signed[:hidden_announcement_ids]]
     cookies.permanent.signed[:hidden_announcement_ids] = ids
     respond_to do |format|
-      format.html { redirect_to :back }
+      format.html { redirect_back(fallback_location: root_path) }
       format.js
     end
   end
@@ -37,8 +38,7 @@ class AnnouncementsController < ApplicationController
     end
   end
 
-  def edit
-  end
+  def edit; end
 
   def update
     if @announcement.update_attributes(announcement_params)

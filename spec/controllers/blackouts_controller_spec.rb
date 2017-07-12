@@ -1,4 +1,7 @@
 # frozen_string_literal: true
+
+# rubocop:disable Lint/AmbiguousBlockAssociation
+
 require 'spec_helper'
 
 shared_examples_for 'page success' do
@@ -30,7 +33,7 @@ describe BlackoutsController, type: :controller do
     end
     context 'GET show' do
       before do
-        get :show, id: FactoryGirl.create(:blackout)
+        get :show, params: { id: FactoryGirl.create(:blackout) }
       end
       it_behaves_like 'page success'
       it { is_expected.to render_template(:show) }
@@ -44,7 +47,7 @@ describe BlackoutsController, type: :controller do
       before do
         @blackout = FactoryGirl.create(:blackout, set_id: 1)
         @blackout_set = Blackout.where(set_id: 1)
-        get :show, id: @blackout
+        get :show, params: { id: @blackout }
       end
       it_behaves_like 'page success'
       context 'recurring blackout' do
@@ -71,7 +74,7 @@ describe BlackoutsController, type: :controller do
     end
     context 'GET edit' do
       before do
-        get :edit, id: FactoryGirl.create(:blackout)
+        get :edit, params: { id: FactoryGirl.create(:blackout) }
       end
       it_behaves_like 'page success'
       it { is_expected.to render_template(:edit) }
@@ -81,7 +84,7 @@ describe BlackoutsController, type: :controller do
         before do
           @new_set_id = Blackout.last ? Blackout.last.id + 1 : 0
           @attributes = FactoryGirl.attributes_for(:blackout, days: ['1', ''])
-          post :create_recurring, blackout: @attributes
+          post :create_recurring, params: { blackout: @attributes }
         end
         it 'should create a set' do
           expect(Blackout.where(set_id: @new_set_id)).not_to be_empty
@@ -93,7 +96,7 @@ describe BlackoutsController, type: :controller do
         before do
           request.env['HTTP_REFERER'] = 'where_i_came_from'
           @attributes = FactoryGirl.attributes_for(:blackout, days: [''])
-          post :create_recurring, blackout: @attributes
+          post :create_recurring, params: { blackout: @attributes }
         end
         it { is_expected.to set_flash }
         it { is_expected.to render_template('new_recurring') }
@@ -105,13 +108,14 @@ describe BlackoutsController, type: :controller do
           @attributes = FactoryGirl.attributes_for(
             :blackout, days: [(Time.zone.today + 1.day).wday.to_s]
           )
-          post :create_recurring, blackout: @attributes
+          post :create_recurring, params: { blackout: @attributes }
         end
 
         it { is_expected.to set_flash }
         it { is_expected.to render_template('new_recurring') }
         it 'should not save the blackouts' do
-          expect { post :create_recurring, blackout: @attributes }.not_to \
+          p = { blackout: @attributes }
+          expect { post :create_recurring, params: p }.not_to \
             change { Blackout.all.count }
         end
       end
@@ -119,7 +123,7 @@ describe BlackoutsController, type: :controller do
 
     context 'POST create' do
       shared_examples_for 'creates blackout' do |attributes|
-        before { post :create, blackout: attributes }
+        before { post :create, params: { blackout: attributes } }
 
         it 'should create the new blackout' do
           expect(Blackout.find(assigns(:blackout).id)).not_to be_nil
@@ -137,12 +141,12 @@ describe BlackoutsController, type: :controller do
       end
 
       shared_examples_for 'does not create blackout' do |attributes|
-        before { post :create, blackout: attributes }
+        before { post :create, params: { blackout: attributes } }
 
         it { is_expected.to set_flash }
         it { is_expected.to render_template(:new) }
         it 'should not save the blackout' do
-          expect { post :create, blackout: attributes }.not_to\
+          expect { post :create, params: { blackout: attributes } }.not_to \
             change { Blackout.all.count }
         end
       end
@@ -225,7 +229,8 @@ describe BlackoutsController, type: :controller do
     context 'PUT update' do
       shared_examples_for 'does not update blackout' do |attributes|
         before do
-          put :update, id: FactoryGirl.create(:blackout), blackout: attributes
+          put :update, params: { id: FactoryGirl.create(:blackout),
+                                 blackout: attributes }
           assigns(:blackout).reload
         end
 
@@ -240,8 +245,8 @@ describe BlackoutsController, type: :controller do
         before do
           @new_attributes = FactoryGirl.attributes_for(:blackout)
           @new_attributes[:notice] = 'New Message!!'
-          put :update, id: FactoryGirl.create(:blackout),
-                       blackout: @new_attributes
+          put :update, params: { id: FactoryGirl.create(:blackout),
+                                 blackout: @new_attributes }
         end
         it 'updates the blackout' do
           expect(assigns(:blackout)[:notice]).to eq(@new_attributes[:notice])
@@ -252,8 +257,8 @@ describe BlackoutsController, type: :controller do
         before do
           @new_attributes = FactoryGirl.attributes_for(:blackout)
           @new_attributes[:notice] = 'New Message!!'
-          put :update, id: FactoryGirl.create(:blackout, set_id: 1),
-                       blackout: @new_attributes
+          put :update, params: { id: FactoryGirl.create(:blackout, set_id: 1),
+                                 blackout: @new_attributes }
         end
         it 'updates the blackout' do
           expect(assigns(:blackout)[:notice]).to eq(@new_attributes[:notice])
@@ -317,7 +322,7 @@ describe BlackoutsController, type: :controller do
     end
     context 'DELETE destroy' do
       before do
-        delete :destroy, id: FactoryGirl.create(:blackout)
+        delete :destroy, params: { id: FactoryGirl.create(:blackout) }
       end
       it 'should delete the blackout' do
         expect(Blackout.where(id:  assigns(:blackout)[:id])).to be_empty
@@ -328,7 +333,8 @@ describe BlackoutsController, type: :controller do
       before do
         # create an extra instance to test that the whole set was deleted
         @extra = FactoryGirl.create(:blackout, set_id: 1)
-        delete :destroy_recurring, id: FactoryGirl.create(:blackout, set_id: 1)
+        delete :destroy_recurring,
+               params: { id: FactoryGirl.create(:blackout, set_id: 1) }
       end
       it 'should delete the whole set' do
         expect(Blackout.where(set_id: @extra[:set_id])).to be_empty
@@ -352,37 +358,37 @@ describe BlackoutsController, type: :controller do
     end
     context 'GET show' do
       before do
-        get :show, id: @blackout
+        get :show, params: { id: @blackout }
       end
       it_behaves_like 'access denied'
     end
     context 'POST create' do
       before do
-        post :create, blackout: @attributes
+        post :create, params: { blackout: @attributes }
       end
       it_behaves_like 'access denied'
     end
     context 'PUT update' do
       before do
-        put :update, id: @blackout
+        put :update, params: { id: @blackout }
       end
       it_behaves_like 'access denied'
     end
     context 'POST create recurring' do
       before do
-        post :create_recurring, blackout: @attributes
+        post :create_recurring, params: { blackout: @attributes }
       end
       it_behaves_like 'access denied'
     end
     context 'DELETE destroy' do
       before do
-        delete :destroy, id: @blackout
+        delete :destroy, params: { id: @blackout }
       end
       it_behaves_like 'access denied'
     end
     context 'DELETE destroy recurring' do
       before do
-        delete :destroy_recurring, id: @blackout
+        delete :destroy_recurring, params: { id: @blackout }
       end
       it_behaves_like 'access denied'
     end

@@ -1,11 +1,12 @@
 # frozen_string_literal: true
+
 # rubocop:disable ClassLength
 class CatalogController < ApplicationController
   helper ReservationsHelper # for request_text
   layout 'application_with_sidebar'
 
   before_action :set_equipment_model, only:
-    [:add_to_cart, :remove_from_cart, :edit_cart_item]
+    %i[add_to_cart remove_from_cart edit_cart_item]
   skip_before_action :authenticate_user!, unless: :guests_disabled?
 
   # --------- before filter methods --------- #
@@ -35,7 +36,7 @@ class CatalogController < ApplicationController
   end
 
   def update_user_per_cat_page
-    unless params[:items_per_page].blank?
+    if params[:items_per_page].present?
       session[:items_per_page] = params[:items_per_page]
     end
     respond_to do |format|
@@ -122,7 +123,7 @@ class CatalogController < ApplicationController
 
   # this method is called to either add or remove an item from the cart
   # it takes either :add_item or :remove_item as an action variable and adds
-  # or removes the equipment_model set from params{} in the before_filter.
+  # or removes the equipment_model set from params{} in the before_action.
   # Finally, it renders the root page and runs the javascript to update the
   # cart (or displays the appropriate errors)
   def change_cart(action, item, quantity = nil)
@@ -149,7 +150,7 @@ class CatalogController < ApplicationController
     array << session[:items_per_page].to_i
     array << @app_configs.default_per_cat_page
     array << 10
-    items_per_page = array.reject { |a| a.blank? || a == 0 }.first
+    items_per_page = array.reject { |a| a.blank? || a.zero? }.first
     # assign items per page to the passed params, the default or 10
     # depending on if they exist or not
     @per_page_opts = [10, 20, 25, 30, 50].unshift(items_per_page).uniq

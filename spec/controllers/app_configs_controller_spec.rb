@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 
 # Routes:
@@ -66,13 +67,13 @@ describe AppConfigsController, type: :controller do
           @params =
             FactoryGirl.attributes_for(:app_config)
                        .reject do |k, _v|
-                         [:favicon_file_name, :favicon_content_type,
-                          :favicon_file_size, :favicon_updated_at].include? k
+                         %i[favicon_file_name favicon_content_type
+                            favicon_file_size favicon_updated_at].include? k
                        end
         end
 
         it 'assigns current configuration to @app_config' do
-          post :update, app_config: @params
+          post :update, params: { app_config: @params }
           expect(assigns(:app_config)).to eq(@app_config)
         end
 
@@ -83,7 +84,7 @@ describe AppConfigsController, type: :controller do
             @user = FactoryGirl.create(:user)
             @params = @params.merge(reset_tos_for_users: 1)
             Rails.logger.debug @params
-            put :update, app_config: @params
+            put :update, params: { app_config: @params }
             @user.reload
             expect(@user.terms_of_service_accepted).to be_falsey
           end
@@ -93,7 +94,7 @@ describe AppConfigsController, type: :controller do
             @user = FactoryGirl.create(:user)
             @params = @params.merge(reset_tos_for_users: 0)
             Rails.logger.debug @params
-            post :update, app_config: @params
+            post :update, params: { app_config: @params }
             @user.reload
             expect(@user.terms_of_service_accepted).to be_truthy
           end
@@ -104,7 +105,7 @@ describe AppConfigsController, type: :controller do
             expect(@user.missing_phone).to be_falsey
             @params = @params.merge(require_phone: 1)
             Rails.logger.debug @params
-            post :update, app_config: @params
+            post :update, params: { app_config: @params }
             @user.reload
             expect(@user.missing_phone).to be_truthy
           end
@@ -121,10 +122,10 @@ describe AppConfigsController, type: :controller do
             @params =
               FactoryGirl.attributes_for(:app_config, site_title: nil)
                          .reject do |k, _v|
-                           [:favicon_file_name, :favicon_content_type,
-                            :favicon_file_size, :favicon_updated_at].include? k
+                           %i[favicon_file_name favicon_content_type
+                              favicon_file_size favicon_updated_at].include? k
                          end
-            post :update, @params
+            post :update, params: @params
           end
           # it { should render_template(:edit) }
         end
@@ -176,7 +177,7 @@ describe AppConfigsController, type: :controller do
       end
     end
 
-    NON_SUPERUSERS = %i(user admin checkout_person banned guest).freeze
+    NON_SUPERUSERS = %i[user admin checkout_person banned guest].freeze
     NON_SUPERUSERS.each { |u| it_behaves_like 'as other users', u }
   end
 
@@ -208,7 +209,7 @@ describe AppConfigsController, type: :controller do
       end
     end
 
-    NON_SUPERUSERS = %i(user admin checkout_person banned guest).freeze
+    NON_SUPERUSERS = %i[user admin checkout_person banned guest].freeze
     NON_SUPERUSERS.each { |u| it_behaves_like 'as other users', u }
   end
 end

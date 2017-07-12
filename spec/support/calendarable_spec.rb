@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 
 shared_examples_for 'calendarable' do |model|
@@ -10,7 +11,7 @@ shared_examples_for 'calendarable' do |model|
   end
 
   context 'GET calendar' do
-    before { get :calendar, id: @obj }
+    before { get :calendar, params: { id: @obj } }
 
     it 'stores instance variables' do
       expect(assigns(:resource)).to eq(@obj)
@@ -24,7 +25,7 @@ shared_examples_for 'calendarable' do |model|
 
   context 'GET calendar dates' do
     it 'defaults to +/- 6 months' do
-      get :calendar, id: @obj
+      get :calendar, params: { id: @obj }
 
       expect(assigns(:start_date)).to eq(Time.zone.today - 6.months)
       expect(assigns(:end_date)).to eq(Time.zone.today + 6.months)
@@ -34,7 +35,7 @@ shared_examples_for 'calendarable' do |model|
       start_date = Time.zone.today
       end_date = Time.zone.today + 1.day
 
-      get :calendar, id: @obj, start: start_date, end: end_date
+      get :calendar, params: { id: @obj, start: start_date, end: end_date }
 
       expect(assigns(:start_date)).to eq(start_date)
       expect(assigns(:end_date)).to eq(end_date)
@@ -44,8 +45,8 @@ shared_examples_for 'calendarable' do |model|
       start_date = Time.zone.today
       end_date = Time.zone.today + 1.day
 
-      get :calendar, id: @obj, calendar: { start_date: start_date,
-                                           end_date: end_date }
+      get :calendar, params: { id: @obj, calendar: { start_date: start_date,
+                                                     end_date: end_date } }
 
       expect(assigns(:start_date)).to eq(start_date)
       expect(assigns(:end_date)).to eq(end_date)
@@ -53,7 +54,7 @@ shared_examples_for 'calendarable' do |model|
   end
 
   context 'GET calendar JSON' do
-    before { get :calendar, format: :json, id: @obj }
+    before { get :calendar, params: { format: :json, id: @obj } }
 
     it 'stores reservations for the object correctly' do
       expect(assigns(:calendar_res)).to include(@res)
@@ -70,7 +71,7 @@ shared_examples_for 'calendarable' do |model|
   end
 
   context 'GET calendar ICS' do
-    before { get :calendar, format: :ics, id: @obj }
+    before { get :calendar, params: { format: :ics, id: @obj } }
 
     it 'stores reservations for the object correctly' do
       expect(assigns(:calendar_res)).to include(@res)

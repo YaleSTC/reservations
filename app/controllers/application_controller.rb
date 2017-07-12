@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 
@@ -9,16 +10,16 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
   before_action :app_setup_check
   before_action :authenticate_user!, unless: :skip_authentication?
-  before_action :cart, unless: :devise_controller?
 
-  with_options unless: ->(_u) { User.count == 0 } do |c|
-    c.before_filter :load_configs
-    c.before_filter :seen_app_configs
-    c.before_filter :fix_cart_date
-    c.before_filter :set_view_mode
-    c.before_filter :check_view_mode
-    c.before_filter :make_cart_compatible
+  with_options unless: ->(_u) { User.count.zero? } do |c|
+    c.before_action :load_configs
+    c.before_action :seen_app_configs
+    c.before_action :fix_cart_date
+    c.before_action :set_view_mode
+    c.before_action :check_view_mode
   end
+
+  before_action :cart, unless: :devise_controller?
 
   helper_method :cart, :current_or_guest_user
 
@@ -38,7 +39,7 @@ class ApplicationController < ActionController::Base
     redirect_to main_app.root_url
   end
 
-  # -------- before_filter methods -------- #
+  # -------- before_action methods -------- #
 
   def app_setup_check
     return if AppConfig.first && (User.count != 0)
@@ -74,10 +75,11 @@ class ApplicationController < ActionController::Base
     # make sure we reset the reserver when we log in
     reserver = current_user ? current_user : current_or_guest_user
     session[:cart] ||= Cart.new
+    make_cart_compatible
     # if there is no cart reserver_id or the old cart reserver was deleted
     # (i.e. we've logged in and the guest user was destroyed)
     if session[:cart].reserver_id.nil? ||
-       User.find_by_id(session[:cart].reserver_id).nil?
+       User.find_by(id: session[:cart].reserver_id).nil?
       session[:cart].reserver_id = reserver.id
     end
     session[:cart].fix_items
@@ -97,7 +99,7 @@ class ApplicationController < ActionController::Base
     current_user.view_mode = params[:view_mode]
     current_user.save!(validate: false)
     flash[:notice] = "Viewing as #{messages_hash[current_user.view_mode]}."
-    redirect_to(:back) && return
+    redirect_back(fallback_location: root_path) && return
   end
 
   def check_active_admin_permission
@@ -139,11 +141,11 @@ class ApplicationController < ActionController::Base
   # accessible routes with guests disabled
   def skip_authentication?
     devise_controller? ||
-      (%w(update_cart empty_cart terms_of_service)
+      (%w[update_cart empty_cart terms_of_service]
       .include?(params[:action]) && !guests_disabled?)
   end
 
-  #-------- end before_filter methods --------#
+  #-------- end before_action methods --------#
 
   def update_cart # rubocop:disable MethodLength, AbcSize
     cart = session[:cart]
@@ -168,7 +170,7 @@ class ApplicationController < ActionController::Base
     notices << Blackout.get_notices_for_date(cart.start_date, :soft)
     notices << Blackout.get_notices_for_date(cart.due_date, :soft)
     notices = notices.reject(&:blank?).to_sentence
-    notices += "\n" unless notices.blank?
+    notices += "\n" if notices.present?
 
     # validate
     @errors = cart.validate_all
@@ -255,6 +257,7 @@ class ApplicationController < ActionController::Base
       # have requirements as part of equipment model itself
       restricted = em.model_restricted?(cart.reserver_id)
       next unless restricted
+      # TODO: #html_safe is a security risk
       @qualifications_hash[em.id] =
         Requirement.list_requirement_admins(reserver, em).html_safe
     end
@@ -264,7 +267,7 @@ class ApplicationController < ActionController::Base
   # rubocop:enable MethodLength, AbcSize
 
   def empty_cart
-    session[:cart].purge_all if session[:cart]
+    session[:cart]&.purge_all
     flash[:notice] = 'Cart emptied.'
     respond_to do |format|
       format.js do

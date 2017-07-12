@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 include EnvHelpers
 
@@ -56,6 +57,7 @@ describe UserMailer, type: :mailer do
 
     it 'logs if the env is set' do
       env_wrapper('LOG_EMAILS' => '1') do
+        allow(Rails.logger).to receive(:info)
         expect(Rails.logger).to receive(:info).with(/Sent/).once
         # force a request email; there is not an email for a basic reservation
         @mail = UserMailer.reservation_status_update(@res,

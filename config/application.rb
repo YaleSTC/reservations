@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
@@ -15,8 +16,8 @@ module Reservations
     # -- all .rb files in that directory are automatically loaded.
 
     # Custom directories with classes and modules you want to be autoloadable.
-    config.autoload_paths += %w(/lib/extras /lib/seed /lib/job_helpers
-                                /lib/).map { |s| "#{config.root}#{s}" }
+    config.autoload_paths += %w[/lib/extras /lib/seed /lib/job_helpers
+                                /lib/].map { |s| "#{config.root}#{s}" }
     config.watchable_dirs['lib'] = [:rb]
 
     # Activate observers that should always be running.
@@ -30,7 +31,8 @@ module Reservations
     config.time_zone = 'Eastern Time (US & Canada)'
 
     # Do not swallow errors in after_commit/after_rollback callbacks.
-    config.active_record.raise_in_transactional_callbacks = true
+    # REMOVED IN RAILS 5 -- this means we need to explicitly throw in callbacks
+    # config.active_record.raise_in_transactional_callbacks = true
 
     # The default locale is :en and all translations from
     # config/locales/*.rb,yml are auto loaded.

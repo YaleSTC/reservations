@@ -1,4 +1,7 @@
 # frozen_string_literal: true
+
+# rubocop:disable Lint/AmbiguousBlockAssociation, Rails/SkipsModelValidations
+
 require 'spec_helper'
 require 'helpers/email_helper_spec'
 
@@ -22,7 +25,7 @@ describe ReservationsController, type: :controller do
       list = { start_date: Time.zone.today.to_s,
                end_date: (Time.zone.today + 1.day).to_s,
                filter: :reserved }
-      put :update_index_dates, list: list
+      put :update_index_dates, params: { list: list }
     end
     it { is_expected.to redirect_to('/reservations') }
     it 'disables all_date viewing' do
@@ -58,14 +61,14 @@ describe ReservationsController, type: :controller do
     shared_examples 'filterable' do
       it 'can filter' do
         trait = :checked_out
-        get :index, trait => true
+        get :index, params: { trait => true }
         expect(time_filtered).to have_received(trait).at_least(:once)
       end
       it 'with respect to session[:filter] first' do
         trait = :checked_out
         session_trait = :returned
         session[:filter] = session_trait
-        get :index, trait => true
+        get :index, params: { trait => true }
         expect(time_filtered).to have_received(session_trait).at_least(:once)
         expect(time_filtered).to have_received(trait).at_least(:once)
       end
@@ -150,12 +153,12 @@ describe ReservationsController, type: :controller do
         context 'without errors' do
           before(:each) do
             allow(cart).to receive(:validate_all).and_return('')
-            get :new, nil, cart: cart
+            get :new, params: {}, session: { cart: cart }
           end
           it { is_expected.to render_template(:new) }
           it 'initializes a new reservation' do
             allow(Reservation).to receive(:new)
-            get :new, nil, cart: cart
+            get :new, params: {}, session: { cart: cart }
             expect(Reservation).to have_received(:new)
           end
           it 'assigns errors' do
@@ -165,7 +168,7 @@ describe ReservationsController, type: :controller do
         context 'with errors' do
           before do
             allow(cart).to receive(:validate_all).and_return('error')
-            get :new, nil, cart: cart
+            get :new, params: {}, session: { cart: cart }
           end
           it 'assigns errors' do
             expect(assigns(:errors)).to eq 'error'
@@ -186,7 +189,7 @@ describe ReservationsController, type: :controller do
       context 'with a non-empty cart' do
         before(:each) do
           @cart = FactoryGirl.build(:cart_with_items, reserver_id: user.id)
-          get :new, nil, cart: @cart
+          get :new, params: {}, session: { cart: @cart }
         end
 
         it 'should display errors' do
@@ -209,8 +212,8 @@ describe ReservationsController, type: :controller do
     end
     it_behaves_like 'inaccessible by banned user' do
       before do
-        post :create,
-             reservation: FactoryGirl.attributes_for(:valid_reservation)
+        attr = FactoryGirl.attributes_for(:valid_reservation)
+        post :create, params: { reservation: attr }
       end
     end
 
@@ -222,14 +225,12 @@ describe ReservationsController, type: :controller do
           @invalid_cart =
             FactoryGirl.build(:invalid_cart, reserver_id: @user.id)
           @req = proc do
-            post :create,
-                 { reservation: { notes: 'because I can' } },
-                 cart: @invalid_cart
+            post :create, params: { reservation: { notes: 'because I can' } },
+                          session: { cart: @invalid_cart }
           end
           @req_no_notes = proc do
-            post :create,
-                 { reservation: { notes: '' } },
-                 cart: @invalid_cart
+            post :create, params: { reservation: { notes: '' } },
+                          session: { cart: @invalid_cart }
           end
         end
 
@@ -305,10 +306,10 @@ describe ReservationsController, type: :controller do
           @valid_cart = FactoryGirl.build(:cart_with_items)
           @req = proc do
             post :create,
-                 { reservation: { start_date: Time.zone.today,
-                                  due_date: (Time.zone.today + 1.day),
-                                  reserver_id: @user.id } },
-                 cart: @valid_cart
+                 params: { reservation: { start_date: Time.zone.today,
+                                          due_date: (Time.zone.today + 1.day),
+                                          reserver_id: @user.id } },
+                 session: { cart: @valid_cart }
           end
         end
 
@@ -380,11 +381,11 @@ describe ReservationsController, type: :controller do
           @valid_cart.reserver_id = @banned.id
           @req = proc do
             post :create,
-                 { reservation: { start_date: Time.zone.today,
-                                  due_date: (Time.zone.today + 1.day),
-                                  reserver_id: @banned.id,
-                                  notes: 'because I can' } },
-                 cart: @valid_cart
+                 params: { reservation: { start_date: Time.zone.today,
+                                          due_date: (Time.zone.today + 1.day),
+                                          reserver_id: @banned.id,
+                                          notes: 'because I can' } },
+                 session: { cart: @valid_cart }
           end
         end
 
@@ -409,13 +410,13 @@ describe ReservationsController, type: :controller do
     # SMELLS:
     #   - message chain
     it_behaves_like 'inaccessible by banned user' do
-      before { get 'edit', id: 1 }
+      before { get 'edit', params: { id: 1 } }
     end
 
     context 'when accessed by patron' do
       before(:each) do
         mock_user_sign_in
-        get 'edit', id: 1
+        get 'edit', params: { id: 1 }
       end
       include_examples 'redirected request'
     end
@@ -424,7 +425,7 @@ describe ReservationsController, type: :controller do
       before(:each) do
         mock_app_config(AC_DEFAULTS.merge(checkout_persons_can_edit: false))
         mock_user_sign_in(UserMock.new(:checkout_person))
-        get 'edit', id: 1
+        get 'edit', params: { id: 1 }
       end
       include_examples 'redirected request'
     end
@@ -436,8 +437,8 @@ describe ReservationsController, type: :controller do
         res = ReservationMock.new(equipment_model: model, id: 1,
                                   class: Reservation)
         allow(Reservation).to receive(:find).with(res.id.to_s)
-          .and_return(res)
-        get :edit, id: res.id
+                                            .and_return(res)
+        get :edit, params: { id: res.id }
       end
       it 'assigns @option_array as Array' do
         expect(assigns(:option_array)).to be_an Array
@@ -490,13 +491,13 @@ describe ReservationsController, type: :controller do
     end
 
     it_behaves_like 'inaccessible by banned user' do
-      before { put :update }
+      before { put :update, params: { id: 1 } }
     end
 
     context 'when accessed by patron' do
       before(:each) do
         sign_in @user
-        put 'update', id: @reservation.id
+        put :update, params: { id: @reservation.id }
       end
       include_examples 'redirected request'
     end
@@ -505,9 +506,9 @@ describe ReservationsController, type: :controller do
       before(:each) do
         sign_in @checkout_person
         mock_app_config(AC_DEFAULTS.merge(checkout_persons_can_edit: false))
-        put 'update',
-            id: @reservation.id,
-            reservation: FactoryGirl.attributes_for(:reservation)
+        put :update,
+            params: { id: @reservation.id,
+                      reservation: FactoryGirl.attributes_for(:reservation) }
       end
       include_examples 'redirected request'
     end
@@ -517,13 +518,11 @@ describe ReservationsController, type: :controller do
       # Happy paths
       describe 'and provides valid params[:reservation]' do
         before(:each) do
-          put :update,
-              id: @reservation.id,
-              reservation:
-                FactoryGirl.attributes_for(:reservation,
-                                           start_date: Time.zone.today,
-                                           due_date: Time.zone.today + 4.days),
-              equipment_item: ''
+          attr = FactoryGirl.attributes_for(:reservation,
+                                            start_date: Time.zone.today,
+                                            due_date: Time.zone.today + 4.days)
+          put :update, params: { id: @reservation.id, reservation: attr,
+                                 equipment_item: '' }
         end
         it 'should update the reservation details' do
           @reservation.reload
@@ -541,13 +540,11 @@ describe ReservationsController, type: :controller do
           @new_equipment_item =
             FactoryGirl.create(:equipment_item,
                                equipment_model: @reservation.equipment_model)
-          put :update,
-              id: @reservation.id,
-              reservation:
-                FactoryGirl.attributes_for(:reservation,
-                                           start_date: Time.zone.today,
-                                           due_date: (Time.zone.today + 1.day)),
-              equipment_item: @new_equipment_item.id
+          attr = FactoryGirl.attributes_for(:reservation,
+                                            start_date: Time.zone.today,
+                                            due_date: (Time.zone.today + 1.day))
+          put :update, params: { id: @reservation.id, reservation: attr,
+                                 equipment_item: @new_equipment_item.id }
         end
         it 'should update the item on current reservation' do
           expect { @reservation.reload }.to\
@@ -573,22 +570,15 @@ describe ReservationsController, type: :controller do
             @new_item =
               FactoryGirl.create(:equipment_item,
                                  equipment_model: @reservation.equipment_model)
-            put :update,
-                id: @reservation.id,
-                reservation: FactoryGirl
-                  .attributes_for(:reservation,
-                                  start_date: Time.zone.today,
-                                  due_date: (Time.zone.today + 1.day)),
-                equipment_item: @old_item.id
+            attr = FactoryGirl.attributes_for(:reservation,
+                                              start_date: Time.zone.today,
+                                              due_date: Time.zone.today + 1.day)
+            put :update, params: { id: @reservation.id, reservation: attr,
+                                   equipment_item: @old_item.id }
             @old_item.reload
             @new_item.reload
-            put :update,
-                id: @reservation.id,
-                reservation: FactoryGirl
-                  .attributes_for(:reservation,
-                                  start_date: Time.zone.today,
-                                  due_date: (Time.zone.today + 1.day)),
-                equipment_item: @new_item.id
+            put :update, params: { id: @reservation.id, reservation: attr,
+                                   equipment_item: @new_item.id }
           end
 
           it 'should update both histories' do
@@ -614,29 +604,17 @@ describe ReservationsController, type: :controller do
               FactoryGirl.create(:reservation,
                                  reserver: @user,
                                  equipment_model: @reservation.equipment_model)
-            put :update,
-                id: @reservation.id,
-                reservation:
-                  FactoryGirl.attributes_for(:reservation,
-                                             start_date: Time.zone.today,
-                                             due_date: Time.zone.today + 1.day),
-                equipment_item: @old_item.id
-            put :update,
-                id: @other_res.id,
-                reservation:
-                  FactoryGirl.attributes_for(:reservation,
-                                             start_date: Time.zone.today,
-                                             due_date: Time.zone.today + 1.day),
-                equipment_item: @new_item.id
+            attr = FactoryGirl.attributes_for(:reservation,
+                                              start_date: Time.zone.today,
+                                              due_date: Time.zone.today + 1.day)
+            put :update, params: { id: @reservation.id, reservation: attr,
+                                   equipment_item: @old_item.id }
+            put :update, params: { id: @other_res.id, reservation: attr,
+                                   equipment_item: @new_item.id }
             @old_item.reload
             @new_item.reload
-            put :update,
-                id: @reservation.id,
-                reservation:
-                  FactoryGirl.attributes_for(:reservation,
-                                             start_date: Time.zone.today,
-                                             due_date: Time.zone.today + 1.day),
-                equipment_item: @new_item.id
+            put :update, params: { id: @reservation.id, reservation: attr,
+                                   equipment_item: @new_item.id }
           end
 
           it 'should update both histories' do
@@ -654,13 +632,11 @@ describe ReservationsController, type: :controller do
       describe 'and provides invalid params[:reservation]' do
         before(:each) do
           request.env['HTTP_REFERER'] = reservation_path(@reservation)
-          put :update,
-              id: @reservation.id,
-              reservation:
-                FactoryGirl.attributes_for(:reservation,
-                                           start_date: Time.zone.today,
-                                           due_date: Time.zone.today - 1.day),
-              equipment_item: ''
+          attr = FactoryGirl.attributes_for(:reservation,
+                                            start_date: Time.zone.today,
+                                            due_date: Time.zone.today - 1.day)
+          put :update, params: { id: @reservation.id, reservation: attr,
+                                 equipment_item: '' }
         end
         include_examples 'redirected request'
 
@@ -692,10 +668,10 @@ describe ReservationsController, type: :controller do
     # Functionality:
     # - destroy reservation, set flash[:notice], redirect to reservations_url
 
-    ADMIN_ROLES = [:admin, :checkout_person].freeze
+    ADMIN_ROLES = %i[admin checkout_person].freeze
 
     shared_examples 'can destroy reservation' do
-      before { delete :destroy, id: res.id }
+      before { delete :destroy, params: { id: res.id } }
       it { is_expected.to redirect_to(reservations_url) }
       it { is_expected.to set_flash[:notice] }
       it 'deletes the reservation' do
@@ -704,7 +680,7 @@ describe ReservationsController, type: :controller do
     end
 
     shared_examples 'cannot destroy reservation' do
-      before { delete :destroy, id: res.id }
+      before { delete :destroy, params: { id: res.id } }
       include_examples 'redirected request'
     end
 
@@ -743,7 +719,7 @@ describe ReservationsController, type: :controller do
       let!(:res) { ReservationMock.new(traits: [:findable]) }
       before do
         allow(User).to receive(:find_by_id)
-        delete :destroy, id: res.id
+        delete :destroy, params: { id: res.id }
       end
     end
   end
@@ -761,7 +737,7 @@ describe ReservationsController, type: :controller do
           .and_return(instance_spy('ActiveRecord::Relation'))
         allow(user).to receive(:due_for_checkin)
           .and_return(instance_spy('ActiveRecord::Relation'))
-        get :manage, user_id: user.id
+        get :manage, params: { user_id: user.id }
       end
       it { expect(response).to be_success }
       it { is_expected.to render_template(:manage) }
@@ -790,7 +766,7 @@ describe ReservationsController, type: :controller do
       before(:each) do
         user = UserMock.new
         mock_user_sign_in(user)
-        get :manage, user_id: user.id
+        get :manage, params: { user_id: user.id }
       end
       include_examples 'redirected request'
     end
@@ -812,7 +788,7 @@ describe ReservationsController, type: :controller do
     end
 
     shared_examples 'can access #current' do
-      before { get :current, user_id: @user.id }
+      before { get :current, params: { user_id: @user.id } }
       it { expect(response).to be_success }
       it { is_expected.to render_template(:current_reservations) }
 
@@ -862,20 +838,20 @@ describe ReservationsController, type: :controller do
     context 'when accessed by patron' do
       before(:each) do
         sign_in @user
-        get :current, user_id: @user.id
+        get :current, params: { user_id: @user.id }
       end
 
       include_examples 'redirected request'
     end
 
     it_behaves_like 'inaccessible by banned user' do
-      before { get :current, user_id: @banned.id }
+      before { get :current, params: { user_id: @banned.id } }
     end
 
     context 'with banned reserver' do
       before(:each) do
         sign_in @admin
-        get :current, user_id: @banned.id
+        get :current, params: { user_id: @banned.id }
       end
 
       it 'is a redirect' do
@@ -935,7 +911,8 @@ describe ReservationsController, type: :controller do
           { @reservation.id.to_s => { notes: '',
                                       equipment_item_id: @item.id } }
         ActionMailer::Base.deliveries = []
-        put :checkout, user_id: @user.id, reservations: reservations_params
+        put :checkout,
+            params: { user_id: @user.id, reservations: reservations_params }
       end
 
       it { expect(response).to be_success }
@@ -993,14 +970,14 @@ describe ReservationsController, type: :controller do
     context 'when accessed by patron' do
       before(:each) do
         sign_in @user
-        put :checkout, user_id: @user.id
+        put :checkout, params: { user_id: @user.id }
       end
 
       include_examples 'redirected request'
     end
 
     it_behaves_like 'inaccessible by banned user' do
-      before { put :checkout, user_id: @banned.id }
+      before { put :checkout, params: { user_id: @banned.id } }
     end
 
     context 'when tos not accepted and not checked off' do
@@ -1008,7 +985,7 @@ describe ReservationsController, type: :controller do
         request.env['HTTP_REFERER'] = 'where_i_came_from'
         sign_in @admin
         @user.update_attributes(terms_of_service_accepted: false)
-        put :checkout, user_id: @user.id, reservations: {}
+        put :checkout, params: { user_id: @user.id, reservations: {} }
       end
       it { expect(response).to redirect_to 'where_i_came_from' }
     end
@@ -1023,8 +1000,9 @@ describe ReservationsController, type: :controller do
         reservations_params =
           { @reservation.id.to_s => { notes: '',
                                       equipment_item_id: @item.id } }
-        put :checkout, user_id: @user.id, reservations: reservations_params,
-                       terms_of_service_accepted: true
+        put :checkout, params: { user_id: @user.id,
+                                 reservations: reservations_params,
+                                 terms_of_service_accepted: true }
       end
 
       it { expect(response).to be_success }
@@ -1046,7 +1024,8 @@ describe ReservationsController, type: :controller do
         res_params = { notes: '', equipment_item_id: @item.id }
         reservations_params = { @reservation.id.to_s => res_params,
                                 @res2.id.to_s => res_params }
-        put :checkout, user_id: @user.id, reservations: reservations_params
+        put :checkout,
+            params: { user_id: @user.id, reservations: reservations_params }
       end
 
       it { expect(response).to redirect_to 'where_i_came_from' }
@@ -1069,7 +1048,8 @@ describe ReservationsController, type: :controller do
           { @reservation.id.to_s => { notes: '',
                                       equipment_item_id: @item.id,
                                       checkout_procedures: {} } }
-        put :checkout, user_id: @user.id, reservations: reservations_params
+        put :checkout,
+            params: { user_id: @user.id, reservations: reservations_params }
       end
 
       it { expect(response).to be_success }
@@ -1098,10 +1078,9 @@ describe ReservationsController, type: :controller do
 
     context 'no reservations selected' do
       before do
-        reservations_params = {}
         request.env['HTTP_REFERER'] = 'where_i_came_from'
         sign_in @checkout_person
-        put :checkout, user_id: @user.id, reservations: reservations_params
+        put :checkout, params: { user_id: @user.id, reservations: {} }
       end
       it { is_expected.to set_flash }
       it { expect(response).to redirect_to 'where_i_came_from' }
@@ -1120,7 +1099,8 @@ describe ReservationsController, type: :controller do
           overdue =
             FactoryGirl.build(:overdue_reservation, reserver_id: @user.id)
           overdue.save(validate: false)
-          put :checkout, user_id: @user.id, reservations: reservations_params
+          put :checkout,
+              params: { user_id: @user.id, reservations: reservations_params }
         end
         it { expect(response).to be_success }
         it { is_expected.to render_template(:receipt) }
@@ -1139,7 +1119,8 @@ describe ReservationsController, type: :controller do
           overdue =
             FactoryGirl.build(:overdue_reservation, reserver_id: @user.id)
           overdue.save(validate: false)
-          put :checkout, user_id: @user.id, reservations: reservations_params
+          put :checkout,
+              params: { user_id: @user.id, reservations: reservations_params }
         end
         it { is_expected.to set_flash }
         it { expect(response).to redirect_to 'where_i_came_from' }
@@ -1157,7 +1138,8 @@ describe ReservationsController, type: :controller do
         reservations_params =
           { @reservation.id.to_s => { notes: '',
                                       equipment_item_id: @obj.id } }
-        put :checkout, user_id: @banned.id, reservations: reservations_params
+        put :checkout,
+            params: { user_id: @banned.id, reservations: reservations_params }
       end
 
       it { is_expected.to set_flash }
@@ -1199,7 +1181,8 @@ describe ReservationsController, type: :controller do
         @item = @reservation.equipment_item
         reservations_params =
           { @reservation.id.to_s => { notes: '', checkin?: '1' } }
-        put :checkin, user_id: @user.id, reservations: reservations_params
+        put :checkin,
+            params: { user_id: @user.id, reservations: reservations_params }
       end
 
       it { expect(response).to be_success }
@@ -1249,14 +1232,14 @@ describe ReservationsController, type: :controller do
     context 'when accessed by patron' do
       before(:each) do
         sign_in @user
-        put :checkin, user_id: @user.id
+        put :checkin, params: { user_id: @user.id }
       end
 
       include_examples 'redirected request'
     end
 
     it_behaves_like 'inaccessible by banned user' do
-      before { put :checkin, user_id: @banned.id }
+      before { put :checkin, params: { user_id: @banned.id } }
     end
 
     context 'items have already been checked in' do
@@ -1268,7 +1251,8 @@ describe ReservationsController, type: :controller do
         @reservation.save(validate: false)
         reservations_params =
           { @reservation.id.to_s => { notes: '', checkin?: '1' } }
-        put :checkin, user_id: @user.id, reservations: reservations_params
+        put :checkin,
+            params: { user_id: @user.id, reservations: reservations_params }
       end
 
       it { is_expected.to set_flash }
@@ -1279,7 +1263,7 @@ describe ReservationsController, type: :controller do
       before do
         request.env['HTTP_REFERER'] = 'where_i_came_from'
         sign_in @admin
-        put :checkin, user_id: @user.id, reservations: {}
+        put :checkin, params: { user_id: @user.id, reservations: {} }
       end
       it { is_expected.to set_flash }
       it { expect(response).to redirect_to 'where_i_came_from' }
@@ -1296,7 +1280,8 @@ describe ReservationsController, type: :controller do
         reservations_params =
           { @reservation.id.to_s => { notes: '', checkin?: '1',
                                       checkin_procedures: {} } }
-        put :checkin, user_id: @user.id, reservations: reservations_params
+        put :checkin,
+            params: { user_id: @user.id, reservations: reservations_params }
       end
 
       it { expect(response).to be_success }
@@ -1327,7 +1312,7 @@ describe ReservationsController, type: :controller do
       before(:each) do
         allow(Reservation).to receive(:find).with(res.id.to_s).and_return(res)
         allow(res).to receive(:renew).and_return(nil)
-        put :renew, id: res.id
+        put :renew, params: { id: res.id }
       end
       it { is_expected.to redirect_to(reservation_path(res)) }
       it { is_expected.to set_flash[:notice] }
@@ -1341,7 +1326,7 @@ describe ReservationsController, type: :controller do
         before do
           allow(Reservation).to receive(:find).with(res.id.to_s).and_return(res)
           allow(res).to receive(:renew).and_return('error')
-          put :renew, id: res.id
+          put :renew, params: { id: res.id }
         end
         it { is_expected.to redirect_to(reservation_path(res)) }
         it { is_expected.to set_flash[:error] }
@@ -1365,7 +1350,7 @@ describe ReservationsController, type: :controller do
       end
       context 'trying to renew someone elses reservation' do
         let!(:res) { FactoryGirl.build_stubbed(:valid_reservation) }
-        before { put :renew, id: res.id }
+        before { put :renew, params: { id: res.id } }
         it { expect(response).to be_redirect }
       end
     end
@@ -1375,7 +1360,7 @@ describe ReservationsController, type: :controller do
       let!(:res) { FactoryGirl.build_stubbed(:valid_reservation) }
       before do
         allow(Reservation).to receive(:find).with(res.id.to_s).and_return(res)
-        put :renew, id: res.id
+        put :renew, params: { id: res.id }
       end
     end
   end
@@ -1406,7 +1391,7 @@ describe ReservationsController, type: :controller do
     shared_examples 'cannot archive reservation' do
       before do
         request.env['HTTP_REFERER'] = reservation_path(@reservation)
-        put :archive, id: @reservation.id, archive_note: "I can't!"
+        put :archive, params: { id: @reservation.id, archive_note: "I can't!" }
       end
 
       it { expect(response).to redirect_to(root_path) }
@@ -1432,7 +1417,8 @@ describe ReservationsController, type: :controller do
 
         context 'with archive note' do
           before(:each) do
-            put :archive, id: @reservation.id, archive_note: 'Because I can'
+            put :archive,
+                params: { id: @reservation.id, archive_note: 'Because I can' }
           end
 
           it 'redirects to reservation show view' do
@@ -1448,7 +1434,7 @@ describe ReservationsController, type: :controller do
 
         context 'without archive note' do
           before(:each) do
-            put :archive, id: @reservation.id
+            put :archive, params: { id: @reservation.id }
           end
 
           it 'redirects to reservation show view' do
@@ -1465,7 +1451,8 @@ describe ReservationsController, type: :controller do
         context 'when auto-deactivate is enabled' do
           before(:each) do
             mock_app_config(AC_DEFAULTS.merge(autodeactivate_on_archive: true))
-            put :archive, id: @reservation.id, archive_note: 'Because I can'
+            put :archive,
+                params: { id: @reservation.id, archive_note: 'Because I can' }
           end
 
           it 'should deactivate the equipment item' do
@@ -1502,7 +1489,8 @@ describe ReservationsController, type: :controller do
           FactoryGirl.build(:checked_in_reservation, reserver: @user)
         @reservation.save(validate: false)
         request.env['HTTP_REFERER'] = reservation_path(@reservation)
-        put :archive, id: @reservation.id, archive_note: 'Because I can'
+        put :archive,
+            params: { id: @reservation.id, archive_note: 'Because I can' }
       end
 
       it 'redirects to reservation show view' do
@@ -1519,7 +1507,7 @@ describe ReservationsController, type: :controller do
         allow(User).to receive(:find).with(@user.id).and_return(@user)
         @reservation =
           FactoryGirl.create(:checked_out_reservation, reserver: @user)
-        put :archive, id: @reservation.id
+        put :archive, params: { id: @reservation.id }
       end
     end
   end
@@ -1537,7 +1525,7 @@ describe ReservationsController, type: :controller do
         allow(UserMailer).to \
           receive_message_chain(:reservation_status_update, :deliver_now)
           .and_return(true)
-        get :send_receipt, id: res.id
+        get :send_receipt, params: { id: res.id }
       end
       it { is_expected.to redirect_to(res) }
       it { is_expected.to set_flash[:notice] }
@@ -1548,7 +1536,7 @@ describe ReservationsController, type: :controller do
         allow(UserMailer).to \
           receive_message_chain(:reservation_status_update, :deliver_now)
           .and_return(false)
-        get :send_receipt, id: res.id
+        get :send_receipt, params: { id: res.id }
       end
       it { is_expected.to redirect_to(res) }
       it { is_expected.to set_flash[:error] }
@@ -1567,7 +1555,7 @@ describe ReservationsController, type: :controller do
         expect(res).to \
           receive_message_chain(:reserver, :reservations, :requested)
           .and_return(full)
-        get :review, id: res.id
+        get :review, params: { id: res.id }
         expect(assigns(:all_current_requests_by_user)).to eq([other])
       end
       it 'should assign errors' do
@@ -1575,7 +1563,7 @@ describe ReservationsController, type: :controller do
           receive_message_chain(:reserver, :reservations, :requested)
           .and_return([])
         allow(res).to receive(:validate).and_return('errors')
-        get :review, id: res.id
+        get :review, params: { id: res.id }
         expect(assigns(:errors)).to eq('errors')
       end
     end
@@ -1589,7 +1577,7 @@ describe ReservationsController, type: :controller do
     before do
       sign_in @admin
       @requested = FactoryGirl.create(:request)
-      put :approve_request, id: @requested.id
+      put :approve_request, params: { id: @requested.id }
     end
     it 'should set the reservation status' do
       expect(assigns(:reservation).status).to eq('reserved')
@@ -1613,7 +1601,7 @@ describe ReservationsController, type: :controller do
     before do
       sign_in @admin
       @requested = FactoryGirl.create(:request)
-      put :deny_request, id: @requested.id
+      put :deny_request, params: { id: @requested.id }
     end
     it 'should set the reservation status to denied' do
       expect(assigns(:reservation).status).to eq('denied')
