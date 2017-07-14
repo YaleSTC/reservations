@@ -13,6 +13,7 @@ class UsersController < ApplicationController
                 only: [:show, :edit, :update, :destroy, :ban, :unban]
   before_action :check_cas_auth, only: [:show, :new, :create, :quick_create,
                                         :edit, :update]
+  before_action :set_requirement_if_possible, only: [:index]
 
   include Autocomplete
   include Calendarable
@@ -24,6 +25,11 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
   end
 
+  def set_requirement_if_possible
+    return unless params[:requirement_id]
+    @requirement = Requirement.find(params[:requirement_id])
+  end
+
   def check_cas_auth
     @cas_auth = ENV['CAS_AUTH']
   end
@@ -31,12 +37,12 @@ class UsersController < ApplicationController
   # ------------ end before filter methods ------------ #
 
   def index
-    @users = if params[:show_banned]
-               User.order('username ASC')
-             else
-               User.active.order('username ASC')
-             end
-
+    method = params[:show_banned] ? :all : :active
+    if @requirement
+      @users = @requirement.users.send(method).order('username ASC')
+    else
+      @users = User.send(method).order('username ASC')
+    end
     respond_to do |format|
       format.html
       format.csv do

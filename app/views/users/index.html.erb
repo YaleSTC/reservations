@@ -1,4 +1,4 @@
-<% title "Users" %>
+<% title (@requirement.nil? ? "Users" : @requirement.name.pluralize) %>
 
 <%= render :partial => 'table', :locals => {:users => @users} %>
 

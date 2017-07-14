@@ -32,6 +32,17 @@ describe UsersController, type: :controller do
         expect(User).not_to have_received(:active)
       end
     end
+
+    context '@requirement set' do
+        it 'restricts to the requirement' do
+          users = spy('Array')
+          req = RequirementMock.new(traits: [:findable,
+                                                  [:with_users, users: users]])
+          allow(users).to receive(:active).and_return(User)
+          get :index, requirement_id: req.id
+          expect(req).to have_received(:users)
+        end
+      end
   end
 
   describe 'GET show' do
