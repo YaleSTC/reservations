@@ -1,5 +1,5 @@
 <div id ="top_buttons">
-  <%= render partial: 'top_buttons', locals: { reserver: @user } %>
+  <%= render partial: 'reservations/top_buttons', locals: { reserver: @user } %>
 </div>
 <hr>
 
@@ -18,7 +18,7 @@
           <div class="receipt_box">
             <h3><%= link_to "Reservation ##{reservation.id}", reservation %></h3>
             <hr>
-            <%= render partial: 'reservation_details', locals: { :@reservation => reservation } %>
+            <%= render partial: 'reservations/reservation_details', locals: { :@reservation => reservation } %>
           </div>
         </div>
       </div>
@@ -40,7 +40,7 @@
           <div class="receipt_box">
             <h3><%= link_to "Reservation ##{reservation.id}", reservation %></h3>
             <hr>
-            <%= render partial: 'reservation_details', locals: { :@reservation => reservation } %>
+            <%= render partial: 'reservations/reservation_details', locals: { :@reservation => reservation } %>
           </div>
         </div>
       </div>

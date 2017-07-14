@@ -384,7 +384,6 @@ describe 'Reservations', type: :feature do
           expect(page.current_url).to \
             eq(manage_reservations_for_user_url(@user))
         end
-
         it 'succeeds when the box is checked off' do
           check 'terms_of_service_accepted'
           select @eq_model.equipment_items.first.name.to_s,

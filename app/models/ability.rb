@@ -35,6 +35,7 @@ class Ability
   end
 
   def checkout
+    can :manage, Manage
     can :manage, Reservation
     cannot :archive, Reservation
     cannot :renew, Reservation unless AppConfig.check(:enable_renewals)
