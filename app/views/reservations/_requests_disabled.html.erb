@@ -1,8 +1,8 @@
-<% title "Confirm Reservation Request" %>
+<% title "Reservation Denied" %>
 <div id="content" class="col-md-9">
   <% unless @errors.empty? %>
     <p>
-    <h3><i class="fa fa-exclamation-triangle warning-icon"></i> Would you like to resolve the following error(s)?</h3>
+    <h3><i class="fa fa-exclamation-triangle warning-icon"></i> Please resolve the following error(s):</h3>
     </p>
     <div class ="form-errors">
       <% @errors.each do |msg| %>
@@ -22,16 +22,9 @@
   </h4>
   </p>
   <%= render partial: 'reservations/edit_reservation_form' %>
-  <div class="well">
-    <%= markdown(request_text) %>
-  </div>
   <%= simple_form_for @reservation do |f| %>
-    <div class="form-group text <%= 'error' if @notes_required %>">
-      <%= f.label "Enter your comments here:" %>
-      <%= f.input_field :notes, class: 'form-control', rows: 5 %>
-    </div>
     <div class="form-group">
-      <%= f.button :submit, "Submit Request", id: 'finalize_reservation_btn', data: { confirm: "Are you sure? This request is not finalized and will be subject to approval by an administrator. It will not be available for checkout until and unless approved, and the request may be denied for any reason at the sole discretion of the administrator." } %>
+      <%= f.button :submit, "Submit", id: 'finalize_reservation_btn' %>
     </div>
   <% end %>
 </div>

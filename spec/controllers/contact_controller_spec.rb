@@ -7,7 +7,7 @@ describe ContactController, type: :controller do
     sign_in FactoryGirl.create(:user)
 
     # goes after the above to skip certain user validations
-    @ac = mock_app_config(contact_email: 'contact@email.com',
+    @ac = mock_app_config(contact_link_location: 'contact@email.com',
                           admin_email: 'admin@email.com',
                           site_title: 'Reservations Specs')
   end

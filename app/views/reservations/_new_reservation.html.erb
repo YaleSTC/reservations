@@ -3,10 +3,10 @@
 <div id="content" class="col-md-9">
   <% unless @errors.empty? %>
     <p>
-      <h3>
-        <i class="fa fa-exclamation-triangle warning-icon"></i>
-        Please be aware of the following errors:
-      </h3>
+    <h3>
+      <i class="fa fa-exclamation-triangle warning-icon"></i>
+      Please be aware of the following errors:
+    </h3>
     </p>
     <div class ="form-errors">
       <% @errors.each do |msg| %>
@@ -17,13 +17,13 @@
     </div>
   <% end %>
   <p>
-    <h4>Equipment Reserved for
+  <h4>Equipment Reserved for
     <%= link_to User.find(cart.reserver_id).name, User.find(cart.reserver_id),
-    target: '_blank' %>
+      target: '_blank' %>
     from
     <%= cart.start_date.to_s(:long) %> to
     <%= cart.due_date.to_s(:long) %>:
-    </h4>
+  </h4>
   </p>
   <%= render partial: 'reservations/edit_reservation_form' %>
 </div>
