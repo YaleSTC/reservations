@@ -33,7 +33,7 @@
 <% end %>
 <% unless @all_current_requests_by_user.empty? %>
   <p>
-    <h4>Please note that <%= link_to @all_current_requests_by_user.first.reserver.name, @all_current_requests_by_user.first.reserver %> is also requesting the following equipment at this time:</h4>
+    <h4>Please note that <%= link_to @reserver.name, @reserver %> is also requesting the following equipment at this time:</h4>
   </p>
   <p>
     <% @all_current_requests_by_user.each do |request| %>

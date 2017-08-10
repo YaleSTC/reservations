@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Searchable
   def self.included(base) # rubocop:disable MethodLength
     def base.searchable_on(*args)
@@ -13,6 +14,8 @@ module Searchable
         # search each query word on each attribute specified via searchable_on
         query.split.each do |q|
           query_results = []
+          # this is NOT a SQL-injection so long as the attributes given to
+          # .searchable on are not user-generated
           @searchable_attrs.each do |attribute|
             query_results << active.where("#{attribute} LIKE :query",
                                           query: "%#{q}%")

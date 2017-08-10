@@ -7,7 +7,7 @@
 class ApplicationController < ActionController::Base
   helper :layout
   # See ActionController::RequestForgeryProtection for details
-  protect_from_forgery
+  protect_from_forgery with: :exception
   before_action :app_setup_check
   before_action :authenticate_user!, unless: :skip_authentication?
 
@@ -35,6 +35,13 @@ class ApplicationController < ActionController::Base
   end
 
   rescue_from ActiveRecord::RecordNotFound do |_exception|
+    flash[:error] = 'Oops, you tried to go somewhere that doesn\'t exist.'
+    redirect_to main_app.root_url
+  end
+
+  # this is for security; handles when an invalid controller class is passed
+  # in params[:controller] or params[:class]
+  rescue_from KeyError do |_exception|
     flash[:error] = 'Oops, you tried to go somewhere that doesn\'t exist.'
     redirect_to main_app.root_url
   end
@@ -257,9 +264,8 @@ class ApplicationController < ActionController::Base
       # have requirements as part of equipment model itself
       restricted = em.model_restricted?(cart.reserver_id)
       next unless restricted
-      # TODO: #html_safe is a security risk
       @qualifications_hash[em.id] =
-        Requirement.list_requirement_admins(reserver, em).html_safe
+        sanitize(Requirement.list_requirement_admins(reserver, em))
     end
 
     @page_eq_models_by_category = eq_models
@@ -288,9 +294,8 @@ class ApplicationController < ActionController::Base
   def deactivate
     authorize! :deactivate, :items
     # Finds the current model (EM, EI, Category)
-    @items_class2 =
-      params[:controller].singularize.titleize.delete(' ')
-                         .constantize.find(params[:id])
+    @items_class2 = ClassFromString.equipment!(params[:controller])
+                                   .find(params[:id])
     # Deactivate the model you had originally intended to deactivate
     @items_class2.destroy
     flash[:notice] = 'Successfully deactivated '\
@@ -302,9 +307,8 @@ class ApplicationController < ActionController::Base
   def activate
     authorize! :activate, :items
     # Finds the current model (EM, EI, Category)
-    @model_to_activate =
-      params[:controller].singularize.titleize.delete(' ')
-                         .constantize.find(params[:id])
+    @model_to_activate = ClassFromString.equipment!(params[:controller])
+                                        .find(params[:id])
     activate_parents(@model_to_activate)
     @model_to_activate.revive
     flash[:notice] = 'Successfully reactivated '\

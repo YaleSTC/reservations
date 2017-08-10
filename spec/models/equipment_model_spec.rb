@@ -297,15 +297,6 @@ describe EquipmentModel, type: :model do
         expect(model.num_available_on(Time.zone.today)).to eq(1)
       end
     end
-    describe '.available_item_select_options' do
-      it 'makes a string listing the available items' do
-        model = FactoryGirl.create(:equipment_model)
-        FactoryGirl.create(:checked_out_reservation, equipment_model: model)
-        item = FactoryGirl.create(:equipment_item, equipment_model: model)
-        expect(model.available_item_select_options).to \
-          eq("<option value=#{item.id}>#{item.name}</option>")
-      end
-    end
     describe 'destroy' do
       it 'destroys the model' do
         model = FactoryGirl.create(:equipment_model)

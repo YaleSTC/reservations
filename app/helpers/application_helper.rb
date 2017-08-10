@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Methods added to this helper will be available to all templates in the
 # application.
 module ApplicationHelper
@@ -13,17 +14,19 @@ module ApplicationHelper
                                     fenced_code_blocks: true,
                                     no_intra_emphasis: true,
                                     strikethrough: true, superscript: true)
+    # This is safe -- Redcarpet sanitizes
     markdown.render(text).html_safe
   end
 
   def markdown_to_plain_text(text)
+    # This is safe -- Redcarpet sanitizes
     strip_tags(markdown(text)).html_safe
   end
 
   def paperclip_field_error(local_form_variable, *fields)
     # Field must be symbol
     fields.each do |field|
-      return 'error' unless local_form_variable.error(field).blank?
+      return 'error' if local_form_variable.error(field).present?
     end
   end
 

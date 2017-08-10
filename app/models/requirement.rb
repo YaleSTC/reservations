@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-class Requirement < ActiveRecord::Base
+
+class Requirement < ApplicationRecord
   has_and_belongs_to_many :equipment_models
   # This join table associates users with the requirements that they have
   # fulfilled. To give a user permission to reserve an item with a
@@ -13,34 +14,6 @@ class Requirement < ActiveRecord::Base
   validates :contact_info,
             :description,
             :contact_name, presence: true
-
-  # rubocop:disable MethodLength
-  def self.list_requirement_admins(current_user, equipment_model)
-    req_status = '<ul>'
-    met_reqs = (equipment_model.requirements & current_user.requirements)
-    outstanding_reqs = equipment_model.requirements - met_reqs
-    admin_names = outstanding_reqs.collect(&:contact_name).to_sentence
-    admin_contacts = outstanding_reqs.collect(&:contact_info).to_sentence
-    outstanding_reqs.each do |req|
-      req_status += "<li>#{req.description}</li>"
-    end
-    req_status += '</ul>'
-    if met_reqs.empty?
-      req_status += 'This model requires proper training before it can be '\
-        'reserved. '
-    else
-      met_admin_names = met_reqs.collect(&:contact_name).to_sentence
-      req_status += 'You have already met the requirements to check out '\
-        'this model set by ' + met_admin_names + '. However, this model '\
-        'requires additional training before it can be reserved. '
-    end
-    # this is currently returning all names, then all email addresses, in one
-    # sentence
-    resp = outstanding_reqs.count > 1 ? ' respectively' : ''
-    req_status += "Please contact #{admin_names}#{resp} at #{admin_contacts}"\
-      + ' about becoming certified.'
-    req_status
-  end
 
   # This code is all related to creating requirements that have multi-step
   # qualification processes, such as a long training program. The code is not

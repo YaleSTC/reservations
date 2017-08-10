@@ -221,16 +221,6 @@ class EquipmentModel < ApplicationRecord
     !(requirements - reserver.requirements).empty?
   end
 
-  def available_item_select_options
-    # TODO: this is apparently a security risk
-    equipment_items.includes(:reservations).active.select(&:available?)\
-                   .sort_by(&:name)\
-                   .collect do |item|
-                     "<option value=#{item.id}>#{item.name}</option>"
-                   end\
-                   .join.html_safe
-  end
-
   private
 
   def assign_ordering

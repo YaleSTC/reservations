@@ -2,6 +2,8 @@
 
 # rubocop:disable ClassLength
 class ReservationsController < ApplicationController
+  include ActionView::Helpers::SanitizeHelper
+
   load_and_authorize_resource
 
   before_action :set_reservation,
@@ -169,9 +171,9 @@ class ReservationsController < ApplicationController
         end
         redirect_to(manage_reservations_for_user_path(reserver)) && return
       rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid => e
-        # TODO: html_safe is a security risk
-        redirect_to catalog_path, flash: { error: 'Oops, something went '\
-          "wrong with making your reservation.<br/> #{e.message}".html_safe }
+        msg = 'Oops, something went wrong with making your '\
+                "reservation.<br/> #{sanitize e.message}"
+        redirect_to catalog_path, flash: { error: msg }
         raise ActiveRecord::Rollback
       end
     end
@@ -442,8 +444,9 @@ class ReservationsController < ApplicationController
   end
 
   def review
+    @reserver = @reservation.reserver
     @all_current_requests_by_user =
-      @reservation.reserver.reservations.requested.reject do |res|
+      @reserver.reservations.requested.reject do |res|
         res.id == @reservation.id
       end
     @errors = @reservation.validate
