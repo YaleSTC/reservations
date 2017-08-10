@@ -78,16 +78,16 @@ class Reservation < ApplicationRecord
   scope :returned_on_time, ->() { where(overdue: false).returned }
   scope :returned_overdue, ->() { where(overdue: true).returned }
   scope :approved_requests, ->() { flagged(:request).finalized }
-  scope :missed_requests, ->() { past_date(:start_date).requested }
-
-  # generalized date scopes (pass parameter as either a string or a symbol)
-  scope :past_date, ->(param) { where("#{param} < ?", Time.zone.today) }
-  scope :today_date, ->(param) { where(param.to_sym => Time.zone.today) }
+  scope :missed_requests, ->() { past_start_date.requested }
 
   # basic date scopes
-  scope :checked_out_today, ->() { today_date(:checked_out) }
-  scope :checked_out_previous, ->() { past_date(:checked_out) }
-  scope :due_today, ->() { today_date(:due_date).checked_out }
+  scope :checked_out_today, ->() { where(checked_out: Time.zone.today) }
+  scope :checked_out_previous, lambda {
+    where('checked_out < ?', Time.zone.today)
+  }
+  scope :past_start_date, ->() { where('start_date < ?', Time.zone.today) }
+  scope :past_due_date, ->() { where('due_date < ?', Time.zone.today) }
+  scope :due_today, ->() { where(due_date: Time.zone.today).checked_out }
 
   # more complex / task-specific scopes
   scope :checkoutable, Reservations::CheckoutableQuery
@@ -107,8 +107,8 @@ class Reservation < ApplicationRecord
 
   # for status modifying jobs
   scope :missed_not_emailed, ->() { missed.not_flagged(:missed_email_sent) }
-  scope :newly_missed, ->() { reserved.past_date(:start_date) }
-  scope :newly_overdue, ->() { not_overdue.checked_out.past_date(:due_date) }
+  scope :newly_missed, ->() { reserved.past_start_date }
+  scope :newly_overdue, ->() { not_overdue.checked_out.past_due_date }
 
   def self.deletable_missed
     return Reservation.none if AppConfig.check(:res_exp_time, '').blank?

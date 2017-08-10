@@ -1,8 +1,10 @@
 # frozen_string_literal: true
+
 module Reservations
   class UpcomingQuery < Reservations::ReservationsQueryBase
     def call
-      @relation.unscoped.today_date(:start_date).reserved.order('reserver_id')
+      @relation.unscoped.where(start_date: Time.zone.today).reserved
+               .order('reserver_id')
     end
   end
 end

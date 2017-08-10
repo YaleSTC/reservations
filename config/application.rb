@@ -30,10 +30,6 @@ module Reservations
     # Default is UTC.
     config.time_zone = 'Eastern Time (US & Canada)'
 
-    # Do not swallow errors in after_commit/after_rollback callbacks.
-    # REMOVED IN RAILS 5 -- this means we need to explicitly throw in callbacks
-    # config.active_record.raise_in_transactional_callbacks = true
-
     # The default locale is :en and all translations from
     # config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path +=
@@ -64,8 +60,8 @@ module Reservations
     # Add app/assets/fonts to the asset pipeline known paths
     config.assets.paths << Rails.root.join('app', 'assets', 'fonts')
 
-    # Ensures that each controller doesn't load every helper in the application
-    config.action_controller.include_all_helpers = false
+    # Load all helpers in all views
+    config.action_controller.include_all_helpers = true
 
     PermanentRecords.dependent_record_window = 10.seconds
 

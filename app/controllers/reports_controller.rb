@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class ReportsController < ApplicationController
   authorize_resource class: false
   MODEL_COLUMNS = [['Total', :all, :count],
@@ -18,7 +19,7 @@ class ReportsController < ApplicationController
                  ['Due Date', :all, :display, :due_date],
                  ['Checked In', :all, :display, :checked_in]].freeze
 
-  before_action :set_dates, only: [:index, :subreport]
+  before_action :set_dates, only: %i[index subreport]
 
   def set_dates
     @start_date = start_date
@@ -56,19 +57,19 @@ class ReportsController < ApplicationController
   end
 
   def subreport
-    id_symbol = (params[:class] + '_id').to_sym
-    resource = params[:class].camelize.constantize
+    resource = ClassFromString.reports!(params[:class])
+    id_symbol = id_symbol_for(resource)
 
-    id_symbol = :reserver_id if resource == User
+    @object = resource.find(params[:id])
 
-    id = params[:id]
-    @object = resource.find params[:id]
+    id = if resource == Category
+           EquipmentModel.where(category_id: params[:id]).collect(&:id)
+         else
+           sanitize_sql(params[:id])
+         end
 
-    if resource == Category
-      id = EquipmentModel.where(category_id: id).collect(&:id)
-      id_symbol = :equipment_model_id
-    end
-
+    # also NOT a SQL-injection -- id_symbol is built by ClassFromString,
+    # which only allows certain classes, and id is sanitized above
     reservations = Reservation.starts_on_days(@start_date, @end_date)
                               .where(id_symbol => id)
 
@@ -92,6 +93,16 @@ class ReportsController < ApplicationController
   end
 
   private
+
+  def id_symbol_for(resource)
+    if resource == User
+      :reserver_id
+    elsif resource == Category
+      :equipment_model_id
+    else
+      (resource.to_s.downcase + '_id').to_sym
+    end
+  end
 
   def start_date
     if session[:report_start_date].present?
