@@ -1,4 +1,4 @@
-class AddOrdering < ActiveRecord::Migration
+class AddOrdering < ActiveRecord::Migration[4.2]
   def up
     return if column_exists?(:equipment_models, :ordering) 
   	
@@ -9,7 +9,7 @@ class AddOrdering < ActiveRecord::Migration
 
     # go through all categories
     models = conn.exec_query('SELECT * FROM equipment_models WHERE '\
-                             'active = 1')
+                             'active = TRUE')
   	ord = 1
   	models.each do |m|
       conn.execute("UPDATE equipment_models SET ordering = "\
