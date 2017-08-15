@@ -6,7 +6,7 @@
   "website": "http://yalestc.github.io/reservations",
   "success_url": "/",
   "scripts": {
-    "postdeploy": "bundle exec rake db:reset minimal=true"
+    "postdeploy": "bundle exec rake db:schema:load db:seed minimal=true"
   },
   "env": {
     "BUILDPACK_URL": "https://github.com/orenyk/heroku-buildpack-ruby",
