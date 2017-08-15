@@ -16,6 +16,7 @@
 * Fixed cart validation counting error ([#1641](https://github.com/YaleSTC/reservations/issues/1641)).
 * Fixed User phone number validation regex ([#1633](https://github.com/YaleSTC/reservations/issues/1633)).
 * Use AppConfig#check everywhere ([#1584](https://github.com/YaleSTC/reservations/issues/1584)).
+* Fixed Heroku deployments by updating post-deploy script ([#1680](https://github.com/YaleSTC/reservations/issues/1680)).
 
 
 ### Added
