@@ -8,6 +8,7 @@
 *This release fixes several long-standing security vulnerabilities*
 
 ### Fixed
+* Fixed broken database migrations ([#1676](https://github.com/YaleSTC/reservations/issues/1676)).
 * Fixed Heroku deployments by updating post-deploy script ([#1680](https://github.com/YaleSTC/reservations/issues/1680)).
 
 ## v6.2.0 - 2016-07-04
@@ -21,13 +22,11 @@
 * Fixed User phone number validation regex ([#1633](https://github.com/YaleSTC/reservations/issues/1633)).
 * Use AppConfig#check everywhere ([#1584](https://github.com/YaleSTC/reservations/issues/1584)).
 
-
 ### Added
 * Configuration for Hound CI ([#1577](https://github.com/YaleSTC/reservations/issues/1577)).
 * Setting to allow requests to block availability ([#1521](https://github.com/YaleSTC/reservations/issues/1521)).
 * Buttons to run cron jobs manually ([#1275](https://github.com/YaleSTC/reservations/issues/1275)).
 * TravisCI now runs ESlint ([#1581](https://github.com/YaleSTC/reservations/issues/1581)).
-
 
 ### Changed
 * Refactor EquipmentModel model spec ([#1600](https://github.com/YaleSTC/reservations/issues/1600)).
