@@ -1,5 +1,5 @@
 # config valid only for Capistrano 3.1
-lock '3.5.0'
+lock '3.8.2'
 
 set :application, "reservations-#{ENV['IDENTIFIER']}"
 set :repo_url, 'https://github.com/YaleSTC/reservations.git'
