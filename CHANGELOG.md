@@ -10,7 +10,7 @@
 ### Fixed
 * Put headers in order corresponding to their order on reservation page ([#1661](https://github.com/YaleSTC/reservations/issues/1661)).
 * Fixed the equipment model seed script generator ([#1662](https://github.com/YaleSTC/reservations/issues/1662)).
-* Fixed broken database migrations ([#1676](https://github.com/YaleSTC/reservations/issues/1676)).
+* Fixed broken database migrations ([#1676](https://github.com/YaleSTC/reservations/issues/1676), [#1684](https://github.com/YaleSTC/reservations/issues/1684)).
 * Fixed Heroku deployments by updating post-deploy script ([#1680](https://github.com/YaleSTC/reservations/issues/1680)).
 
 ### Added
