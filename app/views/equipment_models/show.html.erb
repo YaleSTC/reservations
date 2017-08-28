@@ -194,7 +194,7 @@
 <% if @equipment_model.model_restricted?(cart.reserver_id) %>
   <section id="requirements">
      <h2>Requirements</h2><hr/>
-       <p><%= Requirement.list_requirement_admins(current_user, @equipment_model) %></p>
+       <p><%= list_requirement_admins(current_user, @equipment_model) %></p>
   </section>
 <% end %>
 <% if can? :manage, EquipmentModel %>
