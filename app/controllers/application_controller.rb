@@ -265,7 +265,7 @@ class ApplicationController < ActionController::Base
       restricted = em.model_restricted?(cart.reserver_id)
       next unless restricted
       @qualifications_hash[em.id] =
-        sanitize(Requirement.list_requirement_admins(reserver, em))
+        sanitize(RequirementsHelper.list_requirement_admins(reserver, em))
     end
 
     @page_eq_models_by_category = eq_models
