@@ -69,10 +69,13 @@
     },
     "AWS_SECRET_ACCESS_KEY": {
       "description": "AWS secret access key"
+    },
+    "DATABASE_URL": {
+      "description": "Copy in CLEARDB_DATABASE_URL and change mysql to mysql2"
     }
   },
   "addons": [
-    "heroku-postgresql",
+    "cleardb:ignite",
     "sendgrid:starter",
     "scheduler:standard"
   ]
