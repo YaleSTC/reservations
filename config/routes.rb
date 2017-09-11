@@ -144,9 +144,8 @@ Reservations::Application.routes.draw do
   # yes, both of these are needed to override rails defaults of
   # /controller/:id/edit
   get '/app_configs/', to: 'app_configs#edit', as: :edit_app_configs # match
-  resources :app_configs, only: %i[] do
+  resources :app_configs, only: %i[update] do
     collection do
-      post :update
       put :run_hourly_tasks
       put :run_daily_tasks
     end

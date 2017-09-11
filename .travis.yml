@@ -13,6 +13,7 @@ env:
 before_install:
   - if [ $TRAVIS_PULL_REQUEST == "false" ]; then git clone https://github.com/$TRAVIS_REPO_SLUG.git $TRAVIS_REPO_SLUG && cd $TRAVIS_REPO_SLUG && git checkout -qf $TRAVIS_BRANCH; fi
   - if [ $TRAVIS_PULL_REQUEST == "true" ]; then git checkout -qf master && git checkout -qf $TRAVIS_COMMIT; fi
+  - sudo apt-get install ghostscript
   - convert -version
   - gs -v
   - 'echo ''gem: --no-ri --no-rdoc'' > ~/.gemrc'
