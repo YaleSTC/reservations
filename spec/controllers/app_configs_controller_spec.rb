@@ -73,7 +73,7 @@ describe AppConfigsController, type: :controller do
         end
 
         it 'assigns current configuration to @app_config' do
-          post :update, params: { app_config: @params }
+          post :update, params: { id: @app_config.id, app_config: @params }
           expect(assigns(:app_config)).to eq(@app_config)
         end
 
@@ -84,7 +84,7 @@ describe AppConfigsController, type: :controller do
             @user = FactoryGirl.create(:user)
             @params = @params.merge(reset_tos_for_users: 1)
             Rails.logger.debug @params
-            put :update, params: { app_config: @params }
+            put :update, params: { id: @app_config.id, app_config: @params }
             @user.reload
             expect(@user.terms_of_service_accepted).to be_falsey
           end
@@ -94,7 +94,7 @@ describe AppConfigsController, type: :controller do
             @user = FactoryGirl.create(:user)
             @params = @params.merge(reset_tos_for_users: 0)
             Rails.logger.debug @params
-            post :update, params: { app_config: @params }
+            post :update, params: { id: @app_config.id, app_config: @params }
             @user.reload
             expect(@user.terms_of_service_accepted).to be_truthy
           end
@@ -105,7 +105,7 @@ describe AppConfigsController, type: :controller do
             expect(@user.missing_phone).to be_falsey
             @params = @params.merge(require_phone: 1)
             Rails.logger.debug @params
-            post :update, params: { app_config: @params }
+            post :update, params: { id: @app_config.id, app_config: @params }
             @user.reload
             expect(@user.missing_phone).to be_truthy
           end
@@ -125,7 +125,7 @@ describe AppConfigsController, type: :controller do
                            %i[favicon_file_name favicon_content_type
                               favicon_file_size favicon_updated_at].include? k
                          end
-            post :update, params: @params
+            post :update, params: { id: @app_config.id, app_config: @params }
           end
           # it { should render_template(:edit) }
         end
@@ -133,7 +133,7 @@ describe AppConfigsController, type: :controller do
       context 'user is not admin' do
         before(:each) do
           sign_in FactoryGirl.create(:user)
-          post :update
+          post :update, params: { id: 1 }
         end
         it { is_expected.to redirect_to(root_path) }
       end
@@ -141,7 +141,7 @@ describe AppConfigsController, type: :controller do
     context 'app_config does not exist yet' do
       before(:each) do
         sign_in FactoryGirl.create(:user)
-        post :update
+        post :update, params: { id: 1 }
       end
       it { is_expected.to respond_with(:success) }
       it { is_expected.to set_flash }
