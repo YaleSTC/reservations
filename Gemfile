@@ -116,7 +116,6 @@ group :production do
 end
 
 group :heroku do
-  gem 'pg', '~> 0.18.4'
   gem 'unicorn', '~> 5.1.0'
   gem 'rack-timeout', '~> 0.4.2'
   gem 'aws-sdk', '< 2.0'

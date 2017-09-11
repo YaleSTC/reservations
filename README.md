@@ -6,7 +6,7 @@
 [![Dependency Status](https://gemnasium.com/YaleSTC/reservations.svg)](https://gemnasium.com/YaleSTC/reservations)
 [![Inline docs](http://inch-ci.org/github/yalestc/reservations.svg?branch=master&style=flat)](http://inch-ci.org/github/yalestc/reservations)
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://github.com/YaleSTC/reservations/wiki/Heroku-Deployment-Guide)
 
 ![](http://yalestc.github.io/reservations/images/screenshot.png)
 
