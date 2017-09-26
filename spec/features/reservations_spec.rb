@@ -836,4 +836,42 @@ describe 'Reservations', type: :feature do
       expect(page).to have_content('Description')
     end
   end
+
+  context 'when hide unavailable button is clicked' do
+    before(:each) do
+      empty_cart
+      Capybara.ignore_hidden_elements = false
+      @eq_model1 = FactoryGirl.create(:equipment_model, category: @category)
+      FactoryGirl.create(:equipment_item, equipment_model: @eq_model1)
+      @eq_model1[:overdue_count] = 1
+      @eq_model1.save!
+      @eq_model1.reload
+      page.reset!
+      visit root_path
+    end
+
+    after(:each) do
+      Capybara.ignore_hidden_elements = true
+      @eq_model1.destroy
+      page.reset!
+    end
+
+    it 'shows all items by default' do
+      expect(page).to have_css('.availability-num', text: 1, visible: true)
+      expect(page).to have_css('.availability-num', text: 0, visible: true)
+    end
+
+    it 'hides only unavailable items when clicked' do
+      click_button 'toggle_unavailable'
+      expect(page).to have_css('.availability-num', text: 1, visible: true)
+      expect(page).to have_css('.availability-num', text: 0, visible: false)
+    end
+
+    it 'reshows all items when clicked again' do
+      click_button 'toggle_unavailable'
+      click_button 'toggle_unavailable'
+      expect(page).to have_css('.availability-num', text: 1, visible: :true)
+      expect(page).to have_css('.availability-num', text: 0, visible: :true)
+    end
+  end
 end
