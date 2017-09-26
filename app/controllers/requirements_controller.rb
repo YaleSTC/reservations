@@ -11,7 +11,7 @@ class RequirementsController < ApplicationController
   # ------------- end before filter methods ------------- #
 
   def index
-    @requirements = Requirement.all
+    @requirements = Requirement.all.includes(:equipment_models)
   end
 
   def show
