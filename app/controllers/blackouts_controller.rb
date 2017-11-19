@@ -1,8 +1,9 @@
 # frozen_string_literal: true
+
 class BlackoutsController < ApplicationController
   load_and_authorize_resource
   before_action :set_current_blackout,
-                only: [:edit, :show, :update, :destroy, :destroy_recurring]
+                only: %i[edit show update destroy destroy_recurring]
 
   # ---------- before filter methods ------------ #
 
@@ -31,8 +32,7 @@ class BlackoutsController < ApplicationController
                              end_date: Time.zone.today + 1.day)
   end
 
-  def edit
-  end
+  def edit; end
 
   def create_recurring
     # called when a recurring blackout is needed
@@ -41,7 +41,7 @@ class BlackoutsController < ApplicationController
 
     @blackout = Blackout.new(blackout_params) # for the form if there are errors
 
-    if params[:blackout][:days].first.blank?
+    if params[:blackout][:days].reject(&:blank?).empty?
       flash[:error] = 'You must select at least one day of the week for any '\
       'recurring blackouts to be created.'
       render('new_recurring') && return
