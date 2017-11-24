@@ -42,7 +42,8 @@ def evaluate
 end
 
 def passed?
-  RUBY_PASS.any? { |m| check_ruby.include? m }
+  RUBY_PASS.any? { |m| check_ruby.include? m } &&
+    JS_PASS.any? { |m| check_js.include? m }
 end
 
 def rubocop(files)

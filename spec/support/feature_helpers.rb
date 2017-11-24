@@ -6,7 +6,7 @@ module FeatureHelpers
     @app_config = mock_app_config(**FactoryGirl.attributes_for(:app_config))
     @category = FactoryGirl.create(:category)
     @eq_model =
-      FactoryGirl.create(:equipment_model, category: @category, ordering: 1)
+      FactoryGirl.create(:equipment_model, category: @category)
     @eq_item = FactoryGirl.create(:equipment_item, equipment_model: @eq_model)
     @admin = FactoryGirl.create(:admin)
     @superuser = FactoryGirl.create(:superuser)

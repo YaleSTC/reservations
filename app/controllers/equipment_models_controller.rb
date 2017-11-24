@@ -82,7 +82,6 @@ class EquipmentModelsController < ApplicationController
   end
 
   def create
-    equipment_model_params[:ordering] ||= EquipmentModel.count
     @equipment_model = EquipmentModel.new(equipment_model_params)
     if @equipment_model.save
       flash[:notice] = 'Successfully created equipment model.'
@@ -114,20 +113,6 @@ class EquipmentModelsController < ApplicationController
     end
   end
 
-  def up
-    OrderingHelper.new(@equipment_model).up
-    redirect_to request.referer
-  end
-
-  def down
-    OrderingHelper.new(@equipment_model).down
-    redirect_to request.referer
-  end
-
-  def verify_order
-    OrderingHelper.new(@equipment_model).verify_order
-  end
-
   def deactivate
     if params[:deactivation_cancelled]
       flash[:notice] = 'Deactivation cancelled.'
@@ -138,7 +123,6 @@ class EquipmentModelsController < ApplicationController
          .save(validate: false)
       end
       super
-      OrderingHelper.new(@equipment_model).deactivate_order
     else
       flash[:error] = 'Oops, something went wrong.'
       redirect_to @equipment_model
