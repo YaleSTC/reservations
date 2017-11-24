@@ -17,7 +17,6 @@ module EquipmentModelGenerator
       em.renewal_days_before_due = rand(0..9001)
       em.photo = File.open(IMAGES.sample) unless NO_PICS
       em.associated_equipment_models = EquipmentModel.all.sample(6)
-      em.ordering = 1
     end
   end
 end

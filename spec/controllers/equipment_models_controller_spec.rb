@@ -91,12 +91,8 @@ describe EquipmentModelsController, type: :controller do
     context 'with admin user' do
       before { mock_user_sign_in(UserMock.new(:admin)) }
       context 'successful save' do
-        let!(:model) do
-          category = FactoryGirl.build_stubbed(:category)
-          FactoryGirl.build_stubbed(:equipment_model, category: category)
-        end
+        let!(:model) { FactoryGirl.build_stubbed(:equipment_model) }
         before do
-          allow(model).to receive(:update_attribute)
           allow(EquipmentModel).to receive(:new).and_return(model)
           allow(model).to receive(:save).and_return(true)
           post :create, params: { equipment_model: { name: 'Model' } }
@@ -161,6 +157,7 @@ describe EquipmentModelsController, type: :controller do
       it_behaves_like 'redirected request'
     end
   end
+
   describe 'PUT deactivate' do
     context 'as admin' do
       before { mock_user_sign_in(UserMock.new(:admin)) }
@@ -185,10 +182,7 @@ describe EquipmentModelsController, type: :controller do
         let!(:model) do
           EquipmentModelMock.new(traits: %i[findable with_category])
         end
-        let!(:orderer) { instance_spy('OrderingHelper') }
         before do
-          allow(OrderingHelper).to receive(:new).with(model).and_return(orderer)
-          allow(orderer).to receive(:deactivate_order)
           request.env['HTTP_REFERER'] = 'where_i_came_from'
           put :deactivate,
               params: { id: model.id, deactivation_confirmed: true }
@@ -196,17 +190,14 @@ describe EquipmentModelsController, type: :controller do
         it { is_expected.to set_flash[:notice] }
         it { is_expected.to redirect_to('where_i_came_from') }
         it 'deactivates model' do
-          expect(orderer).to have_received(:deactivate_order)
           expect(model).to have_received(:destroy)
         end
       end
 
       context 'with reservations' do
         it "archives the model's reservations on deactivation" do
-          orderer = instance_spy('OrderingHelper')
           model = EquipmentModelMock.new(traits: %i[findable with_category])
           res = ReservationMock.new
-          allow(OrderingHelper).to receive(:new).with(model).and_return(orderer)
           # stub out scope chain -- SMELL
           allow(Reservation).to receive(:for_eq_model).and_return(Reservation)
           allow(Reservation).to receive(:finalized).and_return([res])
@@ -227,6 +218,7 @@ describe EquipmentModelsController, type: :controller do
       it_behaves_like 'redirected request'
     end
   end
+
   describe 'GET show' do
     # the current controller method is too complex to be tested
     # appropriately. FIXME when refactoring the controller

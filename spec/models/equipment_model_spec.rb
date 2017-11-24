@@ -16,7 +16,7 @@ describe EquipmentModel, type: :model do
   end
 
   describe 'basic validations' do
-    subject { EquipmentModel.new(ordering: 1) }
+    let!(:model) { mock_eq_model }
     it { is_expected.to have_and_belong_to_many(:requirements) }
     it { is_expected.to have_many(:equipment_items) }
     it { is_expected.to have_many(:reservations) }
@@ -29,9 +29,7 @@ describe EquipmentModel, type: :model do
     it { is_expected.to validate_uniqueness_of(:name) }
     it { is_expected.to validate_presence_of(:description) }
     it { is_expected.to belong_to(:category) }
-    it { is_expected.to validate_presence_of(:ordering) }
     it 'requires an associated category' do
-      model = mock_eq_model
       model.category = nil
       expect(model.valid?).to be_falsey
     end
@@ -52,9 +50,7 @@ describe EquipmentModel, type: :model do
         model = mock_eq_model(attr => -1)
         expect(model.valid?).to be_falsey
       end
-    end
-    shared_examples 'allows nil' do |attr|
-      it do
+      it 'is valid when nil' do
         model = mock_eq_model(attr => nil)
         expect(model.valid?).to be_truthy
       end
@@ -74,22 +70,18 @@ describe EquipmentModel, type: :model do
     describe 'max_per_user' do
       it_behaves_like 'integer attribute', :max_per_user
       it_behaves_like 'does not allow 0', :max_per_user
-      it_behaves_like 'allows nil', :max_per_user
     end
     describe 'max_renewal_length' do
       it_behaves_like 'integer attribute', :max_renewal_length
       it_behaves_like 'allows 0', :max_renewal_length
-      it_behaves_like 'allows nil', :max_renewal_length
     end
     describe 'max_renewal_times' do
       it_behaves_like 'integer attribute', :max_renewal_times
       it_behaves_like 'allows 0', :max_renewal_times
-      it_behaves_like 'allows nil', :max_renewal_times
     end
     describe 'renewal_days_before_due' do
       it_behaves_like 'integer attribute', :renewal_days_before_due
       it_behaves_like 'allows 0', :renewal_days_before_due
-      it_behaves_like 'allows nil', :renewal_days_before_due
     end
     shared_examples 'string attribute' do |attr|
       it 'fails when less than 0' do
@@ -106,11 +98,6 @@ describe EquipmentModel, type: :model do
     end
     describe 'replacement fee' do
       it_behaves_like 'string attribute', :replacement_fee
-    end
-    describe 'ordering' do
-      it { is_expected.to validate_presence_of(:ordering) }
-      it { is_expected.not_to allow_value(-2).for(:ordering) }
-      it { is_expected.not_to allow_value(2.3).for(:ordering) }
     end
   end
 
@@ -149,20 +136,6 @@ describe EquipmentModel, type: :model do
                                                      description: 'jean bag')
       expect(EquipmentModel.catalog_search('starbucks')).to eq([another])
       expect(EquipmentModel.catalog_search('Tumblr hipster')).to eq([model])
-    end
-  end
-
-  describe '#category_ordering' do
-    it 'returns the set of orderings of models in its category' do
-      category = FactoryGirl.create(:category, id: 1)
-      category2 = FactoryGirl.create(:category, id: 2)
-      eq_model1 = FactoryGirl.create(:equipment_model,
-                                     category: category,
-                                     ordering: 2)
-      FactoryGirl.create(:equipment_model, category: category, ordering: 4)
-      FactoryGirl.create(:equipment_model, category: category, ordering: 5)
-      FactoryGirl.create(:equipment_model, category: category2, ordering: 3)
-      expect(eq_model1.category_ordering).to eq([2, 4, 5])
     end
   end
 

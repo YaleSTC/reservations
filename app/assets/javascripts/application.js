@@ -89,15 +89,6 @@ $(document).ready(function() {
     ]
   });
 
-  $('.datatable-order').dataTable({
-    "pagingType": "full_numbers",
-    "scrollX": false,
-    "order": [[9,"asc"]],
-    "columnDefs": [
-      { "orderable": false, "targets": [ "no_sort" ] }
-    ]
-  });
-
   // For DataTables in Bootstrap tabs
   // see https://datatables.net/examples/api/tabs_and_scrolling.html
   $('a[data-toggle="tab"]').on( 'shown.bs.tab', function (e) {

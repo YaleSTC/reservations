@@ -176,11 +176,6 @@ Reservations::Application.routes.draw do
 
   get 'status/index'
 
-  put '/equipment_models/:id/up' => 'equipment_models#up',
-      as: 'sort_up'
-  put '/equipment_models/:id/down' => 'equipment_models#down',
-      as: 'sort_down'
-
   # this is a fix for running letter opener inside vagrant
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
 end

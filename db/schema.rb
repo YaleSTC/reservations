@@ -140,7 +140,6 @@ ActiveRecord::Schema.define(version: 20160610135455) do
     t.integer "equipment_items_count", default: 0, null: false
     t.decimal "late_fee_max", precision: 10, scale: 2, default: "0.0"
     t.integer "overdue_count", default: 0, null: false
-    t.integer "ordering", null: false
   end
 
   create_table "equipment_models_associated_equipment_models", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|

@@ -12,7 +12,6 @@ describe 'Equipment model views' do
     shared_examples 'can view full and detailed table' do
       it_behaves_like 'can view detailed table'
       it { expect(page).to have_link 'Edit' }
-      it { is_expected.not_to have_selector 'th', text: 'Ordering' }
     end
 
     shared_examples 'displays appropriate information' do
@@ -74,16 +73,6 @@ describe 'Equipment model views' do
       after { sign_out }
       it { should_not have_selector 'th', text: 'Available' }
       it { is_expected.not_to have_content('Equipment Models') }
-    end
-  end
-  context 'category view' do
-    before do
-      sign_in_as_user(@superuser)
-      visit category_equipment_models_path(@category.id)
-    end
-    after { sign_out }
-    it 'shows ordering' do
-      should have_selector 'th', text: 'Ordering'
     end
   end
 end
