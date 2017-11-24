@@ -1,6 +1,7 @@
 # frozen_string_literal: true
+
 module EquipmentModelGenerator
-  IMAGES = Dir.glob(File.join(Rails.root, 'db', 'seed_images', '*'))
+  IMAGES = Rails.root.join('db', 'seed_images', '*')
   NO_PICS ||= true
 
   def self.generate

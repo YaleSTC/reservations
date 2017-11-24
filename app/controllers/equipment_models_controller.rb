@@ -1,14 +1,15 @@
 # frozen_string_literal: true
+
 # rubocop:disable ClassLength
 class EquipmentModelsController < ApplicationController
   layout 'application_with_sidebar', only: :show
   load_and_authorize_resource
   decorates_assigned :equipment_model
-  skip_before_action :authenticate_user!, only: [:show, :index],
+  skip_before_action :authenticate_user!, only: %i[show index],
                                           unless: :guests_disabled?
   before_action :set_equipment_model,
-                only: [:show, :edit, :update, :destroy, :deactivate]
-  before_action :set_category_if_possible, only: [:index, :new]
+                only: %i[show edit update destroy deactivate]
+  before_action :set_category_if_possible, only: %i[index new]
 
   include ActivationHelper
   include CsvExport
@@ -92,8 +93,7 @@ class EquipmentModelsController < ApplicationController
     end
   end
 
-  def edit
-  end
+  def edit; end
 
   def update
     delete_files
@@ -167,12 +167,15 @@ class EquipmentModelsController < ApplicationController
                   { associated_equipment_model_ids: [] }, :requirement_ids,
                   :requirements, :max_checkout_length)
           .tap do |whitelisted|
-      whitelisted[:checkin_procedures_attributes] =
-        params[:equipment_model][:checkin_procedures_attributes] if
-        params[:equipment_model][:checkin_procedures_attributes]
-      whitelisted[:checkout_procedures_attributes] =
-        params[:equipment_model][:checkout_procedures_attributes] if
-        params[:equipment_model][:checkout_procedures_attributes]
+
+      if params[:equipment_model][:checkin_procedures_attributes]
+        whitelisted[:checkin_procedures_attributes] =
+          params[:equipment_model][:checkin_procedures_attributes]
+      end
+      if params[:equipment_model][:checkout_procedures_attributes]
+        whitelisted[:checkout_procedures_attributes] =
+          params[:equipment_model][:checkout_procedures_attributes]
+      end
     end
   end
 
@@ -220,7 +223,7 @@ class EquipmentModelsController < ApplicationController
       # set up colors
       if date < Time.zone.today
         color = '#888'
-      elsif availability == 0
+      elsif availability.zero?
         color = '#d9534f'
       elsif availability == max_avail
         color = '#5cb85c'
