@@ -1,0 +1,12 @@
+engines:
+  brakeman:
+    enabled: true
+  bundler-audit:
+    enabled: true
+  duplication:
+    enabled: true
+  fixme:
+    enabled: true
+  rubocop:
+    enabled: false
+
