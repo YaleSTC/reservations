@@ -1,9 +1,8 @@
 class AddOrdering < ActiveRecord::Migration[4.2]
   def up
-    return if column_exists?(:equipment_models, :ordering) 
-  	
-    add_column :equipment_models, :ordering, :integer, :null => false
-    
+    unless column_exists?(:equipment_models, :ordering)
+  	 add_column :equipment_models, :ordering, :integer, :null => false
+    end
   	# store ActiveRecord connection to run queries
     conn = ActiveRecord::Base.connection
 

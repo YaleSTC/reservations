@@ -8,9 +8,8 @@ module ReservationGeneratorHelper
                         notes: FFaker::HipsterIpsum.paragraph(2),
                         start_date: Time.zone.today)
     max_checkout_len = r.equipment_model.maximum_checkout_length
-    last = [max_checkout_len - 1, 1].max
     duration = max_checkout_len -
-               rand_val(first: 1, last: last,
+               rand_val(first: 1, last: max_checkout_len - 1,
                         default: 1, random: random)
     r.due_date = r.start_date + duration.days
     r
