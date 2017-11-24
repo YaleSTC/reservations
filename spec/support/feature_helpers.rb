@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module FeatureHelpers
   # make sure we have a working app
   def app_setup
@@ -84,7 +85,7 @@ module FeatureHelpers
       visit root_path
       click_link 'My Profile'
       email = find('.page-header h1 small').text
-      @current_user = User.find_by_email(email)
+      @current_user = User.find_by(email: email)
     end
   end
 

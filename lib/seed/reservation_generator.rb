@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 module ReservationGenerator
   extend ReservationGeneratorHelper
 
-  RES_TYPES = Reservation.statuses.keys + %w(future overdue returned_overdue) -
-              %w(reserved)
+  RES_TYPES = Reservation.statuses.keys + %w[future overdue returned_overdue] -
+              %w[reserved]
 
   # Generate one of each reservation type with fixed time differences and
   # one with random time differences

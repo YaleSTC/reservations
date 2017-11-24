@@ -1,8 +1,9 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Generator do
-  OBJECTS = %i(app_config category requirement user superuser).freeze
+  OBJECTS = %i[app_config category requirement user superuser].freeze
   shared_examples 'generates a valid' do |method|
     it method.to_s do
       expect(Generator.send(method)).to be_truthy
