@@ -118,6 +118,6 @@ end
 group :heroku do
   gem 'unicorn', '~> 5.1.0'
   gem 'rack-timeout', '~> 0.4.2'
-  gem 'aws-sdk', '< 2.0'
+  gem 'aws-sdk', '~> 2.3.0'
   gem 'rails_12factor', '~> 0.0.3'
 end
