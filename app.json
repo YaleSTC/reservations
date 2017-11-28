@@ -70,6 +70,9 @@
     "AWS_SECRET_ACCESS_KEY": {
       "description": "AWS secret access key"
     },
+    "AWS_S3_REGION": {
+      "description": "AWS S3 bucket region"
+    },
     "DATABASE_URL": {
       "description": "Copy in CLEARDB_DATABASE_URL and change mysql to mysql2"
     }

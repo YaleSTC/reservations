@@ -31,6 +31,7 @@
 * Fixed cart validation counting error ([#1641](https://github.com/YaleSTC/reservations/issues/1641)).
 * Fixed User phone number validation regex ([#1633](https://github.com/YaleSTC/reservations/issues/1633)).
 * Use AppConfig#check everywhere ([#1584](https://github.com/YaleSTC/reservations/issues/1584)).
+* Fix issues with Paperclip and S3 ([#1702](https://github.com/YaleSTC/reservations/issues/1702)).
 
 ### Added
 * Configuration for Hound CI ([#1577](https://github.com/YaleSTC/reservations/issues/1577)).
