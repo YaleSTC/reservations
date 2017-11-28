@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in
   # config/application.rb
@@ -52,7 +53,8 @@ Rails.application.configure do
         bucket: ENV['S3_BUCKET_NAME'],
         access_key_id: ENV['AWS_ACCESS_KEY_ID'],
         secret_access_key: ENV['AWS_SECRET_ACCESS_KEY']
-      }
+      },
+      s3_region: ENV['AWS_S3_REGION']
     }
   end
 
@@ -102,7 +104,7 @@ Rails.application.configure do
 
   # Precompile additional assets (application.js, application.css, and all
   # non-JS/CSS are already added)
-  config.assets.precompile += %w(print.css)
+  config.assets.precompile += %w[print.css]
 
   # set up PartyFoul
   config.middleware.use('PartyFoul::Middleware') if ENV['PARTY_FOUL_TOKEN']
