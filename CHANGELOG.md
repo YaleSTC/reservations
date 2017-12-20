@@ -2,6 +2,10 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+## Unreleased
+### Fixed
+* Fixed new user signup when guest access is disabled ([#1706](https://github.com/YaleSTC/reservations/issues/1706)).
+
 ## v6.3.0 - 2017-09-01
 ### Important
 *This release includes an update to Ruby 2.4.1 and Rails 5.1 along with other dependencies*
