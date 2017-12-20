@@ -74,12 +74,12 @@ class Ability
   end
 
   def guest
+    can :create, User if AppConfig.check(:enable_new_users)
     return unless AppConfig.check(:enable_guests)
     can :read, EquipmentModel
     can :empty_cart, :all
     can :reload_catalog_cart, :all
     can :update_cart, :all
-    can :create, User if AppConfig.check(:enable_new_users)
     can :hide, Announcement
   end
 
