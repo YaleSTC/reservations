@@ -5,6 +5,7 @@
 ## Unreleased
 ### Fixed
 * Fixed new user signup when guest access is disabled ([#1706](https://github.com/YaleSTC/reservations/issues/1706)).
+* Permit the use of S3 buckets in regions other than US-East-1 ([#1708](https://github.com/YaleSTC/reservations/issues/1708)).
 * Fixed issue with displaying future reservations ([#1711](https://github.com/YaleSTC/reservations/issues/1711)).
 * Fix issue with checkout form populating the same equipment items for all models ([#1713](https://github.com/YaleSTC/reservations/issues/1713)).
 

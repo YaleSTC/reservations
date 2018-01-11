@@ -1,7 +1,10 @@
 # frozen_string_literal: true
-class AppConfig < ActiveRecord::Base
+
+class AppConfig < ApplicationRecord
   has_attached_file :favicon,
-                    url: '/system/:attachment/:id/:style/favicon.:extension'
+                    url: paperclip_url(filename: 'favicon'),
+                    path: ':rails_root/public/attachments/app_configs/'\
+                      ':attachment/:id/:style/favicon.:extension'
 
   validates_with AttachmentContentTypeValidator,
                  attributes: :favicon,
@@ -35,7 +38,7 @@ class AppConfig < ActiveRecord::Base
   # e-mail address if no separate address is specified
   def self.contact_email
     contact_email = get(:contact_link_location, nil)
-    if contact_email.nil? || contact_email.empty?
+    if contact_email.blank?
       get(:admin_email, nil)
     else
       contact_email
