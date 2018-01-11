@@ -88,8 +88,7 @@ class EquipmentModel < ApplicationRecord
                       thumbnail:
                         '-background none -gravity center -extent 260x180'
                     },
-                    url: '/attachments/equipment_models/:attachment/:id/'\
-                      ':style/:basename.:extension',
+                    url: paperclip_url,
                     path: ':rails_root/public/attachments/equipment_models/'\
                       ':attachment/:id/:style/:basename.:extension',
                     default_url: '/fat_cat.jpeg',
@@ -97,8 +96,7 @@ class EquipmentModel < ApplicationRecord
 
   has_attached_file :documentation, # generates document
                     content_type: 'application/pdf',
-                    url: '/attachments/equipment_models/:attachment/:id/'\
-                      ':style/:basename.:extension',
+                    url: paperclip_url,
                     path: ':rails_root/public/attachments/equipment_models/'\
                       ':attachment/:id/:style/:basename.:extension',
                     preserve_files: true
