@@ -6,6 +6,7 @@
 ### Fixed
 * Fixed new user signup when guest access is disabled ([#1706](https://github.com/YaleSTC/reservations/issues/1706)).
 * Fixed issue with displaying future reservations ([#1711](https://github.com/YaleSTC/reservations/issues/1711)).
+* Fix issue with checkout form populating the same equipment items for all models ([#1713](https://github.com/YaleSTC/reservations/issues/1713)).
 
 ## v6.3.0 - 2017-09-01
 ### Important

@@ -10,9 +10,8 @@ module EquipmentModelsHelper
   end
 
   def available_item_select_options(em)
-    @items ||= em.equipment_items.includes(:reservations).active
-                 .select(&:available?).sort_by(&:name)
-    @str ||= @items.collect do |item|
+    items = em.equipment_items.active.select(&:available?).sort_by(&:name)
+    items.collect do |item|
       "<option value=#{sanitize item.id.to_s}>"\
         "#{sanitize item.name}</option>"
     end.join
