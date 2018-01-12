@@ -397,8 +397,10 @@ class ReservationsController < ApplicationController
   end
 
   def manage # initializer
-    @check_out_set = @user.due_for_checkout.includes(:equipment_model)
-    @check_in_set = @user.due_for_checkin.includes(:equipment_model)
+    @check_out_set = @user.due_for_checkout
+                          .includes(equipment_model: :checkout_procedures)
+    @check_in_set = @user.due_for_checkin
+                         .includes(equipment_model: :checkin_procedures)
 
     render :manage, layout: 'application'
   end
