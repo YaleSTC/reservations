@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module ReservationsHelper
   def filter_message(set, source, filter, view_all)
     if view_all
@@ -11,7 +12,7 @@ module ReservationsHelper
   end
 
   def reservation_length
-    @reservation_length =
+    @reservation_length ||=
       (@reservation.due_date - @reservation.start_date).to_i
   end
 
@@ -21,7 +22,7 @@ module ReservationsHelper
   end
 
   def reservation_length_in_words
-    if @reservation_length == 0
+    if reservation_length.zero?
       'same day'
     else
       distance_of_time_in_words(@reservation.start_date,
@@ -30,13 +31,13 @@ module ReservationsHelper
   end
 
   def bar_span_positioning_fix
-    style = ''
+    style = String.new
 
     if reservation_length_in_words == 'same day' || reservation_length > 31
       style << 'bottom: 0;'
     end
 
-    style << 'display: none;' if @width == 0
+    style << 'display: none;' if @width.zero?
     style
   end
 
@@ -74,12 +75,12 @@ module ReservationsHelper
     passed_length = Time.zone.today - @reservation.start_date + 1
     total_length = @reservation.due_date - @reservation.start_date + 1
     # necessary to prevent division by 0
-    total_length = total_length == 0 ? 1 : total_length
+    total_length = total_length.zero? ? 1 : total_length
     @width = passed_length / total_length
 
     if @width > 1
       @width = 1
-    elsif @width < 0
+    elsif @width.negative?
       @width = 0
     else
       @width
