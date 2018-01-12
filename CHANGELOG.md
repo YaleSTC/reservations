@@ -5,6 +5,7 @@
 ## Unreleased
 ### Fixed
 * Fixed new user signup when guest access is disabled ([#1706](https://github.com/YaleSTC/reservations/issues/1706)).
+* Fixed issue with displaying future reservations ([#1711](https://github.com/YaleSTC/reservations/issues/1711)).
 
 ## v6.3.0 - 2017-09-01
 ### Important
