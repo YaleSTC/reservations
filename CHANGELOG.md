@@ -2,8 +2,9 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
-## Unreleased
+## v6.3.1 - 2018-05-31
 ### Fixed
+* Fixed issues with AWS S3 and Paperclip ([#1702](https://github.com/YaleSTC/reservations/issues/1702)).
 * Fixed new user signup when guest access is disabled ([#1706](https://github.com/YaleSTC/reservations/issues/1706)).
 * Permit the use of S3 buckets in regions other than US-East-1 ([#1708](https://github.com/YaleSTC/reservations/issues/1708)).
 * Fixed issue with displaying future reservations ([#1711](https://github.com/YaleSTC/reservations/issues/1711)).
