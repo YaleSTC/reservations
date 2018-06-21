@@ -1,9 +1,8 @@
 <% accepted = @user.terms_of_service_accepted == true %>
 
 <%= f.input :terms_of_service_accepted, # users(admins) cannot accept ToS for other users
-          input_html: {value: accepted, disabled: !(current_user == @user || !current_user)},
-          label: ("#{ (current_user == @user || !current_user) ? 'I accept' : 'User accepts'} the #{
-                    link_to('Terms of Service', tos_path, target: '_blank')}")  %>
+            input_html: { value: accepted, disabled: user_viewing_other_user?(current_user: current_user, user: @user) },
+            label: sanitize("#{tos_attestation(current_user: current_user, user: @user)} the #{link_to('Terms of Service', tos_path, target: '_blank')}") %>
 
 <% if can? :manage, Reservation %>
   <%= f.input :created_by_admin, as: :hidden, value: true %>

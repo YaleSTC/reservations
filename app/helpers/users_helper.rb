@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module UsersHelper
   def active_tab(key)
     return 'active' if key == :current_equipment
@@ -22,5 +23,17 @@ module UsersHelper
       link_to 'Unban', unban_user_path(user), class: 'btn btn-success',
                                               method: :put
     end
+  end
+
+  def tos_attestation(current_user:, user:)
+    if user_viewing_other_user?(current_user: current_user, user: user)
+      return 'User accepts'
+    end
+    'I accept'
+  end
+
+  def user_viewing_other_user?(current_user:, user:)
+    return false if current_user.nil? || current_user == user
+    true
   end
 end
