@@ -1,11 +1,14 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 require 'concerns/linkable_spec.rb'
+require 'concerns/soft_deletable_spec.rb'
 
 describe EquipmentItem, type: :model do
   include ActiveSupport::Testing::TimeHelpers
 
   it_behaves_like 'linkable'
+  it_behaves_like 'soft deletable'
 
   describe 'basic validations' do
     subject(:item) { FactoryGirl.build(:equipment_item) }

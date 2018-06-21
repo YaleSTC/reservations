@@ -63,8 +63,6 @@ module Reservations
     # Load all helpers in all views
     config.action_controller.include_all_helpers = true
 
-    PermanentRecords.dependent_record_window = 10.seconds
-
     # set up routing options for Reports (at a minimum)
     config.after_initialize do
       Rails.application.routes.default_url_options =

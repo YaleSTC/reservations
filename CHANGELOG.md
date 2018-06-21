@@ -2,6 +2,10 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+## Unreleased
+### Fixed
+* Fixed issues with deactivation / activation by removing permanent_records ([#1715](https://github.com/YaleSTC/reservations/issues/1715)).
+
 ## v6.3.1 - 2018-05-31
 ### Fixed
 * Fixed issues with AWS S3 and Paperclip ([#1702](https://github.com/YaleSTC/reservations/issues/1702)).

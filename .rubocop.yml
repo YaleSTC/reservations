@@ -39,3 +39,6 @@ HasAndBelongsToMany:
   Enabled: false
 Rails:
   Enabled: true
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    - "spec/**/*"

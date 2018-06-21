@@ -38,7 +38,6 @@ gem 'paperclip', '~> 5.1.0'
 gem 'rubyzip', '~> 1.2.1'
 
 # soft deletion
-gem 'permanent_records', '= 4.1.5'
 gem 'nilify_blanks', '~> 1.2.1'
 
 # ui
@@ -89,6 +88,7 @@ group :development, :test do
   gem 'codeclimate-test-reporter', '~> 1.0.8'
   gem 'database_cleaner', '~> 1.6.1'
   gem 'rubocop', '~> 0.49.1', require: false
+  gem 'timecop', '~> 0.9.1'
 end
 
 group :development, :test, :heroku do

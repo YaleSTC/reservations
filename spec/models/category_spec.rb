@@ -1,7 +1,11 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
+require 'concerns/soft_deletable_spec.rb'
 
 describe Category, type: :model do
+  it_behaves_like 'soft deletable'
+
   before(:each) do
     @category = FactoryGirl.build(:category)
   end

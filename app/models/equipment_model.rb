@@ -3,6 +3,7 @@
 # rubocop:disable ClassLength
 class EquipmentModel < ApplicationRecord
   include ApplicationHelper
+  include SoftDeletable
   include Linkable
   include Searchable
 
@@ -201,5 +202,13 @@ class EquipmentModel < ApplicationRecord
     return false if reserver_id.nil?
     reserver = User.find(reserver_id)
     !(requirements - reserver.requirements).empty?
+  end
+
+  private
+
+  # Equipment model deactivation also deactivates all associated checkin and
+  # checkout procedures as well as all equipment items.
+  def associated_records
+    equipment_items + checkin_procedures + checkout_procedures
   end
 end

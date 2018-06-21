@@ -1,8 +1,9 @@
 # frozen_string_literal: true
+
 class RequirementsController < ApplicationController
   load_and_authorize_resource
   before_action :set_current_requirement,
-                only: [:show, :edit, :update, :destroy]
+                only: %i[show edit update destroy]
 
   # ------------- before filter methods ------------- #
   def set_current_requirement
@@ -14,15 +15,13 @@ class RequirementsController < ApplicationController
     @requirements = Requirement.all
   end
 
-  def show
-  end
+  def show; end
 
   def new
     @requirement = Requirement.new
   end
 
-  def edit
-  end
+  def edit; end
 
   def create
     @requirement = Requirement.new(requirement_params)
@@ -42,7 +41,7 @@ class RequirementsController < ApplicationController
   end
 
   def destroy
-    @requirement.destroy(:force)
+    @requirement.destroy
     redirect_to requirements_url
   end
 

@@ -50,7 +50,7 @@ class AnnouncementsController < ApplicationController
   end
 
   def destroy
-    @announcement.destroy(:force)
+    @announcement.destroy
     redirect_to(announcements_url)
   end
 
