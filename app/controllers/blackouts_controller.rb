@@ -107,15 +107,13 @@ class BlackoutsController < ApplicationController
   end
 
   def destroy
-    @blackout.destroy(:force)
+    @blackout.destroy
     redirect_to blackouts_url
   end
 
   def destroy_recurring
     blackout_set = Blackout.where('set_id = ?', @blackout.set_id)
-    blackout_set.each do |blackout|
-      blackout.destroy(:force)
-    end
+    blackout_set.each(&:destroy)
     flash[:notice] = 'All blackouts in the set were successfully destroyed.'
     redirect_to(blackouts_path) && return
   end

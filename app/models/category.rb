@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Category < ApplicationRecord
+  include SoftDeletable
   include Searchable
   searchable_on(:name)
 
@@ -37,5 +38,13 @@ class Category < ApplicationRecord
 
   def maximum_checkout_length
     max_checkout_length || Float::INFINITY
+  end
+
+  private
+
+  # We only need to specify equipment_models here, all other associations will
+  # cascade as those are destroyed.
+  def associated_records
+    equipment_models
   end
 end

@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
-# rubocop:disable Lint/AmbiguousBlockAssociation
-
 require 'spec_helper'
 require 'concerns/linkable_spec.rb'
+require 'concerns/soft_deletable_spec.rb'
 
 describe EquipmentModel, type: :model do
   it_behaves_like 'linkable'
+  it_behaves_like 'soft deletable'
+
   def mock_eq_model(**attrs)
     FactoryGirl.build_stubbed(:equipment_model, **attrs)
   end

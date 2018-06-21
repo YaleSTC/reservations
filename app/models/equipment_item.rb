@@ -1,5 +1,7 @@
 # frozen_string_literal: true
-class EquipmentItem < ActiveRecord::Base
+
+class EquipmentItem < ApplicationRecord # rubocop:disable Metrics/ClassLength
+  include SoftDeletable
   include Linkable
   include Searchable
 
@@ -98,8 +100,10 @@ class EquipmentItem < ActiveRecord::Base
         old_val = diff[0] ? EquipmentModel.find(diff[0]).name : 'nil'
         new_val = diff[1] ? EquipmentModel.find(diff[1]).name : 'nil'
       end
-      new_notes += "\n#{name} changed from " + old_val + ' to ' + new_val\
-        + '.' if old_val && new_val
+      if old_val && new_val
+        new_notes += "\n#{name} changed from " + old_val + ' to ' + new_val\
+          + '.'
+      end
     end
     new_notes += "\n\n" + notes
     self.notes = new_notes.strip
@@ -127,5 +131,13 @@ class EquipmentItem < ActiveRecord::Base
     save!
     destroy
     self
+  end
+
+  private
+
+  # Equipment items don't have any associated records that are soft-deleted with
+  # them
+  def associated_records
+    []
   end
 end
