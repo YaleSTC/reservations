@@ -7,6 +7,7 @@
 * Fixed issues with escaped HTML in flashes and elsewhere ([#1705](https://github.com/YaleSTC/reservations/issues/1705)).
 * Fixed issues with deactivation / activation by removing permanent_records ([#1715](https://github.com/YaleSTC/reservations/issues/1715)).
 * Fixed issue with previous migration leading to incorrect data ([#1722](https://github.com/YaleSTC/reservations/issues/1722)).
+* Fixed broken hourly / monthly task buttons ([#1723](https://github.com/YaleSTC/reservations/issues/1723)).
 
 ## v6.3.1 - 2018-05-31
 ### Fixed

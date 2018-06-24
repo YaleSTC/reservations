@@ -7,6 +7,6 @@
 
 <% if can? :run, :jobs %>
   <legend>Tasks</legend>
-  <%= link_to "Run Daily Tasks", '/app_configs/run_daily_tasks/', class: 'btn btn-default' %>
-  <%= link_to "Run Hourly Tasks", '/app_configs/run_hourly_tasks/', class: 'btn btn-default' %>
+  <%= link_to "Run Daily Tasks", '/app_configs/run_daily_tasks/', method: :put, class: 'btn btn-default' %>
+  <%= link_to "Run Hourly Tasks", '/app_configs/run_hourly_tasks/', method: :put, class: 'btn btn-default' %>
 <% end %>
