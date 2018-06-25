@@ -4,6 +4,7 @@
 
 ## Unreleased
 ### Fixed
+* Fixed incorrect evaluation of reservations affected by a blackout ([#1644](https://github.com/YaleSTC/reservations/issues/1644)).
 * Fixed issues with escaped HTML in flashes and elsewhere ([#1705](https://github.com/YaleSTC/reservations/issues/1705)).
 * Fixed issues with deactivation / activation by removing permanent_records ([#1715](https://github.com/YaleSTC/reservations/issues/1715)).
 * Fixed broken return receipts ([#1717](https://github.com/YaleSTC/reservations/issues/1717)).
