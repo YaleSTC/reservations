@@ -2,7 +2,7 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
-## Unreleased
+## v6.3.2 - 2018-06-25
 ### Fixed
 * Fixed incorrect evaluation of reservations affected by a blackout ([#1644](https://github.com/YaleSTC/reservations/issues/1644)).
 * Fixed issues with escaped HTML in flashes and elsewhere ([#1705](https://github.com/YaleSTC/reservations/issues/1705)).
@@ -21,6 +21,9 @@
 * Permit the use of S3 buckets in regions other than US-East-1 ([#1708](https://github.com/YaleSTC/reservations/issues/1708)).
 * Fixed issue with displaying future reservations ([#1711](https://github.com/YaleSTC/reservations/issues/1711)).
 * Fix issue with checkout form populating the same equipment items for all models ([#1713](https://github.com/YaleSTC/reservations/issues/1713)).
+
+### Removed
+* Removed the ability to order equipment models due to bugs ([#1696](https://github.com/YaleSTC/reservations/issues/1696)).
 
 ## v6.3.0 - 2017-09-01
 ### Important
