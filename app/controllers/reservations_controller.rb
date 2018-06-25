@@ -423,8 +423,14 @@ class ReservationsController < ApplicationController
   end
 
   def send_receipt
-    if UserMailer.reservation_status_update(@reservation, 'checked out')
-                 .deliver_now
+    status = if @reservation.checked_in.present?
+               'returned'
+             elsif @reservation.checked_out.present?
+               'checked out'
+             else
+               ''
+             end
+    if UserMailer.reservation_status_update(@reservation, status).deliver_now
       flash[:notice] = 'Successfully delivered receipt email.'
     else
       flash[:error] = 'Unable to deliver receipt email. Please contact '\
