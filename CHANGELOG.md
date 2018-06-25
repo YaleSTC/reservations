@@ -11,6 +11,9 @@
 * Fixed issue with previous migration leading to incorrect data ([#1722](https://github.com/YaleSTC/reservations/issues/1722)).
 * Fixed broken hourly / monthly task buttons ([#1723](https://github.com/YaleSTC/reservations/issues/1723)).
 
+### Added
+* Added link to the accessibility at Yale site in the footer ([#1725](https://github.com/YaleSTC/reservations/issues/1725)).
+
 ## v6.3.1 - 2018-05-31
 ### Fixed
 * Fixed issues with AWS S3 and Paperclip ([#1702](https://github.com/YaleSTC/reservations/issues/1702)).
