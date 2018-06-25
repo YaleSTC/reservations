@@ -98,6 +98,7 @@ class Reservation < ApplicationRecord
   scope :starts_on_days, Reservations::StartsOnDaysQuery
   scope :upcoming, Reservations::UpcomingQuery
   scope :consecutive_with, Reservations::ConsecutiveWithQuery
+  scope :affected_by_blackout, Reservations::AffectedByBlackoutQuery
 
   # join Scopes
   scope :with_categories, lambda {
