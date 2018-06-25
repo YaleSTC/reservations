@@ -82,7 +82,7 @@
     <% end %>
     <div class="links">
       <p><%= link_to_add_association 'Add Step', f, :checkout_procedures,
-      class: "btn btn-default" %></p>
+      class: "btn btn-default" , id: 'add_checkout_procedure'%></p>
     </div>
   </fieldset>
 
@@ -93,7 +93,7 @@
     <% end %>
     <div class="links">
       <p><%= link_to_add_association 'Add Step', f, :checkin_procedures,
-      class: "btn btn-default" %></p>
+      class: "btn btn-default", id: 'add_checkin_procedure' %></p>
     </div>
   </fieldset>
 
