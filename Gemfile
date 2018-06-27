@@ -32,7 +32,7 @@ gem 'rails_admin', '~> 1.2.0'
 gem 'net-ldap', '~> 0.16.0'
 
 # attachments
-gem 'paperclip', '~> 5.1.0'
+gem 'paperclip', '~> 5.2.0'
 
 # for exporting multiple files
 gem 'rubyzip', '~> 1.2.1'
