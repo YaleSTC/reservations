@@ -10,6 +10,7 @@
 * Fixed broken return receipts ([#1717](https://github.com/YaleSTC/reservations/issues/1717)).
 * Fixed issue with previous migration leading to incorrect data ([#1722](https://github.com/YaleSTC/reservations/issues/1722)).
 * Fixed broken hourly / monthly task buttons ([#1723](https://github.com/YaleSTC/reservations/issues/1723)).
+* Fixed reservation checkin / checkout with procedures ([#1726](https://github.com/YaleSTC/reservations/issues/1726)).
 * Fixed broken procedure creation ([#1727](https://github.com/YaleSTC/reservations/issues/1727)).
 
 ### Added
