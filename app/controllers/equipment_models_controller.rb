@@ -165,18 +165,9 @@ class EquipmentModelsController < ApplicationController
                   :documentation, :max_renewal_times, :max_renewal_length,
                   :renewal_days_before_due, :late_fee_max,
                   { associated_equipment_model_ids: [] }, :requirement_ids,
-                  :requirements, :max_checkout_length)
-          .tap do |whitelisted|
-
-      if params[:equipment_model][:checkin_procedures_attributes]
-        whitelisted[:checkin_procedures_attributes] =
-          params[:equipment_model][:checkin_procedures_attributes]
-      end
-      if params[:equipment_model][:checkout_procedures_attributes]
-        whitelisted[:checkout_procedures_attributes] =
-          params[:equipment_model][:checkout_procedures_attributes]
-      end
-    end
+                  :requirements, :max_checkout_length,
+                  checkin_procedures_attributes: {},
+                  checkout_procedures_attributes: {})
   end
 
   # from https://gist.github.com/cnk/4453c6e81837e8d38b7e
