@@ -268,7 +268,8 @@ class UsersController < ApplicationController
     # we need uniq because it otherwise includes overdue reservations in the
     # date range twice
     (@user.reservations.includes(:equipment_item)
-      .overlaps_with_date_range(@start_date, @end_date).finalized + \
+      .overlaps_with_date_range(@start_date, @end_date).finalized
+      .where.not(status: 'archived') + \
       @user.reservations.includes(:equipment_item).overdue).uniq
   end
 

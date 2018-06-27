@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 class CategoriesController < ApplicationController
   load_and_authorize_resource
   decorates_assigned :category
   before_action :set_current_category,
-                only: [:show, :edit, :update, :destroy, :deactivate]
+                only: %i[show edit update destroy deactivate]
 
   include ActivationHelper
   include CsvExport
@@ -53,8 +54,7 @@ class CategoriesController < ApplicationController
     end
   end
 
-  def edit
-  end
+  def edit; end
 
   def update
     if @category.update_attributes(category_params)
@@ -95,7 +95,7 @@ class CategoriesController < ApplicationController
   def generate_calendar_reservations
     # we need uniq because it otherwise includes overdue reservations in the
     # date range twice
-    (Reservation.for_cat(@category.id).finalized
+    (Reservation.for_cat(@category.id).finalized.where.not(status: 'archived')
       .includes(:equipment_item, :equipment_model)
       .overlaps_with_date_range(@start_date, @end_date) + \
       Reservation.for_cat(@category.id)

@@ -188,7 +188,8 @@ class EquipmentModelsController < ApplicationController
     # we need uniq because it otherwise includes overdue reservations in the
     # date range twice
     (Reservation.for_eq_model(@equipment_model.id).includes(:equipment_item)
-      .overlaps_with_date_range(@start_date, @end_date).finalized + \
+      .overlaps_with_date_range(@start_date, @end_date).finalized
+      .where.not(status: 'archived') + \
       Reservation.for_eq_model(@equipment_model.id).includes(:equipment_item)
         .overdue).uniq
   end
