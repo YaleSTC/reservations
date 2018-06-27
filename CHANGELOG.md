@@ -12,6 +12,7 @@
 * Fixed broken hourly / monthly task buttons ([#1723](https://github.com/YaleSTC/reservations/issues/1723)).
 * Fixed reservation checkin / checkout with procedures ([#1726](https://github.com/YaleSTC/reservations/issues/1726)).
 * Fixed broken procedure creation ([#1727](https://github.com/YaleSTC/reservations/issues/1727)).
+* Fixed broken calendar feed with archived reservations ([#1729](https://github.com/YaleSTC/reservations/issues/1729)).
 
 ### Added
 * Added link to the accessibility at Yale site in the footer ([#1725](https://github.com/YaleSTC/reservations/issues/1725)).

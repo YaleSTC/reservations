@@ -1,12 +1,13 @@
 # frozen_string_literal: true
+
 # rubocop:disable Metrics/ClassLength
 class EquipmentItemsController < ApplicationController
   load_and_authorize_resource
   decorates_assigned :equipment_item
   before_action :set_current_equipment_item,
-                only: [:show, :edit, :update, :destroy, :deactivate,
-                       :activate]
-  before_action :set_equipment_model_if_possible, only: [:index, :new]
+                only: %i[show edit update destroy deactivate
+                         activate]
+  before_action :set_equipment_model_if_possible, only: %i[index new]
 
   include ActivationHelper
   include CsvExport
@@ -59,8 +60,7 @@ class EquipmentItemsController < ApplicationController
     end
   end
 
-  def edit
-  end
+  def edit; end
 
   def update
     p = equipment_item_params
@@ -122,7 +122,8 @@ class EquipmentItemsController < ApplicationController
     # we need uniq because it otherwise includes overdue reservations in the
     # date range twice
     (@equipment_item.reservations.includes(:equipment_item)
-      .overlaps_with_date_range(@start_date, @end_date).finalized + \
+      .overlaps_with_date_range(@start_date, @end_date).finalized
+      .where.not(status: 'archived') + \
       @equipment_item.reservations.includes(:equipment_item).overdue).uniq
   end
 
