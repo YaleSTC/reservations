@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Lint/AmbiguousBlockAssociation, Rails/SkipsModelValidations
+# rubocop:disable Rails/SkipsModelValidations
 
 require 'spec_helper'
 require 'concerns/linkable_spec.rb'
@@ -634,19 +634,20 @@ describe Reservation, type: :model do
     let!(:handler) { FactoryGirl.build_stubbed(:checkout_person) }
     context 'no procedures' do
       let!(:res) { FactoryGirl.build_stubbed(:checked_out_reservation) }
+      let(:procedures) { instance_spy(ActionController::Parameters, to_h: {}) }
       it 'sets the checkin handler' do
-        expect { res.checkin(handler, {}, '') }.to \
+        expect { res.checkin(handler, procedures, '') }.to \
           change { res.checkin_handler }.from(nil).to(handler)
       end
       it 'sets the checked in time' do
         # travel in order to freeze the time
         travel(-1.days) do
-          expect { res.checkin(handler, {}, '') }.to \
+          expect { res.checkin(handler, procedures, '') }.to \
             change { res.checked_in }.from(nil).to(Time.zone.now)
         end
       end
       it 'sets the status to returned' do
-        expect { res.checkin(handler, {}, '') }.to \
+        expect { res.checkin(handler, procedures, '') }.to \
           change { res.status }.from('checked_out').to('returned')
       end
       it 'updates the notes' do
@@ -655,7 +656,7 @@ describe Reservation, type: :model do
         # alternatively just test that the notes change?
         # also applies to the next two tests
         new_notes = ''
-        procedures = {}
+        procedures = instance_spy(ActionController::Parameters, to_h: {})
         allow(res).to receive(:make_notes)
           .with('Checked in', new_notes, [], handler)
         res.checkin(handler, procedures, new_notes)
@@ -663,7 +664,7 @@ describe Reservation, type: :model do
           .with('Checked in', new_notes, [], handler)
       end
       it 'returns the reservation' do
-        expect(res.checkin(handler, {}, '')).to eq(res)
+        expect(res.checkin(handler, procedures, '')).to eq(res)
       end
     end
     context 'with completed procedures' do
@@ -673,7 +674,8 @@ describe Reservation, type: :model do
         model = EquipmentModel.find(procedure.equipment_model.id)
         res = FactoryGirl.build_stubbed(:checked_out_reservation,
                                         equipment_model: model)
-        procedures = { procedure.id.to_s => '1' }
+        p_hash = { procedure.id.to_s => '1' }
+        procedures = instance_spy(ActionController::Parameters, to_h: p_hash)
         allow(res).to receive(:make_notes).with('Checked in', '', [], handler)
         res.checkin(handler, procedures, '')
         expect(res).to have_received(:make_notes)
@@ -687,16 +689,18 @@ describe Reservation, type: :model do
         model = EquipmentModel.find(procedure.equipment_model.id)
         res = FactoryGirl.build_stubbed(:checked_out_reservation,
                                         equipment_model: model)
+        procedures = instance_spy(ActionController::Parameters, to_h: {})
         incomplete = [procedure.step]
         allow(res).to receive(:make_notes)
           .with('Checked in', '', incomplete, handler)
-        res.checkin(handler, {}, '')
+        res.checkin(handler, procedures, '')
         expect(res).to have_received(:make_notes)
           .with('Checked in', '', incomplete, handler)
       end
     end
     context 'overdue' do
       let!(:res) { FactoryGirl.create(:overdue_reservation) }
+      let(:procedures) { instance_spy(ActionController::Parameters, to_h: {}) }
       before do
         ActionMailer::Base.perform_deliveries = false
         mock_app_config(admin_email: 'admin@email.com',
@@ -708,12 +712,12 @@ describe Reservation, type: :model do
       it 'sends the admins an email' do
         expect(AdminMailer).to \
           receive_message_chain(:overdue_checked_in_fine_admin, :deliver_now)
-        res.checkin(handler, {}, '')
+        res.checkin(handler, procedures, '')
       end
       it 'sends the user an email' do
         expect(UserMailer).to \
           receive_message_chain(:reservation_status_update, :deliver_now)
-        res.checkin(handler, {}, '')
+        res.checkin(handler, procedures, '')
       end
     end
   end
@@ -728,23 +732,24 @@ describe Reservation, type: :model do
       let!(:item) do
         FactoryGirl.build_stubbed(:equipment_item, equipment_model: model)
       end
+      let(:procedures) { instance_spy(ActionController::Parameters, to_h: {}) }
       it 'sets the checkout handler' do
-        expect { res.checkout(item.id, handler, {}, '') }.to \
+        expect { res.checkout(item.id, handler, procedures, '') }.to \
           change { res.checkout_handler }.from(nil).to(handler)
       end
       it 'sets the checked out time' do
         # travel in order to freeze the time
         travel(-1.days) do
-          expect { res.checkout(item.id, handler, {}, '') }.to \
+          expect { res.checkout(item.id, handler, procedures, '') }.to \
             change { res.checked_out }.from(nil).to(Time.zone.now)
         end
       end
       it 'sets the status to checked_out' do
-        expect { res.checkout(item.id, handler, {}, '') }.to \
+        expect { res.checkout(item.id, handler, procedures, '') }.to \
           change { res.status }.from('reserved').to('checked_out')
       end
       it 'assigns the item' do
-        expect { res.checkout(item.id, handler, {}, '') }.to \
+        expect { res.checkout(item.id, handler, procedures, '') }.to \
           change { res.equipment_item_id }.from(nil).to(item.id)
       end
       it 'updates the notes' do
@@ -753,7 +758,7 @@ describe Reservation, type: :model do
         # alternatively just test that the notes change?
         # also applies to the next two tests
         new_notes = ''
-        procedures = {}
+        procedures = instance_spy(ActionController::Parameters, to_h: {})
         allow(res).to receive(:make_notes)
           .with('Checked out', new_notes, [], handler)
         res.checkout(item, handler, procedures, new_notes)
@@ -761,7 +766,7 @@ describe Reservation, type: :model do
           .with('Checked out', new_notes, [], handler)
       end
       it 'returns the reservation' do
-        expect(res.checkout(item, handler, {}, '')).to eq(res)
+        expect(res.checkout(item, handler, procedures, '')).to eq(res)
       end
     end
     context 'with completed procedures' do
@@ -773,7 +778,9 @@ describe Reservation, type: :model do
                                          equipment_model: model)
         res = FactoryGirl.build_stubbed(:valid_reservation,
                                         equipment_model: model)
-        procedures = { procedure.id.to_s => '1' }
+        p_hash = { procedure.id.to_s => '1' }
+        procedures = instance_spy(ActionController::Parameters, to_h: p_hash)
+
         allow(res).to receive(:make_notes).with('Checked out', '', [], handler)
         res.checkout(item, handler, procedures, '')
         expect(res).to have_received(:make_notes)
@@ -789,10 +796,11 @@ describe Reservation, type: :model do
                                          equipment_model: model)
         res = FactoryGirl.build_stubbed(:valid_reservation,
                                         equipment_model: model)
+        procedures = instance_spy(ActionController::Parameters, to_h: {})
         incomplete = [procedure.step]
         allow(res).to receive(:make_notes)
           .with('Checked out', '', incomplete, handler)
-        res.checkout(item, handler, {}, '')
+        res.checkout(item, handler, procedures, '')
         expect(res).to have_received(:make_notes)
           .with('Checked out', '', incomplete, handler)
       end

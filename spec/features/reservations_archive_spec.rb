@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'Reservations archiving', type: :feature do
@@ -48,7 +49,8 @@ describe 'Reservations archiving', type: :feature do
       before do
         @ei = FactoryGirl.create(:equipment_item,
                                  equipment_model: @res.equipment_model)
-        @res.checkout(@ei.id, @admin, [], '').save
+        procedures = instance_spy(ActionController::Parameters, to_h: {})
+        @res.checkout(@ei.id, @admin, procedures, '').save
       end
 
       it_behaves_like 'can archive reservation'
@@ -88,7 +90,10 @@ describe 'Reservations archiving', type: :feature do
       end
 
       context 'if checked in' do
-        before { @res.checkin(@admin, [], '').save }
+        before do
+          procedures = instance_spy(ActionController::Parameters, to_h: {})
+          @res.checkin(@admin, procedures, '').save
+        end
 
         it_behaves_like 'cannot see archive button'
       end

@@ -320,7 +320,7 @@ class Reservation < ApplicationRecord
     # gather all the procedure texts that were not
     # checked, ie not included in the procedures hash
     incomplete_procedures = []
-    procedures = Reservation.completed_procedures(procedures)
+    procedures = Reservation.completed_procedures(procedures&.permit!&.to_h)
     equipment_model.checkin_procedures.each do |checkin_procedure|
       if procedures.exclude?(checkin_procedure.id.to_s)
         incomplete_procedures << checkin_procedure.step
@@ -369,7 +369,7 @@ class Reservation < ApplicationRecord
     self.status = 'checked_out'
 
     incomplete_procedures = []
-    procedures = Reservation.completed_procedures(procedures)
+    procedures = Reservation.completed_procedures(procedures&.permit!&.to_h)
     equipment_model.checkout_procedures.each do |checkout_procedure|
       if procedures.exclude?(checkout_procedure.id.to_s)
         incomplete_procedures << checkout_procedure.step
