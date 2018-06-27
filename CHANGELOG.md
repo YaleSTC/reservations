@@ -2,7 +2,7 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
-## v6.3.2 - 2018-06-25
+## v6.3.2 - 2018-06-26
 ### Fixed
 * Fixed incorrect evaluation of reservations affected by a blackout ([#1644](https://github.com/YaleSTC/reservations/issues/1644)).
 * Fixed issues with escaped HTML in flashes and elsewhere ([#1705](https://github.com/YaleSTC/reservations/issues/1705)).
