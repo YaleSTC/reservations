@@ -6,6 +6,7 @@
 # rubocop:disable ClassLength
 class ApplicationController < ActionController::Base
   helper :layout
+
   # See ActionController::RequestForgeryProtection for details
   protect_from_forgery with: :exception
   before_action :app_setup_check
@@ -265,7 +266,7 @@ class ApplicationController < ActionController::Base
       restricted = em.model_restricted?(cart.reserver_id)
       next unless restricted
       @qualifications_hash[em.id] =
-        sanitize(RequirementsHelper.list_requirement_admins(reserver, em))
+        helpers.list_requirement_admins(reserver, em)
     end
 
     @page_eq_models_by_category = eq_models

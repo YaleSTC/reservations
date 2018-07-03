@@ -14,6 +14,7 @@
 * Fixed broken procedure creation ([#1727](https://github.com/YaleSTC/reservations/issues/1727)).
 * Fixed broken calendar feed with archived reservations ([#1729](https://github.com/YaleSTC/reservations/issues/1729)).
 * Updated several vulnerable dependencies.
+* Fixed broken rendering of equipment with a requirement ([#1730](https://github.com/YaleSTC/reservations/issues/1730)).
 
 ### Added
 * Added link to the accessibility at Yale site in the footer ([#1725](https://github.com/YaleSTC/reservations/issues/1725)).
