@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Cart, type: :model do
@@ -199,8 +200,10 @@ describe Cart, type: :model do
       end
 
       it 'fails when the reservation is before' do
+        # rubocop:disable Rails/SkipsModelValidations
         @res.update_columns(start_date: @cart.start_date - 2,
                             due_date: @cart.start_date - 1)
+        # rubocop:enable Rails/SkipsModelValidations
         expect(@cart.check_consecutive).not_to eq([])
         expect(@cart.validate_all).not_to eq([])
       end
@@ -219,6 +222,11 @@ describe Cart, type: :model do
                           due_date: @cart.start_date - 1).save(validate: false)
         expect(@cart.check_consecutive).not_to eq([])
         expect(@cart.validate_all).not_to eq([])
+      end
+
+      it 'passes when checking a renewal' do
+        expect(@cart.check_consecutive).not_to eq([])
+        expect(@cart.validate_all(true)).to eq([])
       end
 
       it "passes when max_per_user isn't 1" do
@@ -251,9 +259,9 @@ describe Cart, type: :model do
       expect(@cart.check_max_ems).to eq([])
     end
     it 'passes when the cart contains multiple models' do
-      em_2 = FactoryGirl.create(:equipment_model, max_per_user: 1)
-      FactoryGirl.create_pair(:equipment_item, equipment_model: em_2)
-      @cart.add_item(em_2)
+      em2 = FactoryGirl.create(:equipment_model, max_per_user: 1)
+      FactoryGirl.create_pair(:equipment_item, equipment_model: em2)
+      @cart.add_item(em2)
       expect(@cart.check_max_ems).to eq([])
     end
     it 'fails when the reserver exceeds the item limit' do
@@ -292,10 +300,10 @@ describe Cart, type: :model do
       expect(@cart.check_max_cat).to eq([])
     end
     it 'passes when the cart has items from multiple categories' do
-      cat_2 = FactoryGirl.create(:category, max_per_user: 1)
-      em_3 = FactoryGirl.create(:equipment_model, category: cat_2)
-      FactoryGirl.create_pair(:equipment_item, equipment_model: em_3)
-      @cart.add_item(em_3)
+      cat2 = FactoryGirl.create(:category, max_per_user: 1)
+      em3 = FactoryGirl.create(:equipment_model, category: cat2)
+      FactoryGirl.create_pair(:equipment_item, equipment_model: em3)
+      @cart.add_item(em3)
       expect(@cart.check_max_cat).to eq([])
     end
     it 'fails when the reserver exceeds the item limit' do
