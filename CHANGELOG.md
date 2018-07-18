@@ -4,12 +4,14 @@
 
 ## Unreleased - 2018-08-03
 ### Fixed
+* Fixed broken renewals when reservations were the maximum checkout length ([#1734](https://github.com/YaleSTC/reservations/issues/1734)).
 * Fix issue with the manage reservation button for approved requests ([1747](https://github.com/YaleSTC/reservations/issues/1747))
 * Fix unauthorized display of procedures and equipment items ([1749](https://github.com/YaleSTC/reservations/issues/1749))
 
 ## v6.3.3 - 2018-07-20
 ### Fixed
 * Modify daily/hourly Admin buttons to use relative path via helper method ([1742](https://github.com/YaleSTC/reservations/issues/1742))
+* Fix buttons to run cron tasks ([1745](https://github.com/YaleSTC/reservations/issues/1745))
 * Change rake daily/hourly tasks to execute immediately to fix issue with cron job in production ([#1739](https://github.com/YaleSTC/reservations/issues/1739), [#1740](https://github.com/YaleSTC/reservations/issues/1740), [#1741](https://github.com/YaleSTC/reservations/issues/1741))
 
 ## v6.3.2 - 2018-06-26

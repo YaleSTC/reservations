@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # rubocop:disable ModuleLength
 module CartValidations
   # These validation methods were carefully written to use as few database
@@ -12,7 +13,7 @@ module CartValidations
     # skipped when validating renewals
     errors = []
     errors += check_banned
-    errors += check_consecutive
+    errors += check_consecutive unless renew
     errors += check_date_blackout(start_date, 'start')
     errors += check_date_blackout(due_date, 'end')
     errors += check_overdue_reservations unless renew
@@ -76,7 +77,7 @@ module CartValidations
     # check that the start date is not on a blackout date
     # 1 query
     errors = []
-    if Blackout.hard.for_date(date).count > 0
+    if Blackout.hard.for_date(date).count.positive?
       errors << "#{Blackout.get_notices_for_date(date, :hard)} "\
         "(a reservation cannot #{verb} on "\
         "#{date.to_date.strftime('%m/%d')})."
@@ -88,7 +89,7 @@ module CartValidations
     # check that the reserver has no overdue reservations
     # 1 query
     errors = []
-    if Reservation.for_reserver(reserver_id).overdue.count > 0
+    if Reservation.for_reserver(reserver_id).overdue.count.positive?
       errors << 'This user has overdue reservations that prevent him/her '\
         'from creating new ones.'
     end
@@ -186,7 +187,7 @@ module CartValidations
     errors = []
     max_available = model.num_available(start_date, due_date, source_res)
     return errors unless max_available < quantity
-    if max_available == 0
+    if max_available.zero?
       error = "No #{model.name.pluralize} are"
     else
       error = "Only #{max_available} #{model.name.pluralize(max_available)}" \
