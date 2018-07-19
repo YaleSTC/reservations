@@ -87,7 +87,7 @@ group :development, :test do
   gem 'awesome_print', '~> 1.8.0'
   gem 'codeclimate-test-reporter', '~> 1.0.8'
   gem 'database_cleaner', '~> 1.6.1'
-  gem 'rubocop', '~> 0.49.1', require: false
+  gem 'rubocop', '~> 0.58.1', require: false
   gem 'timecop', '~> 0.9.1'
 end
 
