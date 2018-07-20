@@ -1,16 +1,17 @@
 # frozen_string_literal: true
-class DailyTasksJob < ActiveJob::Base
+
+class DailyTasksJob < ApplicationJob
   queue_as :default
 
   def perform
-    FlagOverdueJob.perform_later
-    FlagMissedJob.perform_later
-    DenyMissedRequestsJob.perform_later
-    EmailCheckinReminderJob.perform_later
-    EmailCheckoutReminderJob.perform_later
-    EmailMissedReservationsJob.perform_later
-    EmailOverdueReminderJob.perform_later
-    DeleteOldBlackoutsJob.perform_later
-    DeleteMissedReservationsJob.perform_later
+    FlagOverdueJob.perform_now
+    FlagMissedJob.perform_now
+    DenyMissedRequestsJob.perform_now
+    EmailCheckinReminderJob.perform_now
+    EmailCheckoutReminderJob.perform_now
+    EmailMissedReservationsJob.perform_now
+    EmailOverdueReminderJob.perform_now
+    DeleteOldBlackoutsJob.perform_now
+    DeleteMissedReservationsJob.perform_now
   end
 end

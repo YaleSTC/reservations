@@ -2,6 +2,11 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+## v6.3.3 - 2018-07-20
+### Fixed
+* Modify daily/hourly Admin buttons to use relative path via helper method ([1742](https://github.com/YaleSTC/reservations/issues/1742))
+* Change rake daily/hourly tasks to execute immediately to fix issue with cron job in production ([#1739](https://github.com/YaleSTC/reservations/issues/1739), [#1740](https://github.com/YaleSTC/reservations/issues/1740), [#1741](https://github.com/YaleSTC/reservations/issues/1741))
+
 ## v6.3.2 - 2018-06-26
 ### Fixed
 * Fixed incorrect evaluation of reservations affected by a blackout ([#1644](https://github.com/YaleSTC/reservations/issues/1644)).
