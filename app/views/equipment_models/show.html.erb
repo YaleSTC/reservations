@@ -21,7 +21,7 @@
         </div>
       </div>
     </div>
-    
+
     <% else %>
       <%= image_tag "no-image-260.gif", class: 'img-responsive' %>
     <% end %>
@@ -144,60 +144,61 @@
   </section>
 <% end %>
 
-<section id="items">
-  <h2>Items</h2><hr />
-  <p>
-  <%= link_to "Create New #{@equipment_model.name.singularize.truncate(30)} Item",
-    new_equipment_model_equipment_item_path(@equipment_model), class: 'btn btn-default' %>
-  </p>
-  <p id="equipment_items">
-    <%= render 'equipment_items_table' %>
-  </p>
-</section>
-
-<section id="procedures">
-  <h2>Procedures</h2><hr />
-  <div class='row'>
-    <div class='col-md-6'>
-      <p><h4>Check-Out</h4></p>
-    </div>
-    <div class="col-md-6">
-      <p><h4>Check-In</h4></p>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6">
-      <% if @equipment_model.checkout_procedures.empty? %>
-        <p>(none)</p>
-      <% else %>
-        <ol class="rectangle-list">
-          <% @equipment_model.checkout_procedures.each do |checkout_procedure| %>
-            <li><%= checkout_procedure.step %></li>
-          <% end %>
-        </ol>
-      <% end %>
-    </div>
-    <div class="col-md-6">
-      <% if @equipment_model.checkin_procedures.empty? %>
-        <p>(none)</p>
-      <% else %>
-        <ol class="rectangle-list">
-          <% @equipment_model.checkin_procedures.each do |checkin_procedure| %>
-            <li><%= checkin_procedure.step %></li>
-          <% end %>
-        </ol>
-      <% end %>
-    </div>
-  </div>
-</section>
-
 <% if @equipment_model.model_restricted?(cart.reserver_id) %>
   <section id="requirements">
      <h2>Requirements</h2><hr/>
        <p><%= list_requirement_admins(current_user, @equipment_model) %></p>
   </section>
 <% end %>
+
 <% if can? :manage, EquipmentModel %>
+  <section id="items">
+    <h2>Items</h2><hr />
+    <p>
+    <%= link_to "Create New #{@equipment_model.name.singularize.truncate(30)} Item",
+      new_equipment_model_equipment_item_path(@equipment_model), class: 'btn btn-default' %>
+    </p>
+    <p id="equipment_items">
+      <%= render 'equipment_items_table' %>
+    </p>
+  </section>
+
+  <section id="procedures">
+    <h2>Procedures</h2><hr />
+    <div class='row'>
+      <div class='col-md-6'>
+        <p><h4>Check-Out</h4></p>
+      </div>
+      <div class="col-md-6">
+        <p><h4>Check-In</h4></p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <% if @equipment_model.checkout_procedures.empty? %>
+          <p>(none)</p>
+        <% else %>
+          <ol class="rectangle-list">
+            <% @equipment_model.checkout_procedures.each do |checkout_procedure| %>
+              <li><%= checkout_procedure.step %></li>
+            <% end %>
+          </ol>
+        <% end %>
+      </div>
+      <div class="col-md-6">
+        <% if @equipment_model.checkin_procedures.empty? %>
+          <p>(none)</p>
+        <% else %>
+          <ol class="rectangle-list">
+            <% @equipment_model.checkin_procedures.each do |checkin_procedure| %>
+              <li><%= checkin_procedure.step %></li>
+            <% end %>
+          </ol>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
   <section id="pending_reservations">
     <h2>Pending Reservations</h2><hr />
 

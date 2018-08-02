@@ -5,6 +5,7 @@
 ## Unreleased - 2018-08-03
 ### Fixed
 * Fix issue with the manage reservation button for approved requests ([1747](https://github.com/YaleSTC/reservations/issues/1747))
+* Fix unauthorized display of procedures and equipment items ([1749](https://github.com/YaleSTC/reservations/issues/1749))
 
 ## v6.3.3 - 2018-07-20
 ### Fixed
