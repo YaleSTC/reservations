@@ -41,11 +41,10 @@ module ReservationsHelper
     style
   end
 
-  def manage_reservations_btn # rubocop:disable all
-    return if (cannot? :manage, Reservation) || @reservation.reserver.id.nil?
-    if (can? :override, :reservation_errors) &&
-       @reservation.flagged?(:request)
-      link_to 'Review Request', review_request_path, class: 'btn btn-default'
+  def manage_reservations_btn
+    if @reservation.requested? && (can? :override, :reservation_errors)
+      link_to 'Review Request', review_request_path(@reservation),
+              class: 'btn btn-default'
     elsif @reservation.reserved?
       link_to 'Check-Out',
               manage_reservations_for_user_path(@reservation.reserver.id,
