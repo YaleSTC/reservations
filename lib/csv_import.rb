@@ -93,8 +93,12 @@ module CsvImport
     end
 
     user = set_or_create_user_for_import(user_data)
+    # Remove nil values to avoid failing validations - we this allows us to
+    # update role of a bunch of users by passing in only their usernames
+    # (instead of all of their user data).
+    data_to_update = user_data.keep_if { |_, v| v.present? }
+    user.update_attributes(data_to_update)
 
-    user.update_attributes(user_data)
     # if the updated or new user is valid, save to database and add to array
     # of successful imports
     return false unless user.valid?

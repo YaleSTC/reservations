@@ -2,11 +2,14 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
-## Unreleased - 2018-08-03
+## v6.3.4 - 2018-08-03
+### Changed
+* Allowed for bulk-updating of user roles with a csv import with just usernames ([#1748](https://github.com/YaleSTC/reservations/issues/1748)).
+
 ### Fixed
 * Fixed broken renewals when reservations were the maximum checkout length ([#1734](https://github.com/YaleSTC/reservations/issues/1734)).
-* Fix issue with the manage reservation button for approved requests ([1747](https://github.com/YaleSTC/reservations/issues/1747))
-* Fix unauthorized display of procedures and equipment items ([1749](https://github.com/YaleSTC/reservations/issues/1749))
+* Fixed issue with the manage reservation button for approved requests ([1747](https://github.com/YaleSTC/reservations/issues/1747))
+* Fixed unauthorized display of procedures and equipment items ([1749](https://github.com/YaleSTC/reservations/issues/1749))
 
 ## v6.3.3 - 2018-07-20
 ### Fixed
