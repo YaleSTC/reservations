@@ -2,8 +2,9 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
-## v6.3.4 - 2018-08-03
+## v6.3.4 - 2018-08-10
 ### Changed
+* Log files now rotate properly, limited to 150 MB/file with 5 files retained ([#1743](https://github.com/YaleSTC/reservations/issues/1743)).
 * Allowed for bulk-updating of user roles with a csv import with just usernames ([#1748](https://github.com/YaleSTC/reservations/issues/1748)).
 
 ### Fixed
