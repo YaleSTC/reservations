@@ -2,6 +2,10 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+## Unreleased
+### Fixed
+* Fixed an issue where cancelling a reservation would break availability ([#1754](https://github.com/YaleSTC/reservations/issues/1754)).
+
 ## v6.3.4 - 2018-08-10
 ### Changed
 * Log files now rotate properly, limited to 150 MB/file with 5 files retained ([#1743](https://github.com/YaleSTC/reservations/issues/1743)).

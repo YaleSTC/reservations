@@ -24,6 +24,7 @@ class Reservation < ApplicationRecord
   # conditional counter cache for overdue reservations
   after_update :increment_cache, if: :checked_out?
   after_update :decrement_cache, if: :overdue
+  after_destroy :decrement_cache, if: :overdue
 
   # make counter cache update on create
   # should only ever get called in the test suite
@@ -511,8 +512,9 @@ class Reservation < ApplicationRecord
   end
 
   def decrement_cache
-    return unless checked_in? && status_before_last_save == 'checked_out'
-    # just checked in
+    return unless (checked_in? || destroyed?) &&
+                  status_before_last_save == 'checked_out'
+    # just checked in or destroyed
     equipment_model.decrement!(:overdue_count)
   end
 
