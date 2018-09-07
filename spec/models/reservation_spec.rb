@@ -43,6 +43,12 @@ describe Reservation, type: :model do
           receive(:decrement!).with(:overdue_count).once
         res.update_attribute(:due_date, Time.zone.today + 1.day)
       end
+      it 'decrements when an overdue reservation is destroyed' do
+        res = FactoryGirl.create(:overdue_reservation)
+        expect(res.equipment_model).to \
+          receive(:decrement!).with(:overdue_count).once
+        res.destroy!
+      end
     end
     context 'overdue, returned reservation' do
       it 'only decrements once per reservation' do
