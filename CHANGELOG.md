@@ -2,9 +2,10 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
-## Unreleased
+## v6.3.5 - 2018-10-08
 ### Fixed
 * Fixed an issue where cancelling a reservation would break availability ([#1754](https://github.com/YaleSTC/reservations/issues/1754)).
+* Updated a number of dependencies to fix security vulnerabilities ([#1757](https://github.com/YaleSTC/reservations/issues/1757)).
 
 ## v6.3.4 - 2018-08-10
 ### Changed
