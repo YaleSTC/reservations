@@ -57,14 +57,8 @@ class Blackout < ApplicationRecord
       res_dates << DateTime.parse(date.to_s) # rubocop:disable TimeZone
       blackouts_tmp << @blackout
     end
-    # conflict checking
-    query = Reservation.all
-    # create BETWEEN query for each blackout date created
-    res_dates.each do |date|
-      query = query.send(:where, due_date: date..date + 1.day)
-    end
-    # stick em all together and find conflicting reservations
-    res = Reservation.where(query.where_values_hash.inject(:or))
+    # check for conflicts
+    res = Reservations::AffectedByRecurringBlackoutQuery.call(res_dates)
     if res.empty?
       # try to save all of the blackouts
       successful_save = nil
