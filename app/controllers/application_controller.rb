@@ -119,11 +119,12 @@ class ApplicationController < ActionController::Base
     return unless current_user
     return unless (can? :change, :views) &&
                   (current_user.view_mode != current_user.role)
-    doc_link = ActionController::Base.helpers.link_to('here', 'https://yalestc.github.io/reservations/')
-    flash[:persistent] = "Currently viewing as #{current_user.view_mode} "\
-      'user. You can switch back to your regular view '\
-      "#{ActionController::Base.helpers.link_to('below', '#view_as')} (see "\
+    doc_link = '[here](https://yalestc.github.io/reservations/)'
+    below_link = '[below](#view_as)'
+    msg = "Currently viewing as #{current_user.view_mode} "\
+      " user. You can switch back to your regular view #{below_link} (see "\
       "#{doc_link} for details)."
+    flash[:persistent] = msg
   end
 
   def fix_cart_date

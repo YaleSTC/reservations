@@ -2,6 +2,10 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+## Unreleased
+### Fixed
+* Fixed issue with links to documentation and anchor tags being escaped in flash mesasges ([#1760](https://github.com/YaleSTC/reservations/issues/1760)).
+
 ## v6.3.5 - 2018-10-08
 ### Fixed
 * Fixed an issue where cancelling a reservation would break availability ([#1754](https://github.com/YaleSTC/reservations/issues/1754)).
