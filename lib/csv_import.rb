@@ -57,9 +57,7 @@ module CsvImport
       end
     end
 
-    # rubocop:disable UselessAssignment
-    hash_of_statuses = { success: @array_of_success, fail: @array_of_fail }
-    # rubocop:enable UselessAssignment
+    { success: @array_of_success, fail: @array_of_fail }
   end
 
   # attempts to import with LDAP or People, returns nil if the login is not
@@ -73,11 +71,10 @@ module CsvImport
     return if search_user_hash.nil?
 
     # fill-in missing key-values with search data
-    user_data.keys.each do |key|
-      if user_data[key].blank? && search_user_hash[key].present?
-        user_data[key] = search_user_hash[key]
-      end
+    search_user_hash.keys.each do |key|
+      user_data[key] = search_user_hash[key] if user_data[key].blank?
     end
+
     user_data
   end
 
