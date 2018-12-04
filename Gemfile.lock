@@ -287,7 +287,7 @@ GEM
     pry-stack_explorer (0.4.9.2)
       binding_of_caller (>= 0.7)
       pry (>= 0.9.11)
-    rack (2.0.5)
+    rack (2.0.6)
     rack-mini-profiler (0.10.5)
       rack (>= 1.2.0)
     rack-pjax (1.0.0)
