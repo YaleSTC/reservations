@@ -2,10 +2,10 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
-## Unreleased
+## v6.3.6 - 2019-01-11
 ### Fixed
-* Fixed issue with links to documentation and anchor tags being escaped in flash mesasges ([#1760](https://github.com/YaleSTC/reservations/issues/1760)).
 * Fixed issue with recurring blackouts being blocked by old reservations ([#1756](https://github.com/YaleSTC/reservations/issues/1756)).
+* Fixed issue with links to documentation and anchor tags being escaped in flash messages ([#1760](https://github.com/YaleSTC/reservations/issues/1760)).
 * Update loofah from 2.2.2 -> 2.2.3 ([#1763](https://github.com/YaleSTC/reservations/issues/1763)).
 * Fixed issue with CSV user importer ([#1765](https://github.com/YaleSTC/reservations/issues/1765)).
 
