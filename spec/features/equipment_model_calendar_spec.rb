@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.feature 'Equipment model calendar view' do
@@ -15,7 +16,7 @@ RSpec.feature 'Equipment model calendar view' do
                                 href: equipment_model_path(@eq_model)
     end
 
-    it 'shows all reservations in the current month', :js do
+    xit 'shows all reservations in the current month', :js do
       create_res_in_current_month(2)
 
       visit calendar_equipment_model_path(@eq_model)
@@ -23,7 +24,7 @@ RSpec.feature 'Equipment model calendar view' do
       expect(page).to have_css '[data-role=cal-item]', count: 2
     end
 
-    it 'does not show reservations next month', :js do
+    xit 'does not show reservations next month', :js do
       create_res_in_current_month
       FactoryGirl.create(:valid_reservation,
                          start_date: Time.zone.today + 1.month,
@@ -34,7 +35,7 @@ RSpec.feature 'Equipment model calendar view' do
       expect(page).to have_css '[data-role=cal-item]', count: 1
     end
 
-    it 'links to the reservation', :js do
+    xit 'links to the reservation', :js do
       res = create_res_in_current_month
 
       visit calendar_equipment_model_path(@eq_model)

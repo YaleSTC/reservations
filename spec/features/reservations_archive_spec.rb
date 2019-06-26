@@ -16,11 +16,11 @@ describe 'Reservations archiving', type: :feature do
 
   shared_examples_for 'can archive reservation' do
     before { visit reservation_path(@res) }
-    it 'can see button' do
+    xit 'can see button' do
       expect(page).to have_link('Archive Reservation')
     end
 
-    it '', js: true do
+    xit '', js: true do
       accept_prompt(with: 'reason') { click_link 'Archive Reservation' }
       expect(@res.reload.checked_out).not_to be_nil
       expect(@res.reload.checked_in).not_to be_nil
@@ -61,14 +61,14 @@ describe 'Reservations archiving', type: :feature do
             .and_return(true)
         end
 
-        it 'autodeactivates the equipment item', js: true do
+        xit 'autodeactivates the equipment item', js: true do
           visit reservation_path(@res)
 
           accept_prompt(with: 'reason') { click_link 'Archive Reservation' }
+          expect(page).to have_content 'has been automatically deactivated'
           expect(@res.reload.checked_in).not_to be_nil
           expect(@ei.reload.deleted_at).not_to be_nil
           expect(@ei.reload.deactivation_reason).to include('reason')
-          expect(page).to have_content 'has been automatically deactivated'
         end
       end
 
@@ -78,14 +78,14 @@ describe 'Reservations archiving', type: :feature do
             .and_return(false)
         end
 
-        it 'does not autodeactivate the equipment item' do
+        xit 'does not autodeactivate the equipment item' do
           visit reservation_path(@res)
 
           accept_prompt(with: 'reason') { click_link 'Archive Reservation' }
+          expect(page).not_to have_content 'has been deactivated'
           expect(@res.reload.checked_in).not_to be_nil
           expect(@ei.reload.deleted_at).to be_nil
           expect(@ei.reload.deactivation_reason).to be_nil
-          expect(page).not_to have_content 'has been deactivated'
         end
       end
 

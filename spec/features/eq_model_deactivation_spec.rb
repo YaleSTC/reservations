@@ -12,7 +12,7 @@ describe 'Equipment Model deactivation', type: :feature do
   after { sign_out }
 
   shared_examples 'success' do
-    it 'can deactivate and reactivate', js: true do
+    xit 'can deactivate and reactivate', js: true do
       visit equipment_model_path(eq_model)
       click_link 'Deactivate',
                  href: "/equipment_models/#{eq_model.id}/deactivate"

@@ -17,6 +17,8 @@ describe CsvImport do
         allow(User).to receive(:search).and_return(search_user_return)
       end
 
+      after { ENV.delete('USE_PEOPLE_API') }
+
       it 'calls User.search' do
         described_class.import_users(parsed_csv, false, 'normal')
         expect(User).to have_received(:search).once

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'simplecov'
+
 SimpleCov.start
 # Rspec should submit the result to CodeClimate automatically with each Travis
 # CI build (repo token is encrypted in .travis.yml)
@@ -13,6 +14,7 @@ require File.expand_path('../../config/environment', __FILE__)
 require 'rspec/rails'
 require 'capybara/rspec'
 require 'capybara/rails'
+require 'selenium/webdriver'
 # require 'rspec/autorun'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
@@ -35,7 +37,6 @@ RSpec.configure do |config|
   # Needed in order to do integration tests with capybara
   config.include Capybara::DSL
   Capybara.asset_host = 'http://0.0.0.0:3000'
-  Capybara.javascript_driver = :webkit
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
