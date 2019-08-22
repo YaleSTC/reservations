@@ -50,7 +50,7 @@ module CsvImport
       user_data[:role] = user_type
       user_data[:csv_import] = true
       next if attempt_save_with_csv_data?(user_data)
-      if ENV['USE_LDAP'] || ENV['USE_PEOPLE_API']
+      if ENV['USE_LDAP'].present? || ENV['USE_PEOPLE_API'].present?
         attempt_save_with_search(user_data)
       else
         @array_of_fail << [user_data, 'Invalid user parameters.']
