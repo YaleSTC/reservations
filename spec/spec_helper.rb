@@ -35,7 +35,6 @@ RSpec.configure do |config|
   # Needed in order to do integration tests with capybara
   config.include Capybara::DSL
   Capybara.asset_host = 'http://0.0.0.0:3000'
-  Capybara.javascript_driver = :webkit
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"

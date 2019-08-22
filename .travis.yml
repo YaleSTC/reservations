@@ -14,12 +14,18 @@ addons:
   apt:
     packages:
       - ghostscript
+      - chromium-chromedriver
+    update: true
+  chrome: stable
 
 before_install:
   - if [ $TRAVIS_PULL_REQUEST == "false" ]; then git clone https://github.com/$TRAVIS_REPO_SLUG.git $TRAVIS_REPO_SLUG && cd $TRAVIS_REPO_SLUG && git checkout -qf $TRAVIS_BRANCH; fi
   - if [ $TRAVIS_PULL_REQUEST == "true" ]; then git checkout -qf master && git checkout -qf $TRAVIS_COMMIT; fi
   - convert -version
+  - ln --symbolic /usr/lib/chromium-browser/chromedriver "${HOME}/bin/chromedriver"
   - gs -v
+  - google-chrome --version
+  - chromedriver --version
   - 'echo ''gem: --no-ri --no-rdoc'' > ~/.gemrc'
 
 bundler_args: --without=production staging development
