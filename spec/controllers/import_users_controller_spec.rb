@@ -19,6 +19,11 @@ end
 describe ImportUsersController, type: :controller do
   before(:each) { mock_app_config }
 
+  # Ensure that we're not actually searching for people in this test
+  around(:example) do |example|
+    env_wrapper('USE_PEOPLE_API' => nil, 'USE_LDAP' => nil) { example.run }
+  end
+
   before(:each) do
     sign_in FactoryGirl.create(:admin)
     request.env['HTTP_REFERER'] = 'where_i_came_from'

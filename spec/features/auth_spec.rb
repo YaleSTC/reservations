@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'Authentication' do
@@ -24,7 +25,11 @@ describe 'Authentication' do
   describe 'using CAS' do
     # set the environment variable
     around(:example) do |example|
-      env_wrapper('CAS_AUTH' => '1', 'USE_LDAP' => nil) { example.run }
+      env_wrapper(
+        'CAS_AUTH' => '1',
+        'USE_LDAP' => nil,
+        'USE_PEOPLE_API' => nil
+      ) { example.run }
     end
 
     # Not sure how to check new sign_in since we're not actually using the
