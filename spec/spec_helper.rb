@@ -34,6 +34,7 @@ RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
   # Needed in order to do integration tests with capybara
   config.include Capybara::DSL
+  config.include RSpec::Rails::ViewRendering
   Capybara.asset_host = 'http://0.0.0.0:3000'
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures

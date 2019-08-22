@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 class BlackoutUpdater
   # Service Object to update blackouts in the blackouts controller
   def initialize(blackout:, params:)
     @blackout = blackout
-    @params = params
+    @blackout.assign_attributes(params)
   end
 
   def update
@@ -13,7 +14,7 @@ class BlackoutUpdater
 
   private
 
-  attr_reader :blackout, :params
+  attr_reader :blackout
 
   def check_for_conflicts
     return unless conflicts.any?
@@ -21,9 +22,7 @@ class BlackoutUpdater
   end
 
   def conflicts
-    @conflicts ||=
-      Reservation.overlaps_with_date_range(params[:start_date],
-                                           params[:end_date]).active
+    @conflicts ||= Reservation.affected_by_blackout(@blackout).active
   end
 
   def error_string
@@ -41,7 +40,7 @@ class BlackoutUpdater
   end
 
   def update_handler
-    if @blackout.update_attributes(params)
+    if @blackout.save
       { result: 'Blackout was successfully updated.', error: nil }
     else
       { result: nil, error: @blackout.errors.full_messages }
