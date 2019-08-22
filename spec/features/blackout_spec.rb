@@ -97,3 +97,39 @@ describe 'Blackout creation' do
       .set(date)
   end
 end
+
+describe 'Editing blackouts as admin' do
+  let!(:blackout) do
+    create(:blackout, created_by: @admin.id, start_date: Time.zone.today + 1,
+                      end_date: Time.zone.today + 2)
+  end
+
+  before { sign_in_as_user @admin }
+
+  it 'succeeds' do
+    visit root_path
+    click_on 'Blackout Dates'
+    click_on 'Edit'
+    fill_in 'Notice', with: 'New notice'
+    click_on 'Update Blackout'
+    expect(page).to have_css('.alert-success', text: /successfully/)
+  end
+
+  context 'with overlapping but unaffected reservations' do
+    before do
+      # This reservation will start before the blackout we try to create
+      # and end afterwards
+      # It should not prevent the blackout from being created.
+      FactoryGirl.create(:equipment_item, equipment_model: @eq_model)
+      FactoryGirl.create(:reservation, equipment_model: @eq_model,
+                                       due_date: Time.zone.today + 1.month)
+    end
+
+    it 'works' do
+      visit edit_blackout_path(blackout)
+      fill_in 'Notice', with: 'New notice'
+      click_on 'Update Blackout'
+      expect(page).to have_css('.alert-success', text: /successfully/)
+    end
+  end
+end
