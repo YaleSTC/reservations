@@ -22,9 +22,7 @@ describe 'Reservations archiving', type: :feature do
 
     it '', js: true do
       accept_prompt(with: 'reason') { click_link 'Archive Reservation' }
-      expect(@res.reload.checked_out).not_to be_nil
-      expect(@res.reload.checked_in).not_to be_nil
-      expect(@res.reload.notes).to include('Archived')
+      expect(page).to have_content 'Reservation successfully archived.'
     end
   end
 
@@ -65,10 +63,10 @@ describe 'Reservations archiving', type: :feature do
           visit reservation_path(@res)
 
           accept_prompt(with: 'reason') { click_link 'Archive Reservation' }
-          expect(@res.reload.checked_in).not_to be_nil
-          expect(@ei.reload.deleted_at).not_to be_nil
-          expect(@ei.reload.deactivation_reason).to include('reason')
           expect(page).to have_content 'has been automatically deactivated'
+          visit equipment_item_path(@ei)
+          expect(page).to have_content('reason')
+          expect(page).to have_content('Status: Deactivated (reason)')
         end
       end
 
@@ -82,10 +80,9 @@ describe 'Reservations archiving', type: :feature do
           visit reservation_path(@res)
 
           accept_prompt(with: 'reason') { click_link 'Archive Reservation' }
-          expect(@res.reload.checked_in).not_to be_nil
-          expect(@ei.reload.deleted_at).to be_nil
-          expect(@ei.reload.deactivation_reason).to be_nil
-          expect(page).not_to have_content 'has been deactivated'
+          expect(page).not_to have_content 'has been automatically deactivated'
+          visit equipment_item_path(@ei)
+          expect(page).to have_content('Status: available')
         end
       end
 
