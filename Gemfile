@@ -67,15 +67,12 @@ group :development, :test do
   gem 'pry-byebug', '~> 3.4.2'
   gem 'pry-stack_explorer', '~> 0.4.9.2'
   gem 'pry-remote', '~> 0.1.8'
-  gem 'letter_opener', '~> 1.4.1'
-  gem 'letter_opener_web', '~> 1.3.0'
   gem 'factory_girl_rails', '~> 4.7.0'
   gem 'rspec-rails', '~> 3.6.0'
   gem 'shoulda-matchers', '~> 3.1.2'
   gem 'capybara', '~> 3.9.0'
   gem 'capybara-selenium', '~> 0.0.6'
   gem 'selenium-webdriver', '~> 3.14.1'
-  gem 'puma'
   gem 'guard-rspec', '~> 4.7.3'
   gem 'spring', '~> 2.0.2'
   gem 'spring-commands-rspec', '~> 1.0.4'
@@ -93,7 +90,7 @@ group :development, :test do
   gem 'timecop', '~> 0.9.1'
 end
 
-group :development, :test, :heroku do
+group :development, :test, :heroku, :docker do
   # seed script gems
   gem 'ffaker', '~> 2.6.0', require: false
   gem 'ruby-progressbar', '~> 1.8.1', require: false
@@ -106,7 +103,7 @@ gem 'uglifier', '~> 3.2.0'
 gem 'bootstrap-sass', '~> 3.3.7'
 gem 'font-awesome-rails', '~> 4.7.0.2'
 
-group :development do
+group :development, :docker do
   gem 'thin', '~> 1.7.0'
   gem 'rack-mini-profiler', '~> 0.10.5'
   gem 'bullet', '~> 5.5.1'
@@ -122,4 +119,10 @@ group :heroku do
   gem 'rack-timeout', '~> 0.4.2'
   gem 'aws-sdk', '~> 2.3.0'
   gem 'rails_12factor', '~> 0.0.3'
+end
+
+group :docker, :development, :test do
+  gem 'puma', '~> 4.1', '>= 4.1.1'
+  gem 'letter_opener', '~> 1.4.1'
+  gem 'letter_opener_web', '~> 1.3.0'
 end

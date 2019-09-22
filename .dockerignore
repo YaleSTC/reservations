@@ -1,0 +1,6 @@
+CHANGELOG.md
+CONTRIBUTING
+Dockerfile
+README.md
+#deployment/
+*.yml.example*
