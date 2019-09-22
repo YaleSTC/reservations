@@ -1,0 +1,18 @@
+defaults: &defaults
+  adapter: mysql2
+  encoding: utf8
+  database: <%= ENV['RES_DB_NAME'] %>
+  username: <%= ENV['RES_DB_USERNAME'] %>
+  password: <%= ENV['RES_DB_PASSWORD'] %>
+  host: <%= ENV['RES_DB_HOST'] %>
+  port: 3306
+  pool: 5
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+production:
+  <<: *defaults
