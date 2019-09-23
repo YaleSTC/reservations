@@ -5,6 +5,7 @@
 ## Unreleased
 ### Changed
 * Update Rails from 5.1.2 -> 5.1.7 ([#1779](https://gitlab.com/yale-sdmp/reservations/issues/1779)).
+* Update Bullet from 5.5.1 -> 5.7.5 ([#1779](https://gitlab.com/yale-sdmp/reservations/issues/1779)).
 
 ## v6.3.6 - 2019-01-11
 ### Changed

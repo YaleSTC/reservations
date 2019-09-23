@@ -109,7 +109,7 @@ gem 'font-awesome-rails', '~> 4.7.0.2'
 group :development do
   gem 'thin', '~> 1.7.0'
   gem 'rack-mini-profiler', '~> 0.10.5'
-  gem 'bullet', '~> 5.5.1'
+  gem 'bullet', '~> 5.7.5'
 end
 
 group :production do
