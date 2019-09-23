@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 ruby '2.4.1' # Version in .ruby-version must match
 
 # standard gems
-gem 'rails', '~> 5.1.2'
+gem 'rails', '~> 5.1.7'
 gem 'mysql2', '~> 0.4.8'
 gem 'rake', '~> 12.0.0'
 gem 'jbuilder', '~> 2.7.0'

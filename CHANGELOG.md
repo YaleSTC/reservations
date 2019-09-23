@@ -2,6 +2,10 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+## Unreleased
+### Changed
+* Update Rails from 5.1.2 -> 5.1.7 ([#1779](https://gitlab.com/yale-sdmp/reservations/issues/1779)).
+
 ## v6.3.6 - 2019-01-11
 ### Changed
 * Replaced capybara-webkit with selenium and Chromedriver ([#1769](https://github.com/YaleSTC/reservations/issues/1769)).
