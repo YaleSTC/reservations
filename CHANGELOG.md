@@ -2,7 +2,7 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
-## Unreleased
+## v6.3.7 - 2019-10-01
 ### Changed
 * Update Rails from 5.1.2 -> 5.1.7 ([#1779](https://gitlab.com/yale-sdmp/reservations/issues/1779)).
 * Update Bullet from 5.5.1 -> 5.7.5 ([#1779](https://gitlab.com/yale-sdmp/reservations/issues/1779)).
