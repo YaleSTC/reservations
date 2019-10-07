@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.4.1' # Version in .ruby-version must match
+ruby '2.6.5' # Version in .ruby-version must match
 
 # standard gems
 gem 'rails', '~> 5.2.3'

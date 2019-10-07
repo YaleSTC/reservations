@@ -2,9 +2,13 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
-## Unreleased
+## v6.4.0 - 2019-10-29
+### Important
+*This release has not been tested under production conditions. Use at your own risk.*
+
 ### Changed
 * Updated Rails from 5.1.7 -> 5.2.3 ([#1780](https://gitlab.com/yale-sdmp/reservations/issues/1780)).
+* Updated Ruby from 2.4.1 -> 2.6.5 ([#1782](https://gitlab.com/yale-sdmp/reservations/issues/1782)).
 
 ## v6.3.6 - 2019-01-11
 ### Changed
