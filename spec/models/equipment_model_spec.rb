@@ -114,7 +114,7 @@ describe EquipmentModel, type: :model do
         model = FactoryGirl.create(:equipment_model, id: unique_id)
         model.associated_equipment_model_ids = [unique_id]
         expect { model.not_associated_with_self }.to \
-          change { model.errors }
+          change { model.errors.messages }
       end
     end
   end

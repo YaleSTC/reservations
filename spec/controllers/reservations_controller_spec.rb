@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Lint/AmbiguousBlockAssociation, Rails/SkipsModelValidations
+# rubocop:disable Rails/SkipsModelValidations
 
 require 'spec_helper'
 require 'helpers/email_helper_spec'
@@ -739,7 +739,7 @@ describe ReservationsController, type: :controller do
           .and_return(instance_spy('ActiveRecord::Relation'))
         get :manage, params: { user_id: user.id }
       end
-      it { expect(response).to be_success }
+      it { expect(response).to be_successful }
       it { is_expected.to render_template(:manage) }
       it 'assigns @user correctly' do
         expect(assigns(:user)).to eq(user)
@@ -789,7 +789,7 @@ describe ReservationsController, type: :controller do
 
     shared_examples 'can access #current' do
       before { get :current, params: { user_id: @user.id } }
-      it { expect(response).to be_success }
+      it { expect(response).to be_successful }
       it { is_expected.to render_template(:current_reservations) }
 
       it 'assigns @user correctly' do
@@ -915,7 +915,7 @@ describe ReservationsController, type: :controller do
             params: { user_id: @user.id, reservations: reservations_params }
       end
 
-      it { expect(response).to be_success }
+      it { expect(response).to be_successful }
       it { is_expected.to render_template(:receipt) }
 
       it 'assigns empty @check_in_set' do
@@ -1005,7 +1005,7 @@ describe ReservationsController, type: :controller do
                                  terms_of_service_accepted: true }
       end
 
-      it { expect(response).to be_success }
+      it { expect(response).to be_successful }
     end
 
     context 'with duplicate equipment item selection' do
@@ -1052,7 +1052,7 @@ describe ReservationsController, type: :controller do
             params: { user_id: @user.id, reservations: reservations_params }
       end
 
-      it { expect(response).to be_success }
+      it { expect(response).to be_successful }
 
       it { is_expected.to render_template(:receipt) }
 
@@ -1102,7 +1102,7 @@ describe ReservationsController, type: :controller do
           put :checkout,
               params: { user_id: @user.id, reservations: reservations_params }
         end
-        it { expect(response).to be_success }
+        it { expect(response).to be_successful }
         it { is_expected.to render_template(:receipt) }
       end
 
@@ -1185,7 +1185,7 @@ describe ReservationsController, type: :controller do
             params: { user_id: @user.id, reservations: reservations_params }
       end
 
-      it { expect(response).to be_success }
+      it { expect(response).to be_successful }
       it { is_expected.to render_template(:receipt) }
 
       it 'assigns empty @check_out_set' do
@@ -1284,7 +1284,7 @@ describe ReservationsController, type: :controller do
             params: { user_id: @user.id, reservations: reservations_params }
       end
 
-      it { expect(response).to be_success }
+      it { expect(response).to be_successful }
       it { is_expected.to render_template(:receipt) }
 
       it 'assigns empty @check_out_set' do

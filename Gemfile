@@ -3,22 +3,22 @@ source 'https://rubygems.org'
 ruby '2.6.5' # Version in .ruby-version must match
 
 # standard gems
-gem 'rails', '~> 5.2.3'
+gem 'rails', '~> 6.0.0'
 gem 'mysql2', '~> 0.4.8'
 gem 'rake', '~> 12.0.0'
-gem 'jbuilder', '~> 2.7.0'
+gem 'jbuilder', '~> 2.9.1'
 
 # gems required for the rails 5 update
-gem 'responders', '~> 2.4.0'
-gem 'record_tag_helper', '~> 1.0.0'
-gem 'rails-controller-testing', '~> 1.0.2'
+gem 'responders', '~> 3.0.0'
+gem 'record_tag_helper', '~> 1.0.0', :github => 'rails/record_tag_helper', :ref => '128cc1a577f97069b6f7826e06c07b65650529f2'
+gem 'rails-controller-testing', '~> 1.0.3'
 gem 'activemodel-serializers-xml', '~> 1.0.1'
 
 # simulate environment variables
-gem 'dotenv-rails', '~> 2.2.2', :require => 'dotenv/rails-now'
+gem 'dotenv-rails', '~> 2.7.5', :require => 'dotenv/rails-now'
 
 # authentication / authorization
-gem 'devise', '~> 4.4.3'
+gem 'devise', '~> 4.7.1'
 gem 'devise_cas_authenticatable', '~> 1.10.0'
 gem 'cancancan', '~> 2.0.0'
 
@@ -26,7 +26,7 @@ gem 'cancancan', '~> 2.0.0'
 gem 'whenever', '~> 0.9.7'
 
 # administrative panel
-gem 'rails_admin', '~> 1.3.0'
+gem 'rails_admin', '~> 2.0.0'
 
 # ldap integration
 gem 'net-ldap', '~> 0.16.0'
@@ -50,7 +50,7 @@ gem 'rails4-autocomplete', '~> 1.1.1'
 # possibly replace above with rails-jquery-autocomplete v 1.0.3
 gem 'select2-rails', '~> 4.0.3'
 gem 'kaminari', '~> 0.17.0'
-gem 'draper', '~> 3.0.0'
+gem 'draper', '~> 3.1.0'
 gem 'inline_svg', '~> 1.2.1'
 
 # forms / formatting
@@ -73,13 +73,12 @@ group :development, :test do
   gem 'letter_opener', '~> 1.4.1'
   gem 'letter_opener_web', '~> 1.3.0'
   gem 'factory_girl_rails', '~> 4.7.0'
-  gem 'rspec-rails', '~> 3.6.0'
+  gem 'rspec-rails', '~> 4.0.0.beta2'
   gem 'shoulda-matchers', '~> 3.1.2'
   gem 'capybara', '~> 3.9.0'
   gem 'capybara-selenium', '~> 0.0.6'
   gem 'selenium-webdriver', '~> 3.14.1'
   gem 'puma'
-  gem 'guard-rspec', '~> 4.7.3'
   gem 'spring', '~> 2.0.2'
   gem 'spring-commands-rspec', '~> 1.0.4'
   gem 'fuubar', '~> 2.2.0'
@@ -111,8 +110,8 @@ gem 'font-awesome-rails', '~> 4.7.0.5'
 
 group :development do
   gem 'thin', '~> 1.7.0'
-  gem 'rack-mini-profiler', '~> 0.10.5'
-  gem 'bullet', '~> 5.7.5'
+  gem 'rack-mini-profiler', '~> 1.1.0'
+  gem 'bullet', '~> 6.0.2'
 end
 
 group :production do
