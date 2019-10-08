@@ -65,6 +65,7 @@ gem 'icalendar', '~> 2.4.1'
 gem "bootsnap", "~> 1.4"
 
 group :development, :test do
+  gem "bundler-audit", "~> 0.6.1"
   gem 'pry', '~> 0.10.4'
   gem 'pry-rails', '~> 0.3.6'
   gem 'pry-byebug', '~> 3.4.2'
