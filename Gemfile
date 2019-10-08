@@ -4,7 +4,7 @@ ruby '2.6.5' # Version in .ruby-version must match
 
 # standard gems
 gem 'rails', '~> 6.0.0'
-gem 'mysql2', '~> 0.4.8'
+gem 'mysql2', '~> 0.5.2'
 gem 'rake', '~> 12.0.0'
 gem 'jbuilder', '~> 2.9.1'
 
@@ -74,7 +74,7 @@ group :development, :test do
   gem 'letter_opener_web', '~> 1.3.0'
   gem 'factory_girl_rails', '~> 4.7.0'
   gem 'rspec-rails', '~> 4.0.0.beta2'
-  gem 'shoulda-matchers', '~> 3.1.2'
+  gem 'shoulda-matchers', '~> 3.1.3'
   gem 'capybara', '~> 3.9.0'
   gem 'capybara-selenium', '~> 0.0.6'
   gem 'selenium-webdriver', '~> 3.14.1'
@@ -103,7 +103,6 @@ end
 
 # assets
 gem 'sass-rails', '~> 5.0.6'
-gem 'coffee-rails', '~> 4.2.2'
 gem 'uglifier', '~> 3.2.0'
 gem 'bootstrap-sass', '~> 3.3.7'
 gem 'font-awesome-rails', '~> 4.7.0.5'

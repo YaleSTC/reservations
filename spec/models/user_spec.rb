@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'concerns/linkable_spec.rb'
 include EnvHelpers
 
 describe User, type: :model do
@@ -18,7 +17,7 @@ describe User, type: :model do
     it { is_expected.to have_and_belong_to_many(:requirements) }
 
     it { is_expected.to validate_presence_of(:username) }
-    it { is_expected.to validate_uniqueness_of(:username) }
+    it { is_expected.to validate_uniqueness_of(:username).case_insensitive }
     it { is_expected.to validate_presence_of(:first_name) }
     it { is_expected.to validate_presence_of(:last_name) }
     it { is_expected.to validate_presence_of(:affiliation) }

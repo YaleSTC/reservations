@@ -43,7 +43,7 @@ describe BlackoutUpdater do
                                                       :active).and_return([cf])
           updater = BlackoutUpdater.new(blackout: blackout, params: {})
           updater.update
-          expect(blackout).not_to have_received(:update_attributes)
+          expect(blackout).not_to have_received(:update)
         end
         it 'does not return a result' do
           blackout = instance_spy(Blackout, save: true,

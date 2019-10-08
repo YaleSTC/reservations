@@ -68,7 +68,7 @@ class EquipmentItemsController < ApplicationController
       # Delete deactivation reason when "Disabled?" is toggled
       p[:deactivation_reason] = ''
     end
-    @equipment_item.update(current_user, p)
+    @equipment_item.update_equipment_item(current_user, p)
     if @equipment_item.save
       flash[:notice] = 'Successfully updated equipment item.'
       redirect_to @equipment_item
@@ -106,8 +106,8 @@ class EquipmentItemsController < ApplicationController
     super
     new_notes = "#### Reactivated at #{Time.zone.now.to_s(:long)} by "\
       "#{current_user.md_link}\n\n" + @equipment_item.notes
-    @equipment_item.update_attributes(deactivation_reason: nil,
-                                      notes: new_notes)
+    @equipment_item.update(deactivation_reason: nil,
+                           notes: new_notes)
   end
 
   private

@@ -19,7 +19,7 @@ module SoftDeletable
     def revive
       return self unless deleted?
       ActiveRecord::Base.transaction do
-        update_attributes(deleted_at: nil)
+        update(deleted_at: nil)
         revive_associated_records
       end
     end
@@ -41,7 +41,7 @@ module SoftDeletable
     def soft_destroy_record
       ActiveRecord::Base.transaction do
         destroy_associated_records
-        update_attributes(deleted_at: Time.zone.now)
+        update(deleted_at: Time.zone.now)
       end
     end
 

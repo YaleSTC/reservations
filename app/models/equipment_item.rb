@@ -11,7 +11,10 @@ class EquipmentItem < ApplicationRecord # rubocop:disable Metrics/ClassLength
 
   validates :name,
             :equipment_model, presence: true
-  validates :serial, uniqueness: { scope: :equipment_model_id },
+  validates :serial, uniqueness: {
+    scope: :equipment_model_id,
+    case_sensitive: false
+  },
                      allow_nil: true, allow_blank: true
 
   nilify_blanks only: [:deleted_at]
@@ -66,19 +69,19 @@ class EquipmentItem < ApplicationRecord # rubocop:disable Metrics/ClassLength
                  "##### Notes:\n#{new_notes}\n\n"
                end
     new_str += notes
-    update_attributes(notes: new_str)
+    update(notes: new_str)
   end
 
   def make_switch_notes(old_res, new_res, handler)
     # set text depending on whether or not reservations are passed in
     old_res_msg = old_res ? old_res.md_link : 'available'
     new_res_msg = new_res ? new_res.md_link : 'available'
-    update_attributes(notes: "#### Switched by #{handler.md_link} from "\
+    update(notes: "#### Switched by #{handler.md_link} from "\
                       "#{old_res_msg} to #{new_res_msg} on "\
                       "#{Time.zone.now.to_s(:long)}\n\n" + notes)
   end
 
-  def update(current_user, new_params) # rubocop:disable all
+  def update_equipment_item(current_user, new_params) # rubocop:disable all
     assign_attributes(new_params)
     changes = self.changes
     return self if changes.empty?

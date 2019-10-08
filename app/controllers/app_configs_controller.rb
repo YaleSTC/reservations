@@ -6,7 +6,7 @@ class AppConfigsController < ApplicationController
 
   def edit
     @app_config = AppConfig.first || AppConfig.new
-    @app_config.update_attributes(viewed: true)
+    @app_config.update(viewed: true)
   end
 
   def update
@@ -19,7 +19,7 @@ class AppConfigsController < ApplicationController
       User.no_phone.each { |u| u.update(missing_phone: true) }
     end
 
-    if @app_config.update_attributes(app_config_params)
+    if @app_config.update(app_config_params)
       if reset_tos == '1'
         User.all.each { |u| u.update(terms_of_service_accepted: false) }
       end

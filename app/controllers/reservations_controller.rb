@@ -199,14 +199,16 @@ class ReservationsController < ApplicationController
       # check to see if new item is available
       unless new_item.available?
         r = new_item.current_reservation
-        r.update(current_user,
-                 { equipment_item_id: @reservation.equipment_item_id },
-                 '')
+        r.update_reservation(current_user,
+                             {
+                               equipment_item_id: @reservation.equipment_item_id
+                             },
+                             '')
       end
     end
 
     # save changes to database
-    @reservation.update(current_user, res, params[:new_notes])
+    @reservation.update_reservation(current_user, res, params[:new_notes])
     if @reservation.save
       # code for switching equipment items
       if params[:equipment_item].present?
@@ -317,7 +319,7 @@ class ReservationsController < ApplicationController
 
     # update user with terms of service acceptance now that checkout worked
     unless @user.terms_of_service_accepted
-      @user.update_attributes(terms_of_service_accepted: true)
+      @user.update(terms_of_service_accepted: true)
     end
 
     # Send checkout receipts

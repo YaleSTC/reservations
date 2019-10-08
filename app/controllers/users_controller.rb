@@ -178,9 +178,9 @@ class UsersController < ApplicationController
     # use :update_with_password when we're not using CAS and you're editing
     # your own profile
     if @cas_auth || ((can? :manage, User) && (@user.id != current_user.id))
-      method = :update_attributes
+      method = :update
       # delete the current_password key from the params hash just in case it's
-      # present (and :update_attributes will throw an error)
+      # present (and :update will throw an error)
       par.delete('current_password')
     else
       method = :update_with_password
@@ -207,7 +207,7 @@ class UsersController < ApplicationController
       flash[:error] = 'You cannot ban yourself.'
       redirect_to(request.referer) && return
     end
-    @user.update_attributes(role: 'banned', view_mode: 'banned')
+    @user.update(role: 'banned', view_mode: 'banned')
     flash[:notice] = "#{@user.name} was banned succesfully."
     redirect_to request.referer
   end
@@ -217,7 +217,7 @@ class UsersController < ApplicationController
       flash[:error] = 'Cannot unban guest.'
       redirect_to(request.referer) && return
     end
-    @user.update_attributes(role: 'normal', view_mode: 'normal')
+    @user.update(role: 'normal', view_mode: 'normal')
     flash[:notice] = "#{@user.name} was restored to patron status."
     redirect_to request.referer
   end

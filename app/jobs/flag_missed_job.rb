@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class FlagMissedJob < ReservationJob
   private
 
@@ -26,6 +27,6 @@ class FlagMissedJob < ReservationJob
   end
 
   def update(res)
-    res.update_attributes(status: 'missed')
+    res.update(status: 'missed')
   end
 end

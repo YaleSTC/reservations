@@ -56,7 +56,7 @@ class ApplicationController < ActionController::Base
       'the application, please run $bundle exec rake app:setup in the '\
       'terminal. For more information, please see our github page: '\
       'https://github.com/YaleSTC/reservations'
-    render file: 'application_setup/index', layout: 'application'
+    render template: 'application_setup/index', layout: 'application'
   end
 
   def load_configs

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 
 shared_examples_for 'flag job' do |attr, scope|
@@ -6,7 +7,7 @@ shared_examples_for 'flag job' do |attr, scope|
     res = ReservationMock.new
     allow(Reservation).to receive(scope).and_return([res])
     described_class.perform_now
-    expect(res).to have_received(:update_attributes).with(attr)
+    expect(res).to have_received(:update).with(attr)
   end
   it 'logs the update' do
     res = ReservationMock.new

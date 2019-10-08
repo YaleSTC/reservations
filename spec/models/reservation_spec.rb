@@ -3,7 +3,6 @@
 # rubocop:disable Rails/SkipsModelValidations
 
 require 'spec_helper'
-require 'concerns/linkable_spec.rb'
 
 describe Reservation, type: :model do
   include ActiveSupport::Testing::TimeHelpers
@@ -19,7 +18,7 @@ describe Reservation, type: :model do
         res.update_columns(overdue: false)
         expect(res.equipment_model).to \
           receive(:increment!).with(:overdue_count).once
-        res.update_attributes(overdue: true)
+        res.update(overdue: true)
       end
     end
     context 'already overdue reservation' do
@@ -32,7 +31,7 @@ describe Reservation, type: :model do
         res = FactoryGirl.create(:overdue_reservation)
         expect(res.equipment_model).to \
           receive(:decrement!).with(:overdue_count).once
-        res.update_attributes(
+        res.update(
           FactoryGirl.attributes_for(:overdue_returned_reservation,
                                      equipment_model: res.equipment_model)
         )
@@ -62,7 +61,7 @@ describe Reservation, type: :model do
         res = FactoryGirl.create(:checked_out_reservation)
         expect(res.equipment_model).not_to receive(:decrement!)
         expect(res.equipment_model).not_to receive(:increment!)
-        res.update_attributes(
+        res.update(
           FactoryGirl.attributes_for(:checked_in_reservation,
                                      equipment_model: res.equipment_model)
         )
@@ -866,17 +865,19 @@ describe Reservation, type: :model do
     let!(:user) { FactoryGirl.build_stubbed(:user) }
     it 'does nothing when no changes and no new notes' do
       res = FactoryGirl.build_stubbed(:valid_reservation)
-      expect { res.update(user, {}, '') }.not_to change { res.notes }
+      expect { res.update_reservation(user, {}, '') }.not_to change {
+        res.notes
+      }
     end
     it 'updates with given notes' do
       res = FactoryGirl.build_stubbed(:valid_reservation)
-      res.update(user, {}, 'test_note')
+      res.update_reservation(user, {}, 'test_note')
       expect(res.notes).to include('test_note')
     end
     it 'notes the editing user' do
       res = FactoryGirl.build_stubbed(:valid_reservation)
       allow(user).to receive(:md_link).and_return('md link')
-      res.update(user, {}, 'test_note')
+      res.update_reservation(user, {}, 'test_note')
       expect(res.notes).to include('md link')
     end
     shared_examples 'notes change with md link' do |factory, attr|
@@ -884,7 +885,7 @@ describe Reservation, type: :model do
         old = FactoryGirl.create(factory)
         new = FactoryGirl.create(factory)
         res = FactoryGirl.build_stubbed(:valid_reservation, attr => old.id)
-        res.update(user, { attr => new.id }, '')
+        res.update_reservation(user, { attr => new.id }, '')
         expect(res.notes).to include(old.md_link)
         expect(res.notes).to include(new.md_link)
       end
@@ -897,7 +898,7 @@ describe Reservation, type: :model do
         old = Time.zone.today + 3.days
         new = Time.zone.today + 2.days
         res = FactoryGirl.build_stubbed(:valid_reservation, attr => old)
-        res.update(user, { attr => new }, '')
+        res.update_reservation(user, { attr => new }, '')
         expect(res.notes).to include(old.to_s(:long))
         expect(res.notes).to include(new.to_s(:long))
       end
@@ -908,7 +909,7 @@ describe Reservation, type: :model do
       it 'notes the change' do
         res = FactoryGirl.build_stubbed(:overdue_reservation)
         new_date = Time.zone.today + 1.day
-        res.update(user, { due_date: new_date }, '')
+        res.update_reservation(user, { due_date: new_date }, '')
         expect(res.notes).to include('marked as not overdue')
       end
     end
@@ -916,7 +917,7 @@ describe Reservation, type: :model do
       it 'notes the change' do
         res = FactoryGirl.build_stubbed(:checked_out_reservation)
         new_date = Time.zone.today - 1.day
-        res.update(user, { due_date: new_date }, '')
+        res.update_reservation(user, { due_date: new_date }, '')
         expect(res.notes).not_to include('marked as not overdue')
         expect(res.notes).to include('marked as overdue')
       end

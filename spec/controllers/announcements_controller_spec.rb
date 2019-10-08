@@ -2,12 +2,12 @@
 
 require 'spec_helper'
 
-shared_examples_for 'page success' do
+shared_examples_for 'announcements page success' do
   it { is_expected.to respond_with(:success) }
   it { is_expected.not_to set_flash }
 end
 
-shared_examples_for 'access denied' do
+shared_examples_for 'announcements access denied' do
   it { is_expected.to redirect_to(root_url) }
   it { is_expected.to set_flash }
 end
@@ -23,7 +23,7 @@ describe AnnouncementsController, type: :controller do
       before do
         get :index
       end
-      it_behaves_like 'page success'
+      it_behaves_like 'announcements page success'
       it { is_expected.to render_template(:index) }
       it 'should assign @announcements to all Announcements' do
         expect(assigns(:announcements)).to eq(Announcement.all)
@@ -39,14 +39,14 @@ describe AnnouncementsController, type: :controller do
         expect(assigns(:announcement)[:ends_at]).to\
           eq(Time.zone.today + 1.day)
       end
-      it_behaves_like 'page success'
+      it_behaves_like 'announcements page success'
       it { is_expected.to render_template(:new) }
     end
     context 'GET edit' do
       before do
         get :edit, params: { id: FactoryGirl.create(:announcement) }
       end
-      it_behaves_like 'page success'
+      it_behaves_like 'announcements page success'
       it { is_expected.to render_template(:edit) }
     end
     context 'POST create' do
@@ -109,25 +109,25 @@ describe AnnouncementsController, type: :controller do
       before do
         get :index
       end
-      it_behaves_like 'access denied'
+      it_behaves_like 'announcements access denied'
     end
     context 'POST create' do
       before do
         post :create, params: { announcement: @attributes }
       end
-      it_behaves_like 'access denied'
+      it_behaves_like 'announcements access denied'
     end
     context 'PUT update' do
       before do
         put :update, params: { id: @announcement }
       end
-      it_behaves_like 'access denied'
+      it_behaves_like 'announcements access denied'
     end
     context 'DELETE destroy' do
       before do
         delete :destroy, params: { id: @announcement }
       end
-      it_behaves_like 'access denied'
+      it_behaves_like 'announcements access denied'
     end
   end
   context 'GET hide as' do

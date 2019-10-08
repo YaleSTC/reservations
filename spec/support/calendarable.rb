@@ -19,7 +19,7 @@ shared_examples_for 'calendarable' do |model|
         eq("calendar_#{@obj.class.to_s.underscore}_path".to_sym)
     end
     it 'responds with HTML' do
-      expect(response.content_type).to eq('text/html')
+      expect(response.media_type).to eq('text/html')
     end
   end
 
@@ -66,7 +66,7 @@ shared_examples_for 'calendarable' do |model|
         eq("calendar_#{@obj.class.to_s.underscore}_path".to_sym)
     end
     it 'responds with JSON' do
-      expect(response.content_type).to eq('application/json')
+      expect(response.media_type).to eq('application/json')
     end
   end
 
@@ -84,7 +84,7 @@ shared_examples_for 'calendarable' do |model|
     end
 
     it 'responds with ICS format' do
-      expect(response.content_type).to eq('text/calendar')
+      expect(response.media_type).to eq('text/calendar')
     end
   end
 end

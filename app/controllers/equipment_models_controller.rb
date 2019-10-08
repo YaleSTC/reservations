@@ -102,7 +102,7 @@ class EquipmentModelsController < ApplicationController
     # correct for file type
     eq_params[:documentation] = fix_content_type(eq_params[:documentation])
 
-    if @equipment_model.update_attributes(eq_params)
+    if @equipment_model.update(eq_params)
       # hard-delete any deleted checkin/checkout procedures
       delete_procedures(params, 'checkout')
       delete_procedures(params, 'checkin')

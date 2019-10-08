@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # rubocop:disable ModuleLength
 module EquipmentImport
   # IMPORT FUNCTIONS - these are all kinda similar, but we'll write them
@@ -22,7 +23,7 @@ module EquipmentImport
               Category.new(cat_data)
             end
 
-      cat.update_attributes(cat_data)
+      cat.update(cat_data)
       # if updated / new category is valid, save to database and add to array
       # of success
       if cat.valid?
@@ -64,7 +65,7 @@ module EquipmentImport
                 EquipmentModel.new(model_data)
               end
 
-      model.update_attributes(model_data)
+      model.update(model_data)
       # if updated / new model is valid, save to database and add to array of
       # success
       if model.valid?
@@ -159,9 +160,9 @@ module EquipmentImport
   def valid_cat_import?(processed_cats, cat_file)
     # define accepted keys and key error
     # NOTE: this must match the parameters in the database / model!!
-    accepted_keys = [:name, :max_per_user, :max_checkout_length,
-                     :max_renewal_times, :max_renewal_length,
-                     :renewal_days_before_due, :sort_order]
+    accepted_keys = %i[name max_per_user max_checkout_length
+                       max_renewal_times max_renewal_length
+                       renewal_days_before_due sort_order]
     key_error = 'Unable to import category CSV file. Please ensure that the '\
       'first line of the file exactly matches the sample input (name, '\
       'max_per_user, etc.) Note that headers are case sensitive and must be '\
@@ -179,8 +180,8 @@ module EquipmentImport
   # model validators
   def valid_model_import?(processed_models, model_file)
     # define accepted keys and key error
-    accepted_keys = [:category, :name, :description, :late_fee,
-                     :replacement_fee, :max_per_user, :max_renewal_length]
+    accepted_keys = %i[category name description late_fee
+                       replacement_fee max_per_user max_renewal_length]
     key_error = 'Unable to import equipment model CSV file. Please ensure '\
       'that the first line of the file exactly matches the sample input ('\
       'category, name, etc.) Note that headers are case sensitive and must '\
@@ -198,7 +199,7 @@ module EquipmentImport
   # item validators
   def valid_item_import?(processed_items, item_file)
     # define accepted keys and key error
-    accepted_keys = [:equipment_model, :name, :serial]
+    accepted_keys = %i[equipment_model name serial]
     key_error = 'Unable to import equipment item CSV file. Please ensure '\
       'that the first line of the file exactly matches the sample input ('\
       'equipment_model,name,serial) Note that headers are case sensitive '\

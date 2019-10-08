@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class FlagOverdueJob < ReservationJob
   private
 
@@ -26,6 +27,6 @@ class FlagOverdueJob < ReservationJob
   end
 
   def update(res)
-    res.update_attributes(overdue: true)
+    res.update(overdue: true)
   end
 end

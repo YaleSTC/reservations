@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'concerns/soft_deletable_spec.rb'
 
 describe CheckinProcedure, type: :model do
   it_behaves_like 'soft deletable'

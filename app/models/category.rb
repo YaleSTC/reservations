@@ -7,7 +7,7 @@ class Category < ApplicationRecord
 
   has_many :equipment_models, dependent: :destroy
 
-  validates :name, presence: true, uniqueness: true
+  validates :name, presence: true, uniqueness: { case_sensitive: false }
 
   validates :max_per_user, :max_checkout_length, :max_renewal_length,
             :max_renewal_times, :renewal_days_before_due, :sort_order,

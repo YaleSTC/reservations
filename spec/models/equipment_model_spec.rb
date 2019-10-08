@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'concerns/linkable_spec.rb'
-require 'concerns/soft_deletable_spec.rb'
 
 describe EquipmentModel, type: :model do
   it_behaves_like 'linkable'
@@ -27,7 +25,7 @@ describe EquipmentModel, type: :model do
     it { is_expected.to accept_nested_attributes_for(:checkout_procedures) }
     it { is_expected.to have_and_belong_to_many(:associated_equipment_models) }
     it { is_expected.to validate_presence_of(:name) }
-    it { is_expected.to validate_uniqueness_of(:name) }
+    it { is_expected.to validate_uniqueness_of(:name).case_insensitive }
     it { is_expected.to validate_presence_of(:description) }
     it { is_expected.to belong_to(:category) }
     it 'requires an associated category' do

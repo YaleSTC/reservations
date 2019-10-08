@@ -191,7 +191,7 @@ describe Cart, type: :model do
 
     shared_examples 'with a consecutive reservation' do |res_type|
       before do
-        @em.update_attributes(max_per_user: 1, max_checkout_length: 3)
+        @em.update(max_per_user: 1, max_checkout_length: 3)
         @res = FactoryGirl.create(res_type,
                                   reserver: User.find_by(id: @cart.reserver.id),
                                   equipment_model: @em,
@@ -214,7 +214,7 @@ describe Cart, type: :model do
       end
 
       it 'fails when there are reservations before and after' do
-        @em.update_attributes(max_checkout_length: 5)
+        @em.update(max_checkout_length: 5)
         FactoryGirl.build(res_type,
                           reserver: User.find_by(id: @cart.reserver.id),
                           equipment_model: @em,
@@ -230,13 +230,13 @@ describe Cart, type: :model do
       end
 
       it "passes when max_per_user isn't 1" do
-        @em.update_attributes(max_per_user: 5)
+        @em.update(max_per_user: 5)
         expect(@em.max_per_user).not_to eq(1)
         expect(@cart.check_consecutive).to eq([])
       end
 
       it "passes when it doesn't exceed the max_checkout_length" do
-        @em.update_attributes(max_checkout_length: 5)
+        @em.update(max_checkout_length: 5)
         expect(@em.max_checkout_length).to eq(5)
         expect(@cart.check_consecutive).to eq([])
       end

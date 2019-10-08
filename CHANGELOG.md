@@ -6,6 +6,9 @@
 ### Changed
 * Updated Rails from 5.2.3 -> 6.0.0 ([#1781](https://gitlab.com/yale-sdmp/reservations/issues/1781)).
 
+### Fixed
+* Fixed deprecation warnings ([#1787](https://gitlab.com/yale-sdmp/reservations/issues/1787)).
+
 ## v6.4.0 - 2019-10-29
 ### Important
 *This release has not been tested under production conditions. Use at your own risk.*

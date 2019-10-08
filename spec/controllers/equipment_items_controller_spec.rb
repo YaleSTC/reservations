@@ -249,7 +249,7 @@ describe EquipmentItemsController, type: :controller do
       end
       it { is_expected.to redirect_to('/referrer') }
       it 'updates the deactivation reason and the notes' do
-        expect(item).to have_received(:update_attributes)
+        expect(item).to have_received(:update)
           .with(hash_including(:deactivation_reason, :notes))
       end
     end

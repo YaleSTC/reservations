@@ -242,7 +242,7 @@ describe UsersController, type: :controller do
       before { put :ban, params: { id: user.id } }
       it_behaves_like 'redirected request'
       it 'should make the user banned' do
-        expect(user).to have_received(:update_attributes)
+        expect(user).to have_received(:update)
           .with(hash_including(role: 'banned', view_mode: 'banned'))
       end
     end
@@ -263,7 +263,7 @@ describe UsersController, type: :controller do
       before { put :unban, params: { id: user.id } }
       it_behaves_like 'redirected request'
       it 'should make the user banned' do
-        expect(user).to have_received(:update_attributes)
+        expect(user).to have_received(:update)
           .with(hash_including(role: 'normal', view_mode: 'normal'))
       end
     end

@@ -33,7 +33,7 @@ class RequirementsController < ApplicationController
   end
 
   def update
-    if @requirement.update_attributes(requirement_params)
+    if @requirement.update(requirement_params)
       redirect_to @requirement, notice: 'Requirement was successfully updated.'
     else
       render action: 'edit'

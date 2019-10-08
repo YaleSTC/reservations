@@ -13,6 +13,8 @@ require 'spec_helper'
 # => :create_app_configs
 
 describe AppConfigsController, type: :controller do
+  NON_SUPERUSERS = %i[user admin checkout_person banned guest].freeze
+
   describe 'GET edit' do
     context 'app_config exists already' do
       before(:each) do
@@ -79,7 +81,7 @@ describe AppConfigsController, type: :controller do
 
         # TODO: FIXME
         context 'With valid parameters' do
-          # TODO: Simulate successful ActiveRecord update_attributes call
+          # TODO: Simulate successful ActiveRecord update call
           it 'resets TOS status for all users when :reset_tos_for_users is 1' do
             @user = FactoryGirl.create(:user)
             @params = @params.merge(reset_tos_for_users: 1)
@@ -116,7 +118,7 @@ describe AppConfigsController, type: :controller do
         end
 
         context 'With invalid parameters' do
-          # TODO: Simulate update_attributes failure
+          # TODO: Simulate update failure
           before(:each) do
             # Except paperclip attributes that trigger MassAssignment errors
             @params =
@@ -177,7 +179,6 @@ describe AppConfigsController, type: :controller do
       end
     end
 
-    NON_SUPERUSERS = %i[user admin checkout_person banned guest].freeze
     NON_SUPERUSERS.each { |u| it_behaves_like 'as other users', u }
   end
 
@@ -209,7 +210,6 @@ describe AppConfigsController, type: :controller do
       end
     end
 
-    NON_SUPERUSERS = %i[user admin checkout_person banned guest].freeze
     NON_SUPERUSERS.each { |u| it_behaves_like 'as other users', u }
   end
 end

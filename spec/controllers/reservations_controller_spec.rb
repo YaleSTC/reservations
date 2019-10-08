@@ -984,7 +984,7 @@ describe ReservationsController, type: :controller do
       before do
         request.env['HTTP_REFERER'] = 'where_i_came_from'
         sign_in @admin
-        @user.update_attributes(terms_of_service_accepted: false)
+        @user.update(terms_of_service_accepted: false)
         put :checkout, params: { user_id: @user.id, reservations: {} }
       end
       it { expect(response).to redirect_to 'where_i_came_from' }
@@ -993,7 +993,7 @@ describe ReservationsController, type: :controller do
     context 'when tos accepted' do
       before do
         sign_in @admin
-        @user.update_attributes(terms_of_service_accepted: false)
+        @user.update(terms_of_service_accepted: false)
         @item =
           FactoryGirl.create(:equipment_item,
                              equipment_model: @reservation.equipment_model)

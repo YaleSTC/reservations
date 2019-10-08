@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
-# rubocop:disable Lint/AmbiguousBlockAssociation
-
 require 'spec_helper'
 
-shared_examples_for 'page success' do
+shared_examples_for 'blackouts page success' do
   it { is_expected.to respond_with(:success) }
   it { is_expected.not_to set_flash }
 end
 
-shared_examples_for 'access denied' do
+shared_examples_for 'blackouts access denied' do
   it { is_expected.to redirect_to(root_url) }
   it { is_expected.to set_flash }
 end
@@ -25,7 +23,7 @@ describe BlackoutsController, type: :controller do
       before do
         get :index
       end
-      it_behaves_like 'page success'
+      it_behaves_like 'blackouts page success'
       it { is_expected.to render_template(:index) }
       it 'should assign @blackouts to all blackouts' do
         expect(assigns(:blackouts)).to eq(Blackout.all)
@@ -35,7 +33,7 @@ describe BlackoutsController, type: :controller do
       before do
         get :show, params: { id: FactoryGirl.create(:blackout) }
       end
-      it_behaves_like 'page success'
+      it_behaves_like 'blackouts page success'
       it { is_expected.to render_template(:show) }
       context 'single blackout' do
         it 'should not display a set' do
@@ -49,7 +47,7 @@ describe BlackoutsController, type: :controller do
         @blackout_set = Blackout.where(set_id: 1)
         get :show, params: { id: @blackout }
       end
-      it_behaves_like 'page success'
+      it_behaves_like 'blackouts page success'
       context 'recurring blackout' do
         it 'should display the correct set' do
           expect(assigns(:blackout_set).uniq.sort).to\
@@ -62,21 +60,21 @@ describe BlackoutsController, type: :controller do
       before do
         get :new
       end
-      it_behaves_like 'page success'
+      it_behaves_like 'blackouts page success'
       it { is_expected.to render_template(:new) }
     end
     context 'GET new_recurring' do
       before do
         get :new_recurring
       end
-      it_behaves_like 'page success'
+      it_behaves_like 'blackouts page success'
       it { is_expected.to render_template(:new_recurring) }
     end
     context 'GET edit' do
       before do
         get :edit, params: { id: FactoryGirl.create(:blackout) }
       end
-      it_behaves_like 'page success'
+      it_behaves_like 'blackouts page success'
       it { is_expected.to render_template(:edit) }
     end
     context 'POST create_recurring' do
@@ -354,43 +352,43 @@ describe BlackoutsController, type: :controller do
       before do
         get :index
       end
-      it_behaves_like 'access denied'
+      it_behaves_like 'blackouts access denied'
     end
     context 'GET show' do
       before do
         get :show, params: { id: @blackout }
       end
-      it_behaves_like 'access denied'
+      it_behaves_like 'blackouts access denied'
     end
     context 'POST create' do
       before do
         post :create, params: { blackout: @attributes }
       end
-      it_behaves_like 'access denied'
+      it_behaves_like 'blackouts access denied'
     end
     context 'PUT update' do
       before do
         put :update, params: { id: @blackout }
       end
-      it_behaves_like 'access denied'
+      it_behaves_like 'blackouts access denied'
     end
     context 'POST create recurring' do
       before do
         post :create_recurring, params: { blackout: @attributes }
       end
-      it_behaves_like 'access denied'
+      it_behaves_like 'blackouts access denied'
     end
     context 'DELETE destroy' do
       before do
         delete :destroy, params: { id: @blackout }
       end
-      it_behaves_like 'access denied'
+      it_behaves_like 'blackouts access denied'
     end
     context 'DELETE destroy recurring' do
       before do
         delete :destroy_recurring, params: { id: @blackout }
       end
-      it_behaves_like 'access denied'
+      it_behaves_like 'blackouts access denied'
     end
   end
 end

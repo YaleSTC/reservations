@@ -121,7 +121,7 @@ describe CategoriesController, type: :controller do
         let!(:cat) { FactoryGirl.build_stubbed(:category) }
         before do
           allow(Category).to receive(:find).with(cat.id.to_s).and_return(cat)
-          allow(cat).to receive(:update_attributes).and_return(true)
+          allow(cat).to receive(:update).and_return(true)
           attributes_hash = { id: 2 }
           put :update, params: { id: cat.id, category: attributes_hash }
         end
@@ -131,7 +131,7 @@ describe CategoriesController, type: :controller do
       context 'unsuccessful update' do
         let!(:cat) { CategoryMock.new(traits: [:findable]) }
         before do
-          allow(cat).to receive(:update_attributes).and_return(false)
+          allow(cat).to receive(:update).and_return(false)
           put :update, params: { id: cat.id, category: { id: 2 } }
         end
         it { is_expected.to render_template(:edit) }

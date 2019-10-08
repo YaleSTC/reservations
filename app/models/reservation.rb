@@ -381,7 +381,7 @@ class Reservation < ApplicationRecord
     self
   end
 
-  def update(current_user, new_params, new_notes) # rubocop:disable all
+  def update_reservation(current_user, new_params, new_notes) # rubocop:disable all
     # updates a reservation and records changes in the notes
     #
     # takes the current user, the new params from the controller that have

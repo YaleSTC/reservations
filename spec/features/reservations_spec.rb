@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'Reservations', type: :feature do
@@ -194,7 +195,7 @@ describe 'Reservations', type: :feature do
 
   context 'banned equipment processing' do
     after(:each) do
-      @user.update_attributes(role: 'normal')
+      @user.update(role: 'normal')
     end
     shared_examples 'can handle banned user reservation transactions' do
       it 'checks in successfully' do
@@ -202,7 +203,7 @@ describe 'Reservations', type: :feature do
         @checked_out_res = FactoryGirl.create :checked_out_reservation,
                                               reserver: @user,
                                               equipment_model: @eq_model
-        @user.update_attributes(role: 'banned')
+        @user.update(role: 'banned')
         visit manage_reservations_for_user_path(@user)
         check @checked_out_res.equipment_item.name.to_s
         click_button 'Check-In Equipment'
@@ -216,7 +217,7 @@ describe 'Reservations', type: :feature do
       it 'cannot checkout successfully' do
         @res = FactoryGirl.create :valid_reservation, reserver: @user,
                                                       equipment_model: @eq_model
-        @user.update_attributes(role: 'banned')
+        @user.update(role: 'banned')
         # check out
         visit manage_reservations_for_user_path(@user)
         select @eq_model.equipment_items.first.name.to_s, from: 'Equipment Item'
@@ -293,7 +294,7 @@ describe 'Reservations', type: :feature do
       end
 
       it 'does not update equipment items for missing ToS checkbox' do
-        @user.update_attributes(terms_of_service_accepted: false)
+        @user.update(terms_of_service_accepted: false)
         visit manage_reservations_for_user_path(@user)
         select @eq_model.equipment_items.first.name.to_s, from: 'Equipment Item'
         click_button 'Check-Out Equipment'
@@ -367,7 +368,7 @@ describe 'Reservations', type: :feature do
 
     context 'ToS checkbox' do
       before(:each) do
-        @user.update_attributes(terms_of_service_accepted: false)
+        @user.update(terms_of_service_accepted: false)
       end
 
       shared_examples 'can utilize the ToS checkbox' do
@@ -504,40 +505,42 @@ describe 'Reservations', type: :feature do
 
       context 'respects setting renewal_days_before_due' do
         before do
-          @res.equipment_model.update_attributes(renewal_days_before_due: 5)
+          @res.equipment_model.update(renewal_days_before_due: 5)
         end
 
         context 'before limit' do
-          before { @res.update_attributes(due_date: Time.zone.today + 6.days) }
+          before { @res.update(due_date: Time.zone.today + 6.days) }
 
           it_behaves_like 'cannot see renew button'
         end
 
         context 'after limit' do
-          before { @res.update_attributes(due_date: Time.zone.today + 5.days) }
+          before { @res.update(due_date: Time.zone.today + 5.days) }
 
           it_behaves_like 'can see renew button'
         end
       end
 
       context 'respects setting max_renewal_times' do
-        before { @res.equipment_model.update_attributes(max_renewal_times: 3) }
+        before { @res.equipment_model.update(max_renewal_times: 3) }
 
         context 'at limit' do
-          before { @res.update_attributes(times_renewed: 3) }
+          before { @res.update(times_renewed: 3) }
 
           it_behaves_like 'cannot see renew button'
         end
 
         context 'below limit' do
-          before { @res.update_attributes(times_renewed: 2) }
+          before { @res.update(times_renewed: 2) }
 
           it_behaves_like 'can see renew button'
         end
       end
 
       context 'cannot renew if the reservation is overdue' do
+        # rubocop:disable Rails/SkipsModelValidations
         before { @res.update_columns(overdue: true) }
+        # rubocop:enable Rails/SkipsModelValidations
 
         it_behaves_like 'cannot see renew button'
       end

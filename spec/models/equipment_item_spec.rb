@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'concerns/linkable_spec.rb'
-require 'concerns/soft_deletable_spec.rb'
 
 describe EquipmentItem, type: :model do
   include ActiveSupport::Testing::TimeHelpers
@@ -120,10 +118,10 @@ describe EquipmentItem, type: :model do
     let!(:user) { UserMock.new(md_link: 'md_link') }
     let!(:item) { FactoryGirl.build(:equipment_item) }
     it 'updates the notes' do
-      allow(item).to receive(:update_attributes)
+      allow(item).to receive(:update)
       item.make_reservation_notes('', ReservationMock.new(reserver: user), user,
                                   '', Time.zone.now)
-      expect(item).to have_received(:update_attributes)
+      expect(item).to have_received(:update)
         .with(hash_including(:notes))
     end
     it 'includes the given time' do
@@ -161,9 +159,9 @@ describe EquipmentItem, type: :model do
     let!(:user) { UserMock.new }
     let!(:item) { FactoryGirl.build(:equipment_item) }
     it 'updates the notes' do
-      allow(item).to receive(:update_attributes)
+      allow(item).to receive(:update)
       item.make_switch_notes(nil, nil, user)
-      expect(item).to have_received(:update_attributes)
+      expect(item).to have_received(:update)
         .with(hash_including(:notes))
     end
     it 'includes the reservation links when passed' do
@@ -192,7 +190,9 @@ describe EquipmentItem, type: :model do
     context 'no changes' do
       let!(:item) { FactoryGirl.build_stubbed(:equipment_item) }
       it 'does nothing' do
-        expect { item.update(user, {}) }.not_to change { item.notes }
+        expect { item.update_equipment_item(user, {}) }.not_to change {
+          item.notes
+        }
       end
     end
     context 'any changes' do
@@ -200,13 +200,13 @@ describe EquipmentItem, type: :model do
       it 'includes the current time' do
         travel(-1.days) do
           time = Time.zone.now.to_s(:long)
-          item.update(user, serial: 'a')
+          item.update_equipment_item(user, serial: 'a')
           expect(item.notes).to include(time)
         end
       end
       it 'includes the current user' do
         allow(user).to receive(:md_link).and_return('user_link')
-        item.update(user, serial: 'a')
+        item.update_equipment_item(user, serial: 'a')
         expect(item.notes).to include(user.md_link)
       end
     end
@@ -215,7 +215,7 @@ describe EquipmentItem, type: :model do
         old_value = 'a'
         new_value = 'b'
         item = FactoryGirl.build_stubbed(:equipment_item, attr => old_value)
-        item.update(user, attr => new_value)
+        item.update_equipment_item(user, attr => new_value)
         expect(item.notes).to include(old_value)
         expect(item.notes).to include(new_value)
       end
@@ -228,7 +228,7 @@ describe EquipmentItem, type: :model do
         new_model = FactoryGirl.create(:equipment_model)
         item = FactoryGirl.build_stubbed(:equipment_item,
                                          equipment_model: old_model)
-        item.update(user, equipment_model_id: new_model.id)
+        item.update_equipment_item(user, equipment_model_id: new_model.id)
         expect(item.notes).to include('Equipment Model')
         expect(item.notes).to include(old_model.name)
         expect(item.notes).to include(new_model.name)

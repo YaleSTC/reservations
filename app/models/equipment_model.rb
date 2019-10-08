@@ -46,7 +46,7 @@ class EquipmentModel < ApplicationRecord
   validates :name,
             :description,
             :category,     presence: true
-  validates :name,         uniqueness: true
+  validates :name,         uniqueness: { case_sensitive: false }
   validates :late_fee,     :replacement_fee,
             numericality: { greater_than_or_equal_to: 0 }
   validates :max_per_user,

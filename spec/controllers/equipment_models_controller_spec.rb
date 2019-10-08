@@ -129,7 +129,7 @@ describe EquipmentModelsController, type: :controller do
         before do
           allow(EquipmentModel).to receive(:find).with(model.id.to_s)
                                                  .and_return(model)
-          allow(model).to receive(:update_attributes).and_return(true)
+          allow(model).to receive(:update).and_return(true)
           put :update,
               params: { id: model.id, equipment_model: { name: 'Model' } }
         end
@@ -140,7 +140,7 @@ describe EquipmentModelsController, type: :controller do
       context 'unsuccessful update' do
         before do
           model = EquipmentModelMock.new(traits: %i[findable with_category],
-                                         update_attributes: false)
+                                         update: false)
           put :update,
               params: { id: model.id, equipment_model: { name: 'Model' } }
         end

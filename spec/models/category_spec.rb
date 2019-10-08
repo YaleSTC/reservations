@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'concerns/soft_deletable_spec.rb'
 
 describe Category, type: :model do
   it_behaves_like 'soft deletable'
@@ -11,7 +10,7 @@ describe Category, type: :model do
   end
 
   it { is_expected.to validate_presence_of(:name) }
-  it { is_expected.to validate_uniqueness_of(:name) }
+  it { is_expected.to validate_uniqueness_of(:name).case_insensitive }
 
   it { is_expected.to have_many(:equipment_models) }
 
