@@ -8,6 +8,7 @@
 
 ### Changed
 * Updated Rails from 5.2.3 -> 6.0.0 ([#1781](https://gitlab.com/yale-sdmp/reservations/issues/1781)).
+* Updated Boostrap Sass from 3.3.7 -> 3.4.1 ([#1783](https://gitlab.com/yale-sdmp/reservations/issues/1783)).
 
 ### Fixed
 * Fixed deprecation warnings ([#1787](https://gitlab.com/yale-sdmp/reservations/issues/1787)).
