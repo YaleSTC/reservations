@@ -1,7 +1,8 @@
 # frozen_string_literal: true
-# Load the rails application
-require File.expand_path('../application', __FILE__)
+
+# Load the Rails application.
 require 'rails_extensions'
+require_relative 'application'
 
 # Version variable
 if Dir.exist?('.git/') && !defined? APP_VERSION

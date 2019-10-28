@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 ruby '2.4.1' # Version in .ruby-version must match
 
 # standard gems
-gem 'rails', '~> 5.1.7'
+gem 'rails', '~> 5.2.3'
 gem 'mysql2', '~> 0.4.8'
 gem 'rake', '~> 12.0.0'
 gem 'jbuilder', '~> 2.7.0'
@@ -15,10 +15,10 @@ gem 'rails-controller-testing', '~> 1.0.2'
 gem 'activemodel-serializers-xml', '~> 1.0.1'
 
 # simulate environment variables
-gem 'dotenv-rails', '~> 2.2.1', :require => 'dotenv/rails-now'
+gem 'dotenv-rails', '~> 2.2.2', :require => 'dotenv/rails-now'
 
 # authentication / authorization
-gem 'devise', '~> 4.3.0'
+gem 'devise', '~> 4.4.3'
 gem 'devise_cas_authenticatable', '~> 1.10.0'
 gem 'cancancan', '~> 2.0.0'
 
@@ -54,12 +54,15 @@ gem 'draper', '~> 3.0.0'
 gem 'inline_svg', '~> 1.2.1'
 
 # forms / formatting
-gem 'simple_form', '~> 3.5.0'
+gem 'simple_form', '~> 4.0.1'
 gem 'cocoon', '~> 1.2.10'
 gem 'redcarpet', '~> 3.4.0'
 
 # iCalendar export
 gem 'icalendar', '~> 2.4.1'
+
+# bootsnap
+gem "bootsnap", "~> 1.4"
 
 group :development, :test do
   gem 'pry', '~> 0.10.4'
@@ -104,7 +107,7 @@ gem 'sass-rails', '~> 5.0.6'
 gem 'coffee-rails', '~> 4.2.2'
 gem 'uglifier', '~> 3.2.0'
 gem 'bootstrap-sass', '~> 3.3.7'
-gem 'font-awesome-rails', '~> 4.7.0.2'
+gem 'font-awesome-rails', '~> 4.7.0.5'
 
 group :development do
   gem 'thin', '~> 1.7.0'

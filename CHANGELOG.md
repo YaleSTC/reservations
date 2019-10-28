@@ -2,12 +2,15 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+## Unreleased
+### Changed
+* Updated Rails from 5.1.7 -> 5.2.3 ([#1780](https://gitlab.com/yale-sdmp/reservations/issues/1780)).
+
 ## v6.3.6 - 2019-01-11
 ### Changed
 * Replaced capybara-webkit with selenium and Chromedriver ([#1769](https://github.com/YaleSTC/reservations/issues/1769)).
-* Update Rails from 5.1.2 -> 5.1.7 ([#1779](https://gitlab.com/yale-sdmp/reservations/issues/1779)).
-* Update Bullet from 5.5.1 -> 5.7.5 ([#1779](https://gitlab.com/yale-sdmp/reservations/issues/1779)).
-
+* Updated Rails from 5.1.2 -> 5.1.7 ([#1779](https://gitlab.com/yale-sdmp/reservations/issues/1779)).
+* Updated Bullet from 5.5.1 -> 5.7.5 ([#1779](https://gitlab.com/yale-sdmp/reservations/issues/1779)).
 
 ### Fixed
 * Fixed issue with recurring blackouts being blocked by old reservations ([#1756](https://github.com/YaleSTC/reservations/issues/1756)).

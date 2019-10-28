@@ -25,3 +25,4 @@ coverage/
 node_modules/*
 *.swp
 *.env
+storage/
