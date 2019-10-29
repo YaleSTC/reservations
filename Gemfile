@@ -18,7 +18,7 @@ gem 'activemodel-serializers-xml', '~> 1.0.1'
 gem 'dotenv-rails', '~> 2.2.2', :require => 'dotenv/rails-now'
 
 # authentication / authorization
-gem 'devise', '~> 4.4.3'
+gem 'devise', '~> 4.7.1'
 gem 'devise_cas_authenticatable', '~> 1.10.0'
 gem 'cancancan', '~> 2.0.0'
 
