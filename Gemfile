@@ -105,7 +105,7 @@ end
 # assets
 gem 'sass-rails', '~> 5.0.6'
 gem 'uglifier', '~> 3.2.0'
-gem 'bootstrap-sass', '~> 3.3.7'
+gem 'bootstrap-sass', '~> 3.4.1'
 gem 'font-awesome-rails', '~> 4.7.0.5'
 
 group :development do
