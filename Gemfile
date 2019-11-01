@@ -54,7 +54,7 @@ gem 'draper', '~> 3.1.0'
 gem 'inline_svg', '~> 1.2.1'
 
 # forms / formatting
-gem 'simple_form', '~> 4.0.1'
+gem 'simple_form', '~> 5.0.1'
 gem 'cocoon', '~> 1.2.10'
 gem 'redcarpet', '~> 3.4.0'
 
