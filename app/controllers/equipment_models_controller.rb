@@ -99,8 +99,6 @@ class EquipmentModelsController < ApplicationController
     delete_files
 
     eq_params = equipment_model_params
-    # correct for file type
-    eq_params[:documentation] = fix_content_type(eq_params[:documentation])
 
     if @equipment_model.update(eq_params)
       # hard-delete any deleted checkin/checkout procedures
@@ -168,20 +166,6 @@ class EquipmentModelsController < ApplicationController
                   :requirements, :max_checkout_length,
                   checkin_procedures_attributes: {},
                   checkout_procedures_attributes: {})
-  end
-
-  # from https://gist.github.com/cnk/4453c6e81837e8d38b7e
-  def fix_content_type(filedata)
-    return nil if filedata.blank?
-    # see what the unix file command thinks this is
-    if filedata.content_type == 'application/octect-stream'
-      filedata.content_type = type_from_file_command(filedata.path)
-    end
-    filedata
-  end
-
-  def type_from_file_command(file)
-    Paperclip::FileCommandContentTypeDetector.new(file).detect
   end
 
   def generate_calendar_reservations

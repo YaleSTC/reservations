@@ -1,6 +1,6 @@
 <div class="thumbnail">
   <%= link_to equipment_model do %>
-    <% image_tag (equipment_model.photo.exists? ? equipment_model.photo.url(:thumbnail) : 'no-image.gif') %>
+    <% image_tag (equipment_model.photo.attached? ? equipment_model.photo.variant(resize: "260x180") : 'no-image.gif') %>
   <% end %>
   <h4 class="equipment_title">
     <%= link_to equipment_model.name, equipment_model, class: 'equipment_title_link', rel: 'tooltip', title: equipment_model.name %>

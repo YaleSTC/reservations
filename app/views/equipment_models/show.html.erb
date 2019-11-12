@@ -2,10 +2,10 @@
 <% subtitle @equipment_model.category.name %>
 <div class="row em_info">
   <div class="col-md-4">
-    <% if @equipment_model.photo.exists? %>
+    <% if @equipment_model.photo.attached? %>
     <div class="image_box">
       <%= link_to "#image_modal", :"data-toggle" => 'modal' do %>
-        <%= image_tag @equipment_model.photo.url(:large), class: 'img-responsive' %>
+        <%= image_tag @equipment_model.photo.variant(resize: "500x500"), class: 'img-responsive' %>
       <% end %>
       <div id="image_modal" class="modal fade">
         <div class="modal-dialog">
@@ -15,7 +15,7 @@
               <h4 class="modal-title"><%= @equipment_model.name %></h4>
             </div>
             <div class="modal-body">
-              <%= image_tag @equipment_model.photo.url(:original), class: 'img-responsive' %>
+              <%= image_tag @equipment_model.photo.variant(resize_to_limit: [1000, 1000]), class: 'img-responsive' %>
             </div>
           </div>
         </div>
@@ -68,7 +68,7 @@
     <li class="hide"><h4><a href="#"><%= @equipment_model.name.truncate(50) %></a></h4></li>
     <li><a href="#description">Description</a></li>
     <li><a href="#details">Details</a></li>
-    <% if @equipment_model.documentation.exists? %>
+    <% if @equipment_model.documentation.attached? %>
       <li><a href="#documentation">Documentation</a></li>
     <% end %>
     <% if @equipment_model.model_restricted?(cart.reserver_id) %>
@@ -122,21 +122,20 @@
   </div>
 </section>
 
-<% if @equipment_model.documentation.exists? %>
+<% if @equipment_model.documentation.attached? %>
   <section id="documentation">
     <h2>Documentation</h2><hr />
       <div class="row">
         <div class="col-md-3">
           <h4>
-            <%= (link_to @equipment_model.documentation_file_name,
-                         paperclip_full_url(@equipment_model.documentation),
-                         target: "_blank") if @equipment_model.documentation.exists? %>
+            <%= (link_to @equipment_model.documentation_blob.filename,
+                         rails_blob_url(@equipment_model.documentation), target: "_blank") if @equipment_model.documentation.attached? %>
           </h4>
         </div>
       </div>
       <div class="row">
         <div class="col-md-3">
-          <%= link_to @equipment_model.documentation.url, target: "_blank" do %>
+          <%= link_to rails_blob_url(@equipment_model.documentation), target: "_blank" do %>
             <i class="fa fa-file"></i>
           <% end %>
         </div>

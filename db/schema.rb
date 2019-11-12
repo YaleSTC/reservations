@@ -2,17 +2,38 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your
-# database schema. If you need to create the application database on another
-# system, you should be using db:schema:load, not running all the migrations
-# from scratch. The latter is a flawed and unsustainable approach (the more migrations
-# you'll amass, the slower it'll run and the greater likelihood for issues).
+# This file is the source Rails uses to define your schema when running `rails
+# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180624231458) do
+ActiveRecord::Schema.define(version: 2019_11_12_210445) do
 
-  create_table "announcements", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.bigint "byte_size", null: false
+    t.string "checksum", null: false
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "announcements", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.text "message"
     t.date "starts_at"
     t.date "ends_at"
@@ -20,7 +41,7 @@ ActiveRecord::Schema.define(version: 20180624231458) do
     t.datetime "updated_at"
   end
 
-  create_table "app_configs", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "app_configs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.boolean "upcoming_checkin_email_active", default: true
     t.boolean "reservation_confirmation_email_active", default: true
     t.string "site_title", null: false
@@ -59,7 +80,7 @@ ActiveRecord::Schema.define(version: 20180624231458) do
     t.boolean "requests_affect_availability", default: false
   end
 
-  create_table "blackouts", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "blackouts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.date "start_date"
     t.date "end_date"
     t.text "notice"
@@ -70,7 +91,7 @@ ActiveRecord::Schema.define(version: 20180624231458) do
     t.integer "set_id"
   end
 
-  create_table "categories", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "categories", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
     t.integer "max_per_user"
     t.integer "max_checkout_length"
@@ -84,7 +105,7 @@ ActiveRecord::Schema.define(version: 20180624231458) do
     t.boolean "csv_import", default: false, null: false
   end
 
-  create_table "checkin_procedures", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "checkin_procedures", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "equipment_model_id"
     t.string "step"
     t.datetime "created_at"
@@ -92,7 +113,7 @@ ActiveRecord::Schema.define(version: 20180624231458) do
     t.datetime "deleted_at"
   end
 
-  create_table "checkout_procedures", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "checkout_procedures", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "equipment_model_id"
     t.string "step"
     t.datetime "created_at"
@@ -100,7 +121,7 @@ ActiveRecord::Schema.define(version: 20180624231458) do
     t.datetime "deleted_at"
   end
 
-  create_table "equipment_items", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "equipment_items", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
     t.string "serial"
     t.boolean "active", default: true
@@ -110,10 +131,10 @@ ActiveRecord::Schema.define(version: 20180624231458) do
     t.datetime "deleted_at"
     t.boolean "csv_import", default: false, null: false
     t.string "deactivation_reason"
-    t.text "notes", limit: 16777215, null: false
+    t.text "notes", size: :medium, null: false
   end
 
-  create_table "equipment_models", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "equipment_models", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
     t.text "description"
     t.decimal "late_fee", precision: 10, scale: 2
@@ -142,17 +163,17 @@ ActiveRecord::Schema.define(version: 20180624231458) do
     t.integer "overdue_count", default: 0, null: false
   end
 
-  create_table "equipment_models_associated_equipment_models", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "equipment_models_associated_equipment_models", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "equipment_model_id"
     t.integer "associated_equipment_model_id"
   end
 
-  create_table "equipment_models_requirements", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "equipment_models_requirements", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "requirement_id", null: false
     t.integer "equipment_model_id", null: false
   end
 
-  create_table "requirements", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "requirements", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "equipment_model_id"
     t.string "contact_name"
     t.string "contact_info"
@@ -163,7 +184,7 @@ ActiveRecord::Schema.define(version: 20180624231458) do
     t.string "description"
   end
 
-  create_table "reservations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "reservations", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "reserver_id"
     t.integer "checkout_handler_id"
     t.integer "checkin_handler_id"
@@ -183,7 +204,7 @@ ActiveRecord::Schema.define(version: 20180624231458) do
     t.integer "flags", default: 1
   end
 
-  create_table "sessions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "sessions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "session_id", null: false
     t.text "data"
     t.datetime "created_at"
@@ -192,7 +213,7 @@ ActiveRecord::Schema.define(version: 20180624231458) do
     t.index ["updated_at"], name: "index_sessions_on_updated_at"
   end
 
-  create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "username"
     t.string "first_name"
     t.string "last_name"
@@ -214,12 +235,12 @@ ActiveRecord::Schema.define(version: 20180624231458) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
-  create_table "users_requirements", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "users_requirements", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "user_id"
     t.integer "requirement_id"
   end
 
-  create_table "versions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "versions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "item_type", null: false
     t.integer "item_id", null: false
     t.string "event", null: false
@@ -229,4 +250,5 @@ ActiveRecord::Schema.define(version: 20180624231458) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
 end

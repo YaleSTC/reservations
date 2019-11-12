@@ -32,7 +32,6 @@ gem 'rails_admin', '~> 2.0.0'
 gem 'net-ldap', '~> 0.16.0'
 
 # attachments
-gem 'paperclip', '~> 5.2.0'
 
 # for exporting multiple files
 gem 'rubyzip', '~> 1.3.0'
@@ -126,3 +125,6 @@ group :heroku do
   gem 'rails_12factor', '~> 0.0.3'
 end
 
+gem "mini_magick", "~> 4.9"
+
+gem "active_storage_validations", "~> 0.8.4"

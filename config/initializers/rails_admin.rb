@@ -73,10 +73,4 @@ RailsAdmin.config do |config|
     # history_index
     # history_show
   end
-
-  # Include only models we care about
-  config.included_models =
-    [Announcement, AppConfig, Blackout, Category, CheckinProcedure,
-     CheckoutProcedure, EquipmentModel, EquipmentItem, Requirement,
-     Reservation, User]
 end

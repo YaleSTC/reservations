@@ -1,15 +1,11 @@
 # frozen_string_literal: true
 
 class AppConfig < ApplicationRecord
-  has_attached_file :favicon,
-                    url: paperclip_url(filename: 'favicon'),
-                    path: ':rails_root/public/attachments/app_configs/'\
-                      ':attachment/:id/:style/favicon.:extension'
+  has_one_attached :favicon
 
-  validates_with AttachmentContentTypeValidator,
-                 attributes: :favicon,
-                 content_type: 'image/vnd.microsoft.icon',
-                 message: 'Must be .ico'
+  validates :favicon,
+            content_type: { in: 'image/vnd.microsoft.icon',
+                            message: 'must be .ico' }
 
   validates :site_title,   presence: true,
                            length: { maximum: 20 }
