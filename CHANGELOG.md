@@ -15,6 +15,9 @@
 ### Fixed
 * Fixed deprecation warnings ([#1787](https://gitlab.com/yale-sdmp/reservations/issues/1787)).
 
+### Security
+* Updated Nokogiri from 10.10.4 to 10.10.5 for CVE-2019-13117 ([#1792](https://gitlab.com/yale-sdmp/reservations/issues/1792)).
+
 ## v6.4.0 - 2019-10-29
 ### Important
 *This release has not been tested under production conditions. Use at your own risk.*
