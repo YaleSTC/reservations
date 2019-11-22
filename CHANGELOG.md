@@ -17,6 +17,7 @@
 
 ### Security
 * Updated Nokogiri from 10.10.4 to 10.10.5 for CVE-2019-13117 ([#1792](https://gitlab.com/yale-sdmp/reservations/issues/1792)).
+* Updated Loofah from 2.3.0 to 2.3.1 for CVE-2019-15587 ([#1793](https://gitlab.com/yale-sdmp/reservations/issues/1793)).
 
 ## v6.4.0 - 2019-10-29
 ### Important
