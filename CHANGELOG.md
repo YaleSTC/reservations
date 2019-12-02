@@ -5,6 +5,7 @@
 ## Unreleased
 ### Added
 * Added bundler audit ([#1788](https://gitlab.com/yale-sdmp/reservations/issues/1788)).
+* Added Gitlab CI ([#1785](https://gitlab.com/yale-sdmp/reservations/issues/1785)).
 
 ### Changed
 * Updated Rails from 5.2.3 -> 6.0.0 ([#1781](https://gitlab.com/yale-sdmp/reservations/issues/1781)).

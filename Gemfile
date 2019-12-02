@@ -10,7 +10,7 @@ gem 'jbuilder', '~> 2.9.1'
 
 # gems required for the rails 5 update
 gem 'responders', '~> 3.0.0'
-gem 'record_tag_helper', '~> 1.0.0', :github => 'rails/record_tag_helper', :ref => '128cc1a577f97069b6f7826e06c07b65650529f2'
+gem 'record_tag_helper', '~> 1.0.0', :git => 'https://github.com/rails/record_tag_helper.git', :ref => '128cc1a577f97069b6f7826e06c07b65650529f2'
 gem 'rails-controller-testing', '~> 1.0.3'
 gem 'activemodel-serializers-xml', '~> 1.0.1'
 

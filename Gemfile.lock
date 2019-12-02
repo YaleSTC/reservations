@@ -1,5 +1,5 @@
 GIT
-  remote: git://github.com/rails/record_tag_helper.git
+  remote: https://github.com/rails/record_tag_helper.git
   revision: 128cc1a577f97069b6f7826e06c07b65650529f2
   ref: 128cc1a577f97069b6f7826e06c07b65650529f2
   specs:

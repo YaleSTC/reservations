@@ -1,0 +1,53 @@
+stages:
+  - test
+
+.rails_template: &rails_template
+  image: ruby:2.6.5
+
+  stage: test
+
+  services:
+    - mysql:5.7
+
+  variables:
+    MYSQL_DATABASE: gitlab_ci_test
+    MYSQL_ROOT_PASSWORD: reservations
+
+  cache:
+    paths:
+      - vendor/bundle
+  
+  before_script:
+    - gem install bundler --no-document
+    - bundle check --path vendor/bundle || bundle install --path vendor/bundle
+    - cp config/database.gitlab.yml config/database.yml
+
+rails_test:
+  <<: *rails_template
+
+  script: 
+    - curl -sL https://deb.nodesource.com/setup_12.x | bash -
+    - curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+    - echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
+    - apt-get update && apt-get install -y --no-install-recommends nodejs unzip openjdk-11-jre-headless xvfb libxi6 libgconf-2-4 google-chrome-stable
+    - wget -N http://chromedriver.storage.googleapis.com/77.0.3865.40/chromedriver_linux64.zip -P ~/
+    - unzip ~/chromedriver_linux64.zip -d ~/
+    - rm ~/chromedriver_linux64.zip
+    - mv -f ~/chromedriver /usr/local/bin/chromedriver
+    - chown root:root /usr/local/bin/chromedriver
+    - chmod 0755 /usr/local/bin/chromedriver
+    - bundle exec rake
+
+
+rails_style:
+  <<: *rails_template
+
+  script: 
+    - bundle exec rake check_style
+
+rails_audit:
+  <<: *rails_template
+
+  script: 
+    - bundle exec bundle audit update
+    - bundle exec bundle audit
