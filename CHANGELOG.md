@@ -12,6 +12,7 @@
 * Updated Boostrap Sass from 3.3.7 -> 3.4.1 ([#1783](https://gitlab.com/yale-sdmp/reservations/issues/1783)).
 * Updated Rubyzip from 1.2.1 -> 1.3.0 ([#1789](https://gitlab.com/yale-sdmp/reservations/issues/1789)).
 * Updated Simple Form from 4.0.1 -> 5.0.1 ([#1790](https://gitlab.com/yale-sdmp/reservations/issues/1790)).
+* Changed CI pipeline to use latest Chromedriver ([#1795](https://gitlab.com/yale-sdmp/reservations/issues/1795)).
 
 ### Fixed
 * Fixed deprecation warnings ([#1787](https://gitlab.com/yale-sdmp/reservations/issues/1787)).

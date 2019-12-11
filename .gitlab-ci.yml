@@ -30,7 +30,8 @@ rails_test:
     - curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
     - echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
     - apt-get update && apt-get install -y --no-install-recommends nodejs unzip openjdk-11-jre-headless xvfb libxi6 libgconf-2-4 google-chrome-stable
-    - wget -N http://chromedriver.storage.googleapis.com/77.0.3865.40/chromedriver_linux64.zip -P ~/
+    - CHROME_DRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`
+    - wget -N http://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip -P ~/
     - unzip ~/chromedriver_linux64.zip -d ~/
     - rm ~/chromedriver_linux64.zip
     - mv -f ~/chromedriver /usr/local/bin/chromedriver
