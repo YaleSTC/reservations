@@ -21,6 +21,7 @@
 * Updated Nokogiri from 10.10.4 to 10.10.5 for CVE-2019-13117 ([#1792](https://gitlab.com/yale-sdmp/reservations/issues/1792)).
 * Updated Loofah from 2.3.0 to 2.3.1 for CVE-2019-15587 ([#1793](https://gitlab.com/yale-sdmp/reservations/issues/1793)).
 * Updated Puma from 4.1.0 to 4.3.1 for CVE-2019-16770 ([#1794](https://gitlab.com/yale-sdmp/reservations/issues/1794)).
+* Updated Rack from 2.0.7 to 2.0.8 for CVE-2019-167820 ([#17988888888://gitlab.com/yale-sdmp/reservations/issues/1798)).
 
 ## v6.4.0 - 2019-10-29
 ### Important
