@@ -23,6 +23,13 @@
 * Updated Puma from 4.1.0 to 4.3.1 for CVE-2019-16770 ([#1794](https://gitlab.com/yale-sdmp/reservations/issues/1794)).
 * Updated Rack from 2.0.7 to 2.0.8 for CVE-2019-167820 ([#17988888888://gitlab.com/yale-sdmp/reservations/issues/1798)).
 
+## v6.4.1 
+### Important
+*This is an intermediary release towards 7.0 and should not be used in production
+ [See here for upgrade instructions](https://gitlab.com/yale-sdmp/reservations/-/wikis/Upgrade-Path-to-Reservations-7.0-and-Required-Action)*
+### Added
+* Added ActiveStorage database migrations ([#1805](https://gitlab.com/yale-sdmp/reservations/issues/1805)).
+
 ## v6.4.0 - 2019-10-29
 ### Important
 *This release has not been tested under production conditions. Use at your own risk.*

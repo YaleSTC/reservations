@@ -49,23 +49,9 @@ Rails.application.configure do
   # config.action_dispatch.x_sendfile_header = 'X-Sendfile' # for Apache
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for NGINX
 
-  # configure for AWS
-  if ENV['ENABLE_PAPERCLIP_S3']
-    config.paperclip_defaults = {
-      storage: :s3,
-      bucket: ENV['S3_BUCKET_NAME'],
-      s3_region: ENV['AWS_S3_REGION'],
-      url: ':s3_domain_url',
-      s3_credentials: {
-        access_key_id: ENV['AWS_ACCESS_KEY_ID'],
-        secret_access_key: ENV['AWS_SECRET_ACCESS_KEY']
-      }
-    }
-  end
-
   # Store uploaded files on the local file system
   # (see config/storage.yml for options).
-  # config.active_storage.service = :local
+  config.active_storage.service = ENV.fetch('STORAGE_LOCATION', '')
 
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
