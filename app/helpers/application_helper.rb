@@ -15,16 +15,19 @@ module ApplicationHelper
                                     no_intra_emphasis: true,
                                     strikethrough: true, superscript: true)
     # This is safe -- Redcarpet sanitizes
-    # rubocop:disable Rails/OutputSafety
     markdown.render(text).html_safe
-    # rubocop:enable Rails/OutputSafety
   end
 
   def markdown_to_plain_text(text)
     # This is safe -- Redcarpet sanitizes
-    # rubocop:disable Rails/OutputSafety
     strip_tags(markdown(text)).html_safe
-    # rubocop:enable Rails/OutputSafety
+  end
+
+  def paperclip_field_error(local_form_variable, *fields)
+    # Field must be symbol
+    fields.each do |field|
+      return 'error' if local_form_variable.error(field).present?
+    end
   end
 
   def intify(integer)
@@ -35,5 +38,14 @@ module ApplicationHelper
   def dayify(integer)
     return 'unrestricted' if integer.nil? || integer == Float::INFINITY
     pluralize(integer, 'day')
+  end
+
+  def paperclip_full_url(upload)
+    return '#' unless upload.url
+    unless Rails.application.config.action_controller.relative_url_root
+      return upload.url
+    end
+    "#{Rails.application.config.action_controller.relative_url_root}" \
+      "#{upload.url}"
   end
 end

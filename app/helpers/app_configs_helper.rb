@@ -2,18 +2,8 @@
 
 module AppConfigsHelper
   def current_favicon_and_options
-    return unless @app_configs.favicon.attached?
+    return if @app_configs.favicon.blank?
     '<br><br><strong>Current Favicon: </strong> '\
-        "#{current_favicon}"
-  end
-
-  private
-
-  def current_favicon
-    resized_favicon = @app_configs
-                      .favicon
-                      .variant(resize_to_limit: [150, 150])
-
-    image_tag resized_favicon
+        "#{image_tag @app_configs.favicon.url unless @app_configs.favicon.nil?}"
   end
 end

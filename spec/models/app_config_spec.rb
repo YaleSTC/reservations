@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 require 'spec_helper'
 
 describe AppConfig, type: :model do
@@ -37,25 +36,21 @@ describe AppConfig, type: :model do
       expect(@ac).not_to be_valid
     end
   end
-
-  it 'accepts favicon' do
-    file = instance_spy('file')
-    allow(ActiveStorage::Blob).to receive(:service).and_return(file)
-    favicon = ActiveStorage::Blob.new(content_type: 'image/vnd.microsoft.icon',
-                                      filename: 'test.jpg',
-                                      checksum: 'test',
-                                      byte_size: 1.byte)
-    expect(@ac.update(favicon_blob: favicon)).to be_truthy
-  end
-
-  it 'does not accept favicon with wrong filetype' do
-    file = instance_spy('file')
-    allow(ActiveStorage::Blob).to receive(:service).and_return(file)
-    favicon = ActiveStorage::Blob.new(content_type: 'image/jpg',
-                                      filename: 'test.jpg',
-                                      checksum: 'test',
-                                      byte_size: 1.byte)
-    expect(@ac.update(favicon_blob: favicon)).to be_falsey
+  # it "has an attachment that could serve as favicon" do
+  #   @ac.favicon_file_name = "icon.ico"
+  #   @ac.should be_valid
+  # end
+  # it "does not accept a missing favicon" do
+  #   @ac.favicon_file_name = ""
+  #   @ac.should_not be_valid
+  # end
+  it 'has an attachment that is of the favicon format' do
+    types = ['image/gif', 'image/jpeg', 'image/png']
+    types.each do |invalid|
+      @ac.favicon_content_type = invalid
+      expect(@ac).not_to be_valid
+    end
+    @ac.favicon_content_type = 'image/vnd.microsoft.icon'
   end
 
   context '.contact_email' do

@@ -44,7 +44,7 @@ Rails.application.configure do
 
   # Store uploaded files on the local file system
   # (see config/storage.yml for options).
-  config.active_storage.service = ENV.fetch('STORAGE_LOCATION', '')
+  config.active_storage.service = :local
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
@@ -68,6 +68,9 @@ Rails.application.configure do
   # Checks for improperly declared sprockets dependencies.
   # Raises helpful error messages.
   config.assets.raise_runtime_errors = true
+
+  # Set Paperclip path
+  Paperclip.options[:command_path] = '/usr/local/bin'
 
   config.after_initialize do
     Bullet.enable = true
