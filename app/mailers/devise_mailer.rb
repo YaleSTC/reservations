@@ -16,10 +16,10 @@ class DeviseMailer < Devise::Mailer
 
   def devise_sender
     admin_email = if AppConfig.check(:admin_email)
-                     AppConfig.get :admin_email
-                   else
-                     'admin@reservations.app'
-                   end
+                    AppConfig.get :admin_email
+                  else
+                    'admin@reservations.app'
+                  end
 
     Mail::Address.new admin_email
   end

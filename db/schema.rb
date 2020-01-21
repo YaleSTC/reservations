@@ -2,15 +2,15 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your
-# database schema. If you need to create the application database on another
-# system, you should be using db:schema:load, not running all the migrations
-# from scratch. The latter is a flawed and unsustainable approach (the more migrations
-# you'll amass, the slower it'll run and the greater likelihood for issues).
+# This file is the source Rails uses to define your schema when running `rails
+# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_12_210445) do
+ActiveRecord::Schema.define(version: 2020_01_23_142405) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", null: false
@@ -55,10 +55,6 @@ ActiveRecord::Schema.define(version: 2019_11_12_210445) do
     t.text "overdue_checkin_email_body", null: false
     t.boolean "overdue_checkin_email_active", default: true
     t.text "terms_of_service", null: false
-    t.string "favicon_file_name"
-    t.string "favicon_content_type"
-    t.integer "favicon_file_size"
-    t.datetime "favicon_updated_at"
     t.text "deleted_missed_reservation_email_body", null: false
     t.boolean "send_notifications_for_deleted_missed_reservations", default: true
     t.boolean "checkout_persons_can_edit", default: false
@@ -131,7 +127,7 @@ ActiveRecord::Schema.define(version: 2019_11_12_210445) do
     t.datetime "deleted_at"
     t.boolean "csv_import", default: false, null: false
     t.string "deactivation_reason"
-    t.text "notes", limit: 16777215, null: false
+    t.text "notes", size: :medium, null: false
   end
 
   create_table "equipment_models", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -145,14 +141,6 @@ ActiveRecord::Schema.define(version: 2019_11_12_210445) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "deleted_at"
-    t.string "photo_file_name"
-    t.string "photo_content_type"
-    t.integer "photo_file_size"
-    t.datetime "photo_updated_at"
-    t.string "documentation_file_name"
-    t.string "documentation_content_type"
-    t.integer "documentation_file_size"
-    t.datetime "documentation_updated_at"
     t.integer "max_renewal_times"
     t.integer "max_renewal_length"
     t.integer "renewal_days_before_due"

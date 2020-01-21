@@ -32,7 +32,6 @@ gem 'rails_admin', '~> 2.0.0'
 gem 'net-ldap', '~> 0.16.0'
 
 # attachments
-gem 'paperclip', '~> 5.2.0'
 
 # for exporting multiple files
 gem 'rubyzip', '~> 1.3.0'
@@ -63,6 +62,11 @@ gem 'icalendar', '~> 2.4.1'
 
 # bootsnap
 gem "bootsnap", "~> 1.4"
+
+# ActiveStorage
+gem "mini_magick", "~> 4.9"
+gem "active_storage_validations", "~> 0.8.4"
+gem 'aws-sdk-s3', '~> 1'
 
 group :development, :test do
   gem "bundler-audit", "~> 0.6.1"
@@ -122,7 +126,6 @@ end
 group :heroku do
   gem 'unicorn', '~> 5.1.0'
   gem 'rack-timeout', '~> 0.4.2'
-  gem 'aws-sdk', '~> 2.3.0'
+  gem 'aws-sdk', '~> 3'
   gem 'rails_12factor', '~> 0.0.3'
 end
-

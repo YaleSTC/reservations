@@ -69,61 +69,23 @@ class EquipmentModel < ApplicationRecord
   end
 
   #################
-  ## Paperclip   ##
+  ## ActiveStorage ##
   #################
 
-  has_attached_file :photo, # generates profile picture
-                    styles: {
-                      large: { geometry: '500x500', format: 'png' },
-                      medium: { geometry: '250x250', format: 'png' },
-                      small: { geometry: '150x150', format: 'png' },
-                      thumbnail: { geometry: '260x180', format: 'png' }
-                    },
-                    convert_options: {
-                      large:
-                        '-background none -gravity center -extent 500x500',
-                      medium:
-                        '-background none -gravity center -extent 250x250',
-                      small:
-                        '-background none -gravity center -extent 150x150',
-                      thumbnail:
-                        '-background none -gravity center -extent 260x180'
-                    },
-                    url: paperclip_url,
-                    path: ':rails_root/public/attachments/equipment_models/'\
-                      ':attachment/:id/:style/:basename.:extension',
-                    default_url: '/fat_cat.jpeg',
-                    preserve_files: true
+  has_one_attached :photo
+  has_one_attached :documentation
 
-  has_attached_file :documentation, # generates document
-                    content_type: 'application/pdf',
-                    url: paperclip_url,
-                    path: ':rails_root/public/attachments/equipment_models/'\
-                      ':attachment/:id/:style/:basename.:extension',
-                    preserve_files: true
+  validates :photo,
+            content_type: { in: ['image/jpg', 'image/png', 'image/jpeg'],
+                            message: 'must be jpeg, jpg, or png.' },
+            size: { less_than: 1.megabytes,
+                    message: 'must be less than 1 MB in size' }
 
-  validates_attachment_content_type :photo,
-                                    content_type: ['image/jpg', 'image/png',
-                                                   'image/jpeg'],
-                                    message: 'must be jpeg, jpg, or png.'
-  validates_attachment_size :photo,
-                            less_than: 1.megabytes,
-                            message: 'must be less than 1 MB in size'
-  validates_attachment_content_type :documentation,
-                                    content_type: ['application/pdf'],
-                                    message: 'must be pdf'
-
-  validates_attachment_size :documentation,
-                            less_than: 5.megabytes,
-                            message: 'must be less than 5 MB in size'
-
-  Paperclip.interpolates :normalized_photo_name do |attachment, _style|
-    attachment.instance.normalized_photo_name
-  end
-
-  def normalized_photo_name
-    "#{id}-#{photo_file_name.gsub(/[^a-zA-Z0-9_\.]/, '_')}"
-  end
+  validates :documentation,
+            content_type: { in: 'application/pdf',
+                            message: 'must be pdf' },
+            size: { less_than: 5.megabytes,
+                    message: 'must be less than 5 MB in size' }
 
   ######################
   ## Instance Methods ##

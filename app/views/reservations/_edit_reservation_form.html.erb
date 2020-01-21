@@ -16,7 +16,7 @@
             <tr>
               <td>
                 <%= link_to EquipmentModel.find(model_id) do %>
-                  <% image_tag (EquipmentModel.find(model_id).photo.exists? ? EquipmentModel.find(model_id).photo.url(:small) : 'no-image.gif') %>
+                  <% image_tag (EquipmentModel.find(model_id).photo.present? ? EquipmentModel.find(model_id).photo.variant(resize: "150×150") : 'no-image.gif') %>
                 <% end %>
               </td>
               <td>

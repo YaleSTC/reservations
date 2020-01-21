@@ -3,6 +3,9 @@
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
 ## Unreleased
+### Important
+* [See here for upgrade instructions](https://gitlab.com/yale-sdmp/reservations/-/wikis/Upgrade-Path-to-Reservations-7.0-and-Required-Action)*
+
 ### Added
 * Added bundler audit ([#1788](https://gitlab.com/yale-sdmp/reservations/issues/1788)).
 * Added Gitlab CI ([#1785](https://gitlab.com/yale-sdmp/reservations/issues/1785)).
@@ -13,6 +16,7 @@
 * Updated Rubyzip from 1.2.1 -> 1.3.0 ([#1789](https://gitlab.com/yale-sdmp/reservations/issues/1789)).
 * Updated Simple Form from 4.0.1 -> 5.0.1 ([#1790](https://gitlab.com/yale-sdmp/reservations/issues/1790)).
 * Changed CI pipeline to use latest Chromedriver ([#1795](https://gitlab.com/yale-sdmp/reservations/issues/1795)).
+* Changed files to be handled with ActiveStorage rather than Paperclip ([#1796](https://gitlab.com/yale-sdmp/reservations/issues/1796)).
 
 ### Fixed
 * Fixed deprecation warnings ([#1787](https://gitlab.com/yale-sdmp/reservations/issues/1787)).
