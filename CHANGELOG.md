@@ -2,6 +2,13 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+## v6.4.1 
+### Important
+*This is an intermediary release towards 7.0 and should not be used in production
+ [See here for upgrade instructions](https://gitlab.com/yale-sdmp/reservations/-/wikis/Upgrade-Path-to-Reservations-7.0-and-Required-Action)*
+### Added
+* Added ActiveStorage database migrations for S3 users ([#1806](https://gitlab.com/yale-sdmp/reservations/issues/1805)).
+
 ## v6.4.0 - 2019-10-29
 ### Important
 *This release has not been tested under production conditions. Use at your own risk.*
