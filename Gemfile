@@ -5,7 +5,7 @@ ruby '2.6.5' # Version in .ruby-version must match
 # standard gems
 gem 'rails', '~> 6.0.0'
 gem 'mysql2', '~> 0.5.2'
-gem 'rake', '~> 12.0.0'
+gem 'rake', '~> 12.3.3'
 gem 'jbuilder', '~> 2.9.1'
 
 # gems required for the rails 5 update

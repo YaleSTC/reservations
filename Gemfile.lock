@@ -1252,7 +1252,7 @@ GEM
     rainbow (2.2.2)
       rake
     raindrops (0.18.0)
-    rake (12.0.0)
+    rake (12.3.3)
     rb-fsevent (0.10.3)
     rb-inotify (0.10.0)
       ffi (~> 1.0)
@@ -1440,7 +1440,7 @@ DEPENDENCIES
   rails4-autocomplete (~> 1.1.1)
   rails_12factor (~> 0.0.3)
   rails_admin (~> 2.0.0)
-  rake (~> 12.0.0)
+  rake (~> 12.3.3)
   record_tag_helper (~> 1.0.0)!
   redcarpet (~> 3.4.0)
   responders (~> 3.0.0)
