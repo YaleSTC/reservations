@@ -83,7 +83,7 @@ group :development, :test do
   gem 'capybara', '~> 3.9.0'
   gem 'capybara-selenium', '~> 0.0.6'
   gem 'selenium-webdriver', '~> 3.14.1'
-  gem "puma", "~> 4.1"
+  gem "puma", "~> 4.3"
   gem 'spring', '~> 2.0.2'
   gem 'spring-commands-rspec', '~> 1.0.4'
   gem 'fuubar', '~> 2.2.0'
