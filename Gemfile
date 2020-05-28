@@ -48,7 +48,7 @@ gem 'momentjs-rails', '~> 2.17.1'
 gem 'rails4-autocomplete', '~> 1.1.1'
 # possibly replace above with rails-jquery-autocomplete v 1.0.3
 gem 'select2-rails', '~> 4.0.3'
-gem 'kaminari', '~> 0.17.0'
+gem 'kaminari', '~> 1.2.1'
 gem 'draper', '~> 3.1.0'
 gem 'inline_svg', '~> 1.2.1'
 
