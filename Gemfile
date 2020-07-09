@@ -94,6 +94,7 @@ group :development, :test do
   gem 'database_cleaner', '~> 1.6.1'
   gem 'rubocop', '~> 0.49.1', require: false
   gem 'timecop', '~> 0.9.1'
+  gem "bundler-audit", "~> 0.7.0"
 end
 
 group :development, :test, :heroku do
@@ -126,3 +127,4 @@ group :heroku do
   gem 'aws-sdk', '~> 2.3.0'
   gem 'rails_12factor', '~> 0.0.3'
 end
+
