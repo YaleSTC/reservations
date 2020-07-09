@@ -1,0 +1,38 @@
+version: '3'
+services:
+  mysql:
+    container_name: reservations-mysql
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: ${RES_DB_PASSWORD}
+      MYSQL_DATABASE: ${RES_DB_NAME_DEV}
+    command: "mysqld --max_allowed_packet=128M"
+    restart: always
+    volumes:
+      - mysql-data:/var/lib/mysql
+  web:
+    container_name: reservations-rails
+    build:
+      context: ./
+      dockerfile: Dockerfile.dev
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    volumes:
+      - ${APPLICATION_PATH}:/app
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    tty: true
+    depends_on:
+      - mysql 
+    environment:
+      RAILS_ENV: ${RAILS_ENV}
+      DB_HOST: ${RES_DB_HOST}
+      RES_DB_NAME_DEV: ${RES_DB_NAME_DEV}
+      RES_DB_NAME_TST: ${RES_DB_NAME_TST}
+      RES_DB_NAME_PRDT: ${RES_DB_NAME_PRD}
+      RES_DB_USERNAME: ${RES_DB_USERNAME}
+      RES_DB_PASSWORD: ${RES_DB_PASSWORD}
+      CAS_BASE_URL: ${CAS_BASE_URL}
+
+volumes:
+  mysql-data:
