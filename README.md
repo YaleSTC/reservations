@@ -84,6 +84,18 @@ In the `development` and `test` Rails environments, most of the configuration is
 
 In `production`, the `config/database.yml.example.production` should be used as it will refer to the relevant environment variables. Additionally, you must define most of the configuration environment variables listed [here](https://github.com/YaleSTC/reservations/wiki/Configuration) in order for Reservations to work.
 
+#### Developing with Docker
+To develop this app locally with Docker, 
+1. Copy `.env.dev.template` to `.env`. See `.env.example` for a full list of available environment variables.
+2. Copy `config/database.development.yml` to `config/database.yml`.
+3. Run `docker-compose up -d`.
+4. On initial setup, run `docker-compose run web bin/setup`.
+
+To develop locally without Docker:
+1. Copy `.env.example` to `.env`.
+2. Copy `config/database.local.yml` to `config/database.yml`.
+3. Run rake db:create and rake db:schema:load
+
 #### Authentication
 By default, Reservations uses e-mail addresses and passwords to authenticate users with the [`devise`](https://rubygems.org/gems/devise) gem. It also supports the CAS authentication system, using the gem [`devise_cas_authenticatable`](https://rubygems.org/gems/devise_cas_authenticatable). If you want to use CAS authentication you must set the `CAS_AUTH` and `CAS_BASE_URL` environment variables to the appropriate values (see [here](https://github.com/YaleSTC/reservations/wiki/Configuration#authentication) for more details). Switching between authentication methods after initial setup is possible with some caveats (see our [wiki](https://github.com/YaleSTC/reservations/wiki/Authentication#switching-authentication-methods) for more details).
 
