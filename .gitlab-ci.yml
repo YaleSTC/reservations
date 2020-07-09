@@ -1,0 +1,70 @@
+stages:
+  - test
+  - build
+
+.rails_template: &rails_template
+  image: ruby:2.6.5
+
+  stage: test
+
+  services:
+    - mysql:5.7
+
+  variables:
+    MYSQL_DATABASE: gitlab_ci_test
+    MYSQL_ROOT_PASSWORD: reservations
+
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - vendor/ruby
+  
+  before_script:
+    - gem install bundler --no-document
+    - bundle install -j $(nproc) --path vendor/ruby
+    - cp config/database.gitlab.yml config/database.yml
+
+rails_test:
+  <<: *rails_template
+
+  script: 
+    - curl -sL https://deb.nodesource.com/setup_12.x | bash -
+    - curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+    - echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
+    - apt-get update && apt-get install -y --no-install-recommends nodejs unzip openjdk-11-jre-headless xvfb libxi6 libgconf-2-4 google-chrome-stable
+    - CHROME_DRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`
+    - wget -N http://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip -P ~/
+    - unzip ~/chromedriver_linux64.zip -d ~/
+    - rm ~/chromedriver_linux64.zip
+    - mv -f ~/chromedriver /usr/local/bin/chromedriver
+    - chown root:root /usr/local/bin/chromedriver
+    - chmod 0755 /usr/local/bin/chromedriver
+    - bundle exec rake
+
+rails_style:
+  <<: *rails_template
+
+  script: 
+    - bundle exec rake check_style
+
+rails_audit:
+  <<: *rails_template
+
+  script: 
+    - bundle exec bundle audit update
+    - bundle exec bundle audit --ignore CVE-2019-16676 CVE-2019-16892 CVE-2020-8130 CVE-2019-16782 CVE-2020-8161 CVE-2020-5249 CVE-2019-16770 CVE-2020-5247 CVE-2020-11077 CVE-2019-13117 CVE-2020-7595 CVE-2019-15587 CVE-2020-11082 CVE-2020-10663 CVE-2016-7103 CVE-2019-11358 CVE-2019-16109 CVE-2019-5421 CVE-2019-8331 CVE-2016-10735 CVE-2020-8165 CVE-2020-8162 CVE-2020-8167 CVE-2020-5267 CVE-2020-8166 CVE-2020-8164 CVE-2020-11076 CVE-2020-8184 CVE-2020-7663
+
+build:rails:
+  image: "docker:latest"
+  variables:
+    DOCKER_TLS_CERTDIR: ""
+  services:
+    - docker:dind
+  stage: build
+  script:
+    - export IMAGE_TAG=$(echo -en $CI_BUILD_REF_NAME | tr -c '[:alnum:]_.-' '-')
+    - docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" $CI_REGISTRY
+    - docker build -f Dockerfile.prod --pull -t "$CI_REGISTRY_IMAGE:$IMAGE_TAG" .
+    - docker push "$CI_REGISTRY_IMAGE:$IMAGE_TAG"
+  only:
+   - tags
