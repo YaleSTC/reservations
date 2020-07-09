@@ -41,6 +41,7 @@
 
 ### Added
 * Added docker-compose for local development ([#1811](https://gitlab.com/yale-sdmp/reservations/issues/1811)).
+* Added production Docker deployment ([#1812](https://gitlab.com/yale-sdmp/reservations/issues/1812)).
 
 ### Changed
 * Updated Rails from 5.1.7 -> 5.2.3 ([#1780](https://gitlab.com/yale-sdmp/reservations/issues/1780)).

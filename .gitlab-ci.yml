@@ -1,5 +1,6 @@
 stages:
   - test
+  - build
 
 .rails_template: &rails_template
   image: ruby:2.6.5
@@ -14,12 +15,13 @@ stages:
     MYSQL_ROOT_PASSWORD: reservations
 
   cache:
+    key: ${CI_COMMIT_REF_SLUG}
     paths:
-      - vendor/bundle
+      - vendor/ruby
   
   before_script:
     - gem install bundler --no-document
-    - bundle check --path vendor/bundle || bundle install --path vendor/bundle
+    - bundle install -j $(nproc) --path vendor/ruby
     - cp config/database.gitlab.yml config/database.yml
 
 rails_test:
@@ -39,7 +41,6 @@ rails_test:
     - chmod 0755 /usr/local/bin/chromedriver
     - bundle exec rake
 
-
 rails_style:
   <<: *rails_template
 
@@ -52,3 +53,18 @@ rails_audit:
   script: 
     - bundle exec bundle audit update
     - bundle exec bundle audit --ignore CVE-2016-7103
+
+build:rails:
+  image: "docker:latest"
+  variables:
+    DOCKER_TLS_CERTDIR: ""
+  services:
+    - docker:dind
+  stage: build
+  script:
+    - export IMAGE_TAG=$(echo -en $CI_BUILD_REF_NAME | tr -c '[:alnum:]_.-' '-')
+    - docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" $CI_REGISTRY
+    - docker build -f Dockerfile.prod --pull -t "$CI_REGISTRY_IMAGE:$IMAGE_TAG" .
+    - docker push "$CI_REGISTRY_IMAGE:$IMAGE_TAG"
+  only:
+   - tags
