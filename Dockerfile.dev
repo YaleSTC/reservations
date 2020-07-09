@@ -1,0 +1,45 @@
+FROM ruby:2.6.5
+
+# Install dependencies
+RUN curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add 
+RUN echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+RUN apt-get update -qq && apt-get install -y google-chrome-stable \
+                                             nodejs \
+                                             postgresql-client \
+                                             yarn 
+
+# Install Gems before adding app files for better caching
+COPY Gemfile* /tmp/
+WORKDIR /tmp
+RUN gem install bundler --no-document
+RUN bundle install
+
+# Add ChromeDriver for rpsec
+RUN export CHROME_DRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`; \
+    wget -N http://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip -P /usr/local/bin/
+RUN unzip /usr/local/bin/chromedriver_linux64.zip -d /usr/local/bin/
+RUN chown root:root /usr/local/bin/chromedriver
+RUN chmod 0755 /usr/local/bin/chromedriver
+
+# Copy app files
+RUN mkdir /app
+WORKDIR /app
+COPY . /app
+
+# Add a script to be executed every time the container starts.
+COPY entrypoint.sh /usr/bin/
+RUN chmod +x /usr/bin/entrypoint.sh
+
+# Update and cleanup
+RUN apt-get upgrade -y  && apt-get autoclean \
+                        && apt-get autoremove -y
+
+# Expose 3000 for rails
+EXPOSE 3000
+
+# Start the main process.
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["rails", "server", "-b", "0.0.0.0"]

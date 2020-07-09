@@ -39,6 +39,9 @@
 ### Important
 *This release has not been tested under production conditions. Use at your own risk.*
 
+### Added
+* Added docker-compose for local development ([#1811](https://gitlab.com/yale-sdmp/reservations/issues/1811)).
+
 ### Changed
 * Updated Rails from 5.1.7 -> 5.2.3 ([#1780](https://gitlab.com/yale-sdmp/reservations/issues/1780)).
 * Updated Ruby from 2.4.1 -> 2.6.5 ([#1782](https://gitlab.com/yale-sdmp/reservations/issues/1782)).
