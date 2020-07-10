@@ -25,8 +25,8 @@
 * Updated Nokogiri from 10.10.4 to 10.10.5 for CVE-2019-13117 ([#1792](https://gitlab.com/yale-sdmp/reservations/issues/1792)).
 * Updated Loofah from 2.3.0 to 2.3.1 for CVE-2019-15587 ([#1793](https://gitlab.com/yale-sdmp/reservations/issues/1793)).
 * Updated Puma from 4.1.0 to 4.3.1 for CVE-2019-16770 ([#1794](https://gitlab.com/yale-sdmp/reservations/issues/1794)).
-* Updated Rack from 2.0.7 to 2.0.8 for CVE-2019-167820 ([#17988888888://gitlab.com/yale-sdmp/reservations/issues/1798)).
-
+* Updated Rack from 2.0.7 to 2.0.8 for CVE-2019-167820 ([#1798://gitlab.com/yale-sdmp/reservations/issues/1798)).
+* Updated Rails from 6.0 to 6.0.3.1, Rake from 12.0.0 to 12.3.3, and kaminari from 0.17.0 to 1.2.1 ([#1814://gitlab.com/yale-sdmp/reservations/issues/1814)).
 ## v6.4.1 
 ### Important
 *This is an intermediary release towards 7.0 and should not be used in production

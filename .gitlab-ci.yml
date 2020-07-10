@@ -51,4 +51,4 @@ rails_audit:
 
   script: 
     - bundle exec bundle audit update
-    - bundle exec bundle audit
+    - bundle exec bundle audit --ignore CVE-2016-7103

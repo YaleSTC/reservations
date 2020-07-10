@@ -3,9 +3,9 @@ source 'https://rubygems.org'
 ruby '2.6.5' # Version in .ruby-version must match
 
 # standard gems
-gem 'rails', '~> 6.0.0'
+gem 'rails', '~> 6.0.3.1'
 gem 'mysql2', '~> 0.5.2'
-gem 'rake', '~> 12.0.0'
+gem 'rake', '~> 12.3.3'
 gem 'jbuilder', '~> 2.9.1'
 
 # gems required for the rails 5 update
@@ -48,7 +48,7 @@ gem 'momentjs-rails', '~> 2.17.1'
 gem 'rails4-autocomplete', '~> 1.1.1'
 # possibly replace above with rails-jquery-autocomplete v 1.0.3
 gem 'select2-rails', '~> 4.0.3'
-gem 'kaminari', '~> 0.17.0'
+gem 'kaminari', '~> 1.2.1'
 gem 'draper', '~> 3.1.0'
 gem 'inline_svg', '~> 1.2.1'
 
