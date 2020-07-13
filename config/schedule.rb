@@ -24,19 +24,26 @@
 
 # Learn more: http://github.com/javan/whenever
 
-# stagger jobs by offsetting with current time
-time = Time.new # rubocop:disable TimeZone
+# Add all set environment variables to Crontab
+ENV.each_key do |key|
+  env key.to_sym, ENV[key]
+end
 
-# define cron strings
-nightly_cron_str = time.min.to_s + ' 5 * * *'
-hourly_cron_str = time.min.to_s + ' * * * *'
+# Log to stdout
+set :output, "/var/log/cron.log"
 
-# every night around 5 AM
-every nightly_cron_str do
+# Overwrite rake job_type to not include --silent flag
+job_type :rake,    "cd :path && :environment_variable=:environment bundle exec rake :task :output"
+
+# Set environment
+set :environment, ENV["RAILS_ENV"]
+
+# every night around 5 AM EST
+every :day, at: '12:00am' do
   rake 'run_daily_tasks'
 end
 
 # every hour (except five AM)
-every hourly_cron_str do
+every :hour do
   rake 'run_hourly_tasks'
 end

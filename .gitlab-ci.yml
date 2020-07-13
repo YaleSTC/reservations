@@ -68,3 +68,18 @@ build:rails:
     - docker push "$CI_REGISTRY_IMAGE:$IMAGE_TAG"
   only:
    - tags
+
+build:cron:
+  image: "docker:latest"
+  variables:
+    DOCKER_TLS_CERTDIR: ""
+  services:
+    - docker:dind
+  stage: build
+  script:
+    - export IMAGE_TAG=$(echo -en $CI_BUILD_REF_NAME | tr -c '[:alnum:]_.-' '-')
+    - docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" $CI_REGISTRY
+    - docker build -f Dockerfile.cron --pull -t "${CI_REGISTRY_IMAGE}-cron:$IMAGE_TAG" .
+    - docker push "${CI_REGISTRY_IMAGE}-cron:$IMAGE_TAG"
+  only:
+   - tags
