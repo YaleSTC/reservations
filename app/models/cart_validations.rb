@@ -90,7 +90,7 @@ module CartValidations
     # 1 query
     errors = []
     if Reservation.for_reserver(reserver_id).overdue.count.positive?
-      errors << 'This user has overdue reservations that prevent him/her '\
+      errors << 'This user has overdue reservations that prevents them'\
         'from creating new ones.'
     end
     errors

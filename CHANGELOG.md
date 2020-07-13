@@ -17,6 +17,7 @@
 * Updated Simple Form from 4.0.1 -> 5.0.1 ([#1790](https://gitlab.com/yale-sdmp/reservations/issues/1790)).
 * Changed CI pipeline to use latest Chromedriver ([#1795](https://gitlab.com/yale-sdmp/reservations/issues/1795)).
 * Changed files to be handled with ActiveStorage rather than Paperclip ([#1796](https://gitlab.com/yale-sdmp/reservations/issues/1796)).
+* Changed language to be gender neutral ([#1809](https://gitlab.com/yale-sdmp/reservations/issues/1809)).
 
 ### Fixed
 * Fixed deprecation warnings ([#1787](https://gitlab.com/yale-sdmp/reservations/issues/1787)).
