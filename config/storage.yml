@@ -13,6 +13,12 @@ amazon:
   region: <%= ENV['AWS_S3_REGION'] %>
   secret_access_key: <%= ENV['AWS_SECRET_ACCESS_KEY'] %>
 
+mirror:
+  service: Mirror
+  primary: local
+  mirrors:
+    - amazon
+
 # Remember not to checkin your GCS keyfile to a repository
 # google:
 #   service: GCS
@@ -26,8 +32,3 @@ amazon:
 #   storage_account_name: your_account_name
 #   storage_access_key: <%= Rails.application.credentials.dig(:azure_storage, :storage_access_key) %>
 #   container: your_container_name
-
-# mirror:
-#   service: Mirror
-#   primary: local
-#   mirrors: [ amazon, google, microsoft ]
