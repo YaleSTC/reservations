@@ -1,2 +1,2 @@
 <% environment.context_class.instance_eval { include Rails.application.routes.url_helpers } %>
-var new_user = "<%= "#{quick_new_users_path(format: :js)}" %>";
+var new_user = "<%= "#{quick_new_users_path([], format: :js)}" %>";

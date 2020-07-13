@@ -25,6 +25,7 @@ services:
     depends_on:
       - mysql 
     environment:
+      STORAGE_LOCATION: ${STORAGE_LOCATION}
       RAILS_ENV: ${RAILS_ENV}
       DB_HOST: ${RES_DB_HOST}
       RES_DB_NAME_DEV: ${RES_DB_NAME_DEV}

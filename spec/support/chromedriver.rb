@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'selenium/webdriver'
 
 Capybara.register_driver :selenium_chrome_headless_docker_friendly do |app|
