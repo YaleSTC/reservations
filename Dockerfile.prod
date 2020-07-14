@@ -7,22 +7,23 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 
 # Install dependencies and remove unneeded packages/files
-RUN apt-get update -qq && apt-get upgrade -y
-RUN apt-get install -y --no-install-recommends nodejs \
-                                               git \
-                                               unzip \
-                                               xvfb \
-                                               libxi6 \
-                                               libgconf-2-4 \
-                                               apt-transport-https \
-                                               yarn
+RUN apt-get update -qq && apt-get install -y --no-install-recommends nodejs \
+                                                                     git \
+                                                                     unzip \
+                                                                     xvfb \
+                                                                     libxi6 \
+                                                                     libgconf-2-4 \
+                                                                     apt-transport-https \
+                                                                     yarn
+
 # Install packages
 WORKDIR /usr/src/app
 COPY Gemfile* /usr/src/app/
 COPY Gemfile.lock* /usr/src/app/
 COPY package.json /usr/src/app/
-RUN gem install bundler --no-document
-bundle install --without development test
+RUN gem install bundler --no-document 
+RUN bundle install --without development test
+RUN yarn install
 
 # Setup app files
 COPY . /usr/src/app/
@@ -30,9 +31,9 @@ WORKDIR /usr/src/app
 COPY config/database.yml.example.production config/database.yml
 
 # Add entrypoint
-COPY entrypoint.prod.sh /usr/bin/
-RUN chmod +x /usr/bin/entrypoint.prod.sh
-ENTRYPOINT ["entrypoint.prod.sh"]
+COPY entrypoint-prod.sh /usr/bin/
+RUN chmod +x /usr/bin/entrypoint-prod.sh
+ENTRYPOINT ["entrypoint-prod.sh"]
 
 # Expose rails
 EXPOSE 3000

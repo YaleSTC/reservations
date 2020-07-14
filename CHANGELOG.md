@@ -48,6 +48,9 @@
 * Updated Rails from 5.1.7 -> 5.2.3 ([#1780](https://gitlab.com/yale-sdmp/reservations/issues/1780)).
 * Updated Ruby from 2.4.1 -> 2.6.5 ([#1782](https://gitlab.com/yale-sdmp/reservations/issues/1782)).
 
+### Fixed
+* Fixed production Dockerfile and improved layering ([#1815](https://gitlab.com/yale-sdmp/reservations/issues/1815)).
+
 ## v6.3.6 - 2019-01-11
 ### Changed
 * Replaced capybara-webkit with selenium and Chromedriver ([#1769](https://github.com/YaleSTC/reservations/issues/1769)).
