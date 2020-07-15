@@ -93,6 +93,9 @@ Rails.application.configure do
   # config.active_job.queue_adapter     = :resque
   # config.active_job.queue_name_prefix = "reservations_#{Rails.env}"
 
+  # Set domain
+  config.action_mailer.default_url_options = { host: "#{ENV['RAILS_HOST_NAME']}#{ENV['RAILS_RELATIVE_URL_ROOT']}" }
+
   # Disable e-mails if environment variable is set
   config.action_mailer.perform_deliveries = ENV['DISABLE_EMAILS'].nil?
 
