@@ -23,6 +23,7 @@
 
 ### Fixed
 * Fixed production Dockerfile and improved layering ([#1815](https://gitlab.com/yale-sdmp/reservations/issues/1815)).
+* Fixed logging when running under Docker in production ([#1817](https://gitlab.com/yale-sdmp/reservations/issues/1817)).
 
 ## v6.3.6 - 2019-01-11
 ### Changed
