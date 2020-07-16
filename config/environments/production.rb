@@ -72,10 +72,6 @@ Rails.application.configure do
   # when problems arise.
   config.log_level = :info
 
-  # Rotate logs after 150 MB, keep 5 files
-  # See https://medium.com/@atinders/easy-log-rotation-with-rails-5-7b8d3c173461
-  config.logger = Logger.new(config.paths['log'].first, 5, 150.megabytes)
-
   # Prepend all log lines with the following tags.
   # config.log_tags = [ :subdomain, :uuid ]
 
@@ -120,6 +116,10 @@ Rails.application.configure do
     logger           = ActiveSupport::Logger.new(STDOUT)
     logger.formatter = config.log_formatter
     config.logger    = ActiveSupport::TaggedLogging.new(logger)
+  else
+    # Rotate logs after 150 MB, keep 5 files
+    # See https://medium.com/@atinders/easy-log-rotation-with-rails-5-7b8d3c173461
+    config.logger = Logger.new(config.paths['log'].first, 5, 150.megabytes)
   end
 
   # set up PartyFoul
