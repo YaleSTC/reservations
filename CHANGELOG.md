@@ -31,6 +31,8 @@
 * Updated Puma from 4.1.0 to 4.3.1 for CVE-2019-16770 ([#1794](https://gitlab.com/yale-sdmp/reservations/issues/1794)).
 * Updated Rack from 2.0.7 to 2.0.8 for CVE-2019-167820 ([#1798://gitlab.com/yale-sdmp/reservations/issues/1798)).
 * Updated Rails from 6.0 to 6.0.3.1, Rake from 12.0.0 to 12.3.3, and kaminari from 0.17.0 to 1.2.1 ([#1814://gitlab.com/yale-sdmp/reservations/issues/1814)).
+* Updated Devise from 4.7.1 to 4.7.2 and Devise CAS from 1.10.0 to 1.10.4 ([#1820://gitlab.com/yale-sdmp/reservations/issues/1820)).
+
 ## v6.4.1 
 ### Important
 *This is an intermediary release towards 7.0 and should not be used in production
