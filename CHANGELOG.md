@@ -24,6 +24,7 @@
 * Fixed deprecation warnings ([#1787](https://gitlab.com/yale-sdmp/reservations/issues/1787)).
 * Fixed CI build for cron ([#1816](https://gitlab.com/yale-sdmp/reservations/issues/1816)).
 * Fixed Docker logging to STDOUT ([#1819](https://gitlab.com/yale-sdmp/reservations/issues/1819)).
+* Fixed environment variable handling in Dockerfile.prod ([#1821](https://gitlab.com/yale-sdmp/reservations/issues/1821)).
 
 ### Security
 * Updated Nokogiri from 10.10.4 to 10.10.5 for CVE-2019-13117 ([#1792](https://gitlab.com/yale-sdmp/reservations/issues/1792)).

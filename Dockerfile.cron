@@ -1,5 +1,4 @@
 FROM ruby:2.6.5
-ARG MASTER_KEY=$MASTER_KEY
 
 # Add NodeJS repo
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -

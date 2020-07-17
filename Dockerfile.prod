@@ -1,5 +1,4 @@
 FROM ruby:2.6.5
-ARG MASTER_KEY=$MASTER_KEY
 
 # Add NodeJS repo
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
@@ -29,6 +28,7 @@ RUN yarn install
 COPY . /usr/src/app/
 WORKDIR /usr/src/app
 COPY config/database.yml.example.production config/database.yml
+COPY config/secrets.yml.example config/secrets.yml
 
 # Add entrypoint
 COPY entrypoint-prod.sh /usr/bin/

@@ -5,7 +5,7 @@ set -e
 rm -f /app/tmp/pids/server.pid
 
 # Precompile assets
-SECRET_KEY_BASE=$MASTER_KEY RAILS_ENV=production rails assets:precompile
+SECRET_KEY_BASE=$SECRET_KEY_BASE RAILS_ENV=production rails assets:precompile
 
 # Then exec the container's main process (what's set as CMD in the Dockerfile).
 exec "$@"
