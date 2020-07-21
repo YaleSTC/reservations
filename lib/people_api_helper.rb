@@ -56,7 +56,7 @@ class PeopleAPIHelper
   def parse_response
     {}.tap do |out|
       ATTRS.each { |(attr, str)| out[attr] = extract_data(str) }
-      out[:username] = ENV['CAS_AUTH'] ? out[:cas_login] : out[:email]
+      out[:username] = ENV['CAS_AUTH'].present? ? out[:cas_login] : out[:email]
     end
   end
 

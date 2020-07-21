@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # rubocop:disable Rails/Output
 module AutomaticSeed
   def automatic_seed
@@ -15,10 +16,10 @@ module AutomaticSeed
     generate_all_reservation_types
     Generator.generate('reservation', 3)
     puts "Successfully seeded all records! (#{Time.zone.now - start_time}s)\n\n"
-    unless ENV['CAS_AUTH']
-      puts "You can log in using e-mail 'email@email.com' and "\
-           "password 'passw0rd'"
-    end
+
+    return if ENV['CAS_AUTH'].present?
+    puts "You can log in using e-mail 'email@email.com' and "\
+         "password 'passw0rd'"
   end
 
   private
@@ -30,7 +31,7 @@ module AutomaticSeed
 
   def create_superuser
     u = Generator.superuser
-    if ENV['CAS_AUTH']
+    if ENV['CAS_AUTH'].present?
       prompt_field(u, :cas_login)
       u.username = u.cas_login
     else

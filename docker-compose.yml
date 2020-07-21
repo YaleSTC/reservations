@@ -14,8 +14,7 @@ services:
     container_name: reservations-rails
     build:
       context: ./
-      dockerfile: Dockerfile.cron
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+      dockerfile: Dockerfile.dev
     volumes:
       - ${APPLICATION_PATH}:/app
     ports:
@@ -33,6 +32,7 @@ services:
       RES_DB_NAME_PRDT: ${RES_DB_NAME_PRD}
       RES_DB_USERNAME: ${RES_DB_USERNAME}
       RES_DB_PASSWORD: ${RES_DB_PASSWORD}
+      CAS_AUTH: ${CAS_AUTH}
       CAS_BASE_URL: ${CAS_BASE_URL}
 
 volumes:

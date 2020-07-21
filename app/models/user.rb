@@ -10,7 +10,7 @@ class User < ApplicationRecord
   # :cas_authenticatable module. If not, we implement password authentcation
   # using the :database_authenticatable module and also allow for password
   # resets.
-  if ENV['CAS_AUTH']
+  if ENV['CAS_AUTH'].present?
     devise :cas_authenticatable
   else
     devise :database_authenticatable, :recoverable, :rememberable
@@ -38,7 +38,7 @@ class User < ApplicationRecord
             presence: true, uniqueness: { case_sensitive: false },
             format: { with: /\A([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})\z/i }
   # validations for CAS authentication
-  if ENV['CAS_AUTH']
+  if ENV['CAS_AUTH'].present?
     validates :cas_login, presence: true, uniqueness: { case_sensitive: false }
   # validations for password authentication
   else
@@ -105,7 +105,7 @@ class User < ApplicationRecord
   end
 
   def render_name
-    ENV['CAS_AUTH'] ? "#{name} #{username}" : name.to_s
+    ENV['CAS_AUTH'].present? ? "#{name} #{username}" : name.to_s
   end
 
   # ---- Reservation methods ---- #

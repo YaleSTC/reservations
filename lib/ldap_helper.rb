@@ -18,7 +18,7 @@ class LDAPHelper
 
   private
 
-  ATTRS = %i(login email first_name last_name nickname).freeze
+  ATTRS = %i[login email first_name last_name nickname].freeze
   attr_reader :user_login, :ldap
 
   def user_hash # rubocop:disable Metrics/AbcSize
@@ -31,10 +31,10 @@ class LDAPHelper
 
       # deal with affiliation
       out[:affiliation] = aff_params.map { |param| result[param.to_sym][0] }
-                                    .select { |s| s && !s.empty? }.join(' ')
+                                    .select(&:present?).join(' ')
 
       # define username based on authentication method
-      out[:username] = if ENV['CAS_AUTH']
+      out[:username] = if ENV['CAS_AUTH'].present?
                          result[secrets.ldap_login.to_sym][0]
                        else
                          out[:email]
@@ -53,7 +53,7 @@ class LDAPHelper
   end
 
   def filter_param
-    ENV['CAS_AUTH'] ? secrets.ldap_login : secrets.ldap_email
+    ENV['CAS_AUTH'].present? ? secrets.ldap_login : secrets.ldap_email
   end
 
   def attrs

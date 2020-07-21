@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do
@@ -6,7 +7,7 @@ FactoryGirl.define do
     "abc#{n}"
   end
 
-  factory :user, aliases: [:reserver, :checkout_handler, :checkin_handler] do
+  factory :user, aliases: %i[reserver checkout_handler checkin_handler] do
     sequence(:cas_login) { |n| "netid#{n}" }
     first_name 'First'
     last_name 'Last'
@@ -18,7 +19,7 @@ FactoryGirl.define do
     role 'normal'
     view_mode 'normal'
 
-    if ENV['CAS_AUTH']
+    if ENV['CAS_AUTH'].present?
       username { cas_login }
     else
       username { email }
