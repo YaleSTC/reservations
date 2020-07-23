@@ -11,7 +11,7 @@
       <p>
         <%= link_to reservation.equipment_model, target: '_blank' do %>
           <% if reservation.equipment_model.photo.present? %>
-            <%= image_tag reservation.equipment_model.photo.url(resize: "250x250"), class: 'img-responsive' %>
+            <%= image_tag reservation.equipment_model.photo.variant(resize: "250x250"), class: 'img-responsive' %>
           <% else %>
             <%= image_tag 'no-image-260.gif', class: 'img-responsive' %>
           <% end %>
