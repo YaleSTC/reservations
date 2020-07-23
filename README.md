@@ -1,3 +1,8 @@
+# **THIS PROJECT HAS MOVED**
+This project has moved to [https://gitlab.com/yale-sdmp/reservations](https://gitlab.com/yale-sdmp/reservations).
+Please visit that repo for the latest releases and to report issues.
+This repository will no longer be monitored.
+
 # Welcome to Reservations
 
 [![Build Status](https://travis-ci.org/YaleSTC/reservations.svg?branch=master)](https://travis-ci.org/YaleSTC/reservations)
