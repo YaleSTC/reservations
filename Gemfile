@@ -64,7 +64,8 @@ gem 'icalendar', '~> 2.4.1'
 gem "bootsnap", "~> 1.4"
 
 # ActiveStorage
-gem "mini_magick", "~> 4.9"
+gem "mini_magick", "~> 4.10.1"
+gem "image_processing", "~> 1.11"
 gem "active_storage_validations", "~> 0.8.4"
 gem 'aws-sdk-s3', '~> 1'
 
@@ -129,3 +130,4 @@ group :heroku do
   gem 'aws-sdk', '~> 3'
   gem 'rails_12factor', '~> 0.0.3'
 end
+
