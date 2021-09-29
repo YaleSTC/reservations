@@ -34,7 +34,7 @@ gem 'net-ldap', '~> 0.16.0'
 # attachments
 
 # for exporting multiple files
-gem 'rubyzip', '~> 1.3.0'
+gem 'rubyzip', '~> 2.3.0'
 
 # soft deletion
 gem 'nilify_blanks', '~> 1.2.1'
@@ -83,7 +83,7 @@ group :development, :test do
   gem 'shoulda-matchers', '~> 3.1.3'
   gem 'capybara', '~> 3.9.0'
   gem 'capybara-selenium', '~> 0.0.6'
-  gem 'selenium-webdriver', '~> 3.14.1'
+  gem 'selenium-webdriver', '~> 3.142.7'
   gem "puma", "~> 4.1"
   gem 'spring', '~> 2.0.2'
   gem 'spring-commands-rspec', '~> 1.0.4'
